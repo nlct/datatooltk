@@ -1,2 +1,2 @@
 Main-Class: com/dickimawbooks/datatooltk/DatatoolTk
-Class-Path: . jh.jar jlfgr-1_0.jar
+Class-Path: . jh.jar jlfgr-1_0.jar opencsv.jar

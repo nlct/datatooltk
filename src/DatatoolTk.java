@@ -28,7 +28,10 @@ public class DatatoolTk
          }
          else if (in != null)
          {
-            db = DatatoolDb.importCSV(in, settings);
+            DatatoolCsv imp = new DatatoolCsv(settings.getSeparator(),
+               settings.getDelimiter());
+
+            db = imp.importData(new File(in));
          }
          else
          {
