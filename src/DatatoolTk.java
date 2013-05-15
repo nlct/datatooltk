@@ -62,7 +62,7 @@ public class DatatoolTk
                   throw new InvalidSyntaxException("string expected after --sep");
                }
 
-               sep = args[i];
+               settings.setSeparator(args[i]);
             }
             else if (args[i].equals("--out") || args[i].equals("-o"))
             {
@@ -153,5 +153,6 @@ public class DatatoolTk
    private static String out = null;
    private static String in  = null;
    private static String dbtex = null;
-   private static String sep = ",";
+
+   private static DatatoolSettings settings = new DatatoolSettings();
 }
