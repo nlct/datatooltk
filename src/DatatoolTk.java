@@ -1,9 +1,50 @@
 package com.dickimawbooks.datatooltk;
 
+import java.io.*;
+
 public class DatatoolTk
 {
    public static void doBatchProcess()
    {
+      if (in == null && dbtex == null)
+      {
+         System.err.println("<datatool file> or --import <csv file> required for batch mode.\n(If you want the GUI interface, use the --gui option.)");
+         System.exit(1);
+      }
+
+      if (out == null)
+      {
+         System.err.println("--out <file> required for batch mode.\n(If you want the GUI interface, use the --gui option.)");
+         System.exit(1);
+      }
+
+      DatatoolDb db;
+
+      try
+      {
+         if (dbtex != null)
+         {
+            db = DatatoolDb.load(dbtex);
+         }
+         else if (in != null)
+         {
+            db = DatatoolDb.importCSV(in, settings);
+         }
+         else
+         {
+            // shouldn't happen as this has already been checked for
+            // in main()
+
+            throw new FileNotFoundException("No input file specified");
+         }
+
+         db.save(out);
+      }
+      catch (IOException e)
+      {
+         System.err.println(e.getMessage());
+         System.exit(1);
+      }
    }
 
    public static void createAndShowGUI()
@@ -22,7 +63,7 @@ public class DatatoolTk
       System.out.println();
       System.out.println("Available options: ");
       System.out.println("--gui (or -g)\tGUI interface.");
-      System.out.println("--batch (or -b)\tNo GUI interface.");
+      System.out.println("--batch (or -b)\tNo GUI interface. (--out <file> required and either --import <csvfile> or <datatool file>)");
       System.out.println("--import (or -i) <csv file>\tImport <csv file>. Can't be used with <datatool file>");
       System.out.println("--out (or -o) <filename>\tSave to <filename>.");
       System.out.println("--sep <string>\tSeparator used in CSV files. (Defaults to ',')");
