@@ -5,6 +5,6 @@ import java.io.IOException;
 
 public interface DatatoolImport
 {
-   public DatatoolDb importData(File file)
-    throws IOException;
+   public DatatoolDb importData(String source)
+    throws DatatoolImportException;
 }

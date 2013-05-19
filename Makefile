@@ -16,7 +16,7 @@ classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbook
 	cd src; \
 	javac -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../lib/jh.jar:../lib/jlfgr-1_0.jar *.java
+	-cp ../lib/jh.jar:../lib/jlfgr-1_0.jar:../lib/opencsv.jar *.java
 
 classes/com/dickimawbooks/datatooltk	:
 	mkdir -p classes/com/dickimawbooks/datatooltk

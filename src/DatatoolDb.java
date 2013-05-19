@@ -614,6 +614,11 @@ public class DatatoolDb
       return new HeaderEnumeration(headers);
    }
 
+   public RowEnumeration rowElements()
+   {
+      return new RowEnumeration(data);
+   }
+
    public String[] getColumnTitles()
    {
       String[] fields = new String[headers.size()];
@@ -621,7 +626,7 @@ public class DatatoolDb
       int i = 0;
 
       for (HeaderEnumeration en=headerElements();
-           en.hasMoreElements())
+           en.hasMoreElements(); )
       {
          i++;
 

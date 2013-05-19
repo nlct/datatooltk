@@ -28,6 +28,11 @@ public class DatatoolCell
       data = value;
    }
 
+   public String getValue()
+   {
+      return data;
+   }
+
    public void setIndex(int index)
    {
       colIndex = index;

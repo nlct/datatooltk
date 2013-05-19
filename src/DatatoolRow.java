@@ -52,5 +52,36 @@ public class DatatoolRow extends Vector<DatatoolCell>
       }
    }
 
+   public CellEnumeration cellElements()
+   {
+      return new CellEnumeration(this);
+   }
+
+   public String[] getValues()
+   {
+      String[] cells = new String[size()];
+
+      int i = 0;
+
+      for (CellEnumeration en=cellElements();
+          en.hasMoreElements(); )
+      {
+         i++;
+
+         DatatoolCell cell = en.nextElement();
+
+         if (cell == null)
+         {
+            cells[i] = "";
+         }
+         else
+         {
+            cells[i] = cell.getValue();
+         }
+      }
+
+      return cells;
+   }
+
    private int rowIndex=-1;
 }

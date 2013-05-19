@@ -5,6 +5,6 @@ import java.io.IOException;
 
 public interface DatatoolExport
 {
-   public void exportData(DatatoolDb db, File file)
-     throws IOException;
+   public void exportData(DatatoolDb db, String target)
+     throws DatatoolExportException;
 }
