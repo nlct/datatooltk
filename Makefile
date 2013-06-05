@@ -2,6 +2,7 @@ APP_VERSION:=$(shell grep "public static final String appVersion" src/DatatoolTk
 
 test	: app
 	bin/datatooltk --out tests/test-out.dbtex tests/data-raw.dbtex
+	bin/datatooltk --out tests/test-csv-out.dbtex --csv tests/test.csv
 
 app	: lib/datatooltk.jar lib/jh.jar lib/jlfgr-1_0.jar
 

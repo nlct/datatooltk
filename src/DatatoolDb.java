@@ -3,6 +3,7 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.util.Vector;
 import java.util.regex.*;
+import java.util.Date;
 
 public class DatatoolDb
 {
@@ -16,6 +17,12 @@ public class DatatoolDb
    {
       headers = new Vector<DatatoolHeader>(cols);
       data = new Vector<DatatoolRow>(rows);
+   }
+
+   public DatatoolDb(int cols)
+   {
+      headers = new Vector<DatatoolHeader>(cols);
+      data = new Vector<DatatoolRow>();
    }
 
    public static DatatoolDb load(String filename)
@@ -524,6 +531,120 @@ public class DatatoolDb
    public void save()
      throws IOException
    {
+      PrintWriter out = null;
+
+      try
+      {
+         out = new PrintWriter(file);
+
+         name = getName();
+
+         out.println("% Created by "+DatatoolTk.appName+" on "
+          + (new Date()));
+         out.println("\\DTLifdbexists{"+name+"}%");
+         out.println("{\\PackageError{datatool}{Database `"+name+"'");
+         out.println("already exists}{}%");
+         out.println("\\aftergroup\\endinput}{}%");
+         out.println("\\bgroup\\makeatletter");
+         out.println("\\dtl@message{Reconstructing database");
+         out.println("`"+name+"'}%");
+         out.println("\\expandafter\\global\\expandafter");
+         out.println("\\newtoks\\csname dtlkeys@"+name+"\\endcsname");
+         out.println("\\expandafter\\global");
+         out.println(" \\csname dtlkeys@"+name+"\\endcsname={%");
+         out.println("%");
+
+         for (HeaderEnumeration en = headerElements(); en.hasMoreElements();)
+         {
+            DatatoolHeader header = en.nextElement();
+
+            int type = header.getType();
+
+            out.println("\\db@plist@elt@w %");
+            out.println("\\db@col@id@w "+header.getColumnIndex()+"%");
+            out.println("\\db@col@id@end@ %");
+            out.println("\\db@key@id@w "+header.getKey()+"%");
+            out.println("\\db@key@id@end@ %");
+            out.println("\\db@type@id@w "
+               +(type==TYPE_UNKNOWN?"":type)+"%");
+            out.println("\\db@type@id@end@ %");
+            out.println("\\db@header@id@w "+header.getTitle()+"%");
+            out.println("\\db@header@id@end@ %");
+            out.println("\\db@col@id@w "+header.getColumnIndex()+"%");
+            out.println("\\db@col@id@end@ %");
+            out.println("\\db@plist@elt@end@ %");
+         }
+
+         out.println("}%"); // end of dtlkeys@<name>
+
+         out.println("\\expandafter\\global\\expandafter");
+         out.println("\\newtoks\\csname dtldb@"+name+"\\endcsname");
+         out.println("\\expandafter\\global");
+         out.println("\\csname dtldb@"+name+"\\endcsname={%");
+         out.println("%");
+
+         for (RowEnumeration en=rowElements(); en.hasMoreElements(); )
+         {
+            DatatoolRow row = en.nextElement();
+
+            out.println("\\db@row@elt@w %");
+            out.println("\\db@row@id@w "+row.getRowIndex()+"%");
+            out.println("\\db@row@id@end@ %");
+
+            for (CellEnumeration ce=row.cellElements(); ce.hasMoreElements();)
+            {
+               DatatoolCell cell = ce.nextElement();
+
+               out.println("\\db@col@id@w "+cell.getIndex()+"%");
+               out.println("\\db@col@id@end@ %");
+
+               out.println("\\db@col@elt@w "+cell.getValue()+"%");
+               out.println("\\db@col@elt@end@ %");
+
+               out.println("\\db@col@id@w "+cell.getIndex()+"%");
+               out.println("\\db@col@id@end@ %");
+            }
+
+            out.println("\\db@row@id@w "+row.getRowIndex()+"%");
+            out.println("\\db@row@id@end@ %");
+            out.println("\\db@row@elt@end@ %");
+         }
+
+         out.println("}%"); // end of dtldb@<name>
+
+         out.println("\\expandafter\\global");
+         out.println(" \\expandafter\\newcount\\csname dtlrows@"
+           +name+"\\endcsname");
+
+         out.println("\\expandafter\\global");
+         out.println(" \\csname dtlrows@"+name+"\\endcsname="
+           +data.size()+"\\relax");
+
+         out.println("\\expandafter\\global");
+         out.println(" \\expandafter\\newcount\\csname dtlcols@"
+           +name+"\\endcsname");
+
+         out.println("\\expandafter\\global");
+         out.println(" \\csname dtlcols@"+name+"\\endcsname="
+           +headers.size()+"\\relax");
+
+         for (DatatoolHeader header : headers)
+         {
+            out.println("\\expandafter");
+            out.println(" \\gdef\\csname dtl@ci@"+name
+              +"@"+header.getKey()+"\\endcsname{"
+              +header.getColumnIndex()+"}%");
+         }
+
+         out.println("\\egroup");
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+      }
    }
 
    public void setFile(File file)
@@ -565,6 +686,66 @@ public class DatatoolDb
       }
 
       row.setCell(colIdx, value);
+
+      if (!value.isEmpty())
+      {
+         // What's the datatype?
+
+         int type = TYPE_UNKNOWN;
+
+         try
+         {
+            int num = Integer.parseInt(value);
+   
+            type = TYPE_INTEGER;
+         }
+         catch (NumberFormatException ie)
+         {
+            try
+            {
+               float num = Float.parseFloat(value);
+
+               type = TYPE_REAL;
+            }
+            catch (NumberFormatException fe)
+            {
+               // TODO test for currency
+
+               type = TYPE_STRING;
+            }
+         }
+
+         // Does this column have a type assigned to it?
+
+         DatatoolHeader header = getHeader(colIdx);
+
+         switch (header.getType())
+         {
+            case TYPE_STRING:
+            break;
+            case TYPE_UNKNOWN:
+              header.setType(type);
+            break;
+            case TYPE_CURRENCY:
+              if (type == TYPE_STRING)
+              {
+                 header.setType(type);
+              }
+            break;
+            case TYPE_REAL:
+              if (type == TYPE_STRING || type == TYPE_CURRENCY)
+              {
+                 header.setType(type);
+              }
+            break;
+            case TYPE_INTEGER:
+              if (type != TYPE_INTEGER)
+              {
+                 header.setType(type);
+              }
+            break;
+         }
+      }
    }
 
    public void addColumn(DatatoolHeader header)
@@ -654,22 +835,22 @@ public class DatatoolDb
 
    private String name;
 
-   public static final int TYPE_STRING = 0, TYPE_INTEGER=1,
+   public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;
 
-   private static final Pattern PATTERN_DBNAME = Pattern.compile("\\\\DTLifdbexists\\{(.+)\\}%");
-   public static final Pattern PATTERN_COMMENT = Pattern.compile("\\s*%.*");
-   private static final Pattern PATTERN_CLOSE = Pattern.compile("\\s*\\}%.*");
-   private static final Pattern PATTERN_PLIST_ELT = Pattern.compile("\\s*\\\\db@plist@elt@w\\s*(%.*)?");
-   private static final Pattern PATTERN_PLIST_ELT_END = Pattern.compile("\\s*\\\\db@plist@elt@end@\\s*(%.*)?");
+   private static final Pattern PATTERN_DBNAME = Pattern.compile("\\\\DTLifdbexists\\{(.+)\\}%\\s*");
+   public static final Pattern PATTERN_COMMENT = Pattern.compile("\\s*%\\s*");
+   private static final Pattern PATTERN_CLOSE = Pattern.compile("\\s*\\}%\\s*");
+   private static final Pattern PATTERN_PLIST_ELT = Pattern.compile("\\s*\\\\db@plist@elt@w\\s*(%\\s*)?");
+   private static final Pattern PATTERN_PLIST_ELT_END = Pattern.compile("\\s*\\\\db@plist@elt@end@\\s*(%\\s*)?");
 
-   private static final Pattern PATTERN_ROW_ELT = Pattern.compile("\\s*\\\\db@row@elt@w\\s*(%.*)?");
-   private static final Pattern PATTERN_ROW_ELT_END = Pattern.compile("\\s*\\\\db@row@elt@end@\\s*(%.*)?");
-   private static final Pattern PATTERN_ROW_ID = Pattern.compile("\\s*\\\\db@row@id@w\\s*([0-9]+)(%.*)?");
-   private static final Pattern PATTERN_ROW_ID_END = Pattern.compile("\\s*\\\\db@row@id@end@\\s*(%.*)?");
-   private static final Pattern PATTERN_COL_ID = Pattern.compile("\\s*\\\\db@col@id@w\\s*([0-9]+)(%.*)?");
-   private static final Pattern PATTERN_COL_ID_END = Pattern.compile("\\s*\\\\db@col@id@end@\\s*(%.*)?");
+   private static final Pattern PATTERN_ROW_ELT = Pattern.compile("\\s*\\\\db@row@elt@w\\s*(%\\s*)?");
+   private static final Pattern PATTERN_ROW_ELT_END = Pattern.compile("\\s*\\\\db@row@elt@end@\\s*(%\\s*)?");
+   private static final Pattern PATTERN_ROW_ID = Pattern.compile("\\s*\\\\db@row@id@w\\s*([0-9]+)(%\\s*)?");
+   private static final Pattern PATTERN_ROW_ID_END = Pattern.compile("\\s*\\\\db@row@id@end@\\s*(%\\s*)?");
+   private static final Pattern PATTERN_COL_ID = Pattern.compile("\\s*\\\\db@col@id@w\\s*([0-9]+)(%\\s*)?");
+   private static final Pattern PATTERN_COL_ID_END = Pattern.compile("\\s*\\\\db@col@id@end@\\s*(%\\s*)?");
 
-   private static final Pattern PATTERN_COL_ELT = Pattern.compile("\\s*\\\\db@col@elt@w\\s*(.*)");
-   private static final Pattern PATTERN_COL_ELT_END = Pattern.compile("\\s*\\\\db@col@elt@end@\\s*(%.*)?");
+   private static final Pattern PATTERN_COL_ELT = Pattern.compile("\\s*\\\\db@col@elt@w\\s*(.*)%\\s*");
+   private static final Pattern PATTERN_COL_ELT_END = Pattern.compile("\\s*\\\\db@col@elt@end@\\s*(%\\s*)?");
 }

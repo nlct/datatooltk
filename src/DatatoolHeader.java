@@ -17,7 +17,7 @@ public class DatatoolHeader
 
    public DatatoolHeader(String key, String title)
    {
-      this(key, title, DatatoolDb.TYPE_STRING);
+      this(key, title, DatatoolDb.TYPE_UNKNOWN);
    }
 
    public DatatoolHeader(String key, String title, int type)
@@ -44,7 +44,7 @@ public class DatatoolHeader
 
    public void setType(int type)
    {
-      if (type < DatatoolDb.TYPE_STRING || type > DatatoolDb.TYPE_CURRENCY)
+      if (type < DatatoolDb.TYPE_UNKNOWN || type > DatatoolDb.TYPE_CURRENCY)
       {
          throw new IllegalArgumentException("Invalid data type "+type);
       }
@@ -179,9 +179,9 @@ public class DatatoolHeader
          case GROUP_TYPE:
             try
             {
-               if (value.equals(""))
+               if (value.isEmpty())
                {
-                  type = DatatoolDb.TYPE_STRING;
+                  type = DatatoolDb.TYPE_UNKNOWN;
                }
                else
                {
@@ -211,18 +211,18 @@ public class DatatoolHeader
 
    private String key;
    private String title;
-   private int type;
+   private int type = DatatoolDb.TYPE_UNKNOWN;
    private int colIndex=-1;
 
    private static final int GROUP_COL=0, GROUP_KEY=1, GROUP_TITLE=2, GROUP_TYPE=3;
 
-   private static final Pattern PATTERN_COL_ID = Pattern.compile("\\s*\\\\db@col@id@w\\s*([0-9]+)%.*");
-   private static final Pattern PATTERN_COL_ID_END = Pattern.compile("\\s*\\\\db@col@id@end@\\s*%.*");
-   private static final Pattern PATTERN_KEY_ID = Pattern.compile("\\s*\\\\db@key@id@w\\s*(.*)");
-   private static final Pattern PATTERN_KEY_ID_END = Pattern.compile("\\s*\\\\db@key@id@end@\\s*%.*");
-   private static final Pattern PATTERN_TYPE_ID = Pattern.compile("\\s*\\\\db@type@id@w\\s*([0-9]*)%.*");
-   private static final Pattern PATTERN_TYPE_ID_END = Pattern.compile("\\s*\\\\db@type@id@end@\\s*%.*");
-   private static final Pattern PATTERN_TITLE_ID = Pattern.compile("\\s*\\\\db@header@id@w\\s*(.*)");
-   private static final Pattern PATTERN_TITLE_ID_END = Pattern.compile("\\s*\\\\db@header@id@end@\\s*%.*");
+   private static final Pattern PATTERN_COL_ID = Pattern.compile("\\s*\\\\db@col@id@w\\s*([0-9]+)%\\s*");
+   private static final Pattern PATTERN_COL_ID_END = Pattern.compile("\\s*\\\\db@col@id@end@\\s*%\\s*");
+   private static final Pattern PATTERN_KEY_ID = Pattern.compile("\\s*\\\\db@key@id@w\\s*(.*)%\\s*");
+   private static final Pattern PATTERN_KEY_ID_END = Pattern.compile("\\s*\\\\db@key@id@end@\\s*%\\s*");
+   private static final Pattern PATTERN_TYPE_ID = Pattern.compile("\\s*\\\\db@type@id@w\\s*([0-9]*)%\\s*");
+   private static final Pattern PATTERN_TYPE_ID_END = Pattern.compile("\\s*\\\\db@type@id@end@\\s*%\\s*");
+   private static final Pattern PATTERN_TITLE_ID = Pattern.compile("\\s*\\\\db@header@id@w\\s*(.*)%\\s*");
+   private static final Pattern PATTERN_TITLE_ID_END = Pattern.compile("\\s*\\\\db@header@id@end@\\s*%\\s*");
 
 }

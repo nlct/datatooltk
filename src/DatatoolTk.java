@@ -10,13 +10,13 @@ public class DatatoolTk
 
       if (imp == null && dbtex == null)
       {
-         System.err.println("A database must either be loaded or imported batch mode.\n(If you want the GUI interface, use the --gui option.)");
+         System.err.println("A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the --gui option. See --help for help.)");
          System.exit(1);
       }
 
       if (out == null)
       {
-         System.err.println("--out <file> required for batch mode.\n(If you want the GUI interface, use the --gui option.)");
+         System.err.println("--out <file> required for batch mode.\n(If you want the GUI interface, use the --gui option. See --help for help.)");
          System.exit(1);
       }
 

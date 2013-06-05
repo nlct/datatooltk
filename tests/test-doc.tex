@@ -1,0 +1,31 @@
+\documentclass{article}
+
+\usepackage{datatool}
+
+% original
+\input{data-raw.dbtex}
+
+\begin{document}
+
+\DTLdisplaydb{mydata}
+
+\DTLdeletedb{mydata}
+
+% output from datatooltk
+\input{test-out.dbtex}
+
+\DTLdisplaydb{mydata}
+
+% load csv file
+
+\DTLloaddb{testcsv}{test.csv}
+
+\DTLdisplaydb{testcsv}
+
+% load db created from csv file
+
+\input{test-csv-out.dbtex}
+
+\DTLdisplaydb{test}
+
+\end{document}

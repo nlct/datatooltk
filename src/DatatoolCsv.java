@@ -67,6 +67,17 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
 
       DatatoolDb db = new DatatoolDb();
 
+      String name = file.getName();
+
+      int idx = name.lastIndexOf(".");
+
+      if (idx != -1)
+      {
+         name = name.substring(0, idx);
+      }
+
+      db.setName(name);
+
       BufferedReader reader = null;
       CSVReader csvReader = null;
 
