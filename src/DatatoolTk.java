@@ -57,6 +57,18 @@ public class DatatoolTk
 
    public static void createAndShowGUI()
    {
+      DatatoolGui gui = new DatatoolGUI(settings);
+
+      if (dbtex != null)
+      {
+         gui.load(dbtex);
+      }
+      else if (imp != null)
+      {
+         gui.importData(imp, source);
+      }
+
+      gui.setVisible(true);
    }
 
    public static void help()

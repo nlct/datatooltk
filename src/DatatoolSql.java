@@ -16,6 +16,10 @@ public class DatatoolSql implements DatatoolImport
       {
          establishConnection();
       }
+      catch (UserCancelledException e)
+      {
+         throw new DatatoolImportException(e);
+      }
       catch (SQLException e)
       {
          throw new DatatoolImportException("Can't establish SQL connection", e);
@@ -101,7 +105,7 @@ public class DatatoolSql implements DatatoolImport
    }
 
    public synchronized void establishConnection()
-     throws SQLException
+     throws SQLException,UserCancelledException
    {
       if (connection != null)
       {

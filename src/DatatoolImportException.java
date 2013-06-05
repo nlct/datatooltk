@@ -11,4 +11,9 @@ public class DatatoolImportException extends Exception
    {
       super(message, exception);
    }
+
+   public DatatoolImportException(Exception exception)
+   {
+      super(exception);
+   }
 }

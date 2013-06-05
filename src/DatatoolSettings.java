@@ -97,6 +97,7 @@ public class DatatoolSettings
    }
 
    public char[] getSqlPassword()
+     throws UserCancelledException
    {
       if (sqlPassword == null && passwordReader != null)
       {

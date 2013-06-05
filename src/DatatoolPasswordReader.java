@@ -2,5 +2,5 @@ package com.dickimawbooks.datatooltk;
 
 public interface DatatoolPasswordReader
 {
-   public char[] requestPassword();
+   public char[] requestPassword() throws UserCancelledException;
 }
