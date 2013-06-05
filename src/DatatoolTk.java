@@ -325,7 +325,7 @@ public class DatatoolTk
             {
                gui = false;
             }
-            else if ("-".equals(args[i].charAt(0)))
+            else if (args[i].charAt(0) == '-')
             {
                throw new InvalidSyntaxException("Unknown option '"
                 +args[i]+"'. Use --help or -h for help.");
