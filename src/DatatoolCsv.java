@@ -63,8 +63,12 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {
-      File file = new File(source);
+      return importData(new File(source));
+   }
 
+   public DatatoolDb importData(File file)
+      throws DatatoolImportException
+   {
       DatatoolDb db = new DatatoolDb();
 
       String name = file.getName();
@@ -151,7 +155,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       catch (IOException e)
       {
          throw new DatatoolImportException("Failed to import '"
-          +source+"'", e);
+          +file+"'", e);
       }
 
       return db;

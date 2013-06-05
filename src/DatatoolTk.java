@@ -57,7 +57,7 @@ public class DatatoolTk
 
    public static void createAndShowGUI()
    {
-      DatatoolGui gui = new DatatoolGUI(settings);
+      DatatoolGUI gui = new DatatoolGUI(settings);
 
       if (dbtex != null)
       {

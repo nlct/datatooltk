@@ -827,6 +827,16 @@ public class DatatoolDb
       return fields;
    }
 
+   public int getRowCount()
+   {
+      return data.size();
+   }
+
+   public int getColumnCount()
+   {
+      return headers.size();
+   }
+
    private Vector<DatatoolHeader> headers;
 
    private Vector<DatatoolRow> data;
