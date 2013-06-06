@@ -1,6 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <manual>
   <preamble>
-    <inputenc>utf8</inputenc>
     <fontenc>T1</fontenc>
     <title>User Manual for <dict>appname</dict> version 
       <dict>appversion</dict></title>
@@ -16,14 +16,14 @@
      under construction.
      </p>
      <p>
-     The <LaTeX /> <sty>datatool</sty> package is able to save databases 
+     The <cs>LaTeX</cs> <sty>datatool</sty> package is able to save databases 
      in its own internal format. Files in this format are difficult to 
      edit, but are by far the fastest way of loading a <sty>datatool</sty> 
-     database in <LaTeX />. This application provides a <acr>gui</acr>
+     database in <cs>LaTeX</cs>. This application provides a <acr>gui</acr>
      making it easier to edit these files. It can also import data from 
      <acr>csv</acr> files and from SQL databases. <dict>appname</dict>
-     can run in either batch mode (see <ref tag="section">cli</ref>)
-     or <acr>gui</acr> mode (see <ref tag="section">gui</ref>).
+     can run in either batch mode (see <ref>cli</ref>)
+     or <acr>gui</acr> mode (see <ref>gui</ref>).
      </p>
    </node>
    <node tag="cli" type="subsection" title="Batch Mode">
@@ -42,11 +42,11 @@
        with the <opt>gui</opt> option.
      </p>
    </node>
-   <node tag="acronyms" type="acronyms">
-     <printacronyms />
+   <node tag="acronyms" type="acronyms" title="Acronyms">
+     <cs>printacronyms</cs>
    </node>
-   <node tag="docindex" type="index">
-     <printindex />
+   <node tag="docindex" type="index" title="Index">
+     <cs>printindex</cs>
    </node>
   </document>
 </manual>

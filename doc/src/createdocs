@@ -1,11 +1,31 @@
 #!/usr/bin/perl -w
 
 use strict;
-use XML::LibXML;
+use XML::XPath;
 
 my $dictdir = '../../resources/dictionaries';
 my $mainclass = '../../src/DatatoolTk.java';
 my $base = 'datatooltk';
+
+# mapping between xml encoding names and inputenc options
+
+my %inputenc = 
+ (
+    'utf-8' => 'utf8',
+    'ios-8859-1' => 'latin1'
+ );
+
+# default
+my $encoding = 'utf-8';
+
+# mapping between locales and babel options
+
+my %babel =
+ (
+    'en' => 'english',
+    'en-GB' => 'british',
+    'en-US' => 'american'
+ );
 
 if ($#ARGV > 1 || $#ARGV < 0)
 {
@@ -21,7 +41,8 @@ if ($#ARGV == 1)
   $locale .= "-".$ARGV[1];
 }
 
-open FD, $mainclass or die "Can't open '$mainclass' $!\n";
+open FD, "$mainclass" or die "Can't open '$mainclass' $!\n";
+binmode(FD, ":utf8");
 
 my %dict = ();
 
@@ -60,7 +81,8 @@ unless (-e $propfile)
    die "Can't find '$propfile'\n";
 }
 
-open FD, $propfile or die "Can't open '$propfile' $!\n";
+open FD, "$propfile" or die "Can't open '$propfile' $!\n";
+binmode(FD, ":utf8");
 
 my $linenum = 0;
 
@@ -112,32 +134,22 @@ unless (-d $helpsetdir)
    die "'$helpsetdir' is not a directory\n";
 }
 
-my $parser = XML::LibXML->new();
-my $doc = $parser->load_xml(location=>$xmlfile);
+my $xp = XML::XPath->new(filename=>$xmlfile);
 
-my $inputenc = $doc->findnodes('/manual/preamble/inputenc');
-my $fontenc = $doc->findnodes('/manual/preamble/fontenc');
-my $title = $doc->findnodes('/manual/preamble/title');
-my $date  = $doc->findnodes('/manual/preamble/date');
-my $author = $doc->findnodes('/manual/preamble/author');
+# TODO work out how to get the xml encoding from $xp
+
+my $inputenc = $inputenc{$encoding} ? $inputenc{$encoding} : $encoding;
+
+my $nodeset = $xp->find('//newacro');
 
 my %acros = ();
 
-foreach my $newacro ($doc->findnodes('/manual/preamble/newacro'))
+foreach my $element ($nodeset->get_nodelist)
 {
-   my $label = $newacro->textContent;
+   my $label = $element->string_value;
 
-   my $attr = $newacro->attributes();
-
-   if ($attr->getNamedItem('short')=~/short *= *"(.*)"/)
-   {
-      $acros{$label}->{Short} = $1;
-   }
-
-   if ($attr->getNamedItem('long')=~/long="(.*)"/)
-   {
-      $acros{$label}->{Long} = $1;
-   }
+   $acros{$label}->{Long} = $element->getAttribute('long');
+   $acros{$label}->{Short} = $element->getAttribute('short');
 
    unless ($acros{$label}->{Short})
    {
@@ -150,7 +162,99 @@ foreach my $newacro ($doc->findnodes('/manual/preamble/newacro'))
    }
 }
 
+my @tags = ();
+
+my %nodes = ();
+
+$nodeset = $xp->find('//node');
+
+foreach my $element ($nodeset->get_nodelist)
+{
+   my $tag = $element->getAttribute('tag');
+   my $type = $element->getAttribute('type');
+   my $title = $element->getAttribute('title');
+
+   push @tags, $tag;
+
+   $nodes{$tag}->{Type}  = $type;
+   $nodes{$tag}->{Title} = $title;
+   $nodes{$tag}->{Element} = $element;
+}
+
+my @floattags = ();
+
+my %floats = ();
+
+$nodeset = $xp->find('///float');
+
+foreach my $element ($nodeset->get_nodelist)
+{
+   my $tag     = $element->getAttribute('tag');
+   my $type    = $element->getAttribute('type');
+   my $caption = $element->getAttribute('caption');
+
+   push @floattags, $tag;
+
+   $floats{$tag}->{Type}    = $type;
+   $floats{$tag}->{Caption} = $caption;
+   $floats{$tag}->{Element} = $element;
+}
+
+$nodeset = $xp->find('//fontenc');
+
+my $fontenc = 'T1';
+
+if (my @nodelist = $nodeset->get_nodelist)
+{
+   if ($#nodelist != 0)
+   {
+      warn "Only one <fontenc> permitted\n";
+   }
+
+   $fontenc = $nodelist[0]->string_value;
+}
+
+my $title;
+
+$nodeset = $xp->find('//title');
+
+if (my @nodelist = $nodeset->get_nodelist)
+{
+   if ($#nodelist != 0)
+   {
+      warn "Only one <title> permitted\n";
+   }
+
+   $title = $nodelist[0];
+}
+
+$nodeset = $xp->find('//author');
+
+my @authors =  $nodeset->get_nodelist;
+
+my @texauthors = ();
+
+foreach my $element (@authors)
+{
+   push @texauthors, &texfmt($element->toString);
+}
+
+my $date;
+
+$nodeset = $xp->find('//date');
+
+if (my @nodelist = $nodeset->get_nodelist)
+{
+   if ($#nodelist != 0)
+   {
+      warn "Only one <date> permitted\n";
+   }
+
+   $date = $nodelist[0];
+}
+
 open TEXFD, ">$texfile" or die "Can't open '$texfile' $!\n";
+binmode(TEXFD, ":$inputenc");
 
 my $paper = 'a4paper';
 
@@ -165,16 +269,41 @@ print TEXFD <<_END_PREAMBLE;
 \\usepackage[$inputenc]{inputenc}
 \\usepackage[$fontenc]{fontenc}
 \\usepackage{graphicx}
+\\usepackage{makeidx}
 \\usepackage[colorlinks]{hyperref}
+\\usepackage[acronym]{glossaries}
+
+\\makeindex
+\\makeglossaries
 
 _END_PREAMBLE
 
-print TEXFD "\\title{", &texfmt($title), "}\n";
-print TEXFD "\\author{", &texfmt($author), "}\n";
-print TEXFD "\\date{", &texfmt($date), "}\n";
+foreach my $label (keys %acros)
+{
+   print TEXFD "\\newacronym{$label}{", 
+    $acros{$label}->{Short}, "}{",
+    $acros{$label}->{Long}, "}\n";
+}
+
+print TEXFD "\\title{", &texfmt($title->toString), "}\n" if ($title);
+print TEXFD "\\author{", join('\\and ', @texauthors), "}\n";
+print TEXFD "\\date{", &texfmt($date->toString), "}\n";
 
 print TEXFD "\\begin{document}\n", "\\maketitle\n";
 
+foreach my $tag (@tags)
+{
+   my $element = $nodes{$tag}->{Element};
+
+   if ($nodes{$tag}->{Type}=~/(section|chapter)/)
+   {
+      print TEXFD "\\", $nodes{$tag}->{Type},
+        "{", &texfmt($nodes{$tag}->{Title}), "}\n";
+      print TEXFD "\\label{$tag}\n";
+   }
+
+   print TEXFD &texfmt($nodes{$tag}->{Element}->toString), "\n";
+}
 
 print TEXFD "\\end{document}\n";
 close TEXFD;
@@ -182,7 +311,41 @@ close TEXFD;
 sub texfmt{
    my $string = shift;
 
-print ">>", $string, "\n";
+   $string=~s/<dict>([^<]+)<\/dict>/$dict{$1}/g;
+
+   $string=~s/<acr>([^<]+)<\/acr>/\\gls\{$1\}/g;
+
+   $string=~s/<opt>([^<]+)<\/opt>/\\opt\{$1\}/g;
+
+   $string=~s/<ref>([^<]+)<\/ref>/\\autoref\{$1\}/g;
+
+   if ($string=~/<cs>printacronyms<\/cs>/)
+   {
+      if ($nodes{acronyms}->{Title})
+      {
+         $string=~s/<cs>printacronyms<\/cs>/\\printglossary[type=acronym,title=\{$nodes{acronyms}->{Title}\}]/;
+      }
+      else
+      {
+         $string=~s/<cs>printacronyms<\/cs>/\\printglossary[type=acronym]/;
+      }
+   }
+
+   $string=~s/<cs>([^<]+)<\/cs>/\\$1\{\}/g;
+
+   $string=~s/<tt>([^<]+)<\/tt>/\\texttt\{$1\}/g;
+
+   $string=~s/<b>([^<]+)<\/b>/\\textbf\{$1\}/g;
+
+   $string=~s/<em>([^<]+)<\/em>/\\emph\{$1\}/g;
+
+   $string=~s/<i>([^<]+)<\/i>/\\emph\{$1\}/g;
+
+   $string=~s/<p>/\\par /g;
+
+   # String any remaining tags
+
+   $string=~s/<\/?[^>]+>//g;
 
    $string
 }
