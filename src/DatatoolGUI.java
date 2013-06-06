@@ -41,6 +41,12 @@ public class DatatoolGUI extends JFrame
         "file", "quit", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK)));
 
+      fileM.add(DatatoolGuiResources.createJMenuItem(
+        "file", "open", this));
+
+      fileM.add(DatatoolGuiResources.createJMenuItem(
+        "file", "importcsv", this));
+
       settings.setPasswordReader(new GuiPasswordReader(this));
 
       // main panel
@@ -78,7 +84,7 @@ public class DatatoolGUI extends JFrame
       {
          save();
       }
-      else if (action.equals("load"))
+      else if (action.equals("open"))
       {
          load();
       }

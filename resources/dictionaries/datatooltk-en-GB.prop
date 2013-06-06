@@ -49,6 +49,7 @@ filter.tex=TeX Files
 filter.dbtex=Datatool Files
 filter.csv=CSV Files
 filter.txt=Text Files
+filter.csvtxt=CSV and TXT Files
 
 # Button labels
 button.okay=Okay
