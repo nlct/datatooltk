@@ -4,7 +4,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
-public class DatatoolDbPanel extends JPanel
+public class DatatoolDbPanel extends JScrollPane
 {
    public DatatoolDbPanel(DatatoolDb db)
    {
@@ -46,11 +46,17 @@ public class DatatoolDbPanel extends JPanel
             isModified = true;
             fireTableCellUpdated(row, col);
          }
+
+         public boolean isCellEditable(int row, int column)
+         {
+            return true;
+         }
       });
 
-      JScrollPane sp = new JScrollPane(table);
+      table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+      table.setCellEditor(new DbCellEditor());
 
-      add(sp);
+      setViewportView(table);
    }
 
    public void save(String filename)
