@@ -12,13 +12,15 @@ public class DatatoolTk
 
       if (imp == null && dbtex == null)
       {
-         System.err.println("A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the --gui option. See --help for help.)");
+         System.err.println(getLabelWithValues("error.cli.no_data",
+           "--gui", "--help"));
          System.exit(1);
       }
 
       if (out == null)
       {
-         System.err.println("--out <file> required for batch mode.\n(If you want the GUI interface, use the --gui option. See --help for help.)");
+         System.err.println(getLabelWithValues("error.cli.no_out",
+           new String[]{"--out", "--gui", "--help"}));
          System.exit(1);
       }
 
@@ -245,6 +247,21 @@ public class DatatoolTk
       }
 
       return prop;
+   }
+
+   public static String getToolTip(String label)
+   {
+      return getToolTip(null, label);
+   }
+
+   public static String getToolTip(String parent, String label)
+   {
+      if (parent != null)
+      {
+         label = parent+"."+label;
+      }
+
+      return dictionary.getProperty(label+".tooltip");
    }
 
    public static char getMnemonic(String label)

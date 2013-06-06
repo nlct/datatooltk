@@ -39,6 +39,11 @@ about.legal=Licensed under the terms of the (haven't decided yet) licence.
 about.translator_info=
 about.acknowledgements=
 
+# Password dialog box
+password.title=SQL Password
+password.prompt=Password: 
+password.prompt.mnemonic=P
+
 # File filter
 filter.tex=TeX Files
 filter.dbtex=Datatool Files
@@ -56,8 +61,15 @@ button.copy=Copy
 button.copy.mnemonic=Y
 button.copy.tooltip=Copy contents of text area to the clipboard
 
+# Default labels
+default.field=Field$1
+default.texheader=Created by $1 on $2
+
 # Messages
-message.confirm=Confirm
+
+message.confirm_overwrite=Confirm Overwrite
+message.overwrite_query=Overwrite $1?
+message.cancelled=Cancelled
 
 # Syntax
 syntax.title=Syntax:
@@ -115,5 +127,30 @@ error.syntax.unknown_option=Unknown option '$1'. (Use --help or -h for help.)
 error.syntax.only_one_input=Only one <datatool file> permitted
 error.syntax.input_clash=<datatool file> can't be used with an import option
 error.syntax=Syntax error: $1
+error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the $1 option. See $2 for help.)
+error.cli.no_out=$1 <file> required for batch mode.\n(If you want the GUI interface, use the $2 option. See $3 for help.)
+error.export.failed=Failed to export to '$1'
+error.import.failed=Failed to import '$1'
+error.dbload.expected=Line $1: Expected '$2'
+error.dbload.not_found=Premature end of file. Failed to find '$1'
+error.dbload.wrong_end_row_tag=Line $1: Row $2 ended with closing tag for row $3
+error.dbload.missing_end_row_tag=Unexpected end of file while parsing row end tag for row $1
+error.dbload.missing_end_row_tag_pat=Line $1: Missing end of row tag '$2' for row $3
+error.dbload.missing_col_tag=Line $1: Expected column tag '$2'
+error.dbload.col_tag_eof=Unexpected end of file while parsing tag for column $1
+error.dbload.col_data_eof=Unexpected end of file while parsing data for column $1
+error.dbload.col_end_tag_eof=Unexpected end of file while parsing end tag for column $1
+error.dbload.missing_end_col_tag=Line $1: Expected end tag for column '$2'
+error.dbload.wrong_end_col_tag=Line $1: Column $2 ended with closing tag for column $3
+error.dbload.missing_end_brace=Premature end of file. Failed to find end brace for '$1'
+error.nopanel=No current panel!
+error.invalid_data_type=Invalid data type $1
+error.invalid_header=Line $1: Header data for column $2 ended by index $3
+error.invalid_group_id=Invalid group identifier $1
+error.invalid_col_id=Line $1: Invalid column index '$2'
+error.invalid_type_id=Line $1: Invalid type index '$2'
+error.sql.connection_failed=Can't establish SQL connection
+error.sql.query_failed=SQL query failed
+
 # Warning messages
 warning.title=Warning

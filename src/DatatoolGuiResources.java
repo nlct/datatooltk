@@ -127,5 +127,78 @@ public class DatatoolGuiResources
        return button;
     }
 
+    public static JLabel createJLabel(String label)
+    {
+       JLabel jLabel = new JLabel(DatatoolTk.getLabel(label));
+       jLabel.setDisplayedMnemonic(DatatoolTk.getMnemonic(label));
+
+       String tooltip = DatatoolTk.getToolTip(label);
+
+       if (tooltip != null)
+       {
+          jLabel.setToolTipText(tooltip);
+       }
+
+       return jLabel;
+    }
+
+    public static JMenu createJMenu(String label)
+    {
+       return createJMenu(null, label);
+    }
+
+    public static JMenu createJMenu(String parent, String label)
+    {
+       JMenu menu = new JMenu(DatatoolTk.getLabel(parent, label));
+       menu.setMnemonic(DatatoolTk.getMnemonic(parent, label));
+
+       String tooltip = DatatoolTk.getToolTip(parent, label);
+
+       if (tooltip != null)
+       {
+          menu.setToolTipText(tooltip);
+       }
+
+       return menu;
+    }
+
+    public static JMenuItem createJMenuItem(String parent, String label)
+    {
+       return createJMenuItem(parent, label, null, null);
+    }
+
+    public static JMenuItem createJMenuItem(String parent, String label,
+       ActionListener listener)
+    {
+       return createJMenuItem(parent, label, listener, null);
+    }
+
+    public static JMenuItem createJMenuItem(String parent, String label,
+     ActionListener listener, KeyStroke keyStroke)
+    {
+       JMenuItem item = new JMenuItem(DatatoolTk.getLabel(parent, label));
+       item.setMnemonic(DatatoolTk.getMnemonic(parent, label));
+       item.setActionCommand(label);
+
+       String tooltip = DatatoolTk.getToolTip(parent, label);
+
+       if (tooltip != null)
+       {
+          item.setToolTipText(tooltip);
+       }
+
+       if (listener != null)
+       {
+          item.addActionListener(listener);
+       }
+
+       if (keyStroke != null)
+       {
+          item.setAccelerator(keyStroke);
+       }
+
+       return item;
+    }
+
     private static ErrorPanel errorPanel = new ErrorPanel();
 }

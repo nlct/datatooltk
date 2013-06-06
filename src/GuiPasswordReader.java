@@ -14,14 +14,13 @@ public class GuiPasswordReader extends JDialog
 {
    public GuiPasswordReader(Frame parent)
    {
-      super(parent, "SQL Password", true);
+      super(parent, DatatoolTk.getLabel("password.title"), true);
 
       JPanel panel = new JPanel();
 
       getContentPane().add(panel, "Center");
 
-      JLabel label = new JLabel("Password:");
-      label.setDisplayedMnemonic('P');
+      JLabel label = DatatoolGuiResources.createJLabel("password.prompt");
 
       panel.add(label);
 
@@ -34,16 +33,10 @@ public class GuiPasswordReader extends JDialog
 
       getContentPane().add(buttonPanel, "South");
 
-      JButton okayButton = new JButton("Okay");
-      okayButton.setMnemonic('O');
-      okayButton.setActionCommand("okay");
-      okayButton.addActionListener(this);
+      JButton okayButton = DatatoolGuiResources.createOkayButton(this);
       buttonPanel.add(okayButton);
 
-      JButton cancelButton = new JButton("Cancel");
-      cancelButton.setMnemonic('C');
-      cancelButton.setActionCommand("cancel");
-      cancelButton.addActionListener(this);
+      JButton cancelButton = DatatoolGuiResources.createCancelButton(this);
       buttonPanel.add(cancelButton);
 
       pack();

@@ -22,7 +22,8 @@ public class DatatoolSql implements DatatoolImport
       }
       catch (SQLException e)
       {
-         throw new DatatoolImportException("Can't establish SQL connection", e);
+         throw new DatatoolImportException(
+            DatatoolTk.getLabel("error.sql.connection_failed"), e);
       }
 
       DatatoolDb db;
@@ -98,7 +99,8 @@ public class DatatoolSql implements DatatoolImport
       }
       catch (SQLException e)
       {
-         throw new DatatoolImportException("SQL query failed", e);
+         throw new DatatoolImportException(
+           DatatoolTk.getLabel("error.sql.query_failed"), e);
       }
 
       return db;

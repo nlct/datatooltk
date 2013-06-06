@@ -67,14 +67,17 @@ public class DatatoolDb
             }
             else
             {
-               throw new InvalidSyntaxException("l."+linenum
-                +" Expected '\\DTLifdbexists'");
+               throw new InvalidSyntaxException(
+                 DatatoolTk.getLabelWithValues("error.dbload.expected",
+                  ""+linenum, "\\DTLifdbexists"));
             }
          }
 
          if (line == null)
          {
-            throw new EOFException("Premature end of file. Failed to find \\DTLifdbexists");
+            throw new EOFException(
+               DatatoolTk.getLabelWithValue("error.dbload.not_found",
+                 "\\DTLifdbexists"));
          }
 
          // skip until we reach "\\csname dtlkeys@<name>\endcsname={"
@@ -102,7 +105,9 @@ public class DatatoolDb
 
          if (line == null)
          {
-            throw new EOFException("Premature end of file. Failed to find '"+p.pattern()+"'");
+            throw new EOFException(
+               DatatoolTk.getLabelWithValue("error.dbload.not_found",
+                 p.pattern()));
          }
 
          // Now read the header info
@@ -131,8 +136,9 @@ public class DatatoolDb
 
             if (!m.matches())
             {
-               throw new InvalidSyntaxException("l."+linenum
-                 +" Expected '\\db@plist@elt@w'");
+               throw new InvalidSyntaxException(
+                 DatatoolTk.getLabelWithValues("error.dbload.expected",
+                 ""+linenum, "\\db@plist@elt@w"));
             }
 
             DatatoolHeader header = new DatatoolHeader();
@@ -157,8 +163,9 @@ public class DatatoolDb
 
                if (!m.matches())
                {
-                  throw new InvalidSyntaxException("l."+linenum
-                    +" Expected '\\db@plist@elt@end@'");
+                  throw new InvalidSyntaxException(
+                    DatatoolTk.getLabelWithValues("error.dbload.expected",
+                      ""+linenum, "\\db@plist@elt@end@"));
                }
 
                break;
@@ -190,7 +197,9 @@ public class DatatoolDb
 
          if (line == null)
          {
-            throw new EOFException("Premature end of file. Failed to find '"+p.pattern()+"'");
+            throw new EOFException(
+             DatatoolTk.getLabelWithValue("error.dbload.not_found",
+               p.pattern()));
          }
 
          while ((line = in.readLine()) != null)
@@ -226,9 +235,10 @@ public class DatatoolDb
 
                if (!m.matches())
                {
-                   throw new InvalidSyntaxException("l."
-                     +linenum+" Expected '"
-                     +PATTERN_ROW_ELT.pattern()+"'");
+                   throw new InvalidSyntaxException(
+                    DatatoolTk.getLabelWithValues(
+                    "error.dbload.expected",
+                     ""+linenum, PATTERN_ROW_ELT.pattern()));
                }
 
                line = in.readLine();
@@ -244,9 +254,10 @@ public class DatatoolDb
 
                if (!m.matches())
                {
-                   throw new InvalidSyntaxException("l."
-                     +linenum+" Expected '"
-                     +PATTERN_ROW_ID.pattern()+"'");
+                   throw new InvalidSyntaxException(
+                    DatatoolTk.getLabelWithValues(
+                    "error.dbload.expected",
+                     ""+linenum, PATTERN_ROW_ID.pattern()));
                }
 
                int rowIdx = -1;
@@ -273,9 +284,10 @@ public class DatatoolDb
 
                if (!m.matches())
                {
-                   throw new InvalidSyntaxException("l."
-                     +linenum+" Expected '"
-                     +PATTERN_ROW_ID_END.pattern()+"'");
+                   throw new InvalidSyntaxException(
+                    DatatoolTk.getLabelWithValues(
+                    "error.dbload.expected",
+                     ""+linenum, PATTERN_ROW_ID_END.pattern()));
                }
 
                // Now read in columns
@@ -306,9 +318,11 @@ public class DatatoolDb
 
                          if (idx != rowIdx)
                          {
-                            throw new InvalidSyntaxException("l."+linenum
-                           + " Row "+rowIdx
-                           +" ended with closing tag for row "+idx);
+                            throw new InvalidSyntaxException(
+                               DatatoolTk.getLabelWithValues(
+                                 "error.dbload.wrong_end_row_tag",
+                                 new String[]{""+linenum, ""+rowIdx, ""+idx}
+                               ));
                          }
                       }
                       catch (NumberFormatException e)
@@ -320,7 +334,9 @@ public class DatatoolDb
 
                       if (line == null)
                       {
-                         throw new EOFException("Unexpected end of file while parsing end of row "+rowIdx+" tag");
+                         throw new EOFException(
+                            DatatoolTk.getLabelWithValue(
+                            "error.dbload.missing_end_row_tag", rowIdx));
                       }
 
                       linenum++;
@@ -329,17 +345,24 @@ public class DatatoolDb
 
                       if (!m.matches())
                       {
-                         throw new InvalidSyntaxException("l."+linenum
-                          + " Missing end of row tag '"
-                          + PATTERN_ROW_ID_END.pattern()
-                          + "' for row "+rowIdx);
+                         throw new InvalidSyntaxException(
+                            DatatoolTk.getLabelWithValues(
+                            "error.dbload.missing_end_row_tag_pat",
+                            new String[]
+                            {
+                              ""+linenum,
+                              PATTERN_ROW_ID_END.pattern(),
+                              ""+rowIdx
+                            }));
                       }
 
                       line = in.readLine();
 
                       if (line == null)
                       {
-                         throw new EOFException("Unexpected end of file while parsing end of row "+rowIdx+" tag");
+                         throw new EOFException(
+                           DatatoolTk.getLabelWithValue(
+                             "error.dbload.missing_end_row_tag", rowIdx));
                       }
 
                       linenum++;
@@ -348,10 +371,15 @@ public class DatatoolDb
 
                       if (!m.matches())
                       {
-                         throw new InvalidSyntaxException("l."+linenum
-                          + " Missing end of row tag '"
-                          + PATTERN_ROW_ELT_END.pattern()
-                          + "' for row "+rowIdx);
+                         throw new InvalidSyntaxException(
+                            DatatoolTk.getLabelWithValues(
+                            "error.dbload.missing_end_row_tag_pat",
+                            new String[]
+                            {
+                              ""+linenum,
+                              PATTERN_ROW_ELT_END.pattern(),
+                              ""+rowIdx
+                            }));
                       }
 
                       break;
@@ -365,9 +393,10 @@ public class DatatoolDb
 
                   if (!m.matches())
                   {
-                     throw new InvalidSyntaxException("l."+linenum
-                        + " Expected column tag '"
-                        + PATTERN_COL_ID.pattern()+"'");
+                     throw new InvalidSyntaxException(
+                        DatatoolTk.getLabelWithValues(
+                          "error.dbload.missing_col_tag",
+                          ""+linenum, PATTERN_COL_ID.pattern()));
                   }
 
                   try
@@ -383,7 +412,9 @@ public class DatatoolDb
 
                   if (line == null)
                   {
-                     throw new EOFException("Unexpected end of file while parsing tag for column "+colIdx);
+                     throw new EOFException(
+                        DatatoolTk.getLabelWithValue(
+                          "error.dbload.col_tag_eof", colIdx));
                   }
 
                   linenum++;
@@ -392,9 +423,10 @@ public class DatatoolDb
 
                   if (!m.matches())
                   {
-                     throw new InvalidSyntaxException("l."+linenum
-                        + " Expected column tag '"
-                        + PATTERN_COL_ID_END.pattern()+"'");
+                     throw new InvalidSyntaxException(
+                        DatatoolTk.getLabelWithValues(
+                           "error.dbload.missing_col_tag",
+                           ""+linenum, PATTERN_COL_ID_END.pattern()));
                   }
 
                   // Read cell data
@@ -403,7 +435,9 @@ public class DatatoolDb
 
                   if (line == null)
                   {
-                     throw new EOFException("Unexpected end of file while parsing data for column "+colIdx);
+                     throw new EOFException(
+                        DatatoolTk.getLabelWithValue(
+                          "error.dbload.col_data_eof", colIdx));
                   }
 
                   linenum++;
@@ -412,9 +446,10 @@ public class DatatoolDb
 
                   if (!m.matches())
                   {
-                     throw new InvalidSyntaxException("l."+linenum
-                        + " Expected column tag '"
-                        + PATTERN_COL_ID_END.pattern()+"'");
+                     throw new InvalidSyntaxException(
+                        DatatoolTk.getLabelWithValues(
+                           "error.dbload.missing_col_tag",
+                            ""+linenum, PATTERN_COL_ID_END.pattern()));
                   }
 
                   String value = m.group(1);
@@ -435,7 +470,9 @@ public class DatatoolDb
 
                   if (line == null)
                   {
-                     throw new EOFException("Unexpected end of file while parsing data for column "+colIdx);
+                     throw new EOFException(
+                        DatatoolTk.getLabelWithValue(
+                           "error.dbload.col_data_eof", colIdx));
                   }
 
                   // check for end column tag
@@ -444,7 +481,9 @@ public class DatatoolDb
 
                   if (line == null)
                   {
-                     throw new EOFException("Unexpected end of file while parsing end tag for column "+colIdx);
+                     throw new EOFException(
+                        DatatoolTk.getLabelWithValue(
+                           "error.dbload.col_end_tag_eof", colIdx));
                   }
 
                   linenum++;
@@ -453,8 +492,10 @@ public class DatatoolDb
 
                   if (!m.matches())
                   {
-                     throw new InvalidSyntaxException("l."+linenum
-                      + " Expected end tag for column "+colIdx);
+                     throw new InvalidSyntaxException(
+                       DatatoolTk.getLabelWithValues(
+                         "error.dbload.missing_end_col", 
+                         ""+linenum, ""+colIdx));
                   }
 
                   try
@@ -463,9 +504,10 @@ public class DatatoolDb
 
                      if (idx != colIdx)
                      {
-                         throw new InvalidSyntaxException("l."+linenum
-                           + " Column "+colIdx
-                           +" ended with closing tag for column "+idx);
+                         throw new InvalidSyntaxException(
+                           DatatoolTk.getLabelWithValues(
+                             "error.dbload.wrong_end_col_tag",
+                             new String[]{""+linenum, ""+colIdx, ""+idx}));
                      }
                   }
                   catch (NumberFormatException e)
@@ -477,7 +519,9 @@ public class DatatoolDb
 
                   if (line == null)
                   {
-                     throw new EOFException("Unexpected end of file while parsing end tag for column "+colIdx);
+                     throw new EOFException(
+                        DatatoolTk.getLabelWithValue(
+                           "error.dbload.col_end_tag_eof", colIdx));
                   }
 
                   linenum++;
@@ -486,8 +530,10 @@ public class DatatoolDb
 
                   if (!m.matches())
                   {
-                     throw new InvalidSyntaxException("l."+linenum
-                      + " Expected end tag for column "+colIdx);
+                     throw new InvalidSyntaxException(
+                        DatatoolTk.getLabelWithValues(
+                          "error.dbload.missing_end_col_tag",
+                          ""+linenum, ""+colIdx));
                   }
 
                   db.addCell(rowIdx, colIdx, value);
@@ -505,7 +551,9 @@ public class DatatoolDb
 
          if (line == null)
          {
-            throw new EOFException("Premature end of file. Failed to find end brace for '"+ p.pattern()+"'");
+            throw new EOFException(
+               DatatoolTk.getLabelWithValue(
+                 "error.dbload.missing_end_brace", p.pattern()));
          }
 
          db.setFile(dbFile);
@@ -539,8 +587,8 @@ public class DatatoolDb
 
          name = getName();
 
-         out.println("% Created by "+DatatoolTk.appName+" on "
-          + (new Date()));
+         out.println("% "+DatatoolTk.getLabelWithValues("default.texheader",
+           DatatoolTk.appName, (new Date()).toString()));
          out.println("\\DTLifdbexists{"+name+"}%");
          out.println("{\\PackageError{datatool}{Database `"+name+"'");
          out.println("already exists}{}%");

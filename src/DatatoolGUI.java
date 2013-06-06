@@ -34,10 +34,11 @@ public class DatatoolGUI extends JFrame
       JMenuBar mbar = new JMenuBar();
       setJMenuBar(mbar);
 
-      JMenu fileM = createMenu("file");
+      JMenu fileM = DatatoolGuiResources.createJMenu("file");
       mbar.add(fileM);
 
-      fileM.add(createMenuItem("quit",
+      fileM.add(DatatoolGuiResources.createJMenuItem(
+        "file", "quit", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK)));
 
       settings.setPasswordReader(new GuiPasswordReader(this));
@@ -61,70 +62,6 @@ public class DatatoolGUI extends JFrame
       setSize(width, height);
 
       setLocationRelativeTo(null);
-   }
-
-   private JMenu createMenu(String label)
-   {
-      JMenu menu = new JMenu(label);
-
-      return menu;
-   }
-
-   private JMenuItem createMenuItem(String name)
-   {
-      return createMenuItem(name, this, null);
-   }
-
-   private JMenuItem createMenuItem(String name, ActionListener listener)
-   {
-      return createMenuItem(name, listener, null);
-   }
-
-   private JMenuItem createMenuItem(String name, KeyStroke keyStroke)
-   {
-      return createMenuItem(name, this, keyStroke);
-   }
-
-   private JMenuItem createMenuItem(String name, ActionListener listener, KeyStroke keyStroke)
-   {
-      JMenuItem item = new JMenuItem(name);
-      item.setActionCommand(name);
-
-      if (listener != null)
-      {
-         item.addActionListener(listener);
-      }
-
-      if (keyStroke != null)
-      {
-         item.setAccelerator(keyStroke);
-      }
-
-      return item;
-   }
-
-   public static void error(Component parent, Exception e)
-   {
-      JOptionPane.showMessageDialog(parent, e.getMessage(), "Error",
-         JOptionPane.ERROR_MESSAGE);
-
-      e.printStackTrace();
-   }
-
-   public static void error(Component parent, String message)
-   {
-      JOptionPane.showMessageDialog(parent, message, "Error",
-         JOptionPane.ERROR_MESSAGE);
-   }
-
-   public void error(Exception e)
-   {
-      error(this, e);
-   }
-
-   public void error(String message)
-   {
-      error(this, message);
    }
 
    public void actionPerformed(ActionEvent evt)
@@ -165,7 +102,8 @@ public class DatatoolGUI extends JFrame
 
       if (panel == null)
       {
-         error("No Current Panel!");
+         DatatoolGuiResources.error(this, 
+           DatatoolTk.getLabel("error.nopanel"));
          return;
       }
 
@@ -184,7 +122,8 @@ public class DatatoolGUI extends JFrame
 
       if (panel == null)
       {
-         error("No Current Panel!");
+         DatatoolGuiResources.error(this, 
+           DatatoolTk.getLabel("error.nopanel"));
          return;
       }
 
@@ -216,7 +155,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (IOException e)
       {
-         error(e);
+         DatatoolGuiResources.error(this, e);
       }
    }
 
@@ -239,7 +178,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (DatatoolImportException e)
       {
-         error(e);
+         DatatoolGuiResources.error(this, e);
       }
    }
 
@@ -255,7 +194,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (DatatoolImportException e)
       {
-         error(e);
+         DatatoolGuiResources.error(this, e);
       }
    }
 

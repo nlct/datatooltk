@@ -61,5 +61,6 @@ public class RowEnumeration implements Enumeration<DatatoolRow>
    }
 
    private int currentIdx=0;
+   private int offset=0;
    private Vector<DatatoolRow> rows;
 }

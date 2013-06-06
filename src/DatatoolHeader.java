@@ -46,7 +46,8 @@ public class DatatoolHeader
    {
       if (type < DatatoolDb.TYPE_UNKNOWN || type > DatatoolDb.TYPE_CURRENCY)
       {
-         throw new IllegalArgumentException("Invalid data type "+type);
+         throw new IllegalArgumentException(
+            DatatoolTk.getLabelWithValue("error.invalid_data_type", type));
       }
 
       this.type = type;
@@ -74,9 +75,11 @@ public class DatatoolHeader
 
       if (colIndex != idx)
       {
-         throw new InvalidSyntaxException("l."+linenum
-          +" Header data for column "
-          +idx+" ended by index "+colIndex);
+         throw new InvalidSyntaxException(
+            DatatoolTk.getLabelWithValues(
+               "error.invalid_header",
+               new String[]{""+linenum, ""+idx, ""+colIndex}
+            ));
       }
 
       return linenum;
@@ -108,7 +111,9 @@ public class DatatoolHeader
            closePat = PATTERN_TYPE_ID_END;
          break;
          default:
-            throw new IllegalArgumentException("Invalid group identifier "+groupType);
+            throw new IllegalArgumentException(
+              DatatoolTk.getLabelWithValue("error.invalid_group_id",
+                groupType));
       }
 
       String value = null;
@@ -133,8 +138,9 @@ public class DatatoolHeader
             break;
          }
 
-         throw new InvalidSyntaxException("l."+linenum
-            + " Expected '"+openPat.pattern()+"'");
+         throw new InvalidSyntaxException(
+           DatatoolTk.getLabelWithValues("error.dbload.expected",
+            ""+linenum, openPat.pattern()));
       }
 
       while ((line = in.readLine()) != null)
@@ -153,8 +159,9 @@ public class DatatoolHeader
 
       if (line == null)
       {
-         throw new InvalidSyntaxException("l."+linenum
-            + " Expected '"+closePat.pattern()+"'");
+         throw new InvalidSyntaxException(
+            DatatoolTk.getLabelWithValues("error.dbload.expected",
+            ""+linenum, closePat.pattern()));
       }
 
       switch (groupType)
@@ -166,8 +173,9 @@ public class DatatoolHeader
             }
             catch (NumberFormatException e)
             {
-                throw new InvalidSyntaxException("l."+linenum
-                 +" Invalid column index (found '"+value+"')");
+                throw new InvalidSyntaxException(
+                   DatatoolTk.getLabelWithValues(
+                      "error.invalid_col_id", ""+linenum, value));
             }
          break;
          case GROUP_KEY:
@@ -190,8 +198,9 @@ public class DatatoolHeader
             }
             catch (NumberFormatException e)
             {
-                throw new InvalidSyntaxException("l."+linenum
-                 +" Invalid type index (found '"+value+"')");
+                throw new InvalidSyntaxException(
+                   DatatoolTk.getLabelWithValues(
+                      "error.invalid_type_id", ""+linenum, value));
             }
          break;
       }

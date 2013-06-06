@@ -61,5 +61,6 @@ public class HeaderEnumeration implements Enumeration<DatatoolHeader>
    }
 
    private int currentIdx=0;
+   private int offset=0;
    private Vector<DatatoolHeader> headers;
 }

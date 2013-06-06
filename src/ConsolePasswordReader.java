@@ -11,7 +11,8 @@ public class ConsolePasswordReader implements DatatoolPasswordReader
       char[] passwd;
 
       if ((cons = System.console()) != null
-       && (passwd = cons.readPassword("%s", "Password: ")) != null)
+       && (passwd = cons.readPassword("%s",
+           DatatoolTk.getLabel("password.prompt"))) != null)
       {
          return passwd;
       }

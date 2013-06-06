@@ -25,7 +25,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
          {
             writer = new BufferedWriter(new FileWriter(file));
    
-            csvWriter = new CSVWriter(writer, settings.getSeparator(), settings.getDelimiter());
+            csvWriter = new CSVWriter(writer, settings.getSeparator(),
+              settings.getDelimiter());
    
             if (settings.hasCSVHeader())
             {
@@ -55,8 +56,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       }
       catch (IOException e)
       {
-         throw new DatatoolExportException("Failed to export to '"
-           +target+"'", e);
+         throw new DatatoolExportException(
+           DatatoolTk.getLabelWithValue("error.export.failed", target), e);
       }
    }
 
@@ -91,7 +92,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
          {
             reader = new BufferedReader(new FileReader(file));
    
-            csvReader = new CSVReader(reader, settings.getSeparator(), settings.getDelimiter());
+            csvReader = new CSVReader(reader, settings.getSeparator(),
+              settings.getDelimiter());
    
             String[] fields = csvReader.readNext();
    
@@ -119,7 +121,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    
                for (int i = 1; i <= fields.length; i++)
                {
-                  DatatoolHeader header = new DatatoolHeader("Field"+i);
+                  DatatoolHeader header = new DatatoolHeader(
+                    DatatoolTk.getLabelWithValue("default.field", i));
                   header.setColumnIndex(i+1);
                   db.addColumn(header);
    
@@ -154,8 +157,9 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       }
       catch (IOException e)
       {
-         throw new DatatoolImportException("Failed to import '"
-          +file+"'", e);
+         throw new DatatoolImportException(
+          DatatoolTk.getLabelWithValue("error.import.failed", 
+           file.toString()), e);
       }
 
       return db;

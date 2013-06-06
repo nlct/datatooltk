@@ -4,7 +4,7 @@ public class UserCancelledException extends InterruptedException
 {
    public UserCancelledException()
    {
-      this("Cancelled");
+      this(DatatoolTk.getLabel("message.cancelled"));
    }
 
    public UserCancelledException(String message)

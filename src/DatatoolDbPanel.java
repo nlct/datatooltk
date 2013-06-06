@@ -63,7 +63,9 @@ public class DatatoolDbPanel extends JPanel
       if (file.exists())
       {
          if (JOptionPane.showConfirmDialog(this,
-            "Overwrite "+file+"?", "Confirm Overwrite",
+             DatatoolTk.getLabelWithValue("message.overwrite_query",
+               file.toString()),
+             DatatoolTk.getLabel("message.confirm_overwrite"),
              JOptionPane.YES_NO_OPTION,
              JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
          {
@@ -85,7 +87,7 @@ public class DatatoolDbPanel extends JPanel
       }
       catch (IOException e)
       {
-         DatatoolGUI.error(this, e);
+         DatatoolGuiResources.error(this, e);
       }
    }
 
