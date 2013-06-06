@@ -56,5 +56,6 @@ public class CellEnumeration implements Enumeration<DatatoolCell>
    }
 
    private int currentIdx=0;
+   private int offset = 0;
    private DatatoolRow cells;
 }

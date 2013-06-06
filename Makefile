@@ -8,7 +8,10 @@ test-cli	: app
 	bin/datatooltk --out tests/test-csv-out.dbtex --csv tests/test.csv
 	bin/datatooltk --out tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
 
-app	: lib/datatooltk.jar lib/jh.jar lib/jlfgr-1_0.jar
+app	: lib/datatooltk.jar lib/jh.jar lib/jlfgr-1_0.jar lib/resources
+
+lib/resources   :
+	cd lib; ln -s ../resources
 
 lib/datatooltk.jar	: src/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class

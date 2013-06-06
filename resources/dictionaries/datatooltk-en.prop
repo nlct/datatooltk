@@ -1,0 +1,119 @@
+# English language file for datatooltk
+
+# File menu
+file=File
+file.mnemonic=F
+file.recent=Recent
+file.recent.mnemonic=T
+file.recent.clearrecent=Clear
+file.recent.clearrecent.mnemonic=C
+file.recent.clearrecent.tooltip=Clear recent files list
+file.open=Open...
+file.open.mnemonic=O
+file.open.tooltip=Open a raw datatool database file
+file.importcsv=Import CSV...
+file.importcsv.mnemonic=V
+file.importcsv.tooltip=Import data from a CSV file
+file.importsql=Import SQL...
+file.importsql.mnemonic=L
+file.importsql.tooltip=Import data from a SQL database
+file.close=Close
+file.close.mnemonic=C
+file.close.tooltip=Close current database
+file.quit=Quit
+file.quit.mnemonic=Q
+
+# Help menu
+help=Help
+help.mnemonic=H
+help.about=About
+help.about.mnemonic=A
+help.manual=Manual
+help.manual.mnemonic=M
+
+# About dialog
+about.title=About $1
+about.version=$1 version $2 ($3)
+about.copyright=Copyright (C) 2013 $1
+about.legal=Licensed under the terms of the (haven't decided yet) licence.
+about.translator_info=
+about.acknowledgements=
+
+# File filter
+filter.tex=TeX Files
+filter.dbtex=Datatool Files
+filter.csv=CSV Files
+filter.txt=Text Files
+
+# Button labels
+button.okay=Okay
+button.okay.mnemonic=O
+button.cancel=Cancel
+button.cancel.mnemonic=C
+button.help=Help
+button.help.mnemonic=H
+button.copy=Copy
+button.copy.mnemonic=Y
+button.copy.tooltip=Copy contents of text area to the clipboard
+
+# Messages
+message.confirm=Confirm
+
+# Syntax
+syntax.title=Syntax:
+syntax.or=or
+syntax.opt_db=$1 [<option>]+ <datatool file>
+syntax.opt_csv=$1 [<option>]+ --csv <csv file>
+syntax.opt_sql=$1 [<option>]+ --sqldb <name> --sql <sql statement>
+syntax.general=General Options:
+syntax.gui=$1 (or $2)\t\t\tGUI interface.
+syntax.batch=$1 (or $2)\t\t\tNo GUI interface. (Default.)
+syntax.out=$1 (or $2) <filename>\tSave to <filename>.
+syntax.version=$1 (or $2)\t\tPrint version and exit.
+syntax.help=$1 (or $2)\t\t\tPrint this help message and exit.
+syntax.csv_opts=CSV Options:
+syntax.csv=$1 <csv file>\tImport <csv file>.
+syntax.csv_sep=$1 <character>\tSeparator used in CSV files. (Defaults to '$2'.)
+syntax.csv_delim=$1 <character>\tDelimiter used in CSV files. (Defaults to '$2'.)
+syntax.default=Default
+syntax.csv_header=$1\t\tCSV files have a header row.$2
+syntax.csv_noheader=$1\t\tCSV files don't have a header row.$2
+syntax.sql_opts=SQL Options:
+syntax.sql=$1 <statement>\tImport data from SQL database where <statement> is a SQL SELECT statement.
+syntax.sql_db=$1 <name>\t\tSQL database name.
+syntax.sql_prefix=$1 <prefix>\tSQL prefix. (Default: '$2'.)
+syntax.sql_port=$1 <number>\tSQL port. (Default: $2.)
+syntax.sql_host=$1 <hostname>\tSQL host. (Default: '$2'.)
+syntax.sql_user=$1 <user name>\tSQL user name.
+syntax.sql_password=$1  <password>\tSQL password (insecure). If omitted, you will be prompted for the password if you try to import data from a SQL database.
+syntax.sql_wipepassword=$1\t\tFor extra security, wipe the password from memory as soon as it has been used to connect to a SQL database.$2
+syntax.sql_nowipepassword=$1\tDon't wipe the password from memory as soon as it has been used to connect to a SQL database.$2
+
+
+# Error messages
+error.title=Error
+error.message=Error Message
+error.message.mnemonic=M
+error.stacktrace=Stack Trace
+error.stacktrace.mnemonic=T
+error.syntax.missing_char=Character expected after $1
+error.syntax.invalid_sep=Separator must be a single character not a string
+error.syntax.invalid_delim=Delimiter must be a single character not a string
+error.syntax.only_one=Only one $1 permitted
+error.syntax.missing_filename=Filename expected after $1
+error.syntax.only_one_import=Only one import option permitted
+error.syntax.import_clash=$1 can't be used with <datatool file>
+error.syntax.missing_sql=SQL statement expected after $1
+error.syntax.missing_dbname=Database name expected after $1
+error.syntax.missing_prefix=Prefix expected after $1
+error.syntax.missing_host=Host name expected after $1
+error.syntax.missing_user=User name expected after $1
+error.syntax.missing_password=Password expected after $1 (omit $1 to be prompted for a password)
+error.syntax.missing_port=Port number expected after $1
+error.syntax.not_a_number=Number expected after $1 ('$2' found)
+error.syntax.unknown_option=Unknown option '$1'. (Use --help or -h for help.)
+error.syntax.only_one_input=Only one <datatool file> permitted
+error.syntax.input_clash=<datatool file> can't be used with an import option
+error.syntax=Syntax error: $1
+# Warning messages
+warning.title=Warning
