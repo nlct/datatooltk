@@ -1,0 +1,118 @@
+#!/usr/bin/perl -w
+
+use strict;
+use XML::LibXML;
+
+my $dictdir = '../../resources/dictionaries';
+my $mainclass = '../../src/DatatoolTk.java';
+my $base = 'datatooltk';
+
+if ($#ARGV > 1 || $#ARGV < 0)
+{
+   die "Syntax: $0 <lang> [<region>]\n";
+}
+
+my $lang = $ARGV[0];
+
+my $locale = $lang;
+
+if ($#ARGV == 1)
+{
+  $locale .= "-".$ARGV[1];
+}
+
+open FD, $mainclass or die "Can't open '$mainclass' $!\n";
+
+my %dict = ();
+
+while (<FD>)
+{
+   if (/public +static +final +String +appName *= *"([^"]+)"/)
+   {
+      $dict{appname} = $1;
+   }
+   elsif (/public +static +final +String +appVersion *= *"([^"]+)"/)
+   {
+      $dict{appversion} = $1;
+   }
+   elsif (/public +static +final +String +appDate *= *"([^"]+)"/)
+   {
+      $dict{appdate} = $1;
+   }
+}
+
+close FD;
+
+my $propfile = "$dictdir/$base-$locale.prop";
+
+if (not (-e $propfile) and ($lang ne $locale))
+{
+   $propfile = "$dictdir/$base-$lang.prop";
+
+   unless (-e $propfile)
+   {
+      die "Can't find either '$dictdir/$base-$locale.prop' or '$propfile'\n";
+   }
+}
+
+unless (-e $propfile)
+{
+   die "Can't find '$propfile'\n";
+}
+
+open FD, $propfile or die "Can't open '$propfile' $!\n";
+
+my $linenum = 0;
+
+while (<FD>)
+{
+   $linenum++;
+
+   next if (/^ *#/ or /^ *$/);
+
+   if (/^([^=]+)=(.*)$/)
+   {
+      $dict{$1} = $2;
+   }
+   else
+   {
+      warn "$propfile: Can't parse line $linenum\n";
+   }
+}
+
+close FD;
+
+my $xmlfile = "$base-$locale.xml";
+
+if (not (-e $xmlfile) and ($lang ne $locale))
+{
+   $xmlfile = "$base-$lang.xml";
+
+   unless (-e $xmlfile)
+   {
+      die "Can't find either '$base-$locale.xml' or '$xmlfile'\n";
+   }
+}
+
+unless (-e $xmlfile)
+{
+   die "Can't find '$xmlfile'\n";
+}
+
+my $texfile = "$base-$locale.tex";
+my $helpsetdir = "$dictdir/helpset-$locale";
+
+unless (-e $helpsetdir)
+{
+   mkdir $helpsetdir or die "Can't mkdir '$helpsetdir' $!\n";
+}
+
+unless (-d $helpsetdir)
+{
+   die "'$helpsetdir' is not a directory\n";
+}
+
+my $parser = XML::LibXML->new();
+my $doc = $parser->parse_file($xmlfile);
+
+1;

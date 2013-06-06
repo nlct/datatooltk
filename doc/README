@@ -1,0 +1,12 @@
+Application  : datatooltk
+Author       : Nicola L. C. Talbot 
+               www.dickimaw-books.com
+License      : tbc
+Requirements : Java Runtime Environment 
+
+DESCRIPTION
+===========
+
+A Java application that can be used to edit database files
+that use datatool's internal format. It can also be used to
+import data from CSV files and SQL databases.
