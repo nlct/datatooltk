@@ -1,6 +1,8 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.io;
 
 import java.sql.*;
+
+import com.dickimawbooks.datatooltk.*;
 
 public class DatatoolSql implements DatatoolImport
 {

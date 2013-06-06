@@ -32,6 +32,7 @@ classes/com/dickimawbooks/datatooltk	:
 
 clean	:
 	\rm -f classes/com/dickimawbooks/datatooltk/*.class
+	\rm -f classes/com/dickimawbooks/datatooltk/*/*.class
 
 squeaky	:
 	\rm -f lib/datatooltk.jar

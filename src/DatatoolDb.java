@@ -6,6 +6,7 @@ import java.util.regex.*;
 import java.util.Date;
 
 import com.dickimawbooks.datatooltk.io.*;
+import com.dickimawbooks.datatooltk.enumeration.*;
 
 public class DatatoolDb
 {

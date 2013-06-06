@@ -2,6 +2,8 @@ package com.dickimawbooks.datatooltk;
 
 import java.util.Vector;
 
+import com.dickimawbooks.datatooltk.enumeration.*;
+
 public class DatatoolRow extends Vector<DatatoolCell>
 {
    public DatatoolRow()

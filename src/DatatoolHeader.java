@@ -3,6 +3,8 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.util.regex.*;
 
+import com.dickimawbooks.datatooltk.io.*;
+
 public class DatatoolHeader
 {
    public DatatoolHeader()

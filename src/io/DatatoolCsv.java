@@ -1,8 +1,11 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.io;
 
 import java.io.*;
 import au.com.bytecode.opencsv.CSVWriter;
 import au.com.bytecode.opencsv.CSVReader;
+
+import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.enumeration.*;
 
 public class DatatoolCsv implements DatatoolImport,DatatoolExport
 {

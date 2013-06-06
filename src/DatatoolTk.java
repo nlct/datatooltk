@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.Properties;
 import java.util.Locale;
 
+import com.dickimawbooks.datatooltk.io.*;
+
 public class DatatoolTk
 {
    public static void doBatchProcess()

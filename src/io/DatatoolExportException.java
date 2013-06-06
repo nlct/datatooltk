@@ -1,4 +1,4 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.io;
 
 public class DatatoolExportException extends Exception
 {
