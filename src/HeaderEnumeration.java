@@ -11,8 +11,19 @@ public class HeaderEnumeration implements Enumeration<DatatoolHeader>
 {
    public HeaderEnumeration(Vector<DatatoolHeader> headers)
    {
+      this(headers, 0);
+   }
+
+   public HeaderEnumeration(Vector<DatatoolHeader> headers, int offset)
+   {
       this.headers = headers;
       currentIdx = 0;
+      this.offset = offset;
+
+      if (this.offset >= headers.size() || this.offset < 0)
+      {
+         this.offset = 0;
+      }
    }
 
    public boolean hasMoreElements()
@@ -28,7 +39,9 @@ public class HeaderEnumeration implements Enumeration<DatatoolHeader>
 
       DatatoolHeader header = null;
 
-      for (int i = currentIdx; i < headers.size(); i++)
+      int start = currentIdx+offset;
+
+      for (int i = start; i < headers.size(); i++)
       {
          DatatoolHeader thisHeader = headers.get(i);
 
@@ -43,7 +56,7 @@ public class HeaderEnumeration implements Enumeration<DatatoolHeader>
       {
          // wrap round to beginning
 
-         for (int i = 0; i < currentIdx; i++)
+         for (int i = 0; i < start; i++)
          {
             DatatoolHeader thisHeader = headers.get(i);
 

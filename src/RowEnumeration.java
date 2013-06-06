@@ -11,8 +11,19 @@ public class RowEnumeration implements Enumeration<DatatoolRow>
 {
    public RowEnumeration(Vector<DatatoolRow> rows)
    {
+      this(rows, 0);
+   }
+
+   public RowEnumeration(Vector<DatatoolRow> rows, int offset)
+   {
       this.rows = rows;
       currentIdx = 0;
+      this.offset = offset;
+
+      if (this.offset >= rows.size() || this.offset < 0)
+      {
+         this.offset = 0;
+      }
    }
 
    public boolean hasMoreElements()
@@ -28,7 +39,9 @@ public class RowEnumeration implements Enumeration<DatatoolRow>
 
       DatatoolRow row = null;
 
-      for (int i = currentIdx; i < rows.size(); i++)
+      int start = currentIdx+offset;
+
+      for (int i = start; i < rows.size(); i++)
       {
          DatatoolRow thisRow = rows.get(i);
 
@@ -43,7 +56,7 @@ public class RowEnumeration implements Enumeration<DatatoolRow>
       {
          // wrap round to beginning
 
-         for (int i = 0; i < currentIdx; i++)
+         for (int i = 0; i < start; i++)
          {
             DatatoolRow thisRow = rows.get(i);
 

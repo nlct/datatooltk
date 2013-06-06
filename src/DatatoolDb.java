@@ -827,8 +827,11 @@ public class DatatoolDb
 
    public DatatoolRow getRow(int rowIndex)
    {
-      for (DatatoolRow row : data)
+      for (RowEnumeration en=rowElements(rowIndex-1);
+           en.hasMoreElements();)
       {
+         DatatoolRow row = en.nextElement();
+
          if (row.getRowIndex() == rowIndex)
          {
             return row;
@@ -846,6 +849,11 @@ public class DatatoolDb
    public RowEnumeration rowElements()
    {
       return new RowEnumeration(data);
+   }
+
+   public RowEnumeration rowElements(int offset)
+   {
+      return new RowEnumeration(data, offset);
    }
 
    public String[] getColumnTitles()

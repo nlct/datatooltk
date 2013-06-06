@@ -24,10 +24,23 @@ public class DatatoolRow extends Vector<DatatoolCell>
       return rowIndex;
    }
 
+   public CellEnumeration cellElements()
+   {
+      return cellElements(0);
+   }
+
+   public CellEnumeration cellElements(int offset)
+   {
+      return new CellEnumeration(this, offset);
+   }
+
    public DatatoolCell getCell(int colIdx)
    {
-      for (DatatoolCell cell : this)
+      for (CellEnumeration en=cellElements(colIdx-1);
+           en.hasMoreElements(); )
       {
+         DatatoolCell cell = en.nextElement();
+
          if (cell.getIndex() == colIdx)
          {
             return cell;
@@ -50,11 +63,6 @@ public class DatatoolRow extends Vector<DatatoolCell>
       {
          cell.setValue(value);
       }
-   }
-
-   public CellEnumeration cellElements()
-   {
-      return new CellEnumeration(this);
    }
 
    public String[] getValues()

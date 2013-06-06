@@ -6,8 +6,19 @@ public class CellEnumeration implements Enumeration<DatatoolCell>
 {
    public CellEnumeration(DatatoolRow cells)
    {
+      this(cells, 0);
+   }
+
+   public CellEnumeration(DatatoolRow cells, int offset)
+   {
       this.cells = cells;
       currentIdx = 0;
+      this.offset = offset;
+
+      if (this.offset >= cells.size() || this.offset < 0)
+      {
+         this.offset = 0;
+      }
    }
 
    public boolean hasMoreElements()
@@ -23,7 +34,9 @@ public class CellEnumeration implements Enumeration<DatatoolCell>
 
       DatatoolCell cell = null;
 
-      for (int i = currentIdx; i < cells.size(); i++)
+      int start = currentIdx+offset;
+
+      for (int i = start; i < cells.size(); i++)
       {
          DatatoolCell thisCell = cells.get(i);
 
@@ -38,7 +51,7 @@ public class CellEnumeration implements Enumeration<DatatoolCell>
       {
          // wrap round to beginning
 
-         for (int i = 0; i < currentIdx; i++)
+         for (int i = 0; i < start; i++)
          {
             DatatoolCell thisCell = cells.get(i);
 
