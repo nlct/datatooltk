@@ -151,6 +151,7 @@ error.invalid_col_id=Line $1: Invalid column index '$2'
 error.invalid_type_id=Line $1: Invalid type index '$2'
 error.sql.connection_failed=Can't establish SQL connection
 error.sql.query_failed=SQL query failed
+error.resource.not_found=Can't find resource file $1
 
 # Warning messages
 warning.title=Warning

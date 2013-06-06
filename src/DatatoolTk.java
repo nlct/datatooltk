@@ -168,7 +168,8 @@ public class DatatoolTk
    {
       Locale locale = Locale.getDefault();
 
-      String lang = locale.getLanguage();
+      String lang    = locale.getLanguage();
+      String country = locale.getCountry();
 
       String resource = "datatooltk";
 
@@ -178,19 +179,27 @@ public class DatatoolTk
       try
       {
          in = DatatoolTk.class.getResourceAsStream(
-           "/resources/dictionaries/"+resource+"-"+lang+".prop");
+           "/resources/dictionaries/"+resource+"-"+lang
+           +"-"+country+".prop");
+
+         if (in == null)
+         {
+            in = DatatoolTk.class.getResourceAsStream(
+              "/resources/dictionaries/"+resource+"-"+lang+".prop");
+         }
 
          if (in == null && !lang.equals("en"))
          {
             in = DatatoolTk.class.getResourceAsStream(
-              "/resources/dictionaries/"+resource+"-en.prop");
+              "/resources/dictionaries/"+resource+"-en-US.prop");
          }
 
          if (in == null)
          {
             throw new FileNotFoundException
-            ("Can't find dictionary resource file /resources/dictionaries/"
-               +resource+"-en");
+            (
+               "Can't find dictionary resource file /resources/dictionaries/"
+               +resource+"-en-US");
          }
 
          reader = new BufferedReader(new InputStreamReader(in));
