@@ -1,0 +1,55 @@
+<manual>
+  <preamble>
+    <inputenc>utf8</inputenc>
+    <fontenc>T1</fontenc>
+    <title>User Manual for <string>appname</string> version 
+      <string>appversion</string></title>
+    <author>Nicola L. C. Talbot</author>
+    <date><string>appdate</string></date>
+    <newacro short="GUI" long="graphical user interface">gui</newacro>
+    <newacro short="CSV" long="comma-separated values">csv</newacro>
+  </preamble>
+  <document>
+   <node tag="datatooltk" type="titlepage">
+     <maketitle />
+   </node>
+   <node tag="introduction" type="section" title="Introduction">
+     <p>
+     This is the user manual for <string>appname</string>. It's still 
+     under construction.
+     </p>
+     <p>
+     The <LaTeX /> <sty>datatool</sty> package is able to save databases 
+     in its own internal format. Files in this format are difficult to 
+     edit, but are by far the fastest way of loading a <sty>datatool</sty> 
+     database in <LaTeX />. This application provides a <gls>gui</gls>
+     making it easier to edit these files. It can also import data from 
+     <gls>csv</gls> files and from SQL databases. <string>appname</string>
+     can run in either batch mode (see <ref tag="section">cli</ref>)
+     or <gls>gui</gls> mode (see <ref tag="section">gui</ref>).
+     </p>
+   </node>
+   <node tag="cli" type="subsection" title="Batch Mode">
+    <p>
+      The default invocation of <string>appname</string> will be in 
+      batch mode. (Although if you are importing data from a SQL 
+      database and you don't specify a password using 
+      <opt>sqlpassword</opt>, you will be prompted for the password.)
+      You can also explicitly set it to batch mode using the
+      <opt>batch</opt> option.
+    </p>
+   </node>
+   <node tag="gui" type="subsection" title="Graphical Mode">
+     <p>
+       To run <string>appname</string> in graphical mode you must invoke it
+       with the <opt>gui</opt> option.
+     </p>
+   </node>
+   <node tag="acronyms" type="acronyms">
+     <printacronyms />
+   </node>
+   <node tag="docindex" type="index">
+     <printindex />
+   </node>
+  </document>
+</manual>
