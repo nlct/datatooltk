@@ -1,8 +1,11 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.gui;
 
 import java.io.*;
 import javax.swing.*;
 import javax.swing.table.*;
+
+import com.dickimawbooks.datatooltk.DatatoolDb;
+import com.dickimawbooks.datatooltk.DatatoolTk;
 
 public class DatatoolDbPanel extends JScrollPane
 {

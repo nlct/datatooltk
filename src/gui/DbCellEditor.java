@@ -1,6 +1,6 @@
 // Based on DefaultCellEditor
 
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.gui;
 
 import java.util.EventObject;
 import java.awt.Component;

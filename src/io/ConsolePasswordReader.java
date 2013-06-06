@@ -1,6 +1,9 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.io;
 
 import java.io.Console;
+
+import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.UserCancelledException;
 
 public class ConsolePasswordReader implements DatatoolPasswordReader
 {

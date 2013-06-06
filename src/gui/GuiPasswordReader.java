@@ -1,4 +1,4 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.gui;
 
 import java.awt.Frame;
 import java.awt.event.ActionListener;
@@ -8,6 +8,9 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
+
+import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
 public class GuiPasswordReader extends JDialog 
   implements DatatoolPasswordReader,ActionListener

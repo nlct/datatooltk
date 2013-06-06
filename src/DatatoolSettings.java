@@ -1,5 +1,7 @@
 package com.dickimawbooks.datatooltk;
 
+import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
+
 public class DatatoolSettings
 {
    public void setSeparator(char separator)

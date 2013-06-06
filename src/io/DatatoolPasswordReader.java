@@ -1,4 +1,6 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.io;
+
+import com.dickimawbooks.datatooltk.UserCancelledException;
 
 public interface DatatoolPasswordReader
 {

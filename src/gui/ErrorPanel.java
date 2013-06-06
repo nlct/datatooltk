@@ -1,9 +1,11 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.gui;
 
 import java.awt.*;
 import java.io.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import com.dickimawbooks.datatooltk.DatatoolTk;
 
 /**
  * Panel for error messages.

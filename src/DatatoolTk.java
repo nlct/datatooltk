@@ -5,6 +5,8 @@ import java.util.Properties;
 import java.util.Locale;
 
 import com.dickimawbooks.datatooltk.io.*;
+import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
+import com.dickimawbooks.datatooltk.gui.DatatoolGUI;
 
 public class DatatoolTk
 {

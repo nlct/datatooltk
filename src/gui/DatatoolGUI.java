@@ -1,4 +1,4 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.gui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
+import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.*;
 
 public class DatatoolGUI extends JFrame
