@@ -1,14 +1,16 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.io;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
-public class TeXFileFilter extends FileFilter
+import com.dickimawbooks.datatooltk.DatatoolTk;
+
+public class CsvFileFilter extends FileFilter
 {
-   public TeXFileFilter()
+   public CsvFileFilter()
    {
       super();
-      description = DatatoolTk.getLabel("filter.tex");
+      description = DatatoolTk.getLabelWithValue("filter.csv", "*.csv");
    }
 
    public boolean accept(File file)
@@ -29,7 +31,7 @@ public class TeXFileFilter extends FileFilter
 
       String suffix = name.substring(idx+1).toLowerCase();
 
-      return suffix.equals("tex");
+      return suffix.equals("csv");
    }
 
    public String getDescription()

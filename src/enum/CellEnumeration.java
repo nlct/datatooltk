@@ -1,6 +1,8 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.enumeration;
 
 import java.util.*;
+
+import com.dickimawbooks.datatooltk.*;
 
 public class CellEnumeration implements Enumeration<DatatoolCell>
 {

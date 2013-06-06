@@ -1,4 +1,4 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.enumeration;
 
 // With a bit of luck, the datatool database that was read in had
 // the columns defined in order of index, but there's no absolute
@@ -6,6 +6,8 @@ package com.dickimawbooks.datatooltk;
 // each header according to its column index.
 
 import java.util.*;
+
+import com.dickimawbooks.datatooltk.*;
 
 public class HeaderEnumeration implements Enumeration<DatatoolHeader>
 {

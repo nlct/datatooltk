@@ -102,6 +102,13 @@ public class DatatoolDbPanel extends JScrollPane
       return isModified;
    }
 
+   public String getToolTipText()
+   {
+      File file = db.getFile();
+
+      return file == null ? null : file.toString();
+   }
+
    private DatatoolDb db;
 
    private boolean isModified = false;

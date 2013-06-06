@@ -17,14 +17,15 @@ lib/datatooltk.jar	: src/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class
 	cd classes; \
 	jar cmf ../src/Manifest.txt ../lib/datatooltk.jar \
-	com/dickimawbooks/datatooltk/*.class
+	com/dickimawbooks/datatooltk/*.class \
+	com/dickimawbooks/datatooltk/*/*.class 
 
 classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	src/*.java lib/jh.jar lib/jlfgr-1_0.jar
+	src/*.java src/*/*.java lib/jh.jar lib/jlfgr-1_0.jar
 	cd src; \
 	javac -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../lib/jh.jar:../lib/jlfgr-1_0.jar:../lib/opencsv.jar *.java
+	-cp ../lib/jh.jar:../lib/jlfgr-1_0.jar:../lib/opencsv.jar *.java */*.java
 
 classes/com/dickimawbooks/datatooltk	:
 	mkdir -p classes/com/dickimawbooks/datatooltk

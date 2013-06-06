@@ -45,10 +45,11 @@ password.prompt=Password:
 password.prompt.mnemonic=P
 
 # File filter
-filter.tex=TeX Files
-filter.dbtex=Datatool Files
-filter.csv=CSV Files
-filter.txt=Text Files
+filter.tex=TeX Files ($1)
+filter.dbtex=Datatool Files ($1)
+filter.csv=CSV Files ($1)
+filter.txt=Text Files ($1)
+filter.csvtxt=CSV and TXT Files ($1)
 
 # Button labels
 button.okay=Okay
@@ -60,9 +61,11 @@ button.help.mnemonic=H
 button.copy=Copy
 button.copy.mnemonic=Y
 button.copy.tooltip=Copy contents of text area to the clipboard
+button.import=Import
 
 # Default labels
 default.field=Field$1
+default.untitled=Untitled
 default.texheader=Created by $1 on $2
 
 # Messages
@@ -129,6 +132,7 @@ error.syntax.input_clash=<datatool file> can't be used with an import option
 error.syntax=Syntax error: $1
 error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the $1 option. See $2 for help.)
 error.cli.no_out=$1 <file> required for batch mode.\n(If you want the GUI interface, use the $2 option. See $3 for help.)
+error.load.failed=Failed to load '$1'\n$2
 error.export.failed=Failed to export to '$1'
 error.import.failed=Failed to import '$1'
 error.dbload.expected=Line $1: Expected '$2'

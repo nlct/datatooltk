@@ -1,14 +1,16 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.io;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
+
+import com.dickimawbooks.datatooltk.DatatoolTk;
 
 public class DbTeXFileFilter extends FileFilter
 {
    public DbTeXFileFilter()
    {
       super();
-      description = DatatoolTk.getLabel("filter.dbtex");
+      description = DatatoolTk.getLabelWithValue("filter.dbtex", "*.dbtex");
    }
 
    public boolean accept(File file)

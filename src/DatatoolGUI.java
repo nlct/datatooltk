@@ -5,6 +5,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.File;
+import javax.swing.filechooser.FileFilter;
+
+import com.dickimawbooks.datatooltk.io.*;
 
 public class DatatoolGUI extends JFrame
   implements ActionListener
@@ -38,21 +41,51 @@ public class DatatoolGUI extends JFrame
       mbar.add(fileM);
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
-        "file", "quit", this,
-        KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK)));
-
-      fileM.add(DatatoolGuiResources.createJMenuItem(
-        "file", "open", this));
+        "file", "open", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK)));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "importcsv", this));
+
+      fileM.add(DatatoolGuiResources.createJMenuItem(
+        "file", "close", this));
+
+      fileM.add(DatatoolGuiResources.createJMenuItem(
+        "file", "quit", this,
+        KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK)));
 
       settings.setPasswordReader(new GuiPasswordReader(this));
 
       // main panel
 
-      tabbedPane = new JTabbedPane();
+      tabbedPane = new JTabbedPane()
+      {
+         public String getToolTipText(MouseEvent event) 
+         {
+            javax.swing.plaf.TabbedPaneUI ui = getUI();
+
+            if (ui != null)
+            {
+               int index = ui.tabForCoordinate(this, event.getX(), event.getY());
+
+               if (index != -1)
+               {
+                  return ((DatatoolDbPanel)getComponentAt(index)).getToolTipText();
+               }
+            }
+
+            return super.getToolTipText(event);
+         }
+      };
       getContentPane().add(tabbedPane, "Center");
+
+      // File filters
+
+      texFilter = new TeXFileFilter();
+      dbtexFilter = new DbTeXFileFilter();
+      csvtxtFilter = new CsvTxtFileFilter();
+      csvFilter = new CsvFileFilter();
+      txtFilter = new TxtFileFilter();
 
       fileChooser = new JFileChooser();
 
@@ -92,13 +125,102 @@ public class DatatoolGUI extends JFrame
       {
          importCsv();
       }
+      else if (action.equals("close"))
+      {
+         close();
+      }
    }
 
    public void quit()
    {
-      // TODO check for unsaved data
+      for (int i = tabbedPane.getTabCount()-1; i >= 0; i--)
+      {
+         if (!close((DatatoolDbPanel)tabbedPane.getComponentAt(i)))
+         {
+            return;
+         }
+      }
 
       System.exit(0);
+   }
+
+   private void setTeXFileFilters()
+   {
+      FileFilter current = fileChooser.getFileFilter();
+
+      if (current == dbtexFilter || current == texFilter)
+      {
+         return;
+      }
+
+      fileChooser.resetChoosableFileFilters();
+
+      FileFilter all = fileChooser.getAcceptAllFileFilter();
+
+      fileChooser.removeChoosableFileFilter(all);
+
+      fileChooser.addChoosableFileFilter(dbtexFilter);
+      fileChooser.addChoosableFileFilter(texFilter);
+      fileChooser.addChoosableFileFilter(all);
+   }
+
+   private void setCsvFileFilters()
+   {
+      FileFilter current = fileChooser.getFileFilter();
+
+      if (current == csvFilter || current == txtFilter 
+       || current == csvtxtFilter)
+      {
+         return;
+      }
+
+      fileChooser.resetChoosableFileFilters();
+
+      FileFilter all = fileChooser.getAcceptAllFileFilter();
+
+      fileChooser.removeChoosableFileFilter(all);
+
+      fileChooser.addChoosableFileFilter(csvtxtFilter);
+      fileChooser.addChoosableFileFilter(csvFilter);
+      fileChooser.addChoosableFileFilter(txtFilter);
+      fileChooser.addChoosableFileFilter(all);
+   }
+
+   public boolean close()
+   {
+      DatatoolDbPanel panel 
+         = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+      return close(panel);
+   }
+
+   public boolean close(DatatoolDbPanel panel)
+   {
+      if (panel == null) return true;
+
+      if (panel.isModified())
+      {
+         switch (JOptionPane.showConfirmDialog(this,
+           DatatoolTk.getLabelWithValue("message.unsaved_data_query",
+             panel.getName()),
+           DatatoolTk.getLabel("message.unsaved_data"),
+           JOptionPane.YES_NO_CANCEL_OPTION,
+           JOptionPane.QUESTION_MESSAGE))
+         {
+            case JOptionPane.YES_OPTION:
+               panel.save();
+            break;
+            case JOptionPane.NO_OPTION:
+            break;
+            default:
+               return false;
+         }
+      }
+
+      tabbedPane.remove(panel);
+      panel = null;
+
+      return true;
    }
 
    public void save()
@@ -118,6 +240,8 @@ public class DatatoolGUI extends JFrame
 
    public void saveAs()
    {
+      setTeXFileFilters();
+
       if (fileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
       {
          return;
@@ -138,6 +262,8 @@ public class DatatoolGUI extends JFrame
 
    public void load()
    {
+      setTeXFileFilters();
+
       if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
       {
          load(fileChooser.getSelectedFile());
@@ -158,16 +284,23 @@ public class DatatoolGUI extends JFrame
          DatatoolDbPanel panel = new DatatoolDbPanel(db);
 
          tabbedPane.addTab(panel.getName(), panel);
+         tabbedPane.setToolTipTextAt(tabbedPane.getTabCount()-1, 
+           file.toString());
       }
       catch (IOException e)
       {
-         DatatoolGuiResources.error(this, e);
+         DatatoolGuiResources.error(this,
+           DatatoolTk.getLabelWithValues(
+             "error.load.failed", file.toString(), e.getMessage()));
       }
    }
 
    public void importCsv()
    {
-      if (fileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
+      setCsvFileFilters();
+
+      if (fileChooser.showDialog(this, DatatoolTk.getLabel("button.import"))
+       != JFileChooser.APPROVE_OPTION)
       {
          return;
       }
@@ -209,4 +342,7 @@ public class DatatoolGUI extends JFrame
    private JTabbedPane tabbedPane;
 
    private JFileChooser fileChooser;
+
+   private FileFilter texFilter, dbtexFilter, csvFilter, txtFilter,
+     csvtxtFilter;
 }

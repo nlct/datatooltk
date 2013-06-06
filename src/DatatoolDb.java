@@ -5,6 +5,8 @@ import java.util.Vector;
 import java.util.regex.*;
 import java.util.Date;
 
+import com.dickimawbooks.datatooltk.io.*;
+
 public class DatatoolDb
 {
    public DatatoolDb()
@@ -717,7 +719,8 @@ public class DatatoolDb
 
    public String getName()
    {
-      return name == null ? (file == null ? null : file.getName()): name;
+      return name == null ? (file == null ? 
+        DatatoolTk.getLabel("default.untitled") : file.getName()): name;
    }
 
    public void addCell(int rowIdx, int colIdx, String value)

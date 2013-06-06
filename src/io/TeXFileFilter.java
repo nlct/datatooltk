@@ -1,14 +1,16 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.io;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
-public class TxtFileFilter extends FileFilter
+import com.dickimawbooks.datatooltk.DatatoolTk;
+
+public class TeXFileFilter extends FileFilter
 {
-   public TxtFileFilter()
+   public TeXFileFilter()
    {
       super();
-      description = DatatoolTk.getLabel("filter.txt");
+      description = DatatoolTk.getLabelWithValue("filter.tex", "*.tex, *.ltx");
    }
 
    public boolean accept(File file)
@@ -29,7 +31,7 @@ public class TxtFileFilter extends FileFilter
 
       String suffix = name.substring(idx+1).toLowerCase();
 
-      return suffix.equals("txt");
+      return suffix.equals("tex") || suffix.equals("ltx");
    }
 
    public String getDescription()

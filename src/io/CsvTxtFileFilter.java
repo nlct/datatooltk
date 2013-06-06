@@ -1,14 +1,16 @@
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.io;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
+
+import com.dickimawbooks.datatooltk.DatatoolTk;
 
 public class CsvTxtFileFilter extends FileFilter
 {
    public CsvTxtFileFilter()
    {
       super();
-      description = DatatoolTk.getLabel("filter.csvtxt");
+      description = DatatoolTk.getLabelWithValue("filter.csvtxt", "*.csv, *.txt");
    }
 
    public boolean accept(File file)
