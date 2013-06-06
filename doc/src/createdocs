@@ -113,6 +113,78 @@ unless (-d $helpsetdir)
 }
 
 my $parser = XML::LibXML->new();
-my $doc = $parser->parse_file($xmlfile);
+my $doc = $parser->load_xml(location=>$xmlfile);
+
+my $inputenc = $doc->findnodes('/manual/preamble/inputenc');
+my $fontenc = $doc->findnodes('/manual/preamble/fontenc');
+my $title = $doc->findnodes('/manual/preamble/title');
+my $date  = $doc->findnodes('/manual/preamble/date');
+my $author = $doc->findnodes('/manual/preamble/author');
+
+my %acros = ();
+
+foreach my $newacro ($doc->findnodes('/manual/preamble/newacro'))
+{
+   my $label = $newacro->textContent;
+
+   my $attr = $newacro->attributes();
+
+   if ($attr->getNamedItem('short')=~/short *= *"(.*)"/)
+   {
+      $acros{$label}->{Short} = $1;
+   }
+
+   if ($attr->getNamedItem('long')=~/long="(.*)"/)
+   {
+      $acros{$label}->{Long} = $1;
+   }
+
+   unless ($acros{$label}->{Short})
+   {
+      warn "Acronym '$label' missing 'short' attribute\n";
+   }
+
+   unless ($acros{$label}->{Long})
+   {
+      warn "Acronym '$label' missing 'long' attribute\n";
+   }
+}
+
+open TEXFD, ">$texfile" or die "Can't open '$texfile' $!\n";
+
+my $paper = 'a4paper';
+
+if ($locale=~/en-US/)
+{
+   $paper = 'letterpaper';
+}
+
+print TEXFD <<_END_PREAMBLE;
+\\documentclass[$paper]{$base}
+
+\\usepackage[$inputenc]{inputenc}
+\\usepackage[$fontenc]{fontenc}
+\\usepackage{graphicx}
+\\usepackage[colorlinks]{hyperref}
+
+_END_PREAMBLE
+
+print TEXFD "\\title{", &texfmt($title), "}\n";
+print TEXFD "\\author{", &texfmt($author), "}\n";
+print TEXFD "\\date{", &texfmt($date), "}\n";
+
+print TEXFD "\\begin{document}\n", "\\maketitle\n";
+
+
+print TEXFD "\\end{document}\n";
+close TEXFD;
+
+sub texfmt{
+   my $string = shift;
+
+print ">>", $string, "\n";
+
+   $string
+}
 
 1;
