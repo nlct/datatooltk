@@ -135,28 +135,37 @@ public class DatatoolTk
            "":" ("+getLabel("syntax.default")+")")));
    }
 
-   public static void version()
+   public static String getAppInfo()
    {
-      System.out.println(getLabelWithValues("about.version",
-        new String[]{ appName, appVersion, appDate}));
-      System.out.println(getLabelWithValue("about.copyright", 
-        "Nicola L. C. Talbot"));
-      System.out.println(getLabel("about.legal"));
+      String eol = System.getProperty("line.separator", "\n");
+
+      String info = getLabelWithValues("about.version",
+        new String[]{ appName, appVersion, appDate})
+        + eol
+        + getLabelWithValue("about.copyright", "Nicola L. C. Talbot")
+        + eol
+        + getLabel("about.legal");
 
       String translator = dictionary.getProperty("about.translator_info");
 
       if (translator != null && !translator.isEmpty())
       {
-         System.out.println(translator);
+         info += eol + translator;
       }
 
       String ack = dictionary.getProperty("about.acknowledgements");
 
       if (ack != null && !ack.isEmpty())
       {
-         System.out.println();
-         System.out.println(ack);
+         ack += eol + eol + ack;
       }
+
+      return info;
+   }
+
+   public static void version()
+   {
+      System.out.println(getAppInfo());
    }
 
    public static void debug(String message)

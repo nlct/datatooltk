@@ -55,6 +55,16 @@ public class DatatoolGUI extends JFrame
         "file", "quit", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK)));
 
+      JMenu helpM = DatatoolGuiResources.createJMenu("help");
+      mbar.add(helpM);
+
+      helpM.add(DatatoolGuiResources.createJMenuItem(
+         "help", "manual", this,
+          KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)));
+
+      helpM.add(DatatoolGuiResources.createJMenuItem(
+         "help", "about", this));
+
       settings.setPasswordReader(new GuiPasswordReader(this));
 
       // main panel
@@ -129,6 +139,13 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("close"))
       {
          close();
+      }
+      else if (action.equals("about"))
+      {
+         JOptionPane.showMessageDialog(this, 
+           DatatoolTk.getAppInfo(),
+           DatatoolTk.getLabelWithValue("about.title", DatatoolTk.appName),
+           JOptionPane.PLAIN_MESSAGE);
       }
    }
 

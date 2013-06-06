@@ -909,7 +909,7 @@ public class DatatoolDb
      TYPE_REAL=2, TYPE_CURRENCY=3;
 
    private static final Pattern PATTERN_DBNAME = Pattern.compile("\\\\DTLifdbexists\\{(.+)\\}%\\s*");
-   public static final Pattern PATTERN_COMMENT = Pattern.compile("\\s*%\\s*");
+   public static final Pattern PATTERN_COMMENT = Pattern.compile("\\s*%.*");
    private static final Pattern PATTERN_CLOSE = Pattern.compile("\\s*\\}%\\s*");
    private static final Pattern PATTERN_PLIST_ELT = Pattern.compile("\\s*\\\\db@plist@elt@w\\s*(%\\s*)?");
    private static final Pattern PATTERN_PLIST_ELT_END = Pattern.compile("\\s*\\\\db@plist@elt@end@\\s*(%\\s*)?");

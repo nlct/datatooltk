@@ -35,7 +35,7 @@ help.manual.mnemonic=M
 about.title=About $1
 about.version=$1 version $2 ($3)
 about.copyright=Copyright (C) 2013 $1
-about.legal=Licensed under the terms of the (haven't decided yet) licence.
+about.legal=Licensed under the terms of the (haven't decided yet) license.
 about.translator_info=
 about.acknowledgements=
 
