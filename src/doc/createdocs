@@ -11,8 +11,8 @@ if ($#ARGV > 1 || $#ARGV < 0)
    die "Syntax: $0 <lang> [<region>]\n";
 }
 
-my $dictdir = '../../resources/dictionaries';
-my $mainclass = '../../src/DatatoolTk.java';
+my $dictdir = '../resources/dictionaries';
+my $mainclass = '../java/DatatoolTk.java';
 my $base = 'datatooltk';
 
 # mapping between xml encoding names and inputenc options
@@ -641,7 +641,7 @@ sub htmlurl{
       $url = "http://$url";
    }
 
-   "<a href=\"$url\">$text</a>";
+   "<a href=\"$url\"><tt>$text</tt></a>";
 }
 
 1;

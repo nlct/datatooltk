@@ -1,13 +1,13 @@
-DICTDIR=../../resources/dictionaries
-MAINCLASS=../../src/DatatoolTk.java
+DICTDIR=../resources/dictionaries
+MAINCLASS=../java/DatatoolTk.java
 
 all	: en-GB en-US
 
 en-GB	: $(DICTDIR)/helpset-en-GB/datatooltk.html \
-	  ../datatooltk-en-GB.pdf
+	  datatooltk-en-GB.pdf
 
 en-US	: $(DICTDIR)/helpset-en-US/datatooltk.html \
-	  ../datatooltk-en-US.pdf
+	  datatooltk-en-US.pdf
 
 $(DICTDIR)/helpset-en-GB/datatooltk.html	: createdocs datatooltk-en.xml \
 	  $(MAINCLASS) \
@@ -19,13 +19,11 @@ $(DICTDIR)/helpset-en-US/datatooltk.html	: createdocs datatooltk-en.xml \
 	  $(DICTDIR)/datatooltk-en-US.prop
 	createdocs en US
 
-../datatooltk-en-GB.pdf	: datatooltk-en-GB.tex
+datatooltk-en-GB.pdf	: datatooltk-en-GB.tex
 	arara datatooltk-en-GB
-	mv datatooltk-en-GB.pdf ..
 
-../datatooltk-en-US.pdf	: datatooltk-en-US.tex
+datatooltk-en-US.pdf	: datatooltk-en-US.tex
 	arara datatooltk-en-US
-	mv datatooltk-en-US.pdf ..
 
 datatooltk-en-GB.tex	: createdocs datatooltk-en.xml \
 	  $(MAINCLASS) \
