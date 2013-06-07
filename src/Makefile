@@ -1,4 +1,4 @@
-APP_VERSION:=$(shell grep "public static final String appVersion" src/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sappVersion=//" | tr -d "\"\; ")
+APP_VERSION:=$(shell grep "public static final String appVersion" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sappVersion=//" | tr -d "\"\; ")
 
 test-gui	: app
 	bin/datatooltk --gui tests/data-raw.dbtex
@@ -6,26 +6,28 @@ test-gui	: app
 test-cli	: app
 	bin/datatooltk --out tests/test-out.dbtex tests/data-raw.dbtex
 	bin/datatooltk --out tests/test-csv-out.dbtex --csv tests/test.csv
+
+test-sql	: app
 	bin/datatooltk --out tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
 
-app	: lib/datatooltk.jar lib/jh.jar lib/jlfgr-1_0.jar lib/resources
+app	: lib/datatooltk.jar lib/javahelp2.jar lib/resources
 
 lib/resources   :
 	cd lib; ln -s ../resources
 
-lib/datatooltk.jar	: src/Manifest.txt \
+lib/datatooltk.jar	: java/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class
 	cd classes; \
-	jar cmf ../src/Manifest.txt ../lib/datatooltk.jar \
+	jar cmf ../java/Manifest.txt ../lib/datatooltk.jar \
 	com/dickimawbooks/datatooltk/*.class \
 	com/dickimawbooks/datatooltk/*/*.class 
 
 classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	src/*.java src/*/*.java lib/jh.jar lib/jlfgr-1_0.jar
-	cd src; \
+	java/*.java java/*/*.java lib/javahelp2.jar
+	cd java; \
 	javac -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../lib/jh.jar:../lib/jlfgr-1_0.jar:../lib/opencsv.jar *.java */*.java
+	-cp ../lib/javahelp2.jar:../lib/opencsv.jar:../lib/mysql-connector-java.jar *.java */*.java
 
 classes/com/dickimawbooks/datatooltk	:
 	mkdir -p classes/com/dickimawbooks/datatooltk
