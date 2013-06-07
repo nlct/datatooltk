@@ -10,7 +10,7 @@
     <newacro short="CSV" long="comma-separated values">csv</newacro>
   </preamble>
   <document>
-   <node tag="introduction" type="section" title="Introduction">
+   <node tag="introduction" type="chapter" title="Introduction">
      <p>
      This is the user manual for <dict>appname</dict>. It's still 
      under construction.
@@ -27,7 +27,7 @@
      (see <ref>gui</ref>).
      </p>
    </node>
-   <node tag="cli" type="subsection" title="Batch Mode">
+   <node tag="cli" type="section" title="Batch Mode">
     <p>
       The default invocation of <dict>appname</dict> will be in 
       batch mode. (Although if you are importing data from a SQL 
@@ -37,7 +37,7 @@
       <opt>batch</opt> option.
     </p>
    </node>
-   <node tag="gui" type="subsection" title="Graphical Mode">
+   <node tag="gui" type="section" title="Graphical Mode">
      <p>
        To run <dict>appname</dict> in graphical mode you must invoke it
        with the <opt>gui</opt> option.

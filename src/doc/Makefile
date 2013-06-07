@@ -1,4 +1,5 @@
 DICTDIR=../resources/dictionaries
+DICTBACKREF=../../doc
 MAINCLASS=../java/DatatoolTk.java
 
 all	: en-GB en-US
@@ -11,12 +12,14 @@ en-US	: $(DICTDIR)/helpset-en-US/datatooltk.html \
 
 $(DICTDIR)/helpset-en-GB/datatooltk.html	: createdocs datatooltk-en.xml \
 	  $(MAINCLASS) \
-	  $(DICTDIR)/datatooltk-en-GB.prop
+	  $(DICTDIR)/datatooltk-en-GB.prop \
+	  $(DICTDIR)/helpset-en-GB/images/
 	createdocs en GB
 
 $(DICTDIR)/helpset-en-US/datatooltk.html	: createdocs datatooltk-en.xml \
 	  $(MAINCLASS) \
-	  $(DICTDIR)/datatooltk-en-US.prop
+	  $(DICTDIR)/datatooltk-en-US.prop \
+	  $(DICTDIR)/helpset-en-US/images/
 	createdocs en US
 
 datatooltk-en-GB.pdf	: datatooltk-en-GB.tex
@@ -34,6 +37,14 @@ datatooltk-en-US.tex	: createdocs datatooltk-en.xml \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-US.prop
 	createdocs en US
+
+$(DICTDIR)/helpset-en-GB/images/	:
+	cd $(DICTDIR)/helpset-en-GB/images/; \
+	ln -s ../$(DICTBACKREF)/images
+
+$(DICTDIR)/helpset-en-US/images/	:
+	cd $(DICTDIR)/helpset-en-US/images/; \
+	ln -s ../$(DICTBACKREF)/images
 
 clean	:
 	\rm -f datatooltk-en-GB.{tex,aux,log,pdf,glg,glo,gls,ist,ilg,ind,idx,acr,acn,alg}

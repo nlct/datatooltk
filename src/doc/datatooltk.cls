@@ -1,12 +1,16 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{datatooltk}[2013/06/06]
 
-\LoadClass{scrartcl}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrreprt}}
+
+\ProcessOptions
+
+\LoadClass{scrreprt}
 
 \newcommand*{\sty}[1]{\textsf{#1}\index{#1 package@\textsf{#1}
 package}}
 
-\newcommand*{\opt}[1]{\texttt{--#1}\index{--#1@\texttt{--#1}}}
+\newcommand*{\opt}[1]{\texttt{-\/-#1}\index{--#1@\texttt{-\/-#1}}}
 
 \newcommand*{\menu}[1]{\textsf{#1}}
 \newcommand*{\mto}{$\to$}
@@ -42,4 +46,6 @@ package}}
   \vskip\baselineskip
   #2\label{#1}%
 }
+
+\newcommand*{\sectionautorefname}{Section}
 \endinput

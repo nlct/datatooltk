@@ -159,3 +159,7 @@ error.resource.not_found=Can't find resource file $1
 
 # Warning messages
 warning.title=Warning
+
+# Context labels in manual
+figure=Figure
+table=Table

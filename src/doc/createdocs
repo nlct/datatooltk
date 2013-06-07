@@ -36,83 +36,6 @@ my %babel =
     'fr'    => 'frenchb'
  );
 
-# mapping between HTML entities and LaTeX commands
-my %entities =
- (
-    'nbsp'   => '\\nbsp ',
-    'amp'    => '\\ampersand',
-    'quot'   => '\\doublequote ',
-    'lt'     => '\\lessthan ',
-    'gt'     => '\\greaterthan ',
-    'iexcl'  => '\\textexclamdown ',
-    'pound'  => '\\pounds ',
-    'sect'   => '\\S ',
-    'copy'   => '\\copyright ',
-    'laquot' => '\\textquotedblleft ',
-    'reg'    => '\\textregistered ',
-    'para'   => '\\P ',
-    'iquest' => '\\textquestiondown ',
-    'Agrave' => '\\`A',
-    'Aacute' => "\\'A",
-    'Acirc'  => '\\^A',
-    'Atilde' => '\\~A',
-    'Auml'   => '\\"A',
-    'Aring'  => '\\r{A}',
-    'AElig'  => '\\AE ',
-    'Ccedil' => '\\c{c}',
-    'Egrave' => '\\`E',
-    'Eacute' => "\\'E",
-    'Ecirc'  => '\\^E',
-    'Euml'   => '\\"E',
-    'Igrave' => '\\`I',
-    'Iacute' => "\\'I",
-    'Icirc'  => '\\^I',
-    'Iuml'   => '\\"I',
-    'Ntilde' => '\\~N',
-    'Ograve' => '\\`O',
-    'Oacute' => "\\'O",
-    'Ocirc'  => '\\^O',
-    'Ouml'   => '\\"O',
-    'times'  => '\\times ',
-    'Oslash' => '\\O ',
-    'Ugrave' => '\\`U',
-    'Uacute' => "\\'U",
-    'Ucirc'  => '\\^U',
-    'Uuml'   => '\\"U',
-    'Yacute' => "\\'Y",
-    'szlig'  => '\\ss ',
-    'agrave' => '\\`a',
-    'aacute' => "\\'a",
-    'acirc'  => '\\^a',
-    'atilde' => '\\~a',
-    'auml'   => '\\"a',
-    'aring'  => '\\r{a}',
-    'aelig'  => '\\ae ',
-    'ccedil' => '\\c{c}',
-    'egrave' => '\\`e',
-    'eacute' => "\\'e",
-    'ecirc'  => '\\^e',
-    'euml'   => '\\"e',
-    'igrave' => '\\`i',
-    'iacute' => "\\'i",
-    'icirc'  => '\\^i',
-    'iuml'   => '\\"i',
-    'ntilde' => '\\~n',
-    'ograve' => '\\`o',
-    'oacute' => "\\'o",
-    'ocirc'  => '\\^o',
-    'ouml'   => '\\"o',
-    'divide' => '\\divide ',
-    'oslash' => '\\o ',
-    'ugrave' => '\\`u',
-    'uacute' => "\\'u",
-    'ucirc'  => '\\^u',
-    'uuml'   => '\\"u',
-    'yacute' => "\\'y",
-    'ygrave' => '\\`y',
-    'yuml'   => '\\"y',
- );
-
 my %specialchars =
  (
     '&'  => '\\ampersand ',
@@ -131,6 +54,17 @@ my %textags =
  (
     'br'   => "\\\\",
     'hr'   => "\\hrulefill "
+ );
+
+my %sectionunits =
+ (
+   'chapter'       => 'h1',
+   'section'       => 'h2',
+   'subsection'    => 'h3',
+   'subsubsection' => 'h4',
+   'paragraph'     => 'h5',
+   'acronyms'      => 'h1',
+   'index'         => 'h1'
  );
 
 my $lang = $ARGV[0];
@@ -384,6 +318,133 @@ if (my @nodelist = $nodeset->get_nodelist)
    $date = $nodelist[0];
 }
 
+open HTMLFD, ">$helpsetdir/$base.html" 
+  or die "Can't open '$helpsetdir/$base.html'";
+binmode(HTMLFD, ":$inputenc");
+
+my $htmltitle = &htmlfmt($title->toString);
+
+print HTMLFD <<_END_HEAD;
+<!doctype html public "-//w3c//dtd xhtml 1.0 Transitional//$lang"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="$locale" xml:lang="$locale">
+<head>
+  <title>$htmltitle</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=$encoding" />
+  <link rel="next" href="$tags[0].html" />
+</head>
+<body>
+&nbsp;<div style="float: right;">
+<a href="$tags[0].html">Next</a>
+</div>
+<h1>$htmltitle</h1>
+_END_HEAD
+
+foreach my $element (@authors)
+{
+   print HTMLFD 
+    "<div style=\"display: inline;\">",
+    &htmlfmt($element->toString),
+    "</div>\n";
+}
+
+print HTMLFD "</body>\n</html>\n";
+
+close HTMLFD;
+
+my $prev = $base;
+
+for (my $idx=0; $idx<=$#tags; $idx++)
+{
+   my $tag = $tags[$idx];
+
+   my $htmltitle = &htmlfmt($nodes{$tag}->{Title});
+
+   my $next;
+   my $nextlink = '';
+
+   if ($idx< $#tags)
+   {
+      $next = $tags[$idx+1];
+      $nextlink = "<link rel=\"next\" href=\"$next.html\" />";
+   }
+
+   open HTMLFD, ">$helpsetdir/$tag.html" 
+     or die "Can't open '$helpsetdir/$tag.html'";
+   binmode(HTMLFD, ":$inputenc");
+
+   print HTMLFD <<_END_HEAD;
+<!doctype html public "-//w3c//dtd xhtml 1.0 Transitional//$lang"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="$locale" xml:lang="$locale">
+<head>
+  <title>$htmltitle</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=$encoding" />
+  <link rel="prev" href="$prev.html" />
+  $nextlink
+<body>
+_END_HEAD
+
+my $nav = <<_END_NAV;
+<div style="float: left">
+<a href="$prev.html">Prev</a>
+</div>&nbsp;
+_END_NAV
+
+   if ($next)
+   {
+      $nav .= <<_END_NEXT;
+<div style="float: right">
+<a href="$next.html">Next</a>
+</div>
+_END_NEXT
+   }
+
+   print HTMLFD "$nav<div>\n";
+
+   my $level = $sectionunits{$nodes{$tag}->{Type}};
+
+   if ($level)
+   {
+      print HTMLFD "<$level>$htmltitle</$level>";
+   }
+   else
+   {
+      warn "Can't find level for sectional unit '",
+         $nodes{$tag}->{Type}, "'\n";
+      print HTMLFD "<h1>$htmltitle</h1>";
+   }
+
+   my $text = $nodes{$tag}->{Element}->toString;
+
+   my $footnotenum = 1;
+   my $footnotes = '';
+
+   while ($text=~s/<footnote>(.+?)<\/footnote>/<sup><a href="#$footnotenum">$footnotenum<\/a><\/sup>/sg)
+   {
+      $footnotes .= "<p><sup><a name=\"fn$footnotenum\">$footnotenum</a></sup> $1</p>";
+
+      $footnotenum++;
+   }
+
+   print HTMLFD &htmlfmt($text);
+
+   print HTMLFD "</div>";
+
+   if ($footnotes)
+   {
+      print HTMLFD "<hr />", $footnotes;
+   }
+
+   print HTMLFD "$nav</body>\n</html>\n";
+
+   close HTMLFD;
+
+   $prev = $tag;
+}
+
 open TEXFD, ">$texfile" or die "Can't open '$texfile' $!\n";
 binmode(TEXFD, ":$inputenc");
 
@@ -400,14 +461,14 @@ print TEXFD <<_END_PREAMBLE;
 % arara: makeindex
 % arara: pdflatex
 % arara: pdflatex
-\\documentclass[$paper]{$base}
+\\documentclass[$paper,index=totoc]{$base}
 
 \\usepackage[$inputenc]{inputenc}
 \\usepackage[$fontenc]{fontenc}
 \\usepackage{graphicx}
 \\usepackage{makeidx}
 \\usepackage[colorlinks]{hyperref}
-\\usepackage[acronym]{glossaries}
+\\usepackage[acronym,toc]{glossaries}
 
 \\makeindex
 \\makeglossaries
@@ -425,7 +486,7 @@ print TEXFD "\\title{", &texfmt($title->toString), "}\n" if ($title);
 print TEXFD "\\author{", join('\\and ', @texauthors), "}\n";
 print TEXFD "\\date{", &texfmt($date->toString), "}\n";
 
-print TEXFD "\\begin{document}\n", "\\maketitle\n";
+print TEXFD "\\begin{document}\n", "\\maketitle\n\\tableofcontents\n";
 
 foreach my $tag (@tags)
 {
@@ -443,6 +504,115 @@ foreach my $tag (@tags)
 
 print TEXFD "\\end{document}\n";
 close TEXFD;
+
+sub htmlfmt{
+   my $string = shift;
+
+   $string=~s/<dict>(.+?)<\/dict>/$dict{$1}/g;
+
+   $string=~s/<\/?(author|title|xcs|cs)>//g;
+
+   $string=~s/<sty>(.+?)<\/sty>/<tt>$1<\/tt>/g;
+
+   $string=~s/<acr>(.+?)<\/acr>/&htmlacr($1)/eg;
+
+   $string=~s/<menu>(.+?)<\/menu>/&htmlmenu($1)/eg;
+
+   $string=~s/<url>(.+?)<\/url>/&htmlurl($1)/eg;
+
+   $string=~s/<ref>(.+?)<\/ref>/&htmlref($1)/eg;
+
+   $string=~s/<opt>(.+?)<\/opt>/&htmlopt($1)/eg;
+
+   $string
+}
+
+sub htmlopt{
+   my $opt = shift;
+
+# TODO index it
+
+   "<tt>--$opt</tt>"
+}
+
+sub htmlref{
+   my $tag = shift;
+   my $text = $tag;
+
+   if ($nodes{$tag})
+   {
+      $text = "<a href=\"$tag.html\">" 
+            . $nodes{$tag}->{Title}
+            . "</a>";
+   }
+   elsif ($floats{$tag})
+   {
+      $text = "<a href=\"". $floats{$tag}->{Parent}.".html#$tag\">"
+            . $dict{figure} . "&nbsp;" . $floats{$tag}->{Number}
+            . "</a>";
+   }
+   else
+   {
+      warn "Unknown tag '$tag'\n";
+   }
+
+   $text
+}
+
+sub htmlacr{
+   my $acr = shift;
+
+   if (not $acros{$acr})
+   {
+      warn "Unknown acronym '$acr'\n";
+   }
+   elsif ($acros{$acr}->{Used})
+   {
+      $acr = $acros{$acr}->{Short};
+   }
+   else
+   {
+      $acros{$acr}->{Used} = 1;
+
+      $acr = $acros{$acr}->{Long}
+           . ' (' . $acros{$acr}->{Short} . ')';
+   }
+
+   $acr
+}
+
+sub htmlmenu{
+   my $label = shift;
+
+   my $menu;
+   my $currentlabel;
+
+   foreach my $item (split /\./, $label)
+   {
+      if ($currentlabel)
+      {
+         $currentlabel .= ".$item";
+         $menu .= '-&gt;';
+      }
+      else
+      {
+         $currentlabel = $item;
+         $menu = '';
+      }
+
+      if ($dict{$currentlabel})
+      {
+         $menu .= $dict{$currentlabel};
+      }
+      else
+      {
+         warn "Unknown dictionary tag '$currentlabel'\n";
+         $menu .= $currentlabel;
+      }
+   }
+
+   "<em>$menu</em>"
+}
 
 sub texfmt{
    my $string = shift;
@@ -491,9 +661,9 @@ sub texfmt{
 
    $string=~s/(<float[^>]*>.+?<\/float>)/&texfloat($1)/seg;
 
-   $string=~s/\&([^;]);/&texentity($1)/eg;
-
    $string=~s/<([a-z]+) *\/>/&textag($1)/eg;
+
+   $string=~s/\xa0/~/g;
 
    # remove any remaining tags
 
@@ -597,39 +767,6 @@ sub texmenu{
    }
 
    "$text\\index{$index}";
-}
-
-sub texentity{
-   my $entity = shift;
-
-   if ($entity=~/^#(\\d+)$/)
-   {
-      $entity = chr($1);
-
-      if ($specialchars{$entity})
-      {
-         $entity = $specialchars{$entity};
-      }
-   }
-   elsif ($entity=~/^#x(\\d+)$/)
-   {
-      $entity = chr(hex $1);
-
-      if ($specialchars{$entity})
-      {
-         $entity = $specialchars{$entity};
-      }
-   }
-   elsif ($entities{$entity})
-   {
-      $entity = $entities{$entity};
-   }
-   else
-   {
-      warn "Don't know how to convert '&$entity;'\n";
-   }
-
-   $entity
 }
 
 sub htmlurl{
