@@ -8,4 +8,38 @@ package}}
 
 \newcommand*{\opt}[1]{\texttt{--#1}\index{--#1@\texttt{--#1}}}
 
+\newcommand*{\menu}[1]{\textsf{#1}}
+\newcommand*{\mto}{$\to$}
+
+\newcommand*{\lessthan}{\ifmmode<\else\textless\fi}
+\newcommand*{\greaterthan}{\ifmmode>\else\textgreater\fi}
+\newcommand*{\nbsp}{~}
+\newcommand*{\doublequote}{"}
+\newcommand*{\ampersand}{\&}
+\newcommand*{\leftbrace}{\{}
+\newcommand*{\rightbrace}{\}}
+\newcommand*{\underscore}{\_}
+\newcommand*{\textpercent}{\%}
+\newcommand*{\texthash}{\#}
+\newcommand{\floatconts}[3]{%
+  \@ifundefined{\@captype conts}{\tableconts{#1}{#2}{#3}}%
+  {\csname\@captype conts\endcsname{#1}{#2}{#3}}%
+}
+
+\newcommand{\tableconts}[3]{%
+  \iftablecaptiontop
+    #2\label{#1}\vskip\baselineskip
+    {\centering #3\par}%
+  \else
+    {\centering #3\par}%
+    \vskip\baselineskip
+    #2\label{#1}%
+  \fi
+}
+
+\newcommand{\figureconts}[3]{%
+  {\centering #3\par}%
+  \vskip\baselineskip
+  #2\label{#1}%
+}
 \endinput

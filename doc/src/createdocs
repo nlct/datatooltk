@@ -1,7 +1,15 @@
 #!/usr/bin/perl -w
+# File   : createdocs
+# Author : Nicola L. C. Talbot
+# Date   : 2013-06-06
 
 use strict;
 use XML::XPath;
+
+if ($#ARGV > 1 || $#ARGV < 0)
+{
+   die "Syntax: $0 <lang> [<region>]\n";
+}
 
 my $dictdir = '../../resources/dictionaries';
 my $mainclass = '../../src/DatatoolTk.java';
@@ -22,15 +30,108 @@ my $encoding = 'utf-8';
 
 my %babel =
  (
-    'en' => 'english',
+    'en'    => 'english',
     'en-GB' => 'british',
-    'en-US' => 'american'
+    'en-US' => 'american',
+    'fr'    => 'frenchb'
  );
 
-if ($#ARGV > 1 || $#ARGV < 0)
-{
-   die "Syntax: $0 <lang> [<region>]\n";
-}
+# mapping between HTML entities and LaTeX commands
+my %entities =
+ (
+    'nbsp'   => '\\nbsp ',
+    'amp'    => '\\ampersand',
+    'quot'   => '\\doublequote ',
+    'lt'     => '\\lessthan ',
+    'gt'     => '\\greaterthan ',
+    'iexcl'  => '\\textexclamdown ',
+    'pound'  => '\\pounds ',
+    'sect'   => '\\S ',
+    'copy'   => '\\copyright ',
+    'laquot' => '\\textquotedblleft ',
+    'reg'    => '\\textregistered ',
+    'para'   => '\\P ',
+    'iquest' => '\\textquestiondown ',
+    'Agrave' => '\\`A',
+    'Aacute' => "\\'A",
+    'Acirc'  => '\\^A',
+    'Atilde' => '\\~A',
+    'Auml'   => '\\"A',
+    'Aring'  => '\\r{A}',
+    'AElig'  => '\\AE ',
+    'Ccedil' => '\\c{c}',
+    'Egrave' => '\\`E',
+    'Eacute' => "\\'E",
+    'Ecirc'  => '\\^E',
+    'Euml'   => '\\"E',
+    'Igrave' => '\\`I',
+    'Iacute' => "\\'I",
+    'Icirc'  => '\\^I',
+    'Iuml'   => '\\"I',
+    'Ntilde' => '\\~N',
+    'Ograve' => '\\`O',
+    'Oacute' => "\\'O",
+    'Ocirc'  => '\\^O',
+    'Ouml'   => '\\"O',
+    'times'  => '\\times ',
+    'Oslash' => '\\O ',
+    'Ugrave' => '\\`U',
+    'Uacute' => "\\'U",
+    'Ucirc'  => '\\^U',
+    'Uuml'   => '\\"U',
+    'Yacute' => "\\'Y",
+    'szlig'  => '\\ss ',
+    'agrave' => '\\`a',
+    'aacute' => "\\'a",
+    'acirc'  => '\\^a',
+    'atilde' => '\\~a',
+    'auml'   => '\\"a',
+    'aring'  => '\\r{a}',
+    'aelig'  => '\\ae ',
+    'ccedil' => '\\c{c}',
+    'egrave' => '\\`e',
+    'eacute' => "\\'e",
+    'ecirc'  => '\\^e',
+    'euml'   => '\\"e',
+    'igrave' => '\\`i',
+    'iacute' => "\\'i",
+    'icirc'  => '\\^i',
+    'iuml'   => '\\"i',
+    'ntilde' => '\\~n',
+    'ograve' => '\\`o',
+    'oacute' => "\\'o",
+    'ocirc'  => '\\^o',
+    'ouml'   => '\\"o',
+    'divide' => '\\divide ',
+    'oslash' => '\\o ',
+    'ugrave' => '\\`u',
+    'uacute' => "\\'u",
+    'ucirc'  => '\\^u',
+    'uuml'   => '\\"u',
+    'yacute' => "\\'y",
+    'ygrave' => '\\`y',
+    'yuml'   => '\\"y',
+ );
+
+my %specialchars =
+ (
+    '&'  => '\\ampersand ',
+    '~'  => '\\textasciitilde ',
+    '^'  => '\\textasciicircum ',
+    "\\" => '\\textbackslash ',
+    '{'  => '\\leftbrace ',
+    '}'  => '\\rightbrace ',
+    '_'  => '\\underscore ',
+    '%'  => '\\textpercent ',
+    '#'  => '\\texthash ',
+    '$'  => '\\textdollar '
+ );
+
+my %textags =
+ (
+    'br'   => "\\\\",
+    'hr'   => "\\hrulefill "
+ );
 
 my $lang = $ARGV[0];
 
@@ -181,11 +282,13 @@ foreach my $element ($nodeset->get_nodelist)
    $nodes{$tag}->{Element} = $element;
 }
 
+my %counters = ();
+
 my @floattags = ();
 
 my %floats = ();
 
-$nodeset = $xp->find('///float');
+$nodeset = $xp->find('//float');
 
 foreach my $element ($nodeset->get_nodelist)
 {
@@ -193,11 +296,39 @@ foreach my $element ($nodeset->get_nodelist)
    my $type    = $element->getAttribute('type');
    my $caption = $element->getAttribute('caption');
 
+   unless ($tag)
+   {
+      warn "Missing tag in float\n";
+   }
+
+   unless ($type)
+   {
+      warn "Missing type in float\n";
+   }
+
+   unless ($caption)
+   {
+      warn "Missing caption in float\n";
+   }
+
    push @floattags, $tag;
 
    $floats{$tag}->{Type}    = $type;
    $floats{$tag}->{Caption} = $caption;
    $floats{$tag}->{Element} = $element;
+
+   if ($counters{$type})
+   {
+      $counters{$type}++;
+   }
+   else
+   {
+      $counters{$type} = 1;
+   }
+
+   $floats{$tag}->{Number} = $counters{$type};
+
+   $floats{$tag}->{Parent} = $element->getParentNode->getAttribute("tag");
 }
 
 $nodeset = $xp->find('//fontenc');
@@ -264,6 +395,11 @@ if ($locale=~/en-US/)
 }
 
 print TEXFD <<_END_PREAMBLE;
+% arara: pdflatex
+% arara: makeglossaries
+% arara: makeindex
+% arara: pdflatex
+% arara: pdflatex
 \\documentclass[$paper]{$base}
 
 \\usepackage[$inputenc]{inputenc}
@@ -311,13 +447,13 @@ close TEXFD;
 sub texfmt{
    my $string = shift;
 
-   $string=~s/<dict>([^<]+)<\/dict>/$dict{$1}/g;
+   $string=~s/<dict>(.+?)<\/dict>/$dict{$1}/g;
 
-   $string=~s/<acr>([^<]+)<\/acr>/\\gls\{$1\}/g;
+   $string=~s/<acr>(.+?)<\/acr>/\\gls\{$1\}/g;
 
-   $string=~s/<opt>([^<]+)<\/opt>/\\opt\{$1\}/g;
+   $string=~s/<opt>(.+?)<\/opt>/\\opt\{$1\}/g;
 
-   $string=~s/<ref>([^<]+)<\/ref>/\\autoref\{$1\}/g;
+   $string=~s/<ref>(.+?)<\/ref>/\\autoref\{$1\}/g;
 
    if ($string=~/<cs>printacronyms<\/cs>/)
    {
@@ -331,23 +467,181 @@ sub texfmt{
       }
    }
 
-   $string=~s/<cs>([^<]+)<\/cs>/\\$1\{\}/g;
+   $string=~s/<menu>(.+?)<\/menu>/&texmenu($1)/eg;
 
-   $string=~s/<tt>([^<]+)<\/tt>/\\texttt\{$1\}/g;
+   $string=~s/<url>(.+?)<\/url>/\\url\{$1\}/g;
 
-   $string=~s/<b>([^<]+)<\/b>/\\textbf\{$1\}/g;
+   $string=~s/<footnote>(.+?)<\/footnote>/\\footnote\{$1\}/sg;
 
-   $string=~s/<em>([^<]+)<\/em>/\\emph\{$1\}/g;
+   $string=~s/<cs>(.+?)<\/cs>/\\$1/g;
 
-   $string=~s/<i>([^<]+)<\/i>/\\emph\{$1\}/g;
+   $string=~s/<xcs>(.+?)<\/xcs>/\\$1\{\}/g;
 
-   $string=~s/<p>/\\par /g;
+   $string=~s/<tt>(.+?)<\/tt>/\\texttt\{$1\}/sg;
 
-   # String any remaining tags
+   $string=~s/<b>(.+?)<\/b>/\\textbf\{$1\}/sg;
+
+   $string=~s/<em>(.+?)<\/em>/\\emph\{$1\}/sg;
+
+   $string=~s/<i>(.+?)<\/i>/\\emph\{$1\}/sg;
+
+   $string=~s/<\/?p>/\n\n/g;
+
+   $string=~s/(<image.*>.+?<\/image>)/&teximage($1)/eg;
+
+   $string=~s/(<float[^>]*>.+?<\/float>)/&texfloat($1)/seg;
+
+   $string=~s/\&([^;]);/&texentity($1)/eg;
+
+   $string=~s/<([a-z]+) *\/>/&textag($1)/eg;
+
+   # remove any remaining tags
 
    $string=~s/<\/?[^>]+>//g;
 
    $string
+}
+
+sub textag{
+   my $tag = shift;
+
+   ($textags{$tag} ? $textags{$tag} : '')
+}
+
+sub teximage{
+   my $xml = shift;
+
+   $xml=~/<image\s*(.*)\s*>(.+)<\/image>/;
+
+   my $opts = $1;
+   my $imgFile=$2;
+
+   unless (-e $imgFile)
+   {
+      warn "Can't find '$imgFile'\n";
+      return "";
+   }
+
+   if ($opts)
+   {
+      $opts=~s/alt="[^"]+"//;
+
+      $opts=~tr/ +/,/;
+      $opts=~tr/"//;
+   }
+
+   "\\includegraphics[$opts]{$imgFile}";
+}
+
+sub texfloat{
+   my $xml = shift;
+
+   my $contents = '';
+   my $tag;
+
+   if ($xml=~/<float.*? tag="([^"]+)".*?>(.*)<\/float>/s)
+   {
+      $tag = $1;
+      $contents = $2;
+
+      my $caption = $floats{$tag}->{Caption};
+      my $type = $floats{$tag}->{Type};
+
+      $contents = "\\begin{$type}"
+                . "\\floatconts{$tag}{\\caption{$caption}}{$contents}"
+                . "\\end{$type}";
+   }
+
+   $contents
+}
+
+sub texmenu{
+   my $label = shift;
+
+   my @items = split /\./, $label;
+
+   my $text  = '';
+   my $index = '';
+
+   my $currentlabel;
+
+   foreach my $item (@items)
+   {
+      if ($currentlabel)
+      {
+         $currentlabel .= ".$item";
+         $text .= "\\mto ";
+         $index .= "!";
+      }
+      else
+      {
+         $currentlabel = $item;
+      }
+
+      my $word;
+
+      if ($dict{$currentlabel})
+      {
+         $word = $dict{$currentlabel};
+      }
+      else
+      {
+         warn "Undefined dictionary tag '$currentlabel'\n";
+         $word = $item;
+      }
+
+      $text .= "\\menu{$word}";
+
+      $word=~s/(["@|!])/"$1/g;
+      $index .= "$word\@\\menu{$word}";
+   }
+
+   "$text\\index{$index}";
+}
+
+sub texentity{
+   my $entity = shift;
+
+   if ($entity=~/^#(\\d+)$/)
+   {
+      $entity = chr($1);
+
+      if ($specialchars{$entity})
+      {
+         $entity = $specialchars{$entity};
+      }
+   }
+   elsif ($entity=~/^#x(\\d+)$/)
+   {
+      $entity = chr(hex $1);
+
+      if ($specialchars{$entity})
+      {
+         $entity = $specialchars{$entity};
+      }
+   }
+   elsif ($entities{$entity})
+   {
+      $entity = $entities{$entity};
+   }
+   else
+   {
+      warn "Don't know how to convert '&$entity;'\n";
+   }
+
+   $entity
+}
+
+sub htmlurl{
+   my $url = shift;
+   my $text = $url;
+
+   unless ($url=~/^[a-z]+:\/\//)
+   {
+      $url = "http://$url";
+   }
+
+   "<a href=\"$url\">$text</a>";
 }
 
 1;

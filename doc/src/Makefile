@@ -37,3 +37,7 @@ datatooltk-en-US.tex	: createdocs datatooltk-en.xml \
 	  $(DICTDIR)/datatooltk-en-US.prop
 	createdocs en US
 
+clean	:
+	\rm -f datatooltk-en-GB.{tex,aux,log,pdf,glg,glo,gls,ist,ilg,ind,idx,acr,acn,alg}
+	\rm -f datatooltk-en-US.{tex,aux,log,pdf,glg,glo,gls,ist,ilg,ind,idx,acr,acn,alg}
+
