@@ -7,6 +7,16 @@
 
 \LoadClass{scrreprt}
 
+\RequirePackage{etoolbox}
+
+\renewcommand{\@author}{}
+
+\newcommand{\Author}[1]{%
+  \ifdefempty\@author
+  {\def\@author{#1}}%
+  {\appto\@author{\and #1}}%
+}
+
 \newcommand*{\sty}[1]{\textsf{#1}\index{#1 package@\textsf{#1}
 package}}
 

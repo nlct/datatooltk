@@ -1,10 +1,7 @@
 #!/usr/bin/perl -w
-# File   : createdocs
-# Author : Nicola L. C. Talbot
-# Date   : 2013-06-06
 
 use strict;
-use XML::XPath;
+use XML::Parser;
 
 if ($#ARGV > 1 || $#ARGV < 0)
 {
@@ -15,16 +12,7 @@ my $dictdir = '../resources/dictionaries';
 my $mainclass = '../java/DatatoolTk.java';
 my $base = 'datatooltk';
 
-# mapping between xml encoding names and inputenc options
-
-my %inputenc = 
- (
-    'utf-8' => 'utf8',
-    'ios-8859-1' => 'latin1'
- );
-
-# default
-my $encoding = 'utf-8';
+my $fontenc = 'T1';
 
 # mapping between locales and babel options
 
@@ -34,37 +22,6 @@ my %babel =
     'en-GB' => 'british',
     'en-US' => 'american',
     'fr'    => 'frenchb'
- );
-
-my %specialchars =
- (
-    '&'  => '\\ampersand ',
-    '~'  => '\\textasciitilde ',
-    '^'  => '\\textasciicircum ',
-    "\\" => '\\textbackslash ',
-    '{'  => '\\leftbrace ',
-    '}'  => '\\rightbrace ',
-    '_'  => '\\underscore ',
-    '%'  => '\\textpercent ',
-    '#'  => '\\texthash ',
-    '$'  => '\\textdollar '
- );
-
-my %textags =
- (
-    'br'   => "\\\\",
-    'hr'   => "\\hrulefill "
- );
-
-my %sectionunits =
- (
-   'chapter'       => 'h1',
-   'section'       => 'h2',
-   'subsection'    => 'h3',
-   'subsubsection' => 'h4',
-   'paragraph'     => 'h5',
-   'acronyms'      => 'h1',
-   'index'         => 'h1'
  );
 
 my $lang = $ARGV[0];
@@ -107,7 +64,8 @@ if (not (-e $propfile) and ($lang ne $locale))
 
    unless (-e $propfile)
    {
-      die "Can't find either '$dictdir/$base-$locale.prop' or '$propfile'\n";
+      die "Can't find either '$dictdir/$base-$locale.prop' or
+'$propfile'\n";
    }
 }
 
@@ -139,6 +97,11 @@ while (<FD>)
 
 close FD;
 
+my %docinfo = ();
+my @nodes   = ();
+my @current = ();
+my %tags    = ();
+
 my $xmlfile = "$base-$locale.xml";
 
 if (not (-e $xmlfile) and ($lang ne $locale))
@@ -169,185 +132,62 @@ unless (-d $helpsetdir)
    die "'$helpsetdir' is not a directory\n";
 }
 
-my $xp = XML::XPath->new(filename=>$xmlfile);
+# Is there any way of querying the input encoding picked up by
+# XML::Parser? Let's just stick to utf8
+my $inputenc = 'utf8';
+ 
+use XML::Parser;
 
-# TODO work out how to get the xml encoding from $xp
-
-my $inputenc = $inputenc{$encoding} ? $inputenc{$encoding} : $encoding;
-
-my $nodeset = $xp->find('//newacro');
+my %section_levels =
+(
+   'chapter'       => 'h1',
+   'section'       => 'h2',
+   'subsection'    => 'h3',
+   'subsubsection' => 'h4',
+   'paragraph'     => 'h5'
+);
 
 my %acros = ();
 
-foreach my $element ($nodeset->get_nodelist)
-{
-   my $label = $element->string_value;
-
-   $acros{$label}->{Long} = $element->getAttribute('long');
-   $acros{$label}->{Short} = $element->getAttribute('short');
-
-   unless ($acros{$label}->{Short})
-   {
-      warn "Acronym '$label' missing 'short' attribute\n";
-   }
-
-   unless ($acros{$label}->{Long})
-   {
-      warn "Acronym '$label' missing 'long' attribute\n";
-   }
-}
-
-my @tags = ();
-
-my %nodes = ();
-
-$nodeset = $xp->find('//node');
-
-foreach my $element ($nodeset->get_nodelist)
-{
-   my $tag = $element->getAttribute('tag');
-   my $type = $element->getAttribute('type');
-   my $title = $element->getAttribute('title');
-
-   push @tags, $tag;
-
-   $nodes{$tag}->{Type}  = $type;
-   $nodes{$tag}->{Title} = $title;
-   $nodes{$tag}->{Element} = $element;
-}
+my @float_elements = ();
 
 my %counters = ();
 
-my @floattags = ();
+# open the TeX file
+open TEXFD, ">$texfile" or die "Can't open '$texfile' $!\n";
+ 
+# initialize the parser
+my $parser = XML::Parser->new( Handlers => 
+                                     {
+                                      Start=>\&handle_start,
+                                      End=>\&handle_end,
+                                      Char=>\&handle_char
+                                     });
+$parser->parsefile( $xmlfile );
+ 
+close TEXFD;
 
-my %floats = ();
+open HTMLFD, ">$helpsetdir/$base.html"
+  or die "Can't open '$helpsetdir/$base.html' $!\n";
+binmode(HTMLFD, ":utf8");
 
-$nodeset = $xp->find('//float');
+print HTMLFD &html_head($docinfo{Title}, '', $nodes[0]->{Tag});
 
-foreach my $element ($nodeset->get_nodelist)
-{
-   my $tag     = $element->getAttribute('tag');
-   my $type    = $element->getAttribute('type');
-   my $caption = $element->getAttribute('caption');
+print HTMLFD "<body>\n";
 
-   unless ($tag)
-   {
-      warn "Missing tag in float\n";
-   }
+print HTMLFD 
+   "<div class=\"title\" \"><p>",
+   $docinfo{Title}, "</p>\n";
 
-   unless ($type)
-   {
-      warn "Missing type in float\n";
-   }
+print HTMLFD "<p>$docinfo{Author}</p>\n" if ($docinfo{Author});
 
-   unless ($caption)
-   {
-      warn "Missing caption in float\n";
-   }
+print HTMLFD "</div><div class=\"date\">";
 
-   push @floattags, $tag;
+print HTMLFD "<p>$docinfo{Date}</p>\n" if ($docinfo{Date});
 
-   $floats{$tag}->{Type}    = $type;
-   $floats{$tag}->{Caption} = $caption;
-   $floats{$tag}->{Element} = $element;
+print HTMLFD "</div>";
 
-   if ($counters{$type})
-   {
-      $counters{$type}++;
-   }
-   else
-   {
-      $counters{$type} = 1;
-   }
-
-   $floats{$tag}->{Number} = $counters{$type};
-
-   $floats{$tag}->{Parent} = $element->getParentNode->getAttribute("tag");
-}
-
-$nodeset = $xp->find('//fontenc');
-
-my $fontenc = 'T1';
-
-if (my @nodelist = $nodeset->get_nodelist)
-{
-   if ($#nodelist != 0)
-   {
-      warn "Only one <fontenc> permitted\n";
-   }
-
-   $fontenc = $nodelist[0]->string_value;
-}
-
-my $title;
-
-$nodeset = $xp->find('//title');
-
-if (my @nodelist = $nodeset->get_nodelist)
-{
-   if ($#nodelist != 0)
-   {
-      warn "Only one <title> permitted\n";
-   }
-
-   $title = $nodelist[0];
-}
-
-$nodeset = $xp->find('//author');
-
-my @authors =  $nodeset->get_nodelist;
-
-my @texauthors = ();
-
-foreach my $element (@authors)
-{
-   push @texauthors, &texfmt($element->toString);
-}
-
-my $date;
-
-$nodeset = $xp->find('//date');
-
-if (my @nodelist = $nodeset->get_nodelist)
-{
-   if ($#nodelist != 0)
-   {
-      warn "Only one <date> permitted\n";
-   }
-
-   $date = $nodelist[0];
-}
-
-open HTMLFD, ">$helpsetdir/$base.html" 
-  or die "Can't open '$helpsetdir/$base.html'";
-binmode(HTMLFD, ":$inputenc");
-
-my $htmltitle = &htmlfmt($title->toString);
-
-print HTMLFD <<_END_HEAD;
-<!doctype html public "-//w3c//dtd xhtml 1.0 Transitional//$lang"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
->
-<html xmlns="http://www.w3.org/1999/xhtml" lang="$locale" xml:lang="$locale">
-<head>
-  <title>$htmltitle</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=$encoding" />
-  <link rel="next" href="$tags[0].html" />
-</head>
-<body>
-&nbsp;<div style="float: right;">
-<a href="$tags[0].html">Next</a>
-</div>
-<h1>$htmltitle</h1>
-_END_HEAD
-
-foreach my $element (@authors)
-{
-   print HTMLFD 
-    "<div style=\"display: inline;\">",
-    &htmlfmt($element->toString),
-    "</div>\n";
-}
+print HTMLFD &html_nav('', $nodes[0]->{Tag});
 
 print HTMLFD "</body>\n</html>\n";
 
@@ -355,430 +195,905 @@ close HTMLFD;
 
 my $prev = $base;
 
-for (my $idx=0; $idx<=$#tags; $idx++)
+for (my $idx = 0; $idx <= $#nodes; $idx++)
 {
-   my $tag = $tags[$idx];
+   my $node = $nodes[$idx];
 
-   my $htmltitle = &htmlfmt($nodes{$tag}->{Title});
+   my $next = ($idx == $#nodes ? '' : $nodes[$idx+1]->{Tag});
 
-   my $next;
-   my $nextlink = '';
+   my $tag = $node->{Tag};
 
-   if ($idx< $#tags)
+   open HTMLFD, ">$helpsetdir/$tag.html"
+     or die "Can't open '$helpsetdir/$tag.html' $!\n";
+
+   binmode(HTMLFD, ":utf8");
+
+   print HTMLFD &html_head($node->{Title}, $prev, $next);
+
+   print HTMLFD "<body>\n";
+
+   my $header = $section_levels{$node->{Type}};
+
+   print HTMLFD "<$header>", $node->{Title}, "</$header>\n";
+
+   my $content = $node->{Contents};
+
+   $content=~s/<ref>([^<]+)<\/ref>/&get_ref($1)/eg;
+
+   print HTMLFD "<div>$content</div>";
+
+   if ($node->{Footnotes})
    {
-      $next = $tags[$idx+1];
-      $nextlink = "<link rel=\"next\" href=\"$next.html\" />";
+      $content = $node->{Footnotes};
+
+      $content=~s/<ref>([^<]+)<\/ref>/&get_ref($1)/eg;
+
+      print HTMLFD "<hr />$content";
    }
 
-   open HTMLFD, ">$helpsetdir/$tag.html" 
-     or die "Can't open '$helpsetdir/$tag.html'";
-   binmode(HTMLFD, ":$inputenc");
+   print HTMLFD &html_nav($prev, $next);
 
-   print HTMLFD <<_END_HEAD;
-<!doctype html public "-//w3c//dtd xhtml 1.0 Transitional//$lang"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
->
-<html xmlns="http://www.w3.org/1999/xhtml" lang="$locale" xml:lang="$locale">
-<head>
-  <title>$htmltitle</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=$encoding" />
-  <link rel="prev" href="$prev.html" />
-  $nextlink
-<body>
-_END_HEAD
-
-my $nav = <<_END_NAV;
-<div style="float: left">
-<a href="$prev.html">Prev</a>
-</div>&nbsp;
-_END_NAV
-
-   if ($next)
-   {
-      $nav .= <<_END_NEXT;
-<div style="float: right">
-<a href="$next.html">Next</a>
-</div>
-_END_NEXT
-   }
-
-   print HTMLFD "$nav<div>\n";
-
-   my $level = $sectionunits{$nodes{$tag}->{Type}};
-
-   if ($level)
-   {
-      print HTMLFD "<$level>$htmltitle</$level>";
-   }
-   else
-   {
-      warn "Can't find level for sectional unit '",
-         $nodes{$tag}->{Type}, "'\n";
-      print HTMLFD "<h1>$htmltitle</h1>";
-   }
-
-   my $text = $nodes{$tag}->{Element}->toString;
-
-   my $footnotenum = 1;
-   my $footnotes = '';
-
-   while ($text=~s/<footnote>(.+?)<\/footnote>/<sup><a href="#$footnotenum">$footnotenum<\/a><\/sup>/sg)
-   {
-      $footnotes .= "<p><sup><a name=\"fn$footnotenum\">$footnotenum</a></sup> $1</p>";
-
-      $footnotenum++;
-   }
-
-   print HTMLFD &htmlfmt($text);
-
-   print HTMLFD "</div>";
-
-   if ($footnotes)
-   {
-      print HTMLFD "<hr />", $footnotes;
-   }
-
-   print HTMLFD "$nav</body>\n</html>\n";
+   print HTMLFD "</body>\n</html>\n";
 
    close HTMLFD;
 
    $prev = $tag;
 }
 
-open TEXFD, ">$texfile" or die "Can't open '$texfile' $!\n";
-binmode(TEXFD, ":$inputenc");
+sub handle_char{
+   my( $expat, $string ) = @_;
 
-my $paper = 'a4paper';
+   &handle_html($string);
 
-if ($locale=~/en-US/)
-{
-   $paper = 'letterpaper';
+   print TEXFD $string;
 }
 
-print TEXFD <<_END_PREAMBLE;
-% arara: pdflatex
-% arara: makeglossaries
-% arara: makeindex
-% arara: pdflatex
-% arara: pdflatex
-\\documentclass[$paper,index=totoc]{$base}
+sub handle_html{
+   my ($string) = @_;
 
-\\usepackage[$inputenc]{inputenc}
-\\usepackage[$fontenc]{fontenc}
-\\usepackage{graphicx}
-\\usepackage{makeidx}
-\\usepackage[colorlinks]{hyperref}
-\\usepackage[acronym,toc]{glossaries}
-
-\\makeindex
-\\makeglossaries
-
-_END_PREAMBLE
-
-foreach my $label (keys %acros)
-{
-   print TEXFD "\\newacronym{$label}{", 
-    $acros{$label}->{Short}, "}{",
-    $acros{$label}->{Long}, "}\n";
-}
-
-print TEXFD "\\title{", &texfmt($title->toString), "}\n" if ($title);
-print TEXFD "\\author{", join('\\and ', @texauthors), "}\n";
-print TEXFD "\\date{", &texfmt($date->toString), "}\n";
-
-print TEXFD "\\begin{document}\n", "\\maketitle\n\\tableofcontents\n";
-
-foreach my $tag (@tags)
-{
-   my $element = $nodes{$tag}->{Element};
-
-   if ($nodes{$tag}->{Type}=~/(section|chapter)/)
+   if ($#current > -1)
    {
-      print TEXFD "\\", $nodes{$tag}->{Type},
-        "{", &texfmt($nodes{$tag}->{Title}), "}\n";
-      print TEXFD "\\label{$tag}\n";
+      my $element = $current[$#current];
+
+      $docinfo{$element} .= $string;
+   }
+   elsif ($#nodes > -1)
+   {
+      $nodes[$#nodes]->{Contents} .= $string;
+   }
+}
+ 
+sub handle_start {
+    my( $expat, $element, %attrs ) = @_;
+
+    my $sub = "start_$element";
+ 
+    if (defined(&$sub))
+    {
+       {
+         no strict 'refs';
+         &$sub($expat, %attrs);
+       }
+    }
+    else
+    {
+       die "Don't know what to do with '<$element>'\n";
+    }
+}
+
+sub handle_end {
+    my( $expat, $element ) = @_;
+ 
+    my $sub = "end_$element";
+
+    if (defined(&$sub))
+    {
+       {
+         no strict 'refs';
+         &$sub($expat);
+       }
+    }
+    else
+    {
+       die "Don't know what to do with '</$element>'\n";
+    }
+}
+
+sub get_ref{
+   my ($tag) = @_;
+
+   unless ($tags{$tag})
+   {
+      die "Unknown tag '$tag'\n";
    }
 
-   print TEXFD &texfmt($nodes{$tag}->{Element}->toString), "\n";
+   my $ref = $tags{$tag}->{Ref};
+   my $text = $tags{$tag}->{Text};
+
+   "<a href=\"$ref\">$text</a>";
 }
 
-print TEXFD "\\end{document}\n";
-close TEXFD;
+sub get_label{
+   my ($tag, $attrs, $expat) = @_;
 
-sub htmlfmt{
-   my $string = shift;
-
-   $string=~s/<dict>(.+?)<\/dict>/$dict{$1}/g;
-
-   $string=~s/<\/?(author|title|xcs|cs)>//g;
-
-   $string=~s/<sty>(.+?)<\/sty>/<tt>$1<\/tt>/g;
-
-   $string=~s/<acr>(.+?)<\/acr>/&htmlacr($1)/eg;
-
-   $string=~s/<menu>(.+?)<\/menu>/&htmlmenu($1)/eg;
-
-   $string=~s/<url>(.+?)<\/url>/&htmlurl($1)/eg;
-
-   $string=~s/<ref>(.+?)<\/ref>/&htmlref($1)/eg;
-
-   $string=~s/<opt>(.+?)<\/opt>/&htmlopt($1)/eg;
-
-   $string
-}
-
-sub htmlopt{
-   my $opt = shift;
-
-# TODO index it
-
-   "<tt>--$opt</tt>"
-}
-
-sub htmlref{
-   my $tag = shift;
-   my $text = $tag;
-
-   if ($nodes{$tag})
+   unless ($dict{$tag})
    {
-      $text = "<a href=\"$tag.html\">" 
-            . $nodes{$tag}->{Title}
-            . "</a>";
+      if ($expat)
+      {
+         die "No dictionary entry for tag '$tag' on line ",
+           $expat->current_line, "\n";
+      }
+      else
+      {
+         die "No dictionary entry for tag '$tag'\n";
+      }
    }
-   elsif ($floats{$tag})
+
+   my $text = $dict{$tag};
+
+   if ($attrs)
    {
-      $text = "<a href=\"". $floats{$tag}->{Parent}.".html#$tag\">"
-            . $dict{figure} . "&nbsp;" . $floats{$tag}->{Number}
-            . "</a>";
-   }
-   else
-   {
-      warn "Unknown tag '$tag'\n";
+      $text=~s/\$(\d)/$attrs->{"arg$1"}/eg;
    }
 
    $text
 }
 
-sub htmlacr{
-   my $acr = shift;
+sub start_manual{
+   my ($expat, %attrs) = @_;
 
-   if (not $acros{$acr})
+   if ($attrs{fontenc})
    {
-      warn "Unknown acronym '$acr'\n";
+      $fontenc = $attrs{'fontenc'};
    }
-   elsif ($acros{$acr}->{Used})
+
+   print TEXFD "% arara: pdflatex\n";
+   print TEXFD "% arara: makeglossaries\n";
+   print TEXFD "% arara: pdflatex\n";
+   print TEXFD "% arara: makeindex\n";
+   print TEXFD "% arara: pdflatex\n";
+   print TEXFD "\\documentclass[index=totoc]{datatooltk}\n";
+}
+
+sub end_manual{
+   my ($expat) = @_;
+}
+
+sub start_preamble{
+   my ($expat, %attrs) = @_;
+
+   print TEXFD "\\usepackage[$inputenc]{inputenc}\n",
+      "\\usepackage[$fontenc]{fontenc}\n",
+      "\\usepackage{graphicx}\n",
+      "\\usepackage{makeidx}\n",
+      "\\usepackage[colorlinks]{hyperref}\n",
+      "\\usepackage[acronym,toc]{glossaries}\n",
+      "\\makeglossaries\n\\makeindex\n";
+}
+ 
+sub end_preamble{
+   my ($expat) = @_;
+}
+
+sub start_title{
+   my ($expat, %attrs) = @_;
+
+   push @current, 'Title';
+
+   print TEXFD "\\title{";
+}
+
+sub end_title{
+   my ($expat) = @_;
+
+   pop @current;
+
+   print TEXFD "}\n";
+}
+
+sub start_date{
+   my ($expat, %attrs) = @_;
+
+   push @current, 'Date';
+
+   print TEXFD "\\date{";
+}
+
+sub end_date{
+   my ($expat) = @_;
+
+   pop @current;
+
+   print TEXFD "}\n";
+}
+
+sub start_author{
+   my ($expat, %attrs) = @_;
+
+   push @current, 'Author';
+
+   unless ($docinfo{Author})
    {
-      $acr = $acros{$acr}->{Short};
+      $docinfo{Author} = " ";
+   }
+
+   $docinfo{Author} .= "<table class=\"author\"><tr><td>";
+
+   print TEXFD "\\Author{";
+}
+
+sub end_author{
+   my ($expat) = @_;
+
+   $docinfo{Author} .= "</td></tr></table>";
+
+   pop @current;
+
+   print TEXFD "}\n";
+}
+
+sub start_document{
+   my ($expat, %attrs) = @_;
+
+   print TEXFD "\\begin{document}\n\\maketitle\n";
+}
+
+sub end_document{
+   my ($expat) = @_;
+
+   print TEXFD "\\end{document}\n";
+}
+
+sub start_node{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{type})
+   {
+      die "Missing 'type' attribute for element 'node' on line ",
+         $expat->current_line, "\n";
+   }
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'tag' attribute for element 'node' on line ",
+         $expat->current_line, "\n";
+   }
+
+   unless ($attrs{title})
+   {
+      die "Missing 'title' attribute for element 'node' on line ",
+         $expat->current_line, "\n";
+   }
+
+   unless ($section_levels{$attrs{type}})
+   {
+      die "Unknown section level '$attrs{type}' on line ",
+         $expat->current_line, "\n";
+   }
+
+   my %node = 
+   (
+      Type      => $attrs{type},
+      Title     => $attrs{title},
+      Tag       => $attrs{tag},
+      Contents  => '',
+      Footnotes => '' 
+   );
+
+   push @nodes, \%node;
+
+   $tags{$attrs{tag}}->{Ref} = $attrs{tag}.'.html';
+   $tags{$attrs{tag}}->{Text} = $attrs{title};
+
+   print TEXFD "\\", $attrs{type}, "{",
+      $attrs{title}, "}\\label{",
+      $attrs{tag}, "}\n";
+}
+
+sub end_node{
+   my ($expat) = @_;
+
+}
+
+sub start_newacro{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'tag' attribute for element 'newacro' on line ",
+         $expat->current_line, "\n";
+   }
+
+   unless ($attrs{short})
+   {
+      die "Missing 'short' attribute for element 'newacro' on line ",
+         $expat->current_line, "\n";
+   }
+
+   unless ($attrs{long})
+   {
+      die "Missing 'long' attribute for element 'newacro' on line ",
+         $expat->current_line, "\n";
+   }
+
+   my $tag = $attrs{tag};
+
+   if ($acros{$tag})
+   {
+      die "Acronym '$tag' already defined\n";
+   }
+
+   $acros{$tag}->{Short} = $attrs{short};
+   $acros{$tag}->{Long} = $attrs{long};
+
+   print TEXFD "\\newacronym{$tag}{$attrs{short}}{$attrs{long}}\n";
+}
+
+sub end_newacro{
+   my ($expat) = @_;
+}
+ 
+sub start_p{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<p>");
+
+   print TEXFD "\n\n";
+}
+
+sub end_p{
+   my ($expat) = @_;
+
+   &handle_html("</p>");
+
+   print TEXFD "\n\n";
+}
+
+sub start_tt{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<tt>");
+
+   print TEXFD "\\texttt{";
+}
+
+sub end_tt{
+   my ($expat) = @_;
+
+   &handle_html('</tt>');
+
+   print TEXFD "}";
+}
+
+sub start_url{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{www})
+   {
+      die "element 'url' missing 'www' attribute\n";
+   }
+
+   my $string;
+
+   my $uri = $attrs{www};
+
+   $uri = "http://$uri" unless ($uri=~/^[a-z]+:\/\//);
+
+   if ($attrs{text})
+   {
+      print TEXFD "\\href{", $attrs{text}, "}{", $attrs{www}, "}";
+      $string = "<a href=\"$uri\">$attrs{text}</a>";
    }
    else
    {
-      $acros{$acr}->{Used} = 1;
-
-      $acr = $acros{$acr}->{Long}
-           . ' (' . $acros{$acr}->{Short} . ')';
+      print TEXFD "\\url{", $attrs{www}, "}";
+      $string = "<a href=\"$uri\"><tt>$attrs{www}</tt></a>";
    }
 
-   $acr
+   &handle_html($string);
 }
 
-sub htmlmenu{
-   my $label = shift;
+sub end_url{
+   my ($expat) = @_;
+}
 
-   my $menu;
+sub start_sty{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('<tt>');
+
+   print TEXFD "\\sty{";
+}
+
+sub end_sty{
+   my ($expat) = @_;
+
+   &handle_html('</tt>');
+
+   print TEXFD "}";
+}
+
+sub start_footnote{
+   my ($expat, %attrs) = @_;
+
+   if ($counters{footnote})
+   {
+      $counters{footnote} = 1;
+   }
+   else
+   {
+      $counters{footnote}++;
+   }
+
+   $nodes[$#nodes]->{Contents} .=
+     "<sup><a href=\"#fn-$counters{footnote}\">$counters{footnote}</a></sup>";
+
+   push @current, 'Footnote';
+
+   print TEXFD "\\footnote{";
+}
+
+sub end_footnote{
+   my ($expat) = @_;
+
+   pop @current;
+
+   $nodes[$#nodes]->{Footnotes} .=
+     "<p><sup><a name=\"fn-$counters{footnote}\">$counters{footnote}</a></sup>"
+     . $docinfo{Footnote}
+     . '</p>';
+
+   $docinfo{Footnote} = '';
+
+   print TEXFD "}";
+}
+
+sub start_pre{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('<pre>');
+
+   print TEXFD "\\begin{verbatim}";
+}
+
+sub end_pre{
+   my ($expat) = @_;
+
+   &handle_html('</pre>');
+
+   print TEXFD "\\end{verbatim}";
+}
+
+sub start_float{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{type})
+   {
+      die "Element 'float' missing 'type' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   unless ($attrs{tag})
+   {
+      die "Element 'float' missing 'tag' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   unless ($attrs{caption})
+   {
+      die "Element 'float' missing 'caption' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   if ($counters{$attrs{type}})
+   {
+      $counters{$attrs{type}}++;
+   }
+   else
+   {
+      $counters{$attrs{type}} = 1;
+   }
+
+   $attrs{counter} = $counters{$attrs{type}};
+
+   push @float_elements, \%attrs;
+
+   &handle_html("<div class=\"float\"><a name=\"$attrs{tag}\"></a>");
+
+   $tags{$attrs{tag}}->{Ref} = $nodes[$#nodes]->{Tag}
+     .'.html#'.$attrs{tag};
+   $tags{$attrs{tag}}->{Text} = ucfirst(&get_label($attrs{type}))
+        . '&nbsp;' . $attrs{counter};
+
+   unless ($attrs{type} eq 'figure')
+   {
+      &handle_html('<p>' . $tags{$attrs{tag}}->{Text} . ': '
+        . $attrs{caption} . '</p>');
+   }
+
+   print TEXFD "\\begin{", $attrs{type}, "}\n";
+   print TEXFD "\\floatconts{", $attrs{tag}, "}{\\caption";
+
+   if ($attrs{listcaption})
+   {
+      print TEXFD "[", $attrs{listcaption}, "]";
+   }
+
+   print TEXFD "{", $attrs{caption}, "}}{";
+}
+
+sub end_float{
+   my ($expat) = @_;
+
+   my $attrs = pop @float_elements;
+
+   if ($attrs->{type} eq 'figure')
+   {
+      &handle_html('<p>'. $tags{$attrs->{tag}}->{Text} . ': '
+        . $attrs->{caption} . '</p>');
+   }
+
+   &handle_html('</div>');
+
+   print TEXFD "}%\n\\end{", $attrs->{type}, "}\n";
+}
+
+sub start_nbsp{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('&nbsp;');
+
+   print TEXFD "~";
+}
+
+sub end_nbsp{
+   my ($expat) = @_;
+}
+
+sub start_image{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{src})
+   {
+      die "Missing 'image' element's 'src' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   my $imgfile = $attrs{src};
+
+   unless (-e $imgfile)
+   {
+      die "Can't find image file '$imgfile' referenced on line ",
+         $expat->current_line, "\n";
+   }
+
+   my @opts=();
+
+   my $html = "";
+
+   foreach my $key (keys %attrs)
+   {
+      if ($key eq 'scale')
+      {
+         push @opts, "scale=$attrs{scale}";
+      }
+      elsif ($key eq 'width')
+      {
+         push @opts, "width=$attrs{width}";
+         $html .= "$key=\"$attrs{$key}\" ";
+      }
+      elsif ($key eq 'height')
+      {
+         push @opts, "height=$attrs{height}";
+         $html .= "$key=\"$attrs{$key}\" ";
+      }
+      else
+      {
+         $html .= "$key=\"$attrs{$key}\" ";
+      }
+   }
+
+   if (not $attrs{width} or not $attrs{height})
+   {
+      # get image dimensions
+
+      $_ = `file $imgfile`;
+
+      if (/(\d+) x (\d+)/)
+      {
+         $html .= "width=\"$1\" " unless $attrs{width};
+         $html .= "height=\"$2\" " unless $attrs{height};
+      }
+      else
+      {
+         warn "Can't determine dimensions of image '$imgfile'\n";
+      }
+   }
+
+   $html = "<img $html />";
+
+   &handle_html($html);
+
+   print TEXFD "\\includegraphics[",
+     join(',', @opts), "]{$imgfile}";
+}
+
+sub end_image{
+   my ($expat) = @_;
+}
+
+sub start_LaTeX{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('LaTeX');
+
+   print TEXFD "\\LaTeX{}";
+}
+
+sub end_LaTeX{
+   my ($expat) = @_;
+}
+
+sub start_dict{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'dict' element's 'tag' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   my $text = &get_label($attrs{tag}, \%attrs, $expat);
+
+   &handle_html($text);
+
+   print TEXFD $text;
+}
+
+sub end_dict{
+   my ($expat) = @_;
+}
+ 
+sub start_menu{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'menu' element's 'tag' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
    my $currentlabel;
-
-   foreach my $item (split /\./, $label)
-   {
-      if ($currentlabel)
-      {
-         $currentlabel .= ".$item";
-         $menu .= '-&gt;';
-      }
-      else
-      {
-         $currentlabel = $item;
-         $menu = '';
-      }
-
-      if ($dict{$currentlabel})
-      {
-         $menu .= $dict{$currentlabel};
-      }
-      else
-      {
-         warn "Unknown dictionary tag '$currentlabel'\n";
-         $menu .= $currentlabel;
-      }
-   }
-
-   "<em>$menu</em>"
-}
-
-sub texfmt{
-   my $string = shift;
-
-   $string=~s/<dict>(.+?)<\/dict>/$dict{$1}/g;
-
-   $string=~s/<acr>(.+?)<\/acr>/\\gls\{$1\}/g;
-
-   $string=~s/<opt>(.+?)<\/opt>/\\opt\{$1\}/g;
-
-   $string=~s/<ref>(.+?)<\/ref>/\\autoref\{$1\}/g;
-
-   if ($string=~/<cs>printacronyms<\/cs>/)
-   {
-      if ($nodes{acronyms}->{Title})
-      {
-         $string=~s/<cs>printacronyms<\/cs>/\\printglossary[type=acronym,title=\{$nodes{acronyms}->{Title}\}]/;
-      }
-      else
-      {
-         $string=~s/<cs>printacronyms<\/cs>/\\printglossary[type=acronym]/;
-      }
-   }
-
-   $string=~s/<menu>(.+?)<\/menu>/&texmenu($1)/eg;
-
-   $string=~s/<url>(.+?)<\/url>/\\url\{$1\}/g;
-
-   $string=~s/<footnote>(.+?)<\/footnote>/\\footnote\{$1\}/sg;
-
-   $string=~s/<cs>(.+?)<\/cs>/\\$1/g;
-
-   $string=~s/<xcs>(.+?)<\/xcs>/\\$1\{\}/g;
-
-   $string=~s/<tt>(.+?)<\/tt>/\\texttt\{$1\}/sg;
-
-   $string=~s/<b>(.+?)<\/b>/\\textbf\{$1\}/sg;
-
-   $string=~s/<em>(.+?)<\/em>/\\emph\{$1\}/sg;
-
-   $string=~s/<i>(.+?)<\/i>/\\emph\{$1\}/sg;
-
-   $string=~s/<\/?p>/\n\n/g;
-
-   $string=~s/(<image.*>.+?<\/image>)/&teximage($1)/eg;
-
-   $string=~s/(<float[^>]*>.+?<\/float>)/&texfloat($1)/seg;
-
-   $string=~s/<([a-z]+) *\/>/&textag($1)/eg;
-
-   $string=~s/\xa0/~/g;
-
-   # remove any remaining tags
-
-   $string=~s/<\/?[^>]+>//g;
-
-   $string
-}
-
-sub textag{
-   my $tag = shift;
-
-   ($textags{$tag} ? $textags{$tag} : '')
-}
-
-sub teximage{
-   my $xml = shift;
-
-   $xml=~/<image\s*(.*)\s*>(.+)<\/image>/;
-
-   my $opts = $1;
-   my $imgFile=$2;
-
-   unless (-e $imgFile)
-   {
-      warn "Can't find '$imgFile'\n";
-      return "";
-   }
-
-   if ($opts)
-   {
-      $opts=~s/alt="[^"]+"//;
-
-      $opts=~tr/ +/,/;
-      $opts=~tr/"//;
-   }
-
-   "\\includegraphics[$opts]{$imgFile}";
-}
-
-sub texfloat{
-   my $xml = shift;
-
-   my $contents = '';
-   my $tag;
-
-   if ($xml=~/<float.*? tag="([^"]+)".*?>(.*)<\/float>/s)
-   {
-      $tag = $1;
-      $contents = $2;
-
-      my $caption = $floats{$tag}->{Caption};
-      my $type = $floats{$tag}->{Type};
-
-      $contents = "\\begin{$type}"
-                . "\\floatconts{$tag}{\\caption{$caption}}{$contents}"
-                . "\\end{$type}";
-   }
-
-   $contents
-}
-
-sub texmenu{
-   my $label = shift;
-
-   my @items = split /\./, $label;
-
-   my $text  = '';
    my $index = '';
+   my $html  = '';
 
-   my $currentlabel;
-
-   foreach my $item (@items)
+   foreach my $item (split /\./, $attrs{tag})
    {
       if ($currentlabel)
       {
          $currentlabel .= ".$item";
-         $text .= "\\mto ";
-         $index .= "!";
+         print TEXFD "\\mto ";
+         $index .= '!';
+         $html .= '-&gt;';
       }
       else
       {
          $currentlabel = $item;
       }
 
-      my $word;
+      my $text = &get_label($currentlabel, \%attrs, $expat);
 
-      if ($dict{$currentlabel})
-      {
-         $word = $dict{$currentlabel};
-      }
-      else
-      {
-         warn "Undefined dictionary tag '$currentlabel'\n";
-         $word = $item;
-      }
+      $html .= $text;
 
-      $text .= "\\menu{$word}";
+      print TEXFD "\\menu{$text}";
 
-      $word=~s/(["@|!])/"$1/g;
-      $index .= "$word\@\\menu{$word}";
+      $text=~s/([@"!|])/"$1/g;
+
+      $index .= "$text@\\menu{$text}";
    }
 
-   "$text\\index{$index}";
+   &handle_html("<tt>$html</tt>");
+
+   print TEXFD "\\index{$index}";
 }
 
-sub htmlurl{
-   my $url = shift;
-   my $text = $url;
+sub end_menu{
+   my ($expat) = @_;
+}
+ 
+sub start_acr{
+   my ($expat, %attrs) = @_;
 
-   unless ($url=~/^[a-z]+:\/\//)
+   unless ($attrs{tag})
    {
-      $url = "http://$url";
+      die "Missing 'acr' element's 'tag' attribute on line ",
+        $expat->current_line, "\n";
    }
 
-   "<a href=\"$url\"><tt>$text</tt></a>";
+   unless ($acros{$attrs{tag}})
+   {
+      die "Unknown acronym tag '$attrs{tag}' on line ",
+         $expat->current_line, "\n";
+   }
+
+   my $html;
+
+   if ($acros{$attrs{tag}}->{Used})
+   {
+      $html = $acros{$attrs{tag}}->{Short};
+   }
+   else
+   {
+      $html = $acros{$attrs{tag}}->{Long}
+            . ' (' . $acros{$attrs{tag}}->{Short} . ')';
+   }
+
+   &handle_html($html);
+
+   print TEXFD "\\gls{", $attrs{tag}, "}";
 }
 
+sub end_acr{
+   my ($expat) = @_;
+}
+ 
+sub start_ref{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'ref' element's 'tag' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   &handle_html("<ref>$attrs{tag}</ref>");
+
+   print TEXFD "\\autoref{", $attrs{tag}, "}";
+}
+
+sub end_ref{
+   my ($expat) = @_;
+}
+ 
+sub start_opt{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'opt' element's 'tag' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   &handle_html("<tt>--$attrs{tag}</tt>");
+
+   print TEXFD "\\opt{", $attrs{tag}, "}";
+}
+
+sub end_opt{
+   my ($expat) = @_;
+}
+ 
+sub start_printacronyms{
+   my ($expat, %attrs) = @_;
+
+   print TEXFD "\\printglossary[type=acronym]";
+}
+
+sub end_printacronyms{
+   my ($expat) = @_;
+}
+ 
+sub start_printindex{
+   my ($expat, %attrs) = @_;
+
+   print TEXFD "\\printindex ";
+}
+
+sub end_printindex{
+   my ($expat) = @_;
+}
+ 
+sub start_br{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<br />");
+
+   print TEXFD "\\\\";
+}
+
+sub end_br{
+   my ($expat) = @_;
+}
+
+sub start_hr{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<hr />");
+
+   print TEXFD "\\hrulefill ";
+}
+
+sub end_hr{
+   my ($expat) = @_;
+}
+
+sub html_head{
+  my ($title, $prev, $next) = @_;
+
+  my $head = <<_END_HTML_HEAD;
+<!DOCTYPE html  html public "-//w3c//dtd xhtml 1.0 Transitional//en"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB"
+xml:lang="en-GB">
+<head>
+  <style type="text/css">
+    .title
+    {
+      display: inline;
+      font-weight: bold;
+      font-size: xx-large;
+      text-align: center;
+    }
+    .author
+    {
+      display: inline;
+      font-weight: bold;
+      font-size: large;
+      text-align: center;
+      padding: 2em;
+    }
+    .date
+    {
+      display: inline;
+      font-weight: bold;
+      font-size: normal;
+      text-align: center;
+    }
+    .float
+    {
+       text-align: center;
+    }
+  </style>
+  <title>$title</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+_END_HTML_HEAD
+
+  if ($next)
+  {
+     $head .= "<link rel=\"next\" href=\"$next.html\" />";
+  }
+
+  if ($prev)
+  {
+     $head .= "<link rel=\"prev\" href=\"$prev.html\" />";
+  }
+
+  "$head</head>";
+}
+
+sub html_nav{
+  my ($prev, $next) = @_;
+
+  my $nav = '<hr /><div>';
+
+  if ($prev)
+  {
+     $nav .= "<div style=\"float: left;\"><a href=\"$prev.html\">"
+          . &get_label('prev')
+          . "</a></div>";
+  }
+
+  $nav .= "&nbsp;";
+
+  if ($next)
+  {
+     $nav .= "<div style=\"float: right;\"><a href=\"$next.html\">"
+          . &get_label('next')
+          . "</a></div>";
+  }
+
+  "$nav</div>"
+}
+ 
 1;

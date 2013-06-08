@@ -1,0 +1,68 @@
+<!-- Parameter entities -->
+<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref'>
+
+<!-- Main elements-->
+
+<!ELEMENT manual (preamble, document)>
+<!ATTLIST manual fontenc (#PCDATA)+>
+<!ELEMENT preamble (title, author+, date, newacro*)>
+<!ELEMENT document (node+ | printacronyms | printindex)>
+
+<!-- Preamble elements-->
+
+<!ELEMENT date (%basic.content;)+>
+<!ELEMENT newacro EMPTY>
+<!ATTLIST newacro tag (#PCDATA)+ #REQUIRED>
+<!ATTLIST newacro short (%basic.content;)+ #REQUIRED>
+<!ATTLIST newacro long (%basic.content;)+ #REQUIRED>
+<!ELEMENT author (%basic.content;)+>
+<!ELEMENT translator (%basic.content;)+>
+
+<!-- Document elements -->
+
+<!ELEMENT node (p | float | pre)+ | printacronyms | printindex >
+<!ATTLIST node tag (#PCDATA)+ #REQUIRED>
+<!ATTLIST node type (#PCDATA)+ #REQUIRED>
+<!ATTLIST node title (%basic.content;)+ #REQUIRED>
+
+<!-- Basic elements -->
+<!ELEMENT p (%basic.content;)*>
+<!ELEMENT url EMPTY>
+<!ATTLIST url www (#PCDATA)+ #REQUIRED>
+<!ATTLIST url text (#PCDATA)+>
+<!ELEMENT dict EMPTY>
+<!ATTLIST dict tag (#PCDATA)+ #REQUIRED>
+<!ATTLIST dict arg1 (%basic.content;)+>
+<!ATTLIST dict arg2 (%basic.content;)+>
+<!ATTLIST dict arg3 (%basic.content;)+>
+<!ATTLIST dict arg4 (%basic.content;)+>
+<!ATTLIST dict arg5 (%basic.content;)+>
+<!ATTLIST dict arg6 (%basic.content;)+>
+<!ATTLIST dict arg7 (%basic.content;)+>
+<!ATTLIST dict arg8 (%basic.content;)+>
+<!ATTLIST dict arg9 (%basic.content;)+>
+<!ELEMENT ref EMPTY>
+<!ATTLIST ref tag (#PCDATA)+ #REQUIRED>
+<!ELEMENT menu EMPTY>
+<!ATTLIST menu tag (#PCDATA)+ #REQUIRED>
+<!ELEMENT opt EMPTY >
+<!ATTLIST opt tag (#PCDATA)+ #REQUIRED>
+<!ELEMENT tt (%basic.content;)+>
+<!ELEMENT em (%basic.content;)+>
+<!ELEMENT b (%basic.content;)+>
+<!ELEMENT pre (%basic.content;)+>
+<!ELEMENT float (%basic.content;)+>
+<!ATTLIST float type (#PCDATA)+ #REQUIRED>
+<!ATTLIST float tag (#PCDATA)+ #REQUIRED>
+<!ATTLIST float caption (%basic.content;)+ #REQUIRED>
+<!ATTLIST float listcaption (%basic.content;)+>
+
+<!ELEMENT image EMPTY>
+<!ATTLIST image src (%basic.content;)+>
+<!ATTLIST image alt (#PCDATA)+>
+
+<!ELEMENT br EMPTY>
+<!ELEMENT hr EMPTY>
+<!ELEMENT printindex EMPTY>
+<!ELEMENT printacronyms EMPTY>
+<!ELEMENT LaTeX EMPTY>

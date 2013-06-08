@@ -10,13 +10,15 @@ en-GB	: $(DICTDIR)/helpset-en-GB/datatooltk.html \
 en-US	: $(DICTDIR)/helpset-en-US/datatooltk.html \
 	  datatooltk-en-US.pdf
 
-$(DICTDIR)/helpset-en-GB/datatooltk.html	: createdocs datatooltk-en.xml \
+$(DICTDIR)/helpset-en-GB/datatooltk.html	: createdocs \
+	  datatooltk-en.xml datatooltk.dtd \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-GB.prop \
 	  $(DICTDIR)/helpset-en-GB/images/
 	createdocs en GB
 
-$(DICTDIR)/helpset-en-US/datatooltk.html	: createdocs datatooltk-en.xml \
+$(DICTDIR)/helpset-en-US/datatooltk.html	: createdocs \
+	  datatooltk-en.xml datatooltk.dtd \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-US.prop \
 	  $(DICTDIR)/helpset-en-US/images/
@@ -39,11 +41,11 @@ datatooltk-en-US.tex	: createdocs datatooltk-en.xml \
 	createdocs en US
 
 $(DICTDIR)/helpset-en-GB/images/	:
-	cd $(DICTDIR)/helpset-en-GB/images/; \
+	cd $(DICTDIR)/helpset-en-GB/ ; \
 	ln -s ../$(DICTBACKREF)/images
 
 $(DICTDIR)/helpset-en-US/images/	:
-	cd $(DICTDIR)/helpset-en-US/images/; \
+	cd $(DICTDIR)/helpset-en-US/ ; \
 	ln -s ../$(DICTBACKREF)/images
 
 clean	:
