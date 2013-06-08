@@ -15,7 +15,11 @@ app	: lib/datatooltk.jar lib/javahelp2.jar lib/resources
 lib/resources   :
 	cd lib; ln -s ../resources
 
+lib/icons	:
+	cd lib; ln -s ../images/icons
+
 lib/datatooltk.jar	: java/Manifest.txt \
+			lib/icons \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class
 	cd classes; \
 	jar cmf ../java/Manifest.txt ../lib/datatooltk.jar \

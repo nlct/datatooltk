@@ -8,6 +8,7 @@ if ($#ARGV > 1 || $#ARGV < 0)
    die "Syntax: $0 <lang> [<region>]\n";
 }
 
+my $targetdir = '../resources/helpsets';
 my $dictdir = '../resources/dictionaries';
 my $mainclass = '../java/DatatoolTk.java';
 my $base = 'datatooltk';
@@ -120,7 +121,7 @@ unless (-e $xmlfile)
 }
 
 my $texfile = "$base-$locale.tex";
-my $helpsetdir = "$dictdir/helpset-$locale";
+my $helpsetdir = "$targetdir/helpset-$locale";
 
 unless (-e $helpsetdir)
 {
@@ -140,11 +141,11 @@ use XML::Parser;
 
 my %section_levels =
 (
-   'chapter'       => 'h1',
-   'section'       => 'h2',
-   'subsection'    => 'h3',
-   'subsubsection' => 'h4',
-   'paragraph'     => 'h5'
+   'chapter'       => '1',
+   'section'       => '2',
+   'subsection'    => '3',
+   'subsubsection' => '4',
+   'paragraph'     => '5'
 );
 
 my %acros = ();
@@ -167,8 +168,89 @@ $parser->parsefile( $xmlfile );
  
 close TEXFD;
 
-open HTMLFD, ">$helpsetdir/$base.html"
-  or die "Can't open '$helpsetdir/$base.html' $!\n";
+# Write helpset files
+
+open HSFD, ">$helpsetdir/$base.hs"
+  or die "Can't open '$helpsetdir/$base.hs' $!\n";
+binmode(HSFD, ":utf8");
+
+# TODO replace fixed English names with language dependent name from
+# dictionary
+
+print HSFD <<_END_HS_HEAD;
+<?xml version='1.0' encoding='utf8' ?>
+   <!DOCTYPE helpset
+     PUBLIC  "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version
+2.0//EN"
+     "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
+
+<helpset version="2.0">
+   <!-- title -->
+   <title>Manual</title>
+   <!-- maps -->
+   <maps>
+   <homeID>top </homeID>
+   <mapref location="Map.jhm" />
+   </maps>
+
+   <!-- views -->
+   <view xml:lang="$lang" mergetype="javax.help.UniteAppendMerge">
+      <name>TOC</name>
+      <label>Table Of Contents</label>
+      <type>javax.help.TOCView</type>
+      <data>${base}TOC.xml</data>
+   </view>
+   <view xml:lang="$lang" mergetype="javax.help.SortMerge">
+      <name>Index</name>
+      <label>Index</label>
+      <type>javax.help.IndexView</type>
+      <data>${base}Index.xml</data>
+   </view>
+   <view xml:lang="$lang">
+      <name>Search</name>
+      <label>Search</label>
+      <type>javax.help.SearchView</type>
+         <data engine="com.sun.java.help.search.DefaultSearchEngine">
+         JavaHelpSearch
+         </data>
+   </view>
+   <!-- presentation windows -->
+   <!-- main window -->
+   <presentation default=true>
+      <name>main window</name>
+      <size width="600" height="600" />
+      <location x="200" y="200" />
+      <title>Manual</title>
+      <toolbar>
+         <helpaction>javax.help.BackAction</helpaction>
+         <helpaction>javax.help.ForwardAction</helpaction>
+         <helpaction image="homeicon">javax.help.HomeAction</helpaction>
+      </toolbar>
+      <image>appicon</image>
+   </presentation>
+   <!-- secondary window -->
+   <presentation displayviews=false>
+      <name>secondary window</name>
+      <size width="450" height="500" />
+      <location x="200" y="200" />
+      <image>appicon</image>
+   </presentation>
+   <!-- implementation section -->
+   <impl>
+      <helpsetregistry
+helpbrokerclass="javax.help.DefaultHelpBroker" />
+      <viewerregistry viewertype="text/html"
+         viewerclass="com.sun.java.help.impl.CustomKit"/>
+      <viewerregistry viewertype="text/xml"
+          viewerclass="com.sun.java.help.impl.CustomXMLKit" />
+   </impl>
+</helpset>
+_END_HS_HEAD
+
+close HSFD;
+
+open HTMLFD, ">$helpsetdir/index.html"
+  or die "Can't open '$helpsetdir/index.html' $!\n";
 binmode(HTMLFD, ":utf8");
 
 print HTMLFD &html_head($docinfo{Title}, '', $nodes[0]->{Tag});
@@ -193,11 +275,39 @@ print HTMLFD "</body>\n</html>\n";
 
 close HTMLFD;
 
-my $prev = $base;
+my $prev = 'index';
+
+open TOCFD, ">$helpsetdir/${base}TOC.xml" 
+   or die "Can't open '$helpsetdir/${base}TOC.xml' $!\n";
+binmode(TOCFD, ":utf8");
+
+print TOCFD <<_END_TOC_HEAD;
+<?xml version='1.0' encoding='utf8' ?>
+   <!DOCTYPE toc
+     PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version
+2.0//EN"
+     "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0" xml:lang="en">
+<tocitem text="Manual" target="top" >
+_END_TOC_HEAD
+
+my $prevlevel = 0;
 
 for (my $idx = 0; $idx <= $#nodes; $idx++)
 {
    my $node = $nodes[$idx];
+
+# TODO fix this
+   for (my $level = scalar(keys %section_levels); $level >= 0; $level--)
+   {
+      if ($section_levels{$node->{Type}}-$level >= $prevlevel)
+      {
+         print TOCFD "</tocitem>\n";
+      }
+   }
+
+   print TOCFD "<tocitem text=\"$node->{Title}\" target=\"$node->{Tag}\">\n";
 
    my $next = ($idx == $#nodes ? '' : $nodes[$idx+1]->{Tag});
 
@@ -212,7 +322,7 @@ for (my $idx = 0; $idx <= $#nodes; $idx++)
 
    print HTMLFD "<body>\n";
 
-   my $header = $section_levels{$node->{Type}};
+   my $header = 'h'.$section_levels{$node->{Type}};
 
    print HTMLFD "<$header>", $node->{Title}, "</$header>\n";
 
@@ -238,7 +348,37 @@ for (my $idx = 0; $idx <= $#nodes; $idx++)
    close HTMLFD;
 
    $prev = $tag;
+   $prevlevel = $section_levels{$node->{Type}};
 }
+
+print TOCFD "</tocitem>\n</toc>\n";
+
+close TOCFD;
+
+# write map file
+
+open MAPFD, ">$helpsetdir/Map.jhm"
+  or die "Can't open '$helpsetdir/Map.jhm' $!\n";
+binmode(MAPFD, ":utf8");
+
+print MAPFD <<_END_MAP_HEAD;
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE map
+ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN"
+     "http://java.sun.com/products/javahelp/map_2_0.dtd">
+<map version="2.0" xml:lang="$lang">
+_END_MAP_HEAD
+
+print MAPFD "<mapID target=\"top\" url=\"index.html\" />\n";
+print MAPFD "<mapID target=\"appicon\" url=\"logosmall.png\" />\n";
+
+foreach my $tag (keys %tags)
+{
+   print MAPFD "<mapID target=\"$tag\" url=\"$tags{$tag}->{Ref}\" />\n";
+}
+
+print MAPFD "</map>\n";
+close MAPFD;
 
 sub handle_char{
    my( $expat, $string ) = @_;
@@ -352,7 +492,7 @@ sub start_manual{
    print TEXFD "% arara: pdflatex\n";
    print TEXFD "% arara: makeindex\n";
    print TEXFD "% arara: pdflatex\n";
-   print TEXFD "\\documentclass[index=totoc]{datatooltk}\n";
+   print TEXFD "\\documentclass[index=totoc,$babel{$locale}]{datatooltk}\n";
 }
 
 sub end_manual{
@@ -366,6 +506,7 @@ sub start_preamble{
       "\\usepackage[$fontenc]{fontenc}\n",
       "\\usepackage{graphicx}\n",
       "\\usepackage{makeidx}\n",
+      "\\usepackage{babel}\n",
       "\\usepackage[colorlinks]{hyperref}\n",
       "\\usepackage[acronym,toc]{glossaries}\n",
       "\\makeglossaries\n\\makeindex\n";
