@@ -1,0 +1,10 @@
+datatooltk
+
+A Java GUI that can be used to create datatool.sty databases in
+datatool's internal format, which can be quickly imported into
+a LaTeX document using \input. It can also be used in batch mode to
+convert from SQL or CSV.
+
+Initial version still under development.
+
+www.dickimaw-books.com
