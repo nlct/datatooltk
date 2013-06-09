@@ -229,9 +229,11 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN"
       <location x="200" y="200" />
       <title>$manualtitle</title>
       <toolbar>
-         <helpaction>javax.help.BackAction</helpaction>
-         <helpaction>javax.help.ForwardAction</helpaction>
          <helpaction image="homeIcon">javax.help.HomeAction</helpaction>
+         <helpaction image="backIcon">javax.help.BackAction</helpaction>
+         <helpaction image="forwardIcon">javax.help.ForwardAction</helpaction>
+         <helpaction image="reloadIcon">javax.help.ReloadAction</helpaction>
+         <helpaction image="printIcon">javax.help.PrintAction</helpaction>
       </toolbar>
       <image>appIcon</image>
    </presentation>
@@ -383,8 +385,12 @@ print MAPFD <<_END_MAP_HEAD;
 _END_MAP_HEAD
 
 print MAPFD "<mapID target=\"top\" url=\"$base.html\" />\n";
-print MAPFD "<mapID target=\"appIcon\" url=\"../../../icons/logosmall.png\" />\n";
-print MAPFD "<mapID target=\"homeIcon\" url=\"../../../icons/home.png\" />\n";
+print MAPFD "<mapID target=\"appIcon\" url=\"../../icons/logosmall.png\" />\n";
+print MAPFD "<mapID target=\"homeIcon\" url=\"../../icons/home.png\" />\n";
+print MAPFD "<mapID target=\"backIcon\" url=\"../../icons/back.png\" />\n";
+print MAPFD "<mapID target=\"forwardIcon\" url=\"../../icons/forward.png\" />\n";
+print MAPFD "<mapID target=\"reloadIcon\" url=\"../../icons/reload.png\" />\n";
+print MAPFD "<mapID target=\"printIcon\" url=\"../../icons/print.png\" />\n";
 
 &hs_map_id(\%tags);
 &hs_map_id(\%terms);
