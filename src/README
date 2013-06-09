@@ -8,7 +8,6 @@ MySQL connector (http://dev.mysql.com/downloads/connector/j/)
 
 Instructions:
 
-Fetch the above and copy or symlink the jar files (jlfgr-1_0.jar,
-javahelp2.jar, opencsv.jar and mysql-connector-java.jar)
+Fetch the above and copy or symlink the jar files (javahelp2.jar, opencsv.jar and mysql-connector-java.jar)
 in the lib/ directory
 www.dickimaw-books.com

@@ -13,7 +13,7 @@ en-US	: $(TARGETDIR)/datatooltk-en-US/datatooltk.html \
 
 $(TARGETDIR)/datatooltk-en-GB/datatooltk.html	: $(TARGETDIR) \
 	  createdocs \
-	  datatooltk-en.xml datatooltk.dtd \
+	  datatooltk-en.xml manual.dtd \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-GB.prop \
 	  $(TARGETDIR)/datatooltk-en-GB/images/
@@ -24,7 +24,7 @@ $(TARGETDIR)/datatooltk-en-GB/datatooltk.html	: $(TARGETDIR) \
 
 $(TARGETDIR)/datatooltk-en-US/datatooltk.html	: $(TARGETDIR) \
 	  createdocs \
-	  datatooltk-en.xml datatooltk.dtd \
+	  datatooltk-en.xml manual.dtd \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-US.prop \
 	  $(TARGETDIR)/datatooltk-en-US/images/

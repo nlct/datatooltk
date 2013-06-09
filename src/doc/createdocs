@@ -231,16 +231,16 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN"
       <toolbar>
          <helpaction>javax.help.BackAction</helpaction>
          <helpaction>javax.help.ForwardAction</helpaction>
-         <helpaction image="homeicon">javax.help.HomeAction</helpaction>
+         <helpaction image="homeIcon">javax.help.HomeAction</helpaction>
       </toolbar>
-      <image>appicon</image>
+      <image>appIcon</image>
    </presentation>
    <!-- secondary window -->
    <presentation displayviews=false>
       <name>secondary window</name>
       <size width="450" height="500" />
       <location x="200" y="200" />
-      <image>appicon</image>
+      <image>appIcon</image>
    </presentation>
    <!-- implementation section -->
    <impl>
@@ -383,7 +383,8 @@ print MAPFD <<_END_MAP_HEAD;
 _END_MAP_HEAD
 
 print MAPFD "<mapID target=\"top\" url=\"$base.html\" />\n";
-print MAPFD "<mapID target=\"appicon\" url=\"logosmall.png\" />\n";
+print MAPFD "<mapID target=\"appIcon\" url=\"../../../icons/logosmall.png\" />\n";
+print MAPFD "<mapID target=\"homeIcon\" url=\"../../../icons/home.png\" />\n";
 
 &hs_map_id(\%tags);
 &hs_map_id(\%terms);

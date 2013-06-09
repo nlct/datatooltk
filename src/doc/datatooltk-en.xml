@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE datatooltk SYSTEM "datatooltk.dtd">
+<!DOCTYPE manual SYSTEM "manual.dtd">
 <manual fontenc="T1">
   <preamble>
     <title>User Manual for <dict tag="appname" /> version 

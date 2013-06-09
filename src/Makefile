@@ -15,13 +15,13 @@ app	: lib/datatooltk.jar lib/javahelp2.jar lib/resources
 lib/resources   :
 	cd lib; ln -s ../resources
 
-lib/icons	:
-	cd lib; ln -s ../images/icons
+resources/icons	: 
+	cd resources; ln -s ../images/icons
 
 lib/datatooltk.jar	: java/Manifest.txt \
-			lib/icons \
+			resources/icons \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class \
-			doc/createdocs doc/datatooltk-*.xml doc/datatooltk.dtd
+			doc/createdocs doc/datatooltk-*.xml doc/manual.dtd
 	make -C doc
 	cd classes; \
 	jar cmf ../java/Manifest.txt ../lib/datatooltk.jar \
@@ -29,7 +29,7 @@ lib/datatooltk.jar	: java/Manifest.txt \
 	com/dickimawbooks/datatooltk/*/*.class 
 
 classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/*.java java/*/*.java lib/javahelp2.jar
+	java/*.java java/*/*.java
 	cd java; \
 	javac -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \

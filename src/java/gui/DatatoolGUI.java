@@ -38,8 +38,20 @@ public class DatatoolGUI extends JFrame
          }
       );
 
-      setIconImage(new ImageIcon(getClass()
-        .getResource("/icons/logosmall.png")).getImage());
+      String imgFile = "/resources/icons/logosmall.png";
+
+      URL imageURL = DatatoolTk.class.getResource(imgFile);
+
+      if (imageURL != null)
+      {
+         setIconImage(new ImageIcon(imageURL).getImage());
+      }
+      else
+      {
+         DatatoolGuiResources.error(null, 
+            new FileNotFoundException("Can't find resource: '"
+            +imgFile+"'"));
+      }
 
       try
       {
