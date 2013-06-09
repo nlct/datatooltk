@@ -41,14 +41,8 @@ package}}
 }
 
 \newcommand{\tableconts}[3]{%
-  \iftablecaptiontop
-    #2\label{#1}\vskip\baselineskip
-    {\centering #3\par}%
-  \else
-    {\centering #3\par}%
-    \vskip\baselineskip
-    #2\label{#1}%
-  \fi
+  #2\label{#1}\vskip\baselineskip
+  {\centering #3\par}%
 }
 
 \newcommand{\figureconts}[3]{%

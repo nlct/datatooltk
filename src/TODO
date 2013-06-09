@@ -8,12 +8,18 @@ Lots of things!
 
   - Make cells multilined to accommodate data that consists of 1 or
     more paragraphs of LaTeX code. (Blank lines will need to be
-    converted to \DTLpar when saving.)
+    converted to \DTLpar when saving.) See tests/test-para.csv
 
   - Need facility to edit header information (label, title and data
     type)
 
   - Need facility to add or remove columns/rows
+
+  - Import SQL function needs a dialog box to enter the equivalent
+    of the sql command line options --sqluser, --sqlpassword etc
+
+  - Add a user preferences file so user can specify startup
+    directory etc.
 
 * Image icons are just temporary for testing. These need to be
   changed to more interesting images.

@@ -157,6 +157,8 @@ my %terms = ();
 
 my @float_elements = ();
 
+my @tabular_specs = ();
+
 my %counters = ();
 
 # open the TeX file
@@ -283,7 +285,7 @@ print HTMLFD "</body>\n</html>\n";
 
 close HTMLFD;
 
-my $prev = 'index';
+my $prev = $base;
 
 open TOCFD, ">$helpsetdir/${base}TOC.xml" 
    or die "Can't open '$helpsetdir/${base}TOC.xml' $!\n";
@@ -423,20 +425,27 @@ sub print_idx_entries{
 
    foreach my $key (keys %$hash)
    {
-      my $text = $hash->{$key}->{Text};
-
-      $text=~s/<\/?[^>]*>//g;
-
-      print IDXFD "<indexitem text=\"",
-        $text, "\" target=\"",
-        $key, "\">\n";
-
-      if ($hash->{$key}->{Children})
+      if ($hash->{$key}->{Text})
       {
-         &print_idx_entries($hash->{$key}->{Children});
-      }
+         my $text = $hash->{$key}->{Text};
 
-      print IDXFD "</indexitem>\n";
+         $text=~s/<\/?[^>]*>//g;
+
+         print IDXFD "<indexitem text=\"",
+           $text, "\" target=\"",
+           $key, "\">\n";
+
+         if ($hash->{$key}->{Children})
+         {
+            &print_idx_entries($hash->{$key}->{Children});
+         }
+
+         print IDXFD "</indexitem>\n";
+      }
+      else
+      {
+         warn "Text not set for '$key'\n";
+      }
    }
 }
 
@@ -453,7 +462,14 @@ sub hs_map_id{
 
    foreach my $tag (keys %$hash)
    {
-      print MAPFD "<mapID target=\"$tag\" url=\"$hash->{$tag}->{Ref}\" />\n";
+      if ($hash->{$tag}->{Ref})
+      {
+         print MAPFD "<mapID target=\"$tag\" url=\"$hash->{$tag}->{Ref}\" />\n";
+      }
+      else
+      {
+         warn "No Ref found for '$tag'\n";
+      }
 
       if ($hash->{$tag}->{Children})
       {
@@ -796,6 +812,58 @@ sub end_newacro{
    my ($expat) = @_;
 }
  
+sub start_newterm{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'tag' attribute for element 'newterm' on line ",
+         $expat->current_line, "\n";
+   }
+
+   unless ($attrs{text})
+   {
+      die "Missing 'text' attribute for element 'newterm' on line ",
+         $expat->current_line, "\n";
+   }
+
+   my $tag = 'gls_'.$attrs{tag};
+
+   if ($terms{$tag})
+   {
+      die "Term '", $attrs{tag}, "' already defined\n";
+   }
+
+   $terms{$tag}->{Text} = $attrs{text};
+
+   if ($attrs{description})
+   {
+      $terms{$tag}->{Description} = $attrs{description};
+
+      # write html file used by popup window if a description has been
+      # supplied
+
+      open FD, ">$helpsetdir/$tag.html" 
+         or die "Can't open '$helpsetdir/$tag.html' $!\n";
+
+      print FD &html_head($attrs{text});
+
+      print FD "<body>\n<h1>$attrs{text}</h1>\n",
+         ucfirst($attrs{description}), ".\n";
+
+      print FD "</body>\n</html>\n";
+
+      close FD;
+
+      print TEXFD "\\newglossaryentry{$attrs{tag}}{name={",
+       $attrs{text}, "},description={", $attrs{description}, "}}\n";
+   }
+}
+
+sub end_newterm{
+   my ($expat) = @_;
+}
+ 
 sub start_p{
    my ($expat, %attrs) = @_;
 
@@ -876,7 +944,7 @@ sub end_sty{
    my $sty = $docinfo{sty};
    $docinfo{sty} = '';
 
-   &hs_index_term("sty_$sty", "<tt>$sty</tt>", $sty, \%terms);
+   &hs_index_term("sty_$sty", "<tt>$sty</tt>", "$sty.sty", \%terms);
 
    print TEXFD "}";
 }
@@ -1102,6 +1170,16 @@ sub end_LaTeX{
    my ($expat) = @_;
 }
 
+sub start_relax{
+   my ($expat, %attrs) = @_;
+
+   print TEXFD "\\relax ";
+}
+
+sub end_relax{
+   my ($expat) = @_;
+}
+
 sub start_dict{
    my ($expat, %attrs) = @_;
 
@@ -1131,6 +1209,8 @@ sub start_menu{
         $expat->current_line, "\n";
    }
 
+   my $hash = \%terms;
+
    my $currentlabel;
    my $index = '';
    my $html  = '';
@@ -1154,6 +1234,18 @@ sub start_menu{
       $html .= $text;
 
       print TEXFD "\\menu{$text}";
+
+      my $termtag = 'menu_'.$currentlabel;
+
+      &hs_index_term($termtag, "", $text, $hash);
+
+      unless ($hash->{$termtag}->{Children})
+      {
+         my %h = ();
+         $hash->{$termtag}->{Children} = \%h;
+      }
+
+      $hash = $hash->{$termtag}->{Children};
 
       $text=~s/([@"!|])/"$1/g;
 
@@ -1209,6 +1301,55 @@ sub end_acr{
    my ($expat) = @_;
 }
  
+sub start_term{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'term' element's 'tag' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   my $hstag = "gls_".$attrs{tag};
+
+   unless ($terms{$hstag})
+   {
+      die "Unknown term tag '$hstag' on line ",
+         $expat->current_line, "\n";
+   }
+
+   my $html = $terms{$hstag}->{Text};
+
+   unless ($terms{$hstag}->{Ref})
+   {
+      $terms{$hstag}->{Ref} = $nodes[$#nodes]->{Tag} . ".html#$hstag";
+   }
+
+   if ($terms{$hstag}->{Description})
+   {
+      $html = &hs_popup("gls_".$attrs{tag}.".html", $html);
+
+      print TEXFD "\\gls{", $attrs{tag}, "}";
+   }
+   else
+   {
+      my $text = $terms{$hstag}->{Text};
+      my $idx  = $text;
+
+      $idx=~s/([!@"|])/"$1/g;
+
+      print TEXFD "$text\\index{$idx}";
+   }
+
+   &hs_index_term($hstag, $html, $terms{$hstag}->{Text}, 
+     \%terms);
+
+}
+
+sub end_term{
+   my ($expat) = @_;
+}
+ 
 sub start_ref{
    my ($expat, %attrs) = @_;
 
@@ -1254,6 +1395,131 @@ sub start_opt{
 }
 
 sub end_opt{
+   my ($expat) = @_;
+}
+
+sub start_tabular{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{spec})
+   {
+      die "Element 'tabular' missing 'spec' attribute on line ",
+         $expat->current_line;
+   }
+
+   &handle_html('<table>');
+
+   print TEXFD "\\begin{tabular}{", $attrs{spec}, '}';
+
+   my %hash =
+   (
+      spec => $attrs{spec},
+      column => 1
+   );
+
+   push @tabular_specs, \%hash;
+}
+ 
+sub end_tabular{
+   my ($expat) = @_;
+
+   &handle_html('</table>');
+
+   pop @tabular_specs;
+
+   print TEXFD "\\end{tabular}";
+}
+
+sub start_tr{
+   my ($expat, %attrs) = @_;
+
+   $tabular_specs[$#tabular_specs]->{column} = 1;
+
+   &handle_html('<tr>');
+}
+
+sub end_tr{
+   my ($expat) = @_;
+
+   &handle_html('</tr>');
+
+   print TEXFD "\\tabularnewline ";
+}
+
+sub start_td{
+   my ($expat, %attrs) = @_;
+
+   my $colspan = 1;
+
+   if ($attrs{span})
+   {
+      $colspan = $attrs{span};
+
+      unless ($colspan=~/^\d+$/)
+      {
+         die "Attribute 'span' must be an integer on line ",
+           $expat->current_line, "\n";
+      }
+   }
+
+   my $orgcolspec = substr $tabular_specs[$#tabular_specs]->{spec},
+      $tabular_specs[$#tabular_specs]->{column}-1, 1;
+
+   my $colspec = $orgcolspec;
+
+   if ($attrs{spec})
+   {
+      $colspec = $attrs{spec};
+   }
+
+   my $htmlcolspan = ($colspan == 1 ? '' : "colspan=\"$colspan\"");
+
+   if ($colspec eq 'l')
+   {
+      &handle_html("<td align=\"left\" $htmlcolspan>");
+   }
+   elsif ($colspec eq 'r')
+   {
+      &handle_html("<td align=\"right\" $htmlcolspan>");
+   }
+   elsif ($colspec eq 'c')
+   {
+      &handle_html("<td align=\"center\" $htmlcolspan>");
+   }
+
+   unless ($tabular_specs[$#tabular_specs]->{column} == 1)
+   {
+      print TEXFD "&";
+   }
+
+   if (($orgcolspec eq $colspec) and $colspan == 1)
+   {
+      $tabular_specs[$#tabular_specs]->{egroup} = '';
+   }
+   else
+   {
+      print TEXFD "\\multicolumn{$colspan}{$colspec}{";
+      $tabular_specs[$#tabular_specs]->{egroup} = '}';
+   }
+
+   $tabular_specs[$#tabular_specs]->{column} += $colspan;
+}
+
+sub end_td{
+   my ($expat) = @_;
+
+   &handle_html('</td>');
+
+   print TEXFD $tabular_specs[$#tabular_specs]->{egroup};
+}
+
+sub start_printglossary{
+   my ($expat, %attrs) = @_;
+
+   print TEXFD "\\printglossary";
+}
+
+sub end_printglossary{
    my ($expat) = @_;
 }
  
@@ -1337,6 +1603,7 @@ xml:lang="en-GB">
     .float
     {
        text-align: center;
+       padding-top: 16;
     }
   </style>
   <title>$title</title>
@@ -1359,25 +1626,23 @@ _END_HTML_HEAD
 sub html_nav{
   my ($prev, $next) = @_;
 
-  my $nav = '<hr /><div>';
+  my $nav = '<hr /><table width="100%"><tr><td align="left">';
 
   if ($prev)
   {
-     $nav .= "<div style=\"float: left;\"><a href=\"$prev.html\">"
-          . &get_label('prev')
-          . "</a></div>";
+     $nav .= "<a href=\"$prev.html\">" . &get_label('prev') . "</a>";
   }
 
-  $nav .= "&nbsp;";
+  $nav .= '</td><td align="right">';
 
   if ($next)
   {
-     $nav .= "<div style=\"float: right;\"><a href=\"$next.html\">"
+     $nav .= "<a href=\"$next.html\">"
           . &get_label('next')
-          . "</a></div>";
+          . "</a>";
   }
 
-  "$nav</div>"
+  "$nav</td></tr></table>"
 }
  
 1;

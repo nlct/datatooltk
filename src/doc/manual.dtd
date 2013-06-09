@@ -1,12 +1,12 @@
 <!-- Parameter entities -->
-<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref'>
+<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref | term | tabular | menu'>
 
 <!-- Main elements-->
 
 <!ELEMENT manual (preamble, document)>
 <!ATTLIST manual fontenc (#PCDATA)+>
-<!ELEMENT preamble (title, author+, date, newacro*)>
-<!ELEMENT document (node+ | printacronyms | printindex)>
+<!ELEMENT preamble (title, author+, date, newacro*, newterm*)>
+<!ELEMENT document (node+ | printglossary | printacronyms | printindex)>
 
 <!-- Preamble elements-->
 
@@ -15,6 +15,10 @@
 <!ATTLIST newacro tag (#PCDATA)+ #REQUIRED>
 <!ATTLIST newacro short (%basic.content;)+ #REQUIRED>
 <!ATTLIST newacro long (%basic.content;)+ #REQUIRED>
+<!ELEMENT newterm EMPTY>
+<!ATTLIST newterm tag (#PCDATA)+ #REQUIRED>
+<!ATTLIST newterm text (%basic.content;)+ #REQUIRED>
+<!ATTLIST newterm description (%basic.content;)+>
 <!ELEMENT author (%basic.content;)+>
 <!ELEMENT translator (%basic.content;)+>
 
@@ -60,6 +64,15 @@
 <!ELEMENT image EMPTY>
 <!ATTLIST image src (%basic.content;)+>
 <!ATTLIST image alt (#PCDATA)+>
+
+<!ELEMENT tabular (tr)+>
+<!ATTLIST tabular spec (#PCDATA)+ #REQUIRED>
+
+<!ELEMENT tr (td)+>
+
+<!ELEMENT td (%basic.content;)+>
+<!ATTLIST td span (#PCDATA)+>
+<!ATTLIST td spec (#PCDATA)+>
 
 <!ELEMENT br EMPTY>
 <!ELEMENT hr EMPTY>
