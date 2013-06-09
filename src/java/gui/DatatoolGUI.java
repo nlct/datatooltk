@@ -5,7 +5,10 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URL;
 import javax.swing.filechooser.FileFilter;
+import javax.help.*;
 
 import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.*;
@@ -35,6 +38,22 @@ public class DatatoolGUI extends JFrame
          }
       );
 
+      setIconImage(new ImageIcon(getClass()
+        .getResource("/icons/logosmall.png")).getImage());
+
+      try
+      {
+         initHelp();
+      }
+      catch (HelpSetException e)
+      {
+         DatatoolGuiResources.error(null, e);
+      }
+      catch (FileNotFoundException e)
+      {
+         DatatoolGuiResources.error(null, e);
+      }
+
       JMenuBar mbar = new JMenuBar();
       setJMenuBar(mbar);
 
@@ -59,7 +78,7 @@ public class DatatoolGUI extends JFrame
       mbar.add(helpM);
 
       helpM.add(DatatoolGuiResources.createJMenuItem(
-         "help", "manual", this,
+         "help", "manual", csh,
           KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)));
 
       helpM.add(DatatoolGuiResources.createJMenuItem(
@@ -112,6 +131,75 @@ public class DatatoolGUI extends JFrame
       setSize(width, height);
 
       setLocationRelativeTo(null);
+   }
+
+   private void initHelp()
+     throws HelpSetException,FileNotFoundException
+   {
+      if (mainHelpBroker == null)
+      {
+         HelpSet mainHelpSet = null;
+
+         String resource = "datatooltk";
+
+         String helpsetLocation = "/resources/helpsets/"+resource;
+
+         String lang    = DatatoolTk.getLanguage();
+         String country = DatatoolTk.getCountry();
+
+         URL hsURL = getClass().getResource(helpsetLocation
+          + "-" + lang + "-" + country + "/" + resource + ".hs");
+
+         if (hsURL == null)
+         {
+            hsURL = getClass().getResource(helpsetLocation
+              + "-"+lang + "/" + resource + ".hs");
+
+            if (hsURL == null)
+            {
+               hsURL = getClass().getResource(helpsetLocation
+                 + "-en-US/" + resource + ".hs");
+
+               if (hsURL == null)
+               {
+                  throw new FileNotFoundException(
+                    "Can't find helpset files. Tried: \n"
+                   + helpsetLocation + "-" + lang + "-" 
+                   + country + "/" + resource + ".hs\n"
+                   + helpsetLocation + "-" + lang + "/" 
+                   + resource + ".hs\n"
+                   + helpsetLocation + "-en-US/" + resource + ".hs");
+               }
+            }
+         }
+
+         mainHelpSet = new HelpSet(null, hsURL);
+
+         mainHelpBroker = mainHelpSet.createHelpBroker();
+
+         csh = new CSH.DisplayHelpFromSource(mainHelpBroker);
+      }
+   }
+
+   public void enableHelpOnButton(JComponent comp, String id)
+   {
+      if (mainHelpBroker != null)
+      {
+         try
+         {
+            mainHelpBroker.enableHelpOnButton(comp, id, 
+               mainHelpBroker.getHelpSet());
+         }
+         catch (BadIDException e)
+         {
+            DatatoolGuiResources.error(null, e);
+         }
+      }
+      else
+      {
+         DatatoolTk.debug("Can't enable help on button (id="+id
+           +"): null help broker");
+      }
    }
 
    public void actionPerformed(ActionEvent evt)
@@ -363,4 +451,7 @@ public class DatatoolGUI extends JFrame
 
    private FileFilter texFilter, dbtexFilter, csvFilter, txtFilter,
      csvtxtFilter;
+
+   private HelpBroker mainHelpBroker;
+   private CSH.DisplayHelpFromSource csh;
 }

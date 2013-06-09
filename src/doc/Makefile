@@ -5,31 +5,31 @@ MAINCLASS=../java/DatatoolTk.java
 
 all	: en-GB en-US
 
-en-GB	: $(TARGETDIR)/helpset-en-GB/datatooltk.html \
+en-GB	: $(TARGETDIR)/datatooltk-en-GB/datatooltk.html \
 	  datatooltk-en-GB.pdf
 
-en-US	: $(TARGETDIR)/helpset-en-US/datatooltk.html \
+en-US	: $(TARGETDIR)/datatooltk-en-US/datatooltk.html \
 	  datatooltk-en-US.pdf
 
-$(TARGETDIR)/helpset-en-GB/datatooltk.html	: $(TARGETDIR) \
+$(TARGETDIR)/datatooltk-en-GB/datatooltk.html	: $(TARGETDIR) \
 	  createdocs \
 	  datatooltk-en.xml datatooltk.dtd \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-GB.prop \
-	  $(TARGETDIR)/helpset-en-GB/images/
+	  $(TARGETDIR)/datatooltk-en-GB/images/
 	createdocs en GB
-	cd $(TARGETDIR)/helpset-en-GB; \
+	cd $(TARGETDIR)/datatooltk-en-GB; \
 	  \rm -r -f JavaHelpSearch ; \
 	  jh2indexer .
 
-$(TARGETDIR)/helpset-en-US/datatooltk.html	: $(TARGETDIR) \
+$(TARGETDIR)/datatooltk-en-US/datatooltk.html	: $(TARGETDIR) \
 	  createdocs \
 	  datatooltk-en.xml datatooltk.dtd \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-US.prop \
-	  $(TARGETDIR)/helpset-en-US/images/
+	  $(TARGETDIR)/datatooltk-en-US/images/
 	createdocs en US
-	cd $(TARGETDIR)/helpset-en-US; \
+	cd $(TARGETDIR)/datatooltk-en-US; \
 	  \rm -r -f JavaHelpSearch ; \
 	  jh2indexer .
 
@@ -52,14 +52,14 @@ datatooltk-en-US.tex	: createdocs datatooltk-en.xml \
 	  $(DICTDIR)/datatooltk-en-US.prop
 	createdocs en US
 
-$(TARGETDIR)/helpset-en-GB/images/	: 
-	mkdir -p $(TARGETDIR)/helpset-en-GB
-	cd $(TARGETDIR)/helpset-en-GB/ ; \
+$(TARGETDIR)/datatooltk-en-GB/images/	: 
+	mkdir -p $(TARGETDIR)/datatooltk-en-GB
+	cd $(TARGETDIR)/datatooltk-en-GB/ ; \
 	ln -s ../$(TARGETBACKREF)/images
 
-$(TARGETDIR)/helpset-en-US/images/	: 
-	mkdir -p $(TARGETDIR)/helpset-en-US
-	cd $(TARGETDIR)/helpset-en-US/ ; \
+$(TARGETDIR)/datatooltk-en-US/images/	: 
+	mkdir -p $(TARGETDIR)/datatooltk-en-US
+	cd $(TARGETDIR)/datatooltk-en-US/ ; \
 	ln -s ../$(TARGETBACKREF)/images
 
 clean	:

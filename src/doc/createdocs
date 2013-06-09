@@ -34,8 +34,11 @@ if ($#ARGV == 1)
   $locale .= "-".$ARGV[1];
 }
 
+my $encoding_file = 'utf8';
+my $encoding_xml  = 'UTF-8';
+
 open FD, "$mainclass" or die "Can't open '$mainclass' $!\n";
-binmode(FD, ":utf8");
+binmode(FD, ":$encoding_file");
 
 my %dict = ();
 
@@ -76,7 +79,7 @@ unless (-e $propfile)
 }
 
 open FD, "$propfile" or die "Can't open '$propfile' $!\n";
-binmode(FD, ":utf8");
+binmode(FD, ":$encoding_file");
 
 my $linenum = 0;
 
@@ -121,7 +124,7 @@ unless (-e $xmlfile)
 }
 
 my $texfile = "$base-$locale.tex";
-my $helpsetdir = "$targetdir/helpset-$locale";
+my $helpsetdir = "$targetdir/$base-$locale";
 
 unless (-e $helpsetdir)
 {
@@ -174,21 +177,23 @@ close TEXFD;
 
 open HSFD, ">$helpsetdir/$base.hs"
   or die "Can't open '$helpsetdir/$base.hs' $!\n";
-binmode(HSFD, ":utf8");
+binmode(HSFD, ":$encoding_file");
 
-# TODO replace fixed English names with language dependent name from
-# dictionary
+my $toctitle = &get_label('toc');
+my $manualtitle = &get_label('help.manual');
+my $indextitle = &get_label('index');
+my $searchtitle = &get_label('search');
 
 print HSFD <<_END_HS_HEAD;
-<?xml version='1.0' encoding='utf8' ?>
-   <!DOCTYPE helpset
-     PUBLIC  "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version
-2.0//EN"
-     "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
+<?xml version='1.0' encoding='$encoding_xml' ?>
+<!DOCTYPE helpset
+PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN"
+"http://java.sun.com/products/javahelp/helpset_2_0.dtd">
+
 
 <helpset version="2.0">
    <!-- title -->
-   <title>Manual</title>
+   <title>$manualtitle</title>
    <!-- maps -->
    <maps>
    <homeID>top </homeID>
@@ -196,21 +201,21 @@ print HSFD <<_END_HS_HEAD;
    </maps>
 
    <!-- views -->
-   <view xml:lang="$lang" mergetype="javax.help.UniteAppendMerge">
+   <view xml:lang="$locale" mergetype="javax.help.UniteAppendMerge">
       <name>TOC</name>
-      <label>Table Of Contents</label>
+      <label>$toctitle</label>
       <type>javax.help.TOCView</type>
       <data>${base}TOC.xml</data>
    </view>
-   <view xml:lang="$lang" mergetype="javax.help.SortMerge">
+   <view xml:lang="$locale" mergetype="javax.help.SortMerge">
       <name>Index</name>
-      <label>Index</label>
+      <label>$indextitle</label>
       <type>javax.help.IndexView</type>
       <data>${base}Index.xml</data>
    </view>
-   <view xml:lang="$lang">
+   <view xml:lang="$locale">
       <name>Search</name>
-      <label>Search</label>
+      <label>$searchtitle</label>
       <type>javax.help.SearchView</type>
          <data engine="com.sun.java.help.search.DefaultSearchEngine">
          JavaHelpSearch
@@ -222,7 +227,7 @@ print HSFD <<_END_HS_HEAD;
       <name>main window</name>
       <size width="600" height="600" />
       <location x="200" y="200" />
-      <title>Manual</title>
+      <title>$manualtitle</title>
       <toolbar>
          <helpaction>javax.help.BackAction</helpaction>
          <helpaction>javax.help.ForwardAction</helpaction>
@@ -239,8 +244,7 @@ print HSFD <<_END_HS_HEAD;
    </presentation>
    <!-- implementation section -->
    <impl>
-      <helpsetregistry
-helpbrokerclass="javax.help.DefaultHelpBroker" />
+      <helpsetregistry helpbrokerclass="javax.help.DefaultHelpBroker" />
       <viewerregistry viewertype="text/html"
          viewerclass="com.sun.java.help.impl.CustomKit"/>
       <viewerregistry viewertype="text/xml"
@@ -251,9 +255,9 @@ _END_HS_HEAD
 
 close HSFD;
 
-open HTMLFD, ">$helpsetdir/index.html"
-  or die "Can't open '$helpsetdir/index.html' $!\n";
-binmode(HTMLFD, ":utf8");
+open HTMLFD, ">$helpsetdir/$base.html"
+  or die "Can't open '$helpsetdir/$base.html' $!\n";
+binmode(HTMLFD, ":$encoding_file");
 
 print HTMLFD &html_head($docinfo{Title}, '', $nodes[0]->{Tag});
 
@@ -281,10 +285,10 @@ my $prev = 'index';
 
 open TOCFD, ">$helpsetdir/${base}TOC.xml" 
    or die "Can't open '$helpsetdir/${base}TOC.xml' $!\n";
-binmode(TOCFD, ":utf8");
+binmode(TOCFD, ":$encoding_file");
 
 print TOCFD <<_END_TOC_HEAD;
-<?xml version='1.0' encoding='utf8' ?>
+<?xml version='1.0' encoding='$encoding_xml' ?>
    <!DOCTYPE toc
      PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version
 2.0//EN"
@@ -317,7 +321,7 @@ for (my $idx = 0; $idx <= $#nodes; $idx++)
    open HTMLFD, ">$helpsetdir/$tag.html"
      or die "Can't open '$helpsetdir/$tag.html' $!\n";
 
-   binmode(HTMLFD, ":utf8");
+   binmode(HTMLFD, ":$encoding_file");
 
    print HTMLFD &html_head($node->{Title}, $prev, $next);
 
@@ -368,28 +372,21 @@ close TOCFD;
 
 open MAPFD, ">$helpsetdir/Map.jhm"
   or die "Can't open '$helpsetdir/Map.jhm' $!\n";
-binmode(MAPFD, ":utf8");
+binmode(MAPFD, ":$encoding_file");
 
 print MAPFD <<_END_MAP_HEAD;
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE map
  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN"
      "http://java.sun.com/products/javahelp/map_2_0.dtd">
-<map version="2.0" xml:lang="$lang">
+<map version="2.0" xml:lang="$locale">
 _END_MAP_HEAD
 
-print MAPFD "<mapID target=\"top\" url=\"index.html\" />\n";
+print MAPFD "<mapID target=\"top\" url=\"$base.html\" />\n";
 print MAPFD "<mapID target=\"appicon\" url=\"logosmall.png\" />\n";
 
-foreach my $tag (keys %tags)
-{
-   print MAPFD "<mapID target=\"$tag\" url=\"$tags{$tag}->{Ref}\" />\n";
-}
-
-foreach my $tag (keys %terms)
-{
-   print MAPFD "<mapID target=\"$tag\" url=\"$terms{$tag}->{Ref}\" />\n";
-}
+&hs_map_id(\%tags);
+&hs_map_id(\%terms);
 
 print MAPFD "</map>\n";
 close MAPFD;
@@ -398,13 +395,12 @@ close MAPFD;
 
 open IDXFD, ">$helpsetdir/${base}Index.xml"
  or die "Can't open '$helpsetdir/${base}Index.xml' $!\n";
-binmode(IDXFD, ":utf8");
+binmode(IDXFD, ":$encoding_file");
 
 print IDXFD <<_END_IDX_HEAD;
-<?xml version='1.0' encoding='utf8' ?>
+<?xml version='1.0' encoding='$encoding_xml' ?>
    <!DOCTYPE index
-     PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version
-2.0//EN"
+     PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN"
      "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
@@ -418,11 +414,7 @@ close IDXFD;
 sub print_idx_entries{
    my ($hash) = @_;
 
-   my @sortedkeys = sort 
-     {lc($hash->{$a}->{Sort}) cmp lc($hash->{$b}->{Sort})}
-     keys %$hash;
-
-   foreach my $key (@sortedkeys)
+   foreach my $key (keys %$hash)
    {
       my $text = $hash->{$key}->{Text};
 
@@ -430,7 +422,7 @@ sub print_idx_entries{
 
       print IDXFD "<indexitem text=\"",
         $text, "\" target=\"",
-        $hash->{$key}->{Ref}, "\">\n";
+        $key, "\">\n";
 
       if ($hash->{$key}->{Children})
       {
@@ -449,8 +441,22 @@ sub handle_char{
    print TEXFD $string;
 }
 
+sub hs_map_id{
+   my ($hash) = @_;
+
+   foreach my $tag (keys %$hash)
+   {
+      print MAPFD "<mapID target=\"$tag\" url=\"$hash->{$tag}->{Ref}\" />\n";
+
+      if ($hash->{$tag}->{Children})
+      {
+         &hs_map_id($hash->{$tag}->{Children});
+      }
+   }
+}
+
 sub hs_index_term{
-   my ($tag, $text, $sort, $hash) = @_;
+   my ($tag, $text, $term, $hash) = @_;
 
    if ($hash->{$tag})
    {
@@ -458,8 +464,7 @@ sub hs_index_term{
    }
    else
    {
-      $hash->{$tag}->{Text} = $text;
-      $hash->{$tag}->{Sort} = $sort;
+      $hash->{$tag}->{Text} = $term;
       $hash->{$tag}->{Ref}  = $nodes[$#nodes]->{Tag}.".html#$tag";
 
       &handle_html("<a name=\"$tag\">$text</a>");
@@ -472,16 +477,16 @@ sub hs_popup{
 
    my $html = <<_END_POPUP;
   <object classid="java:com.sun.java.help.impl.JHSecondaryViewer">
-    <param name="viewerStyle" value="javax.htlp.Popup" />
+    <param name="viewerStyle" value="javax.help.Popup" />
     <param name="viewerSize" value="400,200" />
     <param name="content" value="$href" />
     <param name="viewerActivator" value="javax.help.LinkLabel" />
-    <param name="text" value="$text" />
+    <param name="text" value="&#x261B;" />
     <param name="textColor" value="blue" />
   </object>
 _END_POPUP
 
-   $html
+   $html.$text
 }
 
 sub handle_html{
@@ -1187,7 +1192,7 @@ sub start_acr{
       $html = $acros{$attrs{tag}}->{Long}
             . ' (' . $acros{$attrs{tag}}->{Short} . ')';
 
-      &hs_index_term('acr_'.$attrs{tag}, $html, $html, \%terms);
+      &hs_index_term('acr_'.$attrs{tag}, $html, ucfirst($html), \%terms);
    }
 
    print TEXFD "\\gls{", $attrs{tag}, "}";
@@ -1226,8 +1231,17 @@ sub start_opt{
 
    my $text = '--'.$attrs{tag};
 
-   &hs_index_term('opt_'.$attrs{tag}, "<tt>$text</tt>", $text,
-     \%terms);
+   unless ($terms{options})
+   {
+      &hs_index_term('options', '', &get_label('options'), \%terms);
+
+      my %hash = ();
+
+      $terms{options}->{Children} = \%hash;
+   }
+
+   &hs_index_term('opt_'.$attrs{tag}, "<tt>$text</tt>", $text, 
+      $terms{options}->{Children});
 
    print TEXFD "\\opt{", $attrs{tag}, "}";
 }

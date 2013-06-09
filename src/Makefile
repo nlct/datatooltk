@@ -20,7 +20,9 @@ lib/icons	:
 
 lib/datatooltk.jar	: java/Manifest.txt \
 			lib/icons \
-			classes/com/dickimawbooks/datatooltk/DatatoolTk.class
+			classes/com/dickimawbooks/datatooltk/DatatoolTk.class \
+			doc/createdocs doc/datatooltk-*.xml doc/datatooltk.dtd
+	make -C doc
 	cd classes; \
 	jar cmf ../java/Manifest.txt ../lib/datatooltk.jar \
 	com/dickimawbooks/datatooltk/*.class \

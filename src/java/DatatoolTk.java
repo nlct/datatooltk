@@ -176,13 +176,25 @@ public class DatatoolTk
       }
    }
 
+   public static String getLanguage()
+   {
+      // TODO allow user to select a language other than the default
+
+      return Locale.getDefault().getLanguage();
+   }
+
+   public static String getCountry()
+   {
+      // TODO allow user to select a country other than the default
+
+      return Locale.getDefault().getCountry();
+   }
+
    public static void loadDictionary()
       throws IOException
    {
-      Locale locale = Locale.getDefault();
-
-      String lang    = locale.getLanguage();
-      String country = locale.getCountry();
+      String lang    = getLanguage();
+      String country = getCountry();
 
       String resource = "datatooltk";
 
