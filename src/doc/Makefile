@@ -18,6 +18,9 @@ $(TARGETDIR)/helpset-en-GB/datatooltk.html	: $(TARGETDIR) \
 	  $(DICTDIR)/datatooltk-en-GB.prop \
 	  $(TARGETDIR)/helpset-en-GB/images/
 	createdocs en GB
+	cd $(TARGETDIR)/helpset-en-GB; \
+	  \rm -r -f JavaHelpSearch ; \
+	  jh2indexer .
 
 $(TARGETDIR)/helpset-en-US/datatooltk.html	: $(TARGETDIR) \
 	  createdocs \
@@ -26,6 +29,9 @@ $(TARGETDIR)/helpset-en-US/datatooltk.html	: $(TARGETDIR) \
 	  $(DICTDIR)/datatooltk-en-US.prop \
 	  $(TARGETDIR)/helpset-en-US/images/
 	createdocs en US
+	cd $(TARGETDIR)/helpset-en-US; \
+	  \rm -r -f JavaHelpSearch ; \
+	  jh2indexer .
 
 $(TARGETDIR)	:
 	mkdir $(TARGETDIR)

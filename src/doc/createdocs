@@ -150,6 +150,8 @@ my %section_levels =
 
 my %acros = ();
 
+my %terms = ();
+
 my @float_elements = ();
 
 my %counters = ();
@@ -298,10 +300,9 @@ for (my $idx = 0; $idx <= $#nodes; $idx++)
 {
    my $node = $nodes[$idx];
 
-# TODO fix this
    for (my $level = scalar(keys %section_levels); $level >= 0; $level--)
    {
-      if ($section_levels{$node->{Type}}-$level >= $prevlevel)
+      if ($section_levels{$node->{Type}}+$level <= $prevlevel)
       {
          print TOCFD "</tocitem>\n";
       }
@@ -351,6 +352,14 @@ for (my $idx = 0; $idx <= $#nodes; $idx++)
    $prevlevel = $section_levels{$node->{Type}};
 }
 
+for (my $level = scalar(keys %section_levels); $level >= 0; $level--)
+{
+   if ($level < $prevlevel)
+   {
+      print TOCFD "</tocitem>\n";
+   }
+}
+
 print TOCFD "</tocitem>\n</toc>\n";
 
 close TOCFD;
@@ -377,8 +386,60 @@ foreach my $tag (keys %tags)
    print MAPFD "<mapID target=\"$tag\" url=\"$tags{$tag}->{Ref}\" />\n";
 }
 
+foreach my $tag (keys %terms)
+{
+   print MAPFD "<mapID target=\"$tag\" url=\"$terms{$tag}->{Ref}\" />\n";
+}
+
 print MAPFD "</map>\n";
 close MAPFD;
+
+# Write the helpset index file
+
+open IDXFD, ">$helpsetdir/${base}Index.xml"
+ or die "Can't open '$helpsetdir/${base}Index.xml' $!\n";
+binmode(IDXFD, ":utf8");
+
+print IDXFD <<_END_IDX_HEAD;
+<?xml version='1.0' encoding='utf8' ?>
+   <!DOCTYPE index
+     PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version
+2.0//EN"
+     "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">
+_END_IDX_HEAD
+
+&print_idx_entries(\%terms);
+
+print IDXFD "</index>\n";
+close IDXFD;
+
+sub print_idx_entries{
+   my ($hash) = @_;
+
+   my @sortedkeys = sort 
+     {lc($hash->{$a}->{Sort}) cmp lc($hash->{$b}->{Sort})}
+     keys %$hash;
+
+   foreach my $key (@sortedkeys)
+   {
+      my $text = $hash->{$key}->{Text};
+
+      $text=~s/<\/?[^>]*>//g;
+
+      print IDXFD "<indexitem text=\"",
+        $text, "\" target=\"",
+        $hash->{$key}->{Ref}, "\">\n";
+
+      if ($hash->{$key}->{Children})
+      {
+         &print_idx_entries($hash->{$key}->{Children});
+      }
+
+      print IDXFD "</indexitem>\n";
+   }
+}
 
 sub handle_char{
    my( $expat, $string ) = @_;
@@ -386,6 +447,41 @@ sub handle_char{
    &handle_html($string);
 
    print TEXFD $string;
+}
+
+sub hs_index_term{
+   my ($tag, $text, $sort, $hash) = @_;
+
+   if ($hash->{$tag})
+   {
+      &handle_html($text);
+   }
+   else
+   {
+      $hash->{$tag}->{Text} = $text;
+      $hash->{$tag}->{Sort} = $sort;
+      $hash->{$tag}->{Ref}  = $nodes[$#nodes]->{Tag}.".html#$tag";
+
+      &handle_html("<a name=\"$tag\">$text</a>");
+   }
+
+}
+
+sub hs_popup{
+   my ($href, $text) = @_;
+
+   my $html = <<_END_POPUP;
+  <object classid="java:com.sun.java.help.impl.JHSecondaryViewer">
+    <param name="viewerStyle" value="javax.htlp.Popup" />
+    <param name="viewerSize" value="400,200" />
+    <param name="content" value="$href" />
+    <param name="viewerActivator" value="javax.help.LinkLabel" />
+    <param name="text" value="$text" />
+    <param name="textColor" value="blue" />
+  </object>
+_END_POPUP
+
+   $html
 }
 
 sub handle_html{
@@ -667,6 +763,20 @@ sub start_newacro{
    $acros{$tag}->{Short} = $attrs{short};
    $acros{$tag}->{Long} = $attrs{long};
 
+   # write html file used by popup window
+
+   open FD, ">$helpsetdir/acr_$tag.html" 
+      or die "Can't open '$helpsetdir/acr_$tag.html' $!\n";
+
+   print FD &html_head($attrs{short});
+
+   print FD "<body>\n<h1>$attrs{short}</h1>\n",
+      ucfirst($attrs{long}), ".\n";
+
+   print FD "</body>\n</html>\n";
+
+   close FD;
+
    print TEXFD "\\newacronym{$tag}{$attrs{short}}{$attrs{long}}\n";
 }
 
@@ -741,7 +851,7 @@ sub end_url{
 sub start_sty{
    my ($expat, %attrs) = @_;
 
-   &handle_html('<tt>');
+   push @current, 'sty';
 
    print TEXFD "\\sty{";
 }
@@ -749,7 +859,12 @@ sub start_sty{
 sub end_sty{
    my ($expat) = @_;
 
-   &handle_html('</tt>');
+   pop @current;
+
+   my $sty = $docinfo{sty};
+   $docinfo{sty} = '';
+
+   &hs_index_term("sty_$sty", "<tt>$sty</tt>", $sty, \%terms);
 
    print TEXFD "}";
 }
@@ -1062,14 +1177,18 @@ sub start_acr{
    if ($acros{$attrs{tag}}->{Used})
    {
       $html = $acros{$attrs{tag}}->{Short};
+
+      &handle_html(&hs_popup("acr_".$attrs{tag}.".html", $html));
    }
    else
    {
+      $acros{$attrs{tag}}->{Used} = 1;
+
       $html = $acros{$attrs{tag}}->{Long}
             . ' (' . $acros{$attrs{tag}}->{Short} . ')';
-   }
 
-   &handle_html($html);
+      &hs_index_term('acr_'.$attrs{tag}, $html, $html, \%terms);
+   }
 
    print TEXFD "\\gls{", $attrs{tag}, "}";
 }
@@ -1105,7 +1224,10 @@ sub start_opt{
         $expat->current_line, "\n";
    }
 
-   &handle_html("<tt>--$attrs{tag}</tt>");
+   my $text = '--'.$attrs{tag};
+
+   &hs_index_term('opt_'.$attrs{tag}, "<tt>$text</tt>", $text,
+     \%terms);
 
    print TEXFD "\\opt{", $attrs{tag}, "}";
 }
