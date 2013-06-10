@@ -1,4 +1,11 @@
-datatooltk
+Application  : datatooltk
+Author       : Nicola L. C. Talbot 
+               www.dickimaw-books.com
+License      : GPL
+Requirements : Java Runtime Environment 
+
+DESCRIPTION
+===========
 
 A Java GUI that can be used to create datatool.sty databases in
 datatool's internal format, which can be quickly imported into
