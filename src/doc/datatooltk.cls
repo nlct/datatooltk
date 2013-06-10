@@ -52,4 +52,6 @@ package}}
 }
 
 \newcommand*{\sectionautorefname}{Section}
+
+\newcommand*{\dq}[1]{``#1''}
 \endinput

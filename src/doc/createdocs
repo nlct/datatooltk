@@ -896,6 +896,22 @@ sub end_tt{
    print TEXFD "}";
 }
 
+sub start_dq{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('"');
+
+   print TEXFD "\\dq{";
+}
+
+sub end_dq{
+   my ($expat) = @_;
+
+   &handle_html('"');
+
+   print TEXFD "}";
+}
+
 sub start_url{
    my ($expat, %attrs) = @_;
 

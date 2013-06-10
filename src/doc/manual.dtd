@@ -1,5 +1,5 @@
 <!-- Parameter entities -->
-<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref | term | tabular | menu'>
+<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref | term | tabular | menu | dq'>
 
 <!-- Main elements-->
 
@@ -51,6 +51,7 @@
 <!ATTLIST menu tag (#PCDATA)+ #REQUIRED>
 <!ELEMENT opt EMPTY >
 <!ATTLIST opt tag (#PCDATA)+ #REQUIRED>
+<!ELEMENT dq (%basic.content;)+>
 <!ELEMENT tt (%basic.content;)+>
 <!ELEMENT em (%basic.content;)+>
 <!ELEMENT b (%basic.content;)+>

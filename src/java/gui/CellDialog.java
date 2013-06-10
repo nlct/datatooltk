@@ -27,6 +27,7 @@ public class CellDialog extends JDialog
 
       p.add(DatatoolGuiResources.createOkayButton(this));
       p.add(DatatoolGuiResources.createCancelButton(this));
+      p.add(gui.createHelpButton("celleditor"));
 
       getContentPane().add(p, BorderLayout.SOUTH);
 
