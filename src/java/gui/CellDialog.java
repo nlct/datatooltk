@@ -9,13 +9,19 @@ import com.dickimawbooks.datatooltk.*;
 public class CellDialog extends JDialog
   implements ActionListener
 {
-   public CellDialog(DatatoolGUI gui, DatatoolDb db, DatatoolDbPanel panel)
+   public CellDialog(DatatoolGUI gui)
    {
-      super(gui, "", true);
+      super(gui, DatatoolTk.getLabel("celledit.title"), true);
 
-      this.panel = panel;
+      this.gui = gui;
 
-      this.db = db;
+      textArea = new JTextArea(20,40);
+
+      textArea.setEditable(true);
+      textArea.setLineWrap(true);
+      textArea.setWrapStyleWord(true);
+
+      getContentPane().add(new JScrollPane(textArea), BorderLayout.CENTER);
 
       JPanel p = new JPanel();
 
@@ -29,10 +35,19 @@ public class CellDialog extends JDialog
       setLocationRelativeTo(null);
    }
 
-   public void display(int rowIdx, int colIdx)
+   public boolean requestEdit(int rowIdx, int colIdx, DatatoolDb db)
    {
+      this.db = db;
+      this.cell = db.getRow(rowIdx+1).getCell(colIdx+1);
+
+      textArea.setText(cell.getValue().replaceAll("\\\\DTLpar *", "\n\n"));
+      revalidate();
+
+      modified = false;
 
       setVisible(true);
+
+      return modified;
    }
 
    public void actionPerformed(ActionEvent evt)
@@ -43,7 +58,8 @@ public class CellDialog extends JDialog
 
       if (action.equals("okay"))
       {
-         panel.setModified(true);
+         cell.setValue(textArea.getText().replaceAll("\n *\n+", "\\\\DTLpar "));
+         modified = true;
 
          setVisible(false);
       }
@@ -53,7 +69,13 @@ public class CellDialog extends JDialog
       }
    }
 
+   private JTextArea textArea;
+
    private DatatoolDb db;
 
-   private DatatoolDbPanel panel;
+   private DatatoolCell cell;
+
+   private DatatoolGUI gui;
+
+   private boolean modified;
 }

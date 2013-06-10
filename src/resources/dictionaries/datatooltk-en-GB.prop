@@ -45,8 +45,11 @@ password.title=SQL Password
 password.prompt=Password: 
 password.prompt.mnemonic=P
 
+# Cell editor dialog box
+celledit.title=Cell Editor
+
 # Column header dialog box
-header.title=Header Details
+header.title=Column '$1'
 header.column_title=Title
 header.column_title.mnemonic=T
 header.column_label=Label

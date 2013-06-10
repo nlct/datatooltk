@@ -65,7 +65,7 @@ public class HeaderDialog extends JDialog
       this.header = db.getHeader(colIdx+1);
 
       modified = false;
-      setTitle(header.getKey());
+      setTitle(DatatoolTk.getLabelWithValue("header.title", header.getKey()));
 
       titleField.setText(header.getTitle());
       labelField.setText(header.getKey());

@@ -132,6 +132,7 @@ public class DatatoolGUI extends JFrame
       fileChooser = new JFileChooser();
 
       headerDialog = new HeaderDialog(this);
+      cellEditor = new CellDialog(this);
 
       // Set default dimensions
 
@@ -465,6 +466,14 @@ public class DatatoolGUI extends JFrame
       }
    }
 
+   public void requestCellEditor(int rowIdx, int colIdx, DatatoolDbPanel panel)
+   {
+      if (cellEditor.requestEdit(rowIdx, colIdx, panel.db))
+      {
+         panel.setModified(true);
+      }
+   }
+
    private DatatoolSettings settings;
 
    private JTabbedPane tabbedPane;
@@ -475,6 +484,8 @@ public class DatatoolGUI extends JFrame
      csvtxtFilter;
 
    private HeaderDialog headerDialog;
+
+   private CellDialog cellEditor;
 
    private HelpBroker mainHelpBroker;
    private CSH.DisplayHelpFromSource csh;

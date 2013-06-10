@@ -3,15 +3,7 @@ TODO List
 
 Lots of things!
 
-* GUI is very primitive and currently only displays the contents of
-  a database.
-
-  - Make cells multilined to accommodate data that consists of 1 or
-    more paragraphs of LaTeX code. (Blank lines will need to be
-    converted to \DTLpar when saving.) See tests/test-para.csv
-
-  - Need facility to edit header information (label, title and data
-    type)
+* GUI is very primitive:
 
   - Need facility to add or remove columns/rows
 

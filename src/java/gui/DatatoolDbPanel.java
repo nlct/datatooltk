@@ -43,6 +43,8 @@ public class DatatoolDbPanel extends JPanel
 
                 int col = table.columnAtPoint(p);
                 int row = table.rowAtPoint(p);
+
+                requestCellEditor(row, col);
              }
           }
        });
@@ -108,6 +110,11 @@ public class DatatoolDbPanel extends JPanel
    public void requestHeaderEditor(int colIdx)
    {
       gui.requestHeaderEditor(colIdx, this);
+   }
+
+   public void requestCellEditor(int row, int col)
+   {
+      gui.requestCellEditor(row, col, this);
    }
 
    protected DatatoolDb db;
