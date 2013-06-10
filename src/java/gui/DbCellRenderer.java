@@ -32,7 +32,8 @@ public class DbCellRenderer implements TableCellRenderer
          return rendererComponent;
       }
 
-      rendererComponent.setText(value.toString());
+      rendererComponent.setText(value.toString().replaceAll("\\\\DTLpar *",
+        "\n\n"));
 
       if (isSelected)
       {

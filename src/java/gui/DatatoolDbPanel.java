@@ -38,9 +38,22 @@ public class DatatoolDbPanel extends JScrollPane
             return db.getColumnCount();
          }
 
+         public Class<?> getColumnClass(int column)
+         {
+            switch (db.getHeader(column+1).getType())
+            {
+               case DatatoolDb.TYPE_INTEGER:
+                  return Integer.class;
+               case DatatoolDb.TYPE_REAL:
+                  return Float.class;
+            }
+
+            return String.class;
+         }
+
          public Object getValueAt(int row, int col)
          {
-            return db.getRow(row+1).getCell(col+1).getValue();
+            return db.getValue(row+1, col+1);
          }
 
          public void setValueAt(Object value, int row, int col)
@@ -58,8 +71,8 @@ public class DatatoolDbPanel extends JScrollPane
 
       table.setRowHeight(100);
       table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-      table.setDefaultRenderer(Object.class, new DbCellRenderer());
-      table.setDefaultEditor(Object.class, new DbCellEditor());
+      table.setDefaultRenderer(String.class, new DbCellRenderer());
+      table.setDefaultEditor(String.class, new DbCellEditor());
 
       setViewportView(table);
    }

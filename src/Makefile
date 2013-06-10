@@ -1,5 +1,4 @@
 APP_VERSION:=$(shell grep "public static final String appVersion" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sappVersion=//" | tr -d "\"\; ")
-JAVA_LIB=/usr/share/java
 
 test-gui	: app
 	bin/datatooltk --gui --csv tests/test-para.csv
@@ -17,10 +16,10 @@ lib	:
 	mkdir -p lib
 
 lib/resources   :
-	cd lib; ln -f -s ../resources
+	cd lib; ln -s ../resources
 
 resources/icons	: 
-	cd resources; ln -f -s ../images/icons
+	cd resources; ln -s ../images/icons
 
 lib/datatooltk.jar	: java/Manifest.txt \
 			resources/icons \

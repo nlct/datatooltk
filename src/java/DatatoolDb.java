@@ -897,6 +897,70 @@ public class DatatoolDb
       return headers.size();
    }
 
+   public Object getValue(int rowIdx, int colIdx)
+   {
+      String value = getRow(rowIdx).getCell(colIdx).getValue();
+
+      if (value.isEmpty())
+      {
+         return value;
+      }
+
+      // What's the data type of this column?
+
+      DatatoolHeader header = getHeader(colIdx);
+
+      int type = header.getType();
+
+      if (type == TYPE_INTEGER)
+      {
+         try
+         {
+            return new Integer(value);
+         }
+         catch (NumberFormatException e)
+         {
+            // Not an integer!
+
+            // Is it a float?
+
+            try
+            {
+               Float num = new Float(value);
+
+               header.setType(TYPE_REAL);
+
+               return num;
+            }
+            catch (NumberFormatException fe)
+            {
+               // Not a float.
+               // Set to String.
+               // TODO check for currency type
+
+               header.setType(TYPE_STRING);
+            }
+         }
+      }
+      else if (type == TYPE_REAL)
+      {
+         try
+         {
+            return new Float(value);
+         }
+         catch (NumberFormatException fe)
+         {
+            // Not a float.
+            // Set to String.
+            // TODO check for currency type
+
+            header.setType(TYPE_STRING);
+         }
+      }
+
+      return value;
+   }
+
    private Vector<DatatoolHeader> headers;
 
    private Vector<DatatoolRow> data;
