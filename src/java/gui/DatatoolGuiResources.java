@@ -58,51 +58,47 @@ public class DatatoolGuiResources
 
     public static JButton createOkayButton(ActionListener listener)
     {
-       return createOkayButton(listener, null);
-    }
-
-    public static JButton createOkayButton(ActionListener listener, String tooltipText)
-    {
-       return createActionButton(
-          DatatoolTk.getLabel("button.okay"),
-          DatatoolTk.getMnemonic("button.okay"),
-          "okay", listener,
-          KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), tooltipText);
-    }
-
-    public static JButton createCloseButton(ActionListener listener)
-    {
-       return createCloseButton(listener, null);
-    }
-
-    public static JButton createCloseButton(ActionListener listener, String tooltipText)
-    {
-       return createActionButton(
-          DatatoolTk.getLabel("button.close"),
-          DatatoolTk.getMnemonic("button.close"),
-          "okay", listener,
-          KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), tooltipText);
+       return createActionButton("button", "okay", 
+          listener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
     }
 
     public static JButton createCancelButton(ActionListener listener)
     {
-       return createCancelButton(listener, null);
+       return createActionButton("button", "cancel", listener,
+          KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
     }
 
-    public static JButton createCancelButton(ActionListener listener, String tooltipText)
+    public static JButton createActionButton(String parent, String label, 
+      ActionListener listener, KeyStroke keyStroke)
     {
-       return createActionButton(
-          DatatoolTk.getLabel("button.cancel"),
-          DatatoolTk.getMnemonic("button.cancel"),
-          "cancel", listener,
-          KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), tooltipText);
+       return createActionButton(parent, label, listener, keyStroke,
+         DatatoolTk.getToolTip(parent, label));
     }
 
-    public static JButton createActionButton(String label, char mnemonic,
-      String actionCommand, ActionListener listener, KeyStroke keyStroke, 
+    public static JButton createActionButton(String parent, String label, 
+      ActionListener listener, KeyStroke keyStroke,
       String tooltipText)
     {
-       JButton button = new JButton(label);
+       String buttonLabel = DatatoolTk.getLabel(parent, label);
+       char mnemonic = DatatoolTk.getMnemonic(parent, label);
+       String actionCommand = label;
+
+       // Is there an associated image?
+
+       URL imageURL = DatatoolTk.class.getResource(
+          "/resources/icons/"+label+".png");
+
+       JButton button;
+
+       if (imageURL == null)
+       {
+          button = new JButton(buttonLabel);
+       }
+       else
+       {
+          button = new JButton(buttonLabel, new ImageIcon(imageURL));
+       }
+
        button.setMnemonic(mnemonic);
 
        if (listener != null)
@@ -115,7 +111,8 @@ public class DatatoolGuiResources
 
              if (keyStroke != null)
              {
-                button.registerKeyboardAction(listener, actionCommand, keyStroke,
+                button.registerKeyboardAction(listener,
+                  actionCommand, keyStroke,
                   JComponent.WHEN_IN_FOCUSED_WINDOW);
              }
           }

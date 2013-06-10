@@ -48,11 +48,8 @@ public class ErrorPanel extends JPanel
       JPanel buttonPanel = new JPanel();
 
       buttonPanel.add(DatatoolGuiResources.createActionButton(
-         DatatoolTk.getLabel("button.copy"),
-         DatatoolTk.getMnemonic("button.copy"),
-         "copy", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.SHIFT_MASK),
-         DatatoolTk.getLabel("button.copy.tooltip")));
+         "button", "copy", this, 
+         KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.SHIFT_MASK)));
 
       add(buttonPanel, "East");
 

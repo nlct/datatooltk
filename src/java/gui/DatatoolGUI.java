@@ -220,10 +220,8 @@ public class DatatoolGUI extends JFrame
    public JButton createHelpButton(String id)
    {
       JButton button = DatatoolGuiResources.createActionButton(
-         DatatoolTk.getLabel("button.help"),
-         DatatoolTk.getMnemonic("button.help"),
-         null, null, KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0),
-         DatatoolTk.getToolTip("button.help"));
+         "button", "help", null, 
+         KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 
       enableHelpOnButton(button, id);
 
