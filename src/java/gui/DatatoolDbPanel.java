@@ -32,6 +32,8 @@ public class DatatoolDbPanel extends JPanel
       table.setDefaultRenderer(String.class, new DbCellRenderer());
       table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
          this));
+      table.setColumnSelectionAllowed(true);
+      table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
       table.addMouseListener(new MouseAdapter()
        {
