@@ -279,7 +279,7 @@ print HTMLFD "<p>$docinfo{Date}</p>\n" if ($docinfo{Date});
 
 print HTMLFD "</div>";
 
-print HTMLFD &html_nav('', $nodes[0]->{Tag});
+print HTMLFD &html_nav('', $nodes[0]);
 
 print HTMLFD "</body>\n</html>\n";
 
@@ -318,7 +318,7 @@ for (my $idx = 0; $idx <= $#nodes; $idx++)
 
    print TOCFD "<tocitem text=\"$node->{Title}\" target=\"$node->{Tag}\">\n";
 
-   my $next = ($idx == $#nodes ? '' : $nodes[$idx+1]->{Tag});
+   my $next = ($idx == $#nodes ? '' : $nodes[$idx+1]);
 
    my $tag = $node->{Tag};
 
@@ -327,7 +327,9 @@ for (my $idx = 0; $idx <= $#nodes; $idx++)
 
    binmode(HTMLFD, ":$encoding_file");
 
-   print HTMLFD &html_head($node->{Title}, $prev, $next);
+   print HTMLFD &html_head($node->{Title}, 
+     ($prev eq $base ? $base : $prev->{Tag}),
+     ($next ? $next->{Tag} : ''));
 
    print HTMLFD "<body>\n";
 
@@ -356,7 +358,7 @@ for (my $idx = 0; $idx <= $#nodes; $idx++)
 
    close HTMLFD;
 
-   $prev = $tag;
+   $prev = $node;
    $prevlevel = $section_levels{$node->{Type}};
 }
 
@@ -1640,22 +1642,37 @@ _END_HTML_HEAD
 }
 
 sub html_nav{
-  my ($prev, $next) = @_;
+  my ($prevNode, $nextNode) = @_;
 
   my $nav = '<hr /><table width="100%"><tr><td align="left">';
 
-  if ($prev)
+  if ($prevNode)
   {
-     $nav .= "<a href=\"$prev.html\">" . &get_label('prev') . "</a>";
+     my $prev;
+     my $title;
+
+     if ($prevNode eq $base)
+     {
+        $prev = $base;
+        $title = &get_label('home');
+     } 
+     else
+     {
+        $prev = $prevNode->{Tag};
+        $title = $prevNode->{Title};
+     }
+
+     $nav .= "<a href=\"$prev.html\">&#x21E6; " .
+      $title . "</a>";
   }
 
   $nav .= '</td><td align="right">';
 
-  if ($next)
+  if ($nextNode)
   {
-     $nav .= "<a href=\"$next.html\">"
-          . &get_label('next')
-          . "</a>";
+     $nav .= "<a href=\"$nextNode->{Tag}.html\">"
+          . $nextNode->{Title}
+          . " &#x21E8;</a>";
   }
 
   "$nav</td></tr></table>"
