@@ -84,6 +84,12 @@ public class DatatoolDbPanel extends JPanel
 
    public void save()
    {
+      if (db.getFile() == null)
+      {
+         gui.saveAs();
+         return;
+      }
+
       try
       {
          db.save();

@@ -83,6 +83,12 @@ public class DatatoolGUI extends JFrame
         "file", "importcsv", this, toolBar));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
+        "file", "save", this, toolBar));
+
+      fileM.add(DatatoolGuiResources.createJMenuItem(
+        "file", "save_as", this, toolBar));
+
+      fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "close", this, toolBar));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
@@ -248,6 +254,10 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("save"))
       {
          save();
+      }
+      else if (action.equals("save_as"))
+      {
+         saveAs();
       }
       else if (action.equals("open"))
       {
