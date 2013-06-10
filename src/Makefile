@@ -18,19 +18,19 @@ lib	:
 	mkdir -p lib
 
 lib/javahelp2.jar	: lib $(JAVA_LIB)/javahelp2.jar
-	cd lib; ln -s $(JAVA_LIB)/javahelp2.jar
+	cd lib; ln -f -s $(JAVA_LIB)/javahelp2.jar
 
 lib/opencsv.jar	: lib $(JAVA_LIB)/opencsv.jar
-	cd lib; ln -s $(JAVA_LIB)/opencsv.jar
+	cd lib; ln -f -s $(JAVA_LIB)/opencsv.jar
 
 lib/mysql-connector-java.jar	: lib $(JAVA_LIB)/mysql-connector-java.jar
-	cd lib; ln -s $(JAVA_LIB)/mysql-connector-java.jar
+	cd lib; ln -f -s $(JAVA_LIB)/mysql-connector-java.jar
 
 lib/resources   :
-	cd lib; ln -s ../resources
+	cd lib; ln -f -s ../resources
 
 resources/icons	: 
-	cd resources; ln -s ../images/icons
+	cd resources; ln -f -s ../images/icons
 
 lib/datatooltk.jar	: java/Manifest.txt \
 			resources/icons \
