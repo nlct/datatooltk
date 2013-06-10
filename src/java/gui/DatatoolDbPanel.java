@@ -32,7 +32,6 @@ public class DatatoolDbPanel extends JPanel
       table.setRowHeight(100);
       table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
       table.setDefaultRenderer(String.class, new DbCellRenderer());
-      table.setDefaultEditor(String.class, new DbCellEditor());
       table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
          this));
 
