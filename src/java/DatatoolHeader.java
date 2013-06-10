@@ -236,4 +236,12 @@ public class DatatoolHeader
    private static final Pattern PATTERN_TITLE_ID = Pattern.compile("\\s*\\\\db@header@id@w\\s*(.*)%\\s*");
    private static final Pattern PATTERN_TITLE_ID_END = Pattern.compile("\\s*\\\\db@header@id@end@\\s*%\\s*");
 
+   public static final String[] TYPE_LABELS = new String[] 
+         {
+            DatatoolTk.getLabel("header.type.unset"),
+            DatatoolTk.getLabel("header.type.string"),
+            DatatoolTk.getLabel("header.type.int"),
+            DatatoolTk.getLabel("header.type.real"),
+            DatatoolTk.getLabel("header.type.currency")
+         };
 }

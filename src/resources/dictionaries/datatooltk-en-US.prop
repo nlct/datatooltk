@@ -45,6 +45,21 @@ password.title=SQL Password
 password.prompt=Password: 
 password.prompt.mnemonic=P
 
+# Column header dialog box
+header.title=Header Details
+header.column_title=Title
+header.column_title.mnemonic=T
+header.column_label=Label
+header.column_label.mnemonic=L
+header.column_type=Type
+header.column_type.mnemonic=Y
+header.tooltip_format=Label: $1. Type: $2
+header.type.string=String
+header.type.int=Integer
+header.type.real=Real
+header.type.currency=Currency
+header.type.unset=Unset
+
 # File filter
 filter.tex=TeX Files ($1)
 filter.dbtex=Datatool Files ($1)

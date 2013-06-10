@@ -399,7 +399,7 @@ public class DatatoolGUI extends JFrame
       {
          DatatoolDb db = DatatoolDb.load(file);
 
-         DatatoolDbPanel panel = new DatatoolDbPanel(db);
+         DatatoolDbPanel panel = new DatatoolDbPanel(this, db);
 
          tabbedPane.addTab(panel.getName(), panel);
          tabbedPane.setToolTipTextAt(tabbedPane.getTabCount()-1, 
@@ -429,7 +429,7 @@ public class DatatoolGUI extends JFrame
       {
          DatatoolDb db = imp.importData(fileChooser.getSelectedFile());
 
-         DatatoolDbPanel panel = new DatatoolDbPanel(db);
+         DatatoolDbPanel panel = new DatatoolDbPanel(this, db);
 
          tabbedPane.addTab(panel.getName(), panel);
       }
@@ -445,7 +445,7 @@ public class DatatoolGUI extends JFrame
       {
          DatatoolDb db = imp.importData(source);
 
-         DatatoolDbPanel panel = new DatatoolDbPanel(db);
+         DatatoolDbPanel panel = new DatatoolDbPanel(this, db);
 
          tabbedPane.addTab(panel.getName(), panel);
       }
