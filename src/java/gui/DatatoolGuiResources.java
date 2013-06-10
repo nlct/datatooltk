@@ -163,17 +163,29 @@ public class DatatoolGuiResources
 
     public static JMenuItem createJMenuItem(String parent, String label)
     {
-       return createJMenuItem(parent, label, null, null);
+       return createJMenuItem(parent, label, null, null, null);
     }
 
     public static JMenuItem createJMenuItem(String parent, String label,
        ActionListener listener)
     {
-       return createJMenuItem(parent, label, listener, null);
+       return createJMenuItem(parent, label, listener, null, null);
+    }
+
+    public static JMenuItem createJMenuItem(String parent, String label,
+       ActionListener listener, JToolBar toolBar)
+    {
+       return createJMenuItem(parent, label, listener, null, toolBar);
     }
 
     public static JMenuItem createJMenuItem(String parent, String label,
      ActionListener listener, KeyStroke keyStroke)
+    {
+       return createJMenuItem(parent, label, listener, keyStroke, null);
+    }
+
+    public static JMenuItem createJMenuItem(String parent, String label,
+     ActionListener listener, KeyStroke keyStroke, JToolBar toolBar)
     {
        JMenuItem item = new JMenuItem(DatatoolTk.getLabel(parent, label));
        item.setMnemonic(DatatoolTk.getMnemonic(parent, label));
@@ -194,6 +206,25 @@ public class DatatoolGuiResources
        if (keyStroke != null)
        {
           item.setAccelerator(keyStroke);
+       }
+
+       if (toolBar != null)
+       {
+          URL imageURL = DatatoolTk.class.getResource(
+             "/resources/icons/"+label+".png");
+
+          if (imageURL != null)
+          {
+             JButton button = new JButton(new ImageIcon(imageURL));
+             button.setActionCommand(label);
+
+             if (listener != null)
+             {
+                button.addActionListener(listener);
+             }
+
+             toolBar.add(button);
+          }
        }
 
        return item;

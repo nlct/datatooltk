@@ -69,32 +69,37 @@ public class DatatoolGUI extends JFrame
       JMenuBar mbar = new JMenuBar();
       setJMenuBar(mbar);
 
+      toolBar = new JToolBar(JToolBar.HORIZONTAL);
+
       JMenu fileM = DatatoolGuiResources.createJMenu("file");
       mbar.add(fileM);
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "open", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK)));
+         KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK),
+        toolBar));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
-        "file", "importcsv", this));
+        "file", "importcsv", this, toolBar));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
-        "file", "close", this));
+        "file", "close", this, toolBar));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "quit", this,
-        KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK)));
+        KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK),
+        toolBar));
 
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
 
       helpM.add(DatatoolGuiResources.createJMenuItem(
          "help", "manual", csh,
-          KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)));
+          KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0),
+          toolBar));
 
       helpM.add(DatatoolGuiResources.createJMenuItem(
-         "help", "about", this));
+         "help", "about", this, toolBar));
 
       settings.setPasswordReader(new GuiPasswordReader(this));
 
@@ -119,7 +124,9 @@ public class DatatoolGUI extends JFrame
             return super.getToolTipText(event);
          }
       };
-      getContentPane().add(tabbedPane, "Center");
+
+      getContentPane().add(tabbedPane, BorderLayout.CENTER);
+      getContentPane().add(toolBar, BorderLayout.PAGE_START);
 
       // File filters
 
@@ -500,4 +507,6 @@ public class DatatoolGUI extends JFrame
 
    private HelpBroker mainHelpBroker;
    private CSH.DisplayHelpFromSource csh;
+
+   private JToolBar toolBar;
 }
