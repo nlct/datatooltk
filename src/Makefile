@@ -1,4 +1,6 @@
 APP_VERSION:=$(shell grep "public static final String appVersion" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sappVersion=//" | tr -d "\"\; ")
+JAVA_LIB=/usr/share/java
+
 
 test-gui	: app
 	bin/datatooltk --gui tests/data-raw.dbtex
@@ -10,7 +12,19 @@ test-cli	: app
 test-sql	: app
 	bin/datatooltk --out tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
 
-app	: lib/datatooltk.jar lib/javahelp2.jar lib/resources
+app	: lib lib/datatooltk.jar lib/resources
+
+lib	:
+	mkdir -p lib
+
+lib/javahelp2.jar	: lib $(JAVA_LIB)/javahelp2.jar
+	cd lib; ln -s $(JAVA_LIB)/javahelp2.jar
+
+lib/opencsv.jar	: lib $(JAVA_LIB)/opencsv.jar
+	cd lib; ln -s $(JAVA_LIB)/opencsv.jar
+
+lib/mysql-connector-java.jar	: lib $(JAVA_LIB)/mysql-connector-java.jar
+	cd lib; ln -s $(JAVA_LIB)/mysql-connector-java.jar
 
 lib/resources   :
 	cd lib; ln -s ../resources
@@ -29,7 +43,8 @@ lib/datatooltk.jar	: java/Manifest.txt \
 	com/dickimawbooks/datatooltk/*/*.class 
 
 classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/*.java java/*/*.java
+	java/*.java java/*/*.java \
+	lib/javahelp2.jar lib/opencsv.jar lib/mysql-connector-java.jar
 	cd java; \
 	javac -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
