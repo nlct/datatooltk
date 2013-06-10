@@ -13,14 +13,16 @@ import javax.swing.text.*;
 public class DbCellEditor extends AbstractCellEditor
   implements TableCellEditor
 {
-   protected JEditorPane editorComponent;
+   protected JTextArea editorComponent;
 
    protected int clickCountToStart = 2;
 
    public DbCellEditor()
    {
-      editorComponent = new JEditorPane();
+      editorComponent = new JTextArea();
       editorComponent.setEditable(true);
+      editorComponent.setLineWrap(true);
+      editorComponent.setWrapStyleWord(true);
    }
 
    public Component getComponent()

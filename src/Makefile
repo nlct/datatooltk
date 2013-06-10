@@ -1,9 +1,8 @@
 APP_VERSION:=$(shell grep "public static final String appVersion" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sappVersion=//" | tr -d "\"\; ")
 JAVA_LIB=/usr/share/java
 
-
 test-gui	: app
-	bin/datatooltk --gui tests/data-raw.dbtex
+	bin/datatooltk --gui --csv tests/test-para.csv
 
 test-cli	: app
 	bin/datatooltk --out tests/test-out.dbtex tests/data-raw.dbtex
@@ -16,15 +15,6 @@ app	: lib lib/datatooltk.jar lib/resources
 
 lib	:
 	mkdir -p lib
-
-lib/javahelp2.jar	: lib $(JAVA_LIB)/javahelp2.jar
-	cd lib; ln -f -s $(JAVA_LIB)/javahelp2.jar
-
-lib/opencsv.jar	: lib $(JAVA_LIB)/opencsv.jar
-	cd lib; ln -f -s $(JAVA_LIB)/opencsv.jar
-
-lib/mysql-connector-java.jar	: lib $(JAVA_LIB)/mysql-connector-java.jar
-	cd lib; ln -f -s $(JAVA_LIB)/mysql-connector-java.jar
 
 lib/resources   :
 	cd lib; ln -f -s ../resources

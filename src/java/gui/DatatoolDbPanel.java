@@ -56,8 +56,10 @@ public class DatatoolDbPanel extends JScrollPane
          }
       });
 
+      table.setRowHeight(100);
       table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-      table.setCellEditor(new DbCellEditor());
+      table.setDefaultRenderer(Object.class, new DbCellRenderer());
+      table.setDefaultEditor(Object.class, new DbCellEditor());
 
       setViewportView(table);
    }
