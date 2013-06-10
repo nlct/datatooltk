@@ -812,6 +812,21 @@ public class DatatoolDb
       headers.add(header);
    }
 
+   // Get header from its key
+
+   public DatatoolHeader getHeader(String key)
+   {
+      for (DatatoolHeader header : headers)
+      {
+         if (header.getKey().equals(key))
+         {
+            return header;
+         }
+      }
+
+      return null;
+   }
+
    // headerIndex is the datatool header index which starts from 1
 
    public DatatoolHeader getHeader(int headerIndex)

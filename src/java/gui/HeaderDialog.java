@@ -9,13 +9,9 @@ import com.dickimawbooks.datatooltk.*;
 public class HeaderDialog extends JDialog
   implements ActionListener
 {
-   public HeaderDialog(DatatoolGUI gui, DatatoolDb db, DatatoolDbPanel panel)
+   public HeaderDialog(DatatoolGUI gui)
    {
       super(gui, DatatoolTk.getLabel("header.title"), true);
-
-      this.panel = panel;
-
-      this.db = db;
 
       Box box = Box.createVerticalBox();
       getContentPane().add(box, BorderLayout.CENTER);
@@ -47,7 +43,7 @@ public class HeaderDialog extends JDialog
       label = DatatoolGuiResources.createJLabel("header.column_type");
       p.add(label);
 
-      typeBox = new JComboBox(DatatoolHeader.TYPE_LABELS);
+      typeBox = new JComboBox<String>(DatatoolHeader.TYPE_LABELS);
       label.setLabelFor(typeBox);
       p.add(typeBox);
 
@@ -63,15 +59,21 @@ public class HeaderDialog extends JDialog
       setLocationRelativeTo(null);
    }
 
-   public void display(int colIdx)
+   public boolean requestEdit(int colIdx, DatatoolDb db)
    {
-      header = db.getHeader(colIdx+1);
+      this.db = db;
+      this.header = db.getHeader(colIdx+1);
+
+      modified = false;
+      setTitle(header.getKey());
 
       titleField.setText(header.getTitle());
       labelField.setText(header.getKey());
       typeBox.setSelectedIndex(header.getType()+1);
 
       setVisible(true);
+
+      return modified;
    }
 
    public void actionPerformed(ActionEvent evt)
@@ -82,10 +84,25 @@ public class HeaderDialog extends JDialog
 
       if (action.equals("okay"))
       {
+         String key = labelField.getText();
+
+         if (!header.getKey().equals(key))
+         {
+            // Only test if key has been changed.
+
+            if (db.getHeader(key) != null)
+            {
+               DatatoolGuiResources.error(this, 
+                  DatatoolTk.getLabelWithValue("error.key_exists", key));
+
+               return;
+            }
+         }
+
          header.setTitle(titleField.getText());
-         header.setKey(labelField.getText());
+         header.setKey(key);
          header.setType(typeBox.getSelectedIndex()-1);
-         panel.setModified(true);
+         modified = true;
 
          setVisible(false);
       }
@@ -95,13 +112,13 @@ public class HeaderDialog extends JDialog
       }
    }
 
-   private DatatoolDb db;
-
    private JTextField titleField, labelField;
 
-   private JComboBox typeBox;
+   private JComboBox<String> typeBox;
 
    private DatatoolHeader header;
 
-   private DatatoolDbPanel panel;
+   private DatatoolDb db;
+
+   private boolean modified;
 }

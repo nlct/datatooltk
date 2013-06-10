@@ -131,6 +131,8 @@ public class DatatoolGUI extends JFrame
 
       fileChooser = new JFileChooser();
 
+      headerDialog = new HeaderDialog(this);
+
       // Set default dimensions
 
       Toolkit tk = Toolkit.getDefaultToolkit();
@@ -455,6 +457,14 @@ public class DatatoolGUI extends JFrame
       }
    }
 
+   public void requestHeaderEditor(int colIdx, DatatoolDbPanel panel)
+   {
+      if (headerDialog.requestEdit(colIdx, panel.db))
+      {
+         panel.setModified(true);
+      }
+   }
+
    private DatatoolSettings settings;
 
    private JTabbedPane tabbedPane;
@@ -463,6 +473,8 @@ public class DatatoolGUI extends JFrame
 
    private FileFilter texFilter, dbtexFilter, csvFilter, txtFilter,
      csvtxtFilter;
+
+   private HeaderDialog headerDialog;
 
    private HelpBroker mainHelpBroker;
    private CSH.DisplayHelpFromSource csh;

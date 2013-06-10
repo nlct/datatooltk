@@ -1,8 +1,8 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.io.*;
-import java.awt.BorderLayout;
 import java.awt.Point;
+import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import javax.swing.*;
@@ -20,8 +20,6 @@ public class DatatoolDbPanel extends JPanel
       this.gui = gui;
       setName(db.getName());
 
-      headerDialog = new HeaderDialog(gui, db, this);
-
       initTable();
    }
 
@@ -34,6 +32,20 @@ public class DatatoolDbPanel extends JPanel
       table.setDefaultRenderer(String.class, new DbCellRenderer());
       table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
          this));
+
+      table.addMouseListener(new MouseAdapter()
+       {
+          public void mouseClicked(MouseEvent evt)
+          {
+             if (evt.getClickCount() == 2)
+             {
+                Point p = evt.getPoint();
+
+                int col = table.columnAtPoint(p);
+                int row = table.rowAtPoint(p);
+             }
+          }
+       });
 
       add(new JScrollPane(table), BorderLayout.CENTER);
    }
@@ -93,11 +105,14 @@ public class DatatoolDbPanel extends JPanel
       return file == null ? null : file.toString();
    }
 
+   public void requestHeaderEditor(int colIdx)
+   {
+      gui.requestHeaderEditor(colIdx, this);
+   }
+
    protected DatatoolDb db;
 
    private boolean isModified = false;
-
-   protected HeaderDialog headerDialog;
 
    protected DatatoolGUI gui;
 
@@ -178,8 +193,9 @@ class DatatoolTableHeader extends JTableHeader
          {
             if (event.getClickCount() == 2)
             {
-               panel.headerDialog.display(((JTableHeader)event.getSource())
-                 .columnAtPoint(new Point(event.getX(), event.getY())));
+               panel.requestHeaderEditor(((JTableHeader)event.getSource())
+                 .columnAtPoint(event.getPoint()));
+
                event.consume();
             }
          }
@@ -188,7 +204,7 @@ class DatatoolTableHeader extends JTableHeader
 
    public String getToolTipText(MouseEvent event)
    {
-      int idx = columnAtPoint(new Point(event.getX(), event.getY()));
+      int idx = columnAtPoint(event.getPoint());
 
       DatatoolHeader header = panel.db.getHeader(idx+1);
 
