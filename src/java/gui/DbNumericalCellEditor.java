@@ -19,6 +19,11 @@ public class DbNumericalCellEditor extends DefaultCellEditor
       panel = new JPanel(new BorderLayout());
    }
 
+   public JTextField getTextField()
+   {
+      return (JTextField)getComponent();
+   }
+
    public Component getTableCellEditorComponent(JTable table,
      Object value, boolean isSelected, int row, int column)
    {

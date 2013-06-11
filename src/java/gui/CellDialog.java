@@ -105,11 +105,11 @@ public class CellDialog extends JDialog
       setLocationRelativeTo(null);
    }
 
-   public boolean requestEdit(int rowIdx, int colIdx, DatatoolDbPanel panel)
+   public boolean requestEdit(DatatoolCell cell, DatatoolDbPanel panel)
    {
       this.panel = panel;
       this.db = panel.db;
-      this.cell = db.getRow(rowIdx+1).getCell(colIdx+1);
+      this.cell = cell;
 
       textArea.setText(cell.getValue().replaceAll("\\\\DTLpar *", "\n\n"));
 

@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.undo.*;
 import javax.swing.event.*;
+import javax.swing.text.Document;
+import javax.swing.text.BadLocationException;
 
 import com.dickimawbooks.datatooltk.*;
 
@@ -34,7 +36,59 @@ public class DatatoolDbPanel extends JPanel
       table.setRowHeight(100);
       table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-      table.setDefaultEditor(Number.class, new DbNumericalCellEditor());
+      DbNumericalCellEditor editor = new DbNumericalCellEditor();
+
+      Document doc = editor.getTextField().getDocument();
+
+      doc.addDocumentListener(new DocumentListener()
+      {
+         public void changedUpdate(DocumentEvent e)
+         {
+            Document doc = e.getDocument();
+            try
+            {
+               updateCell(currentCell, 
+                 doc.getText(0, doc.getLength()));
+               setModified(true);
+            }
+            catch (BadLocationException excp)
+            {
+               DatatoolTk.debug(excp);
+            }
+         }
+
+         public void insertUpdate(DocumentEvent e)
+         {
+            Document doc = e.getDocument();
+            try
+            {
+               updateCell(currentCell, 
+                 doc.getText(0, doc.getLength()));
+               setModified(true);
+            }
+            catch (BadLocationException excp)
+            {
+               DatatoolTk.debug(excp);
+            }
+         }
+
+         public void removeUpdate(DocumentEvent e)
+         {
+            Document doc = e.getDocument();
+            try
+            {
+               updateCell(currentCell, 
+                 doc.getText(0, doc.getLength()));
+               setModified(true);
+            }
+            catch (BadLocationException excp)
+            {
+               DatatoolTk.debug(excp);
+            }
+         }
+      });
+
+      table.setDefaultEditor(Number.class, editor);
       table.setDefaultRenderer(Number.class, new DbNumericalCellRenderer());
       table.setDefaultRenderer(String.class, new DbCellRenderer());
       table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
@@ -48,15 +102,66 @@ public class DatatoolDbPanel extends JPanel
           {
              if (evt.getClickCount() == 2)
              {
-                Point p = evt.getPoint();
+                // has the user double-clicked on the panel behind
+                // the numerical text field?
 
-                int col = table.columnAtPoint(p);
-                int row = table.rowAtPoint(p);
+                int col = table.getSelectedColumn();
 
-                requestCellEditor(row, col);
+                if (col == -1)
+                {
+                   // nothing selected
+
+                   return;
+                }
+
+                int type = db.getHeader(col+1).getType();
+
+                if (type == DatatoolDb.TYPE_INTEGER
+                 || type == DatatoolDb.TYPE_REAL)
+                {
+                   int row = table.getSelectedRow();
+
+                   if (table.editCellAt(row, col))
+                   {
+                      return;
+                   }
+                   else
+                   {
+                      DatatoolTk.debug(
+                        "Can't edit cell at col="+col+", row="+row);
+                   }
+                }
+
+                requestCellEditor(currentCell);
              }
           }
        });
+
+      table.getSelectionModel().addListSelectionListener(
+        new ListSelectionListener()
+        {
+           public void valueChanged(ListSelectionEvent e)
+           {
+              if (!e.getValueIsAdjusting())
+              {
+                 int col = table.getSelectedColumn();
+
+                 if (col == -1)
+                 {
+                    return;
+                 }
+
+                 int row = table.getSelectedRow();
+
+                 if (row == -1)
+                 {
+                    return;
+                 }
+
+                 currentCell = db.getRow(row+1).getCell(col+1);
+              }
+           }
+        });
 
       add(new JScrollPane(table), BorderLayout.CENTER);
    }
@@ -180,9 +285,12 @@ public class DatatoolDbPanel extends JPanel
       gui.requestHeaderEditor(colIdx, this);
    }
 
-   public void requestCellEditor(int row, int col)
+   public void requestCellEditor(DatatoolCell cell)
    {
-      gui.requestCellEditor(row, col, this);
+      if (cell != null)
+      {
+         gui.requestCellEditor(cell, this);
+      }
    }
 
    public void updateCell(DatatoolCell cell, String text)
@@ -200,6 +308,8 @@ public class DatatoolDbPanel extends JPanel
    private JTable table;
 
    private UndoManager undoManager;
+
+   private DatatoolCell currentCell;
 }
 
 class DatatoolDbTableModel extends AbstractTableModel
