@@ -7,6 +7,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.undo.*;
+import javax.swing.event.*;
 
 import com.dickimawbooks.datatooltk.*;
 
@@ -25,6 +27,8 @@ public class DatatoolDbPanel extends JPanel
 
    private void initTable()
    {
+      undoManager = new UndoManager();
+
       table = new JTable(new DatatoolDbTableModel(db, this));
 
       table.setRowHeight(100);
@@ -55,6 +59,49 @@ public class DatatoolDbPanel extends JPanel
        });
 
       add(new JScrollPane(table), BorderLayout.CENTER);
+   }
+
+   public void addUndoEvent(UndoableEditEvent event)
+   {
+      undoManager.addEdit(event.getEdit());
+      gui.updateUndoRedoItems(this);
+      isModified = true;
+   }
+
+   public boolean canUndo()
+   {
+      return undoManager.canUndo();
+   }
+
+   public boolean canRedo()
+   {
+      return undoManager.canRedo();
+   }
+
+   public void undo()
+   {
+      try
+      {
+         undoManager.undo();
+         repaint();
+      }
+      catch (CannotUndoException e)
+      {
+         DatatoolTk.debug(e);
+      }
+   }
+
+   public void redo()
+   {
+      try
+      {
+         undoManager.redo();
+         repaint();
+      }
+      catch (CannotRedoException e)
+      {
+         DatatoolTk.debug(e);
+      }
    }
 
    public void save(String filename)
@@ -128,6 +175,12 @@ public class DatatoolDbPanel extends JPanel
       gui.requestCellEditor(row, col, this);
    }
 
+   public void updateCell(DatatoolCell cell, String text)
+   {
+      addUndoEvent(new UndoableEditEvent(cell, 
+         new UpdateCellEdit(this, cell, text)));
+   }
+
    protected DatatoolDb db;
 
    private boolean isModified = false;
@@ -135,6 +188,8 @@ public class DatatoolDbPanel extends JPanel
    protected DatatoolGUI gui;
 
    private JTable table;
+
+   private UndoManager undoManager;
 }
 
 class DatatoolDbTableModel extends AbstractTableModel

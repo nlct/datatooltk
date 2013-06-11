@@ -136,6 +136,9 @@ default.field=Field$1
 default.untitled=Untitled
 default.texheader=Created by $1 on $2
 
+# Undo/Redo
+undo.cell_edit=Cell Edit
+
 # Messages
 
 message.confirm_overwrite=Confirm Overwrite

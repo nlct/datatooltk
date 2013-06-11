@@ -1,12 +1,13 @@
 package com.dickimawbooks.datatooltk.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.help.*;
 
@@ -260,6 +261,12 @@ public class DatatoolGUI extends JFrame
       return button;
    }
 
+   public void updateUndoRedoItems(DatatoolDbPanel panel)
+   {
+      undoItem.setEnabled(panel.canUndo());
+      redoItem.setEnabled(panel.canRedo());
+   }
+
    public void actionPerformed(ActionEvent evt)
    {
       String action = evt.getActionCommand();
@@ -296,6 +303,26 @@ public class DatatoolGUI extends JFrame
            DatatoolTk.getAppInfo(),
            DatatoolTk.getLabelWithValue("about.title", DatatoolTk.appName),
            JOptionPane.PLAIN_MESSAGE);
+      }
+      else if (action.equals("undo"))
+      {
+         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+         if (panel != null)
+         {
+            panel.undo();
+            updateUndoRedoItems(panel);
+         }
+      }
+      else if (action.equals("redo"))
+      {
+         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+         if (panel != null)
+         {
+            panel.redo();
+            updateUndoRedoItems(panel);
+         }
       }
    }
 
@@ -515,7 +542,7 @@ public class DatatoolGUI extends JFrame
 
    public void requestCellEditor(int rowIdx, int colIdx, DatatoolDbPanel panel)
    {
-      if (cellEditor.requestEdit(rowIdx, colIdx, panel.db))
+      if (cellEditor.requestEdit(rowIdx, colIdx, panel))
       {
          panel.setModified(true);
       }

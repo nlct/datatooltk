@@ -105,9 +105,10 @@ public class CellDialog extends JDialog
       setLocationRelativeTo(null);
    }
 
-   public boolean requestEdit(int rowIdx, int colIdx, DatatoolDb db)
+   public boolean requestEdit(int rowIdx, int colIdx, DatatoolDbPanel panel)
    {
-      this.db = db;
+      this.panel = panel;
+      this.db = panel.db;
       this.cell = db.getRow(rowIdx+1).getCell(colIdx+1);
 
       textArea.setText(cell.getValue().replaceAll("\\\\DTLpar *", "\n\n"));
@@ -171,7 +172,8 @@ public class CellDialog extends JDialog
 
    public void okay()
    {
-      cell.setValue(textArea.getText().replaceAll("\n *\n+", "\\\\DTLpar "));
+      panel.updateCell(cell, 
+        textArea.getText().replaceAll("\n *\n+", "\\\\DTLpar "));
       setVisible(false);
    }
 
@@ -198,6 +200,8 @@ public class CellDialog extends JDialog
    private JTextArea textArea;
 
    private JMenuItem undoItem, redoItem;
+
+   private DatatoolDbPanel panel;
 
    private DatatoolDb db;
 
