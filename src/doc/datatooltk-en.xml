@@ -96,6 +96,16 @@
      </dl>
      </p>
    </node>
+   <node tag="notaspreadsheet" type="section" title="What it isn't">
+   <p>
+   The <app/> application isn't intended to have the full functionality of
+   a<nbsp/>spreadsheet. It's purpose is to allow you to edit databases with 
+   multilined entries. If you data just consists of numbers or short 
+   single-lined text, then you'll probably be better off just using 
+   a<nbsp/>spreadsheet to input the data and use <app/> in batch mode to
+   convert from <acr tag="csv"/> to a<nbsp/><sty>datatool</sty> file.
+   </p>
+   </node>
    <node tag="gui" type="chapter" title="Graphical Mode">
      <p>
        To run <app/> in graphical mode you must invoke it
