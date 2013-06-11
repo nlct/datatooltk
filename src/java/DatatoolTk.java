@@ -96,6 +96,7 @@ public class DatatoolTk
       System.out.println(getLabel("syntax.general"));
       System.out.println(getLabelWithValues("syntax.gui", "--gui", "-g"));
       System.out.println(getLabelWithValues("syntax.batch", "--batch", "-b"));
+      System.out.println(getLabelWithValues("syntax.in", "--in", "-i"));
       System.out.println(getLabelWithValues("syntax.out", "--out", "-o"));
       System.out.println(getLabelWithValues("syntax.version", "--version", "-v"));
       System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
@@ -663,14 +664,17 @@ public class DatatoolTk
             {
                debugMode = false;
             }
-            else if (args[i].charAt(0) == '-')
+            else if (args[i].equals("--in") || args[i].equals("-i"))
             {
-               throw new InvalidSyntaxException(
-                getLabelWithValue("error.syntax.unknown_option",
-                  args[i]));
-            }
-            else
-            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_input",
+                      args[i-1]));
+               }
+
                if (dbtex != null)
                {
                   throw new InvalidSyntaxException(
@@ -684,6 +688,17 @@ public class DatatoolTk
                }
 
                dbtex = args[i];
+            }
+            else if (args[i].charAt(0) == '-')
+            {
+               throw new InvalidSyntaxException(
+                getLabelWithValue("error.syntax.unknown_option",
+                  args[i]));
+            }
+            else
+            {
+               throw new InvalidSyntaxException(getLabelWithValue(
+                  "error.syntax.missing_option", args[i]));
             }
          }
       }

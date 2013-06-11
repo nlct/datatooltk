@@ -3,7 +3,7 @@
 <manual fontenc="T1">
   <preamble>
     <!-- Document Info -->
-    <title>User Manual for <app/> version 
+    <title>User Manual for <dict tag="appname"/> version 
       <dict tag="appversion" /></title>
     <author>Nicola L. C. Talbot<br/><url www="www.dickimaw-books.com" /></author>
     <author>Another Author<br />Affliation or URL</author>
@@ -136,7 +136,7 @@
      open the cell editor dialog box (see <ref tag="celleditor" />).
      </p>
    </node>
-   <node tag="celleditor" type="subsection" title="Cell Editor">
+   <node tag="celleditor" type="section" title="Cell Editor">
    <p>
    To open the cell editor dialog box (see <ref tag="fig.celleditor" />)
    double-click on the required cell, which must be in a column with a 

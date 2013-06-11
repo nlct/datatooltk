@@ -733,10 +733,30 @@ sub start_node{
          $expat->current_line, "\n";
    }
 
-   unless ($section_levels{$attrs{type}})
+   my $currentlevel = $section_levels{$attrs{type}};
+
+   unless ($currentlevel)
    {
       die "Unknown section level '$attrs{type}' on line ",
          $expat->current_line, "\n";
+   }
+
+   my $lastlevel;
+
+   if ($#nodes == -1)
+   {
+      $lastlevel = 0;
+   }
+   else
+   {
+      $lastlevel = $section_levels{$nodes[$#nodes]->{Type}};
+   }
+
+   unless ($currentlevel <= $lastlevel+1)
+   {
+      die "Node '$attrs{tag}' type can't be deeper than '",
+        $section_levels{$lastlevel+1},"' on line ",
+        $expat->current_line, "\n";
    }
 
    my %node = 

@@ -4,7 +4,7 @@ test-gui	: app
 	bin/datatooltk --debug --gui --csv tests/test-para.csv
 
 test-cli	: app
-	bin/datatooltk --debug --out tests/test-out.dbtex tests/data-raw.dbtex
+	bin/datatooltk --debug --out tests/test-out.dbtex --in tests/data-raw.dbtex
 	bin/datatooltk --debug --out tests/test-csv-out.dbtex --csv tests/test.csv
 
 test-sql	: app
