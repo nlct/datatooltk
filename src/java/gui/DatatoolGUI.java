@@ -96,6 +96,21 @@ public class DatatoolGUI extends JFrame
         KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK),
         toolBar));
 
+      JMenu editM = DatatoolGuiResources.createJMenu("edit");
+      mbar.add(editM);
+
+      undoItem = DatatoolGuiResources.createJMenuItem(
+         "edit", "undo", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK),
+         toolBar);
+      editM.add(undoItem);
+
+      redoItem = DatatoolGuiResources.createJMenuItem(
+         "edit", "redo", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK),
+         toolBar);
+      editM.add(redoItem);
+
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
 
@@ -519,4 +534,6 @@ public class DatatoolGUI extends JFrame
    private CSH.DisplayHelpFromSource csh;
 
    private JToolBar toolBar;
+
+   private JMenuItem undoItem, redoItem;
 }

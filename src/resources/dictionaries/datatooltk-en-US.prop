@@ -27,6 +27,36 @@ file.close.tooltip=Close current database
 file.quit=Quit
 file.quit.mnemonic=Q
 
+# Edit Menu
+edit=Edit
+edit.mnemonic=E
+edit.undo=Undo
+edit.undo.mnemonic=U
+edit.redo=Redo
+edit.redo.mnemonic=R
+edit.edit_cell=Edit Cell...
+edit.edit_cell.mnemonic=T
+edit.edit_cell.tooltip=Edit selected cell
+edit.columns=Columns
+edit.columns.mnemonic=L
+edit.columns.edit_header=Edit Header
+edit.columns.edit_header.mnemonic=E
+edit.columns.edit_header.tooltip=Edit header details for current column
+edit.columns.add_column=Add Column
+edit.columns.add_column.mnemonic=A
+edit.columns.add_column.tooltip=Add a new column to the database
+edit.columns.remove_column=Delete Column
+edit.columns.remove_column.mnemonic=D
+edit.columns.remove_column.tooltip=Delete the current column
+edit.rows=Rows
+edit.rows.mnemonic=L
+edit.rows.add_row=Add Row
+edit.rows.add_row.mnemonic=A
+edit.rows.add_row.tooltip=Add a new row to the database
+edit.rows.remove_row=Delete Row
+edit.rows.remove_row.mnemonic=D
+edit.rows.remove_row.tooltip=Delete the current row
+
 # Help menu
 help=Help
 help.mnemonic=H
