@@ -38,56 +38,6 @@ public class DatatoolDbPanel extends JPanel
 
       DbNumericalCellEditor editor = new DbNumericalCellEditor();
 
-      Document doc = editor.getTextField().getDocument();
-
-      doc.addDocumentListener(new DocumentListener()
-      {
-         public void changedUpdate(DocumentEvent e)
-         {
-            Document doc = e.getDocument();
-            try
-            {
-               updateCell(currentCell, 
-                 doc.getText(0, doc.getLength()));
-               setModified(true);
-            }
-            catch (BadLocationException excp)
-            {
-               DatatoolTk.debug(excp);
-            }
-         }
-
-         public void insertUpdate(DocumentEvent e)
-         {
-            Document doc = e.getDocument();
-            try
-            {
-               updateCell(currentCell, 
-                 doc.getText(0, doc.getLength()));
-               setModified(true);
-            }
-            catch (BadLocationException excp)
-            {
-               DatatoolTk.debug(excp);
-            }
-         }
-
-         public void removeUpdate(DocumentEvent e)
-         {
-            Document doc = e.getDocument();
-            try
-            {
-               updateCell(currentCell, 
-                 doc.getText(0, doc.getLength()));
-               setModified(true);
-            }
-            catch (BadLocationException excp)
-            {
-               DatatoolTk.debug(excp);
-            }
-         }
-      });
-
       table.setDefaultEditor(Number.class, editor);
       table.setDefaultRenderer(Number.class, new DbNumericalCellRenderer());
       table.setDefaultRenderer(String.class, new DbCellRenderer());
@@ -100,27 +50,31 @@ public class DatatoolDbPanel extends JPanel
        {
           public void mouseClicked(MouseEvent evt)
           {
+             int col = table.getSelectedColumn();
+
+             if (col == -1)
+             {
+                // nothing selected
+
+                return;
+             }
+
+             int row = table.getSelectedRow();
+
+             if (row == -1)
+             {
+                return;
+             }
+
+             currentCell = db.getRow(row+1).getCell(col+1);
+
              if (evt.getClickCount() == 2)
              {
-                // has the user double-clicked on the panel behind
-                // the numerical text field?
-
-                int col = table.getSelectedColumn();
-
-                if (col == -1)
-                {
-                   // nothing selected
-
-                   return;
-                }
-
                 int type = db.getHeader(col+1).getType();
 
                 if (type == DatatoolDb.TYPE_INTEGER
                  || type == DatatoolDb.TYPE_REAL)
                 {
-                   int row = table.getSelectedRow();
-
                    if (table.editCellAt(row, col))
                    {
                       return;
@@ -293,6 +247,16 @@ public class DatatoolDbPanel extends JPanel
       }
    }
 
+   public void updateCell(String text)
+   {
+      updateCell(currentCell, text);
+   }
+
+   public void updateCell(int row, int col, String text)
+   {
+      updateCell(db.getRow(row+1).getCell(col+1), text);
+   }
+
    public void updateCell(DatatoolCell cell, String text)
    {
       addUndoEvent(new UndoableEditEvent(cell, 
@@ -359,8 +323,7 @@ class DatatoolDbTableModel extends AbstractTableModel
 
    public void setValueAt(Object value, int row, int col)
    {
-      db.getRow(row+1).setCell(col+1, value.toString());
-      panel.setModified(true);
+      panel.updateCell(row, col, value.toString());
       fireTableCellUpdated(row, col);
    }
 
