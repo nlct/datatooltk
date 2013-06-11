@@ -63,8 +63,9 @@ public class DatatoolDbPanel extends JPanel
 
    public void addUndoEvent(UndoableEditEvent event)
    {
-      undoManager.addEdit(event.getEdit());
-      gui.updateUndoRedoItems(this);
+      UndoableEdit edit = event.getEdit();
+      undoManager.addEdit(edit);
+      gui.updateUndoRedoItems(this, edit.getPresentationName(), null);
       isModified = true;
    }
 
@@ -82,7 +83,11 @@ public class DatatoolDbPanel extends JPanel
    {
       try
       {
+         String name = undoManager.getPresentationName();
          undoManager.undo();
+         gui.updateUndoRedoItems(this, 
+            undoManager.canUndo() ? undoManager.getPresentationName():"", 
+            name);
          repaint();
       }
       catch (CannotUndoException e)
@@ -95,7 +100,12 @@ public class DatatoolDbPanel extends JPanel
    {
       try
       {
+         String name = undoManager.getPresentationName();
          undoManager.redo();
+
+         gui.updateUndoRedoItems(this, name,
+           undoManager.canRedo() ? undoManager.getPresentationName():"");
+
          repaint();
       }
       catch (CannotRedoException e)

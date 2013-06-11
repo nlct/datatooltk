@@ -269,6 +269,11 @@ public class DatatoolTk
       return prop;
    }
 
+   public static String getLabelRemoveArgs(String parent, String label)
+   {
+      return getLabel(parent, label).replaceAll("\\$[0-9]", "");
+   }
+
    public static String getLabel(String label)
    {
       return getLabel(null, label);

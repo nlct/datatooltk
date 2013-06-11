@@ -30,10 +30,10 @@ file.quit.mnemonic=Q
 # Edit Menu
 edit=Edit
 edit.mnemonic=E
-edit.undo=Undo
+edit.undo=Undo $1
 edit.undo.mnemonic=U
 edit.undo.tooltip=Undo previous operation
-edit.redo=Redo
+edit.redo=Redo $1
 edit.redo.mnemonic=R
 edit.redo.tooltip=Redo previous operation
 edit.edit_cell=Edit Cell...

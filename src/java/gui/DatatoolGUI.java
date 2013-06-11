@@ -267,6 +267,24 @@ public class DatatoolGUI extends JFrame
       redoItem.setEnabled(panel.canRedo());
    }
 
+   public void updateUndoRedoItems(DatatoolDbPanel panel, 
+     String undoName, String redoName)
+   {
+      if (undoName != null)
+      {
+        undoItem.setText(DatatoolTk.getLabelWithValue("edit.undo",
+           undoName));
+      }
+
+      if (redoName != null)
+      {
+        redoItem.setText(DatatoolTk.getLabelWithValue("edit.redo",
+           redoName));
+      }
+
+      updateUndoRedoItems(panel);
+   }
+
    public void actionPerformed(ActionEvent evt)
    {
       String action = evt.getActionCommand();
@@ -311,7 +329,6 @@ public class DatatoolGUI extends JFrame
          if (panel != null)
          {
             panel.undo();
-            updateUndoRedoItems(panel);
          }
       }
       else if (action.equals("redo"))
@@ -321,7 +338,6 @@ public class DatatoolGUI extends JFrame
          if (panel != null)
          {
             panel.redo();
-            updateUndoRedoItems(panel);
          }
       }
    }

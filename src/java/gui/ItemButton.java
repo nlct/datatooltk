@@ -15,7 +15,7 @@ public class ItemButton extends JMenuItem
    public ItemButton(String parentLabel, String actionLabel,
      ActionListener listener, KeyStroke keyStroke, JToolBar toolBar)
    {
-      super(DatatoolTk.getLabel(parentLabel, actionLabel));
+      super(DatatoolTk.getLabelRemoveArgs(parentLabel, actionLabel));
       setMnemonic(DatatoolTk.getMnemonic(parentLabel, actionLabel));
       setActionCommand(actionLabel);
 
