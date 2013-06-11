@@ -7,10 +7,13 @@ Requirements:
 Java Help (https://javahelp.java.net/)
 Open CSV (http://opencsv.sourceforge.net/)
 MySQL connector (http://dev.mysql.com/downloads/connector/j/)
+Java Look and Feel Graphics Repository
+(http://www.oracle.com/technetwork/java/index-138612.html)
 
 Instructions:
 
-Fetch the above and copy or symlink the jar files (javahelp2.jar, opencsv.jar and mysql-connector-java.jar)
+Fetch the above and copy or symlink the jar files (javahelp2.jar,
+opencsv.jar mysql-connector-java.jar and jlfgr-1_0.jar)
 in the lib/ directory
 
 www.dickimaw-books.com
