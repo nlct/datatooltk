@@ -1,0 +1,15 @@
+*.tex
+*.aux
+*.log
+*.out
+*.pdf
+*.ist
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.idx
+*.ind
+*.ilg

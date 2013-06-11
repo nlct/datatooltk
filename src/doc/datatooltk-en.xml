@@ -129,18 +129,21 @@
      data, the type is unset.
      </p>
      <p>
-     Non-string entries can be edited by double-clicking on the relevant cell.
+     Non-string entries can be edited by double-clicking on the relevant cell, 
+     or you can select the relevant cell and use <menu tag="edit.edit_cell"/>.
      A cursor will appear in the cell and you can edit the numerical value.
      Press <dq>Enter</dq> to finish editing. To edit an entry in a column
-     with the <dq>string</dq> data type, double-click on the relevant cell to 
-     open the cell editor dialog box (see <ref tag="celleditor" />).
+     with the <dq>string</dq> data type, double-click on the relevant cell or 
+     select it and use <menu tag="edit.edit_cell"/> to open the cell editor 
+     dialog box (see <ref tag="celleditor" />).
      </p>
    </node>
    <node tag="celleditor" type="section" title="Cell Editor">
    <p>
    To open the cell editor dialog box (see <ref tag="fig.celleditor" />)
    double-click on the required cell, which must be in a column with a 
-   string data type.
+   string data type. Alternatively, select the cell and use 
+   <menu tag="edit.edit_cell"/>.
    </p>
    <float type="figure" tag="fig.celleditor" caption="Cell Editor Dialog">
      <image alt="Image of cell editor dialog" src="images/celleditor.png" />
