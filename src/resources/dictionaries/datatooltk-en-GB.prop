@@ -99,6 +99,8 @@ message.overwrite_query=Overwrite $1?
 message.unsaved_data=Unsaved Data
 message.unsaved_data_query='$1' has been modified. Do you want to save it?
 message.cancelled=Cancelled
+message.discard_edit_query=Discard the edits you have just made?
+message.confirm_discard=Confirm Discard
 
 # Syntax
 syntax.title=Syntax:
