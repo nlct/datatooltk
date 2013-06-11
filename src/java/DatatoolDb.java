@@ -831,8 +831,11 @@ public class DatatoolDb
 
    public DatatoolHeader getHeader(int headerIndex)
    {
-      for (DatatoolHeader header : headers)
+      for (HeaderEnumeration en=headerElements(headerIndex-1);
+          en.hasMoreElements();)
       {
+         DatatoolHeader header = en.nextElement();
+
          if (header.getColumnIndex() == headerIndex)
          {
             return header;
@@ -863,6 +866,11 @@ public class DatatoolDb
    public HeaderEnumeration headerElements()
    {
       return new HeaderEnumeration(headers);
+   }
+
+   public HeaderEnumeration headerElements(int offset)
+   {
+      return new HeaderEnumeration(headers, offset);
    }
 
    public RowEnumeration rowElements()

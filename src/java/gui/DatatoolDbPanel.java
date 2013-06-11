@@ -1,8 +1,7 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.io.*;
-import java.awt.Point;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import javax.swing.*;
@@ -34,7 +33,7 @@ public class DatatoolDbPanel extends JPanel
       table = new JTable(new DatatoolDbTableModel(db, this));
 
       table.setRowHeight(100);
-      table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+      table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
       DbNumericalCellEditor editor = new DbNumericalCellEditor();
 
@@ -116,6 +115,17 @@ public class DatatoolDbPanel extends JPanel
               }
            }
         });
+
+      for (int i = 0; i < table.getColumnCount(); i++)
+      {
+         if (db.getHeader(i+1).getType() == DatatoolDb.TYPE_STRING)
+         {
+            TableColumn column = table.getColumnModel().getColumn(i);
+
+            column.setPreferredWidth(Math.max(column.getPreferredWidth(),
+              STRING_MIN_WIDTH));
+         }
+      }
 
       add(new JScrollPane(table), BorderLayout.CENTER);
    }
@@ -274,6 +284,8 @@ public class DatatoolDbPanel extends JPanel
    private UndoManager undoManager;
 
    private DatatoolCell currentCell;
+
+   public static final int STRING_MIN_WIDTH=300;
 }
 
 class DatatoolDbTableModel extends AbstractTableModel
