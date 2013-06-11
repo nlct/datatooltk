@@ -44,6 +44,10 @@ public class ItemButton extends JMenuItem
             button.setToolTipText(tooltip);
          }
       }
+      else if (button != null)
+      {
+         button.setToolTipText(getText());
+      }
 
       if (listener != null)
       {
