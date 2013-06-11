@@ -105,11 +105,15 @@ public class DatatoolGUI extends JFrame
          toolBar);
       editM.add(undoItem);
 
+      undoItem.setEnabled(false);
+
       redoItem = DatatoolGuiResources.createJMenuItem(
          "edit", "redo", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK),
          toolBar);
       editM.add(redoItem);
+
+      redoItem.setEnabled(false);
 
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);

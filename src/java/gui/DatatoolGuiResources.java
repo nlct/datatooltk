@@ -187,46 +187,7 @@ public class DatatoolGuiResources
     public static JMenuItem createJMenuItem(String parent, String label,
      ActionListener listener, KeyStroke keyStroke, JToolBar toolBar)
     {
-       JMenuItem item = new JMenuItem(DatatoolTk.getLabel(parent, label));
-       item.setMnemonic(DatatoolTk.getMnemonic(parent, label));
-       item.setActionCommand(label);
-
-       String tooltip = DatatoolTk.getToolTip(parent, label);
-
-       if (tooltip != null)
-       {
-          item.setToolTipText(tooltip);
-       }
-
-       if (listener != null)
-       {
-          item.addActionListener(listener);
-       }
-
-       if (keyStroke != null)
-       {
-          item.setAccelerator(keyStroke);
-       }
-
-       if (toolBar != null)
-       {
-          URL imageURL = getImageUrl(label);
-
-          if (imageURL != null)
-          {
-             JButton button = new JButton(new ImageIcon(imageURL));
-             button.setActionCommand(label);
-
-             if (listener != null)
-             {
-                button.addActionListener(listener);
-             }
-
-             toolBar.add(button);
-          }
-       }
-
-       return item;
+       return new ItemButton(parent, label, listener, keyStroke, toolBar);
     }
 
     // Get the image URL associated with action
