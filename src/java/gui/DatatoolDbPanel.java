@@ -127,7 +127,10 @@ public class DatatoolDbPanel extends JPanel
          }
       }
 
-      add(new JScrollPane(table), BorderLayout.CENTER);
+      JScrollPane sp = new JScrollPane(table);
+      sp.setRowHeaderView(new RowHeaderComponent(this));
+
+      add(sp, BorderLayout.CENTER);
    }
 
    public void addUndoEvent(UndoableEditEvent event)
@@ -273,6 +276,16 @@ public class DatatoolDbPanel extends JPanel
          new UpdateCellEdit(this, cell, text)));
    }
 
+   public int getRowCount()
+   {
+      return table.getRowCount();
+   }
+
+   public int getRowHeight(int row)
+   {
+      return table.getRowHeight(row);
+   }
+
    protected DatatoolDb db;
 
    private boolean isModified = false;
@@ -374,7 +387,17 @@ class DatatoolTableHeader extends JTableHeader
    {
       int idx = columnAtPoint(event.getPoint());
 
+      if (idx == -1)
+      {
+         return null;
+      }
+
       DatatoolHeader header = panel.db.getHeader(idx+1);
+
+      if (header == null)
+      {
+         return null;
+      }
 
       return DatatoolTk.getLabelWithValues("header.tooltip_format", 
          header.getKey(), DatatoolHeader.TYPE_LABELS[header.getType()+1]);
