@@ -1,5 +1,6 @@
 add_column=/toolbarButtonGraphics/table/ColumnInsertAfter16.gif
 add_row=/toolbarButtonGraphics/table/RowInsertAfter16.gif
+cancel=/resources/icons/cancel.png
 close=/resources/icons/close.png
 copy=/toolbarButtonGraphics/general/Copy24.gif
 cut=/toolbarButtonGraphics/general/Cut24.gif

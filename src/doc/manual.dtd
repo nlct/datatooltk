@@ -1,5 +1,5 @@
 <!-- Parameter entities -->
-<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref | term | tabular | menu | dq'>
+<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref | term | tabular | menu | dq | TeX LaTeX | nbsp | meta | dl | app' >
 
 <!-- Main elements-->
 
@@ -24,13 +24,15 @@
 
 <!-- Document elements -->
 
-<!ELEMENT node (p | float | pre)+ | printacronyms | printindex >
+<!ELEMENT node (p | float | pre | dl)+ | printacronyms | printindex >
 <!ATTLIST node tag (#PCDATA)+ #REQUIRED>
 <!ATTLIST node type (#PCDATA)+ #REQUIRED>
 <!ATTLIST node title (%basic.content;)+ #REQUIRED>
 
 <!-- Basic elements -->
 <!ELEMENT p (%basic.content;)*>
+<!ATTLIST p align (#PCDATA)+>
+<!ATTLIST p noindent (#PCDATA)+>
 <!ELEMENT url EMPTY>
 <!ATTLIST url www (#PCDATA)+ #REQUIRED>
 <!ATTLIST url text (#PCDATA)+>
@@ -53,6 +55,7 @@
 <!ATTLIST opt tag (#PCDATA)+ #REQUIRED>
 <!ELEMENT dq (%basic.content;)+>
 <!ELEMENT tt (%basic.content;)+>
+<!ELEMENT meta (%basic.content;)+>
 <!ELEMENT em (%basic.content;)+>
 <!ELEMENT b (%basic.content;)+>
 <!ELEMENT pre (%basic.content;)+>
@@ -61,6 +64,9 @@
 <!ATTLIST float tag (#PCDATA)+ #REQUIRED>
 <!ATTLIST float caption (%basic.content;)+ #REQUIRED>
 <!ATTLIST float listcaption (%basic.content;)+>
+<!ELEMENT dl (dt, dd)+>
+<!ELEMENT dt (%basic.content;)+>
+<!ELEMENT dd (%basic.content;)+>
 
 <!ELEMENT image EMPTY>
 <!ATTLIST image src (%basic.content;)+>
@@ -80,3 +86,5 @@
 <!ELEMENT printindex EMPTY>
 <!ELEMENT printacronyms EMPTY>
 <!ELEMENT LaTeX EMPTY>
+<!ELEMENT TeX EMPTY>
+<!ELEMENT app EMPTY>

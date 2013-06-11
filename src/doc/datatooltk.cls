@@ -54,4 +54,6 @@ package}}
 \newcommand*{\sectionautorefname}{Section}
 
 \newcommand*{\dq}[1]{``#1''}
+
+\newcommand*{\meta}[1]{\ensuremath{\langle}\emph{#1}\ensuremath{\rangle}}
 \endinput

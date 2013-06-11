@@ -3,7 +3,7 @@
 <manual fontenc="T1">
   <preamble>
     <!-- Document Info -->
-    <title>User Manual for <dict tag="appname" /> version 
+    <title>User Manual for <app/> version 
       <dict tag="appversion" /></title>
     <author>Nicola L. C. Talbot<br/><url www="www.dickimaw-books.com" /></author>
     <author>Another Author<br />Affliation or URL</author>
@@ -20,34 +20,85 @@
   <document>
    <node tag="introduction" type="chapter" title="Introduction">
      <p>
-     This is the user manual for <dict tag="appname" />. It's still 
+     This is the user manual for <app/>. It's still 
      under construction.
      </p>
      <p>
      The <LaTeX /> <sty>datatool</sty> package is able to save databases 
      in its own internal format. Files in this format are difficult to 
-     edit, but are by far the fastest way of loading a <sty>datatool</sty> 
+     edit and only a<nbsp /><TeX />pert should attempt it, but they are 
+     by far the fastest way of loading a <sty>datatool</sty> 
      <term tag="database" /> in <LaTeX />. This application provides 
      a<nbsp /><acr tag="gui" /> making it easier to edit these files. 
      It can also import data from <acr tag="csv" /> files and from 
-     SQL databases. <dict tag="appname" /> can run in either 
-     batch mode (see <ref tag="cli" />) or <acr tag="gui" /> mode 
-     (see <ref tag="gui" />).
+     SQL databases. The <app/> application can run in either 
+     batch mode (default) or <acr tag="gui" /> mode (see <ref tag="gui" />).
+     Command line invocation:
+     </p>
+     <p align="center">
+      <app/> [<meta>options</meta>]
+     </p>
+     <p noindent="true">
+     Available options:
+     <dl>
+       <dt><opt tag="gui"/> (or <tt>-g</tt>)</dt>
+       <dd>
+       Invoke <app/> in <acr tag="gui" /> mode.
+       </dd>
+       <dt><opt tag="batch"/> (or <tt>-b</tt>)</dt>
+       <dd>
+       Invoke <app/> in batch mode (default).
+       </dd>
+       <dt><opt tag="out"/> <meta>filename</meta>
+         (or <tt>-o</tt> <meta>filename</meta>)</dt>
+       <dd>
+       Save the database to <meta>filename</meta> (batch mode only).
+       </dd>
+       <dt><opt tag="version"/> (or <tt>-v</tt>)</dt>
+       <dd>Print the version details to STDOUT and exit.</dd>
+       <dt><opt tag="help"/> (or <tt>-h</tt>)</dt>
+       <dd>Print a brief summary of available options to STDOUT and exit.</dd>
+       <dt><opt tag="csv" /> <meta>csv file</meta></dt>
+       <dd>Import data from the given <acr tag="csv"/> file.</dd>
+       <dt><opt tag="sep" /> <meta>character</meta></dt>
+       <dd>Specify the character used to separate values in the 
+       <acr tag="csv" /> file. (Defaults to a<nbsp />comma)</dd>
+       <dt><opt tag="delim" /> <meta>character</meta></dt>
+       <dd>Specify the character used to delimit values in the 
+       <acr tag="csv" /> file. (Defaults to a<nbsp />double quote)</dd>
+       <dt><opt tag="csvheader" /></dt>
+       <dd>The <acr tag="csv"/> file has a header row. (Default.)</dd>
+       <dt><opt tag="nocsvheader" /></dt>
+       <dd>The <acr tag="csv"/> file doesn't have a header row.</dd>
+       <dt><opt tag="sql"/> <meta>statement</meta></dt>
+       <dd>Import data from an SQL database where <meta>statement</meta>
+           is an SQL SELECT statement.</dd>
+       <dt><opt tag="sqldb"/> <meta>name</meta></dt>
+       <dd>The SQL database name.</dd>
+       <dt><opt tag="sqlprefix"/> <meta>prefix</meta></dt>
+       <dd>The SQL prefix. (Default: <dq><tt>jdbc:mysql://</tt></dq>.)</dd>
+       <dt><opt tag="sqlport"/> <meta>port</meta></dt>
+       <dd>The SQL port number. (Default: 3306.)</dd>
+       <dt><opt tag="sqlhost"/> <meta>host</meta></dt>
+       <dd>The SQL host. (Default: <dq><tt>localhost</tt></dq>.)</dd>
+       <dt><opt tag="sqluser"/> <meta>user name</meta></dt>
+       <dd>The SQL user name.</dd>
+       <dt><opt tag="sqlpassword"/> <meta>password</meta></dt>
+       <dd>The SQL password (insecure). If omitted, you will be prompted 
+       for<nbsp />a password if you try to import data from an SQL 
+       database.</dd>
+       <dt><opt tag="wipepassword"/></dt>
+       <dd>For extra security, wipe the password from memory as soon as it 
+       has been used to connect to an SQL database.</dd>
+       <dt><opt tag="nowipepassword"/></dt>
+       <dd>Don't wipe the password from memory as soon as it 
+       has been used to connect to an SQL database. (Default.)</dd>
+     </dl>
      </p>
    </node>
-   <node tag="cli" type="section" title="Batch Mode">
-    <p>
-      The default invocation of <dict tag="appname" /> will be in 
-      batch mode. (Although if you are importing data from a SQL 
-      database and you don't specify a password using 
-      <opt tag="sqlpassword" />, you will be prompted for the password.)
-      You can also explicitly set it to batch mode using the
-      <opt tag="batch" /> option.
-    </p>
-   </node>
-   <node tag="gui" type="section" title="Graphical Mode">
+   <node tag="gui" type="chapter" title="Graphical Mode">
      <p>
-       To run <dict tag="appname" /> in graphical mode you must invoke it
+       To run <app/> in graphical mode you must invoke it
        with the <opt tag="gui" /> option.
      </p>
      <p>

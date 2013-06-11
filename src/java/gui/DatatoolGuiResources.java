@@ -86,8 +86,7 @@ public class DatatoolGuiResources
 
        // Is there an associated image?
 
-       URL imageURL = DatatoolTk.class.getResource(
-          "/resources/icons/"+label+".png");
+       URL imageURL = getImageUrl(label);
 
        JButton button;
 

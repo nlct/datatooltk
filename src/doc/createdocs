@@ -104,6 +104,7 @@ close FD;
 my %docinfo = ();
 my @nodes   = ();
 my @current = ();
+my @paragraph = ();
 my %tags    = ();
 
 my $xmlfile = "$base-$locale.xml";
@@ -869,9 +870,61 @@ sub end_newterm{
 sub start_p{
    my ($expat, %attrs) = @_;
 
-   &handle_html("<p>");
+   my $endtag="\n\n";
 
-   print TEXFD "\n\n";
+   if ($attrs{noindent})
+   {
+      my $value = lc($attrs{noindent});
+
+      if ($value eq 'true' or $value eq 1)
+      {
+         $attrs{noindent} = 1;
+      }
+      elsif ($value eq 'false' or $value eq 0)
+      {
+         $attrs{noindent} = 0;
+      }
+      else
+      {
+         die "Invalid value '$value' of attribute 'noindent' on line ",
+           $expat->current_line, "\n";
+      }
+   }
+
+   if ($attrs{align})
+   {
+      &handle_html('<p align="'.$attrs{'align'}.'">');
+
+      if ($attrs{align} eq 'left')
+      {
+         print TEXFD "\\begin{flushleft}";
+         $endtag="\\end{flushleft}";
+      }
+      elsif ($attrs{align} eq 'right')
+      {
+         print TEXFD "\\begin{flushright}";
+         $endtag="\\end{flushright}";
+      }
+      elsif ($attrs{align} eq 'center')
+      {
+         print TEXFD "\\begin{center}";
+         $endtag="\\end{center}";
+      }
+      else
+      {
+         die "Unknown alignment option", $attrs{align},
+          " for 'p' element on line ", $expat->current_line, "\n";
+      }
+   }
+   else
+   {
+      &handle_html("<p>");
+      print TEXFD "\n\n";
+
+      print TEXFD "\\noindent " if $attrs{noindent};
+   }
+
+   push @paragraph, $endtag;
 }
 
 sub end_p{
@@ -879,7 +932,23 @@ sub end_p{
 
    &handle_html("</p>");
 
-   print TEXFD "\n\n";
+   print TEXFD pop @paragraph;
+}
+
+sub start_dl{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<dl>");
+
+   print TEXFD "\\begin{description}";
+}
+
+sub end_dl{
+   my ($expat) = @_;
+
+   &handle_html("</dl>");
+
+   print TEXFD "\\end{description}";
 }
 
 sub start_tt{
@@ -890,10 +959,56 @@ sub start_tt{
    print TEXFD "\\texttt{";
 }
 
+sub start_dt{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<dt>");
+
+   print TEXFD "\\item[{";
+}
+
+sub end_dt{
+   my ($expat) = @_;
+
+   &handle_html("</dt>");
+
+   print TEXFD "}]";
+}
+
+sub start_dd{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<dd>");
+
+}
+
+sub end_dd{
+   my ($expat) = @_;
+
+   &handle_html("</dd>");
+
+}
+
 sub end_tt{
    my ($expat) = @_;
 
    &handle_html('</tt>');
+
+   print TEXFD "}";
+}
+
+sub start_meta{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<em>&lt;");
+
+   print TEXFD "\\meta{";
+}
+
+sub end_meta{
+   my ($expat) = @_;
+
+   &handle_html('&gt;</em>');
 
    print TEXFD "}";
 }
@@ -1188,6 +1303,18 @@ sub end_LaTeX{
    my ($expat) = @_;
 }
 
+sub start_TeX{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('TeX');
+
+   print TEXFD "\\TeX{}";
+}
+
+sub end_TeX{
+   my ($expat) = @_;
+}
+
 sub start_relax{
    my ($expat, %attrs) = @_;
 
@@ -1195,6 +1322,22 @@ sub start_relax{
 }
 
 sub end_relax{
+   my ($expat) = @_;
+}
+
+sub start_app{
+   my ($expat, %attrs) = @_;
+
+   my $tag="appname";
+
+   my $text = &get_label($tag, \%attrs, $expat);
+
+   &handle_html("<tt>$text</tt>");
+
+   print TEXFD "\\texttt{$text}";
+}
+
+sub end_app{
    my ($expat) = @_;
 }
 
