@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.undo.*;
 
 import com.dickimawbooks.datatooltk.*;
 
@@ -26,7 +27,46 @@ public class CellDialog extends JDialog
          }
       });
 
+      JMenuBar mbar = new JMenuBar();
+      setJMenuBar(mbar);
+
+      JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
+
+      getContentPane().add(toolBar, BorderLayout.NORTH);
+
+      JPanel mainPanel = new JPanel(new BorderLayout());
+
+      getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+      undoManager = new UndoManager();
+
+      JMenu editM = DatatoolGuiResources.createJMenu("edit");
+      mbar.add(editM);
+
+      undoItem = DatatoolGuiResources.createJMenuItem(
+        "edit", "undo", this,
+        KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK),
+        toolBar);
+
+      editM.add(undoItem);
+
+      redoItem = DatatoolGuiResources.createJMenuItem(
+        "edit", "redo", this,
+        KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK),
+        toolBar);
+
+      editM.add(redoItem);
+
       textArea = new JTextArea(20,40);
+      textArea.getDocument().addUndoableEditListener(
+       new UndoableEditListener()
+       {
+          public void undoableEditHappened(UndoableEditEvent event)
+          {
+             undoManager.addEdit(event.getEdit());
+             undoItem.setEnabled(true);
+          }
+       });
 
       textArea.setEditable(true);
       textArea.setLineWrap(true);
@@ -50,7 +90,7 @@ public class CellDialog extends JDialog
          }
       });
 
-      getContentPane().add(new JScrollPane(textArea), BorderLayout.CENTER);
+      mainPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
 
       JPanel p = new JPanel();
 
@@ -58,7 +98,7 @@ public class CellDialog extends JDialog
       p.add(DatatoolGuiResources.createCancelButton(this));
       p.add(gui.createHelpButton("celleditor"));
 
-      getContentPane().add(p, BorderLayout.SOUTH);
+      mainPanel.add(p, BorderLayout.SOUTH);
 
       pack();
 
@@ -71,6 +111,11 @@ public class CellDialog extends JDialog
       this.cell = db.getRow(rowIdx+1).getCell(colIdx+1);
 
       textArea.setText(cell.getValue().replaceAll("\\\\DTLpar *", "\n\n"));
+
+      undoManager.discardAllEdits();
+      undoItem.setEnabled(false);
+      redoItem.setEnabled(false);
+
       revalidate();
 
       modified = false;
@@ -93,6 +138,34 @@ public class CellDialog extends JDialog
       else if (action.equals("cancel"))
       {
          cancel();
+      }
+      else if (action.equals("undo"))
+      {
+         try
+         {
+            undoManager.undo();
+         }
+         catch (CannotUndoException e)
+         {
+            DatatoolTk.debug(e);
+         }
+
+         undoItem.setEnabled(undoManager.canUndo());
+         redoItem.setEnabled(undoManager.canRedo());
+      }
+      else if (action.equals("redo"))
+      {
+         try
+         {
+            undoManager.redo();
+         }
+         catch (CannotRedoException e)
+         {
+            DatatoolTk.debug(e);
+         }
+
+         undoItem.setEnabled(undoManager.canUndo());
+         redoItem.setEnabled(undoManager.canRedo());
       }
    }
 
@@ -124,6 +197,8 @@ public class CellDialog extends JDialog
 
    private JTextArea textArea;
 
+   private JMenuItem undoItem, redoItem;
+
    private DatatoolDb db;
 
    private DatatoolCell cell;
@@ -131,4 +206,6 @@ public class CellDialog extends JDialog
    private DatatoolGUI gui;
 
    private boolean modified;
+
+   private UndoManager undoManager;
 }

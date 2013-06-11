@@ -28,6 +28,7 @@ public class ItemButton extends JMenuItem
          if (imageURL != null)
          {
             button = new JButton(new ImageIcon(imageURL));
+            button.setActionCommand(actionLabel);
 
             toolBar.add(button);
          } 
