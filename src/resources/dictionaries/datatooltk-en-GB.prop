@@ -48,6 +48,12 @@ edit.columns.add_column.tooltip=Add a new column to the database
 edit.columns.remove_column=Delete Column
 edit.columns.remove_column.mnemonic=D
 edit.columns.remove_column.tooltip=Delete the current column
+edit.columns.move_column_left=Move Column Left
+edit.columns.move_column_left.mnemonic=L
+edit.columns.move_column_left.tooltip=Move current column to the left
+edit.columns.move_column_right=Move Column Right
+edit.columns.move_column_right.mnemonic=R
+edit.columns.move_column_right.tooltip=Move current column to the right
 edit.rows=Rows
 edit.rows.mnemonic=L
 edit.rows.add_row=Add Row
@@ -56,6 +62,12 @@ edit.rows.add_row.tooltip=Add a new row to the database
 edit.rows.remove_row=Delete Row
 edit.rows.remove_row.mnemonic=D
 edit.rows.remove_row.tooltip=Delete the current row
+edit.rows.move_row_up=Move Row Up
+edit.rows.move_row_up.mnemonic=U
+edit.rows.move_row_up.tooltip=Move current row up
+edit.rows.move_row_down=Move Row Down
+edit.rows.move_row_down.mnemonic=N
+edit.rows.move_row_down.tooltip=Move current row down
 
 # Help menu
 help=Help

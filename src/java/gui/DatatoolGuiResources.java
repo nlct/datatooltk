@@ -1,6 +1,7 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.awt.*;
+import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.awt.event.*;
@@ -210,8 +211,7 @@ public class DatatoolGuiResources
 
        if (toolBar != null)
        {
-          URL imageURL = DatatoolTk.class.getResource(
-             "/resources/icons/"+label+".png");
+          URL imageURL = getImageUrl(label);
 
           if (imageURL != null)
           {
@@ -230,5 +230,72 @@ public class DatatoolGuiResources
        return item;
     }
 
+    // Get the image URL associated with action
+
+    public static URL getImageUrl(String action)
+    {
+       if (imageMap == null)
+       {
+          // initialise
+
+          imageMap = new Properties();
+
+          InputStream in = null;
+          BufferedReader reader = null;
+
+          try
+          {
+             try
+             {
+                in = DatatoolTk.class.getResourceAsStream(
+                   "/resources/imagemap.prop");
+
+                if (in == null)
+                {
+                   throw new FileNotFoundException(
+                     "Can't find /resources/imagemap.prop");
+                }
+
+                reader = new BufferedReader(
+                   new InputStreamReader(in));
+
+                imageMap.load(reader);
+             }
+             finally
+             {
+                if (reader != null)
+                {
+                   reader.close();
+                }
+
+                if (in != null)
+                {
+                   in.close();
+                }
+             }
+          }
+          catch (IOException e)
+          {
+             DatatoolTk.debug(e);
+             return null;
+          }
+       }
+
+       String location = imageMap.getProperty(action);
+
+       if (location == null) return null;
+
+       URL imageURL = DatatoolTk.class.getResource(location);
+
+       if (imageURL == null)
+       {
+          DatatoolTk.debug("Can't find resource '"+location+"'");
+       }
+
+       return imageURL;
+    }
+
     private static ErrorPanel errorPanel = new ErrorPanel();
+
+    private static Properties imageMap = null;
 }

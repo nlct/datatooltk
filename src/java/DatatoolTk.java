@@ -176,6 +176,14 @@ public class DatatoolTk
       }
    }
 
+   public static void debug(Exception e)
+   {
+      if (debugMode)
+      {
+         e.printStackTrace();
+      }
+   }
+
    public static String getLanguage()
    {
       // TODO allow user to select a language other than the default
