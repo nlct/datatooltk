@@ -984,6 +984,17 @@ public class DatatoolDb
       return value;
    }
 
+   // Row index starts from 1
+   public DatatoolRow insertRow(int rowIdx)
+   {
+      DatatoolRow row = new DatatoolRow(headers.size());
+      row.setRowIndex(rowIdx);
+
+      data.add(rowIdx-1, row);
+
+      return row;
+   }
+
    private Vector<DatatoolHeader> headers;
 
    private Vector<DatatoolRow> data;

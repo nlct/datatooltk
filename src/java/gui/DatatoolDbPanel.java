@@ -314,6 +314,17 @@ public class DatatoolDbPanel extends JPanel
          new UpdateCellEdit(this, row, col, cell, text)));
    }
 
+   public void requestNewColumnAfter()
+   {
+   }
+
+   public void insertNewRowAfter()
+   {
+      // insert new row after selected row or after last row if none
+      // selected.
+   }
+
+
    public void selectRow(int row)
    {
       int col = table.getSelectedColumn();

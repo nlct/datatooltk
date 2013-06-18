@@ -1,5 +1,7 @@
-add_column=/toolbarButtonGraphics/table/ColumnInsertAfter16.gif
-add_row=/toolbarButtonGraphics/table/RowInsertAfter16.gif
+add_column_after=/toolbarButtonGraphics/table/ColumnInsertAfter24.gif
+add_row_after=/toolbarButtonGraphics/table/RowInsertAfter24.gif
+add_column_before=/toolbarButtonGraphics/table/ColumnInsertBefore24.gif
+add_row_before=/toolbarButtonGraphics/table/RowInsertBefore24.gif
 cancel=/resources/icons/cancel.png
 close=/resources/icons/close.png
 copy=/toolbarButtonGraphics/general/Copy24.gif
