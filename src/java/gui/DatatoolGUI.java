@@ -8,6 +8,7 @@ import java.net.URL;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
 import javax.help.*;
 
@@ -116,6 +117,13 @@ public class DatatoolGUI extends JFrame
 
       redoItem.setEnabled(false);
 
+      editCellItem = DatatoolGuiResources.createJMenuItem(
+         "edit", "edit_cell", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK),
+         toolBar);
+      editM.add(editCellItem);
+      editCellItem.setEnabled(false);
+
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
 
@@ -123,6 +131,14 @@ public class DatatoolGUI extends JFrame
          "help", "manual", csh,
           KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0),
           toolBar));
+
+      JMenuItem item = new JMenuItem(DatatoolTk.getLabel("help",
+        "licence"));
+      item.setMnemonic(DatatoolTk.getMnemonic("help", "licence"));
+
+      enableHelpOnButton(item, "licence");
+
+      helpM.add(item);
 
       helpM.add(DatatoolGuiResources.createJMenuItem(
          "help", "about", this, toolBar));
@@ -150,6 +166,19 @@ public class DatatoolGUI extends JFrame
             return super.getToolTipText(event);
          }
       };
+
+      tabbedPane.addChangeListener(new ChangeListener()
+      {
+         public void stateChanged(ChangeEvent event)
+         {
+            Component tab = tabbedPane.getSelectedComponent();
+
+            if (tab != null && (tab instanceof DatatoolDbPanel))
+            {
+               enableEditCellItem(((DatatoolDbPanel)tab).hasSelectedCell());
+            }
+         }
+      });
 
       getContentPane().add(tabbedPane, BorderLayout.CENTER);
       getContentPane().add(toolBar, BorderLayout.PAGE_START);
@@ -314,6 +343,15 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("close"))
       {
          close();
+      }
+      else if (action.equals("edit_cell"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            ((DatatoolDbPanel)tab).requestSelectedCellEdit();
+         }
       }
       else if (action.equals("about"))
       {
@@ -564,6 +602,11 @@ public class DatatoolGUI extends JFrame
       }
    }
 
+   public void enableEditCellItem(boolean enabled)
+   {
+      editCellItem.setEnabled(enabled);
+   }
+
    private DatatoolSettings settings;
 
    private JTabbedPane tabbedPane;
@@ -582,5 +625,5 @@ public class DatatoolGUI extends JFrame
 
    private JToolBar toolBar;
 
-   private JMenuItem undoItem, redoItem;
+   private JMenuItem undoItem, redoItem, editCellItem;
 }

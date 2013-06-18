@@ -40,6 +40,6 @@ public class UpdateCellEdit extends AbstractUndoableEdit
 
    private DatatoolCell cell;
    private String newText, oldText;
-   private String name = DatatoolTk.getLabel("undo.cell_edit");
+   private static final String name = DatatoolTk.getLabel("undo.cell_edit");
    private DatatoolDbPanel panel;
 }

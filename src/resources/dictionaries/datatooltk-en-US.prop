@@ -76,6 +76,8 @@ help=Help
 help.mnemonic=H
 help.about=About
 help.about.mnemonic=A
+help.licence=License
+help.licence.mnemonic=L
 help.manual=Manual
 help.manual.mnemonic=M
 
@@ -138,6 +140,7 @@ default.texheader=Created by $1 on $2
 
 # Undo/Redo
 undo.cell_edit=Cell Edit
+undo.select_cell=Select Cell
 
 # Messages
 

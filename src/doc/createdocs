@@ -979,6 +979,46 @@ sub start_tt{
    print TEXFD "\\texttt{";
 }
 
+sub end_tt{
+   my ($expat) = @_;
+
+   &handle_html('</tt>');
+
+   print TEXFD "}";
+}
+
+sub start_b{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<b>");
+
+   print TEXFD "\\textbf{";
+}
+
+sub end_b{
+   my ($expat) = @_;
+
+   &handle_html('</b>');
+
+   print TEXFD "}";
+}
+
+sub start_em{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<em>");
+
+   print TEXFD "\\emph{";
+}
+
+sub end_em{
+   my ($expat) = @_;
+
+   &handle_html('</em>');
+
+   print TEXFD "}";
+}
+
 sub start_dt{
    my ($expat, %attrs) = @_;
 
@@ -1007,14 +1047,6 @@ sub end_dd{
 
    &handle_html("</dd>");
 
-}
-
-sub end_tt{
-   my ($expat) = @_;
-
-   &handle_html('</tt>');
-
-   print TEXFD "}";
 }
 
 sub start_meta{

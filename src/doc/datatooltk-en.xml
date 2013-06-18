@@ -141,18 +141,29 @@
      <p>
      Non-string entries can be edited by double-clicking on the relevant cell, 
      or you can select the relevant cell and use <menu tag="edit.edit_cell"/>.
-     A cursor will appear in the cell and you can edit the numerical value.
-     Press <dq>Enter</dq> to finish editing. To edit an entry in a column
+     In the first case, a cursor will appear in the cell and you 
+     can edit the numerical value and press <dq>Enter</dq> to finish 
+     editing. In the second case, the cell editor dialog box will 
+     open, see <ref tag="celleditor"/>.
+     </p>
+     <p>
+     To edit or view an entry in a column
      with the <dq>string</dq> data type, double-click on the relevant cell or 
-     select it and use <menu tag="edit.edit_cell"/> to open the cell editor 
+     select the cell and use <menu tag="edit.edit_cell"/> to open the cell editor 
      dialog box (see <ref tag="celleditor" />).
+     </p>
+     <p>
+     <b>Only the first few lines of a string entry are visible in the main 
+     window. If an entry has more than that number of lines, you will need to 
+     use the cell editor dialog box to view the entire contents of that cell.
+     </b>
      </p>
    </node>
    <node tag="celleditor" type="section" title="Cell Editor">
    <p>
    To open the cell editor dialog box (see <ref tag="fig.celleditor" />)
    double-click on the required cell, which must be in a column with a 
-   string data type. Alternatively, select the cell and use 
+   string data type. Alternatively, select the cell (of any type) and use 
    <menu tag="edit.edit_cell"/>.
    </p>
    <float type="figure" tag="fig.celleditor" caption="Cell Editor Dialog">

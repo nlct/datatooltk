@@ -49,39 +49,30 @@ public class DatatoolDbPanel extends JPanel
        {
           public void mouseClicked(MouseEvent evt)
           {
-             int col = table.getSelectedColumn();
+             createSelectCurrentCellUndoable();
 
-             if (col == -1)
+             if (currentCell == null)
              {
                 // nothing selected
 
                 return;
              }
 
-             int row = table.getSelectedRow();
-
-             if (row == -1)
-             {
-                return;
-             }
-
-             currentCell = db.getRow(row+1).getCell(col+1);
-
              if (evt.getClickCount() == 2)
              {
-                int type = db.getHeader(col+1).getType();
+                int type = db.getHeader(currentCol+1).getType();
 
                 if (type == DatatoolDb.TYPE_INTEGER
                  || type == DatatoolDb.TYPE_REAL)
                 {
-                   if (table.editCellAt(row, col))
+                   if (table.editCellAt(currentRow, currentCol))
                    {
                       return;
                    }
                    else
                    {
                       DatatoolTk.debug(
-                        "Can't edit cell at col="+col+", row="+row);
+                        "Can't edit cell at col="+currentCol+", row="+currentRow);
                    }
                 }
 
@@ -95,23 +86,23 @@ public class DatatoolDbPanel extends JPanel
         {
            public void valueChanged(ListSelectionEvent e)
            {
+              int col = table.getSelectedColumn();
+              int row = table.getSelectedRow();
+
+              if (row != currentRow && col != currentCol)
+              {
+                 createSelectCurrentCellUndoable();
+              }
+
               if (!e.getValueIsAdjusting())
               {
-                 int col = table.getSelectedColumn();
-
-                 if (col == -1)
+                 if (col == -1 || row == -1)
                  {
+                    gui.enableEditCellItem(false);
                     return;
                  }
 
-                 int row = table.getSelectedRow();
-
-                 if (row == -1)
-                 {
-                    return;
-                 }
-
-                 currentCell = db.getRow(row+1).getCell(col+1);
+                 gui.enableEditCellItem(currentCell != null);
               }
            }
         });
@@ -131,6 +122,16 @@ public class DatatoolDbPanel extends JPanel
       sp.setRowHeaderView(new RowHeaderComponent(this));
 
       add(sp, BorderLayout.CENTER);
+   }
+
+   public int getSelectedRow()
+   {
+      return table.getSelectedRow();
+   }
+
+   public int getSelectedColumn()
+   {
+      return table.getSelectedColumn();
    }
 
    public void addUndoEvent(UndoableEditEvent event)
@@ -260,6 +261,20 @@ public class DatatoolDbPanel extends JPanel
       }
    }
 
+   public boolean hasSelectedCell()
+   {
+       return (table.getSelectedColumn() != -1 
+            && table.getSelectedRow() != -1);
+   }
+
+   public void requestSelectedCellEdit()
+   {
+      if (currentCell != null)
+      {
+        requestCellEditor(currentCell);
+      }
+   }
+
    public void updateCell(String text)
    {
       updateCell(currentCell, text);
@@ -286,6 +301,54 @@ public class DatatoolDbPanel extends JPanel
       return table.getRowHeight(row);
    }
 
+   protected void setCurrentCell(int row, int col, DatatoolCell cell)
+   {
+      if (cell != currentCell)
+      {
+         table.clearSelection();
+
+         if (col > -1 && row > -1)
+         {
+            table.setColumnSelectionInterval(col, col);
+            table.setRowSelectionInterval(row, row);
+         }
+         currentCell = cell;
+      }
+
+      currentRow = row;
+      currentCol = col;
+   }
+
+   private void createSelectCurrentCellUndoable()
+   {
+      int newRow = table.getSelectedRow();
+      int newCol = table.getSelectedColumn();
+
+      // Ignore if no change to current selection
+
+      if (newRow == currentRow && newCol == currentCol)
+      {
+         return;
+      }
+
+
+      DatatoolCell newCell = null;
+
+      if (newRow != -1 && newCol != -1)
+      {
+         newCell = db.getRow(newRow+1).getCell(newCol+1);
+      }
+
+      addUndoEvent(new UndoableEditEvent(this, 
+         new SelectCellUndoableEdit(this, currentRow,
+           currentCol, currentCell,
+           newRow, newCol, newCell)));
+
+      currentRow = newRow;
+      currentCol = newCol;
+      currentCell = newCell;
+   }
+
    protected DatatoolDb db;
 
    private boolean isModified = false;
@@ -297,6 +360,7 @@ public class DatatoolDbPanel extends JPanel
    private UndoManager undoManager;
 
    private DatatoolCell currentCell;
+   private int currentRow=-1, currentCol=-1;
 
    public static final int STRING_MIN_WIDTH=300;
 }

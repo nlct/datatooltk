@@ -2,6 +2,8 @@ package com.dickimawbooks.datatooltk.gui;
 
 import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 import javax.swing.*;
 
 public class RowHeaderComponent extends JPanel
@@ -43,6 +45,17 @@ class RowButton extends JPanel
 
       this.row = row;
       this.panel = panel;
+
+      addMouseListener(new MouseAdapter()
+      {
+         public void mouseClicked(MouseEvent event)
+         {
+            if (event.getClickCount() == 1)
+            {
+System.out.println("clicked on "+label.getText());
+            }
+         }
+      });
    }
 
    public Dimension getPreferredSize()
