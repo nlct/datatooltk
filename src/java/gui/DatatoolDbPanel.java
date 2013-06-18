@@ -53,6 +53,7 @@ public class DatatoolDbPanel extends JPanel
              int col = table.getSelectedColumn();
 
              rowHeaderComponent.updateRowSelection(row);
+             table.getTableHeader().repaint();
 
              if (row != -1 && col != -1)
              {
@@ -100,20 +101,7 @@ public class DatatoolDbPanel extends JPanel
            {
               if (!e.getValueIsAdjusting())
               {
-                 int col = table.getSelectedColumn();
-                 int row = table.getSelectedRow();
-
-                 rowHeaderComponent.updateRowSelection(row);
-
-                 if (col == -1 || row == -1)
-                 {
-                    currentCell = null;
-                    gui.enableEditCellItem(false);
-                    return;
-                 }
-
-                 currentCell = db.getRow(row+1).getCell(col+1);
-                 gui.enableEditCellItem(currentCell != null);
+                 selectionUpdated();
               }
            }
         });
@@ -135,6 +123,25 @@ public class DatatoolDbPanel extends JPanel
       sp.setRowHeaderView(rowHeaderComponent);
 
       add(sp, BorderLayout.CENTER);
+   }
+
+   protected void selectionUpdated()
+   {
+      int col = table.getSelectedColumn();
+      int row = table.getSelectedRow();
+
+      rowHeaderComponent.updateRowSelection(row);
+      table.getTableHeader().repaint();
+
+      if (col == -1 || row == -1)
+      {
+         currentCell = null;
+         gui.enableEditCellItem(false);
+         return;
+      }
+
+      currentCell = db.getRow(row+1).getCell(col+1);
+      gui.enableEditCellItem(currentCell != null);
    }
 
    public int getSelectedRow()
@@ -369,7 +376,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (col != oldCol)
       {
-         getTableHeader().repaint();
+         table.getTableHeader().repaint();
       }
    }
 
@@ -477,6 +484,18 @@ class DatatoolTableHeader extends JTableHeader
       rendererComponent = new JLabel();
       rendererComponent.setBorder(BorderFactory.createRaisedBevelBorder());
 
+      model.getSelectionModel().addListSelectionListener(
+         new ListSelectionListener()
+      {
+         public void valueChanged(ListSelectionEvent event)
+         {
+            if (!event.getValueIsAdjusting())
+            {
+               panel.selectionUpdated();
+            }
+         }
+      });
+
       addMouseListener(new MouseAdapter()
       {
          public void mouseClicked(MouseEvent event)
@@ -506,7 +525,6 @@ class DatatoolTableHeader extends JTableHeader
             int row, int column)
          {
             rendererComponent.setText(value.toString());
-System.out.println("here");
 
             if (table == null) return rendererComponent;
 
