@@ -46,7 +46,6 @@ public class DatatoolSql implements DatatoolImport
          for (int i = 1; i <= colCount; i++)
          {
             DatatoolHeader header = new DatatoolHeader(data.getColumnName(i));
-            header.setColumnIndex(i);
 
             if (name == null || name.isEmpty())
             {

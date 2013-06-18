@@ -106,15 +106,15 @@ public class CellDialog extends JDialog
    }
 
    public boolean requestEdit(int row, int col,
-     DatatoolCell cell, DatatoolDbPanel panel)
+     DatatoolDbPanel panel)
    {
       this.panel = panel;
       this.db = panel.db;
-      this.cell = cell;
       this.row = row;
       this.col = col;
 
-      textArea.setText(cell.getValue().replaceAll("\\\\DTLpar *", "\n\n"));
+      textArea.setText(
+         db.getRow(row).get(col).replaceAll("\\\\DTLpar *", "\n\n"));
 
       undoManager.discardAllEdits();
       undoItem.setEnabled(false);
@@ -175,7 +175,7 @@ public class CellDialog extends JDialog
 
    public void okay()
    {
-      panel.updateCell(row, col, cell, 
+      panel.updateCell(row, col,  
         textArea.getText().replaceAll("\n *\n+", "\\\\DTLpar "));
       setVisible(false);
    }
@@ -207,8 +207,6 @@ public class CellDialog extends JDialog
    private DatatoolDbPanel panel;
 
    private DatatoolDb db;
-
-   private DatatoolCell cell;
 
    private int row, col;
 

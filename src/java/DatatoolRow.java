@@ -2,9 +2,7 @@ package com.dickimawbooks.datatooltk;
 
 import java.util.Vector;
 
-import com.dickimawbooks.datatooltk.enumeration.*;
-
-public class DatatoolRow extends Vector<DatatoolCell>
+public class DatatoolRow extends Vector<String>
 {
    public DatatoolRow()
    {
@@ -16,82 +14,26 @@ public class DatatoolRow extends Vector<DatatoolCell>
       super(capacity);
    }
 
-   public void setRowIndex(int index)
-   {
-      rowIndex = index;
-   }
-
-   public int getRowIndex()
-   {
-      return rowIndex;
-   }
-
-   public CellEnumeration cellElements()
-   {
-      return cellElements(0);
-   }
-
-   public CellEnumeration cellElements(int offset)
-   {
-      return new CellEnumeration(this, offset);
-   }
-
-   public DatatoolCell getCell(int colIdx)
-   {
-      for (CellEnumeration en=cellElements(colIdx-1);
-           en.hasMoreElements(); )
-      {
-         DatatoolCell cell = en.nextElement();
-
-         if (cell.getIndex() == colIdx)
-         {
-            return cell;
-         }
-      }
-
-      return null;
-   }
-
    public void setCell(int colIdx, String value)
    {
-      DatatoolCell cell = getCell(colIdx);
+      int n = size();
 
-      if (cell == null)
+      if (colIdx == n)
       {
-         cell = new DatatoolCell(value, colIdx);
-         add(cell);
+         add(value);
+      }
+      else if (colIdx > n)
+      {
+         for (int i = n; i < colIdx; i++)
+         {
+            add(new String());
+         }
+
+         add(value);
       }
       else
       {
-         cell.setValue(value);
+         add(colIdx, value);
       }
    }
-
-   public String[] getValues()
-   {
-      String[] cells = new String[size()];
-
-      int i = 0;
-
-      for (CellEnumeration en=cellElements();
-          en.hasMoreElements(); )
-      {
-         i++;
-
-         DatatoolCell cell = en.nextElement();
-
-         if (cell == null)
-         {
-            cells[i] = "";
-         }
-         else
-         {
-            cells[i] = cell.getValue();
-         }
-      }
-
-      return cells;
-   }
-
-   private int rowIndex=-1;
 }

@@ -5,7 +5,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.dickimawbooks.datatooltk.*;
-import com.dickimawbooks.datatooltk.enumeration.*;
 
 public class DatatoolCsv implements DatatoolImport,DatatoolExport
 {
@@ -22,6 +21,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       BufferedWriter writer = null;
       CSVWriter csvWriter = null;
 
+      String[] rowArray = new String[db.getColumnCount()];
+
       try
       {
          try
@@ -36,12 +37,11 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
                csvWriter.writeNext(db.getColumnTitles());
             }
    
-            for (RowEnumeration en = db.rowElements();
-                 en.hasMoreElements(); )
+            for (int i = 0, n = db.getRowCount(); i < n; i++)
             {
-               DatatoolRow row = en.nextElement();
+               DatatoolRow row = db.getRow(i);
    
-               csvWriter.writeNext(row.getValues());
+               csvWriter.writeNext(row.toArray(rowArray));
             }
          }
          finally
@@ -107,14 +107,13 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
                return db;
             }
    
-            int rowIdx = 1;
+            int rowIdx = 0;
    
             if (settings.hasCSVHeader())
             {
                for (int i = 0; i < fields.length; i++)
                {
                   DatatoolHeader header = new DatatoolHeader(fields[i]);
-                  header.setColumnIndex(i+1);
                   db.addColumn(header);
                }
             }
@@ -122,14 +121,13 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             {
                // fields is the first row of data
    
-               for (int i = 1; i <= fields.length; i++)
+               for (int i = 0; i < fields.length; i++)
                {
                   DatatoolHeader header = new DatatoolHeader(
-                    DatatoolTk.getLabelWithValue("default.field", i));
-                  header.setColumnIndex(i+1);
+                    DatatoolTk.getLabelWithValue("default.field", (i+1)));
                   db.addColumn(header);
    
-                  db.addCell(rowIdx, i, fields[i-1]);
+                  db.addCell(rowIdx, i, fields[i]);
                }
    
                rowIdx++;
@@ -139,7 +137,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             {
                for (int i = 0; i < fields.length; i++)
                {
-                  db.addCell(rowIdx, i+1, fields[i]);
+                  db.addCell(rowIdx, i, fields[i]);
                }
    
                rowIdx++;

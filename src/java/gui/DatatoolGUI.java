@@ -647,10 +647,9 @@ public class DatatoolGUI extends JFrame
       }
    }
 
-   public void requestCellEditor(int row, int col,
-     DatatoolCell cell, DatatoolDbPanel panel)
+   public void requestCellEditor(int row, int col, DatatoolDbPanel panel)
    {
-      if (cellEditor.requestEdit(row, col, cell, panel))
+      if (cellEditor.requestEdit(row, col, panel))
       {
          panel.setModified(true);
       }

@@ -6,7 +6,6 @@ import java.util.regex.*;
 import java.util.Date;
 
 import com.dickimawbooks.datatooltk.io.*;
-import com.dickimawbooks.datatooltk.enumeration.*;
 
 public class DatatoolDb
 {
@@ -46,14 +45,14 @@ public class DatatoolDb
 
          db = new DatatoolDb();
 
-         int linenum = 0;
+         db.linenum = 0;
          String line;
 
          // Skip any comment lines at the start of the file
 
          while ((line = in.readLine()) != null)
          {
-            linenum++;
+            db.linenum++;
             Matcher m = PATTERN_COMMENT.matcher(line);
 
             if (m.matches())
@@ -72,7 +71,7 @@ public class DatatoolDb
             {
                throw new InvalidSyntaxException(
                  DatatoolTk.getLabelWithValues("error.dbload.expected",
-                  ""+linenum, "\\DTLifdbexists"));
+                  ""+db.linenum, "\\DTLifdbexists"));
             }
          }
 
@@ -90,7 +89,7 @@ public class DatatoolDb
 
          while ((line = in.readLine()) != null)
          {
-            linenum++;
+            db.linenum++;
             Matcher m = PATTERN_COMMENT.matcher(line);
 
             if (m.matches())
@@ -119,7 +118,7 @@ public class DatatoolDb
          {
             // Ignore commented lines
 
-            linenum++;
+            db.linenum++;
             Matcher m = PATTERN_COMMENT.matcher(line);
 
             if (m.matches())
@@ -141,20 +140,16 @@ public class DatatoolDb
             {
                throw new InvalidSyntaxException(
                  DatatoolTk.getLabelWithValues("error.dbload.expected",
-                 ""+linenum, "\\db@plist@elt@w"));
+                 ""+db.linenum, "\\db@plist@elt@w"));
             }
 
-            DatatoolHeader header = new DatatoolHeader();
-
-            linenum = header.parseHeader(in, linenum);
-
-            db.addColumn(header);
+            db.parseHeader(in);
 
             while ((line = in.readLine()) != null)
             {
                // Ignore commented lines
 
-               linenum++;
+               db.linenum++;
                m = PATTERN_COMMENT.matcher(line);
 
                if (m.matches())
@@ -168,7 +163,7 @@ public class DatatoolDb
                {
                   throw new InvalidSyntaxException(
                     DatatoolTk.getLabelWithValues("error.dbload.expected",
-                      ""+linenum, "\\db@plist@elt@end@"));
+                      ""+db.linenum, "\\db@plist@elt@end@"));
                }
 
                break;
@@ -182,7 +177,7 @@ public class DatatoolDb
 
          while ((line = in.readLine()) != null)
          {
-            linenum++;
+            db.linenum++;
             Matcher m = PATTERN_COMMENT.matcher(line);
 
             if (m.matches())
@@ -207,7 +202,7 @@ public class DatatoolDb
 
          while ((line = in.readLine()) != null)
          {
-            linenum++;
+            db.linenum++;
 
             // skip comments outside of values
 
@@ -241,7 +236,7 @@ public class DatatoolDb
                    throw new InvalidSyntaxException(
                     DatatoolTk.getLabelWithValues(
                     "error.dbload.expected",
-                     ""+linenum, PATTERN_ROW_ELT.pattern()));
+                     ""+db.linenum, PATTERN_ROW_ELT.pattern()));
                }
 
                line = in.readLine();
@@ -251,7 +246,7 @@ public class DatatoolDb
                   break;
                }
 
-               linenum++;
+               db.linenum++;
 
                m = PATTERN_ROW_ID.matcher(line);
 
@@ -260,7 +255,7 @@ public class DatatoolDb
                    throw new InvalidSyntaxException(
                     DatatoolTk.getLabelWithValues(
                     "error.dbload.expected",
-                     ""+linenum, PATTERN_ROW_ID.pattern()));
+                     ""+db.linenum, PATTERN_ROW_ID.pattern()));
                }
 
                int rowIdx = -1;
@@ -281,7 +276,7 @@ public class DatatoolDb
                   break;
                }
 
-               linenum++;
+               db.linenum++;
 
                m = PATTERN_ROW_ID_END.matcher(line);
 
@@ -290,14 +285,14 @@ public class DatatoolDb
                    throw new InvalidSyntaxException(
                     DatatoolTk.getLabelWithValues(
                     "error.dbload.expected",
-                     ""+linenum, PATTERN_ROW_ID_END.pattern()));
+                     ""+db.linenum, PATTERN_ROW_ID_END.pattern()));
                }
 
                // Now read in columns
 
                while ((line = in.readLine()) != null)
                {
-                  linenum++;
+                  db.linenum++;
 
                   // Finish if we've reached the closing brace
 
@@ -324,7 +319,7 @@ public class DatatoolDb
                             throw new InvalidSyntaxException(
                                DatatoolTk.getLabelWithValues(
                                  "error.dbload.wrong_end_row_tag",
-                                 new String[]{""+linenum, ""+rowIdx, ""+idx}
+                                 new String[]{""+db.linenum, ""+rowIdx, ""+idx}
                                ));
                          }
                       }
@@ -342,7 +337,7 @@ public class DatatoolDb
                             "error.dbload.missing_end_row_tag", rowIdx));
                       }
 
-                      linenum++;
+                      db.linenum++;
 
                       m = PATTERN_ROW_ID_END.matcher(line);
 
@@ -353,7 +348,7 @@ public class DatatoolDb
                             "error.dbload.missing_end_row_tag_pat",
                             new String[]
                             {
-                              ""+linenum,
+                              ""+db.linenum,
                               PATTERN_ROW_ID_END.pattern(),
                               ""+rowIdx
                             }));
@@ -368,7 +363,7 @@ public class DatatoolDb
                              "error.dbload.missing_end_row_tag", rowIdx));
                       }
 
-                      linenum++;
+                      db.linenum++;
 
                       m = PATTERN_ROW_ELT_END.matcher(line);
 
@@ -379,7 +374,7 @@ public class DatatoolDb
                             "error.dbload.missing_end_row_tag_pat",
                             new String[]
                             {
-                              ""+linenum,
+                              ""+db.linenum,
                               PATTERN_ROW_ELT_END.pattern(),
                               ""+rowIdx
                             }));
@@ -399,7 +394,7 @@ public class DatatoolDb
                      throw new InvalidSyntaxException(
                         DatatoolTk.getLabelWithValues(
                           "error.dbload.missing_col_tag",
-                          ""+linenum, PATTERN_COL_ID.pattern()));
+                          ""+db.linenum, PATTERN_COL_ID.pattern()));
                   }
 
                   try
@@ -420,7 +415,7 @@ public class DatatoolDb
                           "error.dbload.col_tag_eof", colIdx));
                   }
 
-                  linenum++;
+                  db.linenum++;
 
                   m = PATTERN_COL_ID_END.matcher(line);
 
@@ -429,7 +424,7 @@ public class DatatoolDb
                      throw new InvalidSyntaxException(
                         DatatoolTk.getLabelWithValues(
                            "error.dbload.missing_col_tag",
-                           ""+linenum, PATTERN_COL_ID_END.pattern()));
+                           ""+db.linenum, PATTERN_COL_ID_END.pattern()));
                   }
 
                   // Read cell data
@@ -443,7 +438,7 @@ public class DatatoolDb
                           "error.dbload.col_data_eof", colIdx));
                   }
 
-                  linenum++;
+                  db.linenum++;
 
                   m = PATTERN_COL_ELT.matcher(line);
 
@@ -452,14 +447,14 @@ public class DatatoolDb
                      throw new InvalidSyntaxException(
                         DatatoolTk.getLabelWithValues(
                            "error.dbload.missing_col_tag",
-                            ""+linenum, PATTERN_COL_ID_END.pattern()));
+                            ""+db.linenum, PATTERN_COL_ID_END.pattern()));
                   }
 
                   String value = m.group(1);
 
                   while ((line = in.readLine()) != null)
                   {
-                     linenum++;
+                     db.linenum++;
 
                      m = PATTERN_COL_ELT_END.matcher(line);
 
@@ -489,7 +484,7 @@ public class DatatoolDb
                            "error.dbload.col_end_tag_eof", colIdx));
                   }
 
-                  linenum++;
+                  db.linenum++;
 
                   m = PATTERN_COL_ID.matcher(line);
 
@@ -498,7 +493,7 @@ public class DatatoolDb
                      throw new InvalidSyntaxException(
                        DatatoolTk.getLabelWithValues(
                          "error.dbload.missing_end_col", 
-                         ""+linenum, ""+colIdx));
+                         ""+db.linenum, ""+colIdx));
                   }
 
                   try
@@ -510,7 +505,7 @@ public class DatatoolDb
                          throw new InvalidSyntaxException(
                            DatatoolTk.getLabelWithValues(
                              "error.dbload.wrong_end_col_tag",
-                             new String[]{""+linenum, ""+colIdx, ""+idx}));
+                             new String[]{""+db.linenum, ""+colIdx, ""+idx}));
                      }
                   }
                   catch (NumberFormatException e)
@@ -527,7 +522,7 @@ public class DatatoolDb
                            "error.dbload.col_end_tag_eof", colIdx));
                   }
 
-                  linenum++;
+                  db.linenum++;
 
                   m = PATTERN_COL_ID_END.matcher(line);
 
@@ -536,17 +531,17 @@ public class DatatoolDb
                      throw new InvalidSyntaxException(
                         DatatoolTk.getLabelWithValues(
                           "error.dbload.missing_end_col_tag",
-                          ""+linenum, ""+colIdx));
+                          ""+db.linenum, ""+colIdx));
                   }
 
-                  db.addCell(rowIdx, colIdx, value);
+                  db.addCell(rowIdx-1, colIdx-1, value);
 
                }
 
                if (done) break;
 
                line = in.readLine();
-               linenum++;
+               db.linenum++;
             }
 
             if (done) break;
@@ -571,6 +566,142 @@ public class DatatoolDb
 
       return db;
    }
+
+   public void parseHeader(BufferedReader in)
+    throws IOException
+   {
+      Integer colIdx = (Integer)parseGroup(in, GROUP_COL);
+      String key     = (String)parseGroup(in, GROUP_KEY);
+      Integer type   = (Integer)parseGroup(in, GROUP_TYPE);
+      String title   = (String)parseGroup(in, GROUP_TITLE);
+
+      Integer idx    = (Integer)parseGroup(in, GROUP_COL);
+
+      if (!idx.equals(colIdx))
+      {
+         throw new InvalidSyntaxException(DatatoolTk.getLabelWithValues(
+            "error.dbload.wrong_end_col_tag",
+            new String[] {""+linenum, colIdx.toString(), idx.toString()}));
+      }
+
+      insertColumn(colIdx.intValue()-1, 
+         new DatatoolHeader(key, title, type.intValue()));
+   }
+
+   private Object parseGroup(BufferedReader in, int groupType)
+    throws IOException
+   {
+      Pattern openPat  = null;
+      Pattern closePat = null;
+
+      switch (groupType)
+      {
+         case GROUP_COL:
+           openPat = PATTERN_COL_ID;
+           closePat = PATTERN_COL_ID_END;
+         break;
+         case GROUP_KEY:
+           openPat = PATTERN_KEY_ID;
+           closePat = PATTERN_KEY_ID_END;
+         break;
+         case GROUP_TITLE:
+           openPat = PATTERN_TITLE_ID;
+           closePat = PATTERN_TITLE_ID_END;
+         break;
+         case GROUP_TYPE:
+           openPat = PATTERN_TYPE_ID;
+           closePat = PATTERN_TYPE_ID_END;
+         break;
+         default:
+            throw new IllegalArgumentException(
+              DatatoolTk.getLabelWithValue("error.invalid_group_id",
+                groupType));
+      }
+
+      String value = null;
+      String line = null;
+
+      while ((line = in.readLine()) != null)
+      {
+         linenum++;
+         Matcher m = DatatoolDb.PATTERN_COMMENT.matcher(line);
+
+         if (m.matches())
+         {
+            continue;
+         }
+
+         m = openPat.matcher(line);
+
+         if (m.matches())
+         {
+            value = m.group(1);
+
+            break;
+         }
+
+         throw new InvalidSyntaxException(
+           DatatoolTk.getLabelWithValues("error.dbload.expected",
+            ""+linenum, openPat.pattern()));
+      }
+
+      while ((line = in.readLine()) != null)
+      {
+         linenum++;
+
+         Matcher m = closePat.matcher(line);
+
+         if (m.matches())
+         {
+            break;
+         }
+
+         value += System.getProperty("line.separator", "\n") + line;
+      }
+
+      if (line == null)
+      {
+         throw new InvalidSyntaxException(
+            DatatoolTk.getLabelWithValues("error.dbload.expected",
+            ""+linenum, closePat.pattern()));
+      }
+
+      switch (groupType)
+      {
+         case GROUP_COL:
+            try
+            {
+               return new Integer(value);
+            }
+            catch (NumberFormatException e)
+            {
+                throw new InvalidSyntaxException(
+                   DatatoolTk.getLabelWithValues(
+                      "error.invalid_col_id", ""+linenum, value));
+            }
+         case GROUP_TYPE:
+            try
+            {
+               if (value.isEmpty())
+               {
+                  return DatatoolDb.TYPE_UNKNOWN;
+               }
+               else
+               {
+                  return new Integer(value);
+               }
+            }
+            catch (NumberFormatException e)
+            {
+                throw new InvalidSyntaxException(
+                   DatatoolTk.getLabelWithValues(
+                      "error.invalid_type_id", ""+linenum, value));
+            }
+      }
+
+      return value;
+   }
+
 
    public void save(String filename)
      throws IOException
@@ -605,14 +736,16 @@ public class DatatoolDb
          out.println(" \\csname dtlkeys@"+name+"\\endcsname={%");
          out.println("%");
 
-         for (HeaderEnumeration en = headerElements(); en.hasMoreElements();)
+         for (int i = 0, n = headers.size(); i < n; i++)
          {
-            DatatoolHeader header = en.nextElement();
+            DatatoolHeader header = headers.get(i);
+
+            int colIdx = i+1;
 
             int type = header.getType();
 
             out.println("\\db@plist@elt@w %");
-            out.println("\\db@col@id@w "+header.getColumnIndex()+"%");
+            out.println("\\db@col@id@w "+colIdx+"%");
             out.println("\\db@col@id@end@ %");
             out.println("\\db@key@id@w "+header.getKey()+"%");
             out.println("\\db@key@id@end@ %");
@@ -621,7 +754,7 @@ public class DatatoolDb
             out.println("\\db@type@id@end@ %");
             out.println("\\db@header@id@w "+header.getTitle()+"%");
             out.println("\\db@header@id@end@ %");
-            out.println("\\db@col@id@w "+header.getColumnIndex()+"%");
+            out.println("\\db@col@id@w "+colIdx+"%");
             out.println("\\db@col@id@end@ %");
             out.println("\\db@plist@elt@end@ %");
          }
@@ -634,29 +767,31 @@ public class DatatoolDb
          out.println("\\csname dtldb@"+name+"\\endcsname={%");
          out.println("%");
 
-         for (RowEnumeration en=rowElements(); en.hasMoreElements(); )
+         for (int i = 0, n = data.size(); i < n; i++)
          {
-            DatatoolRow row = en.nextElement();
+            DatatoolRow row = data.get(i);
+            int rowIdx = i+1;
 
             out.println("\\db@row@elt@w %");
-            out.println("\\db@row@id@w "+row.getRowIndex()+"%");
+            out.println("\\db@row@id@w "+rowIdx+"%");
             out.println("\\db@row@id@end@ %");
 
-            for (CellEnumeration ce=row.cellElements(); ce.hasMoreElements();)
+            for (int j = 0, m = row.size(); j < m; j++)
             {
-               DatatoolCell cell = ce.nextElement();
+               String cell = row.get(j);
+               int colIdx = j+1;
 
-               out.println("\\db@col@id@w "+cell.getIndex()+"%");
+               out.println("\\db@col@id@w "+colIdx+"%");
                out.println("\\db@col@id@end@ %");
 
-               out.println("\\db@col@elt@w "+cell.getValue()+"%");
+               out.println("\\db@col@elt@w "+cell+"%");
                out.println("\\db@col@elt@end@ %");
 
-               out.println("\\db@col@id@w "+cell.getIndex()+"%");
+               out.println("\\db@col@id@w "+colIdx+"%");
                out.println("\\db@col@id@end@ %");
             }
 
-            out.println("\\db@row@id@w "+row.getRowIndex()+"%");
+            out.println("\\db@row@id@w "+rowIdx+"%");
             out.println("\\db@row@id@end@ %");
             out.println("\\db@row@elt@end@ %");
          }
@@ -679,12 +814,14 @@ public class DatatoolDb
          out.println(" \\csname dtlcols@"+name+"\\endcsname="
            +headers.size()+"\\relax");
 
-         for (DatatoolHeader header : headers)
+         for (int i = 0, n = headers.size(); i < n; i++)
          {
+            DatatoolHeader header = headers.get(i);
+
             out.println("\\expandafter");
             out.println(" \\gdef\\csname dtl@ci@"+name
               +"@"+header.getKey()+"\\endcsname{"
-              +header.getColumnIndex()+"}%");
+               +(i+1)+"}%");
          }
 
          out.println("\\egroup");
@@ -726,18 +863,97 @@ public class DatatoolDb
 
    public void addCell(int rowIdx, int colIdx, String value)
    {
+      // Do we have a column with index colIdx?
+
+      DatatoolHeader header = getHeader(colIdx);
+
+      if (header == null)
+      {
+         header = insertColumn(colIdx);
+      }
+
       // Do we already have a row with index rowIdx ?
 
       DatatoolRow row = getRow(rowIdx);
 
       if (row == null)
       {
-         row = new DatatoolRow();
-         row.setRowIndex(rowIdx);
-         data.add(row);
+         row = insertRow(rowIdx);
       }
 
-      row.setCell(colIdx, value);
+      setValue(rowIdx, colIdx, value);
+
+   }
+
+   // Get header from its key
+
+   public DatatoolHeader getHeader(String key)
+   {
+      for (DatatoolHeader header : headers)
+      {
+         if (header.getKey().equals(key))
+         {
+            return header;
+         }
+      }
+
+      return null;
+   }
+
+
+   public String[] getColumnTitles()
+   {
+      int n = headers.size();
+
+      String[] fields = new String[n];
+
+      for (int i = 0; i < n; i++)
+      {
+         fields[i] = headers.get(i).getTitle();
+      }
+
+      return fields;
+   }
+
+   public int getRowCount()
+   {
+      return data.size();
+   }
+
+   public int getColumnCount()
+   {
+      return headers.size();
+   }
+
+   public DatatoolRow getRow(int rowIdx)
+   {
+      if (rowIdx >= data.size())
+      {
+         return null;
+      }
+      else
+      {
+         return data.get(rowIdx);
+      }
+   }
+
+   public DatatoolHeader getHeader(int colIdx)
+   {
+      if (colIdx >= headers.size())
+      {
+         return null;
+      }
+      else
+      {
+         return headers.get(colIdx);
+      }
+   }
+
+   public void setValue(int rowIdx, int colIdx, String value)
+   {
+      data.get(rowIdx).setCell(colIdx, value);
+
+      DatatoolHeader header = headers.get(colIdx);
 
       if (!value.isEmpty())
       {
@@ -769,8 +985,6 @@ public class DatatoolDb
 
          // Does this column have a type assigned to it?
 
-         DatatoolHeader header = getHeader(colIdx);
-
          switch (header.getType())
          {
             case TYPE_STRING:
@@ -800,129 +1014,9 @@ public class DatatoolDb
       }
    }
 
-   public void addColumn(DatatoolHeader header)
-   {
-      int colIndex = header.getColumnIndex();
-
-      if (colIndex == -1)
-      {
-         header.setColumnIndex(headers.size()+1);
-      }
-
-      headers.add(header);
-   }
-
-   // Get header from its key
-
-   public DatatoolHeader getHeader(String key)
-   {
-      for (DatatoolHeader header : headers)
-      {
-         if (header.getKey().equals(key))
-         {
-            return header;
-         }
-      }
-
-      return null;
-   }
-
-   // headerIndex is the datatool header index which starts from 1
-
-   public DatatoolHeader getHeader(int headerIndex)
-   {
-      for (HeaderEnumeration en=headerElements(headerIndex-1);
-          en.hasMoreElements();)
-      {
-         DatatoolHeader header = en.nextElement();
-
-         if (header.getColumnIndex() == headerIndex)
-         {
-            return header;
-         }
-      }
-
-      return null;
-   }
-
-   // rowIndex is the datatool row index which starts from 1
-
-   public DatatoolRow getRow(int rowIndex)
-   {
-      for (RowEnumeration en=rowElements(rowIndex-1);
-           en.hasMoreElements();)
-      {
-         DatatoolRow row = en.nextElement();
-
-         if (row.getRowIndex() == rowIndex)
-         {
-            return row;
-         }
-      }
-
-      return null;
-   }
-
-   public HeaderEnumeration headerElements()
-   {
-      return new HeaderEnumeration(headers);
-   }
-
-   public HeaderEnumeration headerElements(int offset)
-   {
-      return new HeaderEnumeration(headers, offset);
-   }
-
-   public RowEnumeration rowElements()
-   {
-      return new RowEnumeration(data);
-   }
-
-   public RowEnumeration rowElements(int offset)
-   {
-      return new RowEnumeration(data, offset);
-   }
-
-   public String[] getColumnTitles()
-   {
-      String[] fields = new String[headers.size()];
-
-      int i = 0;
-
-      for (HeaderEnumeration en=headerElements();
-           en.hasMoreElements(); )
-      {
-         i++;
-
-         DatatoolHeader header = en.nextElement();
-
-         if (header == null)
-         {
-            fields[i] = "";
-         }
-         else
-         {
-            fields[i] = header.getTitle();
-         }
-
-      }
-
-      return fields;
-   }
-
-   public int getRowCount()
-   {
-      return data.size();
-   }
-
-   public int getColumnCount()
-   {
-      return headers.size();
-   }
-
    public Object getValue(int rowIdx, int colIdx)
    {
-      String value = getRow(rowIdx).getCell(colIdx).getValue();
+      String value = getRow(rowIdx).get(colIdx);
 
       if (value.isEmpty())
       {
@@ -984,15 +1078,81 @@ public class DatatoolDb
       return value;
    }
 
-   // Row index starts from 1
    public DatatoolRow insertRow(int rowIdx)
    {
       DatatoolRow row = new DatatoolRow(headers.size());
-      row.setRowIndex(rowIdx);
 
-      data.add(rowIdx-1, row);
+      int n = data.size();
+
+      if (rowIdx == n)
+      {
+         data.add(row);
+      }
+      else if (rowIdx > n)
+      {
+         for (int i = n; i < rowIdx; i++)
+         {
+            data.add(new DatatoolRow(headers.size()));
+         }
+
+         data.add(row);
+      }
+      else
+      {
+         data.add(rowIdx, row);
+      }
 
       return row;
+   }
+
+   public DatatoolHeader insertColumn(int colIdx)
+   {
+      return insertColumn(colIdx, new DatatoolHeader());
+   }
+
+   public DatatoolHeader insertColumn(int colIdx, DatatoolHeader header)
+   {
+      int n = headers.size();
+
+      if (colIdx == n)
+      {
+         addColumn(header);
+      }
+      else if (colIdx > n)
+      {
+         for (int i = n; i < colIdx; i++)
+         {
+            headers.add(new DatatoolHeader());
+
+            for (DatatoolRow row : data)
+            {
+               row.add(new String());
+            }
+         }
+
+         addColumn(header);
+      }
+      else
+      {
+         headers.add(colIdx, header);
+
+         for (DatatoolRow row : data)
+         {
+            row.add(colIdx, new String());
+         }
+      }
+
+      return header;
+   }
+
+   public void addColumn(DatatoolHeader header)
+   {
+      headers.add(header);
+
+      for (DatatoolRow row : data)
+      {
+         row.add(new String());
+      }
    }
 
    private Vector<DatatoolHeader> headers;
@@ -1002,6 +1162,8 @@ public class DatatoolDb
    private File file;
 
    private String name;
+
+   private int linenum;
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;
@@ -1021,4 +1183,14 @@ public class DatatoolDb
 
    private static final Pattern PATTERN_COL_ELT = Pattern.compile("\\s*\\\\db@col@elt@w\\s*(.*)%\\s*");
    private static final Pattern PATTERN_COL_ELT_END = Pattern.compile("\\s*\\\\db@col@elt@end@\\s*(%\\s*)?");
+
+   private static final int GROUP_COL=0, GROUP_KEY=1, GROUP_TITLE=2, GROUP_TYPE=3;
+
+   private static final Pattern PATTERN_KEY_ID = Pattern.compile("\\s*\\\\db@key@id@w\\s*(.*)%\\s*");
+   private static final Pattern PATTERN_KEY_ID_END = Pattern.compile("\\s*\\\\db@key@id@end@\\s*%\\s*");
+   private static final Pattern PATTERN_TYPE_ID = Pattern.compile("\\s*\\\\db@type@id@w\\s*([0-9]*)%\\s*");
+   private static final Pattern PATTERN_TYPE_ID_END = Pattern.compile("\\s*\\\\db@type@id@end@\\s*%\\s*");
+   private static final Pattern PATTERN_TITLE_ID = Pattern.compile("\\s*\\\\db@header@id@w\\s*(.*)%\\s*");
+   private static final Pattern PATTERN_TITLE_ID_END = Pattern.compile("\\s*\\\\db@header@id@end@\\s*%\\s*");
+
 }
