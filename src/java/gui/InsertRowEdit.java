@@ -13,6 +13,8 @@ public class InsertRowEdit extends AbstractUndoableEdit
       this.panel = panel;
       this.rowIdx = rowIdx;
 
+      selectedIdx = panel.getSelectedRow();
+
       row = panel.db.insertRow(rowIdx);
       panel.addRowButton();
       panel.fireRowInserted(rowIdx);
@@ -26,6 +28,7 @@ public class InsertRowEdit extends AbstractUndoableEdit
       panel.db.removeRow(rowIdx);
       panel.removeRowButton();
       panel.fireRowDeleted(rowIdx);
+      panel.selectRow(selectedIdx);
    }
 
    public void redo() throws CannotRedoException
@@ -41,7 +44,7 @@ public class InsertRowEdit extends AbstractUndoableEdit
    }
 
    private DatatoolDbPanel panel;
-   private int rowIdx;
+   private int rowIdx, selectedIdx=-1;
    private DatatoolRow row;
 
    private static final String name = DatatoolTk.getLabel("undo.add_row");

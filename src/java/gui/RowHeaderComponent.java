@@ -43,6 +43,11 @@ public class RowHeaderComponent extends JPanel
    {
       int n = buttons.size()-1;
 
+      if (selectedRow == n)
+      {
+         selectedRow = -1;
+      }
+
       buttons.remove(n);
       remove(n);
    }

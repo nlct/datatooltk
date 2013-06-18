@@ -397,6 +397,15 @@ public class DatatoolGUI extends JFrame
             ((DatatoolDbPanel)tab).insertNewRowAfter();
          }
       }
+      else if (action.equals("add_row_before"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            ((DatatoolDbPanel)tab).insertNewRowBefore();
+         }
+      }
       else if (action.equals("about"))
       {
          JOptionPane.showMessageDialog(this, 

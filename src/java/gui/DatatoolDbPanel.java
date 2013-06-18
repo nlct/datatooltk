@@ -124,7 +124,7 @@ public class DatatoolDbPanel extends JPanel
       rowHeaderComponent.updateRowSelection(row);
       table.getTableHeader().repaint();
 
-      gui.enableEditCellItem(col == -1 || row == -1);
+      gui.enableEditCellItem(col != -1 && row != -1);
    }
 
    public int getSelectedRow()
@@ -308,6 +308,22 @@ public class DatatoolDbPanel extends JPanel
          new InsertRowEdit(this, rowIdx)));
    }
 
+   public void insertNewRowBefore()
+   {
+      // insert new row before selected row or before first row if none
+      // selected.
+
+      int rowIdx = table.getSelectedRow();
+
+      if (rowIdx < 0)
+      {
+         rowIdx = 0;
+      }
+
+      addUndoEvent(new UndoableEditEvent(this, 
+         new InsertRowEdit(this, rowIdx)));
+   }
+
    public void addRowButton()
    {
       rowHeaderComponent.addButton();
@@ -356,6 +372,8 @@ public class DatatoolDbPanel extends JPanel
    {
       int oldRow = table.getSelectedRow();
       int oldCol = table.getSelectedColumn();
+
+      gui.enableEditCellItem(row != -1 && col != -1);
 
       if (oldRow == row && oldCol == col)
       {
