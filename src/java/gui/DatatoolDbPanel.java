@@ -49,7 +49,17 @@ public class DatatoolDbPanel extends JPanel
        {
           public void mouseClicked(MouseEvent evt)
           {
-             createSelectCurrentCellUndoable();
+             int row = table.getSelectedRow();
+             int col = table.getSelectedColumn();
+
+             if (row != -1 && col != -1)
+             {
+                currentCell = db.getRow(row+1).getCell(col+1);
+             }
+             else
+             {
+                currentCell = null;
+             }
 
              if (currentCell == null)
              {
@@ -60,23 +70,23 @@ public class DatatoolDbPanel extends JPanel
 
              if (evt.getClickCount() == 2)
              {
-                int type = db.getHeader(currentCol+1).getType();
+                int type = db.getHeader(col+1).getType();
 
                 if (type == DatatoolDb.TYPE_INTEGER
                  || type == DatatoolDb.TYPE_REAL)
                 {
-                   if (table.editCellAt(currentRow, currentCol))
+                   if (table.editCellAt(row, col))
                    {
                       return;
                    }
                    else
                    {
                       DatatoolTk.debug(
-                        "Can't edit cell at col="+currentCol+", row="+currentRow);
+                        "Can't edit cell at col="+col+", row="+row);
                    }
                 }
 
-                requestCellEditor(currentCell);
+                requestCellEditor(row, col, currentCell);
              }
           }
        });
@@ -86,22 +96,19 @@ public class DatatoolDbPanel extends JPanel
         {
            public void valueChanged(ListSelectionEvent e)
            {
-              int col = table.getSelectedColumn();
-              int row = table.getSelectedRow();
-
-              if (row != currentRow && col != currentCol)
-              {
-                 createSelectCurrentCellUndoable();
-              }
-
               if (!e.getValueIsAdjusting())
               {
+                 int col = table.getSelectedColumn();
+                 int row = table.getSelectedRow();
+
                  if (col == -1 || row == -1)
                  {
+                    currentCell = null;
                     gui.enableEditCellItem(false);
                     return;
                  }
 
+                 currentCell = db.getRow(row+1).getCell(col+1);
                  gui.enableEditCellItem(currentCell != null);
               }
            }
@@ -253,11 +260,11 @@ public class DatatoolDbPanel extends JPanel
       gui.requestHeaderEditor(colIdx, this);
    }
 
-   public void requestCellEditor(DatatoolCell cell)
+   public void requestCellEditor(int row, int col, DatatoolCell cell)
    {
       if (cell != null)
       {
-         gui.requestCellEditor(cell, this);
+         gui.requestCellEditor(row, col, cell, this);
       }
    }
 
@@ -271,24 +278,59 @@ public class DatatoolDbPanel extends JPanel
    {
       if (currentCell != null)
       {
-        requestCellEditor(currentCell);
+        requestCellEditor(table.getSelectedRow(),
+           table.getSelectedColumn(), currentCell);
       }
    }
 
    public void updateCell(String text)
    {
-      updateCell(currentCell, text);
+      updateCell(table.getSelectedRow(),
+        table.getSelectedColumn(), currentCell, text);
    }
 
    public void updateCell(int row, int col, String text)
    {
-      updateCell(db.getRow(row+1).getCell(col+1), text);
+      updateCell(row, col, db.getRow(row+1).getCell(col+1), text);
    }
 
-   public void updateCell(DatatoolCell cell, String text)
+   public void updateCell(int row, int col,
+      DatatoolCell cell, String text)
    {
       addUndoEvent(new UndoableEditEvent(cell, 
-         new UpdateCellEdit(this, cell, text)));
+         new UpdateCellEdit(this, row, col, cell, text)));
+   }
+
+   public void selectCell(int row, int col)
+   {
+      int oldRow = table.getSelectedRow();
+      int oldCol = table.getSelectedColumn();
+
+      if (oldRow == row && oldCol == col)
+      {
+         return; // already selected
+      }
+
+      table.clearSelection();
+
+      if (row > -1)
+      {
+         table.setRowSelectionInterval(row, row);
+      }
+
+      if (col > -1)
+      {
+         table.setColumnSelectionInterval(col, col);
+      }
+
+      if (row > -1 && col > -1)
+      {
+         currentCell = db.getRow(row+1).getCell(col+1);
+      }
+      else
+      {
+         currentCell = null;
+      }
    }
 
    public int getRowCount()
@@ -299,54 +341,6 @@ public class DatatoolDbPanel extends JPanel
    public int getRowHeight(int row)
    {
       return table.getRowHeight(row);
-   }
-
-   protected void setCurrentCell(int row, int col, DatatoolCell cell)
-   {
-      if (cell != currentCell)
-      {
-         table.clearSelection();
-
-         if (col > -1 && row > -1)
-         {
-            table.setColumnSelectionInterval(col, col);
-            table.setRowSelectionInterval(row, row);
-         }
-         currentCell = cell;
-      }
-
-      currentRow = row;
-      currentCol = col;
-   }
-
-   private void createSelectCurrentCellUndoable()
-   {
-      int newRow = table.getSelectedRow();
-      int newCol = table.getSelectedColumn();
-
-      // Ignore if no change to current selection
-
-      if (newRow == currentRow && newCol == currentCol)
-      {
-         return;
-      }
-
-
-      DatatoolCell newCell = null;
-
-      if (newRow != -1 && newCol != -1)
-      {
-         newCell = db.getRow(newRow+1).getCell(newCol+1);
-      }
-
-      addUndoEvent(new UndoableEditEvent(this, 
-         new SelectCellUndoableEdit(this, currentRow,
-           currentCol, currentCell,
-           newRow, newCol, newCell)));
-
-      currentRow = newRow;
-      currentCol = newCol;
-      currentCell = newCell;
    }
 
    protected DatatoolDb db;
@@ -360,7 +354,6 @@ public class DatatoolDbPanel extends JPanel
    private UndoManager undoManager;
 
    private DatatoolCell currentCell;
-   private int currentRow=-1, currentCol=-1;
 
    public static final int STRING_MIN_WIDTH=300;
 }
