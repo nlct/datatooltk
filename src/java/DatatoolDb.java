@@ -1078,10 +1078,27 @@ public class DatatoolDb
       return value;
    }
 
+   public DatatoolRow removeRow(int rowIdx)
+   {
+      return data.remove(rowIdx);
+   }
+
    public DatatoolRow insertRow(int rowIdx)
    {
       DatatoolRow row = new DatatoolRow(headers.size());
 
+      for (int i = 0; i < headers.size(); i++)
+      {
+         row.add(new String());
+      }
+
+      insertRow(rowIdx, row);
+
+      return row;
+   }
+
+   public void insertRow(int rowIdx, DatatoolRow row)
+   {
       int n = data.size();
 
       if (rowIdx == n)
@@ -1101,8 +1118,6 @@ public class DatatoolDb
       {
          data.add(rowIdx, row);
       }
-
-      return row;
    }
 
    public DatatoolHeader insertColumn(int colIdx)

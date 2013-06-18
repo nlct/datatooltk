@@ -296,8 +296,37 @@ public class DatatoolDbPanel extends JPanel
    {
       // insert new row after selected row or after last row if none
       // selected.
+
+      int rowIdx = table.getSelectedRow()+1;
+
+      if (rowIdx == 0)
+      {
+         rowIdx = db.getRowCount();
+      }
+
+      addUndoEvent(new UndoableEditEvent(this, 
+         new InsertRowEdit(this, rowIdx)));
    }
 
+   public void addRowButton()
+   {
+      rowHeaderComponent.addButton();
+   }
+
+   public void removeRowButton()
+   {
+      rowHeaderComponent.removeButton();
+   }
+
+   public void fireRowInserted(int rowIdx)
+   {
+      ((AbstractTableModel)table.getModel()).fireTableRowsInserted(rowIdx, rowIdx);
+   }
+
+   public void fireRowDeleted(int rowIdx)
+   {
+      ((AbstractTableModel)table.getModel()).fireTableRowsDeleted(rowIdx, rowIdx);
+   }
 
    public void selectRow(int row)
    {

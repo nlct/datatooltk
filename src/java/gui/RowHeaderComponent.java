@@ -34,6 +34,19 @@ public class RowHeaderComponent extends JPanel
       buttons.add(button);
    }
 
+   public void addButton()
+   {
+      addButton(buttons.size());
+   }
+
+   public void removeButton()
+   {
+      int n = buttons.size()-1;
+
+      buttons.remove(n);
+      remove(n);
+   }
+
    public void updateRowSelection(int row)
    {
       RowButton button;

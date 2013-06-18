@@ -146,7 +146,7 @@ default.texheader=Created by $1 on $2
 
 # Undo/Redo
 undo.cell_edit=Cell Edit
-undo.select_cell=Select Cell
+undo.add_row=Add Row
 
 # Messages
 
