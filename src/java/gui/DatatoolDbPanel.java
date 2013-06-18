@@ -301,6 +301,30 @@ public class DatatoolDbPanel extends JPanel
          new UpdateCellEdit(this, row, col, cell, text)));
    }
 
+   public void selectRow(int row)
+   {
+      int col = table.getSelectedColumn();
+
+      if (col == -1)
+      {
+         col = 0;
+      }
+
+      selectCell(row, col);
+   }
+
+   public void selectColumn(int col)
+   {
+      int row = table.getSelectedRow();
+
+      if (row == -1)
+      {
+         row = 0;
+      }
+
+      selectCell(row, col);
+   }
+
    public void selectCell(int row, int col)
    {
       int oldRow = table.getSelectedRow();

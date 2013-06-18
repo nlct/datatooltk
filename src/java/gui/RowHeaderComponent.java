@@ -33,7 +33,7 @@ class RowButton extends JPanel
 
    private int padx=10;
 
-   public RowButton(int row, DatatoolDbPanel panel)
+   public RowButton(final int row, final DatatoolDbPanel panel)
    {
       super(new BorderLayout());
 
@@ -52,7 +52,7 @@ class RowButton extends JPanel
          {
             if (event.getClickCount() == 1)
             {
-System.out.println("clicked on "+label.getText());
+               panel.selectRow(row);
             }
          }
       });
