@@ -366,6 +366,11 @@ public class DatatoolDbPanel extends JPanel
       {
          rowHeaderComponent.updateRowSelection(row);
       }
+
+      if (col != oldCol)
+      {
+         getTableHeader().repaint();
+      }
    }
 
    public Color getSelectionBackground()
@@ -501,6 +506,7 @@ class DatatoolTableHeader extends JTableHeader
             int row, int column)
          {
             rendererComponent.setText(value.toString());
+System.out.println("here");
 
             if (table == null) return rendererComponent;
 
