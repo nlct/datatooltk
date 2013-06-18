@@ -1,5 +1,6 @@
 package com.dickimawbooks.datatooltk.gui;
 
+import java.util.Vector;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
@@ -15,14 +16,52 @@ public class RowHeaderComponent extends JPanel
 
       this.panel = dbPanel;
 
-      for (int i = 0, n = panel.getRowCount(); i < n; i++)
+      int n = panel.getRowCount();
+      buttons = new Vector<RowButton>(n);
+
+      for (int i = 0; i < n; i++)
       {
-         RowButton button = new RowButton(i, panel);
-         add(button);
+         addButton(i);
+      }
+   }
+
+   protected void addButton(int row)
+   {
+      RowButton button = new RowButton(row, panel);
+      button.setBackground(panel.getSelectionBackground());
+      button.setOpaque(false);
+      add(button);
+      buttons.add(button);
+   }
+
+   public void updateRowSelection(int row)
+   {
+      RowButton button;
+
+      if (selectedRow != -1)
+      {
+         button = buttons.get(selectedRow);
+
+         button.setOpaque(false);
+         button.repaint();
+      }
+
+      selectedRow = row;
+
+      if (selectedRow != -1)
+      {
+         button = buttons.get(selectedRow);
+
+         button.setOpaque(true);
+         button.repaint();
       }
    }
 
    private DatatoolDbPanel panel;
+
+   private Vector<RowButton> buttons;
+
+   private int selectedRow = -1;
 }
 
 class RowButton extends JPanel
@@ -38,6 +77,7 @@ class RowButton extends JPanel
       super(new BorderLayout());
 
       setBorder(BorderFactory.createRaisedBevelBorder());
+      setOpaque(true);
 
       label = new JLabel(""+(row+1));
 

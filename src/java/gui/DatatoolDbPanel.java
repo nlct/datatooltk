@@ -52,6 +52,8 @@ public class DatatoolDbPanel extends JPanel
              int row = table.getSelectedRow();
              int col = table.getSelectedColumn();
 
+             rowHeaderComponent.updateRowSelection(row);
+
              if (row != -1 && col != -1)
              {
                 currentCell = db.getRow(row+1).getCell(col+1);
@@ -101,6 +103,8 @@ public class DatatoolDbPanel extends JPanel
                  int col = table.getSelectedColumn();
                  int row = table.getSelectedRow();
 
+                 rowHeaderComponent.updateRowSelection(row);
+
                  if (col == -1 || row == -1)
                  {
                     currentCell = null;
@@ -126,7 +130,9 @@ public class DatatoolDbPanel extends JPanel
       }
 
       JScrollPane sp = new JScrollPane(table);
-      sp.setRowHeaderView(new RowHeaderComponent(this));
+
+      rowHeaderComponent = new RowHeaderComponent(this);
+      sp.setRowHeaderView(rowHeaderComponent);
 
       add(sp, BorderLayout.CENTER);
    }
@@ -355,6 +361,16 @@ public class DatatoolDbPanel extends JPanel
       {
          currentCell = null;
       }
+
+      if (row != oldRow)
+      {
+         rowHeaderComponent.updateRowSelection(row);
+      }
+   }
+
+   public Color getSelectionBackground()
+   {
+      return table.getSelectionBackground();
    }
 
    public int getRowCount()
@@ -368,6 +384,8 @@ public class DatatoolDbPanel extends JPanel
    }
 
    protected DatatoolDb db;
+
+   protected RowHeaderComponent rowHeaderComponent;
 
    private boolean isModified = false;
 
@@ -443,23 +461,60 @@ class DatatoolTableHeader extends JTableHeader
 {
    private DatatoolDbPanel panel;
 
+   private JLabel rendererComponent;
+
    public DatatoolTableHeader(TableColumnModel model, 
      DatatoolDbPanel p)
    {
       super(model);
       panel = p;
 
+      rendererComponent = new JLabel();
+      rendererComponent.setBorder(BorderFactory.createRaisedBevelBorder());
+
       addMouseListener(new MouseAdapter()
       {
          public void mouseClicked(MouseEvent event)
          {
-            if (event.getClickCount() == 2)
+            int col = ((JTableHeader)event.getSource())
+                 .columnAtPoint(event.getPoint());
+
+            int clickCount = event.getClickCount();
+
+            if (clickCount == 1)
             {
-               panel.requestHeaderEditor(((JTableHeader)event.getSource())
-                 .columnAtPoint(event.getPoint()));
+               panel.selectColumn(col);
+            }
+            else if (clickCount == 2)
+            {
+               panel.requestHeaderEditor(col);
 
                event.consume();
             }
+         }
+      });
+
+      setDefaultRenderer(new DefaultTableCellRenderer()
+      {
+         public Component getTableCellRendererComponent(JTable table,
+            Object value, boolean isSelected, boolean hasFocus,
+            int row, int column)
+         {
+            rendererComponent.setText(value.toString());
+
+            if (table == null) return rendererComponent;
+
+            if (table.getSelectedColumn() == column)
+            {
+               rendererComponent.setBackground(table.getSelectionBackground());
+               rendererComponent.setOpaque(true);
+            }
+            else
+            {
+               rendererComponent.setOpaque(false);
+            }
+
+            return rendererComponent;
          }
       });
    }
