@@ -1,16 +1,15 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.util.Vector;
+import java.awt.geom.AffineTransform;
 import java.awt.dnd.*;
 import java.awt.datatransfer.*;
 import javax.activation.DataHandler;
-import java.awt.Dimension;
-import java.awt.BorderLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
-public class RowHeaderComponent extends JPanel
+public class RowHeaderComponent extends JPanel implements DropTargetListener
 {
    public RowHeaderComponent(DatatoolDbPanel dbPanel)
    {
@@ -31,7 +30,7 @@ public class RowHeaderComponent extends JPanel
 
    protected void addButton(int row)
    {
-      RowButton button = new RowButton(row, panel);
+      RowButton button = new RowButton(row, panel, this);
       button.setBackground(panel.getSelectionBackground());
       button.setOpaque(false);
       add(button);
@@ -79,21 +78,121 @@ public class RowHeaderComponent extends JPanel
       }
    }
 
+   private void updateDropLocation(Point location)
+   {
+      if (location == null || dragRow == null)
+      {
+         dropLocation = null;
+      }
+      else
+      {
+         dropLocation = getMousePosition();
+      }
+
+      repaint();
+   }
+
+   public void dragEnter(DropTargetDragEvent evt)
+   {
+      updateDropLocation(evt.getLocation());
+   }
+
+   public void dragExit(DropTargetEvent evt)
+   {
+      updateDropLocation(null);
+   }
+
+   public void dragOver(DropTargetDragEvent evt)
+   {
+      updateDropLocation(evt.getLocation());
+   }
+
+   public void drop(DropTargetDropEvent evt)
+   {
+      dropLocation = null;
+      dragRow = null;
+
+      try
+      {
+          int fromIndex = Integer.parseInt(evt.getTransferable()
+           .getTransferData(DataFlavor.stringFlavor).toString());
+
+           RowButton target = (RowButton)
+              ((DropTarget)evt.getSource()).getComponent();
+
+          int toIndex = target.getIndex();
+
+          if (fromIndex != toIndex)
+          {
+             panel.moveRow(fromIndex, toIndex);
+          }
+      }
+      catch (Exception e)
+      {
+      }
+   }
+
+   public void dropActionChanged(DropTargetDragEvent evt)
+   {
+   }
+
+   public void mousePressedOnButton(MouseEvent evt, int row)
+   {
+       dragRow = buttons.get(row);
+
+       if (dragRow != null)
+       {
+          TransferHandler th = dragRow.getTransferHandler();
+          th.exportAsDrag(dragRow, evt, TransferHandler.MOVE);
+       }
+   }
+
+   public void paintComponent(Graphics g)
+   {
+      super.paintComponent(g);
+
+      Graphics2D g2 = (Graphics2D)g;
+
+      if (dragRow != null && dropLocation != null)
+      {
+         Paint oldPaint = g2.getPaint();
+
+         Rectangle rect = dragRow.getBounds();
+
+         int xOffset = 0;
+         int yOffset = dropLocation.y-rect.height/2;
+
+         g2.translate(xOffset, yOffset);
+         g2.setPaint(panel.getSelectionBackground());
+         g2.fillRect(0, 0, rect.width, rect.height);
+         dragRow.paint(g2);
+
+         g2.translate(-xOffset, -yOffset);
+
+         g2.setPaint(oldPaint);
+      }
+   }
+
    private DatatoolDbPanel panel;
 
    private Vector<RowButton> buttons;
 
+   private Point dropLocation = null;
+
+   private RowButton dragRow = null;
+
    private int selectedRow = -1;
 }
 
-class RowButton extends JLabel implements DropTargetListener
+class RowButton extends JLabel
 {
    private DatatoolDbPanel panel;
    private int row;
 
    private int padx=10;
 
-   public RowButton(final int rowIdx, final DatatoolDbPanel panel)
+   public RowButton(final int rowIdx, final DatatoolDbPanel panel,
+     final RowHeaderComponent rowHeaderPanel)
    {
       super(""+(rowIdx+1));
 
@@ -115,47 +214,12 @@ class RowButton extends JLabel implements DropTargetListener
 
          public void mousePressed(MouseEvent evt)
          {
-             JComponent comp = (JComponent)evt.getSource();
-             TransferHandler th = comp.getTransferHandler();
-             th.exportAsDrag(comp, evt, TransferHandler.MOVE);
+             rowHeaderPanel.mousePressedOnButton(evt, row);
          }
       });
 
       setTransferHandler(new RowTransferHandler());
-      setDropTarget(new DropTarget(this, this));
-   }
-
-   public void dragEnter(DropTargetDragEvent evt)
-   {
-   }
-
-   public void dragExit(DropTargetEvent evt)
-   {
-   }
-
-   public void dragOver(DropTargetDragEvent evt)
-   {
-   }
-
-   public void drop(DropTargetDropEvent evt)
-   {
-      try
-      {
-          int fromIndex = Integer.parseInt(evt.getTransferable()
-           .getTransferData(DataFlavor.stringFlavor).toString());
-
-          if (fromIndex != row)
-          {
-             panel.moveRow(fromIndex, row);
-          }
-      }
-      catch (Exception e)
-      {
-      }
-   }
-
-   public void dropActionChanged(DropTargetDragEvent evt)
-   {
+      setDropTarget(new DropTarget(this, rowHeaderPanel));
    }
 
    public Dimension getPreferredSize()
