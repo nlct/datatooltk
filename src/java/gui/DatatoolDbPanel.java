@@ -98,17 +98,6 @@ public class DatatoolDbPanel extends JPanel
            }
         });
 
-      for (int i = 0; i < table.getColumnCount(); i++)
-      {
-         if (db.getHeader(i).getType() == DatatoolDb.TYPE_STRING)
-         {
-            TableColumn column = table.getColumnModel().getColumn(i);
-
-            column.setPreferredWidth(Math.max(column.getPreferredWidth(),
-              STRING_MIN_WIDTH));
-         }
-      }
-
       sp = new JScrollPane(table);
 
       rowHeaderComponent = new RowHeaderComponent(this);
@@ -458,8 +447,16 @@ public class DatatoolDbPanel extends JPanel
 
       for (int i = 0, n = db.getColumnCount(); i < n; i++)
       {
-         model.getColumn(i).setHeaderValue(db.getHeader(i).getTitle());
-         model.getColumn(i).setIdentifier(db.getHeader(i).getKey());
+         TableColumn column = model.getColumn(i);
+
+         column.setHeaderValue(db.getHeader(i).getTitle());
+         column.setIdentifier(db.getHeader(i).getKey());
+
+         if (db.getHeader(i).getType() == DatatoolDb.TYPE_STRING)
+         {
+            column.setPreferredWidth(Math.max(column.getPreferredWidth(),
+              STRING_MIN_WIDTH));
+         }
       }
 
       if (sp.getColumnHeader() != null)
@@ -503,21 +500,9 @@ public class DatatoolDbPanel extends JPanel
    {
       setModified(true);
       table.setModel(new DatatoolDbTableModel(db, this));
-      table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
-         this));
 
-      for (int i = 0; i < table.getColumnCount(); i++)
-      {
-         if (db.getHeader(i).getType() == DatatoolDb.TYPE_STRING)
-         {
-            TableColumn column = table.getColumnModel().getColumn(i);
-
-            column.setPreferredWidth(Math.max(column.getPreferredWidth(),
-              STRING_MIN_WIDTH));
-         }
-      }
-
-      revalidate();
+      updateColumnHeaders();
+      repaint();
    }
 
    protected DatatoolDb db;
