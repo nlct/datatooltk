@@ -136,7 +136,7 @@ public class RowHeaderComponent extends JPanel implements DropTargetListener
    {
    }
 
-   public void mousePressedOnButton(MouseEvent evt, int row)
+   public void startDnD(MouseEvent evt, int row)
    {
        dragRow = buttons.get(row);
 
@@ -212,9 +212,13 @@ class RowButton extends JLabel
             }
          }
 
-         public void mousePressed(MouseEvent evt)
+      });
+
+      addMouseMotionListener(new MouseMotionAdapter()
+      {
+         public void mouseDragged(MouseEvent evt)
          {
-             rowHeaderPanel.mousePressedOnButton(evt, row);
+             rowHeaderPanel.startDnD(evt, row);
          }
       });
 
