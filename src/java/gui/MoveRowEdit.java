@@ -14,6 +14,7 @@ public class MoveRowEdit extends AbstractUndoableEdit
       this.toIndex = toIndex;
 
       panel.db.moveRow(fromIndex, toIndex);
+      panel.selectRow(toIndex);
       panel.dataUpdated();
    }
 
@@ -23,12 +24,14 @@ public class MoveRowEdit extends AbstractUndoableEdit
    public void undo() throws CannotUndoException
    {
       panel.db.moveRow(toIndex, fromIndex);
+      panel.selectRow(fromIndex);
       panel.dataUpdated();
    }
 
    public void redo() throws CannotRedoException
    {
       panel.db.moveRow(fromIndex, toIndex);
+      panel.selectRow(toIndex);
       panel.dataUpdated();
    }
 

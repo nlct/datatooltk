@@ -171,6 +171,13 @@ message.discard_edit_query=Discard the edits you have just made?
 message.confirm_discard=Confirm Discard
 message.input_database_name=Database Name:
 
+# Information messages
+info.view_or_edit=Double-click on the cell to view or edit its contents.
+info.edit=Double-click on the cell to edit it.
+info.edit_name=Double-click on the tab to edit the database name. Click on the tab close icon to close this database.
+info.edit_header=Double-click on the column title to edit the header information or single-click and drag sideways to move the column.
+info.move_row=Drag row button vertically to move it up or down.
+
 # Syntax
 syntax.title=Syntax:
 syntax.or=or

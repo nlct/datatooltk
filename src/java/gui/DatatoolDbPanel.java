@@ -25,6 +25,11 @@ public class DatatoolDbPanel extends JPanel
       buttonTabComponent = new ButtonTabComponent(this);
 
       initTable();
+
+      infoField = new JTextField();
+      infoField.setEditable(false);
+
+      add(infoField, BorderLayout.SOUTH);
    }
 
    private void initTable()
@@ -60,13 +65,18 @@ public class DatatoolDbPanel extends JPanel
              {
                 // nothing selected
 
+                setInfo("");
                 return;
              }
 
+             int type = db.getHeader(col).getType();
+
+             setInfo(type == DatatoolDb.TYPE_STRING ?
+               DatatoolTk.getLabel("info.view_or_edit") :
+               DatatoolTk.getLabel("info.edit"));
+
              if (evt.getClickCount() == 2)
              {
-                int type = db.getHeader(col).getType();
-
                 if (type == DatatoolDb.TYPE_INTEGER
                  || type == DatatoolDb.TYPE_REAL)
                 {
@@ -550,7 +560,18 @@ public class DatatoolDbPanel extends JPanel
    public void dataUpdated()
    {
       setModified(true);
+      int rowIdx = getSelectedRow();
+      int colIdx = getSelectedColumn();
+
       table.setModel(new DatatoolDbTableModel(db, this));
+
+      if (rowIdx != -1 && colIdx != -1)
+      {
+         if (rowIdx > db.getRowCount()) rowIdx = db.getRowCount()-1;
+         if (colIdx > db.getColumnCount()) colIdx = db.getColumnCount()-1;
+
+         selectCell(rowIdx, colIdx);
+      }
 
       updateColumnHeaders();
       repaint();
@@ -610,6 +631,11 @@ public class DatatoolDbPanel extends JPanel
       gui.selectTab(this);
    }
 
+   public void setInfo(String info)
+   {
+      infoField.setText(info);
+   }
+
    protected DatatoolDb db;
 
    protected RowHeaderComponent rowHeaderComponent;
@@ -625,6 +651,8 @@ public class DatatoolDbPanel extends JPanel
    private UndoManager undoManager;
 
    private ButtonTabComponent buttonTabComponent;
+
+   private JTextField infoField;
 
    public static final int STRING_MIN_WIDTH=300;
 
@@ -727,8 +755,11 @@ class DatatoolTableHeader extends JTableHeader
 
             int clickCount = event.getClickCount();
 
+            panel.setInfo("");
+
             if (clickCount == 1)
             {
+               panel.setInfo(DatatoolTk.getLabel("info.edit_header"));
                panel.selectColumn(col);
             }
             else if (clickCount == 2)
@@ -743,6 +774,7 @@ class DatatoolTableHeader extends JTableHeader
          {
             fromIndex =((JTableHeader)event.getSource())
                  .columnAtPoint(event.getPoint());
+            panel.selectColumn(fromIndex);
          }
 
          public void mouseReleased(MouseEvent event)
@@ -756,6 +788,8 @@ class DatatoolTableHeader extends JTableHeader
                {
                   panel.moveColumn(fromIndex, toIndex);
                }
+
+               panel.setInfo("");
             }
 
             fromIndex = -1;
@@ -843,7 +877,12 @@ class ButtonTabComponent extends JPanel
 
       if (evt.getClickCount() == 2)
       {
+         panel.setInfo("");
          panel.requestName();
+      }
+      else
+      {
+         panel.setInfo(DatatoolTk.getLabel("info.edit_name"));
       }
    }
 

@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.dickimawbooks.datatooltk.DatatoolTk;
+
 public class RowHeaderComponent extends JPanel implements DropTargetListener
 {
    public RowHeaderComponent(DatatoolDbPanel dbPanel)
@@ -109,6 +111,7 @@ public class RowHeaderComponent extends JPanel implements DropTargetListener
 
    public void drop(DropTargetDropEvent evt)
    {
+      panel.setInfo("");
       dropLocation = null;
       dragRow = null;
 
@@ -206,10 +209,17 @@ class RowButton extends JLabel
       {
          public void mouseClicked(MouseEvent event)
          {
+            panel.setInfo(DatatoolTk.getLabel("info.move_row"));
+
             if (event.getClickCount() == 1)
             {
                panel.selectRow(row);
             }
+         }
+
+         public void mousePressed(MouseEvent event)
+         {
+            panel.selectRow(row);
          }
 
       });
