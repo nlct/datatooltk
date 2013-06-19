@@ -116,7 +116,7 @@ public class DatatoolDbPanel extends JPanel
       rowHeaderComponent.updateRowSelection(row);
       table.getTableHeader().repaint();
 
-      gui.enableEditCellItem(col != -1 && row != -1);
+      gui.enableEditItems(col != -1 && row != -1);
    }
 
    public int getSelectedRow()
@@ -302,6 +302,28 @@ public class DatatoolDbPanel extends JPanel
 
    public void requestNewColumnBefore()
    {
+      DatatoolHeader header = gui.requestNewHeader(this);
+
+      if (header == null)
+      {
+         return;
+      }
+
+      int colIdx = table.getSelectedColumn();
+
+      if (colIdx < 0)
+      {
+         colIdx = 0;
+      }
+
+      addUndoEvent(new UndoableEditEvent(this, 
+         new InsertColumnEdit(this, header, colIdx)));
+   }
+
+   public void removeSelectedColumn()
+   {
+      addUndoEvent(new UndoableEditEvent(this, 
+         new RemoveColumnEdit(this, table.getSelectedColumn())));
    }
 
    public void insertNewRowAfter()
@@ -358,6 +380,12 @@ public class DatatoolDbPanel extends JPanel
 
    public void selectRow(int row)
    {
+      if (row >= getRowCount() || row < 0)
+      {
+         gui.enableEditItems(hasSelectedCell());
+         return;
+      }
+
       int col = table.getSelectedColumn();
 
       if (col == -1)
@@ -370,6 +398,12 @@ public class DatatoolDbPanel extends JPanel
 
    public void selectColumn(int col)
    {
+      if (col >= db.getColumnCount() || col < 0)
+      {
+         gui.enableEditItems(hasSelectedCell());
+         return;
+      }
+
       int row = table.getSelectedRow();
 
       if (row == -1)
@@ -385,7 +419,7 @@ public class DatatoolDbPanel extends JPanel
       int oldRow = table.getSelectedRow();
       int oldCol = table.getSelectedColumn();
 
-      gui.enableEditCellItem(row != -1 && col != -1);
+      gui.enableEditItems(row != -1 && col != -1);
 
       if (oldRow == row && oldCol == col)
       {

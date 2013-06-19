@@ -137,6 +137,11 @@ public class DatatoolGUI extends JFrame
       colM.add(addColumnAfterItem);
       addColumnAfterItem.setEnabled(false);
 
+      removeColumnItem = DatatoolGuiResources.createJMenuItem(
+         "edit.columns", "remove_column", this, toolBar);
+      colM.add(removeColumnItem);
+      removeColumnItem.setEnabled(false);
+
       JMenu rowM = DatatoolGuiResources.createJMenu("edit.rows");
       editM.add(rowM);
 
@@ -201,7 +206,7 @@ public class DatatoolGUI extends JFrame
 
             if (tab != null && (tab instanceof DatatoolDbPanel))
             {
-               enableEditCellItem(((DatatoolDbPanel)tab).hasSelectedCell());
+               enableEditItems(((DatatoolDbPanel)tab).hasSelectedCell());
             }
          }
       });
@@ -395,6 +400,15 @@ public class DatatoolGUI extends JFrame
          if (tab != null && (tab instanceof DatatoolDbPanel))
          {
             ((DatatoolDbPanel)tab).requestNewColumnBefore();
+         }
+      }
+      else if (action.equals("remove_column"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            ((DatatoolDbPanel)tab).removeSelectedColumn();
          }
       }
       else if (action.equals("add_row_after"))
@@ -686,9 +700,10 @@ public class DatatoolGUI extends JFrame
       }
    }
 
-   public void enableEditCellItem(boolean enabled)
+   public void enableEditItems(boolean enabled)
    {
       editCellItem.setEnabled(enabled);
+      removeColumnItem.setEnabled(enabled);
    }
 
    public void updateTools()
@@ -720,5 +735,6 @@ public class DatatoolGUI extends JFrame
 
    private JMenuItem undoItem, redoItem, editCellItem, 
       addColumnAfterItem, addRowAfterItem,
-      addColumnBeforeItem, addRowBeforeItem;
+      addColumnBeforeItem, addRowBeforeItem,
+      removeColumnItem;
 }

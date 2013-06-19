@@ -150,6 +150,8 @@ undo.add_row=Add Row
 undo.add_column=Add Column
 undo.move_column=Move Column
 undo.move_row=Move Row
+undo.remove_column=Remove Column
+undo.remove_row=Remove Row
 
 # Messages
 
