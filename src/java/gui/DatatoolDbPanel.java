@@ -243,6 +243,16 @@ public class DatatoolDbPanel extends JPanel
       return file == null ? null : file.toString();
    }
 
+   public void requestSelectedHeaderEditor()
+   {
+      int colIndex = table.getSelectedColumn();
+
+      if (colIndex > -1)
+      {
+         requestHeaderEditor(colIndex);
+      }
+   }
+
    public void requestHeaderEditor(int colIdx)
    {
       gui.requestHeaderEditor(colIdx, this);

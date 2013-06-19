@@ -124,34 +124,39 @@ public class DatatoolGUI extends JFrame
       editM.add(editCellItem);
       editCellItem.setEnabled(false);
 
-      JMenu colM = DatatoolGuiResources.createJMenu("edit.columns");
+      JMenu colM = DatatoolGuiResources.createJMenu("edit.column");
       editM.add(colM);
 
+      editHeaderItem = DatatoolGuiResources.createJMenuItem(
+         "edit.column", "edit_header", this, toolBar);
+      colM.add(editHeaderItem);
+      editHeaderItem.setEnabled(false);
+
       addColumnBeforeItem = DatatoolGuiResources.createJMenuItem(
-         "edit.columns", "add_column_before", this, toolBar);
+         "edit.column", "add_column_before", this, toolBar);
       colM.add(addColumnBeforeItem);
       addColumnBeforeItem.setEnabled(false);
 
       addColumnAfterItem = DatatoolGuiResources.createJMenuItem(
-         "edit.columns", "add_column_after", this, toolBar);
+         "edit.column", "add_column_after", this, toolBar);
       colM.add(addColumnAfterItem);
       addColumnAfterItem.setEnabled(false);
 
       removeColumnItem = DatatoolGuiResources.createJMenuItem(
-         "edit.columns", "remove_column", this, toolBar);
+         "edit.column", "remove_column", this, toolBar);
       colM.add(removeColumnItem);
       removeColumnItem.setEnabled(false);
 
-      JMenu rowM = DatatoolGuiResources.createJMenu("edit.rows");
+      JMenu rowM = DatatoolGuiResources.createJMenu("edit.row");
       editM.add(rowM);
 
       addRowBeforeItem = DatatoolGuiResources.createJMenuItem(
-         "edit.rows", "add_row_before", this, toolBar);
+         "edit.row", "add_row_before", this, toolBar);
       rowM.add(addRowBeforeItem);
       addRowBeforeItem.setEnabled(false);
 
       addRowAfterItem = DatatoolGuiResources.createJMenuItem(
-         "edit.rows", "add_row_after", this, toolBar);
+         "edit.row", "add_row_after", this, toolBar);
       rowM.add(addRowAfterItem);
       addRowAfterItem.setEnabled(false);
 
@@ -382,6 +387,15 @@ public class DatatoolGUI extends JFrame
          if (tab != null && (tab instanceof DatatoolDbPanel))
          {
             ((DatatoolDbPanel)tab).requestSelectedCellEdit();
+         }
+      }
+      else if (action.equals("edit_header"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            ((DatatoolDbPanel)tab).requestSelectedHeaderEditor();
          }
       }
       else if (action.equals("add_column_after"))
@@ -704,6 +718,7 @@ public class DatatoolGUI extends JFrame
    {
       editCellItem.setEnabled(enabled);
       removeColumnItem.setEnabled(enabled);
+      editHeaderItem.setEnabled(enabled);
    }
 
    public void updateTools()
@@ -736,5 +751,5 @@ public class DatatoolGUI extends JFrame
    private JMenuItem undoItem, redoItem, editCellItem, 
       addColumnAfterItem, addRowAfterItem,
       addColumnBeforeItem, addRowBeforeItem,
-      removeColumnItem;
+      removeColumnItem, editHeaderItem;
 }
