@@ -134,7 +134,7 @@ public class DatatoolDbPanel extends JPanel
       UndoableEdit edit = event.getEdit();
       undoManager.addEdit(edit);
       gui.updateUndoRedoItems(this, edit.getPresentationName(), null);
-      isModified = true;
+      setModified(true);
    }
 
    public boolean canUndo()
@@ -218,7 +218,7 @@ public class DatatoolDbPanel extends JPanel
       try
       {
          db.save();
-         isModified = false;
+         setModified(false);
       }
       catch (IOException e)
       {
@@ -234,6 +234,7 @@ public class DatatoolDbPanel extends JPanel
    public void setModified(boolean modified)
    {
       isModified = modified;
+      buttonTabComponent.updateLabel();
    }
 
    public String getToolTipText()
@@ -594,10 +595,8 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
-      db.setName(newName);
-      setName(newName);
-      setModified(true);
-      buttonTabComponent.updateLabel();
+      addUndoEvent(new UndoableEditEvent(this, 
+         new DbNameEdit(this, newName)));
    }
 
    protected DatatoolDb db;
@@ -836,7 +835,14 @@ class ButtonTabComponent extends JPanel
 
    public void updateLabel()
    {
-      label.setText(panel.getName());
+      String name = panel.getName();
+
+      if (panel.isModified())
+      {
+         name += " *";
+      }
+
+      label.setText(name);
    }
 
    public void actionPerformed(ActionEvent evt)

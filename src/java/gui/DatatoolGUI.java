@@ -117,6 +117,11 @@ public class DatatoolGUI extends JFrame
 
       redoItem.setEnabled(false);
 
+      editDbNameItem = DatatoolGuiResources.createJMenuItem(
+         "edit", "edit_dbname", this, toolBar);
+      editM.add(editDbNameItem);
+      editDbNameItem.setEnabled(false);
+
       editCellItem = DatatoolGuiResources.createJMenuItem(
          "edit", "edit_cell", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK),
@@ -379,6 +384,15 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("close"))
       {
          close();
+      }
+      else if (action.equals("edit_dbname"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            ((DatatoolDbPanel)tab).requestName();
+         }
       }
       else if (action.equals("edit_cell"))
       {
@@ -723,6 +737,7 @@ public class DatatoolGUI extends JFrame
       addColumnAfterItem.setEnabled(enable);
       addRowBeforeItem.setEnabled(enable);
       addRowAfterItem.setEnabled(enable);
+      editDbNameItem.setEnabled(enable);
    }
 
    private DatatoolSettings settings;
@@ -746,5 +761,5 @@ public class DatatoolGUI extends JFrame
    private JMenuItem undoItem, redoItem, editCellItem, 
       addColumnAfterItem, addRowAfterItem,
       addColumnBeforeItem, addRowBeforeItem,
-      removeColumnItem, editHeaderItem;
+      removeColumnItem, editHeaderItem, editDbNameItem;
 }

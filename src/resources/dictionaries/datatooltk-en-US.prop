@@ -36,6 +36,9 @@ edit.undo.tooltip=Undo previous operation
 edit.redo=Redo $1
 edit.redo.mnemonic=R
 edit.redo.tooltip=Redo previous operation
+edit.edit_dbname=Edit Database Name...
+edit.edit_dbname.mnemonic=N
+edit.edit_dbname.tooltip=Edit the name of the current database (not related to the file name)
 edit.edit_cell=Edit Cell...
 edit.edit_cell.mnemonic=T
 edit.edit_cell.tooltip=Edit selected cell
@@ -148,6 +151,7 @@ default.texheader=Created by $1 on $2
 
 # Undo/Redo
 undo.cell_edit=Cell Edit
+undo.edit_name=Edit Database Name
 undo.add_row=Add Row
 undo.add_column=Add Column
 undo.move_column=Move Column
