@@ -3,8 +3,7 @@ package com.dickimawbooks.datatooltk.gui;
 import java.io.*;
 import java.util.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
+import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.undo.*;
@@ -23,6 +22,7 @@ public class DatatoolDbPanel extends JPanel
       this.db = db;
       this.gui = gui;
       setName(db.getName());
+      buttonTabComponent = new ButtonTabComponent(this);
 
       initTable();
    }
@@ -549,6 +549,16 @@ public class DatatoolDbPanel extends JPanel
       repaint();
    }
 
+   public JComponent getButtonTabComponent()
+   {
+      return buttonTabComponent;
+   }
+
+   public void close()
+   {
+      gui.close(this);
+   }
+
    protected DatatoolDb db;
 
    protected RowHeaderComponent rowHeaderComponent;
@@ -562,6 +572,8 @@ public class DatatoolDbPanel extends JPanel
    private JScrollPane sp;
 
    private UndoManager undoManager;
+
+   private ButtonTabComponent buttonTabComponent;
 
    public static final int STRING_MIN_WIDTH=300;
 
@@ -744,4 +756,45 @@ class DatatoolTableHeader extends JTableHeader
          header.getKey(), DatatoolHeader.TYPE_LABELS[header.getType()+1]);
    }
 
+}
+
+class ButtonTabComponent extends JPanel
+   implements ActionListener
+{
+   public ButtonTabComponent(DatatoolDbPanel panel)
+   {
+      super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+      this.panel = panel;
+      label = new JLabel(panel.getName());
+      button = DatatoolGuiResources.createActionButton
+        ("button", "close_panel", this, null);
+
+      button.setText(null);
+      button.setRolloverEnabled(true);
+      button.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
+      button.setContentAreaFilled(false);
+      button.setFocusable(false);
+
+      add(label);
+      add(button);
+
+      setOpaque(false);
+   }
+
+   public void actionPerformed(ActionEvent evt)
+   {
+      String action = evt.getActionCommand();
+
+      if (action == null) return;
+
+      if (action.equals("close_panel"))
+      {
+         panel.close();
+      }
+   }
+
+   private DatatoolDbPanel panel;
+   private JLabel label;
+   private JButton button;
 }

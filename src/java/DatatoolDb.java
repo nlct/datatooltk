@@ -850,6 +850,11 @@ public class DatatoolDb
       return file;
    }
 
+   public String getFileName()
+   {
+      return file == null ? null : file.getAbsolutePath();
+   }
+
    public void setName(String name)
    {
       this.name = name;

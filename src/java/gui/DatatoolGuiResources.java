@@ -97,6 +97,51 @@ public class DatatoolGuiResources
        else
        {
           button = new JButton(buttonLabel, new ImageIcon(imageURL));
+
+          // Is there an associated rollover image?
+
+          imageURL = getImageUrl(label+"_rollover");
+
+          if (imageURL != null)
+          {
+             button.setRolloverIcon(new ImageIcon(imageURL));
+          }
+
+          // Is there an associated pressed image?
+
+          imageURL = getImageUrl(label+"_pressed");
+
+          if (imageURL != null)
+          {
+             button.setPressedIcon(new ImageIcon(imageURL));
+          }
+
+          // Is there an associated selected image?
+
+          imageURL = getImageUrl(label+"_selected");
+
+          if (imageURL != null)
+          {
+             button.setSelectedIcon(new ImageIcon(imageURL));
+          }
+
+          // Is there an associated disabled image?
+
+          imageURL = getImageUrl(label+"_disabled");
+
+          if (imageURL != null)
+          {
+             button.setDisabledIcon(new ImageIcon(imageURL));
+          }
+
+          // Is there an associated "disabled selected" image?
+
+          imageURL = getImageUrl(label+"_disabled_selected");
+
+          if (imageURL != null)
+          {
+             button.setDisabledSelectedIcon(new ImageIcon(imageURL));
+          }
        }
 
        button.setMnemonic(mnemonic);

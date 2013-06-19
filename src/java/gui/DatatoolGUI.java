@@ -621,15 +621,7 @@ public class DatatoolGUI extends JFrame
    {
       try
       {
-         DatatoolDb db = DatatoolDb.load(file);
-
-         DatatoolDbPanel panel = new DatatoolDbPanel(this, db);
-
-         tabbedPane.addTab(panel.getName(), panel);
-         tabbedPane.setToolTipTextAt(tabbedPane.getTabCount()-1, 
-           file.toString());
-
-         updateTools();
+         createNewTab(DatatoolDb.load(file));
       }
       catch (IOException e)
       {
@@ -637,6 +629,21 @@ public class DatatoolGUI extends JFrame
            DatatoolTk.getLabelWithValues(
              "error.load.failed", file.toString(), e.getMessage()));
       }
+   }
+
+   private void createNewTab(DatatoolDb db)
+   {
+      DatatoolDbPanel panel = new DatatoolDbPanel(this, db);
+
+      tabbedPane.addTab(panel.getName(), panel);
+
+      int idx = tabbedPane.getTabCount()-1;
+
+      tabbedPane.setToolTipTextAt(idx, db.getFileName());
+
+      tabbedPane.setTabComponentAt(idx, panel.getButtonTabComponent());
+
+      updateTools();
    }
 
    public void importCsv()
@@ -653,13 +660,7 @@ public class DatatoolGUI extends JFrame
 
       try
       {
-         DatatoolDb db = imp.importData(fileChooser.getSelectedFile());
-
-         DatatoolDbPanel panel = new DatatoolDbPanel(this, db);
-
-         tabbedPane.addTab(panel.getName(), panel);
-
-         updateTools();
+         createNewTab(imp.importData(fileChooser.getSelectedFile()));
       }
       catch (DatatoolImportException e)
       {
@@ -671,13 +672,7 @@ public class DatatoolGUI extends JFrame
    {
       try
       {
-         DatatoolDb db = imp.importData(source);
-
-         DatatoolDbPanel panel = new DatatoolDbPanel(this, db);
-
-         tabbedPane.addTab(panel.getName(), panel);
-
-         updateTools();
+         createNewTab(imp.importData(source));
       }
       catch (DatatoolImportException e)
       {
