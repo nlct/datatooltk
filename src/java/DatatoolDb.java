@@ -1083,6 +1083,30 @@ public class DatatoolDb
       return data.remove(rowIdx);
    }
 
+   public DatatoolColumn removeColumn(int colIdx)
+   {
+      DatatoolHeader header = headers.remove(colIdx);
+
+      if (header == null)
+      {
+         return null;
+      }
+
+      return new DatatoolColumn(header, colIdx, data, true);
+   }
+
+   public void removeColumn(DatatoolColumn column)
+   {
+      int colIdx = column.getColumnIndex();
+
+      headers.remove(colIdx);
+
+      for (DatatoolRow row : data)
+      {
+         row.remove(colIdx);
+      }
+   }
+
    public DatatoolRow insertRow(int rowIdx)
    {
       DatatoolRow row = new DatatoolRow(headers.size());
@@ -1118,6 +1142,11 @@ public class DatatoolDb
       {
          data.add(rowIdx, row);
       }
+   }
+
+   public void insertColumn(DatatoolColumn column)
+   {
+      column.insertIntoData(headers, data);
    }
 
    public DatatoolHeader insertColumn(int colIdx)

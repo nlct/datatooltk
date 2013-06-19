@@ -388,6 +388,15 @@ public class DatatoolGUI extends JFrame
             ((DatatoolDbPanel)tab).requestNewColumnAfter();
          }
       }
+      else if (action.equals("add_column_before"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            ((DatatoolDbPanel)tab).requestNewColumnBefore();
+         }
+      }
       else if (action.equals("add_row_after"))
       {
          Component tab = tabbedPane.getSelectedComponent();
@@ -646,6 +655,18 @@ public class DatatoolGUI extends JFrame
       {
          DatatoolGuiResources.error(this, e);
       }
+   }
+
+   public DatatoolHeader requestNewHeader(DatatoolDbPanel panel)
+   {
+      DatatoolHeader header = new DatatoolHeader("", "");
+
+      if (headerDialog.requestEdit(header, panel.db))
+      {
+         return header;
+      }
+
+      return null;
    }
 
    public void requestHeaderEditor(int colIdx, DatatoolDbPanel panel)

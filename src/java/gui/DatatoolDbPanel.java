@@ -293,6 +293,22 @@ public class DatatoolDbPanel extends JPanel
 
    public void requestNewColumnAfter()
    {
+      DatatoolHeader header = gui.requestNewHeader(this);
+
+      if (header == null)
+      {
+         return;
+      }
+
+      int colIdx = table.getSelectedColumn()+1;
+
+      if (colIdx == 0)
+      {
+         colIdx = db.getColumnCount();
+      }
+
+      addUndoEvent(new UndoableEditEvent(this, 
+         new InsertColumnEdit(this, header, colIdx)));
    }
 
    public void requestNewColumnBefore()

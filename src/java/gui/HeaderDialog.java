@@ -61,8 +61,13 @@ public class HeaderDialog extends JDialog
 
    public boolean requestEdit(int colIdx, DatatoolDb db)
    {
+      return requestEdit(db.getHeader(colIdx), db);
+   }
+
+   public boolean requestEdit(DatatoolHeader header, DatatoolDb db)
+   {
       this.db = db;
-      this.header = db.getHeader(colIdx);
+      this.header = header;
 
       modified = false;
       setTitle(DatatoolTk.getLabelWithValue("header.title", header.getKey()));
@@ -85,6 +90,13 @@ public class HeaderDialog extends JDialog
       if (action.equals("okay"))
       {
          String key = labelField.getText();
+
+         if (key.isEmpty())
+         {
+            DatatoolGuiResources.error(this, 
+               DatatoolTk.getLabel("error.missing_key"));
+            return;
+         }
 
          if (!header.getKey().equals(key))
          {

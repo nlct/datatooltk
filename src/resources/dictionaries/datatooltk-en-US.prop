@@ -147,6 +147,7 @@ default.texheader=Created by $1 on $2
 # Undo/Redo
 undo.cell_edit=Cell Edit
 undo.add_row=Add Row
+undo.add_column=Add Column
 undo.move_column=Move Column
 undo.move_row=Move Row
 
@@ -246,6 +247,7 @@ error.sql.connection_failed=Can't establish SQL connection
 error.sql.query_failed=SQL query failed
 error.resource.not_found=Can't find resource file $1
 error.key_exists=Header key '$1' already exists.
+error.missing_key=Header key is missing
 
 # Warning messages
 warning.title=Warning
