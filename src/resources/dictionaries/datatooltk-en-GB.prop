@@ -148,6 +148,7 @@ default.texheader=Created by $1 on $2
 undo.cell_edit=Cell Edit
 undo.add_row=Add Row
 undo.move_column=Move Column
+undo.move_row=Move Row
 
 # Messages
 

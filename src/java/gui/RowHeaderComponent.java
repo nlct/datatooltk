@@ -1,6 +1,9 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.util.Vector;
+import java.awt.dnd.*;
+import java.awt.datatransfer.*;
+import javax.activation.DataHandler;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
@@ -23,6 +26,7 @@ public class RowHeaderComponent extends JPanel
       {
          addButton(i);
       }
+
    }
 
    protected void addButton(int row)
@@ -82,26 +86,21 @@ public class RowHeaderComponent extends JPanel
    private int selectedRow = -1;
 }
 
-class RowButton extends JPanel
+class RowButton extends JLabel implements DropTargetListener
 {
    private DatatoolDbPanel panel;
    private int row;
-   private JLabel label;
 
    private int padx=10;
 
-   public RowButton(final int row, final DatatoolDbPanel panel)
+   public RowButton(final int rowIdx, final DatatoolDbPanel panel)
    {
-      super(new BorderLayout());
+      super(""+(rowIdx+1));
 
       setBorder(BorderFactory.createRaisedBevelBorder());
       setOpaque(true);
 
-      label = new JLabel(""+(row+1));
-
-      add(label, BorderLayout.CENTER);
-
-      this.row = row;
+      this.row = new Integer(rowIdx);
       this.panel = panel;
 
       addMouseListener(new MouseAdapter()
@@ -113,12 +112,55 @@ class RowButton extends JPanel
                panel.selectRow(row);
             }
          }
+
+         public void mousePressed(MouseEvent evt)
+         {
+             JComponent comp = (JComponent)evt.getSource();
+             TransferHandler th = comp.getTransferHandler();
+             th.exportAsDrag(comp, evt, TransferHandler.MOVE);
+         }
       });
+
+      setTransferHandler(new RowTransferHandler());
+      setDropTarget(new DropTarget(this, this));
+   }
+
+   public void dragEnter(DropTargetDragEvent evt)
+   {
+   }
+
+   public void dragExit(DropTargetEvent evt)
+   {
+   }
+
+   public void dragOver(DropTargetDragEvent evt)
+   {
+   }
+
+   public void drop(DropTargetDropEvent evt)
+   {
+      try
+      {
+          int fromIndex = Integer.parseInt(evt.getTransferable()
+           .getTransferData(DataFlavor.stringFlavor).toString());
+
+          if (fromIndex != row)
+          {
+             panel.moveRow(fromIndex, row);
+          }
+      }
+      catch (Exception e)
+      {
+      }
+   }
+
+   public void dropActionChanged(DropTargetDragEvent evt)
+   {
    }
 
    public Dimension getPreferredSize()
    {
-      Dimension dim = label.getPreferredSize();
+      Dimension dim = super.getPreferredSize();
 
       dim.width += padx;
       dim.height = panel.getRowHeight(row);
@@ -128,7 +170,7 @@ class RowButton extends JPanel
 
    public Dimension getMinimumSize()
    {
-      Dimension dim = label.getMinimumSize();
+      Dimension dim = super.getMinimumSize();
 
       dim.width += padx;
       dim.height = panel.getRowHeight(row);
@@ -138,7 +180,7 @@ class RowButton extends JPanel
 
    public Dimension getMaximumSize()
    {
-      Dimension dim = label.getMinimumSize();
+      Dimension dim = super.getMinimumSize();
 
       dim.width += padx;
       dim.height = panel.getRowHeight(row);
@@ -148,11 +190,70 @@ class RowButton extends JPanel
 
    public Dimension getSize()
    {
-      Dimension dim = label.getSize();
+      Dimension dim = super.getSize();
 
       dim.width += padx;
       dim.height = panel.getRowHeight(row);
 
       return dim;
+   }
+
+   public int getIndex()
+   {
+      return row;
+   }
+}
+
+class RowTransferHandler extends TransferHandler
+{
+   public boolean canImport(TransferHandler.TransferSupport info)
+   {
+      if (!info.isDataFlavorSupported(DataFlavor.stringFlavor))
+      {
+         return false;
+      }
+
+      return true;
+   }
+
+   protected Transferable createTransferable(JComponent comp)
+   {
+      RowButton button = (RowButton)comp;
+
+      return new StringSelection(""+button.getIndex());
+   }
+
+   public int getSourceActions(JComponent c)
+   {
+      return TransferHandler.MOVE;
+   }
+
+   public boolean importData(TransferHandler.TransferSupport info)
+   {
+      if (!info.isDrop())
+      {
+         return false;
+      }
+
+      Transferable t = info.getTransferable();
+      DropLocation dl = info.getDropLocation();
+
+      int data;
+
+      try
+      {
+         data = Integer.parseInt(
+            (String)t.getTransferData(DataFlavor.stringFlavor));
+      }
+      catch (Exception e)
+      {
+         return false;
+      }
+
+      return true;
+   }
+
+   protected void exportDone(JComponent c, Transferable data, int action)
+   {
    }
 }

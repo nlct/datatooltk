@@ -477,7 +477,13 @@ public class DatatoolDbPanel extends JPanel
          new MoveColumnEdit(this, fromIndex, toIndex)));
    }
 
-   protected void dataUpdated()
+   public void moveRow(int fromIndex, int toIndex)
+   {
+      addUndoEvent(new UndoableEditEvent(this, 
+         new MoveRowEdit(this, fromIndex, toIndex)));
+   }
+
+   public void dataUpdated()
    {
       setModified(true);
       table.setModel(new DatatoolDbTableModel(db, this));
@@ -572,6 +578,7 @@ class DatatoolDbTableModel extends AbstractTableModel
    {
       return (db.getHeader(column).getType() != DatatoolDb.TYPE_STRING);
    }
+
 }
 
 class DatatoolTableHeader extends JTableHeader

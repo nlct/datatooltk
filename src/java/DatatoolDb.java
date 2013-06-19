@@ -1170,6 +1170,15 @@ public class DatatoolDb
       }
    }
 
+   public void moveRow(int fromIndex, int toIndex)
+   {
+      if (fromIndex == toIndex) return;
+
+      DatatoolRow row = data.remove(fromIndex);
+
+      data.add(toIndex, row);
+   }
+
    public void moveColumn(int fromIndex, int toIndex)
    {
       if (fromIndex == toIndex) return;
