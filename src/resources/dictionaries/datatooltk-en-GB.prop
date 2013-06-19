@@ -164,6 +164,7 @@ message.unsaved_data_query='$1' has been modified. Do you want to save it?
 message.cancelled=Cancelled
 message.discard_edit_query=Discard the edits you have just made?
 message.confirm_discard=Confirm Discard
+message.input_database_name=Database Name:
 
 # Syntax
 syntax.title=Syntax:
@@ -252,6 +253,7 @@ error.sql.query_failed=SQL query failed
 error.resource.not_found=Can't find resource file $1
 error.key_exists=Header key '$1' already exists.
 error.missing_key=Header key is missing
+error.invalid_name=Invalid name '$1' (can't be empty or contain TeX special characters)
 
 # Warning messages
 warning.title=Warning

@@ -559,6 +559,47 @@ public class DatatoolDbPanel extends JPanel
       gui.close(this);
    }
 
+   public void requestName()
+   {
+      String currentName = db.getName();
+
+      String newName = JOptionPane.showInputDialog(gui,
+         DatatoolTk.getLabel("message.input_database_name"), currentName);
+
+      if (newName == null || currentName.equals(newName))
+      {
+         return;
+      }
+
+      boolean invalid = newName.isEmpty();
+
+      if (!invalid)
+      {
+         if (newName.indexOf("$") > -1)
+         {
+            newName = newName.replaceAll("\\x24", "\\\\u0024");
+
+            invalid = true;
+         }
+         else
+         {
+            invalid = newName.matches(".*[\\\\%#{}\\&^].*");
+         }
+      }
+
+      if (invalid)
+      {
+         DatatoolGuiResources.error(gui, 
+            DatatoolTk.getLabelWithValue("error.invalid_name", newName));
+         return;
+      }
+
+      db.setName(newName);
+      setName(newName);
+      setModified(true);
+      buttonTabComponent.updateLabel();
+   }
+
    protected DatatoolDb db;
 
    protected RowHeaderComponent rowHeaderComponent;
@@ -761,7 +802,7 @@ class DatatoolTableHeader extends JTableHeader
 class ButtonTabComponent extends JPanel
    implements ActionListener
 {
-   public ButtonTabComponent(DatatoolDbPanel panel)
+   public ButtonTabComponent(final DatatoolDbPanel panel)
    {
       super(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
@@ -780,6 +821,22 @@ class ButtonTabComponent extends JPanel
       add(button);
 
       setOpaque(false);
+
+      addMouseListener(new MouseAdapter()
+      {
+         public void mouseClicked(MouseEvent evt)
+         {
+            if (evt.getClickCount() == 2)
+            {
+               panel.requestName();
+            }
+         }
+      });
+   }
+
+   public void updateLabel()
+   {
+      label.setText(panel.getName());
    }
 
    public void actionPerformed(ActionEvent evt)
