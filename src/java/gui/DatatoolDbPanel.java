@@ -1,6 +1,7 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.io.*;
+import java.util.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
@@ -416,6 +417,13 @@ public class DatatoolDbPanel extends JPanel
    public int getRowHeight(int row)
    {
       return table.getRowHeight(row);
+   }
+
+   public void updateColumnHeader(int column)
+   {
+      table.getTableHeader().getColumnModel().getColumn(column)
+       .setHeaderValue(db.getHeader(column).getTitle());
+      repaint();
    }
 
    protected DatatoolDb db;

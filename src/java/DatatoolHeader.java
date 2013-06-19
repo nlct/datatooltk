@@ -65,6 +65,11 @@ public class DatatoolHeader
       this.title = title;
    }
 
+   public String toString()
+   {
+      return title;
+   }
+
    private String key;
    private String title;
    private int type = DatatoolDb.TYPE_UNKNOWN;

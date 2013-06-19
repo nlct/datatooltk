@@ -653,6 +653,7 @@ public class DatatoolGUI extends JFrame
       if (headerDialog.requestEdit(colIdx, panel.db))
       {
          panel.setModified(true);
+         panel.updateColumnHeader(colIdx);
       }
    }
 

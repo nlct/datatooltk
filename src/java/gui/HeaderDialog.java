@@ -62,7 +62,7 @@ public class HeaderDialog extends JDialog
    public boolean requestEdit(int colIdx, DatatoolDb db)
    {
       this.db = db;
-      this.header = db.getHeader(colIdx+1);
+      this.header = db.getHeader(colIdx);
 
       modified = false;
       setTitle(DatatoolTk.getLabelWithValue("header.title", header.getKey()));
