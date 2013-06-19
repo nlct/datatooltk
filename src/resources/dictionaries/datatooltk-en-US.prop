@@ -137,6 +137,7 @@ button.cancel=Cancel
 button.cancel.mnemonic=C
 button.close_panel=Close
 button.close_panel.mnemonic=C
+button.close_panel.tooltip=Close this database
 button.help=Help
 button.help.mnemonic=H
 button.copy=Copy

@@ -165,6 +165,11 @@ public class DatatoolGUI extends JFrame
       rowM.add(addRowAfterItem);
       addRowAfterItem.setEnabled(false);
 
+      removeRowItem = DatatoolGuiResources.createJMenuItem(
+         "edit.row", "remove_row", this, toolBar);
+      rowM.add(removeRowItem);
+      removeRowItem.setEnabled(false);
+
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
 
@@ -439,6 +444,15 @@ public class DatatoolGUI extends JFrame
             ((DatatoolDbPanel)tab).removeSelectedColumn();
          }
       }
+      else if (action.equals("remove_row"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            ((DatatoolDbPanel)tab).removeSelectedRow();
+         }
+      }
       else if (action.equals("add_row_after"))
       {
          Component tab = tabbedPane.getSelectedComponent();
@@ -694,6 +708,11 @@ public class DatatoolGUI extends JFrame
       }
    }
 
+   public void selectTab(DatatoolDbPanel panel)
+   {
+      tabbedPane.setSelectedComponent(panel);
+   }
+
    public DatatoolHeader requestNewHeader(DatatoolDbPanel panel)
    {
       DatatoolHeader header = new DatatoolHeader("", "");
@@ -727,6 +746,7 @@ public class DatatoolGUI extends JFrame
    {
       editCellItem.setEnabled(enabled);
       removeColumnItem.setEnabled(enabled);
+      removeRowItem.setEnabled(enabled);
       editHeaderItem.setEnabled(enabled);
    }
 
@@ -761,5 +781,6 @@ public class DatatoolGUI extends JFrame
    private JMenuItem undoItem, redoItem, editCellItem, 
       addColumnAfterItem, addRowAfterItem,
       addColumnBeforeItem, addRowBeforeItem,
-      removeColumnItem, editHeaderItem, editDbNameItem;
+      removeColumnItem, editHeaderItem, editDbNameItem,
+      removeRowItem;
 }

@@ -331,6 +331,12 @@ public class DatatoolDbPanel extends JPanel
          new InsertColumnEdit(this, header, colIdx)));
    }
 
+   public void removeSelectedRow()
+   {
+      addUndoEvent(new UndoableEditEvent(this, 
+         new RemoveRowEdit(this, table.getSelectedRow())));
+   }
+
    public void removeSelectedColumn()
    {
       addUndoEvent(new UndoableEditEvent(this, 
@@ -599,6 +605,11 @@ public class DatatoolDbPanel extends JPanel
          new DbNameEdit(this, newName)));
    }
 
+   public void requestSelectedTab()
+   {
+      gui.selectTab(this);
+   }
+
    protected DatatoolDb db;
 
    protected RowHeaderComponent rowHeaderComponent;
@@ -799,7 +810,7 @@ class DatatoolTableHeader extends JTableHeader
 }
 
 class ButtonTabComponent extends JPanel
-   implements ActionListener
+   implements ActionListener,MouseListener
 {
    public ButtonTabComponent(final DatatoolDbPanel panel)
    {
@@ -809,6 +820,7 @@ class ButtonTabComponent extends JPanel
       label = new JLabel(panel.getName());
       button = DatatoolGuiResources.createActionButton
         ("button", "close_panel", this, null);
+      label.setToolTipText(panel.db.getFileName());
 
       button.setText(null);
       button.setRolloverEnabled(true);
@@ -821,16 +833,34 @@ class ButtonTabComponent extends JPanel
 
       setOpaque(false);
 
-      addMouseListener(new MouseAdapter()
+      addMouseListener(this);
+      label.addMouseListener(this);
+   }
+
+   public void mouseClicked(MouseEvent evt)
+   {
+      panel.requestSelectedTab();
+
+      if (evt.getClickCount() == 2)
       {
-         public void mouseClicked(MouseEvent evt)
-         {
-            if (evt.getClickCount() == 2)
-            {
-               panel.requestName();
-            }
-         }
-      });
+         panel.requestName();
+      }
+   }
+
+   public void mousePressed(MouseEvent evt)
+   {
+   }
+
+   public void mouseExited(MouseEvent evt)
+   {
+   }
+
+   public void mouseEntered(MouseEvent evt)
+   {
+   }
+
+   public void mouseReleased(MouseEvent evt)
+   {
    }
 
    public void updateLabel()
@@ -843,6 +873,7 @@ class ButtonTabComponent extends JPanel
       }
 
       label.setText(name);
+      label.setToolTipText(panel.db.getFileName());
    }
 
    public void actionPerformed(ActionEvent evt)
