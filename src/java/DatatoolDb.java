@@ -1170,6 +1170,20 @@ public class DatatoolDb
       }
    }
 
+   public void moveColumn(int fromIndex, int toIndex)
+   {
+      if (fromIndex == toIndex) return;
+
+      DatatoolHeader header = headers.remove(fromIndex);
+      headers.add(toIndex, header);
+
+      for (DatatoolRow row : data)
+      {
+         String value = row.remove(fromIndex);
+         row.add(toIndex, value);
+      }
+   }
+
    private Vector<DatatoolHeader> headers;
 
    private Vector<DatatoolRow> data;
