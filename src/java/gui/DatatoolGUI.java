@@ -16,7 +16,7 @@ import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.*;
 
 public class DatatoolGUI extends JFrame
-  implements ActionListener
+  implements ActionListener,MenuListener
 {
    public DatatoolGUI(DatatoolSettings settings)
    {
@@ -80,6 +80,40 @@ public class DatatoolGUI extends JFrame
         "file", "new", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK),
         toolBar));
+
+      recentM = DatatoolGuiResources.createJMenu("file.recent");
+      recentM.addMenuListener(this);
+      fileM.add(recentM);
+
+      clearRecentItem = DatatoolGuiResources.createJMenuItem(
+        "file.recent", "clearrecent", this, toolBar);
+
+      recentFilesListener = new ActionListener()
+      {
+         public void actionPerformed(ActionEvent evt)
+         {
+            String action = evt.getActionCommand();
+
+            if (action == null) return;
+
+            try
+            {
+               int index = Integer.parseInt(action);
+
+               if (index < 0 || index >= settings.getRecentFileCount())
+               {
+                  DatatoolTk.debug("Invalid recent file index "+index);
+                  return;
+               }
+
+               load(settings.getRecentFileName(index));
+            }
+            catch (NumberFormatException e)
+            {
+               DatatoolTk.debug("Invalid recent file index "+action);
+            }
+         }
+      };
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "open", this,
@@ -513,6 +547,42 @@ public class DatatoolGUI extends JFrame
       }
    }
 
+   public void menuSelected(MenuEvent evt)
+   {
+      if (evt.getSource() == recentM)
+      {
+         recentM.removeAll();
+
+         // Add recent files
+
+         for (int i = 0, n = Math.min(10, settings.getRecentFileCount());
+              i < n; i++)
+         {
+            String name = settings.getRecentFileName(i);
+            File file = new File(name);
+            String num = ""+i;
+            JMenuItem item = new JMenuItem(num+": "+file.getName());
+            item.setMnemonic(num.charAt(0));
+            item.setToolTipText(name);
+            item.setActionCommand(num);
+            item.addActionListener(recentFilesListener);
+
+            recentM.add(item);
+         }
+
+         recentM.addSeparator();
+         recentM.add(clearRecentItem);
+      }
+   }
+
+   public void menuDeselected(MenuEvent evt)
+   {
+   }
+
+   public void menuCanceled(MenuEvent evt)
+   {
+   }
+
    public void quit()
    {
       for (int i = tabbedPane.getTabCount()-1; i >= 0; i--)
@@ -820,9 +890,13 @@ public class DatatoolGUI extends JFrame
 
    private JToolBar toolBar;
 
+   private JMenu recentM;
+
    private JMenuItem undoItem, redoItem, editCellItem, 
       addColumnAfterItem, addRowAfterItem,
       addColumnBeforeItem, addRowBeforeItem,
       removeColumnItem, editHeaderItem, editDbNameItem,
-      removeRowItem;
+      removeRowItem, clearRecentItem;
+
+   private ActionListener recentFilesListener;
 }

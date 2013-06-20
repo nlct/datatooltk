@@ -1023,11 +1023,6 @@ public class DatatoolDb
    {
       String value = getRow(rowIdx).get(colIdx);
 
-      if (value.isEmpty())
-      {
-         return value;
-      }
-
       // What's the data type of this column?
 
       DatatoolHeader header = getHeader(colIdx);
@@ -1036,6 +1031,11 @@ public class DatatoolDb
 
       if (type == TYPE_INTEGER)
       {
+         if (value.isEmpty())
+         {
+            return new Integer(0);
+         }
+
          try
          {
             return new Integer(value);
@@ -1066,6 +1066,11 @@ public class DatatoolDb
       }
       else if (type == TYPE_REAL)
       {
+         if (value.isEmpty())
+         {
+            return new Float(0.0f);
+         }
+
          try
          {
             return new Float(value);

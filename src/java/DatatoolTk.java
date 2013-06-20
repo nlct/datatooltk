@@ -352,6 +352,11 @@ public class DatatoolTk
    {
       String prop = getLabel(label);
 
+      if (prop == null)
+      {
+         return null;
+      }
+
       return prop.replaceAll("\\$1", value.replaceAll("\\\\", "\\\\\\\\"));
    }
 
@@ -371,6 +376,11 @@ public class DatatoolTk
    public static String getLabelWithValues(String label, String[] values)
    {
       String prop = getLabel(label);
+
+      if (prop == null)
+      {
+         return prop;
+      }
 
       int n = prop.length();
 

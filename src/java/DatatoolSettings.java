@@ -166,6 +166,21 @@ public class DatatoolSettings extends Properties
       }
    }
 
+   public void clearRecentFiles()
+   {
+      recentFiles.clear();
+   }
+
+   public String getRecentFileName(int i)
+   {
+      return recentFiles.get(i);
+   }
+
+   public int getRecentFileCount()
+   {
+      return recentFiles.size();
+   }
+
    public void addRecentFile(File file)
    {
       String name = file.getAbsolutePath();
