@@ -1,6 +1,9 @@
 package com.dickimawbooks.datatooltk;
 
 import java.util.Properties;
+import java.io.*;
+import java.util.Vector;
+import java.util.InvalidPropertiesFormatException;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
@@ -10,6 +13,170 @@ public class DatatoolSettings extends Properties
    {
       super();
       setDefaults();
+      recentFiles = new Vector<String>();
+
+      setPropertiesPath();
+   }
+
+   private void setPropertiesPath()
+   {
+      String base;
+
+      if (System.getProperty("os.name").toLowerCase().startsWith("win"))
+      {
+         base = "datatooltk-settings";
+      }
+      else
+      {
+         base = ".datatooltk";
+      }
+
+      String home = System.getProperty("user.home");
+
+      if (home == null)
+      {
+         DatatoolTk.debug("No 'user.home' property!");
+         return;
+      }
+
+      File homeDir = new File(home);
+
+      if (!homeDir.exists())
+      {
+         DatatoolTk.debug("Home directory '"+home+"' doesn't exist!");
+         return;
+      }
+
+      propertiesPath = new File(homeDir, base);
+
+      if (propertiesPath.exists())
+      {
+         if (!propertiesPath.isDirectory())
+         {
+            DatatoolTk.debug("'"+propertiesPath+"' isn't a directory");
+            propertiesPath = null;
+            return;
+         }
+      }
+      else
+      {
+         if (!propertiesPath.mkdir())
+         {
+            DatatoolTk.debug("Unable to mkdir '"+propertiesPath+"'");
+            propertiesPath = null;
+
+            return;
+         }
+      }
+   }
+
+   public void loadProperties()
+      throws IOException,InvalidPropertiesFormatException
+   {
+      if (propertiesPath == null) return;
+
+      File file = new File(propertiesPath, propertiesName);
+
+      BufferedReader reader = null;
+      InputStream in = null;
+
+      try
+      {
+         if (file.exists())
+         {
+            in = new FileInputStream(file);
+
+            loadFromXML(in);
+
+            in.close();
+            in = null;
+         }
+
+         file = new File(propertiesPath, recentName);
+
+         if (file.exists())
+         {
+            reader = new BufferedReader(new FileReader(file));
+
+            recentFiles.clear();
+
+            String line;
+
+            while ((line=reader.readLine()) != null)
+            {
+               recentFiles.add(line);
+            }
+
+            reader.close();
+            reader = null;
+         }
+      }
+      finally
+      {
+         if (in != null)
+         {
+            in.close();
+            in = null;
+         }
+
+         if (reader != null)
+         {
+            reader.close();
+            reader = null;
+         }
+      }
+   }
+
+   public void saveProperties()
+      throws IOException
+   {
+      if (propertiesPath == null) return;
+
+      File file = new File(propertiesPath, propertiesName);
+
+      FileOutputStream out = null;
+
+      try
+      {
+         out = new FileOutputStream(file);
+
+         storeToXML(out, null);
+
+         out.close();
+         out = null;
+
+         file = new File(propertiesPath, recentName);
+
+         PrintWriter writer = new PrintWriter(new FileWriter(file));
+
+         for (String name : recentFiles)
+         {
+            writer.println(name);
+         }
+
+         writer.close();
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+            out = null;
+         }
+      }
+   }
+
+   public void addRecentFile(File file)
+   {
+      String name = file.getAbsolutePath();
+
+      // remove if already in the list
+
+      recentFiles.remove(name);
+
+      // Insert at the start of the list
+
+      recentFiles.add(0, name);
    }
 
    public void setSeparator(char separator)
@@ -193,4 +360,12 @@ public class DatatoolSettings extends Properties
    protected char[] sqlPassword = null;
 
    protected DatatoolPasswordReader passwordReader;
+
+   private Vector<String> recentFiles;
+
+   private File propertiesPath = null;
+
+   private final String propertiesName="datatooltk.prop";
+
+   private final String recentName = "recentfiles";
 }

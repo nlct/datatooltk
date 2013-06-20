@@ -1780,6 +1780,17 @@ sub end_hr{
    my ($expat) = @_;
 }
 
+sub start_percent{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("%");
+   print TEXFD "\\%";
+}
+
+sub end_percent{
+   my ($expat) = @_;
+}
+
 sub html_head{
   my ($title, $prev, $next) = @_;
 

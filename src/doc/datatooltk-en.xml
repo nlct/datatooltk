@@ -181,6 +181,27 @@
    in an entry will automatically be converted behind the scenes.
    </p>
    </node>
+   <node tag="properties" type="chapter" title="Application Properties">
+   <p>
+   When <app/> is run, either in batch or <acr tag="gui"/> mode, 
+   the application settings are read in from the properties file, 
+   if it exists. Any command line options override those settings.
+   If <app/> is run in <acr tag="gui"/> mode, the application properties are saved on exit. They are not saved in batch mode.
+   </p>
+   <p>
+   The properties directory depends on the operating system.
+   On Windows, it is a folder called <dq>datatooltk-settings</dq>
+   in the folder given by the Java system property <tt>user.home</tt>.
+   This is usually the user's home folder but in some versions of
+   Java this can be <percent/>userprofile<percent/>.
+   On other operating systems, the properties directory is
+   called <tt>.datatooltk</tt> and is in the user's home directory.
+   </p>
+   <p>
+   In <acr tag="gui"/> mode, the settings can be changed using
+   <menu tag="edit.preferences"/>
+   </p>
+   </node>
    <node tag="developers" type="chapter" title="Info for Developers">
     <p>
     This chapter will be removed before release. In the <tt>tests</tt> 

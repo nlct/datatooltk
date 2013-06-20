@@ -523,6 +523,15 @@ public class DatatoolGUI extends JFrame
          }
       }
 
+      try
+      {
+         settings.saveProperties();
+      }
+      catch (IOException e)
+      {
+         DatatoolTk.debug(e);
+      }
+
       System.exit(0);
    }
 
@@ -645,6 +654,11 @@ public class DatatoolGUI extends JFrame
       panel.save(fileChooser.getSelectedFile());
    }
 
+   public void addRecentFile(File file)
+   {
+      settings.addRecentFile(file);
+   }
+
    public void load()
    {
       setTeXFileFilters();
@@ -665,6 +679,8 @@ public class DatatoolGUI extends JFrame
       try
       {
          createNewTab(DatatoolDb.load(file));
+
+         settings.addRecentFile(file);
       }
       catch (IOException e)
       {

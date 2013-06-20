@@ -82,6 +82,9 @@ edit.row.move_row_up.tooltip=Move current row up
 edit.row.move_row_down=Move Row Down
 edit.row.move_row_down.mnemonic=N
 edit.row.move_row_down.tooltip=Move current row down
+edit.preferences=Edit Preferences...
+edit.preferences.mnemonic=P
+edit.preferences.tooltip=Edit application settings
 
 # Help menu
 help=Help
@@ -272,6 +275,7 @@ error.resource.not_found=Can't find resource file $1
 error.key_exists=Header key '$1' already exists.
 error.missing_key=Header key is missing
 error.invalid_name=Invalid name '$1' (can't be empty or contain TeX special characters)
+error.load_prop_failed=Unable to load properties: $1
 
 # Warning messages
 warning.title=Warning

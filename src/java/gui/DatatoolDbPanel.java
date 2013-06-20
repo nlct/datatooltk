@@ -238,6 +238,7 @@ public class DatatoolDbPanel extends JPanel
       {
          db.save();
          setModified(false);
+         gui.addRecentFile(db.getFile());
       }
       catch (IOException e)
       {
@@ -831,7 +832,7 @@ class DatatoolTableHeader extends JTableHeader
             Object value, boolean isSelected, boolean hasFocus,
             int row, int column)
          {
-            rendererComponent.setText(value.toString());
+            rendererComponent.setText(value == null ? "" : value.toString());
 
             if (table == null) return rendererComponent;
 

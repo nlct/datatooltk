@@ -417,6 +417,8 @@ public class DatatoolTk
 
    public static void main(String[] args)
    {
+      settings = new DatatoolSettings();
+
       boolean gui = false;
 
       try
@@ -427,6 +429,16 @@ public class DatatoolTk
       {
          System.err.println("Unable to load dictionary file:\n"
            + e.getMessage());
+      }
+
+      try
+      {
+         settings.loadProperties();
+      }
+      catch (IOException e)
+      {
+         System.err.println(getLabelWithValue("error.load.prop_failed", 
+           e.getMessage()));
       }
 
       try
@@ -751,5 +763,5 @@ public class DatatoolTk
 
    private static DatatoolImport imp = null;
 
-   private static DatatoolSettings settings = new DatatoolSettings();
+   private static DatatoolSettings settings;
 }
