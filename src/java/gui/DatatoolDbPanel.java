@@ -53,7 +53,8 @@ public class DatatoolDbPanel extends JPanel
       DbNumericalCellEditor editor = new DbNumericalCellEditor();
 
       table.setDefaultEditor(Number.class, editor);
-      table.setDefaultRenderer(Number.class, new DbNumericalCellRenderer());
+      table.setDefaultRenderer(Integer.class, new DbNumericalCellRenderer());
+      table.setDefaultRenderer(Float.class, new DbNumericalCellRenderer());
       table.setDefaultRenderer(String.class, new DbCellRenderer());
       table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
          this));
@@ -725,6 +726,7 @@ class DatatoolDbTableModel extends AbstractTableModel
          case DatatoolDb.TYPE_REAL:
             return Float.class;
       }
+
 
       return String.class;
    }
