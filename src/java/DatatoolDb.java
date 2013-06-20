@@ -3,6 +3,7 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Collections;
 import java.util.regex.*;
 import java.util.Date;
 
@@ -1243,6 +1244,13 @@ public class DatatoolDb
    public ColumnEnumeration getColumnEnumeration(int colIdx)
    {
       return new ColumnEnumeration(data, colIdx);
+   }
+
+   public void sort(int columnIndex)
+   {
+      DatatoolRow.setSortColumn(columnIndex);
+
+      Collections.sort(data);
    }
 
    private Vector<DatatoolHeader> headers;

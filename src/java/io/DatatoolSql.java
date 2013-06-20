@@ -98,10 +98,10 @@ public class DatatoolSql implements DatatoolImport
 
             for (int i = 1; i <= colCount; i++)
             {
-               row.addCell(i-1, mapFieldIfRequired(rs.getString(i)).replaceAll("\n\n+", "\\\\DTLpar "));
+               row.addCell(i-1, mapFieldIfRequired(rs.getObject(i).toString()).replaceAll("\n\n+", "\\\\DTLpar "));
             }
 
-            db.insertRow(rowIdx);
+            db.insertRow(rowIdx, row);
 
             rowIdx++;
          }
