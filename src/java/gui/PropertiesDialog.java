@@ -33,7 +33,7 @@ public class PropertiesDialog extends JDialog
       lastButton = createRadioButton("preferences.general", "last", bg);
       generalTab.add(lastButton);
 
-      Box box = Box.createHorizontalBox();
+      JComponent box = Box.createHorizontalBox();
       box.setAlignmentX(0);
       generalTab.add(box);
 
@@ -75,9 +75,8 @@ public class PropertiesDialog extends JDialog
       csvTab.add(box);
 
       delimCharField = new CharField('"');
-      JLabel delimLabel = createLabel("preferences.csv.delim", delimCharField);
 
-      box.add(delimLabel);
+      box.add(createLabel("preferences.csv.delim", delimCharField));
       box.add(delimCharField);
 
       hasHeaderBox = createCheckBox("preferences.csv", "hasheader");
@@ -86,6 +85,72 @@ public class PropertiesDialog extends JDialog
       // SQL tab
 
       JComponent sqlTab = addTab("sql");
+
+      JLabel[] labels = new JLabel[5];
+      int idx = 0;
+      int maxWidth = 0;
+      Dimension dim;
+
+      box = createNewRow(sqlTab);
+
+      hostField = new JTextField(16);
+
+      labels[idx] = createLabel("preferences.sql.host", hostField);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+      box.add(hostField);
+
+      box = createNewRow(sqlTab);
+
+      portField = new NonNegativeIntField(3306);
+
+      labels[idx] = createLabel("preferences.sql.port", portField);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+
+      box.add(portField);
+
+      box = createNewRow(sqlTab);
+
+      prefixField = new JTextField(16);
+
+      labels[idx] = createLabel("preferences.sql.prefix", prefixField);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+      box.add(prefixField);
+
+      box = createNewRow(sqlTab);
+
+      databaseField = new JTextField(16);
+
+      labels[idx] = createLabel("preferences.sql.database", databaseField);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+      box.add(databaseField);
+
+      box = createNewRow(sqlTab);
+
+      userField = new JTextField(16);
+
+      labels[idx] = createLabel("preferences.sql.user", userField);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+      box.add(userField);
+
+      for (idx = 0; idx < labels.length; idx++)
+      {
+         dim = labels[idx].getPreferredSize();
+         dim.width = maxWidth;
+         labels[idx].setPreferredSize(dim);
+      }
+
+      wipeBox = createCheckBox("preferences.sql", "wipe");
+      sqlTab.add(wipeBox);
 
       JPanel buttonPanel = new JPanel();
 
@@ -119,6 +184,15 @@ public class PropertiesDialog extends JDialog
          DatatoolTk.getMnemonic("preferences", label));
 
       return tab;
+   }
+
+   private JComponent createNewRow(JComponent tab)
+   {
+      JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
+      comp.setAlignmentX(0);
+      tab.add(comp);
+
+      return comp;
    }
 
    private JRadioButton createRadioButton(String parentLabel,
@@ -208,6 +282,19 @@ public class PropertiesDialog extends JDialog
       delimCharField.setValue(settings.getDelimiter());
 
       hasHeaderBox.setSelected(settings.hasCSVHeader());
+
+      hostField.setText(settings.getSqlHost());
+      prefixField.setText(settings.getSqlPrefix());
+      portField.setValue(settings.getSqlPort());
+      wipeBox.setSelected(settings.isWipePasswordEnabled());
+
+      String user = settings.getSqlUser();
+
+      userField.setText(user == null ? "" : user);
+
+      String db = settings.getSqlDbName();
+
+      databaseField.setText(db == null ? "" : db);
 
       setVisible(true);
    }
@@ -307,6 +394,40 @@ public class PropertiesDialog extends JDialog
 
       settings.setHasCSVHeader(hasHeaderBox.isSelected());
 
+      String host = hostField.getText();
+
+      if (host.isEmpty())
+      {
+         DatatoolGuiResources.error(this, 
+            DatatoolTk.getLabel("error.missing_host"));
+         return;
+      }
+
+      settings.setSqlHost(host);
+
+      String prefix = prefixField.getText();
+
+      if (prefix.isEmpty())
+      {
+         DatatoolGuiResources.error(this,
+            DatatoolTk.getLabel("error.missing_prefix"));
+         return;
+      }
+
+      settings.setSqlPrefix(prefix);
+
+      if (portField.getText().isEmpty())
+      {
+         DatatoolGuiResources.error(this,
+            DatatoolTk.getLabel("error.missing_port"));
+         return;
+      }
+
+      settings.setSqlPort(portField.getValue());
+
+      settings.setSqlUser(userField.getText());
+      settings.setSqlDbName(databaseField.getText());
+
       setVisible(false);
    }
 
@@ -318,11 +439,15 @@ public class PropertiesDialog extends JDialog
 
    private CharField sepCharField, delimCharField;
 
-   private JCheckBox hasHeaderBox;
+   private JCheckBox hasHeaderBox, wipeBox;
 
    private FileField customFileField;
 
    private JFileChooser fileChooser;
+
+   private NonNegativeIntField portField;
+
+   private JTextField hostField, prefixField, databaseField, userField;
 
    private JTabbedPane tabbedPane;
 }

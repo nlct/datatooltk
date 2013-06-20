@@ -321,6 +321,9 @@ error.load_prop_failed=Unable to load properties: $1
 error.missing_custom_file=You have opted for a custom start up directory, but you haven't specified a directory.
 error.missing_sep=No separator specified.
 error.missing_delim=No delimiter specified.
+error.missing_host=No SQL host specified.
+error.missing_port=No SQL port specified.
+error.missing_prefix=No SQL prefix specified.
 
 # Warning messages
 warning.title=Warning
