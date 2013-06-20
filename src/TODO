@@ -1,16 +1,6 @@
 TODO List
 =========
 
-Lots of things!
-
-* GUI is very primitive:
-
-  - Import SQL function needs a dialog box to enter the equivalent
-    of the sql command line options --sqluser, --sqlpassword etc
-
-  - Add a user preferences file so user can specify startup
-    directory etc.
-
 * Image icons are just temporary for testing. These need to be
   changed to more interesting images.
 
