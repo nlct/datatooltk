@@ -31,6 +31,13 @@ public class DatatoolGuiResources
           message = e.getClass().getName();
        }
 
+       Throwable cause = e.getCause();
+
+       if (cause != null)
+       {
+          message += "\n"+cause.getMessage();
+       }
+
        error(parent, message, e);
     }
 

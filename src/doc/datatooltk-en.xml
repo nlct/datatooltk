@@ -124,8 +124,8 @@
       database (not yet implemented), load an existing database 
       or import data. To load an existing database, use
       <menu tag="file.open" />. To import data from a<nbsp /><acr tag="csv" /> 
-      file use <menu tag="file.importcsv" />. To import data
-      from a SQL database use <menu tag="file.importsql" />. (Defaults to a <term tag="mysql"/> database.)
+      file use <menu tag="file.import.importcsv" />. To import data
+      from a SQL database use <menu tag="file.import.importsql" />. (Defaults to a <term tag="mysql"/> database.)
      </p>
      <p>
      Each column has a corresponding data type: string, integer, real

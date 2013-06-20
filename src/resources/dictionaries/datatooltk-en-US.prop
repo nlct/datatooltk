@@ -14,12 +14,14 @@ file.new.tooltip=Create a new empty database
 file.open=Open...
 file.open.mnemonic=O
 file.open.tooltip=Open a raw datatool database file
-file.importcsv=Import CSV...
-file.importcsv.mnemonic=V
-file.importcsv.tooltip=Import data from a CSV file
-file.importsql=Import SQL...
-file.importsql.mnemonic=L
-file.importsql.tooltip=Import data from a SQL database
+file.import=Import
+file.import.mnemonic=I
+file.import.importcsv=Import CSV...
+file.import.importcsv.mnemonic=V
+file.import.importcsv.tooltip=Import data from a CSV file
+file.import.importsql=Import SQL...
+file.import.importsql.mnemonic=L
+file.import.importsql.tooltip=Import data from a SQL database
 file.save=Save
 file.save.mnemonic=S
 file.save_as=Save As...
@@ -145,6 +147,21 @@ preferences.sql.database=Database:
 preferences.sql.database.mnemonic=D
 preferences.sql.user=User Name: 
 preferences.sql.user.mnemonic=U
+
+# Import SQL dialog box
+importsql.title=Import SQL Data
+importsql.host=Host: 
+importsql.host.mnemonic=S
+importsql.prefix=Prefix: 
+importsql.prefix.mnemonic=X
+importsql.port=Port: 
+importsql.port.mnemonic=P
+importsql.database=Database: 
+importsql.database.mnemonic=D
+importsql.user=User Name: 
+importsql.user.mnemonic=U
+importsql.select=SELECT 
+importsql.select.mnemonic=L
 
 # Password dialog box
 password.title=SQL Password
@@ -324,6 +341,9 @@ error.missing_delim=No delimiter specified.
 error.missing_host=No SQL host specified.
 error.missing_port=No SQL port specified.
 error.missing_prefix=No SQL prefix specified.
+error.missing_dbname=Missing Database Name
+error.missing_user=Missing User Name
+error.missing_select=Missing SELECT statement
 
 # Warning messages
 warning.title=Warning

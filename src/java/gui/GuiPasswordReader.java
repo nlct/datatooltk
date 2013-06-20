@@ -1,6 +1,8 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.awt.Frame;
+import java.awt.Dialog;
+import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JDialog;
@@ -19,6 +21,18 @@ public class GuiPasswordReader extends JDialog
    {
       super(parent, DatatoolTk.getLabel("password.title"), true);
 
+      init(parent);
+   }
+
+   public GuiPasswordReader(Dialog parent)
+   {
+      super(parent, DatatoolTk.getLabel("password.title"), true);
+
+      init(parent);
+   }
+
+   private void init(Component parent)
+   {
       JPanel panel = new JPanel();
 
       getContentPane().add(panel, "Center");

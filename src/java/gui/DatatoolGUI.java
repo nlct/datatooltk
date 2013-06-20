@@ -120,8 +120,16 @@ public class DatatoolGUI extends JFrame
          KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK),
         toolBar));
 
-      fileM.add(DatatoolGuiResources.createJMenuItem(
-        "file", "importcsv", this, toolBar));
+      JMenu importM = DatatoolGuiResources.createJMenu("file.import");
+      fileM.add(importM);
+
+      importM.add(DatatoolGuiResources.createJMenuItem(
+        "file.import", "importcsv", this, toolBar));
+
+      importM.add(DatatoolGuiResources.createJMenuItem(
+        "file.import", "importsql", this, toolBar));
+
+      importSqlDialog = new ImportSqlDialog(this);
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "save", this, toolBar));
@@ -433,6 +441,10 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("importcsv"))
       {
          importCsv();
+      }
+      else if (action.equals("importsql"))
+      {
+         importSqlDialog.requestImport(settings);
       }
       else if (action.equals("close"))
       {
@@ -911,4 +923,6 @@ public class DatatoolGUI extends JFrame
    private ActionListener recentFilesListener;
 
    private PropertiesDialog propertiesDialog;
+
+   private ImportSqlDialog importSqlDialog;
 }
