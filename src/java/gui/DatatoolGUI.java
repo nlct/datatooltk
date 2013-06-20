@@ -96,7 +96,9 @@ public class DatatoolGUI extends JFrame
         "file", "save_as", this, toolBar));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
-        "file", "close", this, toolBar));
+        "file", "close", this,
+        KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK),
+         toolBar));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "quit", this,
