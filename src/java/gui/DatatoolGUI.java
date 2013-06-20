@@ -285,7 +285,7 @@ public class DatatoolGUI extends JFrame
       csvFilter = new CsvFileFilter();
       txtFilter = new TxtFileFilter();
 
-      fileChooser = new JFileChooser();
+      fileChooser = new JFileChooser(settings.getStartUpDirectory());
 
       headerDialog = new HeaderDialog(this);
       cellEditor = new CellDialog(this);
@@ -552,7 +552,7 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("preferences"))
       {
-         propertiesDialog.setVisible(true);
+         propertiesDialog.display(settings);
       }
    }
 

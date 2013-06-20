@@ -122,7 +122,11 @@ preferences.general.custom.mnemonic=T
 preferences.csv=CSV
 preferences.csv.mnemonic=V
 preferences.csv.sep=Separator
-preferences.csv.sep.mnemonic=P
+preferences.csv.tabsep=Tab
+preferences.csv.tabsep.mnemonic=T
+preferences.csv.or=Or
+preferences.csv.char=Character
+preferences.csv.char.mnemonic=A
 preferences.csv.delim=Delimiter
 preferences.csv.delim.mnemonic=D
 preferences.csv.hasheader=Has Header Row
@@ -186,6 +190,8 @@ button.copy=Copy
 button.copy.mnemonic=Y
 button.copy.tooltip=Copy contents of text area to the clipboard
 button.import=Import
+button.select=Select
+button.select.mnemonic=S
 
 # Default labels
 default.field=Field$1
@@ -312,6 +318,7 @@ error.key_exists=Header key '$1' already exists.
 error.missing_key=Header key is missing
 error.invalid_name=Invalid name '$1' (can't be empty or contain TeX special characters)
 error.load_prop_failed=Unable to load properties: $1
+error.missing_custom_file=You have opted for a custom start up directory, but you haven't specified a directory.
 
 # Warning messages
 warning.title=Warning
