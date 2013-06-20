@@ -595,6 +595,7 @@ public class DatatoolGUI extends JFrame
 
       try
       {
+         settings.directoryOnExit(fileChooser.getCurrentDirectory());
          settings.saveProperties();
       }
       catch (IOException e)

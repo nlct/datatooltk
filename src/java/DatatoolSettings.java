@@ -361,6 +361,80 @@ public class DatatoolSettings extends Properties
       passwordReader = reader;
    }
 
+   public void setStartUp(int category)
+   {
+      if (category < 0 || category > STARTUP_CUSTOM)
+      {
+         throw new IllegalArgumentException(
+           "Invalid startup category "+category);
+      }
+
+      setProperty("startup", ""+category);
+   }
+
+   public int getStartUp()
+   {
+      String prop = getProperty("startup");
+
+      if (prop == null)
+      {
+         setStartUp(STARTUP_HOME);
+         return STARTUP_HOME;
+      }
+
+      try
+      {
+         int result = Integer.parseInt(prop);
+
+         if (result < 0 || result > STARTUP_CUSTOM)
+         {
+            DatatoolTk.debug("Invalid startup setting '"+prop+"'");
+            return STARTUP_HOME;
+         }
+
+         return result;
+      }
+      catch (NumberFormatException e)
+      {
+         DatatoolTk.debug("Invalid startup setting '"+prop+"'");
+         return STARTUP_HOME;
+      }
+   }
+
+   public void directoryOnExit(File file)
+   {
+      if (getStartUp() == STARTUP_LAST)
+      {
+         setProperty("startupdir", file.getAbsolutePath());
+      }
+   }
+
+   public void setCustomStartUp(File file)
+   {
+      setStartUp(STARTUP_CUSTOM);
+      setProperty("startupdir", file.getAbsolutePath());
+   }
+
+   public File getStartUpDirectory()
+   {
+      switch (getStartUp())
+      {
+         case STARTUP_HOME:
+            return new File(System.getProperty("user.home"));
+         case STARTUP_CWD:
+            return new File(".");
+      }
+
+      String name = getProperty("startupdir");
+
+      if (name == null)
+      {
+         return new File(System.getProperty("user.home"));
+      }
+
+      return new File(name);
+   }
+
    public void setDefaults()
    {
       setSeparator(',');
@@ -370,6 +444,7 @@ public class DatatoolSettings extends Properties
       setSqlPort(3306);
       setSqlPrefix("jdbc:mysql://");
       setWipePassword(false);
+      setStartUp(STARTUP_HOME);
    }
 
    protected char[] sqlPassword = null;
@@ -383,4 +458,9 @@ public class DatatoolSettings extends Properties
    private final String propertiesName="datatooltk.prop";
 
    private final String recentName = "recentfiles";
+
+   public static final STARTUP_HOME   = 0;
+   public static final STARTUP_CWD    = 1;
+   public static final STARTUP_LAST   = 2;
+   public static final STARTUP_CUSTOM = 3;
 }
