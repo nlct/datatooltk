@@ -106,6 +106,42 @@ about.translated_by=Translated by $1
 about.translator_info=
 about.acknowledgements=
 
+# Preferences dialog box
+preferences.title=Preferences
+preferences.general=General
+preferences.general.mnemonic=G
+preferences.general.startup=Start Up Directory
+preferences.general.home=Home
+preferences.general.home.mnemonic=M
+preferences.general.cwd=CWD
+preferences.general.cwd.mnemonic=W
+preferences.general.last=Last
+preferences.general.last.mnemonic=L
+preferences.general.custom=Custom
+preferences.general.custom.mnemonic=T
+preferences.csv=CSV
+preferences.csv.mnemonic=V
+preferences.csv.sep=Separator
+preferences.csv.sep.mnemonic=P
+preferences.csv.delim=Delimiter
+preferences.csv.delim.mnemonic=D
+preferences.csv.hasheader=Has Header Row
+preferences.csv.hasheader.mnemonic=R
+preferences.sql=SQL
+preferences.sql.mnemonic=Q
+preferences.sql.host=Host
+preferences.sql.host.mnemonic=S
+preferences.sql.port=Port
+preferences.sql.port.mnemonic=P
+preferences.sql.prefix=Prefix
+preferences.sql.prefix.mnemonic=X
+preferences.sql.wipe=Wipe Password After Use
+preferences.sql.wipe.mnemonic=W
+preferences.sql.database=Database
+preferences.sql.database.mnemonic=D
+preferences.sql.user=User Name
+preferences.sql.user.mnemonic=U
+
 # Password dialog box
 password.title=SQL Password
 password.prompt=Password: 

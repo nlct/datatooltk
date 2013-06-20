@@ -459,8 +459,8 @@ public class DatatoolSettings extends Properties
 
    private final String recentName = "recentfiles";
 
-   public static final STARTUP_HOME   = 0;
-   public static final STARTUP_CWD    = 1;
-   public static final STARTUP_LAST   = 2;
-   public static final STARTUP_CUSTOM = 3;
+   public static final int STARTUP_HOME   = 0;
+   public static final int STARTUP_CWD    = 1;
+   public static final int STARTUP_LAST   = 2;
+   public static final int STARTUP_CUSTOM = 3;
 }

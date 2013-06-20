@@ -211,6 +211,11 @@ public class DatatoolGUI extends JFrame
       rowM.add(removeRowItem);
       removeRowItem.setEnabled(false);
 
+      editM.add(DatatoolGuiResources.createJMenuItem(
+         "edit", "preferences", this, toolBar));
+
+      propertiesDialog = new PropertiesDialog(this);
+
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
 
@@ -544,6 +549,10 @@ public class DatatoolGUI extends JFrame
          {
             panel.redo();
          }
+      }
+      else if (action.equals("preferences"))
+      {
+         propertiesDialog.setVisible(true);
       }
    }
 
@@ -900,4 +909,6 @@ public class DatatoolGUI extends JFrame
       removeRowItem, clearRecentItem;
 
    private ActionListener recentFilesListener;
+
+   private PropertiesDialog propertiesDialog;
 }
