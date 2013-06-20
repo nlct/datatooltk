@@ -99,6 +99,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
               settings.getDelimiter());
    
             String[] fields = csvReader.readNext();
+
+            mapFieldsIfRequired(fields);
    
             if (fields == null)
             {
@@ -135,6 +137,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    
             while ((fields = csvReader.readNext()) != null)
             {
+               mapFieldsIfRequired(fields);
+
                for (int i = 0; i < fields.length; i++)
                {
                   db.addCell(rowIdx, i, fields[i]);
@@ -164,6 +168,41 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       }
 
       return db;
+   }
+
+   public void mapFieldsIfRequired(String[] fields)
+   {
+      if (!settings.isTeXMappingOn()) return;
+
+      for (int i = 0; i < fields.length; i++)
+      {
+         if (fields[i].isEmpty())
+         {
+            continue;
+         }
+
+         int n = fields[i].length();
+
+         StringBuilder builder = new StringBuilder(n);
+
+         for (int j = 0; j < n; j++)
+         {
+            char c = fields[i].charAt(j);
+
+            String map = settings.getTeXMap(c);
+
+            if (map == null)
+            {
+               builder.append(c);
+            }
+            else
+            {
+               builder.append(map);
+            }
+         }
+
+         fields[i] = builder.toString();
+      }
    }
 
    private DatatoolSettings settings;

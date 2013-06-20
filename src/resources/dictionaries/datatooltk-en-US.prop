@@ -147,6 +147,10 @@ preferences.sql.database=Database:
 preferences.sql.database.mnemonic=D
 preferences.sql.user=User Name: 
 preferences.sql.user.mnemonic=U
+preferences.tex=TeX
+preferences.tex.mnemonic=E
+preferences.tex.map=Map TeX characters when importing data
+preferences.tex.map.mnemonic=M
 
 # Import SQL dialog box
 importsql.title=Import SQL Data

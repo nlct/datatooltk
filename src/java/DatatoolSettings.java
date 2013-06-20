@@ -290,7 +290,7 @@ public class DatatoolSettings extends Properties
 
    public void setHasCSVHeader(boolean hasHeader)
    {
-      setProperty("csvHasHeader", hasHeader ? "true" : "false");
+      setProperty("csvHasHeader", ""+hasHeader);
    }
 
    public String getSqlDbName()
@@ -330,7 +330,7 @@ public class DatatoolSettings extends Properties
 
    public void setWipePassword(boolean wipePassword)
    {
-      setProperty("wipePassword", wipePassword ? "true" : "false");
+      setProperty("wipePassword", ""+wipePassword);
    }
 
    public boolean isWipePasswordEnabled()
@@ -435,6 +435,36 @@ public class DatatoolSettings extends Properties
       return new File(name);
    }
 
+   public void setTeXMapping(boolean enable)
+   {
+      setProperty("subtexspecials", ""+enable);
+   }
+
+   public boolean isTeXMappingOn()
+   {
+      String prop = getProperty("subtexspecials");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setTeXMapping(false);
+         return false;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public String getTeXMap(char c)
+   {
+      String prop = getProperty("tex."+c);
+
+      return prop;
+   }
+
+   public void setTeXMap(char c, String value)
+   {
+      setProperty("tex."+c, value);
+   }
+
    public void setDefaults()
    {
       setSeparator(',');
@@ -445,6 +475,17 @@ public class DatatoolSettings extends Properties
       setSqlPrefix("jdbc:mysql://");
       setWipePassword(false);
       setStartUp(STARTUP_HOME);
+      setTeXMapping(false);
+
+      setTeXMap('\\', "\\textbackslash ");
+      setTeXMap('$', "\\$");
+      setTeXMap('#', "\\#");
+      setTeXMap('%', "\\%");
+      setTeXMap('_', "\\_");
+      setTeXMap('{', "\\{");
+      setTeXMap('}', "\\}");
+      setTeXMap('~', "\\textasciitilde ");
+      setTeXMap('^', "\\textasciicircum ");
    }
 
    protected char[] sqlPassword = null;

@@ -152,6 +152,13 @@ public class PropertiesDialog extends JDialog
       wipeBox = createCheckBox("preferences.sql", "wipe");
       sqlTab.add(wipeBox);
 
+      // TeX Tab
+
+      JComponent texTab = addTab("tex");
+
+      mapTeXBox = createCheckBox("preferences.tex", "map");
+      texTab.add(mapTeXBox);
+
       JPanel buttonPanel = new JPanel();
 
       buttonPanel.add(DatatoolGuiResources.createOkayButton(this));
@@ -296,6 +303,8 @@ public class PropertiesDialog extends JDialog
 
       databaseField.setText(db == null ? "" : db);
 
+      mapTeXBox.setSelected(settings.isTeXMappingOn());
+
       setVisible(true);
    }
 
@@ -428,6 +437,8 @@ public class PropertiesDialog extends JDialog
       settings.setSqlUser(userField.getText());
       settings.setSqlDbName(databaseField.getText());
 
+      settings.setTeXMapping(mapTeXBox.isSelected());
+
       setVisible(false);
    }
 
@@ -439,7 +450,7 @@ public class PropertiesDialog extends JDialog
 
    private CharField sepCharField, delimCharField;
 
-   private JCheckBox hasHeaderBox, wipeBox;
+   private JCheckBox hasHeaderBox, wipeBox, mapTeXBox;
 
    private FileField customFileField;
 

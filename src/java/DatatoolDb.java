@@ -991,7 +991,7 @@ public class DatatoolDb
 
       // What's the data type of this value?
 
-      int type = getType();
+      int type = getType(value);
 
       // If it's unknown, do nothing
 

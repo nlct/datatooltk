@@ -45,7 +45,11 @@ public class DatatoolSql implements DatatoolImport
 
          for (int i = 1; i <= colCount; i++)
          {
-            DatatoolHeader header = new DatatoolHeader(data.getColumnName(i));
+            // The header shouldn't contain any TeX special
+            // characters, but map just in case
+
+            DatatoolHeader header 
+               = new DatatoolHeader(mapFieldIfRequired(data.getColumnName(i)));
 
             if (name == null || name.isEmpty())
             {
@@ -94,7 +98,7 @@ public class DatatoolSql implements DatatoolImport
 
             for (int i = 1; i <= colCount; i++)
             {
-               row.addCell(i-1, rs.getString(i));
+               row.addCell(i-1, mapFieldIfRequired(rs.getString(i)));
             }
 
             db.insertRow(rowIdx);
@@ -109,6 +113,38 @@ public class DatatoolSql implements DatatoolImport
       }
 
       return db;
+   }
+
+   public String mapFieldIfRequired(String value)
+   {
+      if (!settings.isTeXMappingOn()) return value;
+
+      if (value.isEmpty())
+      {
+         return value;
+      }
+
+      int n = value.length();
+
+      StringBuilder builder = new StringBuilder(n);
+
+      for (int j = 0; j < n; j++)
+      {
+         char c = value.charAt(j);
+
+         String map = settings.getTeXMap(c);
+
+         if (map == null)
+         {
+            builder.append(c);
+         }
+         else
+         {
+            builder.append(map);
+         }
+      }
+
+      return builder.toString();
    }
 
    public synchronized void establishConnection()
