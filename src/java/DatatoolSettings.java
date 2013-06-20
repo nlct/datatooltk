@@ -1,32 +1,40 @@
 package com.dickimawbooks.datatooltk;
 
+import java.util.Properties;
+
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
-public class DatatoolSettings
+public class DatatoolSettings extends Properties
 {
+   public DatatoolSettings()
+   {
+      super();
+      setDefaults();
+   }
+
    public void setSeparator(char separator)
    {
-      sep = separator;
+      setProperty("sep", ""+separator);
    }
 
    public char getSeparator()
    {
-      return sep;
+      return getProperty("sep").charAt(0);
    }
 
    public void setDelimiter(char delimiter)
    {
-      delim = delimiter;
+      setProperty("delim", ""+delimiter);
    }
 
    public char getDelimiter()
    {
-      return delim;
+      return getProperty("delim").charAt(0);
    }
 
    public String getSqlUrl()
    {
-      return sqlPrefix + sqlHost + ":" + sqlPort + "/";
+      return getSqlPrefix() + getSqlHost() + ":" + getSqlPort() + "/";
    }
 
    public String getSqlUrl(String sqlDb)
@@ -36,57 +44,86 @@ public class DatatoolSettings
 
    public String getSqlHost()
    {
-      return sqlHost;
+      return getProperty("sqlHost");
    }
 
    public String getSqlPrefix()
    {
-      return sqlPrefix;
+      return getProperty("sqlPrefix");
    }
 
    public int getSqlPort()
    {
-      return sqlPort;
+      String prop = getProperty("sqlPort");
+
+      if (prop == null)
+      {
+         setSqlPort(3306);
+         return 3306;
+      }
+
+      try
+      {
+         return Integer.parseInt(prop);
+      }
+      catch (NumberFormatException e)
+      {
+         // This shouldn't happen unless someone messes around with
+         // the properties file
+
+         setSqlPort(3306);
+
+         throw new IllegalArgumentException(
+            "Invalid port number "+prop, e);
+      }
    }
 
    public void setSqlHost(String host)
    {
-      sqlHost = host;
+      setProperty("sqlHost", host);
    }
 
    public void setSqlPrefix(String prefix)
    {
-      sqlPrefix = prefix;
+      setProperty("sqlPrefix", prefix);
    }
 
    public void setSqlPort(int port)
    {
-      sqlPort = port;
+      setProperty("sqlPort", ""+port);
    }
 
    public boolean hasCSVHeader()
    {
-      return csvHasHeader;
+      String prop = getProperty("csvHasHeader");
+
+      if (prop == null)
+      {
+         setHasCSVHeader(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
    }
 
    public void setHasCSVHeader(boolean hasHeader)
    {
-      csvHasHeader = hasHeader;
+      setProperty("csvHasHeader", hasHeader ? "true" : "false");
    }
 
    public String getSqlDbName()
    {
-      return sqlDbName;
+      return getProperty("sqlDbName");
    }
 
    public void setSqlDbName(String name)
    {
-      sqlDbName = name;
+      setProperty("sqlDbName", name);
    }
 
    public void wipePasswordIfRequired()
    {
-      if (sqlPassword != null && wipePassword)
+      if (sqlPassword != null && isWipePasswordEnabled())
       {
          java.util.Arrays.fill(sqlPassword, ' ');
          sqlPassword = null;
@@ -111,22 +148,30 @@ public class DatatoolSettings
 
    public void setWipePassword(boolean wipePassword)
    {
-      this.wipePassword = wipePassword;
+      setProperty("wipePassword", wipePassword ? "true" : "false");
    }
 
    public boolean isWipePasswordEnabled()
    {
-      return wipePassword;
+      String prop = getProperty("wipePassword");
+
+      if (prop == null)
+      {
+         setWipePassword(false);
+         return false;
+      }
+
+      return Boolean.parseBoolean(prop);
    }
 
    public void setSqlUser(String username)
    {
-      sqlUser = username;
+      setProperty("sqlUser", username);
    }
 
    public String getSqlUser()
    {
-      return sqlUser;
+      return getProperty("sqlUser");
    }
 
    public void setPasswordReader(DatatoolPasswordReader reader)
@@ -134,17 +179,18 @@ public class DatatoolSettings
       passwordReader = reader;
    }
 
-   protected char sep = ',';
-   protected char delim = '\"';
-   protected boolean csvHasHeader = true;
+   public void setDefaults()
+   {
+      setSeparator(',');
+      setDelimiter('"');
+      setHasCSVHeader(true);
+      setSqlHost("localhost");
+      setSqlPort(3306);
+      setSqlPrefix("jdbc:mysql://");
+      setWipePassword(false);
+   }
 
-   protected String sqlHost = "localhost";
-   protected int sqlPort = 3306;
-   protected String sqlPrefix = "jdbc:mysql://";
-   protected String sqlDbName = null;
-   protected String sqlUser = null;
    protected char[] sqlPassword = null;
-   protected boolean wipePassword = false;
 
    protected DatatoolPasswordReader passwordReader;
 }
