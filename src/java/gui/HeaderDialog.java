@@ -43,7 +43,7 @@ public class HeaderDialog extends JDialog
       label = DatatoolGuiResources.createJLabel("header.column_type");
       p.add(label);
 
-      typeBox = new JComboBox<String>(DatatoolHeader.TYPE_LABELS);
+      typeBox = new JComboBox<String>(DatatoolDb.TYPE_LABELS);
       label.setLabelFor(typeBox);
       p.add(typeBox);
 
@@ -61,6 +61,7 @@ public class HeaderDialog extends JDialog
 
    public boolean requestEdit(int colIdx, DatatoolDb db)
    {
+      this.colIdx = colIdx;
       return requestEdit(db.getHeader(colIdx), db, false);
    }
 
@@ -97,40 +98,119 @@ public class HeaderDialog extends JDialog
 
       if (action.equals("okay"))
       {
-         String key = labelField.getText();
-
-         if (key.isEmpty())
-         {
-            DatatoolGuiResources.error(this, 
-               DatatoolTk.getLabel("error.missing_key"));
-            return;
-         }
-
-         if (checkUnique || !header.getKey().equals(key))
-         {
-            // Only test if key has been changed unless checkUnique
-            // set.
-
-            if (db.getHeader(key) != null)
-            {
-               DatatoolGuiResources.error(this, 
-                  DatatoolTk.getLabelWithValue("error.key_exists", key));
-
-               return;
-            }
-         }
-
-         header.setTitle(titleField.getText());
-         header.setKey(key);
-         header.setType(typeBox.getSelectedIndex()-1);
-         modified = true;
-
-         setVisible(false);
+         okay();
       }
       else if (action.equals("cancel"))
       {
+         colIdx = -1;
          setVisible(false);
       }
+   }
+
+   private void okay()
+   {
+      int type = typeBox.getSelectedIndex()-1;
+
+      if (colIdx > -1 && type != DatatoolDb.TYPE_UNKNOWN
+           && type != DatatoolDb.TYPE_STRING)
+      {
+         // Is the requested data type valid for this column?
+
+         int rowIdx = 0;
+
+         for (ColumnEnumeration en = db.getColumnEnumeration(colIdx);
+            en.hasMoreElements(); )
+         {
+            rowIdx++;
+
+            String element = en.nextElement();
+
+            int thisType = DatatoolDb.getType(element);
+
+            switch (type)
+            {
+               case DatatoolDb.TYPE_INTEGER:
+                  if (thisType == DatatoolDb.TYPE_REAL
+                     || thisType == DatatoolDb.TYPE_CURRENCY
+                     || thisType == DatatoolDb.TYPE_STRING)
+                  {
+                     DatatoolGuiResources.error(this, 
+                        DatatoolTk.getLabelWithValues("error.invalid_header_choice",
+                          new String[]
+                          {
+                            DatatoolDb.TYPE_LABELS[type+1],
+                            ""+rowIdx,
+                            DatatoolDb.TYPE_LABELS[thisType+1]
+                          }));
+
+                     return;
+                  }
+               break;
+               case DatatoolDb.TYPE_REAL:
+                  if (thisType == DatatoolDb.TYPE_CURRENCY
+                   || thisType == DatatoolDb.TYPE_STRING)
+                  {
+                     DatatoolGuiResources.error(this, 
+                        DatatoolTk.getLabelWithValues("error.invalid_header_choice",
+                          new String[]
+                          {
+                            DatatoolDb.TYPE_LABELS[type+1],
+                            ""+rowIdx,
+                            DatatoolDb.TYPE_LABELS[thisType+1]
+                          }));
+
+                     return;
+                  }
+               break;
+               case DatatoolDb.TYPE_CURRENCY:
+                  if (thisType == DatatoolDb.TYPE_STRING)
+                  {
+                     DatatoolGuiResources.error(this, 
+                        DatatoolTk.getLabelWithValues("error.invalid_header_choice",
+                          new String[]
+                          {
+                            DatatoolDb.TYPE_LABELS[type+1],
+                            ""+rowIdx,
+                            DatatoolDb.TYPE_LABELS[thisType+1]
+                          }));
+
+                     return;
+                  }
+               break;
+            }
+         }
+      }
+
+      String key = labelField.getText();
+
+      if (key.isEmpty())
+      {
+         DatatoolGuiResources.error(this, 
+            DatatoolTk.getLabel("error.missing_key"));
+         return;
+      }
+
+      if (checkUnique || !header.getKey().equals(key))
+      {
+         // Only test if key has been changed unless checkUnique
+         // set.
+
+         if (db.getHeader(key) != null)
+         {
+            DatatoolGuiResources.error(this, 
+               DatatoolTk.getLabelWithValue("error.key_exists", key));
+
+            return;
+         }
+      }
+
+      header.setTitle(titleField.getText());
+      header.setKey(key);
+      header.setType(type);
+      modified = true;
+
+      colIdx = -1;
+      setVisible(false);
    }
 
    private JTextField titleField, labelField;
@@ -144,4 +224,6 @@ public class HeaderDialog extends JDialog
    private boolean checkUnique;
 
    private boolean modified;
+
+   private int colIdx = -1;
 }

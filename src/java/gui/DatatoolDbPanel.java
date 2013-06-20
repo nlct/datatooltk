@@ -870,7 +870,7 @@ class DatatoolTableHeader extends JTableHeader
       }
 
       return DatatoolTk.getLabelWithValues("header.tooltip_format", 
-         header.getKey(), DatatoolHeader.TYPE_LABELS[header.getType()+1]);
+         header.getKey(), DatatoolDb.TYPE_LABELS[header.getType()+1]);
    }
 
 }

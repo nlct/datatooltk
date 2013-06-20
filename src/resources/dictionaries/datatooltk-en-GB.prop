@@ -348,6 +348,7 @@ error.missing_prefix=No SQL prefix specified.
 error.missing_dbname=Missing Database Name
 error.missing_user=Missing User Name
 error.missing_select=Missing SELECT statement
+error.invalid_header_choice=You can't set the type to '$1': row $2 is of type '$3'.
 
 # Warning messages
 warning.title=Warning

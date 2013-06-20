@@ -74,12 +74,4 @@ public class DatatoolHeader
    private String title;
    private int type = DatatoolDb.TYPE_UNKNOWN;
 
-   public static final String[] TYPE_LABELS = new String[] 
-         {
-            DatatoolTk.getLabel("header.type.unset"),
-            DatatoolTk.getLabel("header.type.string"),
-            DatatoolTk.getLabel("header.type.int"),
-            DatatoolTk.getLabel("header.type.real"),
-            DatatoolTk.getLabel("header.type.currency")
-         };
 }

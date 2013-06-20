@@ -2,6 +2,7 @@ package com.dickimawbooks.datatooltk;
 
 import java.io.*;
 import java.util.Vector;
+import java.util.Enumeration;
 import java.util.regex.*;
 import java.util.Date;
 
@@ -1239,6 +1240,11 @@ public class DatatoolDb
       }
    }
 
+   public ColumnEnumeration getColumnEnumeration(int colIdx)
+   {
+      return new ColumnEnumeration(data, colIdx);
+   }
+
    private Vector<DatatoolHeader> headers;
 
    private Vector<DatatoolRow> data;
@@ -1252,6 +1258,14 @@ public class DatatoolDb
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;
 
+   public static final String[] TYPE_LABELS = new String[] 
+         {
+            DatatoolTk.getLabel("header.type.unset"),
+            DatatoolTk.getLabel("header.type.string"),
+            DatatoolTk.getLabel("header.type.int"),
+            DatatoolTk.getLabel("header.type.real"),
+            DatatoolTk.getLabel("header.type.currency")
+         };
    private static final Pattern PATTERN_DBNAME = Pattern.compile("\\\\DTLifdbexists\\{(.+)\\}%\\s*");
    public static final Pattern PATTERN_COMMENT = Pattern.compile("\\s*%.*");
    private static final Pattern PATTERN_CLOSE = Pattern.compile("\\s*\\}%\\s*");

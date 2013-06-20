@@ -129,7 +129,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
                     DatatoolTk.getLabelWithValue("default.field", (i+1)));
                   db.addColumn(header);
    
-                  db.addCell(rowIdx, i, fields[i]);
+                  db.addCell(rowIdx, i, fields[i].replaceAll("\n\n+", "\\\\DTLpar "));
                }
    
                rowIdx++;
@@ -181,13 +181,15 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             continue;
          }
 
-         int n = fields[i].length();
+         String value = fields[i].replaceAll("\\\\DTLpar *", "\n\n");
+
+         int n = value.length();
 
          StringBuilder builder = new StringBuilder(n);
 
          for (int j = 0; j < n; j++)
          {
-            char c = fields[i].charAt(j);
+            char c = value.charAt(j);
 
             String map = settings.getTeXMap(c);
 

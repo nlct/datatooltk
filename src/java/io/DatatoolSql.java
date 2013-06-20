@@ -98,7 +98,7 @@ public class DatatoolSql implements DatatoolImport
 
             for (int i = 1; i <= colCount; i++)
             {
-               row.addCell(i-1, mapFieldIfRequired(rs.getString(i)));
+               row.addCell(i-1, mapFieldIfRequired(rs.getString(i)).replaceAll("\n\n+", "\\\\DTLpar "));
             }
 
             db.insertRow(rowIdx);
@@ -123,6 +123,8 @@ public class DatatoolSql implements DatatoolImport
       {
          return value;
       }
+
+      value = value.replaceAll("\\\\DTLpar ", "\n\n");
 
       int n = value.length();
 
