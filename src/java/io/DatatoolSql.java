@@ -86,14 +86,18 @@ public class DatatoolSql implements DatatoolImport
             db.setName(name);
          }
 
-         int rowIdx = 1;
+         int rowIdx = 0;
 
          while (rs.next())
          {
+            DatatoolRow row = new DatatoolRow(colCount);
+
             for (int i = 1; i <= colCount; i++)
             {
-               db.addCell(rowIdx, i, rs.getString(i));
+               row.addCell(i-1, rs.getString(i));
             }
+
+            db.insertRow(rowIdx);
 
             rowIdx++;
          }

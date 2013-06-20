@@ -357,6 +357,11 @@ public class DatatoolTk
          return null;
       }
 
+      if (value == null)
+      {
+         return prop.replaceAll("\\$1", "null");
+      }
+
       return prop.replaceAll("\\$1", value.replaceAll("\\\\", "\\\\\\\\"));
    }
 

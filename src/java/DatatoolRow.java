@@ -16,6 +16,18 @@ public class DatatoolRow extends Vector<String>
 
    public void setCell(int colIdx, String value)
    {
+      if (colIdx >= size())
+      {
+         addCell(colIdx, value);
+      }
+      else
+      {
+         set(colIdx, value);
+      }
+   }
+
+   public void addCell(int colIdx, String value)
+   {
       int n = size();
 
       if (colIdx == n)
