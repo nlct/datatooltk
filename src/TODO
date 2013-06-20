@@ -5,15 +5,11 @@ Lots of things!
 
 * GUI is very primitive:
 
-  - Need facility to add or remove columns/rows
-
   - Import SQL function needs a dialog box to enter the equivalent
     of the sql command line options --sqluser, --sqlpassword etc
 
   - Add a user preferences file so user can specify startup
     directory etc.
-
-  - Add Undo/Redo mechanism
 
 * Image icons are just temporary for testing. These need to be
   changed to more interesting images.
