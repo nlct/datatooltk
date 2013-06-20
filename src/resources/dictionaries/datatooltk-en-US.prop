@@ -121,29 +121,29 @@ preferences.general.custom=Custom
 preferences.general.custom.mnemonic=T
 preferences.csv=CSV
 preferences.csv.mnemonic=V
-preferences.csv.sep=Separator
+preferences.csv.sep=Separator: 
 preferences.csv.tabsep=Tab
 preferences.csv.tabsep.mnemonic=T
 preferences.csv.or=Or
-preferences.csv.char=Character
-preferences.csv.char.mnemonic=A
-preferences.csv.delim=Delimiter
+preferences.csv.sepchar=Character
+preferences.csv.sepchar.mnemonic=A
+preferences.csv.delim=Delimiter: 
 preferences.csv.delim.mnemonic=D
 preferences.csv.hasheader=Has Header Row
 preferences.csv.hasheader.mnemonic=R
 preferences.sql=SQL
 preferences.sql.mnemonic=Q
-preferences.sql.host=Host
+preferences.sql.host=Host: 
 preferences.sql.host.mnemonic=S
-preferences.sql.port=Port
+preferences.sql.port=Port: 
 preferences.sql.port.mnemonic=P
-preferences.sql.prefix=Prefix
+preferences.sql.prefix=Prefix: 
 preferences.sql.prefix.mnemonic=X
 preferences.sql.wipe=Wipe Password After Use
 preferences.sql.wipe.mnemonic=W
-preferences.sql.database=Database
+preferences.sql.database=Database: 
 preferences.sql.database.mnemonic=D
-preferences.sql.user=User Name
+preferences.sql.user=User Name: 
 preferences.sql.user.mnemonic=U
 
 # Password dialog box
@@ -319,6 +319,8 @@ error.missing_key=Header key is missing
 error.invalid_name=Invalid name '$1' (can't be empty or contain TeX special characters)
 error.load_prop_failed=Unable to load properties: $1
 error.missing_custom_file=You have opted for a custom start up directory, but you haven't specified a directory.
+error.missing_sep=No separator specified.
+error.missing_delim=No delimiter specified.
 
 # Warning messages
 warning.title=Warning

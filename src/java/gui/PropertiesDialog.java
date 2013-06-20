@@ -51,6 +51,38 @@ public class PropertiesDialog extends JDialog
 
       JComponent csvTab = addTab("csv");
 
+      box = Box.createHorizontalBox();
+      box.setAlignmentX(0);
+      csvTab.add(box);
+
+      box.add(new JLabel(DatatoolTk.getLabel("preferences.csv.sep")));
+
+      bg = new ButtonGroup();
+
+      sepTabButton = createRadioButton("preferences.csv", "tabsep", bg);
+      box.add(sepTabButton);
+
+      box.add(new JLabel(DatatoolTk.getLabel("preferences.csv.or")));
+
+      sepCharButton = createRadioButton("preferences.csv", "sepchar", bg);
+      box.add(sepCharButton);
+
+      sepCharField = new CharField(',');
+      box.add(sepCharField);
+
+      box = Box.createHorizontalBox();
+      box.setAlignmentX(0);
+      csvTab.add(box);
+
+      delimCharField = new CharField('"');
+      JLabel delimLabel = createLabel("preferences.csv.delim", delimCharField);
+
+      box.add(delimLabel);
+      box.add(delimCharField);
+
+      hasHeaderBox = createCheckBox("preferences.csv", "hasheader");
+      csvTab.add(hasHeaderBox);
+
       // SQL tab
 
       JComponent sqlTab = addTab("sql");
@@ -114,6 +146,27 @@ public class PropertiesDialog extends JDialog
       return button;
    }
 
+   private JLabel createLabel(String label, JComponent comp)
+   {
+      JLabel jlabel = new JLabel(DatatoolTk.getLabel(label));
+      jlabel.setDisplayedMnemonic(DatatoolTk.getMnemonic(label));
+      jlabel.setLabelFor(comp);
+
+      return jlabel;
+   }
+
+   private JCheckBox createCheckBox(String parentLabel, String label)
+   {
+      JCheckBox checkBox = new JCheckBox(
+         DatatoolTk.getLabel(parentLabel, label));
+      checkBox.setMnemonic(DatatoolTk.getMnemonic(parentLabel, label));
+      checkBox.setActionCommand(label);
+      checkBox.addActionListener(this);
+      checkBox.setAlignmentX(0);
+
+      return checkBox;
+   }
+
    public void display(DatatoolSettings settings)
    {
       this.settings = settings;
@@ -138,6 +191,23 @@ public class PropertiesDialog extends JDialog
            customFileField.setFile(settings.getStartUpDirectory());
          break;
       }
+
+      char sep = settings.getSeparator();
+
+      if (sep == '\t')
+      {
+         sepTabButton.setSelected(true);
+         sepCharField.setEnabled(false);
+      }
+      else
+      {
+         sepCharButton.setSelected(true);
+         sepCharField.setEnabled(true);
+      }
+
+      delimCharField.setValue(settings.getDelimiter());
+
+      hasHeaderBox.setSelected(settings.hasCSVHeader());
 
       setVisible(true);
    }
@@ -165,6 +235,15 @@ public class PropertiesDialog extends JDialog
       {
          customFileField.setEnabled(true);
          customFileField.requestFocusInWindow();
+      }
+      else if (action.equals("tabsep"))
+      {
+         sepCharField.setEnabled(false);
+      }
+      else if (action.equals("sepchar"))
+      {
+         sepCharField.setEnabled(true);
+         sepCharField.requestFocusInWindow();
       }
    }
 
@@ -197,6 +276,37 @@ public class PropertiesDialog extends JDialog
          settings.setCustomStartUp(file);
       }
 
+      if (sepTabButton.isSelected())
+      {
+         settings.setSeparator('\t');
+      }
+      else
+      {
+         char sep = sepCharField.getValue();
+
+         if (sep == (char)0)
+         {
+            DatatoolGuiResources.error(this, 
+               DatatoolTk.getLabel("error.missing_sep"));
+            return;
+         }
+
+         settings.setSeparator(sep);
+      }
+
+      char delim = delimCharField.getValue();
+
+      if (delim == (char)0)
+      {
+         DatatoolGuiResources.error(this, 
+            DatatoolTk.getLabel("error.missing_delim"));
+         return;
+      }
+
+      settings.setDelimiter(delim);
+
+      settings.setHasCSVHeader(hasHeaderBox.isSelected());
+
       setVisible(false);
    }
 
@@ -205,6 +315,8 @@ public class PropertiesDialog extends JDialog
    private JRadioButton homeButton, cwdButton, lastButton, customButton;
 
    private JRadioButton sepTabButton, sepCharButton;
+
+   private CharField sepCharField, delimCharField;
 
    private JCheckBox hasHeaderBox;
 
