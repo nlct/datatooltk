@@ -954,68 +954,75 @@ public class DatatoolDb
       }
    }
 
+   public static int getType(String value)
+   {
+      if (value == null || value.isEmpty()) return TYPE_UNKNOWN;
+
+      try
+      {
+         Integer.parseInt(value);
+
+         return TYPE_INTEGER;
+      }
+      catch (NumberFormatException e)
+      {
+      }
+
+      try
+      {
+         Float.parseFloat(value);
+
+         return TYPE_REAL;
+      }
+      catch (NumberFormatException e)
+      {
+      }
+
+      // TODO check for currency
+
+      return TYPE_STRING;
+   }
+
    public void setValue(int rowIdx, int colIdx, String value)
    {
       data.get(rowIdx).setCell(colIdx, value);
 
       DatatoolHeader header = headers.get(colIdx);
 
-      if (!value.isEmpty())
+      // What's the data type of this value?
+
+      int type = getType();
+
+      // If it's unknown, do nothing
+
+      if (type == TYPE_UNKNOWN)
       {
-         // What's the datatype?
+         return;
+      }
 
-         int type = TYPE_UNKNOWN;
+      switch (header.getType())
+      {
+         case TYPE_UNKNOWN:
+         case TYPE_INTEGER:
+            // All other types override unknown and int
+            header.setType(type);
+         break;
+         case TYPE_CURRENCY:
+            // string overrides currency
 
-         try
-         {
-            int num = Integer.parseInt(value);
-   
-            type = TYPE_INTEGER;
-         }
-         catch (NumberFormatException ie)
-         {
-            try
+            if (type == TYPE_STRING)
             {
-               float num = Float.parseFloat(value);
-
-               type = TYPE_REAL;
+               header.setType(type);
             }
-            catch (NumberFormatException fe)
+         break;
+         case TYPE_REAL:
+            // string and currency override real
+            if (type == TYPE_STRING || type == TYPE_CURRENCY)
             {
-               // TODO test for currency
-
-               type = TYPE_STRING;
+               header.setType(type);
             }
-         }
-
-         // Does this column have a type assigned to it?
-
-         switch (header.getType())
-         {
-            case TYPE_STRING:
-            break;
-            case TYPE_UNKNOWN:
-              header.setType(type);
-            break;
-            case TYPE_CURRENCY:
-              if (type == TYPE_STRING)
-              {
-                 header.setType(type);
-              }
-            break;
-            case TYPE_REAL:
-              if (type == TYPE_STRING || type == TYPE_CURRENCY)
-              {
-                 header.setType(type);
-              }
-            break;
-            case TYPE_INTEGER:
-              if (type != TYPE_INTEGER)
-              {
-                 header.setType(type);
-              }
-            break;
-         }
+         break;
+         // nothing overrides string
       }
    }
 
