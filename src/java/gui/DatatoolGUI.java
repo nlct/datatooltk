@@ -77,6 +77,11 @@ public class DatatoolGUI extends JFrame
       mbar.add(fileM);
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
+        "file", "new", this,
+        KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK),
+        toolBar));
+
+      fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "open", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK),
         toolBar));
@@ -221,7 +226,9 @@ public class DatatoolGUI extends JFrame
 
             if (tab != null && (tab instanceof DatatoolDbPanel))
             {
-               enableEditItems(((DatatoolDbPanel)tab).hasSelectedCell());
+               DatatoolDbPanel panel = (DatatoolDbPanel)tab;
+
+               enableEditItems(panel.getSelectedRow(), panel.getSelectedColumn());
             }
          }
       });
@@ -389,6 +396,12 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("close"))
       {
          close();
+      }
+      else if (action.equals("new"))
+      {
+         DatatoolDb db = new DatatoolDb();
+         db.setName(DatatoolTk.getLabel("default.untitled"));
+         createNewTab(db);
       }
       else if (action.equals("edit_dbname"))
       {
@@ -671,6 +684,8 @@ public class DatatoolGUI extends JFrame
 
       tabbedPane.setTabComponentAt(idx, panel.getButtonTabComponent());
 
+      tabbedPane.setSelectedIndex(idx);
+
       updateTools();
    }
 
@@ -715,7 +730,9 @@ public class DatatoolGUI extends JFrame
 
    public DatatoolHeader requestNewHeader(DatatoolDbPanel panel)
    {
-      DatatoolHeader header = new DatatoolHeader("", "");
+      String label = DatatoolTk.getLabel("default.untitled");
+
+      DatatoolHeader header = new DatatoolHeader(label, label);
 
       if (headerDialog.requestEdit(header, panel.db))
       {
@@ -742,22 +759,29 @@ public class DatatoolGUI extends JFrame
       }
    }
 
-   public void enableEditItems(boolean enabled)
+   public void enableEditItems(int rowIdx, int colIdx)
    {
-      editCellItem.setEnabled(enabled);
-      removeColumnItem.setEnabled(enabled);
-      removeRowItem.setEnabled(enabled);
-      editHeaderItem.setEnabled(enabled);
+      editCellItem.setEnabled(rowIdx > -1 && colIdx > -1);
+      removeColumnItem.setEnabled(colIdx > -1);
+      removeRowItem.setEnabled(rowIdx > -1);
+      editHeaderItem.setEnabled(colIdx > -1);
    }
 
    public void updateTools()
    {
-      boolean enable = (tabbedPane.getTabCount() > 0);
+      DatatoolDbPanel panel = 
+         (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+      boolean enable = (panel != null);
+
       addColumnBeforeItem.setEnabled(enable);
       addColumnAfterItem.setEnabled(enable);
+      editDbNameItem.setEnabled(enable);
+
+      enable = (enable && panel.getColumnCount() > 0);
+
       addRowBeforeItem.setEnabled(enable);
       addRowAfterItem.setEnabled(enable);
-      editDbNameItem.setEnabled(enable);
    }
 
    private DatatoolSettings settings;

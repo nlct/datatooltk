@@ -61,13 +61,19 @@ public class HeaderDialog extends JDialog
 
    public boolean requestEdit(int colIdx, DatatoolDb db)
    {
-      return requestEdit(db.getHeader(colIdx), db);
+      return requestEdit(db.getHeader(colIdx), db, false);
    }
 
    public boolean requestEdit(DatatoolHeader header, DatatoolDb db)
    {
+      return requestEdit(header, db, true);
+   }
+
+   public boolean requestEdit(DatatoolHeader header, DatatoolDb db, boolean checkUnique)
+   {
       this.db = db;
       this.header = header;
+      this.checkUnique = checkUnique;
 
       modified = false;
       setTitle(DatatoolTk.getLabelWithValue("header.title", header.getKey()));
@@ -75,6 +81,8 @@ public class HeaderDialog extends JDialog
       titleField.setText(header.getTitle());
       labelField.setText(header.getKey());
       typeBox.setSelectedIndex(header.getType()+1);
+
+      titleField.requestFocusInWindow();
 
       setVisible(true);
 
@@ -98,9 +106,10 @@ public class HeaderDialog extends JDialog
             return;
          }
 
-         if (!header.getKey().equals(key))
+         if (checkUnique || !header.getKey().equals(key))
          {
-            // Only test if key has been changed.
+            // Only test if key has been changed unless checkUnique
+            // set.
 
             if (db.getHeader(key) != null)
             {
@@ -131,6 +140,8 @@ public class HeaderDialog extends JDialog
    private DatatoolHeader header;
 
    private DatatoolDb db;
+
+   private boolean checkUnique;
 
    private boolean modified;
 }

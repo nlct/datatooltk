@@ -8,6 +8,9 @@ file.recent.mnemonic=T
 file.recent.clearrecent=Clear
 file.recent.clearrecent.mnemonic=C
 file.recent.clearrecent.tooltip=Clear recent files list
+file.new=New
+file.new.mnemonic=N
+file.new.tooltip=Create a new empty database
 file.open=Open...
 file.open.mnemonic=O
 file.open.tooltip=Open a raw datatool database file
@@ -177,6 +180,9 @@ info.edit=Double-click on the cell to edit it.
 info.edit_name=Double-click on the tab to edit the database name. Click on the tab close icon to close this database.
 info.edit_header=Double-click on the column title to edit the header information or single-click and drag sideways to move the column.
 info.move_row=Drag row button vertically to move it up or down.
+info.empty_db=Use $1 to add columns to the database.
+info.not_empty_db=Use $1 and $2 to add or remove columns and rows, or double-click on a cell to edit it.
+info.no_rows=Use $1 to add rows to the database.
 
 # Syntax
 syntax.title=Syntax:

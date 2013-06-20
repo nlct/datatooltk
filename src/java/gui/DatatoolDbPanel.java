@@ -30,6 +30,15 @@ public class DatatoolDbPanel extends JPanel
       infoField.setEditable(false);
 
       add(infoField, BorderLayout.SOUTH);
+
+      String editLabel = DatatoolTk.getLabel("edit");
+
+      setInfo(db.getColumnCount() == 0 ?
+         DatatoolTk.getLabelWithValue("info.empty_db", 
+          editLabel+"->"+DatatoolTk.getLabel("edit.column")) :
+         DatatoolTk.getLabelWithValues("info.not_empty_db", 
+          editLabel+"->"+DatatoolTk.getLabel("edit.column"),
+          editLabel+"->"+DatatoolTk.getLabel("edit.row")));
    }
 
    private void initTable()
@@ -126,7 +135,7 @@ public class DatatoolDbPanel extends JPanel
       rowHeaderComponent.updateRowSelection(row);
       table.getTableHeader().repaint();
 
-      gui.enableEditItems(col != -1 && row != -1);
+      gui.enableEditItems(row, col);
    }
 
    public int getSelectedRow()
@@ -409,7 +418,7 @@ public class DatatoolDbPanel extends JPanel
    {
       if (row >= getRowCount() || row < 0)
       {
-         gui.enableEditItems(hasSelectedCell());
+         gui.enableEditItems(table.getSelectedRow(), table.getSelectedColumn());
          return;
       }
 
@@ -427,7 +436,7 @@ public class DatatoolDbPanel extends JPanel
    {
       if (col >= db.getColumnCount() || col < 0)
       {
-         gui.enableEditItems(hasSelectedCell());
+         gui.enableEditItems(table.getSelectedRow(), table.getSelectedColumn());
          return;
       }
 
@@ -446,7 +455,17 @@ public class DatatoolDbPanel extends JPanel
       int oldRow = table.getSelectedRow();
       int oldCol = table.getSelectedColumn();
 
-      gui.enableEditItems(row != -1 && col != -1);
+      if (row >= getRowCount())
+      {
+         row = getRowCount()-1;
+      }
+
+      if (col >= getColumnCount())
+      {
+         col = getColumnCount()-1;
+      }
+
+      gui.enableEditItems(row, col);
 
       if (oldRow == row && oldCol == col)
       {
@@ -481,6 +500,11 @@ public class DatatoolDbPanel extends JPanel
       return table.getSelectionBackground();
    }
 
+   public int getColumnCount()
+   {
+      return db.getColumnCount();
+   }
+
    public int getRowCount()
    {
       return table.getRowCount();
@@ -489,6 +513,11 @@ public class DatatoolDbPanel extends JPanel
    public int getRowHeight(int row)
    {
       return table.getRowHeight(row);
+   }
+
+   public void updateTools()
+   {
+      gui.updateTools();
    }
 
    public void updateColumnHeader(int column)
