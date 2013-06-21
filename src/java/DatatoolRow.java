@@ -84,7 +84,7 @@ public class DatatoolRow extends Vector<String>
             y = new Float(0.0f);
          }
 
-         return x.compareTo(y);
+         return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
       }
       else if (columnType == DatatoolDb.TYPE_INTEGER)
       {
@@ -108,11 +108,13 @@ public class DatatoolRow extends Vector<String>
             y = new Integer(0);
          }
 
-         return x.compareTo(y);
+         return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
       }
 
+      String x = get(sortColumn);
+      String y = row.get(sortColumn);
 
-      return get(sortColumn).compareTo(row.get(sortColumn));
+      return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
    }
 
    public void setDatabase(DatatoolDb db)

@@ -230,7 +230,8 @@ public class DatatoolGUI extends JFrame
       sortItem = DatatoolGuiResources.createJMenuItem(
          "tools", "sort", this, toolBar);
       toolsM.add(sortItem);
-      sortItem.setEnabled(false);
+
+      sortDialog = new SortDialog(this);
 
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
@@ -857,6 +858,11 @@ public class DatatoolGUI extends JFrame
       tabbedPane.setSelectedComponent(panel);
    }
 
+   public boolean requestSortDialog(DatatoolDb db)
+   {
+      return sortDialog.requestInput(db);
+   }
+
    public DatatoolHeader requestNewHeader(DatatoolDbPanel panel)
    {
       String label = DatatoolTk.getLabel("default.untitled");
@@ -894,7 +900,6 @@ public class DatatoolGUI extends JFrame
       removeColumnItem.setEnabled(colIdx > -1);
       removeRowItem.setEnabled(rowIdx > -1);
       editHeaderItem.setEnabled(colIdx > -1);
-      sortItem.setEnabled(colIdx > -1);
    }
 
    public void updateTools()
@@ -912,6 +917,7 @@ public class DatatoolGUI extends JFrame
 
       addRowBeforeItem.setEnabled(enable);
       addRowAfterItem.setEnabled(enable);
+      sortItem.setEnabled(enable);
    }
 
    private DatatoolSettings settings;
@@ -945,4 +951,6 @@ public class DatatoolGUI extends JFrame
    private PropertiesDialog propertiesDialog;
 
    private ImportSqlDialog importSqlDialog;
+
+   private SortDialog sortDialog;
 }

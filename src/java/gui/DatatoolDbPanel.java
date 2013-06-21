@@ -267,6 +267,20 @@ public class DatatoolDbPanel extends JPanel
 
    public void sortData()
    {
+      // If a column is selected, use that as the default
+
+      int colIdx = getSelectedColumn();
+
+      if (colIdx > -1)
+      {
+         db.setSortColumn(colIdx);
+      }
+
+      if (!gui.requestSortDialog(db))
+      {
+         return;
+      }
+
    }
 
    public void requestSelectedHeaderEditor()

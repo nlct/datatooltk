@@ -1258,11 +1258,29 @@ public class DatatoolDb
       return sortColumn;
    }
 
-   public void sort(int columnIndex)
+   public void setSortColumn(int columnIndex)
    {
       sortColumn = columnIndex;
+   }
 
+   public boolean isSortAscending()
+   {
+      return sortAscending;
+   }
+
+   public void setSortAscending(boolean isAscending)
+   {
+      sortAscending = isAscending;
+   }
+
+   public void sort()
+   {
       Collections.sort(data);
+   }
+
+   public Vector<DatatoolHeader> getHeaders()
+   {
+      return headers;
    }
 
    private Vector<DatatoolHeader> headers;
@@ -1276,6 +1294,8 @@ public class DatatoolDb
    private int linenum;
 
    private int sortColumn = 0;
+
+   private boolean sortAscending = true;
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;
