@@ -3,23 +3,21 @@ package com.dickimawbooks.datatooltk.gui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.*;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 
 public class ScrollToolBar extends JPanel
-   implements ActionListener
+   implements ActionListener,ChangeListener
 {
    public ScrollToolBar(int orientation)
    {
       super();
       setLayout(new BorderLayout());
 
-      beginComponent = Box.createVerticalBox();
-      beginComponent.add(createNavButton("scrollback"));
-      beginComponent.add(createNavButton("blockscrollback"));
-      beginComponent.add(createNavButton("scrollhome"));
+      backComponent = createNavButton("scrollback");
 
-      super.add(beginComponent, BorderLayout.WEST);
+      super.add(backComponent, BorderLayout.WEST);
 
       toolPanel = new JPanel(null);
 
@@ -32,12 +30,12 @@ public class ScrollToolBar extends JPanel
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
       scrollPane.setBorder(BorderFactory.createEmptyBorder());
+      scrollPane.getViewport().addChangeListener(this);
 
       super.add(scrollPane, BorderLayout.CENTER);
 
-      endComponent = new JPanel();
-      endComponent.add(createNavButton("scrollforward"));
-      super.add(endComponent, BorderLayout.EAST);
+      forwardComponent = createNavButton("scrollforward");
+      super.add(forwardComponent, BorderLayout.EAST);
    }
 
    private JButton createNavButton(String action)
@@ -59,8 +57,71 @@ public class ScrollToolBar extends JPanel
       return button;
    }
 
+   public void stateChanged(ChangeEvent e)
+   {
+      Object source = e.getSource();
+
+      if (source == scrollPane.getViewport())
+      {
+         JViewport viewport = (JViewport)source;
+
+         Rectangle viewRect = viewport.getViewRect();
+
+         Dimension dim = viewport.getView().getPreferredSize();
+
+         if (dim.width > viewRect.getWidth())
+         {
+            backComponent.setVisible(viewRect.x > 0);
+            forwardComponent.setVisible(viewRect.x+viewRect.width<dim.width);
+         }
+         else
+         {
+            backComponent.setVisible(false);
+            forwardComponent.setVisible(false);
+         }
+      }
+   }
+
    public void actionPerformed(ActionEvent event)
    {
+      String action = event.getActionCommand();
+
+      if (action == null) return;
+
+      if (action.equals("scrollforward"))
+      {
+         JViewport viewport = scrollPane.getViewport();
+
+         Rectangle viewRect = viewport.getViewRect();
+
+         viewRect.x += viewRect.width/2;
+
+         Dimension dim = viewport.getView().getPreferredSize();
+
+         double x = viewRect.x+viewRect.width;
+
+         if (x > dim.width)
+         {
+            viewRect.x = (int)Math.max(0, viewRect.x-x+dim.width);
+         }
+
+         toolPanel.scrollRectToVisible(viewRect);
+      }
+      else if (action.equals("scrollback"))
+      {
+         JViewport viewport = scrollPane.getViewport();
+
+         Rectangle viewRect = viewport.getViewRect();
+
+         viewRect.x -= viewRect.width/2;
+
+         if (viewRect.x < 0)
+         {
+            viewRect.x = 0;
+         }
+
+         toolPanel.scrollRectToVisible(viewRect);
+      }
    }
 
    public void addButton(JComponent comp)
@@ -75,5 +136,5 @@ public class ScrollToolBar extends JPanel
 
    private JScrollPane scrollPane;
    private JComponent toolPanel;
-   private JComponent beginComponent, endComponent;
+   private JComponent backComponent, forwardComponent;
 }
