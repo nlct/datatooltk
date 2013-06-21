@@ -919,21 +919,12 @@ public class DatatoolGUI extends JFrame
 
       DatatoolHeader header = new DatatoolHeader(label, label);
 
-      if (headerDialog.requestEdit(header, panel.db))
-      {
-         return header;
-      }
-
-      return null;
+      return headerDialog.requestEdit(header, panel.db);
    }
 
-   public void requestHeaderEditor(int colIdx, DatatoolDbPanel panel)
+   public DatatoolHeader requestHeaderEditor(int colIdx, DatatoolDbPanel panel)
    {
-      if (headerDialog.requestEdit(colIdx, panel.db))
-      {
-         panel.setModified(true);
-         panel.updateColumnHeader(colIdx);
-      }
+      return headerDialog.requestEdit(colIdx, panel.db);
    }
 
    public void requestCellEditor(int row, int col, DatatoolDbPanel panel)

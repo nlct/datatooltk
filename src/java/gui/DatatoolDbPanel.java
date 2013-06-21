@@ -308,7 +308,13 @@ public class DatatoolDbPanel extends JPanel
 
    public void requestHeaderEditor(int colIdx)
    {
-      gui.requestHeaderEditor(colIdx, this);
+      DatatoolHeader header = gui.requestHeaderEditor(colIdx, this);
+
+      if (header != null)
+      {
+         addUndoEvent(new UndoableEditEvent(this, 
+            new UpdateHeaderEdit(this, colIdx, header)));
+      }
    }
 
    public void requestCellEditor(int row, int col)

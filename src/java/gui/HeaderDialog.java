@@ -56,21 +56,21 @@ public class HeaderDialog extends JDialog
       setLocationRelativeTo(null);
    }
 
-   public boolean requestEdit(int colIdx, DatatoolDb db)
+   public DatatoolHeader requestEdit(int colIdx, DatatoolDb db)
    {
       this.colIdx = colIdx;
-      return requestEdit(db.getHeader(colIdx), db, false);
+      return requestEdit((DatatoolHeader)db.getHeader(colIdx).clone(), db, false);
    }
 
-   public boolean requestEdit(DatatoolHeader header, DatatoolDb db)
+   public DatatoolHeader requestEdit(DatatoolHeader header, DatatoolDb db)
    {
       return requestEdit(header, db, true);
    }
 
-   public boolean requestEdit(DatatoolHeader header, DatatoolDb db, boolean checkUnique)
+   public DatatoolHeader requestEdit(DatatoolHeader aHeader, DatatoolDb db, boolean checkUnique)
    {
       this.db = db;
-      this.header = header;
+      this.header = aHeader;
       this.checkUnique = checkUnique;
 
       modified = false;
@@ -84,7 +84,7 @@ public class HeaderDialog extends JDialog
 
       setVisible(true);
 
-      return modified;
+      return modified ? this.header : null;
    }
 
    public void actionPerformed(ActionEvent evt)

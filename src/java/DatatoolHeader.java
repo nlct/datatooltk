@@ -70,8 +70,12 @@ public class DatatoolHeader
       return title;
    }
 
+   public Object clone()
+   {
+      return new DatatoolHeader(key, title, type);
+   }
+
    private String key;
    private String title;
    private int type = DatatoolDb.TYPE_UNKNOWN;
-
 }

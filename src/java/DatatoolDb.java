@@ -944,6 +944,11 @@ public class DatatoolDb
       }
    }
 
+   public void setHeader(int colIdx, DatatoolHeader header)
+   {
+      headers.set(colIdx, header);
+   }
+
    public DatatoolHeader getHeader(int colIdx)
    {
       if (colIdx >= headers.size())
