@@ -227,6 +227,11 @@ public class DatatoolGUI extends JFrame
       JMenu toolsM = DatatoolGuiResources.createJMenu("tools");
       mbar.add(toolsM);
 
+      sortItem = DatatoolGuiResources.createJMenuItem(
+         "tools", "sort", this, toolBar);
+      toolsM.add(sortItem);
+      sortItem.setEnabled(false);
+
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
 
@@ -565,6 +570,15 @@ public class DatatoolGUI extends JFrame
             panel.redo();
          }
       }
+      else if (action.equals("sort"))
+      {
+         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+         if (panel != null)
+         {
+            panel.sortData(); 
+         }
+      }
       else if (action.equals("preferences"))
       {
          propertiesDialog.display(settings);
@@ -880,6 +894,7 @@ public class DatatoolGUI extends JFrame
       removeColumnItem.setEnabled(colIdx > -1);
       removeRowItem.setEnabled(rowIdx > -1);
       editHeaderItem.setEnabled(colIdx > -1);
+      sortItem.setEnabled(colIdx > -1);
    }
 
    public void updateTools()
@@ -923,7 +938,7 @@ public class DatatoolGUI extends JFrame
       addColumnAfterItem, addRowAfterItem,
       addColumnBeforeItem, addRowBeforeItem,
       removeColumnItem, editHeaderItem, editDbNameItem,
-      removeRowItem, clearRecentItem;
+      removeRowItem, clearRecentItem, sortItem;
 
    private ActionListener recentFilesListener;
 

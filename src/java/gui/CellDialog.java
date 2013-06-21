@@ -92,13 +92,9 @@ public class CellDialog extends JDialog
 
       mainPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
 
-      JPanel p = new JPanel();
-
-      p.add(DatatoolGuiResources.createOkayButton(this));
-      p.add(DatatoolGuiResources.createCancelButton(this));
-      p.add(gui.createHelpButton("celleditor"));
-
-      mainPanel.add(p, BorderLayout.SOUTH);
+      mainPanel.add(
+         DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "celleditor"),
+         BorderLayout.SOUTH);
 
       pack();
 

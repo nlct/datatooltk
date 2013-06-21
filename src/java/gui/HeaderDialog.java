@@ -47,12 +47,9 @@ public class HeaderDialog extends JDialog
       label.setLabelFor(typeBox);
       p.add(typeBox);
 
-      p = new JPanel();
-
-      p.add(DatatoolGuiResources.createOkayButton(this));
-      p.add(DatatoolGuiResources.createCancelButton(this));
-
-      getContentPane().add(p, BorderLayout.SOUTH);
+      getContentPane().add(
+       DatatoolGuiResources.createOkayCancelPanel(this),
+       BorderLayout.SOUTH);
 
       pack();
 

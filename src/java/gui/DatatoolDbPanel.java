@@ -265,6 +265,10 @@ public class DatatoolDbPanel extends JPanel
       return file == null ? null : file.toString();
    }
 
+   public void sortData()
+   {
+   }
+
    public void requestSelectedHeaderEditor()
    {
       int colIndex = table.getSelectedColumn();

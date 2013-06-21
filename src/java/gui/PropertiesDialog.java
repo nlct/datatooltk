@@ -159,13 +159,9 @@ public class PropertiesDialog extends JDialog
       mapTeXBox = createCheckBox("preferences.tex", "map");
       texTab.add(mapTeXBox);
 
-      JPanel buttonPanel = new JPanel();
-
-      buttonPanel.add(DatatoolGuiResources.createOkayButton(this));
-      buttonPanel.add(DatatoolGuiResources.createCancelButton(this));
-      buttonPanel.add(gui.createHelpButton("properties"));
-
-      getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+      getContentPane().add(
+        DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "properties"),
+        BorderLayout.SOUTH);
       pack();
 
       setLocationRelativeTo(null);
@@ -205,44 +201,25 @@ public class PropertiesDialog extends JDialog
    private JRadioButton createRadioButton(String parentLabel,
       String label, ButtonGroup bg)
    {
-      JRadioButton button = new JRadioButton(
-        DatatoolTk.getLabel(parentLabel, label));
+      JRadioButton button = DatatoolGuiResources.createJRadioButton(parentLabel,
+         label, bg, this);
 
-      button.setMnemonic(DatatoolTk.getMnemonic(parentLabel, label));
+
       button.setAlignmentX(0);
       button.setOpaque(false);
-
-      String tooltip = DatatoolTk.getToolTip(parentLabel, label);
-
-      if (tooltip != null)
-      {
-         button.setToolTipText(tooltip);
-      }
-
-      button.setActionCommand(label);
-      button.addActionListener(this);
-
-      bg.add(button);
 
       return button;
    }
 
    private JLabel createLabel(String label, JComponent comp)
    {
-      JLabel jlabel = new JLabel(DatatoolTk.getLabel(label));
-      jlabel.setDisplayedMnemonic(DatatoolTk.getMnemonic(label));
-      jlabel.setLabelFor(comp);
-
-      return jlabel;
+      return DatatoolGuiResources.createJLabel(label, comp);
    }
 
    private JCheckBox createCheckBox(String parentLabel, String label)
    {
-      JCheckBox checkBox = new JCheckBox(
-         DatatoolTk.getLabel(parentLabel, label));
-      checkBox.setMnemonic(DatatoolTk.getMnemonic(parentLabel, label));
-      checkBox.setActionCommand(label);
-      checkBox.addActionListener(this);
+      JCheckBox checkBox = DatatoolGuiResources.createJCheckBox(parentLabel, label, this);
+
       checkBox.setAlignmentX(0);
 
       return checkBox;

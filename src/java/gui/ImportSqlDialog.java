@@ -93,11 +93,10 @@ public class ImportSqlDialog extends JDialog
       box.add(createLabel("importsql.select", selectField));
       box.add(selectField);
 
-      JPanel buttonPanel = new JPanel();
-      getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-      buttonPanel.add(DatatoolGuiResources.createOkayButton(this));
-      buttonPanel.add(DatatoolGuiResources.createCancelButton(this));
+      getContentPane().add(
+         DatatoolGuiResources.createOkayCancelPanel(this),
+         BorderLayout.SOUTH);
 
       pack();
 
@@ -115,11 +114,7 @@ public class ImportSqlDialog extends JDialog
 
    private JLabel createLabel(String label, JComponent comp)
    {
-      JLabel jlabel = new JLabel(DatatoolTk.getLabel(label));
-      jlabel.setDisplayedMnemonic(DatatoolTk.getMnemonic(label));
-      jlabel.setLabelFor(comp);
-
-      return jlabel;
+      return DatatoolGuiResources.createJLabel(label, comp);
    }
 
    public void requestImport(DatatoolSettings settings)

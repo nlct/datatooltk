@@ -180,6 +180,11 @@ public class DatatoolGuiResources
 
     public static JLabel createJLabel(String label)
     {
+       return createJLabel(label, null);
+    }
+
+    public static JLabel createJLabel(String label, JComponent comp)
+    {
        JLabel jLabel = new JLabel(DatatoolTk.getLabel(label));
        jLabel.setDisplayedMnemonic(DatatoolTk.getMnemonic(label));
 
@@ -190,7 +195,78 @@ public class DatatoolGuiResources
           jLabel.setToolTipText(tooltip);
        }
 
+       if (comp != null)
+       {
+         jLabel.setLabelFor(comp);
+       }
+
        return jLabel;
+   }
+
+   public static JRadioButton createJRadioButton(String parentLabel,
+      String label, ButtonGroup bg, ActionListener listener)
+   {
+      JRadioButton button = new JRadioButton(
+        DatatoolTk.getLabel(parentLabel, label));
+
+      button.setMnemonic(DatatoolTk.getMnemonic(parentLabel, label));
+
+      String tooltip = DatatoolTk.getToolTip(parentLabel, label);
+
+      if (tooltip != null)
+      {
+         button.setToolTipText(tooltip);
+      }
+
+      button.setActionCommand(label);
+
+      if (listener != null)
+      {
+         button.addActionListener(listener);
+      }
+
+      bg.add(button);
+
+      return button;
+   }
+
+    public static JCheckBox createJCheckBox(String parentLabel, String label,
+       ActionListener listener)
+    {
+       JCheckBox checkBox = new JCheckBox(
+          DatatoolTk.getLabel(parentLabel, label));
+       checkBox.setMnemonic(DatatoolTk.getMnemonic(parentLabel, label));
+       checkBox.setActionCommand(label);
+
+       if (listener != null)
+       {
+          checkBox.addActionListener(listener);
+       }
+
+       return checkBox;
+    }
+
+    public static JComponent createOkayCancelHelpPanel(
+       ActionListener listener, DatatoolGUI gui, String helpId)
+    {
+       JPanel buttonPanel = new JPanel();
+
+       buttonPanel.add(createOkayButton(listener));
+       buttonPanel.add(createCancelButton(listener));
+       buttonPanel.add(gui.createHelpButton(helpId));
+
+       return buttonPanel;
+    }
+
+    public static JComponent createOkayCancelPanel(
+       ActionListener listener)
+    {
+       JPanel buttonPanel = new JPanel();
+
+       buttonPanel.add(createOkayButton(listener));
+       buttonPanel.add(createCancelButton(listener));
+
+       return buttonPanel;
     }
 
     public static JMenu createJMenu(String label)

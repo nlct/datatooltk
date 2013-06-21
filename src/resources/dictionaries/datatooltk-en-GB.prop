@@ -158,6 +158,15 @@ preferences.tex.mnemonic=E
 preferences.tex.map=Map TeX characters when importing data
 preferences.tex.map.mnemonic=M
 
+# Sort dialog
+sort.title=Sort Database
+sort.column=Sort on Column: 
+sort.column.mnemonic=L
+sort.ascending=Ascending
+sort.ascending.mnemonic=A
+sort.descending=Descending
+sort.descending.mnemonic=D
+
 # Import SQL dialog box
 importsql.title=Import SQL Data
 importsql.host=Host: 
