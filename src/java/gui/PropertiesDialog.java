@@ -13,6 +13,7 @@ public class PropertiesDialog extends JDialog
    public PropertiesDialog(DatatoolGUI gui)
    {
       super(gui, DatatoolTk.getLabel("preferences.title"), true);
+      this.gui = gui;
 
       tabbedPane = new JTabbedPane();
 
@@ -20,29 +21,29 @@ public class PropertiesDialog extends JDialog
 
       // General tab
 
-      JComponent generalTab = addTab("general");
+      JComponent startupTab = addTab("startup");
 
       ButtonGroup bg = new ButtonGroup();
 
-      homeButton = createRadioButton("preferences.general", "home", bg);
-      generalTab.add(homeButton);
+      homeButton = createRadioButton("preferences.startup", "home", bg);
+      startupTab.add(homeButton);
 
-      cwdButton = createRadioButton("preferences.general", "cwd", bg);
-      generalTab.add(cwdButton);
+      cwdButton = createRadioButton("preferences.startup", "cwd", bg);
+      startupTab.add(cwdButton);
 
-      lastButton = createRadioButton("preferences.general", "last", bg);
-      generalTab.add(lastButton);
+      lastButton = createRadioButton("preferences.startup", "last", bg);
+      startupTab.add(lastButton);
 
       JComponent box = Box.createHorizontalBox();
       box.setAlignmentX(0);
-      generalTab.add(box);
+      startupTab.add(box);
 
-      customButton = createRadioButton("preferences.general", "custom", bg);
+      customButton = createRadioButton("preferences.startup", "custom", bg);
       box.add(customButton);
 
       fileChooser = new JFileChooser();
 
-      customFileField = new FileField(generalTab, fileChooser,
+      customFileField = new FileField(startupTab, fileChooser,
          JFileChooser.DIRECTORIES_ONLY);
 
       box.add(customFileField);
@@ -158,6 +159,57 @@ public class PropertiesDialog extends JDialog
 
       mapTeXBox = createCheckBox("preferences.tex", "map");
       texTab.add(mapTeXBox);
+
+      box = createNewRow(texTab);
+      latexFileField = new FileField(this, "latex", fileChooser);
+      box.add(createLabel("preferences.tex.latexapp", latexFileField));
+      box.add(latexFileField);
+
+      // Display Tab
+
+      JComponent displayTab = addTab("display");
+
+      labels = new JLabel[3];
+      idx = 0;
+      maxWidth = 0;
+
+      box = createNewRow(displayTab);
+
+      GraphicsEnvironment env =
+         GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+      fontBox = new JComboBox<String>(env.getAvailableFontFamilyNames());
+
+      labels[idx] = createLabel("preferences.display.font", fontBox);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+      box.add(fontBox);
+
+      box = createNewRow(displayTab);
+      sizeField = new NonNegativeIntField(10);
+
+      labels[idx] = createLabel("preferences.display.fontsize", sizeField);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+      box.add(sizeField);
+
+      box = createNewRow(displayTab);
+      cellHeightField = new NonNegativeIntField(4);
+
+      labels[idx] = createLabel("preferences.display.cellheight", cellHeightField);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+      box.add(cellHeightField);
+
+      for (idx = 0; idx < labels.length; idx++)
+      {
+         dim = labels[idx].getPreferredSize();
+         dim.width = maxWidth;
+         labels[idx].setPreferredSize(dim);
+      }
 
       getContentPane().add(
         DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "properties"),
@@ -281,6 +333,12 @@ public class PropertiesDialog extends JDialog
       databaseField.setText(db == null ? "" : db);
 
       mapTeXBox.setSelected(settings.isTeXMappingOn());
+
+      latexFileField.setFileName(settings.getLaTeX());
+
+      sizeField.setValue(settings.getFontSize());
+      fontBox.setSelectedItem(settings.getFontName());
+      cellHeightField.setValue(settings.getCellHeight());
 
       setVisible(true);
    }
@@ -416,6 +474,14 @@ public class PropertiesDialog extends JDialog
 
       settings.setTeXMapping(mapTeXBox.isSelected());
 
+      settings.setLaTeX(latexFileField.getFileName());
+
+      settings.setFontName(fontBox.getSelectedItem().toString());
+      settings.setFontSize(sizeField.getValue());
+      settings.setCellHeight(cellHeightField.getValue());
+
+      gui.updateTableSettings();
+
       setVisible(false);
    }
 
@@ -429,13 +495,17 @@ public class PropertiesDialog extends JDialog
 
    private JCheckBox hasHeaderBox, wipeBox, mapTeXBox;
 
-   private FileField customFileField;
+   private FileField customFileField, latexFileField;
 
    private JFileChooser fileChooser;
 
-   private NonNegativeIntField portField;
+   private NonNegativeIntField portField, sizeField, cellHeightField;
 
    private JTextField hostField, prefixField, databaseField, userField;
 
+   private JComboBox<String> fontBox;
+
    private JTabbedPane tabbedPane;
+
+   private DatatoolGUI gui;
 }

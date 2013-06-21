@@ -4,6 +4,7 @@ import java.util.Properties;
 import java.io.*;
 import java.util.Vector;
 import java.util.InvalidPropertiesFormatException;
+import java.awt.Font;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
@@ -475,6 +476,57 @@ public class DatatoolSettings extends Properties
       return getProperty("app.latex");
    }
 
+   public String getFontName()
+   {
+      return getProperty("fontname");
+   }
+
+   public void setFontName(String name)
+   {
+      setProperty("fontname", name);
+   }
+
+   public int getFontSize()
+   {
+      try
+      {
+         return Integer.parseInt(getProperty("fontsize"));
+      }
+      catch (NumberFormatException e)
+      {
+         setFontSize(12);
+         return 12;
+      }
+   }
+
+   public void setFontSize(int fontSize)
+   {
+      setProperty("fontsize", ""+fontSize);
+   }
+
+   public Font getFont()
+   {
+      return new Font(getFontName(), Font.PLAIN, getFontSize());
+   }
+
+   public int getCellHeight()
+   {
+      try
+      {
+         return Integer.parseInt(getProperty("cellheight"));
+      }
+      catch (NumberFormatException e)
+      {
+         setCellHeight(4);
+         return 4;
+      }
+   }
+
+   public void setCellHeight(int height)
+   {
+      setProperty("cellheight", ""+height);
+   }
+
    public void setDefaults()
    {
       setSeparator(',');
@@ -498,6 +550,9 @@ public class DatatoolSettings extends Properties
       setTeXMap('^', "\\textasciicircum ");
 
       setLaTeX("latex");
+      setFontName("Monospaced");
+      setFontSize(12);
+      setCellHeight(4);
    }
 
    protected char[] sqlPassword = null;

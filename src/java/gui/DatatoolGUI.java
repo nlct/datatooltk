@@ -970,6 +970,24 @@ public class DatatoolGUI extends JFrame
       sortItem.setEnabled(enable);
    }
 
+   public Font getCellFont()
+   {
+      return settings.getFont();
+   }
+
+   public int getCellHeight()
+   {
+      return settings.getCellHeight();
+   }
+
+   public void updateTableSettings()
+   {
+      for (int i = 0, n = tabbedPane.getTabCount(); i < n; i++)
+      {
+         ((DatatoolDbPanel)tabbedPane.getComponentAt(i)).updateTableSettings();
+      }
+   }
+
    private DatatoolSettings settings;
 
    private JTabbedPane tabbedPane;

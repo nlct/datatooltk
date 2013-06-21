@@ -632,6 +632,7 @@ sub start_preamble{
    print TEXFD "\\usepackage[$inputenc]{inputenc}\n",
       "\\usepackage[$fontenc]{fontenc}\n",
       "\\usepackage{graphicx}\n",
+      "\\usepackage{verbatim}\n",
       "\\usepackage{makeidx}\n",
       "\\usepackage{babel}\n",
       "\\usepackage[colorlinks]{hyperref}\n",
@@ -1185,6 +1186,39 @@ sub end_pre{
    print TEXFD "\\end{verbatim}";
 }
 
+sub start_verbinput{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{src})
+   {
+      die "Missing 'verbinput' element's 'src' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   &handle_html('<pre>');
+
+   open FD, $attrs{src} or die "Can't open '$attrs{src}' $!\n";
+
+   while (<FD>)
+   {
+      s/\&/\&amp;/g;
+      s/</\&lt;/g;
+      s/>/\&gt;/g;
+
+      &handle_html($_);
+   }
+
+   close FD;
+
+   &handle_html('</pre>');
+
+   print TEXFD "\\verbatiminput{$attrs{src}}";
+}
+
+sub end_verbinput{
+   my ($expat) = @_;
+}
+ 
 sub start_float{
    my ($expat, %attrs) = @_;
 
@@ -1562,7 +1596,7 @@ sub start_term{
 sub end_term{
    my ($expat) = @_;
 }
- 
+
 sub start_ref{
    my ($expat, %attrs) = @_;
 

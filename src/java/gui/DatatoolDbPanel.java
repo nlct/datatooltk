@@ -47,7 +47,6 @@ public class DatatoolDbPanel extends JPanel
 
       table = new JTable(new DatatoolDbTableModel(db, this));
 
-      table.setRowHeight(DEFAULT_ROW_HEIGHT);
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
       DbNumericalCellEditor editor = new DbNumericalCellEditor();
@@ -125,6 +124,8 @@ public class DatatoolDbPanel extends JPanel
 
       add(sp, BorderLayout.CENTER);
 
+      updateTableSettings();
+
       updateColumnHeaders();
    }
 
@@ -137,6 +138,17 @@ public class DatatoolDbPanel extends JPanel
       table.getTableHeader().repaint();
 
       gui.enableEditItems(row, col);
+   }
+
+   public void updateTableSettings()
+   {
+      table.setFont(gui.getCellFont());
+
+      FontMetrics fm = table.getFontMetrics(table.getFont());
+
+      table.setRowHeight(gui.getCellHeight()*(fm.getHeight()+fm.getLeading()));
+
+      rowHeaderComponent.revalidate();
    }
 
    public int getSelectedRow()
@@ -705,8 +717,6 @@ public class DatatoolDbPanel extends JPanel
    private JTextField infoField;
 
    public static final int STRING_MIN_WIDTH=300;
-
-   public static final int DEFAULT_ROW_HEIGHT=100;
 }
 
 class DatatoolDbTableModel extends AbstractTableModel

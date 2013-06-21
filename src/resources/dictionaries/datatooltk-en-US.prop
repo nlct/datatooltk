@@ -119,17 +119,16 @@ about.acknowledgements=
 
 # Preferences dialog box
 preferences.title=Preferences
-preferences.general=General
-preferences.general.mnemonic=G
-preferences.general.startup=Start Up Directory
-preferences.general.home=Home
-preferences.general.home.mnemonic=M
-preferences.general.cwd=CWD
-preferences.general.cwd.mnemonic=W
-preferences.general.last=Last
-preferences.general.last.mnemonic=L
-preferences.general.custom=Custom
-preferences.general.custom.mnemonic=T
+preferences.startup=Start Up Directory
+preferences.startup.mnemonic=Y
+preferences.startup.home=Home
+preferences.startup.home.mnemonic=M
+preferences.startup.cwd=CWD
+preferences.startup.cwd.mnemonic=W
+preferences.startup.last=Last
+preferences.startup.last.mnemonic=L
+preferences.startup.custom=Custom
+preferences.startup.custom.mnemonic=T
 preferences.csv=CSV
 preferences.csv.mnemonic=V
 preferences.csv.sep=Separator: 
@@ -158,8 +157,18 @@ preferences.sql.user=User Name:
 preferences.sql.user.mnemonic=U
 preferences.tex=TeX
 preferences.tex.mnemonic=E
-preferences.tex.map=Map TeX characters when importing data
+preferences.tex.map=Map TeX characters when importing data from CSV or SQL
 preferences.tex.map.mnemonic=M
+preferences.tex.latexapp=LaTeX Executable: 
+preferences.tex.latexapp.mnemonic=L 
+preferences.display=Display
+preferences.display.mnemonic=I
+preferences.display.font=Font
+preferences.display.font.mnemonic=F
+preferences.display.fontsize=Size
+preferences.display.fontsize.mnemonic=Z
+preferences.display.cellheight=Cell Height
+preferences.display.cellheight.mnemonic=G
 
 # Sort dialog
 sort.title=Sort Database

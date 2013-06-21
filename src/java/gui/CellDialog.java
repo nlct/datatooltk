@@ -58,6 +58,7 @@ public class CellDialog extends JDialog
       editM.add(redoItem);
 
       textArea = new JTextArea(20,40);
+      textArea.setFont(gui.getCellFont());
       textArea.getDocument().addUndoableEditListener(
        new UndoableEditListener()
        {
