@@ -131,6 +131,9 @@ public class DatatoolGUI extends JFrame
 
       importSqlDialog = new ImportSqlDialog(this);
 
+      importM.add(DatatoolGuiResources.createJMenuItem(
+        "file.import", "importprobsoln", this, toolBar));
+
       fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "save", this, toolBar));
 
@@ -456,6 +459,10 @@ public class DatatoolGUI extends JFrame
       {
          importSqlDialog.requestImport(settings);
       }
+      else if (action.equals("importprobsoln"))
+      {
+         importProbSoln();
+      }
       else if (action.equals("close"))
       {
          close();
@@ -666,6 +673,25 @@ public class DatatoolGUI extends JFrame
       fileChooser.addChoosableFileFilter(all);
    }
 
+   private void setTeXFileFilter()
+   {
+      FileFilter current = fileChooser.getFileFilter();
+
+      if (current == dbtexFilter || current == texFilter)
+      {
+         return;
+      }
+
+      fileChooser.resetChoosableFileFilters();
+
+      FileFilter all = fileChooser.getAcceptAllFileFilter();
+
+      fileChooser.removeChoosableFileFilter(all);
+
+      fileChooser.addChoosableFileFilter(texFilter);
+      fileChooser.addChoosableFileFilter(all);
+   }
+
    private void setCsvFileFilters()
    {
       FileFilter current = fileChooser.getFileFilter();
@@ -835,6 +861,29 @@ public class DatatoolGUI extends JFrame
       try
       {
          createNewTab(imp.importData(fileChooser.getSelectedFile()));
+      }
+      catch (DatatoolImportException e)
+      {
+         DatatoolGuiResources.error(this, e);
+      }
+   }
+
+   public void importProbSoln()
+   {
+      setTeXFileFilter();
+
+      if (fileChooser.showDialog(this, DatatoolTk.getLabel("button.import"))
+       != JFileChooser.APPROVE_OPTION)
+      {
+         return;
+      }
+
+      DatatoolProbSoln imp = new DatatoolProbSoln(settings);
+
+      try
+      {
+         createNewTab(imp.importData(
+            fileChooser.getSelectedFile().getAbsolutePath()));
       }
       catch (DatatoolImportException e)
       {

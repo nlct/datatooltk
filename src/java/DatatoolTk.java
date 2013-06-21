@@ -100,6 +100,10 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.out", "--out", "-o"));
       System.out.println(getLabelWithValues("syntax.version", "--version", "-v"));
       System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
+      System.out.println(getLabelWithValue("syntax.debug", "--debug"));
+      System.out.println(getLabelWithValue("syntax.nodebug", "--nodebug"));
+      System.out.println(getLabelWithValue("syntax.deletetmpfiles", "--delete-tmp-files"));
+      System.out.println(getLabelWithValue("syntax.nodeletetmpfiles", "--nodelete-tmp-files"));
       System.out.println();
       System.out.println(getLabel("syntax.csv_opts"));
       System.out.println(getLabelWithValue("syntax.csv", "--csv"));
@@ -438,6 +442,14 @@ public class DatatoolTk
       return builder.toString();
    }
 
+   public static void removeFileOnExit(File file)
+   {
+      if (removeTmpFilesOnExit)
+      {
+         file.deleteOnExit();
+      }
+   }
+
    public static void main(String[] args)
    {
       settings = new DatatoolSettings();
@@ -704,6 +716,14 @@ public class DatatoolTk
             {
                debugMode = false;
             }
+            else if (args[i].equals("--delete-tmp-files"))
+            {
+               removeTmpFilesOnExit = true;
+            }
+            else if (args[i].equals("--nodelete-tmp-files"))
+            {
+               removeTmpFilesOnExit = false;
+            }
             else if (args[i].equals("--in") || args[i].equals("-i"))
             {
                i++;
@@ -783,6 +803,8 @@ public class DatatoolTk
    private static String out = null;
    private static String dbtex = null;
    private static String source = null;
+
+   private static boolean removeTmpFilesOnExit=true;
 
    private static DatatoolImport imp = null;
 

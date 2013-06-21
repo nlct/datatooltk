@@ -465,6 +465,16 @@ public class DatatoolSettings extends Properties
       setProperty("tex."+c, value);
    }
 
+   public void setLaTeX(String app)
+   {
+      setProperty("app.latex", app);
+   }
+
+   public String getLaTeX()
+   {
+      return getProperty("app.latex");
+   }
+
    public void setDefaults()
    {
       setSeparator(',');
@@ -486,6 +496,8 @@ public class DatatoolSettings extends Properties
       setTeXMap('}', "\\}");
       setTeXMap('~', "\\textasciitilde ");
       setTeXMap('^', "\\textasciicircum ");
+
+      setLaTeX("latex");
    }
 
    protected char[] sqlPassword = null;

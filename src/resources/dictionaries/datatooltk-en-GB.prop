@@ -22,6 +22,9 @@ file.import.importcsv.tooltip=Import data from a CSV file
 file.import.importsql=Import SQL...
 file.import.importsql.mnemonic=L
 file.import.importsql.tooltip=Import data from a SQL database
+file.import.importprobsoln=Import probsoln File...
+file.import.importprobsoln.mnemonic=P
+file.import.importprobsoln.tooltip=Import data from a probsoln database
 file.save=Save
 file.save.mnemonic=S
 file.save_as=Save As...
@@ -236,6 +239,11 @@ default.field=Field$1
 default.untitled=Untitled
 default.texheader=Created by $1 on $2
 
+# Header keys for probsoln imports
+probsoln.label=Label
+probsoln.question=Question
+probsoln.answer=Answer
+
 # Undo/Redo
 undo.cell_edit=Cell Edit
 undo.edit_name=Edit Database Name
@@ -281,6 +289,10 @@ syntax.in=$1 (or $2) <datatool file>\tLoad <datatool file>. (Can't be used with 
 syntax.out=$1 (or $2) <filename>\tSave to <filename>.
 syntax.version=$1 (or $2)\t\tPrint version and exit.
 syntax.help=$1 (or $2)\t\t\tPrint this help message and exit.
+syntax.debug=$1\t\t\tSwitch on debug mode.
+syntax.nodebug=$1\t\t\tSwitch off debug mode. (Default.)
+syntax.deletetmpfiles=$1\tDelete temporary files on exit. (Default)
+syntax.nodeletetmpfiles=$1\tDon't delete temporary files on exit.
 syntax.csv_opts=CSV Options:
 syntax.csv=$1 <csv file>\tImport <csv file>. (Can't be used with --in or --sql.)
 syntax.csv_sep=$1 <character>\tSeparator used in CSV files. (Defaults to '$2'.)
@@ -368,6 +380,11 @@ error.missing_user=Missing User Name
 error.missing_select=Missing SELECT statement
 error.invalid_header_choice=You can't set the type to '$1': row $2 is of type '$3'.
 error.no_sort_column_selected=No sort column selected.
+error.io.file_not_found=No such file '$1'.
+error.process_failed=Process '$1' (running in '$2') failed with exit code $3.
+error.missing_begin_prob=Missing 'BEGIN PROBLEM: ' on line $1 of '$2'.
+error.mismatched_end_prob='BEGIN PROBLEM: $1' ended by 'END PROBLEM: $2' on input line $3 of '$4'.
+error.internal.import_probdata_failed=(Internal Error) Something's gone wrong. Failed to import data.
 
 # Warning messages
 warning.title=Warning
