@@ -300,7 +300,7 @@ syntax.out=$1 (or $2) <filename>\tSave to <filename>.
 syntax.version=$1 (or $2)\t\tPrint version and exit.
 syntax.help=$1 (or $2)\t\t\tPrint this help message and exit.
 syntax.debug=$1\t\t\tSwitch on debug mode.
-syntax.nodebug=$1\t\t\tSwitch off debug mode. (Default.)
+syntax.nodebug=$1\t\tSwitch off debug mode. (Default.)
 syntax.deletetmpfiles=$1\tDelete temporary files on exit. (Default)
 syntax.nodeletetmpfiles=$1\tDon't delete temporary files on exit.
 syntax.csv_opts=CSV Options:
@@ -320,6 +320,8 @@ syntax.sql_user=$1 <user name>\tSQL user name.
 syntax.sql_password=$1  <password>\tSQL password (insecure). If omitted, you will be prompted for the password if you try to import data from a SQL database.
 syntax.sql_wipepassword=$1\t\tFor extra security, wipe the password from memory as soon as it has been used to connect to a SQL database.$2
 syntax.sql_nowipepassword=$1\tDon't wipe the password from memory as soon as it has been used to connect to a SQL database.$2
+syntax.probsoln_opts=probsoln Options:
+syntax.probsoln=$1 <filename>\tImport probsoln data from <filename>
 
 
 # Error messages

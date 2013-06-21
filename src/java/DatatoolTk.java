@@ -138,6 +138,9 @@ public class DatatoolTk
         "--nowipepassword", 
         (settings.isWipePasswordEnabled()?
            "":" ("+getLabel("syntax.default")+")")));
+      System.out.println();
+      System.out.println(getLabel("syntax.probsoln_opts"));
+      System.out.println(getLabelWithValue("syntax.probsoln", "--probsoln"));
    }
 
    public static String getAppInfo()
@@ -578,6 +581,32 @@ public class DatatoolTk
 
                source = args[i];
                imp = new DatatoolCsv(settings);
+            }
+            else if (args[i].equals("--probsoln"))
+            {
+               if (source != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabel("error.syntax.only_one_import"));
+               }
+
+               if (dbtex != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.import_clash", args[i]));
+               }
+
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValue("error.syntax.missing_filename",
+                        args[i-1]));
+               }
+
+               source = args[i];
+               imp = new DatatoolProbSoln(settings);
             }
             else if (args[i].equals("--sql"))
             {
