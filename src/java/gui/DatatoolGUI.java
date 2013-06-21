@@ -224,6 +224,9 @@ public class DatatoolGUI extends JFrame
 
       propertiesDialog = new PropertiesDialog(this);
 
+      JMenu toolsM = DatatoolGuiResources.createJMenu("tools");
+      mbar.add(toolsM);
+
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
 
@@ -726,13 +729,6 @@ public class DatatoolGUI extends JFrame
 
    public void saveAs()
    {
-      setTeXFileFilters();
-
-      if (fileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
-      {
-         return;
-      }
-
       DatatoolDbPanel panel 
          = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
 
@@ -740,6 +736,15 @@ public class DatatoolGUI extends JFrame
       {
          DatatoolGuiResources.error(this, 
            DatatoolTk.getLabel("error.nopanel"));
+         return;
+      }
+
+      setTeXFileFilters();
+
+      fileChooser.setSelectedFile(new File(panel.getName()+".dbtex"));
+
+      if (fileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
+      {
          return;
       }
 

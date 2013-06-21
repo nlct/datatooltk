@@ -956,6 +956,11 @@ public class DatatoolDb
       }
    }
 
+   public int getColumnType(int colIdx)
+   {
+      return headers.get(colIdx).getType();
+   }
+
    public static int getType(String value)
    {
       if (value == null || value.isEmpty()) return TYPE_UNKNOWN;
@@ -1128,7 +1133,7 @@ public class DatatoolDb
 
    public DatatoolRow insertRow(int rowIdx)
    {
-      DatatoolRow row = new DatatoolRow(headers.size());
+      DatatoolRow row = new DatatoolRow(this, headers.size());
 
       for (int i = 0; i < headers.size(); i++)
       {
@@ -1142,6 +1147,8 @@ public class DatatoolDb
 
    public void insertRow(int rowIdx, DatatoolRow row)
    {
+      row.setDatabase(this);
+
       int n = data.size();
 
       if (rowIdx == n)
@@ -1152,7 +1159,7 @@ public class DatatoolDb
       {
          for (int i = n; i < rowIdx; i++)
          {
-            data.add(new DatatoolRow(headers.size()));
+            data.add(new DatatoolRow(this, headers.size()));
          }
 
          data.add(row);
@@ -1246,9 +1253,14 @@ public class DatatoolDb
       return new ColumnEnumeration(data, colIdx);
    }
 
+   public int getSortColumn()
+   {
+      return sortColumn;
+   }
+
    public void sort(int columnIndex)
    {
-      DatatoolRow.setSortColumn(columnIndex);
+      sortColumn = columnIndex;
 
       Collections.sort(data);
    }
@@ -1262,6 +1274,8 @@ public class DatatoolDb
    private String name;
 
    private int linenum;
+
+   private int sortColumn = 0;
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;

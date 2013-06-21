@@ -94,7 +94,7 @@ public class DatatoolSql implements DatatoolImport
 
          while (rs.next())
          {
-            DatatoolRow row = new DatatoolRow(colCount);
+            DatatoolRow row = new DatatoolRow(db, colCount);
 
             for (int i = 1; i <= colCount; i++)
             {

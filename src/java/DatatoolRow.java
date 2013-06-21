@@ -5,14 +5,21 @@ import java.util.Vector;
 public class DatatoolRow extends Vector<String>
    implements Comparable<DatatoolRow>
 {
-   public DatatoolRow()
+   private DatatoolRow()
    {
       super();
    }
 
-   public DatatoolRow(int capacity)
+   public DatatoolRow(DatatoolDb db)
+   {
+      super();
+      this.db = db;
+   }
+
+   public DatatoolRow(DatatoolDb db, int capacity)
    {
       super(capacity);
+      this.db = db;
    }
 
    public void setCell(int colIdx, String value)
@@ -50,29 +57,12 @@ public class DatatoolRow extends Vector<String>
       }
    }
 
-   public static void setSortColumn(int columnIndex)
-   {
-      sortColumn = columnIndex;
-   }
-
-   public static int getSortColumn()
-   {
-      return sortColumn;
-   }
-
-   public static boolean isSortNumerical()
-   {
-      return sortNumerical;
-   }
-
-   public static void setSortNumerical(boolean enable)
-   {
-      sortNumerical = enable;
-   }
-
    public int compareTo(DatatoolRow row)
    {
-      if (sortNumerical)
+      int sortColumn = db.getSortColumn();
+      int columnType = db.getColumnType(sortColumn);
+
+      if (columnType == DatatoolDb.TYPE_REAL)
       {
          Float x, y;
 
@@ -96,11 +86,44 @@ public class DatatoolRow extends Vector<String>
 
          return x.compareTo(y);
       }
+      else if (columnType == DatatoolDb.TYPE_INTEGER)
+      {
+         Integer x, y;
+
+         try
+         {
+            x = new Integer(get(sortColumn));
+         }
+         catch (NumberFormatException e)
+         {
+            x = new Integer(0);
+         }
+
+         try
+         {
+            y = new Integer(row.get(sortColumn));
+         }
+         catch (NumberFormatException e)
+         {
+            y = new Integer(0);
+         }
+
+         return x.compareTo(y);
+      }
+
 
       return get(sortColumn).compareTo(row.get(sortColumn));
    }
 
-   private static int sortColumn = 0;
+   public void setDatabase(DatatoolDb db)
+   {
+      this.db = db;
+   }
 
-   private static boolean sortNumerical = false;
+   public DatatoolDb getDatabase()
+   {
+      return db;
+   }
+
+   private DatatoolDb db;
 }

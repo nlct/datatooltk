@@ -88,6 +88,12 @@ edit.preferences=Edit Preferences...
 edit.preferences.mnemonic=P
 edit.preferences.tooltip=Edit application settings
 
+# Tools menu
+tools=Tools
+tools.mnemonic=T
+tools.sort=Sort...
+tools.sort.mnemonic=S
+
 # Help menu
 help=Help
 help.mnemonic=H
