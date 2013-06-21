@@ -71,7 +71,7 @@ public class DatatoolGUI extends JFrame
       JMenuBar mbar = new JMenuBar();
       setJMenuBar(mbar);
 
-      toolBar = new JToolBar(JToolBar.HORIZONTAL);
+      toolBar = new ScrollToolBar(SwingConstants.HORIZONTAL);
 
       JMenu fileM = DatatoolGuiResources.createJMenu("file");
       mbar.add(fileM);
@@ -149,6 +149,7 @@ public class DatatoolGUI extends JFrame
 
       JMenu editM = DatatoolGuiResources.createJMenu("edit");
       mbar.add(editM);
+
 
       undoItem = DatatoolGuiResources.createJMenuItem(
          "edit", "undo", this,
@@ -936,7 +937,7 @@ public class DatatoolGUI extends JFrame
    private HelpBroker mainHelpBroker;
    private CSH.DisplayHelpFromSource csh;
 
-   private JToolBar toolBar;
+   private ScrollToolBar toolBar;
 
    private JMenu recentM;
 

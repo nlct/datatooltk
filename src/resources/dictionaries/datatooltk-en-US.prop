@@ -228,6 +228,12 @@ button.copy.tooltip=Copy contents of text area to the clipboard
 button.import=Import
 button.select=Select
 button.select.mnemonic=S
+button.scrollback=Scroll Back
+button.blockscrollback=Block Scroll Back
+button.scrollhome=Scroll Home
+button.scrollforward=Scroll Forward
+button.blockscrollforward=Block Scroll Forward
+button.scrollend=Scroll End
 
 # Default labels
 default.field=Field$1

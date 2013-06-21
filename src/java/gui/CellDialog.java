@@ -30,7 +30,7 @@ public class CellDialog extends JDialog
       JMenuBar mbar = new JMenuBar();
       setJMenuBar(mbar);
 
-      JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
+      ScrollToolBar toolBar = new ScrollToolBar(SwingConstants.HORIZONTAL);
 
       getContentPane().add(toolBar, BorderLayout.NORTH);
 

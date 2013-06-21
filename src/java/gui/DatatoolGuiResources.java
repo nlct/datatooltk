@@ -88,7 +88,7 @@ public class DatatoolGuiResources
       String tooltipText)
     {
        String buttonLabel = DatatoolTk.getLabel(parent, label);
-       char mnemonic = DatatoolTk.getMnemonic(parent, label);
+       int mnemonic = DatatoolTk.getMnemonicInt(parent, label);
        String actionCommand = label;
 
        // Is there an associated image?
@@ -151,7 +151,10 @@ public class DatatoolGuiResources
           }
        }
 
-       button.setMnemonic(mnemonic);
+       if (mnemonic != -1)
+       {
+          button.setMnemonic(mnemonic);
+       }
 
        if (listener != null)
        {
@@ -301,7 +304,7 @@ public class DatatoolGuiResources
     }
 
     public static JMenuItem createJMenuItem(String parent, String label,
-       ActionListener listener, JToolBar toolBar)
+       ActionListener listener, ScrollToolBar toolBar)
     {
        return createJMenuItem(parent, label, listener, null, toolBar);
     }
@@ -313,7 +316,7 @@ public class DatatoolGuiResources
     }
 
     public static JMenuItem createJMenuItem(String parent, String label,
-     ActionListener listener, KeyStroke keyStroke, JToolBar toolBar)
+     ActionListener listener, KeyStroke keyStroke, ScrollToolBar toolBar)
     {
        return new ItemButton(parent, label, listener, keyStroke, toolBar);
     }

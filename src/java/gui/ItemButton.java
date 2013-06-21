@@ -1,8 +1,10 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.net.URL;
+import java.awt.Dimension;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 
@@ -13,7 +15,7 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 public class ItemButton extends JMenuItem
 {
    public ItemButton(String parentLabel, String actionLabel,
-     ActionListener listener, KeyStroke keyStroke, JToolBar toolBar)
+     ActionListener listener, KeyStroke keyStroke, ScrollToolBar toolBar)
    {
       super(DatatoolTk.getLabelRemoveArgs(parentLabel, actionLabel));
       setMnemonic(DatatoolTk.getMnemonic(parentLabel, actionLabel));
@@ -27,10 +29,23 @@ public class ItemButton extends JMenuItem
 
          if (imageURL != null)
          {
-            button = new JButton(new ImageIcon(imageURL));
+            Icon icon = new ImageIcon(imageURL);
+            button = new JButton(icon);
             button.setActionCommand(actionLabel);
+            button.putClientProperty("hideActionText", Boolean.TRUE);
+            button.setHorizontalTextPosition(JButton.CENTER);
+            button.setVerticalTextPosition(JButton.BOTTOM);
+            button.setPreferredSize(
+             new Dimension(icon.getIconWidth()+border,
+             icon.getIconHeight()+border));
+            button.setMaximumSize(button.getPreferredSize());
+            button.setContentAreaFilled(false);
 
-            toolBar.add(button);
+            Border border = button.getBorder();
+            button.setBorder(BorderFactory.createCompoundBorder(
+              BorderFactory.createEmptyBorder(2,2,2,2), border));
+
+            toolBar.addButton(button);
          } 
       }
 
@@ -82,4 +97,6 @@ public class ItemButton extends JMenuItem
    }
 
    private JButton button;
+
+   private int border=10;
 }

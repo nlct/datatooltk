@@ -323,7 +323,7 @@ public class DatatoolTk
 
       if (prop.equals(""))
       {
-         System.err.println("Empty dictionary property '"+prop+"'");
+         debug("Empty dictionary property '"+prop+"'");
          return label.charAt(0);
       }
 
@@ -337,12 +337,20 @@ public class DatatoolTk
 
    public static int getMnemonicInt(String parent, String label)
    {
-      String prop = getLabel(parent, label+".mnemonic");
+      String prop;
 
-      if (prop.equals(""))
+      if (parent == null)
       {
-         System.err.println("Empty dictionary property '"+prop+"'");
-         return label.codePointAt(0);
+         prop = dictionary.getProperty(label+".mnemonic");
+      }
+      else
+      {
+         prop = dictionary.getProperty(parent+"."+label+".mnemonic");
+      }
+
+      if (prop == null || prop.isEmpty())
+      {
+         return -1;
       }
 
       return prop.codePointAt(0);
