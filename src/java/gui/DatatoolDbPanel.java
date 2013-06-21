@@ -568,6 +568,7 @@ public class DatatoolDbPanel extends JPanel
       tableColumn.setIdentifier(db.getHeader(column).getKey());
 
       sp.getColumnHeader().repaint();
+      table.repaint();
    }
 
    public void updateColumnHeaders()
