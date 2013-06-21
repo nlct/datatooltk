@@ -281,6 +281,7 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
+      addUndoEvent(new UndoableEditEvent(this, new SortEdit(this)));
    }
 
    public void requestSelectedHeaderEditor()

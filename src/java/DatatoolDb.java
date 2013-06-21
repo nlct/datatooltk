@@ -1283,6 +1283,27 @@ public class DatatoolDb
       return headers;
    }
 
+   public DatatoolRow[] dataToArray()
+   {
+      int n = data.size();
+      DatatoolRow[] array = new DatatoolRow[n];
+
+      for (int i = 0; i < n; i++)
+      {
+         array[i] = data.get(i);
+      }
+
+      return array;
+   }
+
+   public void dataFromArray(DatatoolRow[] array)
+   {
+      for (int i = 0; i < array.length; i++)
+      {
+         data.set(i, array[i]);
+      }
+   }
+
    private Vector<DatatoolHeader> headers;
 
    private Vector<DatatoolRow> data;
