@@ -28,6 +28,7 @@ public class DatatoolSql implements DatatoolImport
             DatatoolTk.getLabel("error.sql.connection_failed"), e);
       }
 
+      hasVerbatim = false;
       DatatoolDb db;
       String name = null;
 
@@ -112,12 +113,25 @@ public class DatatoolSql implements DatatoolImport
            DatatoolTk.getLabel("error.sql.query_failed"), e);
       }
 
+      if (hasVerbatim)
+      {
+         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+      }
+
       return db;
    }
 
    public String mapFieldIfRequired(String value)
    {
-      if (!settings.isTeXMappingOn()) return value;
+      if (!settings.isTeXMappingOn())
+      {
+         if (!hasVerbatim)
+         {
+            hasVerbatim = DatatoolDb.checkForVerbatim(value);
+         }
+
+         return value;
+      }
 
       if (value.isEmpty())
       {
@@ -177,4 +191,6 @@ public class DatatoolSql implements DatatoolImport
    private DatatoolSettings settings;
 
    private Connection connection = null;
+
+   private boolean hasVerbatim = false;
 }

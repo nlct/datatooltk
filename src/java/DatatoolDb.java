@@ -40,6 +40,7 @@ public class DatatoolDb
    {
       BufferedReader in = null;
       DatatoolDb db = null;
+      boolean hasVerbatim = false;
 
       try
       {
@@ -145,7 +146,7 @@ public class DatatoolDb
                  ""+db.linenum, "\\db@plist@elt@w"));
             }
 
-            db.parseHeader(in);
+            hasVerbatim = db.parseHeader(in, !hasVerbatim) || hasVerbatim;
 
             while ((line = in.readLine()) != null)
             {
@@ -465,7 +466,8 @@ public class DatatoolDb
                         break;
                      }
 
-                     value += System.getProperty("line.separator", "\n") + line;
+                     value += System.getProperty("line.separator", "\n") 
+                            + line;
                   }
 
                   if (line == null)
@@ -536,6 +538,16 @@ public class DatatoolDb
                           ""+db.linenum, ""+colIdx));
                   }
 
+                  if (value.endsWith("%"))
+                  {
+                     value = value.substring(0, value.length()-1);
+                  }
+
+                  if (!hasVerbatim)
+                  {
+                     hasVerbatim = checkForVerbatim(value);
+                  }
+
                   db.addCell(rowIdx-1, colIdx-1, value);
 
                }
@@ -566,10 +578,27 @@ public class DatatoolDb
          }
       }
 
+      if (hasVerbatim)
+      {
+         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+      }
+
       return db;
    }
 
-   public void parseHeader(BufferedReader in)
+   public static boolean checkForVerbatim(String value)
+   {
+      for (int i = 0; i < PATTERN_VERBATIM.length; i++)
+      {
+         Matcher m = PATTERN_VERBATIM[i].matcher(value);
+
+         if (m.matches()) return true;
+      }
+
+      return false;
+   }
+
+   public boolean parseHeader(BufferedReader in, boolean checkForVerbatim)
     throws IOException
    {
       Integer colIdx = (Integer)parseGroup(in, GROUP_COL);
@@ -588,6 +617,8 @@ public class DatatoolDb
 
       insertColumn(colIdx.intValue()-1, 
          new DatatoolHeader(key, title, type.intValue()));
+
+      return checkForVerbatim ? checkForVerbatim(title): false;
    }
 
    private Object parseGroup(BufferedReader in, int groupType)
@@ -1347,8 +1378,8 @@ public class DatatoolDb
    private static final Pattern PATTERN_COL_ID = Pattern.compile("\\s*\\\\db@col@id@w\\s*([0-9]+)(%\\s*)?");
    private static final Pattern PATTERN_COL_ID_END = Pattern.compile("\\s*\\\\db@col@id@end@\\s*(%\\s*)?");
 
-   private static final Pattern PATTERN_COL_ELT = Pattern.compile("\\s*\\\\db@col@elt@w\\s*(.*)(%\\s*)?");
-   private static final Pattern PATTERN_COL_ELT_END = Pattern.compile("\\s*\\\\db@col@elt@end@\\s*(%\\s*)?");
+   private static final Pattern PATTERN_COL_ELT = Pattern.compile("\\s*\\\\db@col@elt@w\\s*(.*?)%?");
+   private static final Pattern PATTERN_COL_ELT_END = Pattern.compile("\\s*\\\\db@col@elt@end@\\s*%?");
 
    private static final int GROUP_COL=0, GROUP_KEY=1, GROUP_TITLE=2, GROUP_TYPE=3;
 
@@ -1359,4 +1390,14 @@ public class DatatoolDb
    private static final Pattern PATTERN_TITLE_ID = Pattern.compile("\\s*\\\\db@header@id@w\\s*(.*)%\\s*");
    private static final Pattern PATTERN_TITLE_ID_END = Pattern.compile("\\s*\\\\db@header@id@end@\\s*%\\s*");
 
+   private static final Pattern[] PATTERN_VERBATIM =
+    new Pattern[]
+    { 
+       Pattern.compile(".*\\\\begin\\s*\\{verbatim\\}.*"),
+       Pattern.compile(".*\\\\verb\\b.*"),
+       Pattern.compile(".*\\\\begin\\s*\\{lstlisting\\}.*"),
+       Pattern.compile(".*\\\\lstinline\\b.*"),
+       Pattern.compile(".*\\\\lstinputlisting\\b.*"),
+       Pattern.compile(".*\\\\verbatiminput\\b.*")
+    };
 }

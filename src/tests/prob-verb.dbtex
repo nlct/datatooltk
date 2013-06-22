@@ -1,4 +1,4 @@
-% Created by datatooltk on Sat Jun 22 11:28:09 BST 2013
+% Created by datatooltk on Sat Jun 22 11:58:56 BST 2013
 \DTLifdbexists{prob-verb}%
 {\PackageError{datatool}{Database `prob-verb'
 already exists}{}%
@@ -70,8 +70,8 @@ already exists}{}%
 \db@col@id@end@ %
 \db@col@id@w 3%
 \db@col@id@end@ %
-\db@col@elt@w This problem has a code 
-fragment.  \input{hello-world-answer}%
+\db@col@elt@w This problem has a code fragment.
+\input{hello-world-answer}%
 \db@col@elt@end@ %
 \db@col@id@w 3%
 \db@col@id@end@ %

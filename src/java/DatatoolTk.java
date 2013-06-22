@@ -176,6 +176,18 @@ public class DatatoolTk
       System.out.println(getAppInfo());
    }
 
+   public static void warning(String message)
+   {
+      if (guiMode)
+      {
+         DatatoolGuiResources.warning(null, message);
+      }
+      else
+      {
+         System.err.println(message);
+      }
+   }
+
    public static void debug(String message)
    {
       if (debugMode)
@@ -457,7 +469,7 @@ public class DatatoolTk
    {
       settings = new DatatoolSettings();
 
-      boolean gui = false;
+      guiMode = false;
 
       try
       {
@@ -731,11 +743,11 @@ public class DatatoolTk
             }
             else if (args[i].equals("--gui") || args[i].equals("-g"))
             {
-               gui = true;
+               guiMode = true;
             }
             else if (args[i].equals("--batch") || args[i].equals("-b"))
             {
-               gui = false;
+               guiMode = false;
             }
             else if (args[i].equals("--debug"))
             {
@@ -793,7 +805,7 @@ public class DatatoolTk
       }
       catch (InvalidSyntaxException e)
       {
-         if (gui)
+         if (guiMode)
          {
             DatatoolGuiResources.error(null, e);
          }
@@ -806,7 +818,7 @@ public class DatatoolTk
          System.exit(1);
       }
 
-      if (gui)
+      if (guiMode)
       {
          javax.swing.SwingUtilities.invokeLater(new Runnable()
           {
@@ -821,6 +833,8 @@ public class DatatoolTk
          doBatchProcess();
       }
    }
+
+   private static boolean guiMode = false;
 
    public static final String appVersion = "0.1a";
    public static final String appName = "datatooltk";

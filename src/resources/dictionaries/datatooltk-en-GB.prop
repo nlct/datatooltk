@@ -400,6 +400,7 @@ error.internal.import_probdata_failed=(Internal Error) Something's gone wrong. F
 
 # Warning messages
 warning.title=Warning
+warning.verb_detected=Verbatim text has been detected. You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 
 # Context labels in manual
 figure=Figure

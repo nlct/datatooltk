@@ -15,6 +15,8 @@ public class DatatoolProbSoln implements DatatoolImport
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {
+      boolean hasVerbatim = false;
+
       File file = new File(source);
 
       if (!file.exists())
@@ -181,6 +183,12 @@ public class DatatoolProbSoln implements DatatoolImport
             question = question.replaceAll("\\\\(begin|end) *\\{onlyproblem\\}", "");
             answer = answer.replaceAll("\\\\(begin|end) *\\{onlysolution\\}", "");
 
+            if (!hasVerbatim)
+            {
+               hasVerbatim = DatatoolDb.checkForVerbatim(question)
+                           || DatatoolDb.checkForVerbatim(answer);
+            }
+
             DatatoolRow row = new DatatoolRow(db, 3);
             row.addCell(0, label);
             row.addCell(1, question);
@@ -220,6 +228,11 @@ public class DatatoolProbSoln implements DatatoolImport
                throw new DatatoolImportException(e);
             }
          }
+      }
+
+      if (hasVerbatim)
+      {
+         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
       }
 
       return db;

@@ -58,8 +58,10 @@ public class DatatoolGuiResources
     {
        DatatoolTk.debug("Warning: '"+message+"'");
 
+       errorPanel.updateMessage(message);
+
        JOptionPane.showMessageDialog(parent,
-          message,
+          errorPanel,
           DatatoolTk.getLabelWithAlt("error.warning", "Warning"),
           JOptionPane.WARNING_MESSAGE);
     }

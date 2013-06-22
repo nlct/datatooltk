@@ -73,6 +73,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    public DatatoolDb importData(File file)
       throws DatatoolImportException
    {
+      boolean hasVerbatim = false;
+
       DatatoolDb db = new DatatoolDb();
 
       String name = file.getName();
@@ -100,7 +102,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    
             String[] fields = csvReader.readNext();
 
-            mapFieldsIfRequired(fields);
+            hasVerbatim = mapFieldsIfRequired(fields, !hasVerbatim) || hasVerbatim;
    
             if (fields == null)
             {
@@ -137,7 +139,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    
             while ((fields = csvReader.readNext()) != null)
             {
-               mapFieldsIfRequired(fields);
+               hasVerbatim = mapFieldsIfRequired(fields, !hasVerbatim) || hasVerbatim;
 
                for (int i = 0; i < fields.length; i++)
                {
@@ -167,12 +169,31 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
            file.toString()), e);
       }
 
+      if (hasVerbatim)
+      {
+         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+      }
+
       return db;
    }
 
-   public void mapFieldsIfRequired(String[] fields)
+   public boolean mapFieldsIfRequired(String[] fields, boolean checkForVerbatim)
    {
-      if (!settings.isTeXMappingOn()) return;
+      if (!settings.isTeXMappingOn())
+      {
+         if (checkForVerbatim)
+         {
+            for (int i = 0; i < fields.length; i++)
+            {
+               if (DatatoolDb.checkForVerbatim(fields[i]))
+               {
+                  return true;
+               }
+            }
+         }
+
+         return false;
+      }
 
       for (int i = 0; i < fields.length; i++)
       {
@@ -205,6 +226,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
 
          fields[i] = builder.toString();
       }
+
+      return false;
    }
 
    private DatatoolSettings settings;
