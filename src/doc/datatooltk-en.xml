@@ -58,12 +58,29 @@
        <dd>
        Save the database to <meta>filename</meta> (batch mode only).
        </dd>
+       <dt><opt tag="in"/> (or <tt>-i</tt>) <meta>datatool file</meta></dt>
+       <dd>Load <meta>datatool file</meta>.</dd>
        <dt><opt tag="version"/> (or <tt>-v</tt>)</dt>
        <dd>Print the version details to STDOUT and exit.</dd>
        <dt><opt tag="help"/> (or <tt>-h</tt>)</dt>
        <dd>Print a brief summary of available options to STDOUT and exit.</dd>
+       <dt><opt tag="debug"/></dt>
+       <dd>Enables debug mode.</dd>
+       <dt><opt tag="nodebug"/></dt>
+       <dd>Disables debug mode. (Default.)</dd>
+       <dt><opt tag="delete-tmp-files"/></dt>
+       <dd>Delete temporary files on exit. (Default.)</dd>
+       <dt><opt tag="nodelete-tmp-files"/></dt>
+       <dd>Don't delete temporary files on exit.</dd>
+       <dt><opt tag="map-tex-specials"/></dt>
+       <dd>Map <TeX/> special characters when importing data from 
+       <acr tag="csv"/> or <acr tag="sql"/>.</dd>
+       <dt><opt tag="nomap-tex-specials"/></dt>
+       <dd>Don't map <TeX/> special characters when importing data from 
+       <acr tag="csv"/> or <acr tag="sql"/>. (Default.)</dd>
        <dt><opt tag="csv" /> <meta>csv file</meta></dt>
-       <dd>Import data from the given <acr tag="csv"/> file.</dd>
+       <dd>Import data from the given <acr tag="csv"/> file.
+       (See <ref tag="importcsv"/>)</dd>
        <dt><opt tag="sep" /> <meta>character</meta></dt>
        <dd>Specify the character used to separate values in the 
        <acr tag="csv" /> file. (Defaults to a<nbsp />comma)</dd>
@@ -76,7 +93,8 @@
        <dd>The <acr tag="csv"/> file doesn't have a header row.</dd>
        <dt><opt tag="sql"/> <meta>statement</meta></dt>
        <dd>Import data from an <acr tag="sql"/> database where <meta>statement</meta>
-           is an <acr tag="sql"/> SELECT statement.</dd>
+           is an <acr tag="sql"/> SELECT statement.
+       (See <ref tag="importsql"/>)</dd>
        <dt><opt tag="sqldb"/> <meta>name</meta></dt>
        <dd>The <acr tag="sql"/> database name.</dd>
        <dt><opt tag="sqlprefix"/> <meta>prefix</meta></dt>
@@ -97,13 +115,18 @@
        <dt><opt tag="nowipepassword"/></dt>
        <dd>Don't wipe the password from memory as soon as it 
        has been used to connect to an <acr tag="sql"/> database. (Default.)</dd>
+       <dt><opt tag="probsoln"/> <meta>filename</meta></dt>
+       <dd>Import <sty>probsoln</sty> data from <meta>filename</meta>.
+       (See <ref tag="importprobsoln"/>.)</dd>
      </dl>
+     You can't combine any of the following options: <opt tag="in"/>, 
+     <opt tag="csv"/>, <opt tag="sql"/>, <opt tag="probsoln"/>.
      </p>
    </node>
    <node tag="notaspreadsheet" type="section" title="What it isn't">
    <p>
    The <app/> application isn't intended to have the full functionality of
-   a<nbsp/>spreadsheet. It's purpose is to allow you to edit databases <sty>datatool</sty> with 
+   a<nbsp/>spreadsheet. Its purpose is to allow you to edit <sty>datatool</sty> databases with 
    multilined entries. If your data just consists of numbers or short 
    single-lined text, then you'll probably be better off just using 
    a<nbsp/>spreadsheet to input the data and use <app/> in batch mode to
@@ -166,6 +189,54 @@
    </example>
    </node>
    <node tag="importsql" type="section" title="Import SQL Data">
+   <p>
+   Data can be imported from an<nbsp/><acr tag="sql"/> database using
+   the <opt tag="sql"/> command line option or the 
+   <menu tag="file.import.importsql"/> menu item. You additionally need to
+   supply the database, port, prefix, host, user name and password. In batch 
+   mode, you can use the command line options <opt tag="sqldb"/>,
+   <opt tag="sqlport"/>, <opt tag="sqlprefix"/>, <opt tag="sqlhost"/> and
+   <opt tag="sqluser"/>. You can specify the password with 
+   <opt tag="sqlpassword"/>, but that isn't secure. If you don't use that, 
+   you will be prompted for the password, where the text you enter 
+   won't be visible. See <ref tag="introduction"/> for more details
+   about command line options.
+   </p>
+   <p>
+   In <acr tag="gui"/> mode, when you use <menu tag="file.import.importsql"/>
+   the dialog box shown in <ref tag="sqlimportdialog"/> will be displayed,
+   where you can enter the settings. In addition to the above named settings,
+   you must also specify the <acr tag="sql"/> SELECT statement that identifies 
+   the required data to import. (This manual assumes that if you have
+   data in an <acr tag="sql"/> database, then you have a<nbsp/>basic
+   knowledge of <acr tag="sql"/> syntax.)
+   </p>
+     <float type="figure" tag="sqlimportdialog" caption="SQL Import Dialog Box">
+      <image scale="0.75" alt="Image of the SQL dialog box" src="images/sqlimportdialog.png" />
+     </float>
+   <p>
+   For example, in <ref tag="sqlimportdialog"/> I<nbsp/>want to import all
+   data from the table called <tt>testsqldata</tt> in the <term tag="mysql"/>
+   database called <tt>datatooltk</tt>. Once I've entered this information,
+   I<nbsp/>then click on <dq><dict tag="button.okay"/></dq> and the password
+   dialog box will appear (see <ref tag="sqlpassworddialog"/>).
+   </p>
+     <float type="figure" tag="sqlpassworddialog" caption="Password Dialog Box">
+      <image scale="0.75" alt="Image of the password dialog box" src="images/sqlpassworddialog.png" />
+     </float>
+   <p>
+   Alternatively, I<nbsp/>can use batch mode to import and save the data 
+   from the command prompt:
+   </p>
+   <pre>
+[nlct@dickimaw tests]$ datatooltk --out test-sql-data.dbtex \
+--sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
+Password:
+   </pre>
+   <p>
+   The password should be entered at the <dq><dict tag="password.prompt"/></dq>
+   prompt.
+   </p>
    </node>
    <node tag="importprobsoln" type="section" title="Import probsoln Data">
    </node>
@@ -327,7 +398,17 @@
    </p>
    </node>
    <node type="chapter" tag="licence" title="Licence" >
-     <verbinput src="LICENSE"/>
+   <p>
+   <app/> is licensed under the terms of the GNU General Public License.
+   <app/> depends on the following third party libraries whose jar files are
+   in the <tt>lib</tt> directory: Java Help 
+   (<url www="https://javahelp.java.net/"/>),
+   Open CSV (<url www="http://opencsv.sourceforge.net/"/>),
+   MySQL connector (<url www="http://dev.mysql.com/downloads/connector/j/"/>)
+   and the Java Look and Feel Graphics Repository
+   (<url www="http://www.oracle.com/technetwork/java/index-138612.html"/>).
+   </p>
+     <verbtabinput src="LICENSE"/>
    </node>
    <printglossary />
    <printacronyms />

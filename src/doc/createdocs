@@ -637,6 +637,7 @@ sub start_preamble{
       "\\usepackage[$fontenc]{fontenc}\n",
       "\\usepackage{graphicx}\n",
       "\\usepackage{verbatim}\n",
+      "\\usepackage{moreverb}\n",
       "\\usepackage{makeidx}\n",
       "\\usepackage{babel}\n",
       "\\usepackage[colorlinks]{hyperref}\n",
@@ -1255,6 +1256,39 @@ sub start_verbinput{
 }
 
 sub end_verbinput{
+   my ($expat) = @_;
+}
+ 
+sub start_verbtabinput{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{src})
+   {
+      die "Missing 'verbtabinput' element's 'src' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   &handle_html('<pre>');
+
+   open FD, $attrs{src} or die "Can't open '$attrs{src}' $!\n";
+
+   while (<FD>)
+   {
+      s/\&/\&amp;/g;
+      s/</\&lt;/g;
+      s/>/\&gt;/g;
+
+      &handle_html($_);
+   }
+
+   close FD;
+
+   &handle_html('</pre>');
+
+   print TEXFD "\\verbatimtabinput{$attrs{src}}";
+}
+
+sub end_verbtabinput{
    my ($expat) = @_;
 }
  
