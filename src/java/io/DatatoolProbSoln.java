@@ -67,7 +67,7 @@ public class DatatoolProbSoln implements DatatoolImport
          out.println("\\batchmode");
          out.println("\\documentclass{article}");
 
-         out.println("\\usepackage{probsoln}");
+         out.println("\\usepackage[usedefaultargs]{probsoln}");
          out.println("\\usepackage{etoolbox}");
 
          out.println("\\loadallproblems{"+
@@ -165,6 +165,7 @@ public class DatatoolProbSoln implements DatatoolImport
 
                line = line.replaceAll("\\\\par ", "\\\\DTLpar ");
                line = line.replaceAll("\n\n+", "\\\\DTLpar ");
+               line = line.replaceAll("([^\\\\])#(\\d{1})", "$1##$2");
 
                buffer.append(line);
             }

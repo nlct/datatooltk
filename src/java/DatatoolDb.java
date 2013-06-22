@@ -449,7 +449,7 @@ public class DatatoolDb
                      throw new InvalidSyntaxException(
                         DatatoolTk.getLabelWithValues(
                            "error.dbload.missing_col_tag",
-                            ""+db.linenum, PATTERN_COL_ID_END.pattern()));
+                            ""+db.linenum, PATTERN_COL_ELT.pattern()));
                   }
 
                   String value = m.group(1);
@@ -1347,7 +1347,7 @@ public class DatatoolDb
    private static final Pattern PATTERN_COL_ID = Pattern.compile("\\s*\\\\db@col@id@w\\s*([0-9]+)(%\\s*)?");
    private static final Pattern PATTERN_COL_ID_END = Pattern.compile("\\s*\\\\db@col@id@end@\\s*(%\\s*)?");
 
-   private static final Pattern PATTERN_COL_ELT = Pattern.compile("\\s*\\\\db@col@elt@w\\s*(.*)%\\s*");
+   private static final Pattern PATTERN_COL_ELT = Pattern.compile("\\s*\\\\db@col@elt@w\\s*(.*)(%\\s*)?");
    private static final Pattern PATTERN_COL_ELT_END = Pattern.compile("\\s*\\\\db@col@elt@end@\\s*(%\\s*)?");
 
    private static final int GROUP_COL=0, GROUP_KEY=1, GROUP_TITLE=2, GROUP_TYPE=3;

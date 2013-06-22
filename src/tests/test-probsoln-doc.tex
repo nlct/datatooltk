@@ -1,0 +1,18 @@
+\documentclass{article}
+
+\usepackage{datatool}
+\usepackage{listings}
+
+\input{prob-verb.dbtex}
+
+\begin{document}
+
+\DTLforeach{prob-verb}{\Label=Label,\Question=Question,\Answer=Answer}{%
+Question:
+   \Question
+
+Answer:
+   \Answer
+}
+
+\end{document}

@@ -1,0 +1,96 @@
+% Created by datatooltk on Sat Jun 22 11:28:09 BST 2013
+\DTLifdbexists{prob-verb}%
+{\PackageError{datatool}{Database `prob-verb'
+already exists}{}%
+\aftergroup\endinput}{}%
+\bgroup\makeatletter
+\dtl@message{Reconstructing database
+`prob-verb'}%
+\expandafter\global\expandafter
+\newtoks\csname dtlkeys@prob-verb\endcsname
+\expandafter\global
+ \csname dtlkeys@prob-verb\endcsname={%
+%
+\db@plist@elt@w %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@key@id@w Label%
+\db@key@id@end@ %
+\db@type@id@w 0%
+\db@type@id@end@ %
+\db@header@id@w Label%
+\db@header@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+\db@plist@elt@w %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@key@id@w Question%
+\db@key@id@end@ %
+\db@type@id@w 0%
+\db@type@id@end@ %
+\db@header@id@w Question%
+\db@header@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+\db@plist@elt@w %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@key@id@w Answer%
+\db@key@id@end@ %
+\db@type@id@w 0%
+\db@type@id@end@ %
+\db@header@id@w Answer%
+\db@header@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+}%
+\expandafter\global\expandafter
+\newtoks\csname dtldb@prob-verb\endcsname
+\expandafter\global
+\csname dtldb@prob-verb\endcsname={%
+%
+\db@row@elt@w %
+\db@row@id@w 1%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w code-helloworld%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w This problem has a code fragment.  \input{hello-world-question}%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w This problem has a code 
+fragment.  \input{hello-world-answer}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@row@id@w 1%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+}%
+\expandafter\global
+ \expandafter\newcount\csname dtlrows@prob-verb\endcsname
+\expandafter\global
+ \csname dtlrows@prob-verb\endcsname=1\relax
+\expandafter\global
+ \expandafter\newcount\csname dtlcols@prob-verb\endcsname
+\expandafter\global
+ \csname dtlcols@prob-verb\endcsname=3\relax
+\expandafter
+ \gdef\csname dtl@ci@prob-verb@Label\endcsname{1}%
+\expandafter
+ \gdef\csname dtl@ci@prob-verb@Question\endcsname{2}%
+\expandafter
+ \gdef\csname dtl@ci@prob-verb@Answer\endcsname{3}%
+\egroup
