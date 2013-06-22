@@ -29,7 +29,17 @@ public class DatatoolProbSoln implements DatatoolImport
       File dir = file.getParentFile();
 
       DatatoolDb db = new DatatoolDb();
-      db.setName(file.getName());
+
+      String name = file.getName();
+
+      int index = name.lastIndexOf(".");
+
+      if (index > -1)
+      {
+         name = name.substring(0, index);
+      }
+
+      db.setName(name);
 
       String key = DatatoolTk.getLabel("probsoln.label");
       db.addColumn(new DatatoolHeader(key, key, DatatoolDb.TYPE_STRING));
@@ -51,7 +61,7 @@ public class DatatoolProbSoln implements DatatoolImport
          File texFile = File.createTempFile("dbt", ".tex", dir);
          DatatoolTk.removeFileOnExit(texFile);
 
-         String name = texFile.getName();
+         name = texFile.getName();
 
          name = name.substring(0, name.lastIndexOf("."));
 
