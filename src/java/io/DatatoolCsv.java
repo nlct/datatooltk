@@ -181,18 +181,22 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    {
       if (!settings.isTeXMappingOn())
       {
-         if (checkForVerbatim)
+         boolean hasVerbatim = !checkForVerbatim;
+
+         for (int i = 0; i < fields.length; i++)
          {
-            for (int i = 0; i < fields.length; i++)
+            fields[i].replaceAll("\n\n+", "\\\\DTLpar ");
+
+            if (!hasVerbatim)
             {
                if (DatatoolDb.checkForVerbatim(fields[i]))
                {
-                  return true;
+                  hasVerbatim = true;
                }
             }
          }
 
-         return false;
+         return hasVerbatim;
       }
 
       for (int i = 0; i < fields.length; i++)
@@ -224,7 +228,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             }
          }
 
-         fields[i] = builder.toString();
+         fields[i] = builder.toString().replaceAll("\n\n+", "\\\\DTLpar ");
       }
 
       return false;
