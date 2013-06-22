@@ -107,6 +107,10 @@ my @current = ();
 my @paragraph = ();
 my %tags    = ();
 
+my $languagedefinitions = 
+  "\\def\\idxpackagename{".&get_label('manual.idxpackage')."}\n"
+ ."\\def\\examplename{".&get_label('manual.example')."}\n";
+
 my $xmlfile = "$base-$locale.xml";
 
 if (not (-e $xmlfile) and ($lang ne $locale))
@@ -182,10 +186,10 @@ open HSFD, ">$helpsetdir/$base.hs"
   or die "Can't open '$helpsetdir/$base.hs' $!\n";
 binmode(HSFD, ":$encoding_file");
 
-my $toctitle = &get_label('toc');
-my $manualtitle = &get_label('help.manual');
-my $indextitle = &get_label('index');
-my $searchtitle = &get_label('search');
+my $toctitle = &get_label('manual.toc');
+my $manualtitle = &get_label('manual.title');
+my $indextitle = &get_label('manual.index');
+my $searchtitle = &get_label('manual.search');
 
 print HSFD <<_END_HS_HEAD;
 <?xml version='1.0' encoding='$encoding_xml' ?>
@@ -637,7 +641,8 @@ sub start_preamble{
       "\\usepackage{babel}\n",
       "\\usepackage[colorlinks]{hyperref}\n",
       "\\usepackage[acronym,toc]{glossaries}\n",
-      "\\makeglossaries\n\\makeindex\n";
+      "\\makeglossaries\n\\makeindex\n",
+      $languagedefinitions;
 }
  
 sub end_preamble{
@@ -1170,6 +1175,40 @@ sub end_footnote{
    print TEXFD "}";
 }
 
+sub start_example{
+   my ($expat, %attrs) = @_;
+
+   if ($counters{example})
+   {
+      $counters{example} = 1;
+   }
+   else
+   {
+      $counters{example}++;
+   }
+
+   &handle_html('<blockquote><p><b>'
+    . &get_label('manual.example')
+    . $counters{example}
+    . ($attrs{title}? "($attrs{title})." : '.')
+    . '</b></p><p>');
+
+   print TEXFD "\\begin{example}";
+
+   if ($attrs{title})
+   {
+      print TEXFD '[', $attrs{title}, ']';
+   }
+}
+
+sub end_example{
+   my ($expat) = @_;
+
+   &handle_html('</p></blockquote>');
+
+   print TEXFD "\\end{example}";
+}
+
 sub start_pre{
    my ($expat, %attrs) = @_;
 
@@ -1257,7 +1296,7 @@ sub start_float{
 
    $tags{$attrs{tag}}->{Ref} = $nodes[$#nodes]->{Tag}
      .'.html#'.$attrs{tag};
-   $tags{$attrs{tag}}->{Text} = ucfirst(&get_label($attrs{type}))
+   $tags{$attrs{tag}}->{Text} = ucfirst(&get_label('manual.'.$attrs{type}))
         . '&nbsp;' . $attrs{counter};
 
    unless ($attrs{type} eq 'figure')
@@ -1628,7 +1667,7 @@ sub start_opt{
 
    unless ($terms{options})
    {
-      &hs_index_term('options', '', &get_label('options'), \%terms);
+      &hs_index_term('options', '', &get_label('manual.options'), \%terms);
 
       my %hash = ();
 
@@ -1642,6 +1681,27 @@ sub start_opt{
 }
 
 sub end_opt{
+   my ($expat) = @_;
+}
+
+sub start_cs{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'cs' element's 'tag' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   my $text = "\\".$attrs{tag};
+
+   print TEXFD '\\cs{', $attrs{tag}, '}';
+
+   &hs_index_term('cs_'.$attrs{tag}, $text, $text, \%terms);
+
+}
+
+sub end_cs{
    my ($expat) = @_;
 }
 
@@ -1894,7 +1954,7 @@ sub html_nav{
      if ($prevNode eq $base)
      {
         $prev = $base;
-        $title = &get_label('home');
+        $title = &get_label('manual.home');
      } 
      else
      {

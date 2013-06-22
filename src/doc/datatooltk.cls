@@ -8,6 +8,7 @@
 \LoadClass{scrreprt}
 
 \RequirePackage{etoolbox}
+\RequirePackage{amsthm}
 
 \renewcommand{\@author}{}
 
@@ -17,8 +18,14 @@
   {\appto\@author{\and #1}}%
 }
 
-\newcommand*{\sty}[1]{\textsf{#1}\index{#1 package@\textsf{#1}
-package}}
+% Default definition.
+% (Overridden by context label in dictionary file.)
+\providecommand{\idxpackagename}{package}
+
+\newcommand*{\sty}[1]{%
+  \textsf{#1}%
+  \index{#1 \idxpackagename @\textsf{#1} \idxpackagename}%
+}
 
 \newcommand*{\opt}[1]{\texttt{-\/-#1}\index{--#1@\texttt{-\/-#1}}}
 
@@ -56,4 +63,24 @@ package}}
 \newcommand*{\dq}[1]{``#1''}
 
 \newcommand*{\meta}[1]{\ensuremath{\langle}\emph{#1}\ensuremath{\rangle}}
+
+\newcommand*{\cs}[1]{\texttt{\char`\\#1}\index{#1@\texttt{\char`\\#1}}}
+
+\newtheoremstyle{example}% style name
+{2ex}% above space
+{2ex}% below space
+{}% body font
+{}% indent amount
+{\bfseries}% head font
+{.}% post head punctuation
+{\newline}% post head punctuation
+{}% head spec 
+
+% Default definition.
+% (Overridden by context label in dictionary file.)
+\providecommand{\examplename}{Example}
+
+\theoremstyle{example}
+\newtheorem{example}{\examplename}
+
 \endinput

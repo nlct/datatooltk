@@ -309,6 +309,8 @@ syntax.debug=$1\t\t\tSwitch on debug mode.
 syntax.nodebug=$1\t\tSwitch off debug mode. (Default.)
 syntax.deletetmpfiles=$1\tDelete temporary files on exit. (Default)
 syntax.nodeletetmpfiles=$1\tDon't delete temporary files on exit.
+syntax.maptexspecials=$1\tMap TeX special characters.$2
+syntax.nomaptexspecials=$1\tDon't map TeX special characters.$2
 syntax.csv_opts=CSV Options:
 syntax.csv=$1 <csv file>\tImport <csv file>. (Can't be used with --in or --sql.)
 syntax.csv_sep=$1 <character>\tSeparator used in CSV files. (Defaults to '$2'.)
@@ -409,12 +411,15 @@ warning.title=Warning
 warning.verb_detected=Verbatim text has been detected. You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 
 # Context labels in manual
-figure=Figure
-table=Table
-next=Next
-prev=Previous
-home=Home
-options=Options
-toc=Table of Contents
-index=Index
-search=Search
+manual.title=Manual
+manual.figure=Figure
+manual.table=Table
+manual.next=Next
+manual.prev=Previous
+manual.home=Home
+manual.options=Options
+manual.toc=Table of Contents
+manual.index=Index
+manual.search=Search
+manual.idxpackage=package
+manual.example=Example

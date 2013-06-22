@@ -104,6 +104,8 @@ public class DatatoolTk
       System.out.println(getLabelWithValue("syntax.nodebug", "--nodebug"));
       System.out.println(getLabelWithValue("syntax.deletetmpfiles", "--delete-tmp-files"));
       System.out.println(getLabelWithValue("syntax.nodeletetmpfiles", "--nodelete-tmp-files"));
+      System.out.println(getLabelWithValues("syntax.maptexspecials", "--map-tex-specials", (settings.isTeXMappingOn()?" ("+getLabel("syntax.default")+".)":"")));
+      System.out.println(getLabelWithValues("syntax.nomaptexspecials", "--nomap-tex-specials", (settings.isTeXMappingOn()?"":" ("+getLabel("syntax.default")+".)")));
       System.out.println();
       System.out.println(getLabel("syntax.csv_opts"));
       System.out.println(getLabelWithValue("syntax.csv", "--csv"));
@@ -764,6 +766,14 @@ public class DatatoolTk
             else if (args[i].equals("--nodelete-tmp-files"))
             {
                removeTmpFilesOnExit = false;
+            }
+            else if (args[i].equals("--map-tex-specials"))
+            {
+               settings.setTeXMapping(true);
+            }
+            else if (args[i].equals("--nomap-tex-specials"))
+            {
+               settings.setTeXMapping(false);
             }
             else if (args[i].equals("--in") || args[i].equals("-i"))
             {

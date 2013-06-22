@@ -3,3 +3,4 @@ test-sql-data.dbtex
 *.log
 *.pdf
 *.out
+*.dvi

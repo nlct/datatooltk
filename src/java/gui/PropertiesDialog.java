@@ -252,7 +252,7 @@ public class PropertiesDialog extends JDialog
       }
 
       getContentPane().add(
-        DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "properties"),
+        DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "preferences"),
         BorderLayout.SOUTH);
       pack();
 
