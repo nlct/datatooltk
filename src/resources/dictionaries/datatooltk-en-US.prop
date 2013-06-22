@@ -165,10 +165,11 @@ preferences.display=Display
 preferences.display.mnemonic=I
 preferences.display.font=Font
 preferences.display.font.mnemonic=F
-preferences.display.fontsize=Size
+preferences.display.fontsize=Font Size
 preferences.display.fontsize.mnemonic=Z
 preferences.display.cellheight=Cell Height
 preferences.display.cellheight.mnemonic=G
+preferences.display.cellwidths=Cell Widths
 
 # Sort dialog
 sort.title=Sort Database
@@ -216,6 +217,11 @@ header.type.int=Integer
 header.type.real=Real
 header.type.currency=Currency
 header.type.unset=Unset
+header.type.string.mnemonic=S
+header.type.int.mnemonic=T
+header.type.real.mnemonic=R
+header.type.currency.mnemonic=N
+header.type.unset.mnemonic=U
 
 # File filter
 filter.tex=TeX Files ($1)

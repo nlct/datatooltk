@@ -971,11 +971,18 @@ public class DatatoolGUI extends JFrame
       return settings.getCellHeight();
    }
 
+   public int getCellWidth(int type)
+   {
+      return settings.getCellWidth(type);
+   }
+
    public void updateTableSettings()
    {
       for (int i = 0, n = tabbedPane.getTabCount(); i < n; i++)
       {
-         ((DatatoolDbPanel)tabbedPane.getComponentAt(i)).updateTableSettings();
+         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getComponentAt(i);
+         panel.updateColumnHeaders();
+         panel.updateTableSettings();
       }
    }
 

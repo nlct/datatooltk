@@ -582,11 +582,8 @@ public class DatatoolDbPanel extends JPanel
          column.setHeaderValue(db.getHeader(i).getTitle());
          column.setIdentifier(db.getHeader(i).getKey());
 
-         if (db.getHeader(i).getType() == DatatoolDb.TYPE_STRING)
-         {
-            column.setPreferredWidth(Math.max(column.getPreferredWidth(),
-              STRING_MIN_WIDTH));
-         }
+         column.setPreferredWidth(Math.max(column.getPreferredWidth(),
+              gui.getCellWidth(db.getHeader(i).getType())));
       }
 
       if (sp.getColumnHeader() != null)
@@ -722,8 +719,6 @@ public class DatatoolDbPanel extends JPanel
    private ButtonTabComponent buttonTabComponent;
 
    private JTextField infoField;
-
-   public static final int STRING_MIN_WIDTH=300;
 }
 
 class DatatoolDbTableModel extends AbstractTableModel

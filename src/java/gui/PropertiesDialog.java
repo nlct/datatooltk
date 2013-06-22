@@ -167,13 +167,19 @@ public class PropertiesDialog extends JDialog
 
       // Display Tab
 
-      JComponent displayTab = addTab("display");
+      JComponent displayTab =
+         addTab(new JPanel(new FlowLayout(FlowLayout.LEFT)), "display");
+
+      displayTab.setAlignmentY(0);
+      JComponent leftPanel = Box.createVerticalBox();
+      leftPanel.setAlignmentY(0);
+      displayTab.add(leftPanel);
 
       labels = new JLabel[3];
       idx = 0;
       maxWidth = 0;
 
-      box = createNewRow(displayTab);
+      box = createNewRow(leftPanel);
 
       GraphicsEnvironment env =
          GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -186,7 +192,7 @@ public class PropertiesDialog extends JDialog
       box.add(labels[idx++]);
       box.add(fontBox);
 
-      box = createNewRow(displayTab);
+      box = createNewRow(leftPanel);
       sizeField = new NonNegativeIntField(10);
 
       labels[idx] = createLabel("preferences.display.fontsize", sizeField);
@@ -195,7 +201,7 @@ public class PropertiesDialog extends JDialog
       box.add(labels[idx++]);
       box.add(sizeField);
 
-      box = createNewRow(displayTab);
+      box = createNewRow(leftPanel);
       cellHeightField = new NonNegativeIntField(4);
 
       labels[idx] = createLabel("preferences.display.cellheight", cellHeightField);
@@ -203,6 +209,40 @@ public class PropertiesDialog extends JDialog
       maxWidth = Math.max(maxWidth, dim.width);
       box.add(labels[idx++]);
       box.add(cellHeightField);
+
+      for (idx = 0; idx < labels.length; idx++)
+      {
+         dim = labels[idx].getPreferredSize();
+         dim.width = maxWidth;
+         labels[idx].setPreferredSize(dim);
+      }
+
+      JComponent rightPanel = Box.createVerticalBox();
+      rightPanel.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(), 
+        DatatoolTk.getLabel("preferences.display.cellwidths")));
+      rightPanel.setAlignmentY(0);
+      displayTab.add(rightPanel);
+
+      cellWidthFields = new NonNegativeIntField[DatatoolDb.TYPE_LABELS.length];
+      labels = new JLabel[DatatoolDb.TYPE_LABELS.length];
+
+      for (int i = 0; i < cellWidthFields.length; i++)
+      {
+         box = createNewRow(rightPanel);
+         cellWidthFields[i] = new NonNegativeIntField(0);
+         labels[i] = new JLabel(DatatoolDb.TYPE_LABELS[i]);
+         if (DatatoolDb.TYPE_MNEMONICS[i] != -1)
+         {
+            labels[i].setDisplayedMnemonic(DatatoolDb.TYPE_MNEMONICS[i]);
+            labels[i].setLabelFor(cellWidthFields[i]);
+         }
+
+         dim = labels[i].getPreferredSize();
+         maxWidth = Math.max(maxWidth, dim.width);
+         box.add(labels[i]);
+         box.add(cellWidthFields[i]);
+      }
 
       for (idx = 0; idx < labels.length; idx++)
       {
@@ -221,8 +261,11 @@ public class PropertiesDialog extends JDialog
 
    private JComponent addTab(String label)
    {
-      JComponent tab = Box.createVerticalBox();
+      return addTab(Box.createVerticalBox(), label);
+   }
 
+   private JComponent addTab(JComponent tab, String label)
+   {
       int index = tabbedPane.getTabCount();
 
       tabbedPane.addTab(DatatoolTk.getLabel("preferences", label), 
@@ -339,6 +382,11 @@ public class PropertiesDialog extends JDialog
       sizeField.setValue(settings.getFontSize());
       fontBox.setSelectedItem(settings.getFontName());
       cellHeightField.setValue(settings.getCellHeight());
+
+      for (int i = 0; i < cellWidthFields.length; i++)
+      {
+         cellWidthFields[i].setValue(settings.getCellWidth(i-1));
+      }
 
       setVisible(true);
    }
@@ -480,6 +528,11 @@ public class PropertiesDialog extends JDialog
       settings.setFontSize(sizeField.getValue());
       settings.setCellHeight(cellHeightField.getValue());
 
+      for (int i = 0; i < cellWidthFields.length; i++)
+      {
+         settings.setCellWidth(cellWidthFields[i].getValue(), i-1);
+      }
+
       gui.updateTableSettings();
 
       setVisible(false);
@@ -500,6 +553,8 @@ public class PropertiesDialog extends JDialog
    private JFileChooser fileChooser;
 
    private NonNegativeIntField portField, sizeField, cellHeightField;
+
+   private NonNegativeIntField[] cellWidthFields;
 
    private JTextField hostField, prefixField, databaseField, userField;
 

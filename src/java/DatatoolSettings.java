@@ -509,6 +509,88 @@ public class DatatoolSettings extends Properties
       return new Font(getFontName(), Font.PLAIN, getFontSize());
    }
 
+   public void setCellWidth(int cellWidth, int type)
+   {
+      String tag;
+
+      switch (type)
+      {
+         case DatatoolDb.TYPE_STRING:
+            tag = "string";
+         break;
+         case DatatoolDb.TYPE_UNKNOWN:
+            tag = "unset";
+         break;
+         case DatatoolDb.TYPE_INTEGER:
+            tag = "int";
+         break;
+         case DatatoolDb.TYPE_REAL:
+            tag = "real";
+         break;
+         case DatatoolDb.TYPE_CURRENCY:
+            tag = "currency";
+         break;
+         default:
+            throw new IllegalArgumentException(
+              "setCellWidth(int,int): Invalid data type "+type);
+      }
+
+      setProperty("cellwidth."+tag, ""+cellWidth);
+   }
+
+   public int getCellWidth(int type)
+   {
+      String tag;
+      int defValue;
+
+      switch (type)
+      {
+         case DatatoolDb.TYPE_STRING:
+            tag = "string";
+            defValue = 300;
+         break;
+         case DatatoolDb.TYPE_UNKNOWN:
+            tag = "unset";
+            defValue = 100;
+         break;
+         case DatatoolDb.TYPE_INTEGER:
+            tag = "int";
+            defValue = 40;
+         break;
+         case DatatoolDb.TYPE_REAL:
+            tag = "real";
+            defValue = 60;
+         break;
+         case DatatoolDb.TYPE_CURRENCY:
+            tag = "currency";
+            defValue = 60;
+         break;
+         default:
+            throw new IllegalArgumentException(
+              "getCellWidth(int): Invalid data type "+type);
+      }
+
+      String prop = getProperty("cellwidth."+tag);
+
+      try
+      {
+         if (prop == null) throw new NullPointerException();
+
+         return Integer.parseInt(prop);
+      }
+      catch (NullPointerException e)
+      {
+      }
+      catch (NumberFormatException e)
+      {
+         DatatoolTk.debug("Property 'cellwidth."+tag
+           +"' should be an integer. Found: '"+prop+"'");
+      }
+
+      setProperty("cellwidth."+tag, ""+defValue);
+      return defValue;
+   }
+
    public int getCellHeight()
    {
       try

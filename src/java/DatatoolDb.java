@@ -1365,6 +1365,14 @@ public class DatatoolDb
             DatatoolTk.getLabel("header.type.real"),
             DatatoolTk.getLabel("header.type.currency")
          };
+   public static final int[] TYPE_MNEMONICS = new int[] 
+         {
+            DatatoolTk.getMnemonicInt("header.type.unset"),
+            DatatoolTk.getMnemonicInt("header.type.string"),
+            DatatoolTk.getMnemonicInt("header.type.int"),
+            DatatoolTk.getMnemonicInt("header.type.real"),
+            DatatoolTk.getMnemonicInt("header.type.currency")
+         };
    private static final Pattern PATTERN_DBNAME = Pattern.compile("\\\\DTLifdbexists\\{(.+)\\}%\\s*");
    public static final Pattern PATTERN_COMMENT = Pattern.compile("\\s*%.*");
    private static final Pattern PATTERN_CLOSE = Pattern.compile("\\s*\\}%\\s*");
@@ -1393,11 +1401,11 @@ public class DatatoolDb
    private static final Pattern[] PATTERN_VERBATIM =
     new Pattern[]
     { 
-       Pattern.compile(".*\\\\begin\\s*\\{verbatim\\}.*"),
-       Pattern.compile(".*\\\\verb\\b.*"),
-       Pattern.compile(".*\\\\begin\\s*\\{lstlisting\\}.*"),
-       Pattern.compile(".*\\\\lstinline\\b.*"),
-       Pattern.compile(".*\\\\lstinputlisting\\b.*"),
-       Pattern.compile(".*\\\\verbatiminput\\b.*")
+       Pattern.compile(".*\\\\begin\\s*\\{verbatim\\}.*", Pattern.DOTALL),
+       Pattern.compile(".*\\\\verb\\b.*", Pattern.DOTALL),
+       Pattern.compile(".*\\\\begin\\s*\\{lstlisting\\}.*", Pattern.DOTALL),
+       Pattern.compile(".*\\\\lstinline\\b.*", Pattern.DOTALL),
+       Pattern.compile(".*\\\\lstinputlisting\\b.*", Pattern.DOTALL),
+       Pattern.compile(".*\\\\verbatiminput\\b.*", Pattern.DOTALL)
     };
 }

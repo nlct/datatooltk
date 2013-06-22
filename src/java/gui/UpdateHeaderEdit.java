@@ -18,6 +18,11 @@ public class UpdateHeaderEdit extends AbstractUndoableEdit
       panel.db.setHeader(col, newHeader);
       panel.setModified(true);
       panel.updateColumnHeader(col);
+
+      if (DatatoolDb.checkForVerbatim(newHeader.getTitle()))
+      {
+         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+      }
    }
 
    public boolean canUndo() {return true;}

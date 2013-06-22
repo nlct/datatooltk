@@ -191,7 +191,13 @@ public class DatatoolGuiResources
     public static JLabel createJLabel(String label, JComponent comp)
     {
        JLabel jLabel = new JLabel(DatatoolTk.getLabel(label));
-       jLabel.setDisplayedMnemonic(DatatoolTk.getMnemonic(label));
+
+       int mnemonic = DatatoolTk.getMnemonicInt(label);
+
+       if (mnemonic != -1)
+       {
+          jLabel.setDisplayedMnemonic(mnemonic);
+       }
 
        String tooltip = DatatoolTk.getToolTip(label);
 

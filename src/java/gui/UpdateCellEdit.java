@@ -18,6 +18,11 @@ public class UpdateCellEdit extends AbstractUndoableEdit
       this.oldText = panel.db.getRow(row).get(col);
 
       panel.db.setValue(row, col, newText);
+
+      if (DatatoolDb.checkForVerbatim(newText))
+      {
+         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+      }
    }
 
    public boolean canUndo() {return true;}
