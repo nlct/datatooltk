@@ -1,6 +1,4 @@
-\lstset{language=Java}
-\begin{lstlisting}
-public class HelloWorld
+public class HelloUser
 { 
    public static void main(String[] args)
    {
@@ -8,4 +6,3 @@ public class HelloWorld
          + (args.length==0 ? "anon" : args[0])+"!");
    }
 }
-\end{lstlisting}  
