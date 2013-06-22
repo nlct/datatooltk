@@ -1,4 +1,4 @@
-% Created by datatooltk on Sat Jun 22 11:58:56 BST 2013
+% Created by datatooltk on Sat Jun 22 21:58:17 BST 2013
 \DTLifdbexists{prob-verb}%
 {\PackageError{datatool}{Database `prob-verb'
 already exists}{}%
@@ -64,14 +64,14 @@ already exists}{}%
 \db@col@id@end@ %
 \db@col@id@w 2%
 \db@col@id@end@ %
-\db@col@elt@w This problem has a code fragment.  \input{hello-world-question}%
+\db@col@elt@w Modify the following code so that the user can optionally supply a name. If supplied, the greeting should be changed to say hello to the given name.
+\lstinputlisting[language=Java]{HelloWorld.java}%
 \db@col@elt@end@ %
 \db@col@id@w 2%
 \db@col@id@end@ %
 \db@col@id@w 3%
 \db@col@id@end@ %
-\db@col@elt@w This problem has a code fragment.
-\input{hello-world-answer}%
+\db@col@elt@w \lstinputlisting[language=Java]{HelloUser.java}%
 \db@col@elt@end@ %
 \db@col@id@w 3%
 \db@col@id@end@ %

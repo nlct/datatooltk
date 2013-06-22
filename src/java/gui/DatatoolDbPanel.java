@@ -911,7 +911,7 @@ class ButtonTabComponent extends JPanel
 {
    public ButtonTabComponent(final DatatoolDbPanel panel)
    {
-      super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+      super(new FlowLayout(FlowLayout.LEFT, 2, 0));
 
       this.panel = panel;
       label = new JLabel(panel.getName());

@@ -1,5 +1,5 @@
 <!-- Parameter entities -->
-<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref | term | tabular | menu | dq | TeX LaTeX | nbsp | meta | dl | app | verbinput | cs' >
+<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref | term | tabular | menu | dq | TeX LaTeX | nbsp | meta | dl | app | verbinput | cs | env | hash' >
 
 <!-- Main elements-->
 
@@ -79,6 +79,9 @@
 <!ELEMENT cs EMPTY>
 <!ATTLIST cs tag (%basic.content;)+>
 
+<!ELEMENT env EMPTY>
+<!ATTLIST env tag (%basic.content;)+>
+
 <!ELEMENT tabular (tr)+>
 <!ATTLIST tabular spec (#PCDATA)+ #REQUIRED>
 
@@ -95,3 +98,5 @@
 <!ELEMENT LaTeX EMPTY>
 <!ELEMENT TeX EMPTY>
 <!ELEMENT app EMPTY>
+<!ELEMENT nbsp EMPTY>
+<!ELEMENT hash EMPTY>

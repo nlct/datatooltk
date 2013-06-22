@@ -617,7 +617,7 @@ public class DatatoolSettings extends Properties
       setSqlHost("localhost");
       setSqlPort(3306);
       setSqlPrefix("jdbc:mysql://");
-      setWipePassword(false);
+      setWipePassword(true);
       setStartUp(STARTUP_HOME);
       setTeXMapping(false);
 

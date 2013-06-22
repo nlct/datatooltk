@@ -1,18 +1,23 @@
 \documentclass{article}
 
+\usepackage{etoolbox}
 \usepackage{datatool}
 \usepackage{listings}
+
+\newtoggle{showanswers}
+\toggletrue{showanswers}
 
 \input{prob-verb.dbtex}
 
 \begin{document}
 
-\DTLforeach{prob-verb}{\Label=Label,\Question=Question,\Answer=Answer}{%
-Question:
-   \Question
+\begin{enumerate}
+  \DTLforeach*{prob-verb}{\Question=Question,\Answer=Answer}%
+  {%
+    \item \Question
 
-Answer:
-   \Answer
-}
+    \iftoggle{showanswers}{Answer: \Answer}{}
+  }
+\end{enumerate}
 
 \end{document}

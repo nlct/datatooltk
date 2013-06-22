@@ -422,4 +422,5 @@ manual.toc=Table of Contents
 manual.index=Index
 manual.search=Search
 manual.idxpackage=package
+manual.idxenv=environment
 manual.example=Example

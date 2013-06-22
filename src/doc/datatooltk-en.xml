@@ -111,10 +111,10 @@
        database.</dd>
        <dt><opt tag="wipepassword"/></dt>
        <dd>For extra security, wipe the password from memory as soon as it 
-       has been used to connect to an <acr tag="sql"/> database.</dd>
+       has been used to connect to an <acr tag="sql"/> database. (Default.)</dd>
        <dt><opt tag="nowipepassword"/></dt>
        <dd>Don't wipe the password from memory as soon as it 
-       has been used to connect to an <acr tag="sql"/> database. (Default.)</dd>
+       has been used to connect to an <acr tag="sql"/> database.</dd>
        <dt><opt tag="probsoln"/> <meta>filename</meta></dt>
        <dd>Import <sty>probsoln</sty> data from <meta>filename</meta>.
        (See <ref tag="importprobsoln"/>.)</dd>
@@ -131,6 +131,138 @@
    single-lined text, then you'll probably be better off just using 
    a<nbsp/>spreadsheet to input the data and use <app/> in batch mode to
    convert from <acr tag="csv"/> to a<nbsp/><sty>datatool</sty> file.
+   </p>
+   </node>
+   <node tag="verbatim" type="section" title="Verbatim">
+   <p>
+   Since the contents of the database are stored in a<nbsp/><TeX/> token
+   register, and assigned to control sequences via commands like
+   <cs tag="DTLforeach"/>, verbatim text is not permitted. This is 
+   a<nbsp/>common problem when attempting to use verbatim text within
+   a<nbsp/>command and is covered in the UK List of <TeX/> Frequently
+   Asked Questions (<url www="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin" text="Why doesn't verbatim work within...?"/>).
+   <app/> checks for verbatim text when you load a<nbsp/>database or import
+   data (unless the <dq>map <TeX/> special characters</dq> property is set for
+   <acr tag="csv"/> or <acr tag="sql"/> imports). Also, <app/> checks for
+   verbatim text when you edit the contents of a<nbsp/>cell. If it
+   detects any, it will give a<nbsp/>warning. If you ignore the warning, 
+   <TeX/> will give an error if you then attempt to load the database into
+   a<nbsp/>document.
+   </p>
+   <p>
+   If you just have a<nbsp/>short fragment of inline verbatim text, consider
+   one of the alternatives listed in <url www="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin" text="Why doesn't verbatim work within...?"/>
+   If on the other hand you have a<nbsp/>block of verbatim text you'll have 
+   to put the verbatim text in a<nbsp/>separate file
+   and load it using <cs tag="verbatiminput"/> (from the 
+   <sty>verbatim</sty> package) or <cs tag="lstinputlisting"/> (from the
+   <sty>listings</sty> package). For example, in <ref tag="ex.verb"/> 
+   I<nbsp/>have used <cs tag="lstinputlisting"/>.
+   </p>
+     <float type="figure" tag="ex.verb" caption="Verbatim Blocks Need to be in Separate Files">
+      <image scale="0.75" alt="Image of main window showing cell with listing input" src="images/verb.png" />
+     </float>
+   <p>
+   This requires two files: <tt>HelloWorld.java</tt>
+   </p>
+   <verbinput src="../tests/HelloWorld.java"/>
+   <p noindent="true">
+   and <tt>HelloUser.java</tt>:
+   </p>
+   <verbinput src="../tests/HelloUser.java"/>
+   <p>
+   Assuming that I've saved my database in a<nbsp/>file called
+   <tt>prob-verb.dbtex</tt>, here's a<nbsp/>sample document:
+   </p>
+   <verbinput src="../tests/test-probsoln-doc.tex"/>
+   </node>
+   <node tag="gui" type="chapter" title="Graphical Mode">
+     <p>
+       To run <app/> in graphical mode you must invoke it
+       with the <opt tag="gui" /> option. The main window
+       is shown in <ref tag="mainwindow"/>. Each database is
+       in a<nbsp/>tabbed pane, with the name of the database in the
+       tab. Note that the name corresponds to the database's identifying
+       label, as used in commands like <cs tag="DTLnewdb"/>. This is 
+       not necessarily the same as the filename. Since this name is
+       used as a label, it shouldn't contain any of <TeX/>'s special
+       characters or any other active characters that could cause problems.
+     </p>
+     <float type="figure" tag="mainwindow" caption="Main Window">
+      <image scale="0.75" alt="Image of main window" src="images/mainwindow.png" />
+     </float>
+     <p>
+      You can use the <menu tag="file" /> menu to create a<nbsp />new 
+      database, load an existing database 
+      or import data (see <ref tag="import"/>). To load an existing database, use
+      <menu tag="file.open" />. These database files contain <LaTeX/> code
+      in a<nbsp/>specific format. Typically, they should have 
+      a<nbsp/><tt>.tex</tt> extension, but to help filter them from other
+      <TeX/> or <LaTeX/> files, <app/> assumes a default extension of
+      <tt>.dbtex</tt>. You can load these files into a<nbsp/><LaTeX/>
+      document using <cs tag="input"/>, but remember to specify the
+      <tt>.dbtex</tt> extension. (Also remember to load the 
+      <sty>datatool</sty> package.)
+     </p>
+     <p>
+     Each column has a corresponding data type: string, integer, real
+     or currency. (Currency type not yet implemented in the <acr tag="gui" />.)
+     If one or more entries in a given column is a string (non-numerical)
+     then the entire column has a <dq>string</dq> data type. If the column 
+     has no string entries, but has one or more real entries, then
+     the entire column has a <dq>real</dq> data type. If there are no string 
+     or real entries, but there are one or more integer entries, then the
+     entire column has an <dq>integer</dq> data type. If the column has no 
+     data, the type is unset.
+     </p>
+     <p>
+     Non-string entries can be edited by double-clicking on the relevant cell, 
+     or you can select the relevant cell and use <menu tag="edit.edit_cell"/>.
+     In the first case, a cursor will appear in the cell and you 
+     can edit the numerical value and press <dq>Enter</dq> to finish 
+     editing. In the second case, the cell editor dialog box will 
+     open, see <ref tag="celleditor"/>.
+     </p>
+     <p>
+     <b>Only the first few lines of a string entry are visible in the main 
+     window. If an entry has more than that number of lines, you will need to 
+     use the cell editor dialog box to view the entire contents of that 
+     cell.</b> The default row height can be changed in the
+     <dict tag="preferences.title"/> dialog box (see <ref tag="preferences"/>).
+     </p>
+     <p>
+     To edit or view an entry in a column
+     with the <dq>string</dq> data type, double-click on the relevant cell or 
+     select the cell and use <menu tag="edit.edit_cell"/> to open the cell editor 
+     dialog box (see <ref tag="celleditor" />). You can now scroll through
+     the cell contents.
+     </p>
+   </node>
+   <node tag="celleditor" type="section" title="Cell Editor">
+   <p>
+   To open the cell editor dialog box (see <ref tag="fig.celleditor" />)
+   double-click on the required cell, which must be in a column with a 
+   string data type. Alternatively, select the cell (of any type) and use 
+   <menu tag="edit.edit_cell"/>.
+   </p>
+   <float type="figure" tag="fig.celleditor" caption="Cell Editor Dialog">
+     <image scale="0.75" alt="Image of cell editor dialog" src="images/celleditor.png" />
+   </float>
+   <p>
+   Remember that the contents of the cell should be <LaTeX/> code, so be
+   careful if you use any of <TeX/>'s special characters. Also, see the
+   section on verbatim text (<ref tag="verbatim"/>) if you haven't 
+   already read it.
+   Once you have made your edits, click on <dq><dict tag="button.okay" /></dq>
+   to update the database. To discard the edits, click 
+   <dq><dict tag="button.cancel" /></dq>.
+   </p>
+   <p>
+   If you've used <sty>datatool</sty>, you will probably know that 
+   if you want a paragraph break in your cell entries you need to use 
+   <cs tag="DTLpar"/>, but with <app/> you don't need to worry about it 
+   as blank lines in an entry will automatically be converted behind 
+   the scenes. Note that redundant blank lines will be removed.
    </p>
    </node>
    <node tag="import" type="chapter" title="Importing Data">
@@ -216,8 +348,10 @@
      </float>
    <p>
    For example, in <ref tag="sqlimportdialog"/> I<nbsp/>want to import all
-   data from the table called <tt>testsqldata</tt> in the <term tag="mysql"/>
-   database called <tt>datatooltk</tt>. Once I've entered this information,
+   data from the table called <tt>customers</tt> in the <term tag="mysql"/>
+   database called <tt>myshop</tt>. (I've created a<nbsp/>user called
+   <tt>shopadmin</tt> with SELECT privileges for this database.) Once I've 
+   entered this information,
    I<nbsp/>then click on <dq><dict tag="button.okay"/></dq> and the password
    dialog box will appear (see <ref tag="sqlpassworddialog"/>).
    </p>
@@ -229,8 +363,8 @@
    from the command prompt:
    </p>
    <pre>
-[nlct@dickimaw tests]$ datatooltk --out test-sql-data.dbtex \
---sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
+[nlct@dickimaw tests]$ datatooltk --out customers.dbtex \
+--sql "SELECT * FROM customers" --sqldb myshop --sqluser shopadmin
 Password:
    </pre>
    <p>
@@ -239,82 +373,55 @@ Password:
    </p>
    </node>
    <node tag="importprobsoln" type="section" title="Import probsoln Data">
-   </node>
-   <node tag="gui" type="chapter" title="Graphical Mode">
-     <p>
-       To run <app/> in graphical mode you must invoke it
-       with the <opt tag="gui" /> option.
-     </p>
-     <p>
-       The <acr tag="gui" /> interface is currently very primitive<footnote>It needs a lot of work on it!</footnote> 
-       and doesn't allow you to do much, but let's test out 
-       a<nbsp />figure here (see <ref tag="mainwindow" />).
-     </p>
-     <float type="figure" tag="mainwindow" caption="Main Window">
-      <image alt="Image of main window" src="images/mainwindow.png" />
+   <p>
+   The <sty>probsoln</sty> package allows you to define problems (and 
+   optionally their solutions) using <cs tag="newproblem"/> or the
+   <env tag="defproblem"/> environment. <app/> can load a<nbsp/>file
+   containing these definitions and convert the <sty>probsoln</sty> data
+   into a<nbsp/><sty>datatool</sty> database containing three columns
+   with keys: <tt><dict tag="probsoln.label"/></tt>, 
+   <tt><dict tag="probsoln.question"/></tt> and
+   <tt><dict tag="probsoln.answer"/></tt>. You can import one of these
+   files using the <opt tag="probsoln"/> command line option or (in
+   <acr tag="gui"/> mode) using the <menu tag="file.import.importprobsoln"/>
+   menu item.
+   </p>
+   <p>
+   <TeX/> is a<nbsp/>difficult language to parse, so <app/> uses 
+   <LaTeX/> to help gather the data from the imported file.
+   <app/> creates a<nbsp/>temporary <LaTeX/> file and runs <LaTeX/>
+   on it in the background. It assumes that the <tt>latex</tt> application
+   is on your path. If this isn't the case, you will have to specify
+   the location of the <tt>latex</tt> executable in the 
+   <dict tag="preferences.title"/> dialog box (see <ref tag="preferences"/>).
+   The temporary files are deleted when you quit <app/> unless you have
+   used the <opt tag="nodelete-tmp-files"/> option.
+   </p>
+   <p>
+   <b>Note:</b> <app/> doesn't support problems that require arguments. Any
+   instance of <hash/><meta>n</meta> will be replaced with
+   <hash/><hash/><meta>n</meta>, but you will have to replace those
+   with something else. Also, recall from <ref tag="verbatim"/> that you
+   can't have verbatim text in a<nbsp/><sty>datatool</sty> database, 
+   but you can use <cs tag="verbatiminput"/> (from the 
+   <sty>verbatim</sty> package) or <cs tag="lstinputlisting"/> (from the
+   <sty>listings</sty> package). Since <LaTeX/> is used to gather the
+   data, pretty-printing spaces and comments won't be imported.
+   </p>
+   <example>
+   Consider the file called <tt>prob-mixed.tex</tt> that contains the 
+   following:
+   <verbinput src="../tests/prob-mixed.tex"/>
+   <p>
+   This contains a<nbsp/>mixture of <cs tag="newproblem"/> and
+   <env tag="defproblem"/>. It also has comments and spaces to make
+   the code more readable. As can be seen in <ref tag="importps"/>
+   these have gone in the import.
+   </p>
+     <float type="figure" tag="importps" caption="Pretty Printing and Comments are Lost When Importing Data from probsoln">
+      <image scale="0.75" alt="Image of the main window" src="images/importps.png" />
      </float>
-     <p>
-      You can use the <menu tag="file" /> to create a<nbsp />new 
-      database (not yet implemented), load an existing database 
-      or import data. To load an existing database, use
-      <menu tag="file.open" />. To import data from a<nbsp /><acr tag="csv" /> 
-      file use <menu tag="file.import.importcsv" />. To import data
-      from a <acr tag="sql"/> database use <menu tag="file.import.importsql" />. (Defaults to a <term tag="mysql"/> database.)
-     </p>
-     <p>
-     Each column has a corresponding data type: string, integer, real
-     or currency. (Currency type not yet implemented in the <acr tag="gui" />.)
-     If one or more entries in a given column is a string (non-numerical)
-     then the entire column has a <dq>string</dq> data type. If the column 
-     has no string entries, but has one or more real entries, then
-     the entire column has a <dq>real</dq> data type. If there are no string 
-     or real entries, but there are one or more integer entries, then the
-     entire column has an <dq>integer</dq> data type. If the column has no 
-     data, the type is unset.
-     </p>
-     <p>
-     Non-string entries can be edited by double-clicking on the relevant cell, 
-     or you can select the relevant cell and use <menu tag="edit.edit_cell"/>.
-     In the first case, a cursor will appear in the cell and you 
-     can edit the numerical value and press <dq>Enter</dq> to finish 
-     editing. In the second case, the cell editor dialog box will 
-     open, see <ref tag="celleditor"/>.
-     </p>
-     <p>
-     To edit or view an entry in a column
-     with the <dq>string</dq> data type, double-click on the relevant cell or 
-     select the cell and use <menu tag="edit.edit_cell"/> to open the cell editor 
-     dialog box (see <ref tag="celleditor" />).
-     </p>
-     <p>
-     <b>Only the first few lines of a string entry are visible in the main 
-     window. If an entry has more than that number of lines, you will need to 
-     use the cell editor dialog box to view the entire contents of that cell.
-     </b>
-     </p>
-   </node>
-   <node tag="celleditor" type="section" title="Cell Editor">
-   <p>
-   To open the cell editor dialog box (see <ref tag="fig.celleditor" />)
-   double-click on the required cell, which must be in a column with a 
-   string data type. Alternatively, select the cell (of any type) and use 
-   <menu tag="edit.edit_cell"/>.
-   </p>
-   <float type="figure" tag="fig.celleditor" caption="Cell Editor Dialog">
-     <image alt="Image of cell editor dialog" src="images/celleditor.png" />
-   </float>
-   <p>
-   Once you have made your edits, click on <dq><dict tag="button.okay" /></dq>
-   to update the database. To discard the edits, click 
-   <dq><dict tag="button.cancel" /></dq>.
-   </p>
-   <p>
-   If you've used <sty>datatool</sty>, you will probably know that 
-   if you want a paragraph break in your cell entries you need to use 
-   <cs tag="DTLpar"/>, but with <app/> you don't need to worry about it 
-   as blank lines in an entry will automatically be converted behind 
-   the scenes.
-   </p>
+   </example>
    </node>
    <node tag="preferences" type="chapter" title="Application Properties">
    <p>
@@ -328,7 +435,7 @@ Password:
    On Windows, it is a folder called <dq>datatooltk-settings</dq>
    in the folder given by the Java system property <tt>user.home</tt>.
    This is usually the user's home folder but in some versions of
-   Java this can be <percent/>userprofile<percent/>.
+   Java this can be <tt><percent/>userprofile<percent/></tt>.
    On other operating systems, the properties directory is
    called <tt>.datatooltk</tt> and is in the user's home directory.
    </p>

@@ -15,6 +15,10 @@ $(TARGETDIR)/datatooltk-en-GB/datatooltk.html	: $(TARGETDIR) \
 	  createdocs \
 	  datatooltk-en.xml manual.dtd \
           ../tests/test-para.csv \
+          ../tests/HelloWorld.java \
+          ../tests/HelloUser.java \
+          ../tests/test-probsoln-doc.tex \
+          ../tests/prob-mixed.tex \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-GB.prop \
 	  $(TARGETDIR)/datatooltk-en-GB/images/
@@ -27,6 +31,10 @@ $(TARGETDIR)/datatooltk-en-US/datatooltk.html	: $(TARGETDIR) \
 	  createdocs \
 	  datatooltk-en.xml manual.dtd \
           ../tests/test-para.csv \
+          ../tests/HelloWorld.java \
+          ../tests/HelloUser.java \
+          ../tests/test-probsoln-doc.tex \
+          ../tests/prob-mixed.tex \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-US.prop \
 	  $(TARGETDIR)/datatooltk-en-US/images/

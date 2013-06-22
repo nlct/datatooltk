@@ -109,6 +109,7 @@ my %tags    = ();
 
 my $languagedefinitions = 
   "\\def\\idxpackagename{".&get_label('manual.idxpackage')."}\n"
+ ."\\def\\idxenvname{".&get_label('manual.idxenv')."}\n"
  ."\\def\\examplename{".&get_label('manual.example')."}\n";
 
 my $xmlfile = "$base-$locale.xml";
@@ -1104,7 +1105,7 @@ sub start_url{
 
    if ($attrs{text})
    {
-      print TEXFD "\\href{", $attrs{text}, "}{", $attrs{www}, "}";
+      print TEXFD "\\href{", $attrs{www}, "}{", $attrs{text}, "}";
       $string = "<a href=\"$uri\">$attrs{text}</a>";
    }
    else
@@ -1190,7 +1191,7 @@ sub start_example{
 
    &handle_html('<blockquote><p><b>'
     . &get_label('manual.example')
-    . $counters{example}
+    . '&nbsp;' . $counters{example}
     . ($attrs{title}? "($attrs{title})." : '.')
     . '</b></p><p>');
 
@@ -1335,7 +1336,7 @@ sub start_float{
 
    unless ($attrs{type} eq 'figure')
    {
-      &handle_html('<p>' . $tags{$attrs{tag}}->{Text} . ': '
+      &handle_html('<p></p><p>' . $tags{$attrs{tag}}->{Text} . ': '
         . $attrs{caption} . '</p>');
    }
 
@@ -1358,7 +1359,7 @@ sub end_float{
    if ($attrs->{type} eq 'figure')
    {
       &handle_html('<p>'. $tags{$attrs->{tag}}->{Text} . ': '
-        . $attrs->{caption} . '</p>');
+        . $attrs->{caption} . '</p><p></p>');
    }
 
    &handle_html('</div>');
@@ -1375,6 +1376,18 @@ sub start_nbsp{
 }
 
 sub end_nbsp{
+   my ($expat) = @_;
+}
+
+sub start_hash{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('<tt>#</tt>');
+
+   print TEXFD "\\texttt{\\#}";
+}
+
+sub end_hash{
    my ($expat) = @_;
 }
 
@@ -1731,11 +1744,32 @@ sub start_cs{
 
    print TEXFD '\\cs{', $attrs{tag}, '}';
 
-   &hs_index_term('cs_'.$attrs{tag}, $text, $text, \%terms);
+   &hs_index_term('cs_'.$attrs{tag}, "<tt>$text</tt>", $text, \%terms);
 
 }
 
 sub end_cs{
+   my ($expat) = @_;
+}
+
+sub start_env{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'env' element's 'tag' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   my $text = $attrs{tag};
+
+   print TEXFD '\\env{', $attrs{tag}, '}';
+
+   &hs_index_term('env_'.$attrs{tag}, "<tt>$text</tt>", $text, \%terms);
+
+}
+
+sub end_env{
    my ($expat) = @_;
 }
 

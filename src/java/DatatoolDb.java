@@ -1404,8 +1404,6 @@ public class DatatoolDb
        Pattern.compile(".*\\\\begin\\s*\\{verbatim\\}.*", Pattern.DOTALL),
        Pattern.compile(".*\\\\verb\\b.*", Pattern.DOTALL),
        Pattern.compile(".*\\\\begin\\s*\\{lstlisting\\}.*", Pattern.DOTALL),
-       Pattern.compile(".*\\\\lstinline\\b.*", Pattern.DOTALL),
-       Pattern.compile(".*\\\\lstinputlisting\\b.*", Pattern.DOTALL),
-       Pattern.compile(".*\\\\verbatiminput\\b.*", Pattern.DOTALL)
+       Pattern.compile(".*\\\\lstinline\\b.*", Pattern.DOTALL)
     };
 }

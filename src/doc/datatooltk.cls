@@ -66,6 +66,11 @@
 
 \newcommand*{\cs}[1]{\texttt{\char`\\#1}\index{#1@\texttt{\char`\\#1}}}
 
+% Default definition.
+% (Overridden by context label in dictionary file.)
+\providecommand{\idxenvname}{environment}
+\newcommand*{\env}[1]{\textsf{#1}\index{#1@\textsf{#1} \idxenvname}}
+
 \newtheoremstyle{example}% style name
 {2ex}% above space
 {2ex}% below space

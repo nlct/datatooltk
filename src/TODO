@@ -1,11 +1,15 @@
 TODO List
 =========
 
+* Add shuffle function
+
 * Implement currency data type
 
 * Add template facility
 
 * Add plugin module facility
+
+* Add syntax highlighting to the cell editor?
 
 * Image icons are just temporary for testing. These need to be
   changed to more interesting images.
