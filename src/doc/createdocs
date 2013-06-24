@@ -1310,6 +1310,8 @@ sub start_float{
         $expat->current_line, "\n";
    }
 
+   my $pos = ($attrs{pos}? "[$attrs{pos}]" : '');
+
    if ($counters{$attrs{type}})
    {
       $counters{$attrs{type}}++;
@@ -1336,7 +1338,7 @@ sub start_float{
         . $attrs{caption} . '</p>');
    }
 
-   print TEXFD "\\begin{", $attrs{type}, "}\n";
+   print TEXFD "\\begin{", $attrs{type}, "}$pos\n";
    print TEXFD "\\floatconts{", $attrs{tag}, "}{\\caption";
 
    if ($attrs{listcaption})

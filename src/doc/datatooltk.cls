@@ -64,12 +64,14 @@
 
 \newcommand*{\meta}[1]{\ensuremath{\langle}\emph{#1}\ensuremath{\rangle}}
 
-\newcommand*{\cs}[1]{\texttt{\char`\\#1}\index{#1@\texttt{\char`\\#1}}}
+\DeclareRobustCommand*{\csnoindex}[1]{\texttt{\char`\\#1}}
+
+\DeclareRobustCommand*{\cs}[1]{\csnoindex{#1}\index{#1@\csnoindex{#1}}}
 
 % Default definition.
 % (Overridden by context label in dictionary file.)
 \providecommand{\idxenvname}{environment}
-\newcommand*{\env}[1]{\textsf{#1}\index{#1@\textsf{#1} \idxenvname}}
+\DeclareRobustCommand*{\env}[1]{\textsf{#1}\index{#1@\textsf{#1} \idxenvname}}
 
 \newtheoremstyle{example}% style name
 {2ex}% above space

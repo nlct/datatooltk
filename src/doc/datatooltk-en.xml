@@ -133,6 +133,37 @@
    convert from <acr tag="csv"/> to a<nbsp/><sty>datatool</sty> file.
    </p>
    </node>
+   <node tag="fileext" type="section" title="File Extensions">
+   <p>
+   The <sty>datatool</sty> database files loaded and saved by <app/>
+   are just <LaTeX/> files, so they could just have the standard
+   <tt>.tex</tt> extension, but to help differentiate the database files
+   from other files containing <TeX/>/<LaTeX/> code (such as picture-drawing
+   code), <app/> assumes a<nbsp/>default extension of <tt>.dbtex</tt>.
+   If you use this extension, remember to include it in the argument of
+   <cs tag="input"/>. Note that the database label (as used in commands
+   like <cs tag="DTLnewdb"/>) is independent of the file name (although
+   when importing data, it defaults to the file base name). The database
+   label can be changed using <menu tag="edit.edit_dbname"/>.
+   </p>
+   <example>
+   Suppose you have a<nbsp/>database file called <tt>my-data.dbtex</tt>
+   and you have set the database label to just <dq><tt>data</tt></dq>.
+   Then you can load and display the data using:
+   <pre>
+   \documentclass{article}
+   \usepackage{datatool}% remember to load the datatool package
+
+   \input{my-data.dbtex}% load the database from file `my-data.dbtex'
+
+   \begin{document}
+
+   \DTLdisplaydb{data}% Display the database identified by the name `data'
+
+   \end{document}
+   </pre>
+   </example>
+   </node>
    <node tag="verbatim" type="section" title="Verbatim">
    <p>
    Since the contents of the database are stored in a<nbsp/><TeX/> token
@@ -141,7 +172,10 @@
    a<nbsp/>common problem when attempting to use verbatim text within
    a<nbsp/>command and is covered in the UK List of <TeX/> Frequently
    Asked Questions (<url www="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin" text="Why doesn't verbatim work within...?"/>).
-   <app/> checks for verbatim text when you load a<nbsp/>database or import
+   The <app/> application checks for verbatim text<footnote>More
+   specifically, it checks for any occurrences of <cs tag="verb"/>, 
+   <cs tag="lstinline"/> or the beginning of the <env tag="verbatim"/>
+   or <env tag="lstlisting"/> environments.</footnote> when you load a<nbsp/>database or import
    data (unless the <dq>map <TeX/> special characters</dq> property is set for
    <acr tag="csv"/> or <acr tag="sql"/> imports). Also, <app/> checks for
    verbatim text when you edit the contents of a<nbsp/>cell. If it
@@ -151,7 +185,7 @@
    </p>
    <p>
    If you just have a<nbsp/>short fragment of inline verbatim text, consider
-   one of the alternatives listed in <url www="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin" text="Why doesn't verbatim work within...?"/>
+   one of the alternatives listed in <url www="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin" text="the FAQ"/>.
    If on the other hand you have a<nbsp/>block of verbatim text you'll have 
    to put the verbatim text in a<nbsp/>separate file
    and load it using <cs tag="verbatiminput"/> (from the 
@@ -159,8 +193,8 @@
    <sty>listings</sty> package). For example, in <ref tag="ex.verb"/> 
    I<nbsp/>have used <cs tag="lstinputlisting"/>.
    </p>
-     <float type="figure" tag="ex.verb" caption="Verbatim Blocks Need to be in Separate Files">
-      <image scale="0.75" alt="Image of main window showing cell with listing input" src="images/verb.png" />
+     <float type="figure" tag="ex.verb" caption="Verbatim Blocks Need to be in Separate Files" pos="htb">
+      <image scale="0.75" alt="Image of main window showing cells with listing input" src="images/verb.png" />
      </float>
    <p>
    This requires two files: <tt>HelloWorld.java</tt>
@@ -172,7 +206,8 @@
    <verbinput src="../tests/HelloUser.java"/>
    <p>
    Assuming that I've saved my database in a<nbsp/>file called
-   <tt>prob-verb.dbtex</tt>, here's a<nbsp/>sample document:
+   <tt>prob-verb.dbtex</tt> with database label <dq><tt>problems</tt></dq>,
+   here's a<nbsp/>sample document:
    </p>
    <verbinput src="../tests/test-probsoln-doc.tex"/>
    </node>

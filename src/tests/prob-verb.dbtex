@@ -1,15 +1,15 @@
 % Created by datatooltk on Sat Jun 22 21:58:17 BST 2013
-\DTLifdbexists{prob-verb}%
-{\PackageError{datatool}{Database `prob-verb'
+\DTLifdbexists{problems}%
+{\PackageError{datatool}{Database `problems'
 already exists}{}%
 \aftergroup\endinput}{}%
 \bgroup\makeatletter
 \dtl@message{Reconstructing database
-`prob-verb'}%
+`problems'}%
 \expandafter\global\expandafter
-\newtoks\csname dtlkeys@prob-verb\endcsname
+\newtoks\csname dtlkeys@problems\endcsname
 \expandafter\global
- \csname dtlkeys@prob-verb\endcsname={%
+ \csname dtlkeys@problems\endcsname={%
 %
 \db@plist@elt@w %
 \db@col@id@w 1%
@@ -49,9 +49,9 @@ already exists}{}%
 \db@plist@elt@end@ %
 }%
 \expandafter\global\expandafter
-\newtoks\csname dtldb@prob-verb\endcsname
+\newtoks\csname dtldb@problems\endcsname
 \expandafter\global
-\csname dtldb@prob-verb\endcsname={%
+\csname dtldb@problems\endcsname={%
 %
 \db@row@elt@w %
 \db@row@id@w 1%
@@ -80,17 +80,17 @@ already exists}{}%
 \db@row@elt@end@ %
 }%
 \expandafter\global
- \expandafter\newcount\csname dtlrows@prob-verb\endcsname
+ \expandafter\newcount\csname dtlrows@problems\endcsname
 \expandafter\global
- \csname dtlrows@prob-verb\endcsname=1\relax
+ \csname dtlrows@problems\endcsname=1\relax
 \expandafter\global
- \expandafter\newcount\csname dtlcols@prob-verb\endcsname
+ \expandafter\newcount\csname dtlcols@problems\endcsname
 \expandafter\global
- \csname dtlcols@prob-verb\endcsname=3\relax
+ \csname dtlcols@problems\endcsname=3\relax
 \expandafter
- \gdef\csname dtl@ci@prob-verb@Label\endcsname{1}%
+ \gdef\csname dtl@ci@problems@Label\endcsname{1}%
 \expandafter
- \gdef\csname dtl@ci@prob-verb@Question\endcsname{2}%
+ \gdef\csname dtl@ci@problems@Question\endcsname{2}%
 \expandafter
- \gdef\csname dtl@ci@prob-verb@Answer\endcsname{3}%
+ \gdef\csname dtl@ci@problems@Answer\endcsname{3}%
 \egroup
