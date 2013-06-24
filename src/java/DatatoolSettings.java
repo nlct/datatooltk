@@ -134,6 +134,19 @@ public class DatatoolSettings extends Properties
             reader.close();
             reader = null;
          }
+         else
+         {
+            addCurrency("\\$");
+            addCurrency("\\pounds");
+            addCurrency("\\texteuro");
+            addCurrency("\\textdollar");
+            addCurrency("\\textstirling");
+            addCurrency("\\textyen");
+            addCurrency("\\textwon");
+            addCurrency("\\textcurrency");
+            addCurrency("\\euro");
+            addCurrency("\\yen");
+         }
       }
       finally
       {
@@ -545,6 +558,11 @@ public class DatatoolSettings extends Properties
       return currencies.remove(currency);
    }
 
+   public void clearCurrencies()
+   {
+      currencies.clear();
+   }
+
    public boolean isCurrency(String text)
    {
       Matcher m = PATTERN_CURRENCY.matcher(text);
@@ -755,11 +773,6 @@ public class DatatoolSettings extends Properties
       setFontSize(12);
       setCellHeight(4);
 
-      if (currencies.size() == 0)
-      {
-         addCurrency("\\$");
-         addCurrency("\\pounds");
-      }
    }
 
    protected char[] sqlPassword = null;

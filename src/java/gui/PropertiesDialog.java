@@ -13,7 +13,7 @@ import javax.swing.border.Border;
 import com.dickimawbooks.datatooltk.*;
 
 public class PropertiesDialog extends JDialog
-  implements ActionListener
+  implements ActionListener,ListSelectionListener,MouseListener
 {
    public PropertiesDialog(DatatoolGUI gui)
    {
@@ -172,6 +172,7 @@ public class PropertiesDialog extends JDialog
 
       box = createNewRow(texTab, new BorderLayout());
       texMapTable = new JTable();
+      texMapTable.addMouseListener(this);
       texMapTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
       texMapTable.setBorder(BorderFactory.createEtchedBorder());
       texMapTable.setIntercellSpacing(new Dimension(6, 1));
@@ -191,27 +192,56 @@ public class PropertiesDialog extends JDialog
       box.add(buttonPanel, BorderLayout.EAST);
 
       buttonPanel.add(DatatoolGuiResources.createActionButton(
-         "button", "add", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0)));
+         "preferences.tex", "add_map", this, null));
 
-      editButton = DatatoolGuiResources.createActionButton(
-         "button", "edit", this, null);
-      buttonPanel.add(editButton);
+      editMapButton = DatatoolGuiResources.createActionButton(
+         "preferences.tex", "edit_map", this, null);
+      buttonPanel.add(editMapButton);
 
-      removeButton = DatatoolGuiResources.createActionButton(
-         "button", "remove", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0));
-      buttonPanel.add(removeButton);
+      removeMapButton = DatatoolGuiResources.createActionButton(
+         "preferences.tex", "remove_map", this, null);
+      buttonPanel.add(removeMapButton);
 
-      texMapTable.getSelectionModel().addListSelectionListener(
-         new ListSelectionListener()
-         {
-            public void valueChanged(ListSelectionEvent evt)
-            {
-               updateButtons();
-            }
-         }
-      );
+      texMapTable.getSelectionModel().addListSelectionListener(this);
+
+      // Currencies Tab
+
+      JComponent currencyTab = 
+         addTab(new JPanel(new BorderLayout()), "currencies");
+
+      currencyList = new JList<String>();
+      currencyList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      currencyList.setVisibleRowCount(10);
+
+      currencyTab.add(new JScrollPane(currencyList), BorderLayout.CENTER);
+
+      buttonPanel = Box.createVerticalBox();
+      currencyTab.add(buttonPanel, BorderLayout.EAST);
+
+      JTextArea textArea = new JTextArea(2, 40);
+
+      textArea.setText(DatatoolTk.getLabel(
+        "preferences.currencies.reminder"));
+      textArea.setEditable(false);
+      textArea.setWrapStyleWord(true);
+      textArea.setLineWrap(true);
+      textArea.setOpaque(false);
+
+      currencyTab.add(textArea, BorderLayout.NORTH);
+
+      buttonPanel.add(DatatoolGuiResources.createActionButton(
+         "preferences.currencies", "add_currency", this, null));
+
+      editCurrencyButton = DatatoolGuiResources.createActionButton(
+         "preferences.currencies", "edit_currency", this, null);
+      buttonPanel.add(editCurrencyButton);
+
+      removeCurrencyButton = DatatoolGuiResources.createActionButton(
+         "preferences.currencies", "remove_currency", this, null);
+      buttonPanel.add(removeCurrencyButton);
+
+      currencyList.addListSelectionListener(this);
+      currencyList.addMouseListener(this);
 
       // Display Tab
 
@@ -447,10 +477,51 @@ public class PropertiesDialog extends JDialog
       }
 
       texMapModel = new TeXMapModel(this, texMapTable, settings);
+      texMapTable.setModel(texMapModel);
+
+      currencyListModel = new CurrencyListModel(currencyList, settings);
 
       updateButtons();
 
       setVisible(true);
+   }
+
+   public void valueChanged(ListSelectionEvent evt)
+   {
+      updateButtons();
+   }
+
+   public void mouseClicked(MouseEvent evt)
+   {
+      Object source = evt.getSource();
+
+      if (evt.getClickCount() == 2 && evt.getModifiersEx() == 0)
+      {
+         if (source == currencyList)
+         {
+            currencyListModel.editCurrency(currencyList.getSelectedIndex());
+         }
+         else if (source == texMapTable)
+         {
+            texMapModel.editRow(texMapTable.getSelectedRow());
+         }
+      }
+   }
+
+   public void mouseEntered(MouseEvent evt)
+   {
+   }
+
+   public void mouseExited(MouseEvent evt)
+   {
+   }
+
+   public void mousePressed(MouseEvent evt)
+   {
+   }
+
+   public void mouseReleased(MouseEvent evt)
+   {
    }
 
    public void actionPerformed(ActionEvent evt)
@@ -486,11 +557,11 @@ public class PropertiesDialog extends JDialog
          sepCharField.setEnabled(true);
          sepCharField.requestFocusInWindow();
       }
-      else if (action.equals("add"))
+      else if (action.equals("add_map"))
       {
          texMapModel.addRow();
       }
-      else if (action.equals("edit"))
+      else if (action.equals("edit_map"))
       {
          int index = texMapTable.getSelectedRow();
 
@@ -499,7 +570,7 @@ public class PropertiesDialog extends JDialog
             texMapModel.editRow(index);
          }
       }
-      else if (action.equals("remove"))
+      else if (action.equals("remove_map"))
       {
          int index = texMapTable.getSelectedRow();
 
@@ -508,13 +579,39 @@ public class PropertiesDialog extends JDialog
             texMapModel.removeRow(index);
          }
       }
+      else if (action.equals("add_currency"))
+      {
+         currencyListModel.addCurrency();
+      }
+      else if (action.equals("remove_currency"))
+      {
+         int index = currencyList.getSelectedIndex();
+
+         if (index > -1)
+         {
+            currencyListModel.removeCurrency(index);
+         }
+      }
+      else if (action.equals("edit_currency"))
+      {
+         int index = currencyList.getSelectedIndex();
+
+         if (index > -1)
+         {
+            currencyListModel.editCurrency(index);
+         }
+      }
    }
 
    private void updateButtons()
    {
-      boolean enabled = texMapTable.getSelectedRow()!=-1;
-      editButton.setEnabled(enabled);
-      removeButton.setEnabled(enabled);
+      boolean enabled = texMapTable.getSelectedRow() != -1;
+      editMapButton.setEnabled(enabled);
+      removeMapButton.setEnabled(enabled);
+
+      enabled = currencyList.getSelectedIndex() != -1;
+      editCurrencyButton.setEnabled(enabled);
+      removeCurrencyButton.setEnabled(enabled);
    }
 
    private void okay()
@@ -617,6 +714,8 @@ public class PropertiesDialog extends JDialog
 
       texMapModel.updateSettings();
 
+      currencyListModel.updateSettings();
+
       settings.setFontName(fontBox.getSelectedItem().toString());
       settings.setFontSize(sizeField.getValue());
       settings.setCellHeight(cellHeightField.getValue());
@@ -651,7 +750,8 @@ public class PropertiesDialog extends JDialog
 
    private JTextField hostField, prefixField, databaseField, userField;
 
-   private JButton removeButton, editButton;
+   private JButton removeMapButton, editMapButton,
+      removeCurrencyButton, editCurrencyButton;
 
    private JComboBox<String> fontBox;
 
@@ -659,292 +759,94 @@ public class PropertiesDialog extends JDialog
 
    private JTable texMapTable;
 
+   private JList<String> currencyList;
+
+   private CurrencyListModel currencyListModel;
+
    private JTabbedPane tabbedPane;
 
    private DatatoolGUI gui;
 }
 
-class TeXMapModel extends AbstractTableModel
+class CurrencyListModel extends AbstractListModel<String>
 {
-   public TeXMapModel(PropertiesDialog dialog,
-      JTable table, DatatoolSettings settings)
+   public CurrencyListModel(JList<String> list, DatatoolSettings settings)
    {
-      super();
       this.settings = settings;
-      this.table = table;
+      this.list = list;
 
-      table.setModel(this);
+      list.setModel(this);
 
-      keyField = new CharField();
-      valueField = new JTextField(20);
+      int n = settings.getCurrencyCount();
+      currencies = new Vector<String>(n);
 
-      texMapDialog = new TeXMapDialog(dialog);
-
-      keyList = new Vector<Character>();
-      valueList = new Vector<String>();
-
-      for (Enumeration en=settings.keys(); en.hasMoreElements();)
+      for (int i = 0; i < n; i++)
       {
-         String key = (String)en.nextElement();
-
-         Matcher m = PATTERN_KEY.matcher(key);
-
-         if (m.matches())
-         {
-            char c = m.group(1).charAt(0);
-            keyList.add(new Character(c));
-            valueList.add(settings.getTeXMap(c));
-         }
-      }
-
-      originals = keyList.toArray();
-
-      table.getColumn(COL_VAL).setPreferredWidth(
-        (int)valueField.getPreferredSize().getWidth());
-
-      table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-   }
-
-   public String getColumnName(int columnIndex)
-   {
-      return columnIndex == 0 ? COL_KEY : COL_VAL;
-   }
-
-   public boolean isCellEditable(int rowIndex, int columnIndex)
-   {
-      return false;
-   }
-
-   public void setValueAt(Object aValue, int rowIndex, int columnIndex)
-   {
-      if (columnIndex == 0)
-      {
-         keyList.set(rowIndex, new Character(aValue.toString().charAt(0)));
-      }
-      else
-      {
-         valueList.add(aValue.toString());
+         currencies.add(settings.getCurrency(i));
       }
    }
 
-   public int getColumnCount() {return 2;}
-
-   public int getRowCount() {return keyList == null ? 0 : keyList.size();}
-
-   public Object getValueAt(int rowIndex, int columnIndex)
+   public int getSize()
    {
-      return columnIndex == 0 ? keyList.get(rowIndex) : valueList.get(rowIndex);
+      return currencies.size();
+   }
+
+   public String getElementAt(int index)
+   {
+      return currencies.get(index);
    }
 
    public void updateSettings()
    {
-      for (int i = 0; i < originals.length; i++)
+      settings.clearCurrencies();
+
+      for (int i = 0, n = currencies.size(); i < n; i++)
       {
-         Character c = (Character)originals[i];
-
-         int index = keyList.indexOf(c);
-
-         if (index == -1)
-         {
-            // User has removed this mapping.
-
-            settings.removeTeXMap(c.charValue());
-         }
-         else
-         {
-            Character key = keyList.remove(index);
-            String value = valueList.remove(index);
-
-            settings.setTeXMap(key.charValue(), value);
-         }
-      }
-
-      // Remaining entries are new mappings
-
-      for (int i = 0, n = keyList.size(); i < n; i++)
-      {
-         settings.setTeXMap(keyList.get(i).charValue(), valueList.get(i));
+         settings.addCurrency(currencies.get(i));
       }
    }
 
-   public void removeRow(int index)
+   public void addCurrency()
    {
-      keyList.remove(index);
-      valueList.remove(index);
+      String response = JOptionPane.showInputDialog(list, LABEL_ADD);
 
-      table.tableChanged(new TableModelEvent(this, index, index,
-         TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
-
-      if (index < keyList.size())
+      if (response != null)
       {
-         table.setRowSelectionInterval(index, index);
+         currencies.add(response);
+
+         list.revalidate();
       }
    }
 
-   public void addRow()
+   public void removeCurrency(int index)
    {
-      if (texMapDialog.displayNew())
-      {
-         keyList.add(texMapDialog.getKey());
-         valueList.add(texMapDialog.getValue());
+      currencies.remove(index);
 
-         int index = keyList.size()-1;
-
-         table.tableChanged(new TableModelEvent(this, index, index,
-            TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
-
-         table.setRowSelectionInterval(index, index);
-      }
+      list.revalidate();
    }
 
-   public void editRow(int rowIndex)
+   public void editCurrency(int index)
    {
-      if (texMapDialog.displayEdit(keyList.get(rowIndex),
-            valueList.get(rowIndex)))
+      String response = JOptionPane.showInputDialog(list, LABEL_EDIT,
+         currencies.get(index));
+
+      if (response != null)
       {
-         keyList.set(rowIndex, texMapDialog.getKey());
-         valueList.set(rowIndex, texMapDialog.getValue());
-
-         table.tableChanged(new TableModelEvent(this, rowIndex, rowIndex,
-            TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
-
-         table.setRowSelectionInterval(rowIndex, rowIndex);
+         currencies.set(index, response);
       }
+
+      list.revalidate();
    }
 
    private DatatoolSettings settings;
 
-   private JTable table;
+   private Vector<String> currencies;
 
-   private CharField keyField;
+   private JList<String> list;
 
-   private JTextField valueField;
+   private static final String LABEL_ADD 
+      = DatatoolTk.getLabel("preferences.currencies.add_currency");
 
-   private TeXMapDialog texMapDialog;
-
-   private Vector<Character> keyList;
-   private Vector<String> valueList;
-
-   private Object[] originals;
-
-   private static final Pattern PATTERN_KEY 
-     = Pattern.compile("tex\\.(.)");
-
-   public static final String COL_KEY 
-      = DatatoolTk.getLabel("texmap.character");
-   public static final String COL_VAL 
-      = DatatoolTk.getLabel("texmap.replacement");
-
-   private static final Border focusBorder 
-      = BorderFactory.createLineBorder(Color.GRAY);
-
-   private static final Border noFocusBorder 
-      = BorderFactory.createEmptyBorder();
-}
-
-class TeXMapDialog extends JDialog implements ActionListener
-{
-   public TeXMapDialog(JDialog parent)
-   {
-      super(parent, "", true);
-
-      JPanel panel = new JPanel();
-      getContentPane().add(panel, BorderLayout.CENTER);
-
-      keyField   = new CharField();
-      valueField = new JTextField(20);
-
-      panel.add(DatatoolGuiResources.createJLabel("texmap.character",
-         keyField));
-      panel.add(keyField);
-
-      panel.add(DatatoolGuiResources.createJLabel("texmap.replacement",
-         valueField));
-      panel.add(valueField);
-      
-      getContentPane().add(
-        DatatoolGuiResources.createOkayCancelPanel(this),
-        BorderLayout.SOUTH);
-
-      pack();
-      setLocationRelativeTo(null);
-   }
-
-   public boolean displayNew()
-   {
-      keyField.setText("");
-      valueField.setText("");
-
-      setTitle(TITLE_ADD);
-
-      return display();
-   }
-
-   
-   public boolean displayEdit(Character c, String value)
-   {
-      if (c != null) keyField.setValue(c.charValue());
-      if (value != null) valueField.setText(value);
-
-      setTitle(TITLE_EDIT);
-
-      return display();
-   }
-
-   private boolean display()
-   {
-      keyField.requestFocusInWindow();
-
-      modified = false;
-
-      setVisible(true);
-
-      return modified;
-   }
-
-   public void actionPerformed(ActionEvent evt)
-   {
-      String action = evt.getActionCommand();
-
-      if (action == null) return;
-
-      if (action.equals("okay"))
-      {
-         okay();
-      }
-      else if (action.equals("cancel"))
-      {
-         modified = false;
-         setVisible(false);
-      }
-   }
-
-   private void okay()
-   {
-      if (keyField.getText().isEmpty())
-      {
-         DatatoolGuiResources.error(this, 
-            DatatoolTk.getLabel("error.missing_texmap_key"));
-         return;
-      }
-
-      modified = true;
-      setVisible(false);
-   }
-
-   public Character getKey() { return new Character(keyField.getValue());}
-
-   public String getValue() { return valueField.getText(); }
-
-   private CharField keyField;
-
-   private JTextField valueField;
-
-   private boolean modified;
-
-   private static final String TITLE_ADD 
-      = DatatoolTk.getLabel("texmap.add_mapping");
-
-   private static final String TITLE_EDIT 
-      = DatatoolTk.getLabel("texmap.edit_mapping");
+   private static final String LABEL_EDIT 
+      = DatatoolTk.getLabel("preferences.currencies.edit_currency");
 }

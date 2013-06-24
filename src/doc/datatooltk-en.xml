@@ -21,10 +21,6 @@
   <document>
    <node tag="introduction" type="chapter" title="Introduction">
      <p>
-     This is the user manual for <app/>. It's still 
-     under construction.
-     </p>
-     <p>
      The <LaTeX /> <sty>datatool</sty> package is able to save databases 
      in its own internal format to allow for rapid loading (using
      <cs tag="DTLsaverawdb"/>).
@@ -34,7 +30,11 @@
      <term tag="database" /> in <LaTeX />. This application provides 
      a<nbsp /><acr tag="gui" /> making it easier to edit these files. 
      It can also import data from <acr tag="csv" /> files, from 
-     <acr tag="sql" /> databases and from <sty>probsoln</sty> databases. The <app/> 
+     <acr tag="sql" /> databases and from <sty>probsoln</sty> databases.
+     This manual assumes the user has some knowledge of the
+     <sty>datatool</sty> package.
+     </p>
+     <p>The <app/> 
      application can run in either 
      batch mode (default) or <acr tag="gui" /> mode (see <ref tag="gui" />).
      Command line invocation:
