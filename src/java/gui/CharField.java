@@ -1,6 +1,7 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import javax.swing.JTextField;
 import javax.swing.text.Document;
 
@@ -49,8 +50,24 @@ public class CharField extends JTextField
 
    public Dimension getMaximumSize()
    {
+      Dimension maxDim = super.getMaximumSize();
+
+      FontMetrics fm = getFontMetrics(getFont());
+
+      maxDim.width = Math.max(20, fm.getMaxAdvance());
+
       return maxDim;
    }
 
-   private Dimension maxDim = new Dimension(20,20);
+   public Dimension getPreferredSize()
+   {
+      Dimension maxDim = super.getPreferredSize();
+
+      FontMetrics fm = getFontMetrics(getFont());
+
+      maxDim.width = Math.max(20, fm.getMaxAdvance());
+
+      return maxDim;
+   }
+
 }

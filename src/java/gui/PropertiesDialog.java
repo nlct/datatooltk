@@ -174,6 +174,7 @@ public class PropertiesDialog extends JDialog
       texMapTable = new JTable();
       texMapTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
       texMapTable.setBorder(BorderFactory.createEtchedBorder());
+      texMapTable.setIntercellSpacing(new Dimension(6, 1));
 
       FontMetrics fm = texMapTable.getFontMetrics(texMapTable.getFont());
 
@@ -815,7 +816,9 @@ class TeXMapModel extends AbstractTableModel
 
    private JTable table;
 
-   private JTextField keyField, valueField;
+   private CharField keyField;
+
+   private JTextField valueField;
 
    private TeXMapDialog texMapDialog;
 
