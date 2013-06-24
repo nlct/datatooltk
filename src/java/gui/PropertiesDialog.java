@@ -193,9 +193,24 @@ public class PropertiesDialog extends JDialog
          "button", "add", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0)));
 
-      buttonPanel.add(DatatoolGuiResources.createActionButton(
+      editButton = DatatoolGuiResources.createActionButton(
+         "button", "edit", this, null);
+      buttonPanel.add(editButton);
+
+      removeButton = DatatoolGuiResources.createActionButton(
          "button", "remove", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0)));
+         KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0));
+      buttonPanel.add(removeButton);
+
+      texMapTable.getSelectionModel().addListSelectionListener(
+         new ListSelectionListener()
+         {
+            public void valueChanged(ListSelectionEvent evt)
+            {
+               updateButtons();
+            }
+         }
+      );
 
       // Display Tab
 
@@ -430,13 +445,9 @@ public class PropertiesDialog extends JDialog
          cellWidthFields[i].setValue(settings.getCellWidth(i-1));
       }
 
-      texMapModel = new TeXMapModel(texMapTable, settings);
-      texMapTable.setDefaultRenderer(Object.class, texMapModel);
-      texMapTable.setDefaultEditor(Character.class, 
-         texMapModel.getKeyCellEditor());
-      texMapTable.setDefaultEditor(String.class, 
-         texMapModel.getValueCellEditor());
+      texMapModel = new TeXMapModel(this, texMapTable, settings);
 
+      updateButtons();
 
       setVisible(true);
    }
@@ -478,6 +489,15 @@ public class PropertiesDialog extends JDialog
       {
          texMapModel.addRow();
       }
+      else if (action.equals("edit"))
+      {
+         int index = texMapTable.getSelectedRow();
+
+         if (index > -1)
+         {
+            texMapModel.editRow(index);
+         }
+      }
       else if (action.equals("remove"))
       {
          int index = texMapTable.getSelectedRow();
@@ -487,6 +507,13 @@ public class PropertiesDialog extends JDialog
             texMapModel.removeRow(index);
          }
       }
+   }
+
+   private void updateButtons()
+   {
+      boolean enabled = texMapTable.getSelectedRow()!=-1;
+      editButton.setEnabled(enabled);
+      removeButton.setEnabled(enabled);
    }
 
    private void okay()
@@ -623,6 +650,8 @@ public class PropertiesDialog extends JDialog
 
    private JTextField hostField, prefixField, databaseField, userField;
 
+   private JButton removeButton, editButton;
+
    private JComboBox<String> fontBox;
 
    private TeXMapModel texMapModel;
@@ -635,9 +664,9 @@ public class PropertiesDialog extends JDialog
 }
 
 class TeXMapModel extends AbstractTableModel
-   implements TableCellRenderer
 {
-   public TeXMapModel(JTable table, DatatoolSettings settings)
+   public TeXMapModel(PropertiesDialog dialog,
+      JTable table, DatatoolSettings settings)
    {
       super();
       this.settings = settings;
@@ -648,8 +677,7 @@ class TeXMapModel extends AbstractTableModel
       keyField = new CharField();
       valueField = new JTextField(20);
 
-      keyCellEditor = new DefaultCellEditor(keyField);
-      valueCellEditor = new DefaultCellEditor(valueField);
+      texMapDialog = new TeXMapDialog(dialog);
 
       keyList = new Vector<Character>();
       valueList = new Vector<String>();
@@ -683,7 +711,7 @@ class TeXMapModel extends AbstractTableModel
 
    public boolean isCellEditable(int rowIndex, int columnIndex)
    {
-      return true;
+      return false;
    }
 
    public void setValueAt(Object aValue, int rowIndex, int columnIndex)
@@ -700,52 +728,11 @@ class TeXMapModel extends AbstractTableModel
 
    public int getColumnCount() {return 2;}
 
-   public int getRowCount() {return keyList.size();}
+   public int getRowCount() {return keyList == null ? 0 : keyList.size();}
 
    public Object getValueAt(int rowIndex, int columnIndex)
    {
       return columnIndex == 0 ? keyList.get(rowIndex) : valueList.get(rowIndex);
-   }
-
-   public Component getTableCellRendererComponent(JTable table, 
-      Object value, boolean isSelected, boolean hasFocus, 
-      int row, int column)
-   {
-      JTextField comp = column == 0 ? keyField : valueField;
-
-      comp.setText(value.toString());
-
-      comp.setEditable(false);
-
-      if (isSelected)
-      {
-         comp.setBackground(table.getSelectionBackground());
-      }
-      else
-      {
-         comp.setBackground(Color.YELLOW);
-      }
-
-      if (hasFocus)
-      {
-         comp.setBorder(focusBorder);
-      }
-      else
-      {
-         comp.setBorder(noFocusBorder);
-      }
-
-      return comp;
-   }
-
-   public TableCellEditor getKeyCellEditor()
-   {
-      return keyCellEditor;
-   }
-
-   public TableCellEditor getValueCellEditor()
-   {
-      return valueCellEditor;
    }
 
    public void updateSettings()
@@ -786,19 +773,42 @@ class TeXMapModel extends AbstractTableModel
 
       table.tableChanged(new TableModelEvent(this, index, index,
          TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
+
+      if (index < keyList.size())
+      {
+         table.setRowSelectionInterval(index, index);
+      }
    }
 
    public void addRow()
    {
-      keyList.add(new Character('c'));
-      valueList.add(COL_VAL);
+      if (texMapDialog.displayNew())
+      {
+         keyList.add(texMapDialog.getKey());
+         valueList.add(texMapDialog.getValue());
 
-      int index = keyList.size()-1;
+         int index = keyList.size()-1;
 
-      table.tableChanged(new TableModelEvent(this, index, index,
-         TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
+         table.tableChanged(new TableModelEvent(this, index, index,
+            TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
 
-      table.editCellAt(index, 0);
+         table.setRowSelectionInterval(index, index);
+      }
+   }
+
+   public void editRow(int rowIndex)
+   {
+      if (texMapDialog.displayEdit(keyList.get(rowIndex),
+            valueList.get(rowIndex)))
+      {
+         keyList.set(rowIndex, texMapDialog.getKey());
+         valueList.set(rowIndex, texMapDialog.getValue());
+
+         table.tableChanged(new TableModelEvent(this, rowIndex, rowIndex,
+            TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
+
+         table.setRowSelectionInterval(rowIndex, rowIndex);
+      }
    }
 
    private DatatoolSettings settings;
@@ -807,12 +817,12 @@ class TeXMapModel extends AbstractTableModel
 
    private JTextField keyField, valueField;
 
+   private TeXMapDialog texMapDialog;
+
    private Vector<Character> keyList;
    private Vector<String> valueList;
 
    private Object[] originals;
-
-   private DefaultCellEditor keyCellEditor, valueCellEditor;
 
    private static final Pattern PATTERN_KEY 
      = Pattern.compile("tex\\.(.)");
@@ -827,4 +837,111 @@ class TeXMapModel extends AbstractTableModel
 
    private static final Border noFocusBorder 
       = BorderFactory.createEmptyBorder();
+}
+
+class TeXMapDialog extends JDialog implements ActionListener
+{
+   public TeXMapDialog(JDialog parent)
+   {
+      super(parent, "", true);
+
+      JPanel panel = new JPanel();
+      getContentPane().add(panel, BorderLayout.CENTER);
+
+      keyField   = new CharField();
+      valueField = new JTextField(20);
+
+      panel.add(DatatoolGuiResources.createJLabel("texmap.character",
+         keyField));
+      panel.add(keyField);
+
+      panel.add(DatatoolGuiResources.createJLabel("texmap.replacement",
+         valueField));
+      panel.add(valueField);
+      
+      getContentPane().add(
+        DatatoolGuiResources.createOkayCancelPanel(this),
+        BorderLayout.SOUTH);
+
+      pack();
+      setLocationRelativeTo(null);
+   }
+
+   public boolean displayNew()
+   {
+      keyField.setText("");
+      valueField.setText("");
+
+      setTitle(TITLE_ADD);
+
+      return display();
+   }
+
+   
+   public boolean displayEdit(Character c, String value)
+   {
+      if (c != null) keyField.setValue(c.charValue());
+      if (value != null) valueField.setText(value);
+
+      setTitle(TITLE_EDIT);
+
+      return display();
+   }
+
+   private boolean display()
+   {
+      keyField.requestFocusInWindow();
+
+      modified = false;
+
+      setVisible(true);
+
+      return modified;
+   }
+
+   public void actionPerformed(ActionEvent evt)
+   {
+      String action = evt.getActionCommand();
+
+      if (action == null) return;
+
+      if (action.equals("okay"))
+      {
+         okay();
+      }
+      else if (action.equals("cancel"))
+      {
+         modified = false;
+         setVisible(false);
+      }
+   }
+
+   private void okay()
+   {
+      if (keyField.getText().isEmpty())
+      {
+         DatatoolGuiResources.error(this, 
+            DatatoolTk.getLabel("error.missing_texmap_key"));
+         return;
+      }
+
+      modified = true;
+      setVisible(false);
+   }
+
+   public Character getKey() { return new Character(keyField.getValue());}
+
+   public String getValue() { return valueField.getText(); }
+
+   private CharField keyField;
+
+   private JTextField valueField;
+
+   private boolean modified;
+
+   private static final String TITLE_ADD 
+      = DatatoolTk.getLabel("texmap.add_mapping");
+
+   private static final String TITLE_EDIT 
+      = DatatoolTk.getLabel("texmap.edit_mapping");
 }

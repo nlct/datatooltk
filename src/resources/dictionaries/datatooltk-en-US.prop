@@ -123,7 +123,7 @@ preferences.startup=Start Up Directory
 preferences.startup.mnemonic=Y
 preferences.startup.home=Home
 preferences.startup.home.mnemonic=M
-preferences.startup.cwd=CWD
+preferences.startup.cwd=Current Working Directory
 preferences.startup.cwd.mnemonic=W
 preferences.startup.last=Last
 preferences.startup.last.mnemonic=L
@@ -174,6 +174,10 @@ preferences.display.cellwidths=Cell Widths
 # TeX mappings table
 texmap.character=Character
 texmap.replacement=Replacement
+texmap.replacement=Replacement
+texmap.replacement.mnemonic=R
+texmap.add_mapping=Add Mapping
+texmap.edit_mapping=Edit Mapping
 
 # Sort dialog
 sort.title=Sort Database
@@ -256,6 +260,8 @@ button.add=Add
 button.add.mnemonic=A
 button.remove=Remove
 button.remove.mnemonic=R
+button.edit=Edit
+button.edit.mnemonic=T
 
 # Default labels
 default.field=Field$1
@@ -413,6 +419,7 @@ error.process_failed=Process '$1' (running in '$2') failed with exit code $3.
 error.missing_begin_prob=Missing 'BEGIN PROBLEM: ' on line $1 of '$2'.
 error.mismatched_end_prob='BEGIN PROBLEM: $1' ended by 'END PROBLEM: $2' on input line $3 of '$4'.
 error.internal.import_probdata_failed=(Internal Error) Something's gone wrong. Failed to import data.
+error.missing_texmap_key=Missing mapping character.
 
 # Warning messages
 warning.title=Warning
