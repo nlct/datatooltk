@@ -22,7 +22,7 @@ resources/icons	:
 	cd resources; ln -s ../images/icons
 
 lib/splash.png	: lib
-		cd lib; ln -s ../images/splash.png
+		cd lib; ln -s -f ../images/splash.png
 
 lib/datatooltk.jar	: java/Manifest.txt \
 			resources/icons \

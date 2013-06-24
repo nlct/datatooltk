@@ -171,6 +171,10 @@ preferences.display.cellheight=Cell Height
 preferences.display.cellheight.mnemonic=G
 preferences.display.cellwidths=Cell Widths
 
+# TeX mappings table
+texmap.character=Character
+texmap.replacement=Replacement
+
 # Sort dialog
 sort.title=Sort Database
 sort.column=Sort on Column: 
@@ -248,6 +252,10 @@ button.select=Select
 button.select.mnemonic=S
 button.scrollback=Scroll Back
 button.scrollforward=Scroll Forward
+button.add=Add
+button.add.mnemonic=A
+button.remove=Remove
+button.remove.mnemonic=R
 
 # Default labels
 default.field=Field$1

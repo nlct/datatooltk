@@ -466,6 +466,11 @@ public class DatatoolSettings extends Properties
       setProperty("tex."+c, value);
    }
 
+   public String removeTeXMap(char c)
+   {
+      return (String)remove("tex."+c);
+   }
+
    public void setLaTeX(String app)
    {
       setProperty("app.latex", app);

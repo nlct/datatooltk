@@ -20,6 +20,11 @@ public class CharField extends JTextField
       super(""+defVal, 1);
    }
 
+   public CharField()
+   {
+      super(1);
+   }
+
    protected Document createDefaultModel()
    {
       return new CharDocument();

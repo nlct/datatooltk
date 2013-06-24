@@ -1,9 +1,14 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.io.File;
+import java.util.*;
+import java.util.regex.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.table.*;
+import javax.swing.event.*;
+import javax.swing.border.Border;
 
 import com.dickimawbooks.datatooltk.*;
 
@@ -157,13 +162,40 @@ public class PropertiesDialog extends JDialog
 
       JComponent texTab = addTab("tex");
 
-      mapTeXBox = createCheckBox("preferences.tex", "map");
-      texTab.add(mapTeXBox);
-
       box = createNewRow(texTab);
       latexFileField = new FileField(this, "latex", fileChooser);
       box.add(createLabel("preferences.tex.latexapp", latexFileField));
       box.add(latexFileField);
+
+      mapTeXBox = createCheckBox("preferences.tex", "map");
+      texTab.add(mapTeXBox);
+
+      box = createNewRow(texTab, new BorderLayout());
+      texMapTable = new JTable();
+      texMapTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+      texMapTable.setBorder(BorderFactory.createEtchedBorder());
+
+      FontMetrics fm = texMapTable.getFontMetrics(texMapTable.getFont());
+
+      int rowHeight = fm.getHeight()+6;
+      texMapTable.setRowHeight(rowHeight);
+
+      JScrollPane sp = new JScrollPane(texMapTable);
+      sp.setBorder(BorderFactory.createEmptyBorder());
+
+      sp.setPreferredSize(new Dimension(150, 11*rowHeight));
+      box.add(sp, BorderLayout.CENTER);
+
+      JComponent buttonPanel = Box.createVerticalBox();
+      box.add(buttonPanel, BorderLayout.EAST);
+
+      buttonPanel.add(DatatoolGuiResources.createActionButton(
+         "button", "add", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0)));
+
+      buttonPanel.add(DatatoolGuiResources.createActionButton(
+         "button", "remove", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0)));
 
       // Display Tab
 
@@ -268,8 +300,13 @@ public class PropertiesDialog extends JDialog
    {
       int index = tabbedPane.getTabCount();
 
+      JPanel panel = new JPanel();
+      panel.setOpaque(true);
+      panel.setBorder(BorderFactory.createEtchedBorder());
+      panel.add(tab);
+
       tabbedPane.addTab(DatatoolTk.getLabel("preferences", label), 
-         new JScrollPane(tab));
+         panel);
 
       String tooltip = DatatoolTk.getToolTip("preferences", label);
 
@@ -286,7 +323,12 @@ public class PropertiesDialog extends JDialog
 
    private JComponent createNewRow(JComponent tab)
    {
-      JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
+      return createNewRow(tab, new FlowLayout(FlowLayout.LEFT, 4, 1));
+   }
+
+   private JComponent createNewRow(JComponent tab, LayoutManager layout)
+   {
+      JComponent comp = new JPanel(layout);
       comp.setAlignmentX(0);
       tab.add(comp);
 
@@ -388,6 +430,14 @@ public class PropertiesDialog extends JDialog
          cellWidthFields[i].setValue(settings.getCellWidth(i-1));
       }
 
+      texMapModel = new TeXMapModel(texMapTable, settings);
+      texMapTable.setDefaultRenderer(Object.class, texMapModel);
+      texMapTable.setDefaultEditor(Character.class, 
+         texMapModel.getKeyCellEditor());
+      texMapTable.setDefaultEditor(String.class, 
+         texMapModel.getValueCellEditor());
+
+
       setVisible(true);
    }
 
@@ -423,6 +473,19 @@ public class PropertiesDialog extends JDialog
       {
          sepCharField.setEnabled(true);
          sepCharField.requestFocusInWindow();
+      }
+      else if (action.equals("add"))
+      {
+         texMapModel.addRow();
+      }
+      else if (action.equals("remove"))
+      {
+         int index = texMapTable.getSelectedRow();
+
+         if (index > -1)
+         {
+            texMapModel.removeRow(index);
+         }
       }
    }
 
@@ -524,6 +587,8 @@ public class PropertiesDialog extends JDialog
 
       settings.setLaTeX(latexFileField.getFileName());
 
+      texMapModel.updateSettings();
+
       settings.setFontName(fontBox.getSelectedItem().toString());
       settings.setFontSize(sizeField.getValue());
       settings.setCellHeight(cellHeightField.getValue());
@@ -560,7 +625,206 @@ public class PropertiesDialog extends JDialog
 
    private JComboBox<String> fontBox;
 
+   private TeXMapModel texMapModel;
+
+   private JTable texMapTable;
+
    private JTabbedPane tabbedPane;
 
    private DatatoolGUI gui;
+}
+
+class TeXMapModel extends AbstractTableModel
+   implements TableCellRenderer
+{
+   public TeXMapModel(JTable table, DatatoolSettings settings)
+   {
+      super();
+      this.settings = settings;
+      this.table = table;
+
+      table.setModel(this);
+
+      keyField = new CharField();
+      valueField = new JTextField(20);
+
+      keyCellEditor = new DefaultCellEditor(keyField);
+      valueCellEditor = new DefaultCellEditor(valueField);
+
+      keyList = new Vector<Character>();
+      valueList = new Vector<String>();
+
+      for (Enumeration en=settings.keys(); en.hasMoreElements();)
+      {
+         String key = (String)en.nextElement();
+
+         Matcher m = PATTERN_KEY.matcher(key);
+
+         if (m.matches())
+         {
+            char c = m.group(1).charAt(0);
+            keyList.add(new Character(c));
+            valueList.add(settings.getTeXMap(c));
+         }
+      }
+
+      originals = keyList.toArray();
+
+      table.getColumn(COL_VAL).setPreferredWidth(
+        (int)valueField.getPreferredSize().getWidth());
+
+      table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+   }
+
+   public String getColumnName(int columnIndex)
+   {
+      return columnIndex == 0 ? COL_KEY : COL_VAL;
+   }
+
+   public boolean isCellEditable(int rowIndex, int columnIndex)
+   {
+      return true;
+   }
+
+   public void setValueAt(Object aValue, int rowIndex, int columnIndex)
+   {
+      if (columnIndex == 0)
+      {
+         keyList.set(rowIndex, new Character(aValue.toString().charAt(0)));
+      }
+      else
+      {
+         valueList.add(aValue.toString());
+      }
+   }
+
+   public int getColumnCount() {return 2;}
+
+   public int getRowCount() {return keyList.size();}
+
+   public Object getValueAt(int rowIndex, int columnIndex)
+   {
+      return columnIndex == 0 ? keyList.get(rowIndex) : valueList.get(rowIndex);
+   }
+
+   public Component getTableCellRendererComponent(JTable table, 
+      Object value, boolean isSelected, boolean hasFocus, 
+      int row, int column)
+   {
+      JTextField comp = column == 0 ? keyField : valueField;
+
+      comp.setText(value.toString());
+
+      comp.setEditable(false);
+
+      if (isSelected)
+      {
+         comp.setBackground(table.getSelectionBackground());
+      }
+      else
+      {
+         comp.setBackground(Color.YELLOW);
+      }
+
+      if (hasFocus)
+      {
+         comp.setBorder(focusBorder);
+      }
+      else
+      {
+         comp.setBorder(noFocusBorder);
+      }
+
+      return comp;
+   }
+
+   public TableCellEditor getKeyCellEditor()
+   {
+      return keyCellEditor;
+   }
+
+   public TableCellEditor getValueCellEditor()
+   {
+      return valueCellEditor;
+   }
+
+   public void updateSettings()
+   {
+      for (int i = 0; i < originals.length; i++)
+      {
+         Character c = (Character)originals[i];
+
+         int index = keyList.indexOf(c);
+
+         if (index == -1)
+         {
+            // User has removed this mapping.
+
+            settings.removeTeXMap(c.charValue());
+         }
+         else
+         {
+            Character key = keyList.remove(index);
+            String value = valueList.remove(index);
+
+            settings.setTeXMap(key.charValue(), value);
+         }
+      }
+
+      // Remaining entries are new mappings
+
+      for (int i = 0, n = keyList.size(); i < n; i++)
+      {
+         settings.setTeXMap(keyList.get(i).charValue(), valueList.get(i));
+      }
+   }
+
+   public void removeRow(int index)
+   {
+      keyList.remove(index);
+      valueList.remove(index);
+
+      table.tableChanged(new TableModelEvent(this, index, index,
+         TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
+   }
+
+   public void addRow()
+   {
+      keyList.add(new Character('c'));
+      valueList.add(COL_VAL);
+
+      int index = keyList.size()-1;
+
+      table.tableChanged(new TableModelEvent(this, index, index,
+         TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
+
+      table.editCellAt(index, 0);
+   }
+
+   private DatatoolSettings settings;
+
+   private JTable table;
+
+   private JTextField keyField, valueField;
+
+   private Vector<Character> keyList;
+   private Vector<String> valueList;
+
+   private Object[] originals;
+
+   private DefaultCellEditor keyCellEditor, valueCellEditor;
+
+   private static final Pattern PATTERN_KEY 
+     = Pattern.compile("tex\\.(.)");
+
+   public static final String COL_KEY 
+      = DatatoolTk.getLabel("texmap.character");
+   public static final String COL_VAL 
+      = DatatoolTk.getLabel("texmap.replacement");
+
+   private static final Border focusBorder 
+      = BorderFactory.createLineBorder(Color.GRAY);
+
+   private static final Border noFocusBorder 
+      = BorderFactory.createEmptyBorder();
 }
