@@ -42,7 +42,7 @@ public class DatatoolSql implements DatatoolImport
 
          int colCount = data.getColumnCount();
 
-         db = new DatatoolDb(colCount);
+         db = new DatatoolDb(settings, colCount);
 
          for (int i = 1; i <= colCount; i++)
          {

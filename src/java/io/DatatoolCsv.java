@@ -75,7 +75,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    {
       boolean hasVerbatim = false;
 
-      DatatoolDb db = new DatatoolDb();
+      DatatoolDb db = new DatatoolDb(settings);
 
       String name = file.getName();
 

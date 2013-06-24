@@ -28,7 +28,7 @@ public class DatatoolProbSoln implements DatatoolImport
 
       File dir = file.getParentFile();
 
-      DatatoolDb db = new DatatoolDb();
+      DatatoolDb db = new DatatoolDb(settings);
 
       String name = file.getName();
 

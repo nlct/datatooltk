@@ -34,7 +34,7 @@ public class DatatoolTk
       {
          if (dbtex != null)
          {
-            db = DatatoolDb.load(dbtex);
+            db = DatatoolDb.load(settings, dbtex);
          }
          else
          {
@@ -388,10 +388,38 @@ public class DatatoolTk
 
       if (value == null)
       {
-         return prop.replaceAll("\\$1", "null");
+         value = "";
       }
 
-      return prop.replaceAll("\\$1", value.replaceAll("\\\\", "\\\\\\\\"));
+      int n = prop.length();
+
+      StringBuffer buffer = new StringBuffer(n);
+
+      for (int i = 0; i < n; i++)
+      {
+         int c = prop.codePointAt(i);
+
+         if (c == (int)'\\' && i != n-1)
+         {
+            buffer.appendCodePoint(prop.codePointAt(++i));
+         }
+         else if (c == (int)'$' && i != n-1)
+         {
+            c = prop.codePointAt(i+1);
+
+            if (c == (int)'1')
+            {
+               buffer.append(value);
+               i++;
+            }
+         }
+         else
+         {
+            buffer.appendCodePoint(c);
+         }
+      }
+
+      return new String(buffer);
    }
 
    public static String getLabelWithValue(String label, int value)
@@ -418,45 +446,45 @@ public class DatatoolTk
 
       int n = prop.length();
 
-      StringBuilder builder = new StringBuilder(n);
+      StringBuffer buffer = new StringBuffer(n);
 
       for (int i = 0; i < n; i++)
       {
-         int codePoint = prop.codePointAt(i);
+         int c = prop.codePointAt(i);
 
-         if (codePoint == 36) // $
+         if (c == (int)'\\' && i != n-1)
          {
-            // is the next character a number?
+            buffer.appendCodePoint(prop.codePointAt(++i));
+         }
+         else if (c == (int)'$' && i != n-1)
+         {
+            c = prop.codePointAt(i+1);
 
-            int next = -1;
-
-            if (++i < n)
+            if (c >= 48 && c <= 57)
             {
-               next = prop.codePointAt(i);
-            }
+               // Digit
 
-            if (next > 48 && next <= 57) // next is a digit 1-9
-            {
-               int j = next-49;
-               builder.append(j < values.length ? values[j] : "??");
+               int index = c - 48 - 1;
+
+               if (index >= 0 && index < values.length)
+               {
+                  buffer.append(values[index]);
+               }
+
+               i++;
             }
             else
             {
-               builder.appendCodePoint(codePoint);
-
-               if (next != -1)
-               {
-                  builder.appendCodePoint(next);
-               }
+               buffer.append('$');
             }
          }
          else
          {
-            builder.appendCodePoint(codePoint);
+            buffer.appendCodePoint(c);
          }
       }
 
-      return builder.toString();
+      return new String(buffer);
    }
 
    public static void removeFileOnExit(File file)

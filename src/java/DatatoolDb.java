@@ -11,31 +11,36 @@ import com.dickimawbooks.datatooltk.io.*;
 
 public class DatatoolDb
 {
-   public DatatoolDb()
+   public DatatoolDb(DatatoolSettings settings)
    {
+      this.settings = settings;
       headers = new Vector<DatatoolHeader>();
       data = new Vector<DatatoolRow>();
    }
 
-   public DatatoolDb(int rows, int cols)
+   public DatatoolDb(DatatoolSettings settings, int rows, int cols)
    {
+      this.settings = settings;
       headers = new Vector<DatatoolHeader>(cols);
       data = new Vector<DatatoolRow>(rows);
    }
 
-   public DatatoolDb(int cols)
+   public DatatoolDb(DatatoolSettings settings, int cols)
    {
+      this.settings = settings;
       headers = new Vector<DatatoolHeader>(cols);
       data = new Vector<DatatoolRow>();
    }
 
-   public static DatatoolDb load(String filename)
+   public static DatatoolDb load(DatatoolSettings settings,
+      String filename)
      throws IOException
    {
-      return load(new File(filename));
+      return load(settings, new File(filename));
    }
 
-   public static DatatoolDb load(File dbFile)
+   public static DatatoolDb load(DatatoolSettings settings, 
+     File dbFile)
      throws IOException
    {
       BufferedReader in = null;
@@ -46,7 +51,7 @@ public class DatatoolDb
       {
          in = new BufferedReader(new FileReader(dbFile));
 
-         db = new DatatoolDb();
+         db = new DatatoolDb(settings);
 
          db.linenum = 0;
          String line;
@@ -997,7 +1002,7 @@ public class DatatoolDb
       return headers.get(colIdx).getType();
    }
 
-   public static int getType(String value)
+   public int getType(String value)
    {
       if (value == null || value.isEmpty()) return TYPE_UNKNOWN;
 
@@ -1021,7 +1026,15 @@ public class DatatoolDb
       {
       }
 
-      // TODO check for currency
+      try
+      {
+         settings.parseCurrency(value);
+
+         return TYPE_CURRENCY;
+      }
+      catch (NumberFormatException e)
+      {
+      }
 
       return TYPE_STRING;
    }
@@ -1092,27 +1105,40 @@ public class DatatoolDb
          }
          catch (NumberFormatException e)
          {
-            // Not an integer!
-
-            // Is it a float?
-
-            try
-            {
-               Float num = new Float(value);
-
-               header.setType(TYPE_REAL);
-
-               return num;
-            }
-            catch (NumberFormatException fe)
-            {
-               // Not a float.
-               // Set to String.
-               // TODO check for currency type
-
-               header.setType(TYPE_STRING);
-            }
+            // Not an integer
          }
+
+         // Is it a float?
+
+         try
+         {
+            Float num = new Float(value);
+
+            header.setType(TYPE_REAL);
+
+            return num;
+         }
+         catch (NumberFormatException e)
+         {
+            // Not a float.
+         }
+
+         // Is it currency?
+
+         try
+         {
+            Currency currency = settings.parseCurrency(value);
+
+            header.setType(TYPE_CURRENCY);
+
+            return currency;
+         }
+         catch (NumberFormatException e)
+         {
+            // Not currency.
+         }
+
+         header.setType(TYPE_STRING);
       }
       else if (type == TYPE_REAL)
       {
@@ -1128,11 +1154,50 @@ public class DatatoolDb
          catch (NumberFormatException fe)
          {
             // Not a float.
-            // Set to String.
-            // TODO check for currency type
-
-            header.setType(TYPE_STRING);
          }
+
+         // Is it currency?
+
+         try
+         {
+            Currency currency = settings.parseCurrency(value);
+
+            header.setType(TYPE_CURRENCY);
+
+            return currency;
+         }
+         catch (NumberFormatException e)
+         {
+            // Not currency.
+         }
+
+         // Set to String.
+
+         header.setType(TYPE_STRING);
+      }
+      else if (type == TYPE_CURRENCY)
+      {
+         if (value.isEmpty())
+         {
+            return new Currency(null, 0.0f);
+         }
+
+         try
+         {
+            Currency currency = settings.parseCurrency(value);
+
+            header.setType(TYPE_CURRENCY);
+
+            return currency;
+         }
+         catch (NumberFormatException e)
+         {
+            // Not currency.
+         }
+
+         // Set to String.
+
+         header.setType(TYPE_STRING);
       }
 
       return value;
@@ -1339,6 +1404,8 @@ public class DatatoolDb
          data.set(i, array[i]);
       }
    }
+
+   private DatatoolSettings settings;
 
    private Vector<DatatoolHeader> headers;
 

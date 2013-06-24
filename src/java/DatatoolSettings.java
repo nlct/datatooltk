@@ -5,6 +5,8 @@ import java.io.*;
 import java.util.Vector;
 import java.util.InvalidPropertiesFormatException;
 import java.awt.Font;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
@@ -13,8 +15,10 @@ public class DatatoolSettings extends Properties
    public DatatoolSettings()
    {
       super();
-      setDefaults();
       recentFiles = new Vector<String>();
+      currencies = new Vector<String>();
+
+      setDefaults();
 
       setPropertiesPath();
    }
@@ -111,6 +115,25 @@ public class DatatoolSettings extends Properties
             reader.close();
             reader = null;
          }
+
+         file = new File(propertiesPath, currencyFileName);
+
+         if (file.exists())
+         {
+            reader = new BufferedReader(new FileReader(file));
+
+            currencies.clear();
+
+            String line;
+
+            while ((line=reader.readLine()) != null)
+            {
+               currencies.add(line);
+            }
+
+            reader.close();
+            reader = null;
+         }
       }
       finally
       {
@@ -137,6 +160,8 @@ public class DatatoolSettings extends Properties
 
       FileOutputStream out = null;
 
+      PrintWriter writer = null;
+
       try
       {
          out = new FileOutputStream(file);
@@ -148,7 +173,7 @@ public class DatatoolSettings extends Properties
 
          file = new File(propertiesPath, recentName);
 
-         PrintWriter writer = new PrintWriter(new FileWriter(file));
+         writer = new PrintWriter(new FileWriter(file));
 
          for (String name : recentFiles)
          {
@@ -156,6 +181,19 @@ public class DatatoolSettings extends Properties
          }
 
          writer.close();
+         writer = null;
+
+         file = new File(propertiesPath, currencyFileName);
+
+         writer = new PrintWriter(new FileWriter(file));
+
+         for (String currency : currencies)
+         {
+            writer.println(currency);
+         }
+
+         writer.close();
+         writer = null;
       }
       finally
       {
@@ -163,6 +201,12 @@ public class DatatoolSettings extends Properties
          {
             out.close();
             out = null;
+         }
+
+         if (writer != null)
+         {
+            writer.close();
+            writer = null;
          }
       }
    }
@@ -471,6 +515,76 @@ public class DatatoolSettings extends Properties
       return (String)remove("tex."+c);
    }
 
+   public int getCurrencyCount()
+   {
+      return currencies.size();
+   }
+
+   public int getCurrencyIndex(String currency)
+   {
+      return currencies.indexOf(currency);
+   }
+
+   public String getCurrency(int index)
+   {
+      return currencies.get(index);
+   }
+
+   public void addCurrency(String value)
+   {
+      currencies.add(value);
+   }
+
+   public void setCurrency(int index, String value)
+   {
+      currencies.set(index, value);
+   }
+
+   public boolean removeCurrency(String currency)
+   {
+      return currencies.remove(currency);
+   }
+
+   public boolean isCurrency(String text)
+   {
+      Matcher m = PATTERN_CURRENCY.matcher(text);
+
+      if (m.matches())
+      {
+         String currency = m.group(1);
+
+         for (int i = 0, n = currencies.size(); i < n; i++)
+         {
+            if (currencies.get(i).equals(currency)) return true;
+         }
+      }
+
+      return false;
+   }
+
+   public Currency parseCurrency(String text)
+      throws NumberFormatException
+   {
+      Matcher m = PATTERN_CURRENCY.matcher(text);
+
+      if (m.matches())
+      {
+         String currency = m.group(1);
+         float value = Float.parseFloat(m.group(2));
+
+         for (int i = 0, n = currencies.size(); i < n; i++)
+         {
+            if (currencies.get(i).equals(currency))
+            {
+               return new Currency(currency, value);
+            }
+         }
+      }
+
+      throw new NumberFormatException(DatatoolTk.getLabelWithValue(
+         "error.not_currency", text));
+   }
+
    public void setLaTeX(String app)
    {
       setProperty("app.latex", app);
@@ -640,11 +754,19 @@ public class DatatoolSettings extends Properties
       setFontName("Monospaced");
       setFontSize(12);
       setCellHeight(4);
+
+      if (currencies.size() == 0)
+      {
+         addCurrency("\\$");
+         addCurrency("\\pounds");
+      }
    }
 
    protected char[] sqlPassword = null;
 
    protected DatatoolPasswordReader passwordReader;
+
+   protected Vector<String> currencies;
 
    private Vector<String> recentFiles;
 
@@ -654,8 +776,14 @@ public class DatatoolSettings extends Properties
 
    private final String recentName = "recentfiles";
 
+   private final String currencyFileName = "currencies";
+
    public static final int STARTUP_HOME   = 0;
    public static final int STARTUP_CWD    = 1;
    public static final int STARTUP_LAST   = 2;
    public static final int STARTUP_CUSTOM = 3;
+
+   public static final Pattern PATTERN_CURRENCY
+      = Pattern.compile("([^\\d\\.]+) *(\\d*\\.?\\d+)");
+
 }

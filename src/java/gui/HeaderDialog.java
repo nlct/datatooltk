@@ -122,7 +122,7 @@ public class HeaderDialog extends JDialog
 
             String element = en.nextElement();
 
-            int thisType = DatatoolDb.getType(element);
+            int thisType = db.getType(element);
 
             switch (type)
             {

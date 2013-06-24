@@ -469,7 +469,7 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("new"))
       {
-         DatatoolDb db = new DatatoolDb();
+         DatatoolDb db = new DatatoolDb(settings);
          db.setName(DatatoolTk.getLabel("default.untitled"));
          createNewTab(db);
       }
@@ -817,7 +817,7 @@ public class DatatoolGUI extends JFrame
    {
       try
       {
-         createNewTab(DatatoolDb.load(file));
+         createNewTab(DatatoolDb.load(settings, file));
 
          settings.addRecentFile(file);
       }

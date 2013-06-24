@@ -420,6 +420,7 @@ error.missing_begin_prob=Missing 'BEGIN PROBLEM: ' on line $1 of '$2'.
 error.mismatched_end_prob='BEGIN PROBLEM: $1' ended by 'END PROBLEM: $2' on input line $3 of '$4'.
 error.internal.import_probdata_failed=(Internal Error) Something's gone wrong. Failed to import data.
 error.missing_texmap_key=Missing mapping character.
+error.not_currency='$1' not in currency format.
 
 # Warning messages
 warning.title=Warning
