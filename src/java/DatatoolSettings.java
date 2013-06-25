@@ -952,4 +952,10 @@ public class DatatoolSettings extends Properties
    public static final String DICT_DIR = "/resources/dictionaries/";
 
    public static final String RESOURCE = "datatooltk";
+
+   public static final Pattern PATTERN_HELPSET 
+     = Pattern.compile("datatooltk-([a-z]{2})(-[A-Z]{2})?");
+
+   public static final Pattern PATTERN_DICT 
+     = Pattern.compile("datatooltk-([a-z]{2})(-[A-Z]{2})?\\.prop");
 }

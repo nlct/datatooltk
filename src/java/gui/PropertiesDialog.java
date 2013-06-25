@@ -1,6 +1,7 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.regex.*;
 import java.awt.*;
@@ -64,6 +65,7 @@ public class PropertiesDialog extends JDialog
         BorderFactory.createEtchedBorder(),
         DatatoolTk.getLabel("preferences.shuffle")
       ));
+
       generalTab.add(shuffleComp);
 
       box = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -253,16 +255,8 @@ public class PropertiesDialog extends JDialog
       buttonPanel = Box.createVerticalBox();
       currencyTab.add(buttonPanel, BorderLayout.EAST);
 
-      JTextArea textArea = new JTextArea(2, 40);
-
-      textArea.setText(DatatoolTk.getLabel(
-        "preferences.currencies.reminder"));
-      textArea.setEditable(false);
-      textArea.setWrapStyleWord(true);
-      textArea.setLineWrap(true);
-      textArea.setOpaque(false);
-
-      currencyTab.add(textArea, BorderLayout.NORTH);
+      currencyTab.add(createTextArea("preferences.currencies.reminder"),
+        BorderLayout.NORTH);
 
       buttonPanel.add(DatatoolGuiResources.createActionButton(
          "preferences.currencies", "add_currency", this, null));
@@ -364,6 +358,33 @@ public class PropertiesDialog extends JDialog
          labels[idx].setPreferredSize(dim);
       }
 
+      // Language Tab
+
+      JComponent languageTab =
+         addTab(new JPanel(new BorderLayout()), "language");
+
+      languageTab.add(createTextArea("preferences.language.restart"),
+         BorderLayout.NORTH);
+
+      JComponent comp = Box.createVerticalBox();
+      languageTab.add(comp);
+
+      box = new JPanel(new FlowLayout());
+      comp.add(box);
+
+      helpsetLangBox = new JComboBox<String>(gui.getHelpSets());
+
+      box.add(createLabel("preferences.language.helpset", helpsetLangBox));
+      box.add(helpsetLangBox);
+
+      box = new JPanel(new FlowLayout());
+      comp.add(box);
+
+      dictLangBox = new JComboBox<String>(gui.getDictionaries());
+
+      box.add(createLabel("preferences.language.dictionary", dictLangBox));
+      box.add(dictLangBox);
+
       getContentPane().add(
         DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "preferences"),
         BorderLayout.SOUTH);
@@ -432,6 +453,19 @@ public class PropertiesDialog extends JDialog
    private JLabel createLabel(String label, JComponent comp)
    {
       return DatatoolGuiResources.createJLabel(label, comp);
+   }
+
+   private JTextArea createTextArea(String label)
+   {
+      JTextArea textArea = new JTextArea(2, 40);
+
+      textArea.setText(DatatoolTk.getLabel(label));
+      textArea.setEditable(false);
+      textArea.setWrapStyleWord(true);
+      textArea.setLineWrap(true);
+      textArea.setOpaque(false);
+
+      return textArea;
    }
 
    private JCheckBox createCheckBox(String parentLabel, String label)
@@ -531,6 +565,9 @@ public class PropertiesDialog extends JDialog
          seedField.setEnabled(true);
          seedField.setValue(seed.intValue());
       }
+
+      helpsetLangBox.setSelectedItem(settings.getHelpSet());
+      dictLangBox.setSelectedItem(settings.getDictionary());
 
       updateButtons();
 
@@ -798,6 +835,9 @@ public class PropertiesDialog extends JDialog
 
       settings.setShuffleIterations(iterationsField.getValue());
 
+      settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
+      settings.setDictionary(dictLangBox.getSelectedItem().toString());
+
       setVisible(false);
    }
 
@@ -835,6 +875,8 @@ public class PropertiesDialog extends JDialog
    private JList<String> currencyList;
 
    private CurrencyListModel currencyListModel;
+
+   private JComboBox<String> helpsetLangBox, dictLangBox;
 
    private JTabbedPane tabbedPane;
 

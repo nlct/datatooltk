@@ -193,6 +193,13 @@ preferences.currencies.remove_currency.mnemonic=R
 preferences.currencies.edit_currency=Edit
 preferences.currencies.edit_currency.mnemonic=T
 preferences.currencies.reminder=If you add new currencies here, remember to also add them in your document using \\DTLnewcurrencysymbol
+preferences.language=Language
+preferences.language.mnemonic=L
+preferences.language.restart=Application needs to be restarted for language change to take effect.
+preferences.language.helpset=Manual Language: 
+preferences.language.helpset.mnemonic=M 
+preferences.language.dictionary=GUI Language:
+preferences.language.dictionary.mnemonic=A
 
 # TeX mappings table
 texmap.character=Character

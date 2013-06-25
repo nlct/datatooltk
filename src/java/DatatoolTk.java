@@ -295,36 +295,6 @@ public class DatatoolTk
       }
    }
 
-   public String[] getDictionaries()
-    throws URISyntaxException
-   {
-      File dir = new File(DatatoolTk.class.getResource(
-         settings.DICT_DIR).toURI());
-
-      return dir.list(new FilenameFilter()
-      {
-         public boolean accept(File directory, String name)
-         {
-            return name.matches("datatooltk-[a-z]{2}(-[A-Z]{2})?");
-         }
-      });
-   }
-
-   public String[] getHelpsets()
-    throws URISyntaxException
-   {
-      File dir = new File(DatatoolTk.class.getResource(
-         settings.HELPSET_DIR).toURI());
-
-      return dir.list(new FilenameFilter()
-      {
-         public boolean accept(File directory, String name)
-         {
-            return name.matches("datatooltk-[a-z]{2}(-[A-Z]{2})?");
-         }
-      });
-   }
-
    public static void loadDictionary()
       throws IOException
    {

@@ -1,7 +1,7 @@
 APP_VERSION:=$(shell grep "public static final String appVersion" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sappVersion=//" | tr -d "\"\; ")
 
 test-gui	: app
-	bin/datatooltk --debug --gui --csv tests/test-para.csv
+	bin/datatooltk-gui --debug --csv tests/test-para.csv
 
 test-cli	: app
 	bin/datatooltk --debug --out tests/test-out.dbtex --in tests/data-raw.dbtex

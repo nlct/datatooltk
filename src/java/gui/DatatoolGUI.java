@@ -3,7 +3,12 @@ package com.dickimawbooks.datatooltk.gui;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.net.URL;
+import java.net.URISyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Arrays;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -389,6 +394,86 @@ public class DatatoolGUI extends JFrame
       enableHelpOnButton(button, id);
 
       return button;
+   }
+
+   public String[] getDictionaries()
+   {
+      File dir = null;
+
+      try
+      {
+         dir = new File(DatatoolTk.class.getResource(
+            settings.DICT_DIR).toURI());
+      }
+      catch (URISyntaxException e)
+      {
+         DatatoolGuiResources.error(this, e);
+         return null;
+      }
+
+      String[] list = dir.list(new FilenameFilter()
+      {
+         public boolean accept(File directory, String name)
+         {
+            Matcher m = DatatoolSettings.PATTERN_DICT.matcher(name);
+
+            return m.matches();
+         }
+      });
+
+      for (int i = 0; i < list.length; i++)
+      {
+         Matcher m = DatatoolSettings.PATTERN_DICT.matcher(list[i]);
+
+         if (m.matches())
+         {
+            list[i] = (m.groupCount() == 1 ? m.group(1) : m.group(1)+m.group(2));
+         }
+      }
+
+      Arrays.sort(list);
+
+      return list;
+   }
+
+   public String[] getHelpSets()
+   {
+      File dir = null;
+
+      try
+      {
+         dir = new File(DatatoolTk.class.getResource(
+            settings.HELPSET_DIR).toURI());
+      }
+      catch (URISyntaxException e)
+      {
+         DatatoolGuiResources.error(this, e);
+         return null;
+      }
+
+      String[] list = dir.list(new FilenameFilter()
+      {
+         public boolean accept(File directory, String name)
+         {
+            Matcher m = DatatoolSettings.PATTERN_HELPSET.matcher(name);
+
+            return m.matches();
+         }
+      });
+
+      for (int i = 0; i < list.length; i++)
+      {
+         Matcher m = DatatoolSettings.PATTERN_HELPSET.matcher(list[i]);
+
+         if (m.matches())
+         {
+            list[i] = (m.groupCount() == 1 ? m.group(1) : m.group(1)+m.group(2));
+         }
+      }
+
+      Arrays.sort(list);
+
+      return list;
    }
 
    public void updateUndoRedoItems(DatatoolDbPanel panel)
