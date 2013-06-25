@@ -247,6 +247,7 @@ header.column_title=Title
 header.column_title.mnemonic=T
 header.column_label=Label
 header.column_label.mnemonic=L
+header.column_label_note=(Avoid TeX active characters.)
 header.column_type=Type
 header.column_type.mnemonic=Y
 header.tooltip_format=Label: $1. Type: $2

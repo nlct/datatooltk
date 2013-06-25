@@ -16,36 +16,59 @@ public class HeaderDialog extends JDialog
       Box box = Box.createVerticalBox();
       getContentPane().add(box, BorderLayout.CENTER);
 
-      JPanel p = new JPanel();
+      JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
       box.add(p);
 
-      JLabel label = DatatoolGuiResources.createJLabel("header.column_title");
-      p.add(label);
+      Dimension dim;
+      int idx = 0;
+      int maxWidth = 0;
+      JLabel[] labels = new JLabel[3];
 
-      titleField = new JTextField(10);
-      label.setLabelFor(titleField);
+      titleField = new JTextField(32);
+      labels[idx] = DatatoolGuiResources.createJLabel("header.column_title",
+        titleField);
 
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+
+      p.add(labels[idx++]);
       p.add(titleField);
 
-      p = new JPanel();
+      p = new JPanel(new FlowLayout(FlowLayout.LEFT));
       box.add(p);
-
-      label = DatatoolGuiResources.createJLabel("header.column_label");
-      p.add(label);
 
       labelField = new JTextField(10);
-      label.setLabelFor(labelField);
-      p.add(labelField);
 
-      p = new JPanel();
+      labels[idx] = DatatoolGuiResources.createJLabel("header.column_label",
+         labelField);
+
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+
+      p.add(labels[idx++]);
+      p.add(labelField);
+      p.add(DatatoolGuiResources.createJLabel("header.column_label_note"));
+
+      p = new JPanel(new FlowLayout(FlowLayout.LEFT));
       box.add(p);
 
-      label = DatatoolGuiResources.createJLabel("header.column_type");
-      p.add(label);
-
       typeBox = new JComboBox<String>(DatatoolDb.TYPE_LABELS);
-      label.setLabelFor(typeBox);
+
+      labels[idx] = DatatoolGuiResources.createJLabel("header.column_type",
+         typeBox);
+
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+
+      p.add(labels[idx++]);
       p.add(typeBox);
+
+      for (idx = 0; idx < labels.length; idx++)
+      {
+         dim = labels[idx].getPreferredSize();
+         dim.width = maxWidth;
+         labels[idx].setPreferredSize(dim);
+      }
 
       getContentPane().add(
        DatatoolGuiResources.createOkayCancelPanel(this),
