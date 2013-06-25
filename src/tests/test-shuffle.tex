@@ -1,0 +1,65 @@
+\documentclass{article}
+
+\usepackage{etoolbox}
+\usepackage{datatool}
+
+% Used by some of the questions:
+\usepackage{paralist}
+\usepackage{tikz}
+
+\newtoggle{showanswers}
+\toggletrue{showanswers}
+
+\input{data-shuffled.dbtex}
+
+% Number to select from level 1
+\newcounter{maxleveli}
+\setcounter{maxleveli}{1}
+
+% Number to select from level 2
+\newcounter{maxlevelii}
+\setcounter{maxlevelii}{2}
+
+% Counter to keep track of level 1 questions
+\newcounter{leveli}
+
+% Counter to keep track of level 2 questions
+\newcounter{levelii}
+
+\begin{document}
+
+\begin{enumerate}
+ \DTLforeach*{problems}%
+  {\Question=Question,\Answer=Answer,\Level=Level}%
+  {%
+    % Increment counter for this level
+    \stepcounter{level\romannumeral\Level}%
+    % Have we reached the maximum for this level?
+    \ifnumgreater
+      {\value{level\romannumeral\Level}}%
+      {\value{maxlevel\romannumeral\Level}}%
+    {}% reached maximum, do nothing
+    {\item \Question
+
+     \ifdefempty\Answer
+     {}% no answer
+     {% do answer if this is the solution sheet
+       \iftoggle{showanswers}{Answer: \Answer}{}%
+     }%
+    }%
+    % do we need to continue or have we got everything?
+    \ifboolexpr
+    {%
+      test{\ifnumgreater
+      {\value{leveli}}%
+      {\value{maxleveli}}}%
+      and
+      test{\ifnumgreater
+      {\value{levelii}}%
+      {\value{maxlevelii}}}%
+    }%
+    {\dtlbreak}{}%
+  }
+\end{enumerate}
+
+\end{document}

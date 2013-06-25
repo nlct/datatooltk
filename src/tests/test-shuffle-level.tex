@@ -1,0 +1,85 @@
+\documentclass{article}
+
+\usepackage{etoolbox}
+\usepackage{datatool}
+
+% Used by some of the questions:
+\usepackage{paralist}
+\usepackage{tikz}
+
+\newtoggle{showanswers}
+\toggletrue{showanswers}
+
+\input{data-shuffled.dbtex}
+
+% Number to select from level 1
+\newcounter{maxleveli}
+\setcounter{maxleveli}{1}
+
+% Number to select from level 2
+\newcounter{maxlevelii}
+\setcounter{maxlevelii}{2}
+
+% Counter to keep track of level 1 questions
+\newcounter{leveli}
+
+% Counter to keep track of level 2 questions
+\newcounter{levelii}
+
+% List of level 1 questions
+\newcommand*{\listleveli}{}
+
+% List of level 2 questions
+\newcommand*{\listlevelii}{}
+
+\begin{document}
+
+ \DTLforeach*{problems}%
+  {\Question=Question,\Answer=Answer,\Level=Level}%
+  {%
+    % Increment counter for this level
+    \stepcounter{level\romannumeral\Level}%
+    % Have we reached the maximum for this level?
+    \ifnumgreater
+      {\value{level\romannumeral\Level}}%
+      {\value{maxlevel\romannumeral\Level}}%
+    {}% reached maximum, do nothing
+    {% Add row number to the appropriate list
+      \listcsxadd{listlevel\romannumeral\Level}{\DTLcurrentindex}%
+    }%
+    % do we need to continue or have we got everything?
+    \ifboolexpr
+    {%
+      test{\ifnumgreater
+      {\value{leveli}}%
+      {\value{maxleveli}}}%
+      and
+      test{\ifnumgreater
+      {\value{levelii}}%
+      {\value{maxlevelii}}}%
+    }%
+    {\dtlbreak}{}%
+  }
+
+\renewcommand{\do}[1]{% 
+  \dtlgetrow{problems}{#1}%
+  \dtlgetentryfromcurrentrow{\Question}{\dtlcolumnindex{problems}{Question}}%
+  \dtlgetentryfromcurrentrow{\Answer}{\dtlcolumnindex{problems}{Answer}}%
+  \item \Question
+
+   \ifdefempty\Answer
+   {}% no answer
+   {% do answer if this is the solution sheet
+     \iftoggle{showanswers}{Answer: \Answer}{}%
+   }%
+}
+
+\begin{enumerate}
+% do easy questions
+
+\dolistloop{\listleveli}
+
+% do medium level questions
+\dolistloop{\listlevelii}
+\end{enumerate}
+\end{document}

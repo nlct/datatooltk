@@ -362,11 +362,40 @@
    </node>
    <node tag="sort" type="section" title="Sorting the Data">
    <p>
+   Although you can sort data in <sty>datatool</sty> using \cs{DTLsort}, 
+   it's far more efficient to sort it in <app/>.<footnote>If the original 
+   data is in an <acr tag="sql"/> database, it's even more efficient to 
+   do the sorting in the SELECT statement when you import the data (see 
+   <ref tag="importsql"/>).</footnote> So instead of doing, say,
+   <pre>
+\input{mydata.dbtex}% loads `data' database from file `mydata.dbtex'
+\DTLsortdb{Surname}{data}% sort data on `Title' field
+   </pre>
+It's better to run, say,
+<pre>
+<dict tag="appname"/> --in mydata.dbtex --sort Surname --out mydata-sorted.dbtex
+</pre>
+   Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
+<pre>
+\input{mydata-sorted.dbtex}
+</pre>
+   or, if you have shell escape enabled you can used <TeX/>'s 
+\cs{write18} mechanism:
+   </p>
+<pre>
+\immediate\write18{<dict tag="appname"/> --in mydata.dbtex --sort Surname 
+--out mydata-sorted.dbtex}
+
+\input{mydata-sorted.dbtex}
+</pre>
+   <p>
    A<nbsp/>database can be sorted according to a<nbsp/>particular column
    in either ascending or descending order. In batch mode, this is done
-   with the <opt tag="sort"/> option, where the sort column is identified
-   by the column's unique label. For alphabetical comparisons you can also
-   use <opt tag="sort-case-sensitive"/> for case-sensitive comparisons
+   with the <opt tag="sort"/> option, as shown above, where the sort column is identified
+   by the column's unique label. If the label is preceded by <tt>-</tt> then
+   descending order is used (for example, <opt tag="sort"/><nbsp/><tt>-Surname</tt>). If the label is preceded by <tt>+</tt> (or has
+   no prefix) then ascending order is used.  For alphabetical comparisons you 
+   can also use <opt tag="sort-case-sensitive"/> for case-sensitive comparisons
    and <opt tag="sort-case-insensitive"/> for case-insensitive comparisons.
    The default is case-insensitive.
    </p>
@@ -458,6 +487,65 @@
    </example>
    </node>
    <node tag="shuffle" type="section" title="Shuffling the Data">
+   <p>
+   Data can be reordered by randomly swapping pairs of rows. By default, 
+   this random row swapping is done 100 times, but this number can be
+   changed via the <opt tag="shuffle-iterations"/> command line option 
+   or the <dq><dict tag="preferences.shuffle.iter"/></dq> field in the 
+   <dict tag="preferences.title"/> dialog box. Data shuffling can be
+   performed either by the <opt tag="shuffle"/> command line option or
+   the <menu tag="tools.shuffle"/> menu item.
+   </p>
+   <example>
+   <p>
+   Consider the database shown in <ref tag="shuffleex1"/>. This database
+   has four columns. The first is a<nbsp/>question, the second is the 
+   corresponding answer (optional) and the third is a<nbsp/>number indicating 
+   the question level.  For example, 1 could correspond to easy and 2 could 
+   correspond to medium difficulty.
+   </p>
+   <float type="figure" tag="shuffleex1" caption="Shuffle Example">
+      <image scale="0.75" alt="Image of example database" src="images/shuffleex1.png" />
+   </float>
+   <p>
+   Now suppose I<nbsp/>want to write an assignment sheet that has one randomly
+   selected question of level<nbsp/>1 and two randomly selected questions of
+   level<nbsp/>2. Let's suppose the file name is <tt>data.dbtex</tt>
+   and the database is called <dq>problems</dq>. Then I<nbsp/>can run <app/>
+   in batch mode using:
+   <pre>
+<dict tag="appname"/> --shuffle --in data.dbtex --out data-shuffled.dbtex
+   </pre>
+   Remember to use <opt tag="seed"/> if you don't want a<nbsp/>different
+   ordering every time you run that command. For example:
+   <pre>
+<dict tag="appname"/> --seed 2013 --shuffle --in data.dbtex --out data-shuffled.dbtex
+   </pre>
+   This shuffled database can now be loaded in my document:
+   </p>
+<verbinput src="../tests/test-shuffle.tex"/>
+   <p>
+   What if I<nbsp/>want all the easy questions first? This requires 
+   some more code as shown below:
+   </p>
+<verbinput src="../tests/test-shuffle-level.tex"/>
+   <p>
+   Now, the <cs tag="DTLforeach"/> loop just stores the row numbers of the
+   required questions in two lists, corresponding to the two different levels.
+   Then each list is iterated through and the corresponding row is fetched
+   using <cs tag="dtlgetrow"/>.
+   </p>
+   <p>
+   Remember that if you have shell escape enabled when you run <LaTeX/> you
+   can invoke <app/> in your document <em>before</em> you load the database:
+   </p>
+   <pre>
+\immediate\write18{datatooltk --in data.dbtex --seed 2013 --shuffle 
+--out data-shuffled.dbtex}
+
+\input{data-shuffled.dbtex}
+   </pre>
+   </example>
    </node>
    <node tag="import" type="chapter" title="Importing Data">
    <p>

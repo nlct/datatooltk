@@ -1,0 +1,204 @@
+% Created by datatooltk on Tue Jun 25 20:38:36 BST 2013
+\DTLifdbexists{problems}%
+{\PackageError{datatool}{Database `problems'
+already exists}{}%
+\aftergroup\endinput}{}%
+\bgroup\makeatletter
+\dtl@message{Reconstructing database
+`problems'}%
+\expandafter\global\expandafter
+\newtoks\csname dtlkeys@problems\endcsname
+\expandafter\global
+ \csname dtlkeys@problems\endcsname={%
+%
+\db@plist@elt@w %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@key@id@w Question%
+\db@key@id@end@ %
+\db@type@id@w 0%
+\db@type@id@end@ %
+\db@header@id@w Question%
+\db@header@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+\db@plist@elt@w %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@key@id@w Answer%
+\db@key@id@end@ %
+\db@type@id@w 0%
+\db@type@id@end@ %
+\db@header@id@w Answer%
+\db@header@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+\db@plist@elt@w %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@key@id@w Level%
+\db@key@id@end@ %
+\db@type@id@w 1%
+\db@type@id@end@ %
+\db@header@id@w Level%
+\db@header@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+}%
+\expandafter\global\expandafter
+\newtoks\csname dtldb@problems\endcsname
+\expandafter\global
+\csname dtldb@problems\endcsname={%
+%
+\db@row@elt@w %
+\db@row@id@w 1%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w Describe what is meant by object-oriented programming.%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w 1%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@row@id@w 1%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 2%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w Describe what is meant by the term \emph {inheritance} in object-oriented programming. Use examples. %
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w 1%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@row@id@w 2%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 3%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w A coin is weighted so that heads is four times as likely as tails. Find the probability that:
+\begin {inparaenum}
+  \item tails appears,
+  \item heads appears
+\end {inparaenum} %
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w Let $p=P(T)$, then $P(H)=4p$. We require $P(H)+P(T)=1$, so $4p+p=1$, hence $p=\frac {1}{5}$. Therefore: 
+\begin{inparaenum}
+ \item $P(T)=\frac {1}{5}$,
+ \item $P(H)=\frac {4}{5}$ 
+\end{inparaenum}  %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w 2%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@row@id@w 3%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 4%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w Under which of the following functions does $S=\{a_1,a_2\}$ become a probability space? \DTLpar \begin{inparaenum}
+ \begin {tabular}{ll}
+ \item $P(a_1)=\frac {1}{3}$, $P(a_2)=\frac {1}{2}$ & \item \label {validprobspacescorrect1} $P(a_1)=\frac {3}{4}$, $P(a_2)=\frac {1}{4}$ \\ 
+ \item \label {validprobspacescorrect2} $P(a_1)=1$, $P(a_2)=0$ & \item $P(a_1)=\frac {5}{4}$, $P(a_2)=-\frac {1}{4}$ 
+ \end {tabular}
+\end {inparaenum}  %
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w \ref {validprobspacescorrect1} and \ref {validprobspacescorrect2} %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w 2%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@row@id@w 4%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 5%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w \label {ex:digraph} Identify, if any, the sinks and sources of the digraph shown in Figure~\ref {fig:digraph}. \DTLpar \begin {figure}[tbh] \centering \begin {tikzpicture}[every node/.style={draw,circle}] \path (0,0) node (A) {$A$} (1,0) node (B) {$B$} (0,1) node (C) {$C$}; \draw [->] (A) -- (B); \draw [->] (B) -- (C); \draw [->] (A) -- (C); \end {tikzpicture} \DTLpar \caption {Digraph for Question~\ref {ex:digraph}} \label {fig:digraph} \end {figure}   %
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $A$ is a souce and $C$ is a sink.  %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w 2%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@row@id@w 5%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+}%
+\expandafter\global
+ \expandafter\newcount\csname dtlrows@problems\endcsname
+\expandafter\global
+ \csname dtlrows@problems\endcsname=5\relax
+\expandafter\global
+ \expandafter\newcount\csname dtlcols@problems\endcsname
+\expandafter\global
+ \csname dtlcols@problems\endcsname=3\relax
+\expandafter
+ \gdef\csname dtl@ci@problems@Question\endcsname{1}%
+\expandafter
+ \gdef\csname dtl@ci@problems@Answer\endcsname{2}%
+\expandafter
+ \gdef\csname dtl@ci@problems@Level\endcsname{3}%
+\egroup
