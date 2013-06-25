@@ -107,6 +107,10 @@
        <tt>+</tt> (ascending order) or <tt>-</tt> (descending order).
        If <meta>prefix</meta> is omitted, ascending is assumed.
        (See <ref tag="sort"/>.)</dd>
+       <dt><opt tag="sort-case-sensitive"/></dt>
+       <dd>Use case-sensitive comparison when sorting strings.</dd>
+       <dt><opt tag="sort-case-insensitive"/></dt>
+       <dd>Use case-insensitive comparison when sorting strings. (Default.)</dd>
        <dt><opt tag="csv" /> <meta>csv file</meta></dt>
        <dd>Import data from the given <acr tag="csv"/> file.
        (See <ref tag="importcsv"/>)</dd>
@@ -271,8 +275,7 @@
      <p>
      Each column has a corresponding data type: string, integer, real
      or currency. The type is automatically detected from the column data,
-     but can be changed using the <menu tag="edit.column.edit_header"/>
-     menu item or by double-clicking on the column header.
+     but can be changed, as described in <ref tag="editheader"/>.
      </p>
      <p>
      Non-string entries can be edited by double-clicking on the relevant cell, 
@@ -304,7 +307,7 @@
    string data type. Alternatively, select the cell (of any type) and use 
    <menu tag="edit.edit_cell"/>.
    </p>
-   <float type="figure" tag="fig.celleditor" caption="Cell Editor Dialog">
+   <float type="figure" tag="fig.celleditor" caption="Cell Editor Dialog" pos="htb">
      <image scale="0.75" alt="Image of cell editor dialog" src="images/celleditor.png" />
    </float>
    <p>
@@ -324,6 +327,27 @@
    the scenes. Note that redundant blank lines will be removed.
    </p>
    </node>
+   <node tag="editheader" type="section" title="Header Dialog">
+     <p>
+     Each column has a<nbsp/>title, a<nbsp/>uniquely identifying label
+     and an associated type. The type can be one of:
+     <dq><dict tag="header.type.string"/></dq>, 
+     <dq><dict tag="header.type.int"/></dq>, 
+     <dq><dict tag="header.type.real"/></dq> or 
+     <dq><dict tag="header.type.currency"/></dq>.
+     The type is automatically detected from the column data,
+     but can be changed using the <menu tag="edit.column.edit_header"/>
+     menu item or by double-clicking on the column header which opens the 
+     header dialog box (see <ref tag="headerdialog"/>). The label corresponds 
+     to the label used to identify the column in commands such
+     as <cs tag="DTLforeach"/>. The title is used in commands like
+     <cs tag="DTLdisplaydb"/>. See <ref tag="preferences"/> for 
+     currency mappings.
+     </p>
+     <float type="figure" tag="headerdialog" caption="Header Dialog" pos="htb">
+      <image scale="0.75" alt="Image of header dialog box" src="images/headerdialog.png" />
+     </float>
+   </node>
    <node tag="tools" type="chapter" title="Tools">
    <p>
    There are currently two tools available: sort (see <ref tag="sort"/>)
@@ -339,9 +363,99 @@
    <node tag="sort" type="section" title="Sorting the Data">
    <p>
    A<nbsp/>database can be sorted according to a<nbsp/>particular column
-   in either ascending or descending order. In <acr tag="gui"/> mode, this
-   can be done using the <menu tag="tools.sort"/> menu item.
+   in either ascending or descending order. In batch mode, this is done
+   with the <opt tag="sort"/> option, where the sort column is identified
+   by the column's unique label. For alphabetical comparisons you can also
+   use <opt tag="sort-case-sensitive"/> for case-sensitive comparisons
+   and <opt tag="sort-case-insensitive"/> for case-insensitive comparisons.
+   The default is case-insensitive.
    </p>
+   <p>In <acr tag="gui"/> mode, sorting is
+   done using the <menu tag="tools.sort"/> menu item which opens
+   the <dq><dict tag="sort.title"/></dq> dialog box (see <ref tag="sortdialog"/>).
+   </p>
+   <float type="figure" tag="sortdialog" caption="Sort Dialog" pos="htb">
+      <image scale="0.75" alt="Image of sort dialog box" src="images/sortdialog.png" />
+   </float>
+   <p>
+   Select the column you wish to sort by from the drop-down list of column
+   titles, and check the appropriate radio button for ascending or descending
+   sort. If the column has the string data type, you also need to specify
+   whether or not you want to use case-sensitive comparisons by checking or
+   unchecking the <dq><dict tag="sort.case_sensitive"/></dq> box.  If the 
+   column type has a<nbsp/>numerical type, the entries will be sorted via 
+   a<nbsp/>numerical comparison (10 is greater than 2) and the case-sensitive
+   option is ignored. If the column type is a string type,
+   the entries will be sorted via an alphabetical comparison (<dq>10</dq>
+   comes before <dq>2</dq>).
+   </p>
+   <example>
+   Consider the data shown in <ref tag="sortex1"/> and reproduced in 
+   <ref tag="tabsortex1"/>.
+   <float type="figure" tag="sortex1" caption="Original Data">
+      <image scale="0.75" alt="Image of example database" src="images/sortex1.png" />
+   </float>
+   <float type="table" tag="tabsortex1" caption="Original Data" pos="htbp">
+    <tabular spec="ll" >
+     <tr>
+      <td><tt>Book</tt></td>
+      <td><cs tag="pounds"/><tt>5.99</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Video Game</tt></td>
+      <td><cs tag="euro"/><tt>20.00</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Pen</tt></td>
+      <td><cs tag="pounds"/><tt>3.00</tt></td>
+     </tr>
+    </tabular>
+   </float>
+   <p>
+   The first column has a<nbsp/>string data type and the second has 
+   a<nbsp/>currency data type. Sorting in ascending order on the second column,
+   will sort numerically on just the number. The currency symbol is ignored.
+   This produces the ordering shown in <ref tag="tabsortex2"/>.
+   </p>
+   <float type="table" tag="tabsortex2" caption="Data Sorted on Second Column (Currency Comparison)" pos="htbp">
+    <tabular spec="ll" >
+     <tr>
+      <td><tt>Pen</tt></td>
+      <td><cs tag="pounds"/><tt>3.00</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Book</tt></td>
+      <td><cs tag="pounds"/><tt>5.99</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Video Game</tt></td>
+      <td><cs tag="euro"/><tt>20.00</tt></td>
+     </tr>
+    </tabular>
+   </float>
+   <p>
+   If the type of the second column is changed from currency to string, and the
+   sort is redone, the order is now based on a<nbsp/>string comparison that
+   includes the currency symbol. This produces the ordering shown in
+   <ref tag="tabsortex3"/>.
+   </p>
+   <float type="table" tag="tabsortex3" caption="Data Sorted on Second Column (String Comparison)" pos="htbp">
+    <tabular spec="ll" >
+     <tr>
+      <td><tt>Video Game</tt></td>
+      <td><cs tag="euro"/><tt>20.00</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Pen</tt></td>
+      <td><cs tag="pounds"/><tt>3.00</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Book</tt></td>
+      <td><cs tag="pounds"/><tt>5.99</tt></td>
+     </tr>
+    </tabular>
+   </float>
+   </example>
    </node>
    <node tag="shuffle" type="section" title="Shuffling the Data">
    </node>

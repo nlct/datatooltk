@@ -1367,6 +1367,12 @@ public class DatatoolDb
       return new ColumnEnumeration(data, colIdx);
    }
 
+   public Currency parseCurrency(String text)
+     throws NumberFormatException
+   {
+      return settings.parseCurrency(text);
+   }
+
    public int getSortColumn()
    {
       return sortColumn;
@@ -1385,6 +1391,16 @@ public class DatatoolDb
    public void setSortAscending(boolean isAscending)
    {
       sortAscending = isAscending;
+   }
+
+   public boolean isSortCaseSensitive()
+   {
+      return sortCaseSensitive;
+   }
+
+   public void setSortCaseSensitive(boolean isSensitive)
+   {
+      sortCaseSensitive = isSensitive;
    }
 
    public void sort()
@@ -1459,6 +1475,8 @@ public class DatatoolDb
    private int sortColumn = 0;
 
    private boolean sortAscending = true;
+
+   private boolean sortCaseSensitive = false;
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;

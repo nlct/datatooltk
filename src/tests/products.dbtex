@@ -1,0 +1,111 @@
+% Created by datatooltk on Tue Jun 25 18:00:13 BST 2013
+\DTLifdbexists{products}%
+{\PackageError{datatool}{Database `products'
+already exists}{}%
+\aftergroup\endinput}{}%
+\bgroup\makeatletter
+\dtl@message{Reconstructing database
+`products'}%
+\expandafter\global\expandafter
+\newtoks\csname dtlkeys@products\endcsname
+\expandafter\global
+ \csname dtlkeys@products\endcsname={%
+%
+\db@plist@elt@w %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@key@id@w product%
+\db@key@id@end@ %
+\db@type@id@w 0%
+\db@type@id@end@ %
+\db@header@id@w Product%
+\db@header@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+\db@plist@elt@w %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@key@id@w price%
+\db@key@id@end@ %
+\db@type@id@w 3%
+\db@type@id@end@ %
+\db@header@id@w Price (\pounds)%
+\db@header@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+}%
+\expandafter\global\expandafter
+\newtoks\csname dtldb@products\endcsname
+\expandafter\global
+\csname dtldb@products\endcsname={%
+%
+\db@row@elt@w %
+\db@row@id@w 1%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w Book%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w \pounds5.99%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@row@id@w 1%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 2%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w Video Game%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w \euro20.00%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@row@id@w 2%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 3%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w Pen%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w \pounds 3%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@row@id@w 3%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+}%
+\expandafter\global
+ \expandafter\newcount\csname dtlrows@products\endcsname
+\expandafter\global
+ \csname dtlrows@products\endcsname=3\relax
+\expandafter\global
+ \expandafter\newcount\csname dtlcols@products\endcsname
+\expandafter\global
+ \csname dtlcols@products\endcsname=2\relax
+\expandafter
+ \gdef\csname dtl@ci@products@product\endcsname{1}%
+\expandafter
+ \gdef\csname dtl@ci@products@price\endcsname{2}%
+\egroup

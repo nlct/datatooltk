@@ -62,57 +62,46 @@ public class DatatoolRow extends Vector<String>
       int sortColumn = db.getSortColumn();
       int columnType = db.getColumnType(sortColumn);
 
-      if (columnType == DatatoolDb.TYPE_REAL)
+      try
       {
-         Float x, y;
+         if (columnType == DatatoolDb.TYPE_REAL)
+         {
+            Float x = new Float(get(sortColumn));
 
-         try
-         {
-            x = new Float(get(sortColumn));
-         }
-         catch (NumberFormatException e)
-         {
-            x = new Float(0.0f);
-         }
+            Float y = new Float(row.get(sortColumn));
 
-         try
-         {
-            y = new Float(row.get(sortColumn));
+            return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
          }
-         catch (NumberFormatException e)
+         else if (columnType == DatatoolDb.TYPE_INTEGER)
          {
-            y = new Float(0.0f);
-         }
 
-         return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
+            Integer x = new Integer(get(sortColumn));
+
+            Integer y = new Integer(row.get(sortColumn));
+
+            return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
+         }
+         else if (columnType == DatatoolDb.TYPE_CURRENCY)
+         {
+            Currency x = db.parseCurrency(get(sortColumn));
+
+            Currency y = db.parseCurrency(row.get(sortColumn));
+
+            return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
+         }
       }
-      else if (columnType == DatatoolDb.TYPE_INTEGER)
+      catch (NumberFormatException e)
       {
-         Integer x, y;
-
-         try
-         {
-            x = new Integer(get(sortColumn));
-         }
-         catch (NumberFormatException e)
-         {
-            x = new Integer(0);
-         }
-
-         try
-         {
-            y = new Integer(row.get(sortColumn));
-         }
-         catch (NumberFormatException e)
-         {
-            y = new Integer(0);
-         }
-
-         return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
       }
 
       String x = get(sortColumn);
       String y = row.get(sortColumn);
+
+      if (!db.isSortCaseSensitive())
+      {
+         x = x.toLowerCase();
+         y = y.toLowerCase();
+      }
 
       return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
    }

@@ -217,6 +217,8 @@ sort.ascending=Ascending
 sort.ascending.mnemonic=A
 sort.descending=Descending
 sort.descending.mnemonic=D
+sort.case_sensitive=Case sensitive
+sort.case_sensitive.mnemonic=S
 
 # Import SQL dialog box
 importsql.title=Import SQL Data
@@ -356,6 +358,8 @@ syntax.shuffle_iter=$1 <number>\tSet the number of iterations performed in a shu
 syntax.shuffle=$1\tShuffle the database. (Shuffle is always performed after sort, regardless of the option order.)
 syntax.no_shuffle=$1\tDon't shuffle the database. (Default.)
 syntax.sort=$1 [+|-]<field>\tSort the database on the column whose label is given by <field>. If <field> is preceded by '+', use ascending order. If <field> is preceded by '-', use descending order. If sign prefix is omitted, '+' is assumed. (Sort is always performed before shuffle, regardless of option order.)
+syntax.sort_case_sensitive=$1\tUse case sensitive comparison when sorting strings.
+syntax.sort_case_insensitive=$1\tUse case insensitive comparison when sorting strings. (Default.)
 syntax.csv_opts=CSV Options:
 syntax.csv=$1 <csv file>\tImport <csv file>. (Can't be used with --in or --sql.)
 syntax.csv_sep=$1 <character>\tSeparator used in CSV files. (Defaults to '$2'.)

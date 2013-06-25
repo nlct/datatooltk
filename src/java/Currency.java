@@ -5,6 +5,7 @@ import java.util.regex.*;
 import java.text.DecimalFormat;
 
 public class Currency extends Number
+  implements Comparable<Number>
 {
    public Currency(String currency, float value)
    {
@@ -35,6 +36,24 @@ public class Currency extends Number
    public String toString()
    {
       return (currency == null ? "" : currency) + format.format(value);
+   }
+
+   public int compareTo(Number object)
+   {
+      float num = object.floatValue();
+
+      if (value == num)
+      {
+         return 0;
+      }
+      else if (value < num)
+      {
+         return -1;
+      }
+      else
+      {
+         return 1;
+      }
    }
 
    private float value;

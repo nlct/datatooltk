@@ -44,6 +44,8 @@ public class DatatoolTk
 
          if (!(sort == null || sort.isEmpty()))
          {
+            db.setSortCaseSensitive(isCaseSensitive);
+
             boolean ascending = true;
 
             char c = sort.charAt(0);
@@ -121,6 +123,8 @@ public class DatatoolTk
       {
          if (!(sort == null || sort.isEmpty()))
          {
+            db.setSortCaseSensitive(isCaseSensitive);
+
             boolean ascending = true;
 
             char c = sort.charAt(0);
@@ -195,6 +199,8 @@ public class DatatoolTk
       System.out.println(getLabelWithValue("syntax.shuffle", "--shuffle"));
       System.out.println(getLabelWithValue("syntax.no_shuffle", "--noshuffle"));
       System.out.println(getLabelWithValue("syntax.sort", "--sort"));
+      System.out.println(getLabelWithValue("syntax.sort_case_sensitive", "--sort-case-sensitive"));
+      System.out.println(getLabelWithValue("syntax.sort_case_insensitive", "--sort-case-insensitive"));
       System.out.println();
       System.out.println(getLabel("syntax.csv_opts"));
       System.out.println(getLabelWithValue("syntax.csv", "--csv"));
@@ -948,6 +954,14 @@ public class DatatoolTk
             {
                doShuffle = false;
             }
+            else if (args[i].equals("--sort-case-sensitive"))
+            {
+               isCaseSensitive = true;
+            }
+            else if (args[i].equals("--sort-case-insensitive"))
+            {
+               isCaseSensitive = false;
+            }
             else if (args[i].equals("--sort"))
             {
                i++;
@@ -1021,6 +1035,8 @@ public class DatatoolTk
    private static boolean removeTmpFilesOnExit=true;
 
    private static boolean doShuffle = false;
+
+   private static boolean isCaseSensitive = false;
 
    private static String sort=null;
 

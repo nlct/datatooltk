@@ -946,7 +946,7 @@ public class DatatoolSettings extends Properties
    public static final int STARTUP_CUSTOM = 3;
 
    public static final Pattern PATTERN_CURRENCY
-      = Pattern.compile("([^\\d\\.]+) *(\\d*\\.?\\d+)");
+      = Pattern.compile("(.+?) *(\\d*\\.?\\d+)");
 
    public static final String HELPSET_DIR = "/resources/helpsets/";
    public static final String DICT_DIR = "/resources/dictionaries/";

@@ -37,8 +37,11 @@ public class SortDialog extends JDialog
          "sort", "descending", bg, this);
       row.add(descendingButton);
 
+      isCaseSensitiveBox = DatatoolGuiResources.createJCheckBox("sort", "case_sensitive", this);
+      mainPanel.add(isCaseSensitiveBox);
+
       getContentPane().add(
-        DatatoolGuiResources.createOkayCancelPanel(this),
+        DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "sort"),
         BorderLayout.SOUTH);
 
       pack();
@@ -68,6 +71,8 @@ public class SortDialog extends JDialog
       {
          descendingButton.setSelected(true);
       }
+
+      isCaseSensitiveBox.setSelected(db.isSortCaseSensitive());
 
       setVisible(true);
 
@@ -106,6 +111,7 @@ public class SortDialog extends JDialog
 
       db.setSortColumn(colIdx);
       db.setSortAscending(ascendingButton.isSelected());
+      db.setSortCaseSensitive(isCaseSensitiveBox.isSelected());
 
       success = true;
       setVisible(false);
@@ -113,6 +119,8 @@ public class SortDialog extends JDialog
 
    private JComboBox<DatatoolHeader> headerBox;
    private JRadioButton ascendingButton, descendingButton;
+
+   private JCheckBox isCaseSensitiveBox;
 
    private DatatoolDb db;
 

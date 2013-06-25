@@ -71,7 +71,8 @@ public class HeaderDialog extends JDialog
       }
 
       getContentPane().add(
-       DatatoolGuiResources.createOkayCancelPanel(this),
+       DatatoolGuiResources.createOkayCancelHelpPanel(this,
+        gui, "editheader"),
        BorderLayout.SOUTH);
 
       pack();

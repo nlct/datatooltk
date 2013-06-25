@@ -28,6 +28,7 @@
 <!ATTLIST node tag (#PCDATA)+ #REQUIRED>
 <!ATTLIST node type (#PCDATA)+ #REQUIRED>
 <!ATTLIST node title (%basic.content;)+ #REQUIRED>
+<!ATTLIST node pos (#PCDATA)+ #REQUIRED>
 
 <!-- Basic elements -->
 <!ELEMENT p (%basic.content;)*>
