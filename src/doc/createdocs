@@ -707,7 +707,7 @@ sub end_author{
 sub start_document{
    my ($expat, %attrs) = @_;
 
-   print TEXFD "\\begin{document}\n\\maketitle\n";
+   print TEXFD "\\begin{document}\n\\maketitle\n\\tableofcontents\n";
 }
 
 sub end_document{

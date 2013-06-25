@@ -47,7 +47,19 @@
      <dl>
        <dt><opt tag="gui"/> (or <tt>-g</tt>)</dt>
        <dd>
-       Invoke <app/> in <acr tag="gui" /> mode.
+       Invoke <app/> in <acr tag="gui" /> mode. (The command line invocation
+       <p align="center">
+       <app/><tt>-gui</tt> [<meta>options</meta>] 
+       </p>
+       <p noindent="true">
+       is equivalent to
+       </p>
+       <p align="center">
+       <app/> <opt tag="gui"/> [<meta>options</meta>] 
+       </p>
+       <p noindent="true">
+       but additionally has a<nbsp/>splash screen.)
+       </p>
        </dd>
        <dt><opt tag="batch"/> (or <tt>-b</tt>)</dt>
        <dd>
@@ -76,8 +88,25 @@
        <dd>Map <TeX/> special characters when importing data from 
        <acr tag="csv"/> or <acr tag="sql"/>.</dd>
        <dt><opt tag="nomap-tex-specials"/></dt>
-       <dd>Don't map <TeX/> special characters when importing data from 
+       <dd>Don't map <TeX/> special characters when importing data from
        <acr tag="csv"/> or <acr tag="sql"/>. (Default.)</dd>
+       <dt><opt tag="seed"/> <meta>number</meta></dt>
+       <dd>Set the random generator seed to <meta>number</meta> or clear it
+       if <meta>number</meta> is <tt>""</tt>. (See <ref tag="shuffle"/>.)</dd>
+       <dt><opt tag="shuffle-iterations"/> <meta>number</meta></dt>
+       <dd>Set the number of iterations to perform in a<nbsp/>shuffle to 
+       <meta>number</meta>. (See <ref tag="shuffle"/>.)</dd>
+       <dt><opt tag="shuffle"/></dt>
+       <dd>Shuffle the database. (Shuffle is always performed after sort,
+       regardless of the option order.)</dd>
+       <dt><opt tag="noshuffle"/></dt>
+       <dd>Don't shuffle the database. (Default.)</dd>
+       <dt><opt tag="sort"/> [<meta>prefix</meta>]<meta>field</meta></dt>
+       <dd>Sort the database according to the column whose label is
+       <meta>field</meta>. Optionally, <meta>prefix</meta> may be
+       <tt>+</tt> (ascending order) or <tt>-</tt> (descending order).
+       If <meta>prefix</meta> is omitted, ascending is assumed.
+       (See <ref tag="sort"/>.)</dd>
        <dt><opt tag="csv" /> <meta>csv file</meta></dt>
        <dd>Import data from the given <acr tag="csv"/> file.
        (See <ref tag="importcsv"/>)</dd>
@@ -136,7 +165,7 @@
    <node tag="fileext" type="section" title="File Extensions">
    <p>
    The <sty>datatool</sty> database files loaded and saved by <app/>
-   are just <LaTeX/> files, so they could just have the standard
+   are just <LaTeX/> files, so they could simply have the standard
    <tt>.tex</tt> extension, but to help differentiate the database files
    from other files containing <TeX/>/<LaTeX/> code (such as picture-drawing
    code), <app/> assumes a<nbsp/>default extension of <tt>.dbtex</tt>.
@@ -151,16 +180,16 @@
    and you have set the database label to just <dq><tt>data</tt></dq>.
    Then you can load and display the data using:
    <pre>
-   \documentclass{article}
-   \usepackage{datatool}% remember to load the datatool package
+\documentclass{article}
+\usepackage{datatool}% remember to load the datatool package
 
-   \input{my-data.dbtex}% load the database from file `my-data.dbtex'
+\input{my-data.dbtex}% load the database from file `my-data.dbtex'
 
-   \begin{document}
+\begin{document}
 
-   \DTLdisplaydb{data}% Display the database identified by the name `data'
+\DTLdisplaydb{data}% Display the database identified by the name `data'
 
-   \end{document}
+\end{document}
    </pre>
    </example>
    </node>
@@ -213,8 +242,8 @@
    </node>
    <node tag="gui" type="chapter" title="Graphical Mode">
      <p>
-       To run <app/> in graphical mode you must invoke it
-       with the <opt tag="gui" /> option. The main window
+       To run <app/> in graphical mode you must invoke it with either 
+       <app/><tt>-gui</tt> or <app/><nbsp/><opt tag="gui"/>. The main window
        is shown in <ref tag="mainwindow"/>. Each database is
        in a<nbsp/>tabbed pane, with the name of the database in the
        tab. Note that the name corresponds to the database's identifying
@@ -222,33 +251,28 @@
        not necessarily the same as the filename. Since this name is
        used as a label, it shouldn't contain any of <TeX/>'s special
        characters or any other active characters that could cause problems.
+       An asterisk <tt>*</tt> following the label in the tab indicates that 
+       the database has been modified.
      </p>
-     <float type="figure" tag="mainwindow" caption="Main Window">
+     <float type="figure" tag="mainwindow" caption="Main Window" pos="htb">
       <image scale="0.75" alt="Image of main window" src="images/mainwindow.png" />
      </float>
      <p>
       You can use the <menu tag="file" /> menu to create a<nbsp />new 
-      database, load an existing database 
-      or import data (see <ref tag="import"/>). To load an existing database, use
+      database, load an existing database or import data (see 
+      <ref tag="import"/>). To load an existing database, use
       <menu tag="file.open" />. These database files contain <LaTeX/> code
-      in a<nbsp/>specific format. Typically, they should have 
-      a<nbsp/><tt>.tex</tt> extension, but to help filter them from other
-      <TeX/> or <LaTeX/> files, <app/> assumes a default extension of
-      <tt>.dbtex</tt>. You can load these files into a<nbsp/><LaTeX/>
-      document using <cs tag="input"/>, but remember to specify the
-      <tt>.dbtex</tt> extension. (Also remember to load the 
-      <sty>datatool</sty> package.)
+      in a<nbsp/>specific format. The <app/> application assumes 
+      a<nbsp/><tt>.dbtex</tt> file extension (see <ref tag="fileext"/>).
+      You can load these files into a<nbsp/><LaTeX/> document using 
+      <cs tag="input"/>, but remember to specify the <tt>.dbtex</tt> 
+      extension. (Also remember to load the <sty>datatool</sty> package.)
      </p>
      <p>
      Each column has a corresponding data type: string, integer, real
-     or currency. (Currency type not yet implemented in the <acr tag="gui" />.)
-     If one or more entries in a given column is a string (non-numerical)
-     then the entire column has a <dq>string</dq> data type. If the column 
-     has no string entries, but has one or more real entries, then
-     the entire column has a <dq>real</dq> data type. If there are no string 
-     or real entries, but there are one or more integer entries, then the
-     entire column has an <dq>integer</dq> data type. If the column has no 
-     data, the type is unset.
+     or currency. The type is automatically detected from the column data,
+     but can be changed using the <menu tag="edit.column.edit_header"/>
+     menu item or by double-clicking on the column header.
      </p>
      <p>
      Non-string entries can be edited by double-clicking on the relevant cell, 
@@ -299,6 +323,27 @@
    as blank lines in an entry will automatically be converted behind 
    the scenes. Note that redundant blank lines will be removed.
    </p>
+   </node>
+   <node tag="tools" type="chapter" title="Tools">
+   <p>
+   There are currently two tools available: sort (see <ref tag="sort"/>)
+   and shuffle (see <ref tag="shuffle"/>). These both reorder the rows of the
+   database and can be invoked either from the <menu tag="tools"/> menu
+   or from the command line (as long as
+   you have also loaded a<nbsp/>database using <opt tag="in"/> or one of the
+   import options). If you use both <opt tag="sort"/> and <opt tag="shuffle"/>
+   in the command line invocation, sort will always be performed first, 
+   regardless of the option order.
+   </p>
+   </node>
+   <node tag="sort" type="section" title="Sorting the Data">
+   <p>
+   A<nbsp/>database can be sorted according to a<nbsp/>particular column
+   in either ascending or descending order. In <acr tag="gui"/> mode, this
+   can be done using the <menu tag="tools.sort"/> menu item.
+   </p>
+   </node>
+   <node tag="shuffle" type="section" title="Shuffling the Data">
    </node>
    <node tag="import" type="chapter" title="Importing Data">
    <p>
