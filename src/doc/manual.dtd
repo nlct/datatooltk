@@ -1,5 +1,5 @@
 <!-- Parameter entities -->
-<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref | term | tabular | menu | dq | TeX LaTeX | nbsp | meta | dl | app | verbinput | cs | env | hash' >
+<!ENTITY % basic.content '#PCDATA | dict | tt | em | br | url | sty | acr | image | opt | ref | term | tabular | menu | dq | TeX LaTeX | nbsp | meta | dl | app | verbinput | cs | env | hash | cont' >
 
 <!-- Main elements-->
 
@@ -24,7 +24,7 @@
 
 <!-- Document elements -->
 
-<!ELEMENT node (p | float | pre | dl)+ | printacronyms | printindex >
+<!ELEMENT node (p | float | pre | alltt | dl)+ | printacronyms | printindex >
 <!ATTLIST node tag (#PCDATA)+ #REQUIRED>
 <!ATTLIST node type (#PCDATA)+ #REQUIRED>
 <!ATTLIST node title (%basic.content;)+ #REQUIRED>
@@ -101,3 +101,4 @@
 <!ELEMENT app EMPTY>
 <!ELEMENT nbsp EMPTY>
 <!ELEMENT hash EMPTY>
+<!ELEMENT cont EMPTY>

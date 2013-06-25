@@ -634,6 +634,7 @@ sub start_preamble{
       "\\usepackage[$fontenc]{fontenc}\n",
       "\\usepackage{graphicx}\n",
       "\\usepackage{verbatim}\n",
+      "\\usepackage{alltt}\n",
       "\\usepackage{moreverb}\n",
       "\\usepackage{makeidx}\n",
       "\\usepackage{babel}\n",
@@ -1221,6 +1222,22 @@ sub end_pre{
    &handle_html('</pre>');
 
    print TEXFD "\\end{verbatim}";
+}
+
+sub start_alltt{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('<pre>');
+
+   print TEXFD "\\begin{alltt}";
+}
+
+sub end_alltt{
+   my ($expat) = @_;
+
+   &handle_html('</pre>');
+
+   print TEXFD "\\end{alltt}";
 }
 
 sub start_verbinput{
@@ -1937,6 +1954,27 @@ sub start_hr{
 }
 
 sub end_hr{
+   my ($expat) = @_;
+}
+
+sub start_cont{
+   my ($expat, %attrs) = @_;
+
+   print TEXFD "\\continueline ";
+}
+
+sub end_cont{
+   my ($expat) = @_;
+}
+
+sub start_contexplan{
+   my ($expat, %attrs) = @_;
+
+  print TEXFD &get_label('manual.cont_explanation');
+}
+
+
+sub end_contexplan{
    my ($expat) = @_;
 }
 

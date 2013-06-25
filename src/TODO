@@ -1,22 +1,11 @@
 TODO List
 =========
 
-* Add shuffle function
-
-* Implement currency data type
-
 * Add template facility
 
 * Add plugin module facility
 
 * Add syntax highlighting to the cell editor?
-
-* Image icons are just temporary for testing. These need to be
-  changed to more interesting images.
-
-  Most of the images are now from the Java Look & Feel Graphics
-  Repository for the main GUI, but I can't work out how to
-  reference them in Map.jhm
 
 * Documentation needs finishing.
 

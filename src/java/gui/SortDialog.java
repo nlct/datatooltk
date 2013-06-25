@@ -14,9 +14,11 @@ public class SortDialog extends JDialog
       super(gui, DatatoolTk.getLabel("sort.title"), true);
 
       JComponent mainPanel = Box.createVerticalBox();
+      mainPanel.setAlignmentX(0);
       getContentPane().add(mainPanel, BorderLayout.CENTER);
 
       JPanel row = new JPanel();
+      row.setAlignmentX(0);
       mainPanel.add(row);
 
       headerBox = new JComboBox<DatatoolHeader>();
@@ -25,6 +27,7 @@ public class SortDialog extends JDialog
       row.add(headerBox);
 
       row = new JPanel();
+      row.setAlignmentX(0);
       mainPanel.add(row);
 
       ButtonGroup bg = new ButtonGroup();
@@ -37,8 +40,12 @@ public class SortDialog extends JDialog
          "sort", "descending", bg, this);
       row.add(descendingButton);
 
+      row = new JPanel();
+      row.setAlignmentX(0);
+      mainPanel.add(row);
+
       isCaseSensitiveBox = DatatoolGuiResources.createJCheckBox("sort", "case_sensitive", this);
-      mainPanel.add(isCaseSensitiveBox);
+      row.add(isCaseSensitiveBox);
 
       getContentPane().add(
         DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "sort"),

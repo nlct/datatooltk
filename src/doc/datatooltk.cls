@@ -58,6 +58,13 @@
   #2\label{#1}%
 }
 
+\newcommand{\continuesymbol}{$\hookleftarrow$}
+
+\newcommand*{\continue@symbol}{%
+ \smash{\raisebox{-1.6ex}{\makebox[0pt][r]{\continuesymbol}}}}
+
+\newcommand*{\continueline}{\continue@symbol\newline}
+
 \newcommand*{\sectionautorefname}{Section}
 
 \newcommand*{\dq}[1]{``#1''}

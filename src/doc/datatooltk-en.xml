@@ -17,6 +17,8 @@
          term otherwise it goes in the index -->
     <newterm tag="mysql" text="MySQL" description="An open source SQL database" />
     <newterm tag="database" text="database" />
+    <newterm tag="cwd" text="current working directory" 
+      description="The directory in which the application was started"/>
   </preamble>
   <document>
    <node tag="introduction" type="chapter" title="Introduction">
@@ -362,7 +364,7 @@
    </node>
    <node tag="sort" type="section" title="Sorting the Data">
    <p>
-   Although you can sort data in <sty>datatool</sty> using \cs{DTLsort}, 
+   Although you can sort data in <sty>datatool</sty> using <cs tag="DTLsort"/>, 
    it's far more efficient to sort it in <app/>.<footnote>If the original 
    data is in an <acr tag="sql"/> database, it's even more efficient to 
    do the sorting in the SELECT statement when you import the data (see 
@@ -380,7 +382,7 @@ It's better to run, say,
 \input{mydata-sorted.dbtex}
 </pre>
    or, if you have shell escape enabled you can used <TeX/>'s 
-\cs{write18} mechanism:
+<cs tag="write18"/> mechanism:
    </p>
 <pre>
 \immediate\write18{<dict tag="appname"/> --in mydata.dbtex --sort Surname 
@@ -525,8 +527,8 @@ It's better to run, say,
    </p>
 <verbinput src="../tests/test-shuffle.tex"/>
    <p>
-   What if I<nbsp/>want all the easy questions first? This requires 
-   some more code as shown below:
+   What if I<nbsp/>want all the easy questions listed first? This requires 
+   some modifications to the code as shown below:
    </p>
 <verbinput src="../tests/test-shuffle-level.tex"/>
    <p>
@@ -644,14 +646,19 @@ It's better to run, say,
    Alternatively, I<nbsp/>can use batch mode to import and save the data 
    from the command prompt:
    </p>
-   <pre>
-[nlct@dickimaw tests]$ datatooltk --out customers.dbtex \
---sql "SELECT * FROM customers" --sqldb myshop --sqluser shopadmin
+   <alltt>
+datatooltk --out customers.dbtex --sql "SELECT * FROM customers" <cont />--sqldb myshop --sqluser shopadmin
 Password:
-   </pre>
+   </alltt>
    <p>
-   The password should be entered at the <dq><dict tag="password.prompt"/></dq>
-   prompt.
+   <contexplan/> The password should be entered at the <dq><dict tag="password.prompt"/></dq>
+   prompt. Remember that it's more efficient to get the <acr tag="sql"/>
+   database to do any sorting. For example (assuming the table has 
+   a<nbsp/>column called <tt>Surname</tt>):
+   <alltt>
+datatooltk --out customers.dbtex --sql "SELECT * FROM customers ORDER BY <cont />Surname" --sqldb myshop --sqluser shopadmin
+Password:
+   </alltt>
    </p>
    </node>
    <node tag="importprobsoln" type="section" title="Import probsoln Data">
@@ -671,7 +678,7 @@ Password:
    <p>
    <TeX/> is a<nbsp/>difficult language to parse, so <app/> uses 
    <LaTeX/> to help gather the data from the imported file.
-   <app/> creates a<nbsp/>temporary <LaTeX/> file and runs <LaTeX/>
+   The <app/> application creates a<nbsp/>temporary <LaTeX/> file and runs <LaTeX/>
    on it in the background. It assumes that the <tt>latex</tt> application
    is on your path. If this isn't the case, you will have to specify
    the location of the <tt>latex</tt> executable in the 
@@ -700,7 +707,7 @@ Password:
    the code more readable. As can be seen in <ref tag="importps"/>
    these have gone in the import.
    </p>
-     <float type="figure" tag="importps" caption="Pretty Printing and Comments are Lost When Importing Data from probsoln">
+     <float type="figure" tag="importps" caption="Pretty Printing and Comments are Lost When Importing Data from probsoln" pos="hbt">
       <image scale="0.75" alt="Image of the main window" src="images/importps.png" />
      </float>
    </example>
@@ -714,7 +721,7 @@ Password:
    </p>
    <p>
    The properties directory depends on the operating system.
-   On Windows, it is a folder called <dq>datatooltk-settings</dq>
+   On Windows, it is a folder called <tt>datatooltk-settings</tt>
    in the folder given by the Java system property <tt>user.home</tt>.
    This is usually the user's home folder but in some versions of
    Java this can be <tt><percent/>userprofile<percent/></tt>.
@@ -723,8 +730,32 @@ Password:
    </p>
    <p>
    In <acr tag="gui"/> mode, the settings can be changed using
-   <menu tag="edit.preferences"/>
+   <menu tag="edit.preferences"/>. This opens the 
+   <dq><dict tag="preferences.title"/></dq> dialog box, which has the 
+   following tabs:
    </p>
+   <dl>
+    <dt><dict tag="preferences.general"/></dt>
+    <dd>
+     (<ref tag="prefgeneral"/>)
+     <float type="figure" tag="prefgeneral" caption="General Tab" pos="htb">
+      <image scale="0.75" alt="Image of the general tab of the preferences dialog box" src="images/pref-general.png" />
+     </float>
+     <p>
+     In this tab you can specify the start up directory. (The default 
+     directory when you first load, save or import data via the 
+     <menu tag="file"/> menu.) You can set this to your home directory,
+     the <term tag="cwd"/>, the directory you last used on the previous run
+     of <app/> or you can specify a<nbsp/>directory of your choice.
+     </p>
+     <p>
+     In this tab you can also specify the number of iterations to use in
+     a<nbsp/>shuffle operation (equivalent to <opt tag="shuffle-iterations"/>)
+     and, optionally, a<nbsp/>seed for the random number generator 
+     (equivalent to <opt tag="seed"/>).
+     </p>
+    </dd>
+   </dl>
    </node>
    <node tag="developers" type="chapter" title="Info for Developers">
     <p>
