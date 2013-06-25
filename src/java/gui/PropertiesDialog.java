@@ -26,32 +26,67 @@ public class PropertiesDialog extends JDialog
 
       // General tab
 
-      JComponent startupTab = addTab("startup");
+      JComponent generalTab = addTab("general");
+
+      JComponent startupComp = Box.createVerticalBox();
+      startupComp.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(),
+        DatatoolTk.getLabel("preferences.startup")));
+      generalTab.add(startupComp);
 
       ButtonGroup bg = new ButtonGroup();
 
       homeButton = createRadioButton("preferences.startup", "home", bg);
-      startupTab.add(homeButton);
+      startupComp.add(homeButton);
 
       cwdButton = createRadioButton("preferences.startup", "cwd", bg);
-      startupTab.add(cwdButton);
+      startupComp.add(cwdButton);
 
       lastButton = createRadioButton("preferences.startup", "last", bg);
-      startupTab.add(lastButton);
+      startupComp.add(lastButton);
 
       JComponent box = Box.createHorizontalBox();
       box.setAlignmentX(0);
-      startupTab.add(box);
+      startupComp.add(box);
 
       customButton = createRadioButton("preferences.startup", "custom", bg);
       box.add(customButton);
 
       fileChooser = new JFileChooser();
 
-      customFileField = new FileField(startupTab, fileChooser,
+      customFileField = new FileField(startupComp, fileChooser,
          JFileChooser.DIRECTORIES_ONLY);
 
       box.add(customFileField);
+
+      JComponent shuffleComp = Box.createVerticalBox();
+      shuffleComp.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(),
+        DatatoolTk.getLabel("preferences.shuffle")
+      ));
+      generalTab.add(shuffleComp);
+
+      box = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      box.setAlignmentX(0);
+      shuffleComp.add(box);
+
+      iterationsField = new NonNegativeIntField(100);
+      box.add(DatatoolGuiResources.createJLabel("preferences.shuffle.iter"), 
+         iterationsField);
+      box.add(iterationsField);
+
+      box = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      box.setAlignmentX(0);
+      shuffleComp.add(box);
+
+      hasSeedBox = DatatoolGuiResources.createJCheckBox("preferences.shuffle",
+         "seed", this);
+      box.add(hasSeedBox);
+
+      seedField = new NonNegativeIntField(0);
+      seedField.setText("");
+      seedField.setEnabled(false);
+      box.add(seedField);
 
       // CSV tab
 
@@ -481,6 +516,22 @@ public class PropertiesDialog extends JDialog
 
       currencyListModel = new CurrencyListModel(currencyList, settings);
 
+      iterationsField.setValue(settings.getShuffleIterations());
+
+      Long seed = settings.getRandomSeed();
+
+      if (seed == null)
+      {
+         hasSeedBox.setSelected(false);
+         seedField.setEnabled(false);
+      }
+      else
+      {
+         hasSeedBox.setSelected(true);
+         seedField.setEnabled(true);
+         seedField.setValue(seed.intValue());
+      }
+
       updateButtons();
 
       setVisible(true);
@@ -599,6 +650,15 @@ public class PropertiesDialog extends JDialog
          if (index > -1)
          {
             currencyListModel.editCurrency(index);
+         }
+      }
+      else if (action.equals("seed"))
+      {
+         seedField.setEnabled(hasSeedBox.isSelected());
+
+         if (seedField.isEnabled())
+         {
+            seedField.requestFocusInWindow();
          }
       }
    }
@@ -727,6 +787,17 @@ public class PropertiesDialog extends JDialog
 
       gui.updateTableSettings();
 
+      if (hasSeedBox.isSelected())
+      {
+         settings.setRandomSeed(new Long(seedField.getValue()));
+      }
+      else
+      {
+         settings.setRandomSeed(null);
+      }
+
+      settings.setShuffleIterations(iterationsField.getValue());
+
       setVisible(false);
    }
 
@@ -738,13 +809,15 @@ public class PropertiesDialog extends JDialog
 
    private CharField sepCharField, delimCharField;
 
-   private JCheckBox hasHeaderBox, wipeBox, mapTeXBox;
+   private JCheckBox hasHeaderBox, wipeBox, mapTeXBox,
+      hasSeedBox;
 
    private FileField customFileField, latexFileField;
 
    private JFileChooser fileChooser;
 
-   private NonNegativeIntField portField, sizeField, cellHeightField;
+   private NonNegativeIntField portField, sizeField, cellHeightField,
+      iterationsField, seedField;
 
    private NonNegativeIntField[] cellWidthFields;
 

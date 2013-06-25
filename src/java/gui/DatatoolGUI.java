@@ -237,6 +237,10 @@ public class DatatoolGUI extends JFrame
 
       sortDialog = new SortDialog(this);
 
+      shuffleItem = DatatoolGuiResources.createJMenuItem(
+         "tools", "shuffle", this, toolBar);
+      toolsM.add(shuffleItem);
+
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
 
@@ -586,6 +590,15 @@ public class DatatoolGUI extends JFrame
          if (panel != null)
          {
             panel.sortData(); 
+         }
+      }
+      else if (action.equals("shuffle"))
+      {
+         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+         if (panel != null)
+         {
+            panel.shuffleData(settings.getRandom()); 
          }
       }
       else if (action.equals("preferences"))
@@ -959,6 +972,7 @@ public class DatatoolGUI extends JFrame
       addRowBeforeItem.setEnabled(enable);
       addRowAfterItem.setEnabled(enable);
       sortItem.setEnabled(enable);
+      shuffleItem.setEnabled(enable);
    }
 
    public Font getCellFont()
@@ -1010,7 +1024,7 @@ public class DatatoolGUI extends JFrame
       addColumnAfterItem, addRowAfterItem,
       addColumnBeforeItem, addRowBeforeItem,
       removeColumnItem, editHeaderItem, editDbNameItem,
-      removeRowItem, clearRecentItem, sortItem;
+      removeRowItem, clearRecentItem, sortItem, shuffleItem;
 
    private ActionListener recentFilesListener;
 

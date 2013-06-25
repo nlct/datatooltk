@@ -296,6 +296,12 @@ public class DatatoolDbPanel extends JPanel
       addUndoEvent(new UndoableEditEvent(this, new SortEdit(this)));
    }
 
+   public void shuffleData(Random random)
+   {
+      addUndoEvent(new UndoableEditEvent(this, 
+         new ShuffleEdit(this, random)));
+   }
+
    public void requestSelectedHeaderEditor()
    {
       int colIndex = table.getSelectedColumn();

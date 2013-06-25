@@ -96,6 +96,8 @@ tools=Tools
 tools.mnemonic=T
 tools.sort=Sort...
 tools.sort.mnemonic=S
+tools.shuffle=Shuffle
+tools.shuffle.mnemonic=H
 
 # Help menu
 help=Help
@@ -119,8 +121,9 @@ about.acknowledgements=
 
 # Preferences dialog box
 preferences.title=Preferences
+preferences.general=General
+preferences.general.mnemonic=G
 preferences.startup=Start Up Directory
-preferences.startup.mnemonic=Y
 preferences.startup.home=Home
 preferences.startup.home.mnemonic=M
 preferences.startup.cwd=Current Working Directory
@@ -129,6 +132,11 @@ preferences.startup.last=Last
 preferences.startup.last.mnemonic=L
 preferences.startup.custom=Custom
 preferences.startup.custom.mnemonic=T
+preferences.shuffle=Shuffle
+preferences.shuffle.iter=Shuffle Iterations
+preferences.shuffle.iter.mnemonic=I
+preferences.shuffle.seed=Random Seed
+preferences.shuffle.seed.mnemonic=R
 preferences.csv=CSV
 preferences.csv.mnemonic=V
 preferences.csv.sep=Separator: 
@@ -188,7 +196,7 @@ preferences.currencies.reminder=If you add new currencies here, remember to also
 
 # TeX mappings table
 texmap.character=Character
-texmap.replacement=Replacement
+texmap.character.mnemonic=T
 texmap.replacement=Replacement
 texmap.replacement.mnemonic=R
 texmap.add_mapping=Add Mapping
@@ -293,6 +301,7 @@ undo.move_row=Move Row
 undo.remove_column=Remove Column
 undo.remove_row=Remove Row
 undo.sort=Sort
+undo.shuffle=Shuffle
 
 # Messages
 

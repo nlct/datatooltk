@@ -96,6 +96,8 @@ tools=Tools
 tools.mnemonic=T
 tools.sort=Sort...
 tools.sort.mnemonic=S
+tools.shuffle=Shuffle
+tools.shuffle.mnemonic=H
 
 # Help menu
 help=Help
@@ -119,8 +121,9 @@ about.acknowledgements=
 
 # Preferences dialog box
 preferences.title=Preferences
+preferences.general=General
+preferences.general.mnemonic=G
 preferences.startup=Start Up Directory
-preferences.startup.mnemonic=Y
 preferences.startup.home=Home
 preferences.startup.home.mnemonic=M
 preferences.startup.cwd=Current Working Directory
@@ -129,6 +132,11 @@ preferences.startup.last=Last
 preferences.startup.last.mnemonic=L
 preferences.startup.custom=Custom
 preferences.startup.custom.mnemonic=T
+preferences.shuffle=Shuffle
+preferences.shuffle.iter=Shuffle Iterations
+preferences.shuffle.iter.mnemonic=I
+preferences.shuffle.seed=Random Seed
+preferences.shuffle.seed.mnemonic=R
 preferences.csv=CSV
 preferences.csv.mnemonic=V
 preferences.csv.sep=Separator: 
@@ -293,6 +301,7 @@ undo.move_row=Move Row
 undo.remove_column=Remove Column
 undo.remove_row=Remove Row
 undo.sort=Sort
+undo.shuffle=Shuffle
 
 # Messages
 
@@ -318,7 +327,7 @@ info.no_rows=Use $1 to add rows to the database.
 # Syntax
 syntax.title=Syntax:
 syntax.or=or
-syntax.opt_db=$1 [<option>]+  --in <datatool file>
+syntax.opt_db=$1 [<option>]+ --in <datatool file>
 syntax.opt_csv=$1 [<option>]+ --csv <csv file>
 syntax.opt_sql=$1 [<option>]+ --sqldb <name> --sql <sql statement>
 syntax.general=General Options:
@@ -379,9 +388,9 @@ error.syntax.not_a_number=Number expected after $1 ('$2' found)
 error.syntax.unknown_option=Unknown option '$1'. (Use --help or -h for help.)
 error.syntax.only_one_input=Only one <datatool file> permitted
 error.syntax.input_clash=<datatool file> can't be used with an import option
+error.syntax=Syntax error: $1
 error.syntax.missing_input=Filename expected after $1
 error.syntax.missing_option=Option expected before $1
-error.syntax=Syntax error: $1
 error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the $1 option. See $2 for help.)
 error.cli.no_out=$1 <file> required for batch mode.\n(If you want the GUI interface, use the $2 option. See $3 for help.)
 error.load.failed=Failed to load '$1'\n$2

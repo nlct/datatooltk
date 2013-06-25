@@ -2,6 +2,7 @@ package com.dickimawbooks.datatooltk;
 
 import java.io.*;
 import java.util.Vector;
+import java.util.Random;
 import java.util.Enumeration;
 import java.util.Collections;
 import java.util.regex.*;
@@ -1377,6 +1378,27 @@ public class DatatoolDb
    public void sort()
    {
       Collections.sort(data);
+   }
+
+   public void shuffle(Random random)
+   {
+      int numRows = data.size();
+      int n = settings.getShuffleIterations();
+
+      for (int i = 0; i < n; i++)
+      {
+         int index1 = random.nextInt(numRows);
+         int index2 = random.nextInt(numRows);
+
+         if (index1 != index2)
+         {
+            DatatoolRow row1 = data.get(index1);
+            DatatoolRow row2 = data.get(index2);
+
+            data.set(index1, row2);
+            data.set(index2, row1);
+         }
+      }
    }
 
    public Vector<DatatoolHeader> getHeaders()

@@ -3,6 +3,7 @@ package com.dickimawbooks.datatooltk;
 import java.util.Properties;
 import java.io.*;
 import java.util.Vector;
+import java.util.Random;
 import java.util.InvalidPropertiesFormatException;
 import java.awt.Font;
 import java.util.regex.Pattern;
@@ -744,6 +745,52 @@ public class DatatoolSettings extends Properties
    public void setCellHeight(int height)
    {
       setProperty("cellheight", ""+height);
+   }
+
+   public void setRandomSeed(Long seed)
+   {
+      setProperty("seed", seed == null ? "" : seed.toString());
+   }
+
+   public Long getRandomSeed()
+   {
+      String prop = getProperty("seed");
+
+      if (prop == null || prop.isEmpty()) return null;
+
+      try
+      {
+         return new Long(prop);
+      }
+      catch (NumberFormatException e)
+      {
+         return null;
+      }
+   }
+
+   public Random getRandom()
+   {
+      Long seed = getRandomSeed();
+
+      return seed == null ? new Random() : new Random(seed.longValue());
+   }
+
+   public int getShuffleIterations()
+   {
+      try
+      {
+         return Integer.parseInt(getProperty("shuffle.iter"));
+      }
+      catch (Exception e)
+      {
+         setShuffleIterations(100);
+         return 100;
+      }
+   }
+
+   public void setShuffleIterations(int number)
+   {
+      setProperty("shuffle.iter", ""+number);
    }
 
    public void setDefaults()
