@@ -2,8 +2,8 @@ package com.dickimawbooks.datatooltk;
 
 import java.io.*;
 import java.util.Properties;
-import java.util.Locale;
 import java.awt.Cursor;
+import java.net.URISyntaxException;
 
 import com.dickimawbooks.datatooltk.io.*;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
@@ -295,55 +295,57 @@ public class DatatoolTk
       }
    }
 
-   public static String getLanguage()
+   public String[] getDictionaries()
+    throws URISyntaxException
    {
-      // TODO allow user to select a language other than the default
+      File dir = new File(DatatoolTk.class.getResource(
+         settings.DICT_DIR).toURI());
 
-      return Locale.getDefault().getLanguage();
+      return dir.list(new FilenameFilter()
+      {
+         public boolean accept(File directory, String name)
+         {
+            return name.matches("datatooltk-[a-z]{2}(-[A-Z]{2})?");
+         }
+      });
    }
 
-   public static String getCountry()
+   public String[] getHelpsets()
+    throws URISyntaxException
    {
-      // TODO allow user to select a country other than the default
+      File dir = new File(DatatoolTk.class.getResource(
+         settings.HELPSET_DIR).toURI());
 
-      return Locale.getDefault().getCountry();
+      return dir.list(new FilenameFilter()
+      {
+         public boolean accept(File directory, String name)
+         {
+            return name.matches("datatooltk-[a-z]{2}(-[A-Z]{2})?");
+         }
+      });
    }
 
    public static void loadDictionary()
       throws IOException
    {
-      String lang    = getLanguage();
-      String country = getCountry();
-
-      String resource = "datatooltk";
+      String dictLanguage = settings.getDictionary();
 
       InputStream in = null;
       BufferedReader reader = null;
 
       try
       {
-         in = DatatoolTk.class.getResourceAsStream(
-           "/resources/dictionaries/"+resource+"-"+lang
-           +"-"+country+".prop");
+         String dict = settings.getDictionaryLocation()+"-"
+             + settings.getDictionary()+".prop";
 
-         if (in == null)
-         {
-            in = DatatoolTk.class.getResourceAsStream(
-              "/resources/dictionaries/"+resource+"-"+lang+".prop");
-         }
-
-         if (in == null && !lang.equals("en"))
-         {
-            in = DatatoolTk.class.getResourceAsStream(
-              "/resources/dictionaries/"+resource+"-en-US.prop");
-         }
+         in = DatatoolTk.class.getResourceAsStream(dict);
 
          if (in == null)
          {
             throw new FileNotFoundException
             (
-               "Can't find dictionary resource file /resources/dictionaries/"
-               +resource+"-en-US");
+               "Can't find dictionary resource file " +dict
+            );
          }
 
          reader = new BufferedReader(new InputStreamReader(in));
@@ -592,22 +594,22 @@ public class DatatoolTk
 
       try
       {
+         settings.loadProperties();
+      }
+      catch (IOException e)
+      {
+         System.err.println("Unable to load properties:\n" +
+           e.getMessage());
+      }
+
+      try
+      {
          loadDictionary();
       }
       catch (IOException e)
       {
          System.err.println("Unable to load dictionary file:\n"
            + e.getMessage());
-      }
-
-      try
-      {
-         settings.loadProperties();
-      }
-      catch (IOException e)
-      {
-         System.err.println(getLabelWithValue("error.load.prop_failed", 
-           e.getMessage()));
       }
 
       try

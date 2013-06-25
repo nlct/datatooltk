@@ -336,36 +336,18 @@ public class DatatoolGUI extends JFrame
       {
          HelpSet mainHelpSet = null;
 
-         String resource = "datatooltk";
+         String helpset = settings.getHelpSetLocation()
+            + "-"+settings.getHelpSet()+"/"+settings.RESOURCE+".hs";
 
-         String helpsetLocation = "/resources/helpsets/"+resource;
-
-         String lang    = DatatoolTk.getLanguage();
-         String country = DatatoolTk.getCountry();
-
-         URL hsURL = getClass().getResource(helpsetLocation
-          + "-" + lang + "-" + country + "/" + resource + ".hs");
+         URL hsURL = getClass().getResource(helpset);
 
          if (hsURL == null)
          {
-            hsURL = getClass().getResource(helpsetLocation
-              + "-"+lang + "/" + resource + ".hs");
-
             if (hsURL == null)
             {
-               hsURL = getClass().getResource(helpsetLocation
-                 + "-en-US/" + resource + ".hs");
-
-               if (hsURL == null)
-               {
-                  throw new FileNotFoundException(
-                    "Can't find helpset files. Tried: \n"
-                   + helpsetLocation + "-" + lang + "-" 
-                   + country + "/" + resource + ".hs\n"
-                   + helpsetLocation + "-" + lang + "/" 
-                   + resource + ".hs\n"
-                   + helpsetLocation + "-en-US/" + resource + ".hs");
-               }
+               throw new FileNotFoundException(
+                  DatatoolTk.getLabelWithValue("error.resource.not_found",
+                    helpset));
             }
          }
 

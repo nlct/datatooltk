@@ -8,6 +8,8 @@ import java.util.InvalidPropertiesFormatException;
 import java.awt.Font;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.Locale;
+import java.net.URL;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
@@ -793,6 +795,106 @@ public class DatatoolSettings extends Properties
       setProperty("shuffle.iter", ""+number);
    }
 
+   public String getDictionary()
+   {
+      String prop = getProperty("dictionary");
+
+      if (prop == null)
+      {
+         Locale locale = Locale.getDefault();
+
+         String language = locale.getLanguage();
+         String country = locale.getCountry();
+
+         String dictLocation = DICT_DIR+RESOURCE;
+
+         URL url = getClass().getResource(dictLocation
+          + "-" + language + "-" + country + "/" + RESOURCE + ".hs");
+         if (url == null)
+         {
+            url = getClass().getResource(dictLocation
+              + "-" + language + "/" + RESOURCE + ".hs");
+
+            if (url == null)
+            {
+               prop = "en-US";
+            }
+            else
+            {
+               prop = language;
+            }
+         }
+         else
+         {
+            prop = language+"-"+country;
+         }
+
+         setDictionary(prop);
+      }
+
+      return prop;
+   }
+
+   public void setDictionary(String dictionary)
+   {
+      setProperty("dictionary", dictionary);
+   }
+
+   public String getHelpSet()
+   {
+      String prop = getProperty("helpset");
+
+      if (prop == null)
+      {
+         Locale locale = Locale.getDefault();
+
+         String language = locale.getLanguage();
+         String country = locale.getCountry();
+
+         String helpsetLocation = HELPSET_DIR+RESOURCE;
+
+         URL hsURL = getClass().getResource(helpsetLocation
+          + "-" + language + "-" + country + "/" + RESOURCE + ".hs");
+         if (hsURL == null)
+         {
+            hsURL = getClass().getResource(helpsetLocation
+              + "-"+language + "/" + RESOURCE + ".hs");
+
+            if (hsURL == null)
+            {
+               prop = "en-US";
+            }
+            else
+            {
+               prop = language;
+            }
+         }
+         else
+         {
+            prop = language+"-"+country;
+         }
+
+         setHelpSet(prop);
+      }
+ 
+      return prop;
+   }
+
+   public void setHelpSet(String helpset)
+   {
+      setProperty("helpset", helpset);
+   }
+
+   public static String getHelpSetLocation()
+   {
+      return HELPSET_DIR + RESOURCE;
+   }
+
+   public static String getDictionaryLocation()
+   {
+      return DICT_DIR + RESOURCE;
+   }
+
    public void setDefaults()
    {
       setSeparator(',');
@@ -846,4 +948,8 @@ public class DatatoolSettings extends Properties
    public static final Pattern PATTERN_CURRENCY
       = Pattern.compile("([^\\d\\.]+) *(\\d*\\.?\\d+)");
 
+   public static final String HELPSET_DIR = "/resources/helpsets/";
+   public static final String DICT_DIR = "/resources/dictionaries/";
+
+   public static final String RESOURCE = "datatooltk";
 }
