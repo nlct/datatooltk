@@ -811,26 +811,31 @@ public class DatatoolGUI extends JFrame
       settings.addRecentFile(file);
    }
 
-   public void load()
+   public DatatoolDb load()
    {
       setTeXFileFilters();
 
       if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
       {
-         load(fileChooser.getSelectedFile());
+         return load(fileChooser.getSelectedFile());
       }
+
+      return null;
    }
 
-   public void load(String filename)
+   public DatatoolDb load(String filename)
    {
-      load(new File(filename));
+      return load(new File(filename));
    }
 
-   public void load(File file)
+   public DatatoolDb load(File file)
    {
+      DatatoolDb db = null;
+
       try
       {
-         createNewTab(DatatoolDb.load(settings, file));
+         db = DatatoolDb.load(settings, file);
+         createNewTab(db);
 
          settings.addRecentFile(file);
       }
@@ -840,6 +845,8 @@ public class DatatoolGUI extends JFrame
            DatatoolTk.getLabelWithValues(
              "error.load.failed", file.toString(), e.getMessage()));
       }
+
+      return db;
    }
 
    private void createNewTab(DatatoolDb db)
@@ -859,61 +866,76 @@ public class DatatoolGUI extends JFrame
       updateTools();
    }
 
-   public void importCsv()
+   public DatatoolDb importCsv()
    {
       setCsvFileFilters();
 
       if (fileChooser.showDialog(this, DatatoolTk.getLabel("button.import"))
        != JFileChooser.APPROVE_OPTION)
       {
-         return;
+         return null;
       }
 
       DatatoolCsv imp = new DatatoolCsv(settings);
 
+      DatatoolDb db = null;
+
       try
       {
-         createNewTab(imp.importData(fileChooser.getSelectedFile()));
+         db = imp.importData(fileChooser.getSelectedFile());
+         createNewTab(db);
       }
       catch (DatatoolImportException e)
       {
          DatatoolGuiResources.error(this, e);
       }
+
+      return db;
    }
 
-   public void importProbSoln()
+   public DatatoolDb importProbSoln()
    {
       setTeXFileFilter();
 
       if (fileChooser.showDialog(this, DatatoolTk.getLabel("button.import"))
        != JFileChooser.APPROVE_OPTION)
       {
-         return;
+         return null;
       }
 
       DatatoolProbSoln imp = new DatatoolProbSoln(settings);
 
+      DatatoolDb db = null;
+
       try
       {
-         createNewTab(imp.importData(
-            fileChooser.getSelectedFile().getAbsolutePath()));
+         db = imp.importData(
+            fileChooser.getSelectedFile().getAbsolutePath());
+         createNewTab(db);
       }
       catch (DatatoolImportException e)
       {
          DatatoolGuiResources.error(this, e);
       }
+
+      return db;
    }
 
-   public void importData(DatatoolImport imp, String source)
+   public DatatoolDb importData(DatatoolImport imp, String source)
    {
+      DatatoolDb db = null;
+
       try
       {
-         createNewTab(imp.importData(source));
+         db = imp.importData(source);
+         createNewTab(db);
       }
       catch (DatatoolImportException e)
       {
          DatatoolGuiResources.error(this, e);
       }
+
+      return db;
    }
 
    public void selectTab(DatatoolDbPanel panel)

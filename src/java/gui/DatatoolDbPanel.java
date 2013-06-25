@@ -293,13 +293,17 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
+      gui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       addUndoEvent(new UndoableEditEvent(this, new SortEdit(this)));
+      gui.setCursor(Cursor.getDefaultCursor());
    }
 
    public void shuffleData(Random random)
    {
+      gui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       addUndoEvent(new UndoableEditEvent(this, 
          new ShuffleEdit(this, random)));
+      gui.setCursor(Cursor.getDefaultCursor());
    }
 
    public void requestSelectedHeaderEditor()

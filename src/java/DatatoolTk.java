@@ -3,6 +3,7 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.util.Properties;
 import java.util.Locale;
+import java.awt.Cursor;
 
 import com.dickimawbooks.datatooltk.io.*;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
@@ -41,6 +42,42 @@ public class DatatoolTk
             db = imp.importData(source);
          }
 
+         if (!(sort == null || sort.isEmpty()))
+         {
+            boolean ascending = true;
+
+            char c = sort.charAt(0);
+
+            if (c == '+')
+            {
+               ascending = true;
+               sort = sort.substring(1);
+            }
+            else if (c == '-')
+            {
+               ascending = false;
+               sort = sort.substring(1);
+            }
+
+            int colIndex = db.getColumnIndex(sort);
+
+            if (colIndex == -1)
+            {
+               throw new InvalidSyntaxException(
+                  DatatoolTk.getLabelWithValue("error.syntax.unknown_field",
+                  sort));
+            }
+
+            db.setSortColumn(colIndex);
+            db.setSortAscending(ascending);
+            db.sort();
+         }
+
+         if (doShuffle)
+         {
+            db.shuffle();
+         }
+
          db.save(out);
       }
       catch (IOException e)
@@ -67,15 +104,62 @@ public class DatatoolTk
    {
       DatatoolGUI gui = new DatatoolGUI(settings);
 
+      gui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+      DatatoolDb db = null;
+
       if (dbtex != null)
       {
-         gui.load(dbtex);
+         db = gui.load(dbtex);
       }
       else if (imp != null)
       {
-         gui.importData(imp, source);
+         db = gui.importData(imp, source);
       }
 
+      if (db != null)
+      {
+         if (!(sort == null || sort.isEmpty()))
+         {
+            boolean ascending = true;
+
+            char c = sort.charAt(0);
+
+            if (c == '+')
+            {
+               ascending = true;
+               sort = sort.substring(1);
+            }
+            else if (c == '-')
+            {
+               ascending = false;
+               sort = sort.substring(1);
+            }
+
+            int colIndex = db.getColumnIndex(sort);
+
+            if (colIndex == -1)
+            {
+               DatatoolGuiResources.error(null,
+                  DatatoolTk.getLabelWithValue("error.syntax.unknown_field",
+                  sort));
+            }
+            else
+            {
+               db.setSortColumn(colIndex);
+               db.setSortAscending(ascending);
+               db.sort();
+            }
+         }
+
+         if (doShuffle)
+         {
+            db.shuffle();
+         }
+
+      }
+
+      gui.setCursor(Cursor.getDefaultCursor());
       gui.setVisible(true);
    }
 
@@ -106,6 +190,11 @@ public class DatatoolTk
       System.out.println(getLabelWithValue("syntax.nodeletetmpfiles", "--nodelete-tmp-files"));
       System.out.println(getLabelWithValues("syntax.maptexspecials", "--map-tex-specials", (settings.isTeXMappingOn()?" ("+getLabel("syntax.default")+".)":"")));
       System.out.println(getLabelWithValues("syntax.nomaptexspecials", "--nomap-tex-specials", (settings.isTeXMappingOn()?"":" ("+getLabel("syntax.default")+".)")));
+      System.out.println(getLabelWithValue("syntax.seed", "--seed"));
+      System.out.println(getLabelWithValue("syntax.shuffle_iter", "--shuffle-iterations"));
+      System.out.println(getLabelWithValue("syntax.shuffle", "--shuffle"));
+      System.out.println(getLabelWithValue("syntax.no_shuffle", "--noshuffle"));
+      System.out.println(getLabelWithValue("syntax.sort", "--sort"));
       System.out.println();
       System.out.println(getLabel("syntax.csv_opts"));
       System.out.println(getLabelWithValue("syntax.csv", "--csv"));
@@ -828,6 +917,78 @@ public class DatatoolTk
 
                dbtex = args[i];
             }
+            else if (args[i].equals("--seed"))
+            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_number",
+                      args[i-1]));
+               }
+
+               if (args[i].isEmpty())
+               {
+                  settings.setRandomSeed(null);
+               }
+               else
+               {
+                  try
+                  {
+                     settings.setRandomSeed(new Long(args[i]));
+                  }
+                  catch (NumberFormatException e)
+                  {
+                     throw new InvalidSyntaxException(
+                       getLabelWithValue("error.syntax.missing_number",
+                         args[i-1]));
+                  }
+               }
+            }
+            else if (args[i].equals("--shuffle-iterations"))
+            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_number",
+                      args[i-1]));
+               }
+
+               try
+               {
+                  settings.setShuffleIterations(new Integer(args[i]));
+               }
+               catch (NumberFormatException e)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_number",
+                      args[i-1]));
+               }
+            }
+            else if (args[i].equals("--shuffle"))
+            {
+               doShuffle = true;
+            }
+            else if (args[i].equals("--noshuffle"))
+            {
+               doShuffle = false;
+            }
+            else if (args[i].equals("--sort"))
+            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValue("error.syntax.missing_sort_field",
+                     args[i-1]));
+               }
+
+               sort = args[i];
+            }
             else if (args[i].charAt(0) == '-')
             {
                throw new InvalidSyntaxException(
@@ -886,6 +1047,10 @@ public class DatatoolTk
    private static String source = null;
 
    private static boolean removeTmpFilesOnExit=true;
+
+   private static boolean doShuffle = false;
+
+   private static String sort=null;
 
    private static DatatoolImport imp = null;
 

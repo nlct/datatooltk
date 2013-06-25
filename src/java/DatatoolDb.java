@@ -944,6 +944,18 @@ public class DatatoolDb
       return null;
    }
 
+   public int getColumnIndex(String key)
+   {
+      for (int i = 0, n = headers.size(); i < n; i++)
+      {
+         if (headers.get(i).getKey().equals(key))
+         {
+            return i;
+         }
+      }
+
+      return -1;
+   }
 
    public String[] getColumnTitles()
    {
@@ -1378,6 +1390,11 @@ public class DatatoolDb
    public void sort()
    {
       Collections.sort(data);
+   }
+
+   public void shuffle()
+   {
+      shuffle(settings.getRandom());
    }
 
    public void shuffle(Random random)
