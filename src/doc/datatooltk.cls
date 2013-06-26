@@ -69,7 +69,7 @@
 
 \newcommand*{\dq}[1]{``#1''}
 
-\newcommand*{\meta}[1]{\ensuremath{\langle}\emph{#1}\ensuremath{\rangle}}
+\newcommand*{\meta}[1]{\ensuremath{\langle}\textit{#1}\ensuremath{\rangle}}
 
 \DeclareRobustCommand*{\csnoindex}[1]{\texttt{\char`\\#1}}
 

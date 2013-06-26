@@ -50,13 +50,9 @@
     % do we need to continue or have we got everything?
     \ifboolexpr
     {%
-      test{\ifnumgreater
-      {\value{leveli}}%
-      {\value{maxleveli}}}%
+      test{\ifnumgreater{\value{leveli}}{\value{maxleveli}}}
       and
-      test{\ifnumgreater
-      {\value{levelii}}%
-      {\value{maxlevelii}}}%
+      test{\ifnumgreater{\value{levelii}}{\value{maxlevelii}}}
     }%
     {\dtlbreak}{}%
   }
@@ -75,11 +71,12 @@
 }
 
 \begin{enumerate}
-% do easy questions
 
+% do easy questions
 \dolistloop{\listleveli}
 
 % do medium level questions
 \dolistloop{\listlevelii}
+
 \end{enumerate}
 \end{document}

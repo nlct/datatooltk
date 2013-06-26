@@ -50,13 +50,9 @@
     % do we need to continue or have we got everything?
     \ifboolexpr
     {%
-      test{\ifnumgreater
-      {\value{leveli}}%
-      {\value{maxleveli}}}%
+      test{\ifnumgreater{\value{leveli}}{\value{maxleveli}}}
       and
-      test{\ifnumgreater
-      {\value{levelii}}%
-      {\value{maxlevelii}}}%
+      test{\ifnumgreater{\value{levelii}}{\value{maxlevelii}}}
     }%
     {\dtlbreak}{}%
   }

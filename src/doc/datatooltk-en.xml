@@ -260,7 +260,8 @@
    </p>
    <verbinput src="../tests/test-probsoln-doc.tex"/>
    <p>
-   Related topics: <ref text="shuffling a database" tag="shuffle"/> and 
+   Related topics: <ref text="shuffling a database" tag="shuffle"/>,
+   <ref text="sorting and shuffling a database" tag="sortshuffle"/> and 
    <ref text="importing probsoln datasets" tag="importprobsoln"/>.
    </p>
    </node>
@@ -335,7 +336,7 @@
    string data type. Alternatively, select the cell (of any type) and use 
    <menu tag="edit.edit_cell"/>.
    </p>
-   <float type="figure" tag="fig.celleditor" caption="Cell Editor Dialog" pos="htb">
+   <float type="figure" tag="fig.celleditor" caption="Cell Editor Dialog" pos="htbp">
      <image scale="0.75" alt="Image of cell editor dialog" src="images/celleditor.png" />
    </float>
    <p>
@@ -372,7 +373,7 @@
      <cs tag="DTLdisplaydb"/>. See <ref tag="preferences"/> for 
      currency mappings.
      </p>
-     <float type="figure" tag="headerdialog" caption="Header Dialog" pos="htb">
+     <float type="figure" tag="headerdialog" caption="Header Dialog" pos="htbp">
       <image scale="0.75" alt="Image of header dialog box" src="images/headerdialog.png" />
      </float>
      <p>
@@ -381,7 +382,7 @@
      label and type displayed in a<nbsp/>tooltip (see 
      <ref tag="headerdetails"/>).
      </p>
-     <float type="figure" tag="headerdetails" caption="Header Details Shown in Tooltip" pos="htb">
+     <float type="figure" tag="headerdetails" caption="Header Details Shown in Tooltip" pos="htbp">
       <image scale="0.75" alt="Image of main window showing header tooltip"
          src="images/headerdetails.png" />
      </float>
@@ -406,8 +407,10 @@
    do the sorting in the SELECT statement when you import the data (see 
    <ref tag="importsql"/>).</footnote> So instead of doing, say,
    <pre>
-\input{mydata.dbtex}% loads `data' database from file `mydata.dbtex'
+\input{mydata.dbtex}% loads database <dict tag="manual.labelled"/> `data' from file `mydata.dbtex'
 \DTLsortdb{Surname}{data}% sort data on `Title' field
+% Later in the document:
+\DTLdisplaydb{data}% display data in tabular environment
    </pre>
 It's better to run, say,
 <pre>
@@ -416,6 +419,8 @@ It's better to run, say,
    Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
 <pre>
 \input{mydata-sorted.dbtex}
+% Later in the document:
+\DTLdisplaydb{data}% display data in tabular environment
 </pre>
    or, if you have shell escape enabled you can used <TeX/>'s 
 <cs tag="write18"/> mechanism:
@@ -425,6 +430,8 @@ It's better to run, say,
 --out mydata-sorted.dbtex}
 
 \input{mydata-sorted.dbtex}
+% Later in the document:
+\DTLdisplaydb{data}% display data in tabular environment
 </pre>
    <p>
    A<nbsp/>database can be sorted according to a<nbsp/>particular column
@@ -457,11 +464,9 @@ It's better to run, say,
    comes before <dq>2</dq>).
    </p>
    <example>
+   <p>
    Consider the data shown in <ref tag="sortex1"/> and reproduced in 
    <ref tag="tabsortex1"/>.
-   <float type="figure" tag="sortex1" caption="Original Data">
-      <image scale="0.75" alt="Image of example database" src="images/sortex1.png" />
-   </float>
    <float type="table" tag="tabsortex1" caption="Original Data" pos="htbp">
     <tabular spec="ll" >
      <tr>
@@ -478,12 +483,17 @@ It's better to run, say,
      </tr>
     </tabular>
    </float>
-   <p>
    The first column has a<nbsp/>string data type and the second has 
    a<nbsp/>currency data type. Sorting in ascending order on the second column,
-   will sort numerically on just the number. The currency symbol is ignored.
-   This produces the ordering shown in <ref tag="tabsortex2"/>.
+   will sort numerically on just the number. The currency symbol is ignored
+   (see <ref tag="tabsortex2"/>).
+   If the type of the second column is changed from currency to string, and the
+   sort is redone, the order is now based on a<nbsp/>string comparison that
+   includes the currency symbol (see <ref tag="tabsortex3"/>).
    </p>
+   <float type="figure" tag="sortex1" caption="Original Data" pos="htbp">
+      <image scale="0.75" alt="Image of example database" src="images/sortex1.png" />
+   </float>
    <float type="table" tag="tabsortex2" caption="Data Sorted on Second Column (Currency Comparison)" pos="htbp">
     <tabular spec="ll" >
      <tr>
@@ -500,12 +510,6 @@ It's better to run, say,
      </tr>
     </tabular>
    </float>
-   <p>
-   If the type of the second column is changed from currency to string, and the
-   sort is redone, the order is now based on a<nbsp/>string comparison that
-   includes the currency symbol. This produces the ordering shown in
-   <ref tag="tabsortex3"/>.
-   </p>
    <float type="table" tag="tabsortex3" caption="Data Sorted on Second Column (String Comparison)" pos="htbp">
     <tabular spec="ll" >
      <tr>
@@ -542,14 +546,14 @@ It's better to run, say,
    the question level.  For example, 1 could correspond to easy and 2 could 
    correspond to medium difficulty.
    </p>
-   <float type="figure" tag="shuffleex1" caption="Shuffle Example">
+   <float type="figure" tag="shuffleex1" caption="Shuffle Example" pos="htbp">
       <image scale="0.75" alt="Image of example database" src="images/shuffleex1.png" />
    </float>
    <p>
    Now suppose I<nbsp/>want to write an assignment sheet that has one randomly
    selected question of level<nbsp/>1 and two randomly selected questions of
    level<nbsp/>2. Let's suppose the file name is <tt>data.dbtex</tt>
-   and the database is called <dq>problems</dq>. Then I<nbsp/>can run <app/>
+   and the database label is <dq><tt>problems</tt></dq>. Then I<nbsp/>can run <app/>
    in batch mode using:
    <pre>
 <dict tag="appname"/> --shuffle --in data.dbtex --out data-shuffled.dbtex
@@ -571,7 +575,8 @@ It's better to run, say,
    Now, the <cs tag="DTLforeach"/> loop just stores the row numbers of the
    required questions in two lists, corresponding to the two different levels.
    Then each list is iterated through and the corresponding row is fetched
-   using <cs tag="dtlgetrow"/>.
+   using <cs tag="dtlgetrow"/>. Extending this example to accommodate an
+   arbitrary number of levels is left as an exercise for the reader.
    </p>
    <p>
    Remember that if you have shell escape enabled when you run <LaTeX/> you
@@ -583,6 +588,83 @@ It's better to run, say,
 
 \input{data-shuffled.dbtex}
    </pre>
+   </example>
+   </node>
+   <node tag="sortshuffle" type="section" title="Sorting and Shuffling">
+   <p>
+   As mentioned earlier, if you specify both <opt tag="sort"/> and
+   <opt tag="shuffle"/>, the sorting will always be performed first, 
+   regardless of the option order, but why would you want to sort the data
+   if you're going to shuffle it? Consider the command invocation:
+<alltt>
+<dict tag="appname"/> <opt tag="shuffle"/> <opt tag="in"/> <meta>in-file</meta> <opt tag="out"/> <meta>out-file</meta>
+</alltt>
+   Every time you run this command, you will get a<nbsp/>different ordering.
+If, however, you set a<nbsp/>seed for the random generator, for example:
+<alltt>
+<dict tag="appname"/> <opt tag="seed"/> 2013 <opt tag="shuffle"/> <opt tag="in"/> <meta>in-file</meta> <opt tag="out"/> <meta>out-file</meta>
+</alltt>
+   You will always get the same random ordering <em>provided the original 
+   data in <meta>in-file</meta> has remained unchanged</em>. If you want to 
+   modify the shuffled data in your document and save it to the original 
+   file <meta>in-file</meta> using <cs tag="DTLsaverawdb"/>, the ordering in 
+   that file will change, so the next time you shuffle it, you'll get 
+   a<nbsp/>different ordering, even if you use the same seed. 
+   </p>
+   <example>
+   <p>
+   Suppose you have a<nbsp/>database of exam questions and you want to keep
+   track of the year in which each question was last used. (To make life
+   easier, let's identify the academic year <dq>2012/13</dq> as 2013, the
+   academic year <dq>2013/14</dq> as 2014, etc.) Let's further suppose the
+   database of questions is in a<nbsp/>file called <tt>mth-101.dbtex</tt>
+   and the database label is <dq><tt>problems</tt></dq> (see 
+   <ref tag="sortshuffleex"/>). The database 
+   contains a<nbsp/>column with the label <dq><tt>Label</tt></dq>, which
+   uniquely identifies an exam question, a<nbsp/>column with the label
+   <dq><tt>Question</tt></dq> that contains the exam question, a<nbsp/>column
+   with the label <dq><tt>Answer</tt></dq> that contains the answer and
+   an integer column with the label <dq><tt>Year</tt></dq> that contains the
+   exam year in which that question was last used. (A zero entry means the
+   question hasn't been used.)
+   </p>
+   <float type="figure" tag="sortshuffleex" caption="Sort and Shuffle Example" pos="htbp">
+      <image scale="0.75" alt="Image of example database" src="images/sortshuffleex1.png" />
+   </float>
+   <p>
+   Now suppose the exam requires five questions to be randomly selected from 
+   this database, but must not include any question used in the past three 
+   years. So the exam <LaTeX/> document needs to load in a<nbsp/>shuffled
+   version of <tt>mth-101.dbtex</tt>, use the first five questions that don't
+   have a<nbsp/>year set in the past three year range, set the year for the
+   selected questions to the current exam year, display the questions (and
+   optionally the answers for the solution sheet), and at the end of the
+   document, overwrite <tt>mth-101.dbtex</tt> so that it now has 
+   a<nbsp/>record of this year's exam questions.
+   </p>
+   <p>
+   There are two problems. Firstly, if the process is to be automated
+   with a<nbsp/>call to <app/> <opt tag="shuffle"/> followed by 
+   a<nbsp/><LaTeX/> call, a<nbsp/>different set of problems will be selected
+   on each run, even with the same seed. To overcome this, a<nbsp/>sort on 
+   the <tt>Label</tt> column needs to be done before the shuffle:
+<alltt>
+<dict tag="appname"/> <opt tag="sort"/> Label <opt tag="seed"/> 2013 <opt tag="shuffle"/> <opt tag="in"/> mth-101.dbtex <cont/><opt tag="out"/> mth-101-shuffled.dbtex
+</alltt>
+   <contexplan/>
+   This way the shuffle always starts from the same ordering.
+   </p>
+   <p>
+   The second problem occurs if you edit the database such that you add or
+   remove rows. This will change the initial conditions, even with the sort.
+   If you add or remove rows, you need to accept that the document may well
+   end up with a<nbsp/>different selection of questions, which is okay if
+   you haven't finalised the exam, but it means that some of the questions
+   will be identified as having been used in that exam year from 
+   a<nbsp/>previous run but are now no longer selected. In order to make them
+   available for the next year, if they haven't been selected, but have the
+   year set to this year, the year needs to be cleared.
+   </p>
    </example>
    </node>
    <node tag="import" type="chapter" title="Importing Data">
@@ -747,6 +829,10 @@ Password:
       <image scale="0.75" alt="Image of the main window" src="images/importps.png" />
      </float>
    </example>
+   <p>
+   Related topics: <ref text="shuffling a database" tag="shuffle"/> and
+   <ref text="sorting and shuffling a database" tag="sortshuffle"/>.
+   </p>
    </node>
    <node tag="preferences" type="chapter" title="Application Properties">
    <p>

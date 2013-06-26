@@ -19,6 +19,8 @@ $(TARGETDIR)/datatooltk-en-GB/datatooltk.html	: $(TARGETDIR) \
           ../tests/HelloUser.java \
           ../tests/test-probsoln-doc.tex \
           ../tests/prob-mixed.tex \
+          ../tests/test-shuffle.tex \
+          ../tests/test-shuffle-level.tex \
 	  images/*.png \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-GB.prop \
@@ -36,6 +38,8 @@ $(TARGETDIR)/datatooltk-en-US/datatooltk.html	: $(TARGETDIR) \
           ../tests/HelloUser.java \
           ../tests/test-probsoln-doc.tex \
           ../tests/prob-mixed.tex \
+          ../tests/test-shuffle.tex \
+          ../tests/test-shuffle-level.tex \
 	  images/*.png \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-US.prop \

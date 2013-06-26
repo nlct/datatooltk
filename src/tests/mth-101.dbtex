@@ -1,0 +1,544 @@
+% Created by datatooltk on Wed Jun 26 11:09:06 BST 2013
+\DTLifdbexists{problems}%
+{\PackageError{datatool}{Database `problems'
+already exists}{}%
+\aftergroup\endinput}{}%
+\bgroup\makeatletter
+\dtl@message{Reconstructing database
+`problems'}%
+\expandafter\global\expandafter
+\newtoks\csname dtlkeys@problems\endcsname
+\expandafter\global
+ \csname dtlkeys@problems\endcsname={%
+%
+\db@plist@elt@w %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@key@id@w Label%
+\db@key@id@end@ %
+\db@type@id@w 0%
+\db@type@id@end@ %
+\db@header@id@w Label%
+\db@header@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+\db@plist@elt@w %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@key@id@w Question%
+\db@key@id@end@ %
+\db@type@id@w 0%
+\db@type@id@end@ %
+\db@header@id@w Question%
+\db@header@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+\db@plist@elt@w %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@key@id@w Answer%
+\db@key@id@end@ %
+\db@type@id@w 0%
+\db@type@id@end@ %
+\db@header@id@w Answer%
+\db@header@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+\db@plist@elt@w %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@key@id@w Year%
+\db@key@id@end@ %
+\db@type@id@w 1%
+\db@type@id@end@ %
+\db@header@id@w Year%
+\db@header@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@plist@elt@end@ %
+}%
+\expandafter\global\expandafter
+\newtoks\csname dtldb@problems\endcsname
+\expandafter\global
+\csname dtldb@problems\endcsname={%
+%
+\db@row@elt@w %
+\db@row@id@w 1%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w gpowh%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $f(x) = g(x)^{h(x)}.$%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \begin{align*}
+  f(x) & = e^{\ln g(x)^{h(x)}}\\
+   & = e^{h(x)\ln g(x)}\\
+  f'(x) & = e^{h(x)\ln g(x)}(h'(x)\ln g(x) + h(x)\frac {g'(x)}{g(x)})\\
+   & = g(x)^{h(x)}(h'(x)\ln g(x) + \frac {h(x)g'(x)}{g(x)})
+\end{align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 1%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 2%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w arcsin%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \arcsin (x)$%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\sin (y) = x\] diff. w.r.t. $x$:
+\begin{align*}
+ \cos y \frac {dy}{dx} & = 1\\
+ \frac{dy}{dx} & = \frac {1}{\cos y}\\
+  & = \frac {1}{\sqrt {1 - \sin ^2y}}\\
+  & = \frac {1}{\sqrt {1-x^2}}.
+\end{align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 2%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 3%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w arccos%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \arccos x$.%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \(\cos y = x\) diff. w.r.t. $x$: 
+\begin{align*}
+ -\sin y \frac {dy}{dx} & = 1\\
+ \frac {dy}{dx} & = \frac {-1}{\sin y}\\
+ & = \frac {-1}{\sqrt {1-\cos ^2y}}\\
+ & = \frac {-1}{\sqrt {1-x^2}}
+\end {align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 3%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 4%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w tan%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \tan x$%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \begin{align*}
+ y & = \tan x\\
+ & = \frac {\sin x}{\cos x}\\
+ \frac {dy}{dx} & = \frac {\cos x}{\cos x} + \sin x\times \frac {-1}{\cos ^2x}\times -\sin x\\ 
+ & = 1 + \tan ^2x\\ & = & \sec ^2x.
+\end{align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 4%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 5%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w arctan%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \arctan x = \tan ^{-1}x$%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\tan y = x\] diff w.r.t. $x$:
+\begin{align*}
+ \sec ^2y\frac {dy}{dx} & = 1\\
+ \frac {dy}{dx} & = \frac {1}{\sec ^2y}\\
+ & = \frac {1}{1+\tan ^2y}\\
+ & = \frac {1}{1+x^2}
+\end{align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 5%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 6%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w cot%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = (\tan x)^{-1} = \cot x$%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \begin{align*}
+ \frac {dy}{dx} & = -(\tan x)^{-2}\sec ^2x\\
+ & = -\frac {\cos ^2x}{\sin ^2x}\cdot \frac {1}{\cos ^2x}\\
+ & = \frac {-1}{\sin ^2x}\\
+ & = -\csc ^2x.
+\end{align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 6%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 7%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w cosxsqsinx%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \cos (x^2)\sin x$.%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\frac {dy}{dx} = -\sin (x^2)2x\sin x + \cos (x^2)\cos x\]%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 7%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 8%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w xlnx%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = (x+1)\ln (x+1)$.%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \begin{align*}
+ \frac {dy}{dx} & = \ln (x+1) + \frac {x+1}{x+1}\\
+ & = 1 + \ln (x+1). 
+\end{align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 8%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 9%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w glng%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $f(x) = g(x)\ln (g(x))$.%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \begin{align*}
+ f'(x) & = g'(x)\ln (g(x)) + \frac {g(x)}{g(x)}g'(x)\\
+ & = g'(x)(1+\ln (g(x))).
+\end{align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 9%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 10%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w sinx/x%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \frac {\sin x}{x}$.%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\frac {dy}{dx} = \frac {\cos x}{x} - \frac {\sin x}{x^2}\]%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 10%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 11%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w exp4x%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \exp (4x)$ %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\frac {dy}{dx} = 4\exp (4x)\]%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 11%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 12%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w exp3x+2%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \exp (3x+2)$ %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\frac {dy}{dx} = 3\exp (3x+2)\]%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 12%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 13%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w cubic%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y=x^3 + 4x^2 - x + 3$ %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\frac {dy}{dx} = 3x^2 + 8x - 1\]%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 13%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 14%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w quad%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y=2x^3 + 6x -1$ %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\frac {dy}{dx} = 6x + 6 = 6(x+1)\]%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w %
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 14%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+}%
+\expandafter\global
+ \expandafter\newcount\csname dtlrows@problems\endcsname
+\expandafter\global
+ \csname dtlrows@problems\endcsname=14\relax
+\expandafter\global
+ \expandafter\newcount\csname dtlcols@problems\endcsname
+\expandafter\global
+ \csname dtlcols@problems\endcsname=4\relax
+\expandafter
+ \gdef\csname dtl@ci@problems@Label\endcsname{1}%
+\expandafter
+ \gdef\csname dtl@ci@problems@Question\endcsname{2}%
+\expandafter
+ \gdef\csname dtl@ci@problems@Answer\endcsname{3}%
+\expandafter
+ \gdef\csname dtl@ci@problems@Year\endcsname{4}%
+\egroup
