@@ -42,6 +42,11 @@ public class DatatoolTk
             db = imp.importData(source);
          }
 
+         if (dbname != null)
+         {
+            db.setName(dbname);
+         }
+
          if (!(sort == null || sort.isEmpty()))
          {
             db.setSortCaseSensitive(isCaseSensitive);
@@ -121,6 +126,11 @@ public class DatatoolTk
 
       if (db != null)
       {
+         if (dbname != null)
+         {
+            db.setName(dbname);
+         }
+
          if (!(sort == null || sort.isEmpty()))
          {
             db.setSortCaseSensitive(isCaseSensitive);
@@ -184,7 +194,9 @@ public class DatatoolTk
       System.out.println(getLabel("syntax.general"));
       System.out.println(getLabelWithValues("syntax.gui", "--gui", "-g"));
       System.out.println(getLabelWithValues("syntax.batch", "--batch", "-b"));
-      System.out.println(getLabelWithValues("syntax.in", "--in", "-i"));
+      System.out.println(getLabelWithValues("syntax.in", 
+        new String[]{"--in", "-i", appName}));
+      System.out.println(getLabelWithValue("syntax.name", "--name"));
       System.out.println(getLabelWithValues("syntax.out", "--out", "-o"));
       System.out.println(getLabelWithValues("syntax.version", "--version", "-v"));
       System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
@@ -950,11 +962,18 @@ public class DatatoolTk
 
                sort = args[i];
             }
-            else if (args[i].charAt(0) == '-')
+            else if (args[i].equals("--name"))
             {
-               throw new InvalidSyntaxException(
-                getLabelWithValue("error.syntax.unknown_option",
-                  args[i]));
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_dbname",
+                      args[i-1]));
+               }
+
+               dbname = args[i];
             }
             else if (args[i].equals("--in") || args[i].equals("-i"))
             {
@@ -980,6 +999,12 @@ public class DatatoolTk
                }
 
                dbtex = args[i];
+            }
+            else if (args[i].charAt(0) == '-')
+            {
+               throw new InvalidSyntaxException(
+                getLabelWithValue("error.syntax.unknown_option",
+                  args[i]));
             }
             else
             {
@@ -1052,6 +1077,8 @@ public class DatatoolTk
    private static boolean isCaseSensitive = false;
 
    private static String sort=null;
+
+   private static String dbname = null;
 
    private static DatatoolImport imp = null;
 

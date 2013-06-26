@@ -1709,7 +1709,14 @@ sub start_ref{
 
    &handle_html("<ref>$attrs{tag}</ref>");
 
-   print TEXFD "\\autoref{", $attrs{tag}, "}";
+   if ($attrs{text})
+   {
+      print TEXFD "\\hyperref[$attrs{tag}]{$attrs{text}}";
+   }
+   else
+   {
+      print TEXFD "\\autoref{", $attrs{tag}, "}";
+   }
 }
 
 sub end_ref{

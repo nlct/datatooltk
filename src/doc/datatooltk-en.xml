@@ -73,15 +73,21 @@
        Save the database to <meta>filename</meta> (batch mode only).
        </dd>
        <dt><opt tag="in"/> (or <tt>-i</tt>) <meta>datatool file</meta></dt>
-       <dd>Load <meta>datatool file</meta>.</dd>
+       <dd>Load <meta>datatool file</meta>. The switch <opt tag="in"/>
+       (or <tt>-i</tt>) is optional, so <app/><nbsp/><meta>file</meta>
+       is equivalent to <app/><nbsp/><opt tag="in"/> <meta>file</meta>.</dd>
+       <dt><opt tag="name"/> <meta>name</meta></dt>
+       <dd>If used with <opt tag="in"/>, <opt tag="csv"/>, <opt tag="sql"/>
+       or <opt tag="probsoln"/>, sets the database label to 
+       <meta>name</meta>. (See <ref tag="fileext"/>.)</dd>
        <dt><opt tag="version"/> (or <tt>-v</tt>)</dt>
        <dd>Print the version details to STDOUT and exit.</dd>
        <dt><opt tag="help"/> (or <tt>-h</tt>)</dt>
        <dd>Print a brief summary of available options to STDOUT and exit.</dd>
        <dt><opt tag="debug"/></dt>
-       <dd>Enables debug mode.</dd>
+       <dd>Enable debug mode.</dd>
        <dt><opt tag="nodebug"/></dt>
-       <dd>Disables debug mode. (Default.)</dd>
+       <dd>Disable debug mode. (Default.)</dd>
        <dt><opt tag="delete-tmp-files"/></dt>
        <dd>Delete temporary files on exit. (Default.)</dd>
        <dt><opt tag="nodelete-tmp-files"/></dt>
@@ -133,7 +139,7 @@
        <dt><opt tag="sqldb"/> <meta>name</meta></dt>
        <dd>The <acr tag="sql"/> database name.</dd>
        <dt><opt tag="sqlprefix"/> <meta>prefix</meta></dt>
-       <dd>The <acr tag="sql"/> prefix. (Default: <dq><tt>jdbc:mysql://</tt></dq>.)</dd>
+       <dd>The Java <acr tag="sql"/> prefix. (Default: <dq><tt>jdbc:mysql://</tt></dq>.) Currrently, only <term tag="mysql"/> is supported. Additional libraries will be required for other <acr tag="sql"/> databases.</dd>
        <dt><opt tag="sqlport"/> <meta>port</meta></dt>
        <dd>The <acr tag="sql"/> port number. (Default: 3306.)</dd>
        <dt><opt tag="sqlhost"/> <meta>host</meta></dt>
@@ -179,11 +185,19 @@
    <cs tag="input"/>. Note that the database label (as used in commands
    like <cs tag="DTLnewdb"/>) is independent of the file name (although
    when importing data, it defaults to the file base name). The database
-   label can be changed using <menu tag="edit.edit_dbname"/>.
+   label can be changed using <menu tag="edit.edit_dbname"/> in 
+   <acr tag="gui"/> mode or via the command line option 
+   <opt tag="name"/> <meta>label</meta>.
    </p>
+     <float type="figure" tag="setnamedialog" 
+      caption="Setting the Database Name" pos="htb">
+      <image scale="0.75" alt="Image of dialog box"
+         src="images/setnamedialog.png" />
+     </float>
    <example>
    Suppose you have a<nbsp/>database file called <tt>my-data.dbtex</tt>
-   and you have set the database label to just <dq><tt>data</tt></dq>.
+   and you have set the database label to just <dq><tt>data</tt></dq>
+   (as shown in <ref tag="setnamedialog"/>).
    Then you can load and display the data using:
    <pre>
 \documentclass{article}
@@ -232,7 +246,7 @@
       <image scale="0.75" alt="Image of main window showing cells with listing input" src="images/verb.png" />
      </float>
    <p>
-   This requires two files: <tt>HelloWorld.java</tt>
+   That database requires two files: <tt>HelloWorld.java</tt>
    </p>
    <verbinput src="../tests/HelloWorld.java"/>
    <p noindent="true">
@@ -245,6 +259,10 @@
    here's a<nbsp/>sample document:
    </p>
    <verbinput src="../tests/test-probsoln-doc.tex"/>
+   <p>
+   Related topics: <ref text="shuffling a database" tag="shuffle"/> and 
+   <ref text="importing probsoln datasets" tag="importprobsoln"/>.
+   </p>
    </node>
    <node tag="gui" type="chapter" title="Graphical Mode">
      <p>
@@ -254,11 +272,13 @@
        in a<nbsp/>tabbed pane, with the name of the database in the
        tab. Note that the name corresponds to the database's identifying
        label, as used in commands like <cs tag="DTLnewdb"/>. This is 
-       not necessarily the same as the filename. Since this name is
-       used as a label, it shouldn't contain any of <TeX/>'s special
-       characters or any other active characters that could cause problems.
-       An asterisk <tt>*</tt> following the label in the tab indicates that 
-       the database has been modified.
+       not necessarily the same as the filename (see <ref tag="fileext"/>). 
+       Since this name is used as a label, it shouldn't contain any of 
+       <TeX/>'s special characters or any other active characters that could 
+       cause problems.  An asterisk <tt>*</tt> following the label in the tab 
+       indicates that the database has been modified. If you move the mouse
+       over the tab, you will see the filename appear in a<nbsp/>tooltip,
+       if the database has been saved to a<nbsp/><sty>datatool</sty> file.
      </p>
      <float type="figure" tag="mainwindow" caption="Main Window" pos="htb">
       <image scale="0.75" alt="Image of main window" src="images/mainwindow.png" />
@@ -293,6 +313,12 @@
      use the cell editor dialog box to view the entire contents of that 
      cell.</b> The default row height can be changed in the
      <dict tag="preferences.title"/> dialog box (see <ref tag="preferences"/>).
+     Columns set to integer or real data types have single-lined cells with no
+     line wrap. Columns set to currency data type may wrap, but using 
+     <dq>Enter</dq> will finish editing the cell (unless you're using the cell
+     editor dialog box). If you insert a<nbsp/>newline character in the cell
+     edit dialog box (for any data type), the type for that column will 
+     be converted to <dq>string</dq>.
      </p>
      <p>
      To edit or view an entry in a column
@@ -348,6 +374,16 @@
      </p>
      <float type="figure" tag="headerdialog" caption="Header Dialog" pos="htb">
       <image scale="0.75" alt="Image of header dialog box" src="images/headerdialog.png" />
+     </float>
+     <p>
+     In <acr tag="gui"/> mode, column headers show the
+     title. If you move the mouse over the column header, you will see the
+     label and type displayed in a<nbsp/>tooltip (see 
+     <ref tag="headerdetails"/>).
+     </p>
+     <float type="figure" tag="headerdetails" caption="Header Details Shown in Tooltip" pos="htb">
+      <image scale="0.75" alt="Image of main window showing header tooltip"
+         src="images/headerdetails.png" />
      </float>
    </node>
    <node tag="tools" type="chapter" title="Tools">
