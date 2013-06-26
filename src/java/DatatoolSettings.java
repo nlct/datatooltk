@@ -703,7 +703,7 @@ public class DatatoolSettings extends Properties
          break;
          case DatatoolDb.TYPE_CURRENCY:
             tag = "currency";
-            defValue = 60;
+            defValue = 150;
          break;
          default:
             throw new IllegalArgumentException(
@@ -712,22 +712,23 @@ public class DatatoolSettings extends Properties
 
       String prop = getProperty("cellwidth."+tag);
 
+      if (prop == null)
+      {
+         setCellWidth(defValue, type);
+         return defValue;
+      }
+
       try
       {
-         if (prop == null) throw new NullPointerException();
-
          return Integer.parseInt(prop);
-      }
-      catch (NullPointerException e)
-      {
       }
       catch (NumberFormatException e)
       {
+         setCellWidth(defValue, type);
          DatatoolTk.debug("Property 'cellwidth."+tag
            +"' should be an integer. Found: '"+prop+"'");
       }
 
-      setProperty("cellwidth."+tag, ""+defValue);
       return defValue;
    }
 

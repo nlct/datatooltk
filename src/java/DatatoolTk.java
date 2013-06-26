@@ -870,31 +870,6 @@ public class DatatoolTk
             {
                settings.setTeXMapping(false);
             }
-            else if (args[i].equals("--in") || args[i].equals("-i"))
-            {
-               i++;
-
-               if (i == args.length)
-               {
-                  throw new InvalidSyntaxException(
-                    getLabelWithValue("error.syntax.missing_input",
-                      args[i-1]));
-               }
-
-               if (dbtex != null)
-               {
-                  throw new InvalidSyntaxException(
-                    getLabel("error.syntax.only_one_input"));
-               }
-
-               if (imp != null)
-               {
-                  throw new InvalidSyntaxException(
-                    getLabel("error.syntax.input_clash"));
-               }
-
-               dbtex = args[i];
-            }
             else if (args[i].equals("--seed"))
             {
                i++;
@@ -981,10 +956,48 @@ public class DatatoolTk
                 getLabelWithValue("error.syntax.unknown_option",
                   args[i]));
             }
+            else if (args[i].equals("--in") || args[i].equals("-i"))
+            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_input",
+                      args[i-1]));
+               }
+
+               if (dbtex != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabel("error.syntax.only_one_input"));
+               }
+
+               if (imp != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabel("error.syntax.input_clash"));
+               }
+
+               dbtex = args[i];
+            }
             else
             {
-               throw new InvalidSyntaxException(getLabelWithValue(
-                  "error.syntax.missing_option", args[i]));
+               // if no option specified, assume --in
+
+               if (dbtex != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabel("error.syntax.only_one_input"));
+               }
+
+               if (imp != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabel("error.syntax.input_clash"));
+               }
+
+               dbtex = args[i];
             }
          }
       }

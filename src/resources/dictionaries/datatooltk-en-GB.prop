@@ -407,7 +407,6 @@ error.syntax.only_one_input=Only one <datatool file> permitted
 error.syntax.input_clash=<datatool file> can't be used with an import option
 error.syntax=Syntax error: $1
 error.syntax.missing_input=Filename expected after $1
-error.syntax.missing_option=Option expected before $1
 error.syntax.missing_number=Number expected after $1
 error.syntax.missing_sort_field=Sort field (and optionally '+' or '-' prefix) expected after $1
 error.syntax.unknown_field=Unknown sort field '$1'.

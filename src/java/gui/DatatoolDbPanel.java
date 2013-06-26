@@ -52,6 +52,8 @@ public class DatatoolDbPanel extends JPanel
       DbNumericalCellEditor editor = new DbNumericalCellEditor();
 
       table.setDefaultEditor(Number.class, editor);
+      // Use default renderer for currency (line may need wrapping
+      // to accommodate currency control sequences)
       table.setDefaultRenderer(Integer.class, new DbNumericalCellRenderer());
       table.setDefaultRenderer(Float.class, new DbNumericalCellRenderer());
       table.setDefaultRenderer(String.class, new DbCellRenderer());
@@ -588,12 +590,13 @@ public class DatatoolDbPanel extends JPanel
       for (int i = 0, n = db.getColumnCount(); i < n; i++)
       {
          TableColumn column = model.getColumn(i);
+         DatatoolHeader header = db.getHeader(i);
 
-         column.setHeaderValue(db.getHeader(i).getTitle());
-         column.setIdentifier(db.getHeader(i).getKey());
+         column.setHeaderValue(header.getTitle());
+         column.setIdentifier(header.getKey());
 
          column.setPreferredWidth(Math.max(column.getPreferredWidth(),
-              gui.getCellWidth(db.getHeader(i).getType())));
+              gui.getCellWidth(header.getType())));
       }
 
       if (sp.getColumnHeader() != null)
