@@ -1,4 +1,6 @@
 test-sql-data.dbtex
+mth-101-shuffled.dbtex
+data-shuffled.dbtex
 *.aux
 *.log
 *.pdf

@@ -75,6 +75,8 @@
 
 \DeclareRobustCommand*{\cs}[1]{\csnoindex{#1}\index{#1@\csnoindex{#1}}}
 
+\newcommand*{\button}[1]{\textsf{\bfseries #1}}
+
 % Default definition.
 % (Overridden by context label in dictionary file.)
 \providecommand{\idxenvname}{environment}

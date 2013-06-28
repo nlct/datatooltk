@@ -1,0 +1,64 @@
+% arara: pdflatex: {shell: on}
+\documentclass{article}
+
+\usepackage{etoolbox}
+\usepackage{datatool}
+\usepackage{listings}
+%
+\newtoggle{showanswers}
+\togglefalse{showanswers}
+
+\newcommand{\examyear}{2013}
+\newcommand{\maxquestions}{5}
+\newcounter{question}
+
+\immediate\write18{datatooltk --sort Label --seed \examyear\space
+--shuffle --in mth-101.dbtex --out mth-101-shuffled.dbtex}
+
+\input{mth-101-shuffled.dbtex}
+
+\begin{document}
+
+\begin{enumerate}
+  \DTLforeach{problems}{\Question=Question,\Answer=Answer,\Year=Year}%
+  {%
+     % If year hasn't been specified, set it to 0 to
+     % allow numeric comparisons
+     \ifdefempty{\Year}{\def\Year{0}}{}%
+     \ifnumgreater{\value{question}}{\maxquestions}
+     {%
+        % Finished selecting questions, unset any year
+        % equal to this exam year
+        \ifnumequal{\Year}{\examyear}
+        {%
+           % unset year
+           \DTLreplaceentryforrow{Year}{0}%
+        }%
+        {}%
+     }%
+     {%
+        % Still selecting questions.
+        % Check the year
+        \ifboolexpr
+        {%
+           test{\ifnumequal{\Year}{\examyear}}
+           or
+           test{\ifnumless{\Year}{\examyear-3}}
+        }
+        {% select this question
+           \stepcounter{question}%
+           \item \Question
+
+           \iftoggle{showanswers}{Answer: \Answer}{}%
+           % update year
+           \DTLreplaceentryforrow{Year}{\examyear}%
+        }%
+        {% skip this question, it was used in the past 3 years
+        }%
+     }%
+  }
+\end{enumerate}
+
+% update database file
+\DTLsaverawdb{problems}{mth-101.dbtex}
+\end{document}

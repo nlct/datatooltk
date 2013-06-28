@@ -1548,6 +1548,28 @@ sub end_dict{
    my ($expat) = @_;
 }
  
+sub start_button{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tag})
+   {
+      die "Missing 'button' element's 'tag' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   my $text = &get_label($attrs{tag}, \%attrs, $expat);
+
+   $text=~s/:\s*$//;
+
+   &handle_html("<b>$text</b>");
+
+   print TEXFD "\\button{$text}";
+}
+
+sub end_button{
+   my ($expat) = @_;
+}
+ 
 sub start_menu{
    my ($expat, %attrs) = @_;
 

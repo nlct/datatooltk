@@ -344,9 +344,9 @@
    careful if you use any of <TeX/>'s special characters. Also, see the
    section on verbatim text (<ref tag="verbatim"/>) if you haven't 
    already read it.
-   Once you have made your edits, click on <dq><dict tag="button.okay" /></dq>
+   Once you have made your edits, click on <button tag="button.okay" />
    to update the database. To discard the edits, click 
-   <dq><dict tag="button.cancel" /></dq>.
+   <button tag="button.cancel" />.
    </p>
    <p>
    If you've used <sty>datatool</sty>, you will probably know that 
@@ -365,10 +365,10 @@
      <p>
      Each column has a<nbsp/>title, a<nbsp/>uniquely identifying label
      and an associated type. The type can be one of:
-     <dq><dict tag="header.type.string"/></dq>, 
-     <dq><dict tag="header.type.int"/></dq>, 
-     <dq><dict tag="header.type.real"/></dq> or 
-     <dq><dict tag="header.type.currency"/></dq>.
+     <button tag="header.type.string"/>, 
+     <button tag="header.type.int"/>, 
+     <button tag="header.type.real"/> or 
+     <button tag="header.type.currency"/>.
      The type is automatically detected from the column data,
      but can be changed using the <menu tag="edit.column.edit_header"/>
      menu item or by double-clicking on the column header which opens the 
@@ -451,7 +451,7 @@ It's better to run, say,
    </p>
    <p>In <acr tag="gui"/> mode, sorting is
    done using the <menu tag="tools.sort"/> menu item which opens
-   the <dq><dict tag="sort.title"/></dq> dialog box (see <ref tag="sortdialog"/>).
+   the <button tag="sort.title"/> dialog box (see <ref tag="sortdialog"/>).
    </p>
    <float type="figure" tag="sortdialog" caption="Sort Dialog" pos="htb">
       <image scale="0.75" alt="Image of sort dialog box" src="images/sortdialog.png" />
@@ -461,7 +461,7 @@ It's better to run, say,
    titles, and check the appropriate radio button for ascending or descending
    sort. If the column has the string data type, you also need to specify
    whether or not you want to use case-sensitive comparisons by checking or
-   unchecking the <dq><dict tag="sort.case_sensitive"/></dq> box.  If the 
+   unchecking the <button tag="sort.case_sensitive"/> box.  If the 
    column type has a<nbsp/>numerical type, the entries will be sorted via 
    a<nbsp/>numerical comparison (10 is greater than 2) and the case-sensitive
    option is ignored. If the column type is a string type,
@@ -538,7 +538,7 @@ It's better to run, say,
    Data can be reordered by randomly swapping pairs of rows. By default, 
    this random row swapping is done 100 times, but this number can be
    changed via the <opt tag="shuffle-iterations"/> command line option 
-   or the <dq><dict tag="preferences.shuffle.iter"/></dq> field in the 
+   or the <button tag="preferences.shuffle.iter"/> field in the 
    <dict tag="preferences.title"/> dialog box. Data shuffling can be
    performed either by the <opt tag="shuffle"/> command line option or
    the <menu tag="tools.shuffle"/> menu item.
@@ -695,7 +695,7 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    (see <ref tag="importprobsoln"/>). In the case of the first
    two, <app /> can automatically convert <TeX />'s special characters if the
    <opt tag="map-tex-specials"/> command line option is used or the
-   <dq><dict tag="preferences.tex.map"/></dq> option has been selected in the 
+   <button tag="preferences.tex.map"/> option has been selected in the 
    <dict tag="preferences.title"/> dialog box (see <ref tag="preferences"/>).
    </p>
    </node>
@@ -719,11 +719,11 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    <p>
    If the <acr tag="csv"/> file has a<nbsp/>header row, you must make sure 
    the <opt tag="csvheader"/> option is used or the 
-   <dq><dict tag="preferences.csv.hasheader"/></dq> option is checked in the
+   <button tag="preferences.csv.hasheader"/> option is checked in the
    <dict tag="preferences.title"/> dialog box.
    If the <acr tag="csv"/> file has no header row, you must make sure 
    the <opt tag="nocsvheader"/> option is used or the 
-   <dq><dict tag="preferences.csv.hasheader"/></dq> option is unchecked in the
+   <button tag="preferences.csv.hasheader"/> option is unchecked in the
    <dict tag="preferences.title"/> dialog box.
    </p>
    <example>
@@ -773,7 +773,7 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    database called <tt>myshop</tt>. (I've created a<nbsp/>user called
    <tt>shopadmin</tt> with SELECT privileges for this database.) Once I've 
    entered this information,
-   I<nbsp/>then click on <dq><dict tag="button.okay"/></dq> and the password
+   I<nbsp/>then click on <button tag="button.okay"/> and the password
    dialog box will appear (see <ref tag="sqlpassworddialog"/>).
    </p>
      <float type="figure" tag="sqlpassworddialog" caption="Password Dialog Box">
@@ -788,7 +788,7 @@ datatooltk --out customers.dbtex --sql "SELECT * FROM customers" <cont />--sqldb
 Password:
    </alltt>
    <p>
-   <contexplan/> The password should be entered at the <dq><dict tag="password.prompt"/></dq>
+   <contexplan/> The password should be entered at the <button tag="password.prompt"/>
    prompt. Remember that it's more efficient to get the <acr tag="sql"/>
    database to do any sorting. For example (assuming the table has 
    a<nbsp/>column called <tt>Surname</tt>):
@@ -872,14 +872,14 @@ Password:
    <p>
    In <acr tag="gui"/> mode, the settings can be changed using
    <menu tag="edit.preferences"/>. This opens the 
-   <dq><dict tag="preferences.title"/></dq> dialog box, which has the 
+   <button tag="preferences.title"/> dialog box, which has the 
    following tabs:
    </p>
    <dl>
     <dt><dict tag="preferences.general"/></dt>
     <dd>
      (<ref tag="prefgeneral"/>)
-     <float type="figure" tag="prefgeneral" caption="General Tab" pos="htb">
+     <float type="figure" tag="prefgeneral" caption="General Tab" pos="htbp">
       <image scale="0.75" alt="Image of the general tab of the preferences dialog box" src="images/pref-general.png" />
      </float>
      <p>
@@ -896,67 +896,129 @@ Password:
      (equivalent to <opt tag="seed"/>).
      </p>
     </dd>
-   </dl>
-   </node>
-   <node tag="developers" type="chapter" title="Info for Developers">
+    <dt><dict tag="preferences.csv"/></dt>
+    <dd>
+     (<ref tag="prefcsv"/>)
+     <float type="figure" tag="prefcsv" caption="CSV Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the csv tab of the preferences dialog box" src="images/pref-csv.png" />
+     </float>
+     <p>
+     In this tab you can specify the separator character. If the separator is
+     a<nbsp/>tab character, select the 
+     <button tag="preferences.csv.tabsep"/> radio button. Otherwise
+     select the <button tag="preferences.csv.sepchar"/> radio button
+     and enter the character in the neighbouring text box. Set the delimiter
+     in the <button tag="preferences.csv.delim"/> field. Check the
+     <button tag="preferences.csv.hasheader"/> button if your 
+     <acr tag="csv"/> files have a<nbsp/>header row otherwise uncheck it.
+     </p>
+    </dd>
+    <dt><dict tag="preferences.sql"/></dt>
+    <dd>
+     (<ref tag="prefsql"/>)
+     <float type="figure" tag="prefsql" caption="SQL Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the SQL tab of the preferences dialog box" src="images/pref-sql.png" />
+     </float>
     <p>
-    This chapter will be removed before release. In the <tt>tests</tt> 
-    directory there's a test file <tt>data-raw.dbtex</tt> 
-    (originally generated by <sty>datatool</sty>) and a test 
-    document <tt>test-doc.tex</tt>, a test <acr tag="csv" />
-    file and a test <acr tag="sql"/> file. The <acr tag="sql"/> file can be used to create
-    a test <term tag="mysql"/> database. The batch mode can be tested using:
-<pre>
-        bin/datatooltk --out tests/test-out.dbtex tests/data-raw.dbtex
-        bin/datatooltk --out tests/test-csv-out.dbtex --csv tests/test.csv
-</pre>
-   (The first command just reads in <tt>tests/data-raw.dbtex</tt> and writes it out as <tt>tests/test-out.dbtex</tt>. The second command imports data from <tt>tests/test.csv</tt> and saves it as <tt>tests/test-csv-out.dbtex</tt>.)
-  </p>
-  <p>
-   Once you have created the <term tag="mysql"/> database, you can test it with:
-<pre>
- bin/datatooltk --out tests/test-sql-data.dbtex \
-   --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
-</pre>
-   After you have completed these steps, you can <LaTeX /> the test document <tt>test-doc.tex</tt>.
-   </p>
-   </node>
-   <node tag="docediting" type="section" title="Editing this Document">
-   <p>
-   The source for this document is in XML. The Perl script 
-   <tt>createdocs</tt> is used to convert the XML source into 
-   <LaTeX /> and JavaHelp files. 
-   </p>
-   <p>
-   Each sectional unit must be contained in a <tt>node</tt> element with a<nbsp /><tt>tag</tt> attribute that uniquely identifies it, a<nbsp />type attribute that identifies the sectioning level and a<nbsp />title attribute that specifies the title.
-   </p>
-   <p>
-   Let's try out a table here (see <ref tag="tab.sample"/>).
-   <float type="table" tag="tab.sample" caption="A sample table" >
-    <tabular spec="lcr" >
-     <tr>
-      <td>
-       A left aligned column.
-      </td>
-      <td>
-       A centred column.
-      </td>
-      <td>
-       A right aligned column.
-      </td>
-     </tr>
-     <tr>
-      <td>A</td>
-      <td>B</td>
-      <td>C</td>
-     </tr>
-     <tr>
-       <td span="2" spec="c">A column spanning cell</td>
-       <td>X</td>
-     </tr>
-    </tabular>
-   </float>
-   </p>
+    In this tab, you can specify the <acr tag="sql"/> connection information.
+    Enter the host name and port number the <acr tag="sql"/> server is 
+    running on in the <button tag="preferences.sql.host"/> and 
+    <button tag="preferences.sql.port"/> fields. Currently, the only
+    available prefix is <dq>jdbc:mysql://</dq>, which is the JDBC driver for
+    <term tag="mysql"/>. If you are using another driver or <acr tag="sql"/> 
+    database, you'll have to add the relevant library to the <tt>lib</tt>
+    directory and add it to the class path used by <tt>datatooltk.jar</tt>.
+    Enter the name of the database you want to connect to in the 
+    <button tag="preferences.sql.database"/> field and the associated
+    user name in the <button tag="preferences.sql.user"/> field.
+    If you want the password wiped from memory as soon as a<nbsp/>connection
+    has been made, make sure the <button tag="preferences.sql.wipe"/>
+    box has been selected.
+    </p>
+    </dd>
+    <dt><dict tag="preferences.tex"/></dt>
+    <dd>
+     (<ref tag="preftex"/>)
+     <float type="figure" tag="preftex" caption="TeX Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the tex tab of the preferences dialog box" src="images/pref-tex.png" />
+     </float>
+    <p>
+    In this tab you can specify whether or not to map <TeX/> special 
+    characters when you import data from <acr tag="csv"/> or <acr tag="sql"/>.
+    If you want the mapping, make sure the <button tag="preferences.tex.map"/>
+    box is checked. If it is checked, the performed mappings are listed
+    in the table in the tab. To add another mapping, click on the
+    <button tag="preferences.tex.add_map"/> button, which opens the 
+    dialog box shown in <ref tag="addmap"/>.
+    </p>
+     <float type="figure" tag="addmap" caption="Add Mapping Dialog" pos="htbp">
+      <image scale="0.75" alt="Image of the add mapping dialog box" src="images/addmap.png" />
+     </float>
+    <p>
+    To remove a<nbsp/>mapping, select the unwanted mapping and click on 
+    <button tag="preferences.tex.remove_map"/>. To edit a<nbsp/>mapping,
+    select the mapping and click on <button tag="preferences.tex.edit_map"/>.
+    </p>
+    <p>
+    <LaTeX/> is used to help <app/> import data from 
+    a<nbsp/><sty>probsoln</sty> dataset. If the <tt>latex</tt> executable 
+    isn't on the system path, you will have to specify its full location
+    in the <button tag="preferences.tex.latexapp"/> field. You can use
+    the ellipsis button next to the field to browse your filing system.
+    </p>
+    </dd>
+    <dt><dict tag="preferences.currencies"/></dt>
+    <dd>
+     (<ref tag="prefcurrencies"/>)
+     <float type="figure" tag="prefcurrencies" caption="Currencies Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the currencies tab of the preferences dialog box" src="images/pref-currencies.png" />
+     </float>
+    <p>
+    If you want to identify a<nbsp/>column as a<nbsp/>currency type, you 
+    must make sure that <app/> recognises the <LaTeX/> command to typeset
+    your currency. Known currency commands are listed in the 
+    <button tag="preferences.currencies"/> tab. If you add any currencies
+    to the list, remember to add them in your document as well with 
+    <cs tag="DTLnewcurrencysymbol"/>.
+    </p>
+    </dd>
+    <dt><dict tag="preferences.display"/></dt>
+    <dd>
+     (<ref tag="prefdisplay"/>)
+     <float type="figure" tag="prefdisplay" caption="Display Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the display tab of the preferences dialog box" src="images/pref-display.png" />
+     </float>
+    <p>
+    The default font used in cell entries is a monospaced font. This can be
+    changed using the <button tag="preferences.display.font"/> drop-down menu.
+    You can also set the font size in the 
+    <button tag="preferences.display.fontsize"/> field. By default, each
+    string cell has a<nbsp/>maximum of four lines visible in the main window.
+    (Real and integer columns only have a<nbsp/>single line visible.) This
+    number can be changed in the <button tag="preferences.display.cellheight"/>
+    field. Each column has a<nbsp/>default width that depends on the data type
+    for that column. The values are listed in the 
+    <button tag="preferences.display.cellwidth"/> area. These can be changed
+    as required.
+    </p>
+    </dd>
+    <dt><dict tag="preferences.language"/></dt>
+    <dd>
+     (<ref tag="preflanguage"/>)
+     <float type="figure" tag="preflanguage" caption="Language Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the language tab of the preferences dialog box" src="images/pref-language.png" />
+     </float>
+    <p>
+    The language used by the manual accessed via <menu tag="help.manual"/>
+    can be set from the <button tag="preferences.language.helpset"/> drop-down 
+    list. The language used in the messages, menu items, buttons and 
+    <acr tag="gui"/> labels can be set from the 
+    <button tag="preferences.language.dictionary"/> drop-down 
+    list. Note that you have to restart <app/> for these changes to take 
+    effect.
+    </p>
+    </dd>
+   </dl>
    </node>
    <node type="chapter" tag="licence" title="Licence" >
    <p>
