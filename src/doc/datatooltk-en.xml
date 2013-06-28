@@ -6,8 +6,10 @@
     <title>User Manual for <dict tag="appname"/> version 
       <dict tag="appversion" /></title>
     <author>Nicola L. C. Talbot<br/><url www="www.dickimaw-books.com" /></author>
+<!--
     <author>Another Author<br />Affliation or URL</author>
     <author>Translated by Some One<br />Affliation or URL</author>
+-->
     <date><dict tag="appdate" /></date>
     <!-- Define Acronyms -->
     <newacro short="GUI" long="graphical user interface" tag="gui" />
