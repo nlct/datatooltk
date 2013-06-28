@@ -355,6 +355,11 @@
    as blank lines in an entry will automatically be converted behind 
    the scenes. Note that redundant blank lines will be removed.
    </p>
+   <p>
+   <b>Note:</b> if you use <sty>datatool</sty>'s <cs tag="DTLsaverawdb"/> 
+   command to overwrite your file, you will lose any pretty-printing spaces
+   or comments in your code.
+   </p>
    </node>
    <node tag="editheader" type="section" title="Header Dialog">
      <p>
@@ -541,7 +546,7 @@ It's better to run, say,
    <example>
    <p>
    Consider the database shown in <ref tag="shuffleex1"/>. This database
-   has four columns. The first is a<nbsp/>question, the second is the 
+   has three columns. The first is a<nbsp/>question, the second is the 
    corresponding answer (optional) and the third is a<nbsp/>number indicating 
    the question level.  For example, 1 could correspond to easy and 2 could 
    correspond to medium difficulty.
@@ -609,7 +614,9 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    modify the shuffled data in your document and save it to the original 
    file <meta>in-file</meta> using <cs tag="DTLsaverawdb"/>, the ordering in 
    that file will change, so the next time you shuffle it, you'll get 
-   a<nbsp/>different ordering, even if you use the same seed. 
+   a<nbsp/>different ordering, even if you use the same seed. If you sort
+   first on a unique label, that will ensure the shuffle has the same 
+   starting point (unless you add or remove rows).
    </p>
    <example>
    <p>
@@ -662,8 +669,20 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    you haven't finalised the exam, but it means that some of the questions
    will be identified as having been used in that exam year from 
    a<nbsp/>previous run but are now no longer selected. In order to make them
-   available for the next year, if they haven't been selected, but have the
+   available for the next year, if they haven't been selected but have had the
    year set to this year, the year needs to be cleared.
+   </p>
+   <p>
+   To solve this, once you have selected the maximum required number of
+   questions, don't break out of the loop, as was done earlier (see
+   <ref tag="shuffle"/>). Instead, for the rest of the loop, if the exam
+   year is set to the current year, clear it.
+   </p>
+   <verbinput src="../tests/test-exam.tex" />
+   <p>
+   <b>Note:</b> since this overwrites the <sty>datatool</sty> file, you will
+   lose any pretty-printing spaces or comments you may have done in 
+   <app/>'s cell editor dialog.
    </p>
    </example>
    </node>

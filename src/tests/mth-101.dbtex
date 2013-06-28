@@ -1,4 +1,4 @@
-% Created by datatooltk on Wed Jun 26 11:09:06 BST 2013
+% Created by datatooltk on Fri Jun 28 15:56:32 BST 2013
 \DTLifdbexists{problems}%
 {\PackageError{datatool}{Database `problems'
 already exists}{}%
@@ -70,113 +70,6 @@ already exists}{}%
 \db@row@id@end@ %
 \db@col@id@w 1%
 \db@col@id@end@ %
-\db@col@elt@w gpowh%
-\db@col@elt@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@elt@w $f(x) = g(x)^{h(x)}.$%
-\db@col@elt@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@elt@w \begin{align*}
-  f(x) & = e^{\ln g(x)^{h(x)}}\\
-   & = e^{h(x)\ln g(x)}\\
-  f'(x) & = e^{h(x)\ln g(x)}(h'(x)\ln g(x) + h(x)\frac {g'(x)}{g(x)})\\
-   & = g(x)^{h(x)}(h'(x)\ln g(x) + \frac {h(x)g'(x)}{g(x)})
-\end{align*}%
-\db@col@elt@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@col@elt@w %
-\db@col@elt@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@row@id@w 1%
-\db@row@id@end@ %
-\db@row@elt@end@ %
-\db@row@elt@w %
-\db@row@id@w 2%
-\db@row@id@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@elt@w arcsin%
-\db@col@elt@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@elt@w $y = \arcsin (x)$%
-\db@col@elt@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@elt@w \[\sin (y) = x\] diff. w.r.t. $x$:
-\begin{align*}
- \cos y \frac {dy}{dx} & = 1\\
- \frac{dy}{dx} & = \frac {1}{\cos y}\\
-  & = \frac {1}{\sqrt {1 - \sin ^2y}}\\
-  & = \frac {1}{\sqrt {1-x^2}}.
-\end{align*}%
-\db@col@elt@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@col@elt@w %
-\db@col@elt@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@row@id@w 2%
-\db@row@id@end@ %
-\db@row@elt@end@ %
-\db@row@elt@w %
-\db@row@id@w 3%
-\db@row@id@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@elt@w arccos%
-\db@col@elt@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@elt@w $y = \arccos x$.%
-\db@col@elt@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@elt@w \(\cos y = x\) diff. w.r.t. $x$: 
-\begin{align*}
- -\sin y \frac {dy}{dx} & = 1\\
- \frac {dy}{dx} & = \frac {-1}{\sin y}\\
- & = \frac {-1}{\sqrt {1-\cos ^2y}}\\
- & = \frac {-1}{\sqrt {1-x^2}}
-\end {align*}%
-\db@col@elt@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@col@elt@w %
-\db@col@elt@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@row@id@w 3%
-\db@row@id@end@ %
-\db@row@elt@end@ %
-\db@row@elt@w %
-\db@row@id@w 4%
-\db@row@id@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
 \db@col@elt@w tan%
 \db@col@elt@end@ %
 \db@col@id@w 1%
@@ -189,97 +82,21 @@ already exists}{}%
 \db@col@id@end@ %
 \db@col@id@w 3%
 \db@col@id@end@ %
-\db@col@elt@w \begin{align*}
- y & = \tan x\\
- & = \frac {\sin x}{\cos x}\\
- \frac {dy}{dx} & = \frac {\cos x}{\cos x} + \sin x\times \frac {-1}{\cos ^2x}\times -\sin x\\ 
- & = 1 + \tan ^2x\\ & = & \sec ^2x.
-\end{align*}%
+\db@col@elt@w \begin {align*} y & = \tan x\\ & = \frac {\sin x}{\cos x}\\ \frac {dy}{dx} & = \frac {\cos x}{\cos x} + \sin x\times \frac {-1}{\cos ^2x}\times -\sin x\\ & = 1 + \tan ^2x\\ & = & \sec ^2x. \end {align*}%
 \db@col@elt@end@ %
 \db@col@id@w 3%
 \db@col@id@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
-\db@col@elt@w %
+\db@col@elt@w 0%
 \db@col@elt@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
-\db@row@id@w 4%
+\db@row@id@w 1%
 \db@row@id@end@ %
 \db@row@elt@end@ %
 \db@row@elt@w %
-\db@row@id@w 5%
-\db@row@id@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@elt@w arctan%
-\db@col@elt@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@elt@w $y = \arctan x = \tan ^{-1}x$%
-\db@col@elt@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@elt@w \[\tan y = x\] diff w.r.t. $x$:
-\begin{align*}
- \sec ^2y\frac {dy}{dx} & = 1\\
- \frac {dy}{dx} & = \frac {1}{\sec ^2y}\\
- & = \frac {1}{1+\tan ^2y}\\
- & = \frac {1}{1+x^2}
-\end{align*}%
-\db@col@elt@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@col@elt@w %
-\db@col@elt@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@row@id@w 5%
-\db@row@id@end@ %
-\db@row@elt@end@ %
-\db@row@elt@w %
-\db@row@id@w 6%
-\db@row@id@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@elt@w cot%
-\db@col@elt@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@elt@w $y = (\tan x)^{-1} = \cot x$%
-\db@col@elt@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@elt@w \begin{align*}
- \frac {dy}{dx} & = -(\tan x)^{-2}\sec ^2x\\
- & = -\frac {\cos ^2x}{\sin ^2x}\cdot \frac {1}{\cos ^2x}\\
- & = \frac {-1}{\sin ^2x}\\
- & = -\csc ^2x.
-\end{align*}%
-\db@col@elt@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@col@elt@w %
-\db@col@elt@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@row@id@w 6%
-\db@row@id@end@ %
-\db@row@elt@end@ %
-\db@row@elt@w %
-\db@row@id@w 7%
+\db@row@id@w 2%
 \db@row@id@end@ %
 \db@col@id@w 1%
 \db@col@id@end@ %
@@ -301,141 +118,15 @@ already exists}{}%
 \db@col@id@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
-\db@col@elt@w %
+\db@col@elt@w 0%
 \db@col@elt@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
-\db@row@id@w 7%
+\db@row@id@w 2%
 \db@row@id@end@ %
 \db@row@elt@end@ %
 \db@row@elt@w %
-\db@row@id@w 8%
-\db@row@id@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@elt@w xlnx%
-\db@col@elt@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@elt@w $y = (x+1)\ln (x+1)$.%
-\db@col@elt@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@elt@w \begin{align*}
- \frac {dy}{dx} & = \ln (x+1) + \frac {x+1}{x+1}\\
- & = 1 + \ln (x+1). 
-\end{align*}%
-\db@col@elt@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@col@elt@w %
-\db@col@elt@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@row@id@w 8%
-\db@row@id@end@ %
-\db@row@elt@end@ %
-\db@row@elt@w %
-\db@row@id@w 9%
-\db@row@id@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@elt@w glng%
-\db@col@elt@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@elt@w $f(x) = g(x)\ln (g(x))$.%
-\db@col@elt@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@elt@w \begin{align*}
- f'(x) & = g'(x)\ln (g(x)) + \frac {g(x)}{g(x)}g'(x)\\
- & = g'(x)(1+\ln (g(x))).
-\end{align*}%
-\db@col@elt@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@col@elt@w %
-\db@col@elt@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@row@id@w 9%
-\db@row@id@end@ %
-\db@row@elt@end@ %
-\db@row@elt@w %
-\db@row@id@w 10%
-\db@row@id@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@elt@w sinx/x%
-\db@col@elt@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@elt@w $y = \frac {\sin x}{x}$.%
-\db@col@elt@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@elt@w \[\frac {dy}{dx} = \frac {\cos x}{x} - \frac {\sin x}{x^2}\]%
-\db@col@elt@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@col@elt@w %
-\db@col@elt@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@row@id@w 10%
-\db@row@id@end@ %
-\db@row@elt@end@ %
-\db@row@elt@w %
-\db@row@id@w 11%
-\db@row@id@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@elt@w exp4x%
-\db@col@elt@end@ %
-\db@col@id@w 1%
-\db@col@id@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@elt@w $y = \exp (4x)$ %
-\db@col@elt@end@ %
-\db@col@id@w 2%
-\db@col@id@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@elt@w \[\frac {dy}{dx} = 4\exp (4x)\]%
-\db@col@elt@end@ %
-\db@col@id@w 3%
-\db@col@id@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@col@elt@w %
-\db@col@elt@end@ %
-\db@col@id@w 4%
-\db@col@id@end@ %
-\db@row@id@w 11%
-\db@row@id@end@ %
-\db@row@elt@end@ %
-\db@row@elt@w %
-\db@row@id@w 12%
+\db@row@id@w 3%
 \db@row@id@end@ %
 \db@col@id@w 1%
 \db@col@id@end@ %
@@ -457,15 +148,15 @@ already exists}{}%
 \db@col@id@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
-\db@col@elt@w %
+\db@col@elt@w 0%
 \db@col@elt@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
-\db@row@id@w 12%
+\db@row@id@w 3%
 \db@row@id@end@ %
 \db@row@elt@end@ %
 \db@row@elt@w %
-\db@row@id@w 13%
+\db@row@id@w 4%
 \db@row@id@end@ %
 \db@col@id@w 1%
 \db@col@id@end@ %
@@ -487,15 +178,75 @@ already exists}{}%
 \db@col@id@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
-\db@col@elt@w %
+\db@col@elt@w 0%
 \db@col@elt@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
-\db@row@id@w 13%
+\db@row@id@w 4%
 \db@row@id@end@ %
 \db@row@elt@end@ %
 \db@row@elt@w %
-\db@row@id@w 14%
+\db@row@id@w 5%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w xlnx%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = (x+1)\ln (x+1)$.%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \begin {align*} \frac {dy}{dx} & = \ln (x+1) + \frac {x+1}{x+1}\\ & = 1 + \ln (x+1). \end {align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w 0%
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 5%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 6%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w arccos%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \arccos x$.%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \(\cos y = x\) diff. w.r.t. $x$: \begin {align*} -\sin y \frac {dy}{dx} & = 1\\ \frac {dy}{dx} & = \frac {-1}{\sin y}\\ & = \frac {-1}{\sqrt {1-\cos ^2y}}\\ & = \frac {-1}{\sqrt {1-x^2}} \end {align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w 0%
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 6%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 7%
 \db@row@id@end@ %
 \db@col@id@w 1%
 \db@col@id@end@ %
@@ -517,7 +268,217 @@ already exists}{}%
 \db@col@id@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
-\db@col@elt@w %
+\db@col@elt@w 0%
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 7%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 8%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w sinx/x%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \frac {\sin x}{x}$.%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\frac {dy}{dx} = \frac {\cos x}{x} - \frac {\sin x}{x^2}\]%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w 0%
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 8%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 9%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w gpowh%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $f(x) = g(x)^{h(x)}.$%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \begin {align*} f(x) & = e^{\ln g(x)^{h(x)}}\\ & = e^{h(x)\ln g(x)}\\ f'(x) & = e^{h(x)\ln g(x)}(h'(x)\ln g(x) + h(x)\frac {g'(x)}{g(x)})\\ & = g(x)^{h(x)}(h'(x)\ln g(x) + \frac {h(x)g'(x)}{g(x)}) \end {align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w 0%
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 9%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 10%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w arctan%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \arctan x = \tan ^{-1}x$%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\tan y = x\] diff w.r.t. $x$: \begin {align*} \sec ^2y\frac {dy}{dx} & = 1\\ \frac {dy}{dx} & = \frac {1}{\sec ^2y}\\ & = \frac {1}{1+\tan ^2y}\\ & = \frac {1}{1+x^2} \end {align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w 0%
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 10%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 11%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w arcsin%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \arcsin (x)$%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\sin (y) = x\] diff. w.r.t. $x$: \begin {align*} \cos y \frac {dy}{dx} & = 1\\ \frac {dy}{dx} & = \frac {1}{\cos y}\\ & = \frac {1}{\sqrt {1 - \sin ^2y}}\\ & = \frac {1}{\sqrt {1-x^2}}. \end {align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w 0%
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 11%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 12%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w exp4x%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = \exp (4x)$ %
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \[\frac {dy}{dx} = 4\exp (4x)\]%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w 0%
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 12%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 13%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w glng%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $f(x) = g(x)\ln (g(x))$.%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \begin {align*} f'(x) & = g'(x)\ln (g(x)) + \frac {g(x)}{g(x)}g'(x)\\ & = g'(x)(1+\ln (g(x))). \end {align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w 0%
+\db@col@elt@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@row@id@w 13%
+\db@row@id@end@ %
+\db@row@elt@end@ %
+\db@row@elt@w %
+\db@row@id@w 14%
+\db@row@id@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@elt@w cot%
+\db@col@elt@end@ %
+\db@col@id@w 1%
+\db@col@id@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@elt@w $y = (\tan x)^{-1} = \cot x$%
+\db@col@elt@end@ %
+\db@col@id@w 2%
+\db@col@id@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@elt@w \begin {align*} \frac {dy}{dx} & = -(\tan x)^{-2}\sec ^2x\\ & = -\frac {\cos ^2x}{\sin ^2x}\cdot \frac {1}{\cos ^2x}\\ & = \frac {-1}{\sin ^2x}\\ & = -\csc ^2x. \end {align*}%
+\db@col@elt@end@ %
+\db@col@id@w 3%
+\db@col@id@end@ %
+\db@col@id@w 4%
+\db@col@id@end@ %
+\db@col@elt@w 0%
 \db@col@elt@end@ %
 \db@col@id@w 4%
 \db@col@id@end@ %
