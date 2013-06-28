@@ -998,7 +998,7 @@ Password:
     number can be changed in the <button tag="preferences.display.cellheight"/>
     field. Each column has a<nbsp/>default width that depends on the data type
     for that column. The values are listed in the 
-    <button tag="preferences.display.cellwidth"/> area. These can be changed
+    <button tag="preferences.display.cellwidths"/> area. These can be changed
     as required.
     </p>
     </dd>
