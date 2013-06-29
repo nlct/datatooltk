@@ -16,4 +16,8 @@ Fetch the above and copy or symlink the jar files (javahelp2.jar,
 opencsv.jar mysql-connector-java.jar and jlfgr-1_0.jar)
 in the lib/ directory
 
+In the lib/ directory, make a symbolic link to resources/
+images/icons/ and images/splash.png
+
+
 www.dickimaw-books.com

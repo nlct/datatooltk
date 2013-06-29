@@ -1,4 +1,5 @@
 APP_VERSION:=$(shell grep "public static final String appVersion" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sappVersion=//" | tr -d "\"\; ")
+IZPACKDIR=/usr/local/IzPack
 
 test-gui	: app
 	bin/datatooltk-gui --debug --csv tests/test-para.csv
@@ -11,6 +12,13 @@ test-sql	: app
 	bin/datatooltk --debug --out tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
 
 app	: lib lib/datatooltk.jar lib/resources lib/splash.png
+
+dist	: ../dist/datatooltk-installer.jar
+	cp doc/datatooltk-en-GB.pdf ../dist
+
+../dist/datatooltk-installer.jar	: app install.xml
+	$(IZPACKDIR)/bin/compile install.xml -b . \
+	-o ../dist/datatooltk-installer.jar -k standard
 
 lib	:
 	mkdir -p lib
