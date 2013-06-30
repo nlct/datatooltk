@@ -13,11 +13,11 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 public class FindDialog extends JDialog
   implements ActionListener
 {
-   public FindDialog(JDialog parent, JTextComponent component)
+   public FindDialog(JDialog parent, JTextComponent textComp)
    {
       super(parent, DatatoolTk.getLabel("find.title"), false);
 
-      this.component = component;
+      this.textComp = textComp;
 
       JComponent mainPanel = Box.createVerticalBox();
       getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -73,6 +73,11 @@ public class FindDialog extends JDialog
         "regex", null);
       panel.add(regexBox);
 
+      wrapBox = DatatoolGuiResources.createJCheckBox("find",
+        "wrap", null);
+      panel.add(wrapBox);
+      wrapBox.setSelected(true);
+
       mainPanel.add(Box.createVerticalGlue());
 
       JPanel buttonPanel = new JPanel();
@@ -114,6 +119,14 @@ public class FindDialog extends JDialog
       {
          find();
       }
+      else if (action.equals("replace"))
+      {
+         replace();
+      }
+      else if (action.equals("replace_all"))
+      {
+         replaceAll();
+      }
       else if (action.equals("close"))
       {
          setVisible(false);
@@ -148,6 +161,60 @@ public class FindDialog extends JDialog
       setVisible(true);
    }
 
+   public void replace()
+   {
+      if (regexBox.isSelected())
+      {
+         replaceRegEx();
+      }
+      else
+      {
+         replaceNoRegEx();
+      }
+
+      find();
+   }
+
+   public void replaceNoRegEx()
+   {
+      String replacement = replaceField.getText();
+      int start = textComp.getSelectionStart();
+
+      textComp.replaceSelection(replacement);
+
+      textComp.setCaretPosition(start+replacement.length());
+   }
+
+   public void replaceRegEx()
+   {
+      int start = textComp.getSelectionStart();
+
+      String selectedText = textComp.getSelectedText();
+
+      Pattern pattern;
+
+      if (caseBox.isSelected())
+      {
+         pattern = Pattern.compile(searchField.getText());
+      }
+      else
+      {
+         pattern = Pattern.compile(searchField.getText(),
+            Pattern.CASE_INSENSITIVE);
+      }
+
+      Matcher matcher = pattern.matcher(selectedText);
+
+      String replacement = matcher.replaceFirst(replaceField.getText());
+
+      textComp.replaceSelection(replacement);
+      textComp.setCaretPosition(start+replacement.length());
+   }
+
+   public void replaceAll()
+   {
+   }
+
    public void find()
    {
       found = regexBox.isSelected() ?  findRegEx() : findNoRegEx();
@@ -159,9 +226,9 @@ public class FindDialog extends JDialog
    {
       String searchText = searchField.getText();
 
-      int pos = component.getCaretPosition();
+      int pos = textComp.getCaretPosition();
 
-      String text = component.getText();
+      String text = textComp.getText();
 
       if (!caseBox.isSelected())
       {
@@ -175,11 +242,7 @@ public class FindDialog extends JDialog
       {
          if (pos > 0)
          {
-            if (JOptionPane.showConfirmDialog(this, 
-                 DatatoolTk.getLabel("find.query_wrap"),
-                 DatatoolTk.getLabel("find.query_wrap.title"),
-                 JOptionPane.YES_NO_OPTION)
-               == JOptionPane.YES_OPTION)
+            if (wrapBox.isSelected())
             {
                index = text.indexOf(searchText);
             }
@@ -194,9 +257,9 @@ public class FindDialog extends JDialog
       }
 
 
-      component.setSelectionStart(index);
-      component.setSelectionEnd(index+searchText.length());
-      component.requestFocus();
+      textComp.setSelectionStart(index);
+      textComp.setSelectionEnd(index+searchText.length());
+      textComp.requestFocus();
 
       return true;
    }
@@ -205,9 +268,9 @@ public class FindDialog extends JDialog
    {
       Pattern pattern;
 
-      int pos = component.getCaretPosition();
+      int pos = textComp.getCaretPosition();
 
-      String text = component.getText();
+      String text = textComp.getText();
 
       if (caseBox.isSelected())
       {
@@ -217,7 +280,6 @@ public class FindDialog extends JDialog
       {
          pattern = Pattern.compile(searchField.getText(),
             Pattern.CASE_INSENSITIVE);
-         text = text.toLowerCase();
       }
 
       int index = -1;
@@ -233,11 +295,7 @@ public class FindDialog extends JDialog
       {
          if (pos > 0)
          {
-            if (JOptionPane.showConfirmDialog(this, 
-                 DatatoolTk.getLabel("find.query_wrap"),
-                 DatatoolTk.getLabel("find.query_wrap.title"),
-                 JOptionPane.YES_NO_OPTION)
-               == JOptionPane.YES_OPTION)
+            if (wrapBox.isSelected())
             {
                if (matcher.find())
                {
@@ -255,9 +313,9 @@ public class FindDialog extends JDialog
       }
 
 
-      component.setSelectionStart(index);
-      component.setSelectionEnd(matcher.end());
-      component.requestFocus();
+      textComp.setSelectionStart(index);
+      textComp.setSelectionEnd(matcher.end());
+      textComp.requestFocus();
 
       return true;
    }
@@ -271,8 +329,8 @@ public class FindDialog extends JDialog
 
    private JButton findButton, replaceButton, replaceAllButton;
    private JTextField searchField, replaceField;
-   private JTextComponent component;
-   private JCheckBox caseBox, regexBox;
+   private JTextComponent textComp;
+   private JCheckBox caseBox, regexBox, wrapBox;
 
    private JComponent replacePanel;
 

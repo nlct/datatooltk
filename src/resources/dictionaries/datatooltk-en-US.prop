@@ -275,8 +275,8 @@ find.case=Case Sensitive
 find.case.mnemonic=A
 find.regex=Regular Expression
 find.regex.mnemonic=X
-find.query_wrap=Wrap round to the beginning of the cell?
-find.query_wrap.title=Wrap Round?
+find.wrap=Wrap round
+find.wrap.mnemonic=W
 find.not_found=Not found in this cell
 
 # Extra fields for find & replace dialog
