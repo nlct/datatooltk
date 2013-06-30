@@ -213,6 +213,78 @@ public class FindDialog extends JDialog
 
    public void replaceAll()
    {
+      if (regexBox.isSelected())
+      {
+         replaceAllRegEx();
+      }
+      else
+      {
+         replaceAllNoRegEx();
+      }
+
+      updateButtons();
+   }
+
+   public void replaceAllRegEx()
+   {
+      Pattern pattern;
+
+      if (caseBox.isSelected())
+      {
+         pattern = Pattern.compile(searchField.getText());
+      }
+      else
+      {
+         pattern = Pattern.compile(searchField.getText(),
+            Pattern.CASE_INSENSITIVE);
+      }
+
+      Matcher matcher = pattern.matcher(textComp.getText());
+
+      textComp.setText(matcher.replaceAll(replaceField.getText()));
+   }
+
+   public void replaceAllNoRegEx()
+   {
+      String text = textComp.getText();
+      String matcherText = text;
+      String searchText = searchField.getText();
+      int searchLength = searchText.length();
+
+      String replaceText = replaceField.getText();
+
+      if (!caseBox.isSelected())
+      {
+         searchText = searchText.toLowerCase();
+         matcherText = text.toLowerCase();
+      }
+
+      int pos = 0;
+      int index;
+
+      int count = 0;
+
+      StringBuilder builder = new StringBuilder(text.length());
+
+      while ((index = matcherText.indexOf(searchText, pos)) != -1)
+      {
+         builder.append(text.substring(pos, index));
+         builder.append(replaceText);
+         pos = index+searchLength;
+         count++;
+      }
+
+      if (pos < text.length())
+      {
+         builder.append(text.substring(pos));
+      }
+
+      textComp.setText(builder.toString());
+
+      JOptionPane.showMessageDialog(this, 
+        count == 1 ?
+        DatatoolTk.getLabel("replace.one_replaced") :
+        DatatoolTk.getLabelWithValue("replace.num_replaced", count));
    }
 
    public void find()

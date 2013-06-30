@@ -287,6 +287,8 @@ replace.replace=Replace
 replace.replace.mnemonic=R
 replace.replace_all=Replace All
 replace.replace_all.mnemonic=A
+replace.one_replaced=One occurrence replaced.
+replace.num_replaced=$1 occurrences replaced.
 
 # Column header dialog box
 header.title=Column '$1'
