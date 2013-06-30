@@ -148,7 +148,6 @@ public class CellDialog extends JDialog
       updateEditButtons();
 
       findDialog = new FindDialog(this, textArea);
-      replaceDialog = new ReplaceDialog(this, textArea);
 
       mainPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
 
@@ -254,8 +253,7 @@ public class CellDialog extends JDialog
             findDialog.setSearchText(selectedText);
          }
 
-         findDialog.display();
-         findAgainItem.setEnabled(true);
+         findDialog.display(false);
       }
       else if (action.equals("find_again"))
       {
@@ -267,10 +265,10 @@ public class CellDialog extends JDialog
 
          if (selectedText != null)
          {
-            replaceDialog.setSearchText(selectedText);
+            findDialog.setSearchText(selectedText);
          }
 
-         replaceDialog.display();
+         findDialog.display(true);
       }
    }
 
@@ -315,6 +313,9 @@ public class CellDialog extends JDialog
          copyItem.setEnabled(true);
          cutItem.setEnabled(true);
       }
+
+      findAgainItem.setEnabled(findDialog == null ? false :
+        !findDialog.getSearchText().isEmpty());
    }
 
    private JTextArea textArea;
@@ -335,6 +336,4 @@ public class CellDialog extends JDialog
    private UndoManager undoManager;
 
    private FindDialog findDialog;
-
-   private ReplaceDialog replaceDialog;
 }

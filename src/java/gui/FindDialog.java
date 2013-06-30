@@ -31,6 +31,10 @@ public class FindDialog extends JDialog
          "find.search_for", searchField));
       panel.add(searchField);
 
+      Dimension dim = searchField.getMaximumSize();
+      dim.height = (int)searchField.getPreferredSize().getHeight();
+      searchField.setMaximumSize(dim);
+
       searchField.getDocument().addDocumentListener(new DocumentListener()
       {
          public void changedUpdate(DocumentEvent e)
@@ -49,6 +53,15 @@ public class FindDialog extends JDialog
          }
       });
 
+      replacePanel = Box.createHorizontalBox();
+      mainPanel.add(replacePanel);
+
+      replaceField = new JTextField();
+
+      replacePanel.add(DatatoolGuiResources.createJLabel(
+         "replace.replace_text", replaceField));
+      replacePanel.add(replaceField);
+
       panel = Box.createHorizontalBox();
       mainPanel.add(panel);
 
@@ -60,6 +73,8 @@ public class FindDialog extends JDialog
         "regex", null);
       panel.add(regexBox);
 
+      mainPanel.add(Box.createVerticalGlue());
+
       JPanel buttonPanel = new JPanel();
       getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
@@ -68,6 +83,16 @@ public class FindDialog extends JDialog
         KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
 
       buttonPanel.add(findButton);
+
+      replaceButton = DatatoolGuiResources.createActionButton(
+        "replace", "replace", this, null);
+
+      buttonPanel.add(replaceButton);
+
+      replaceAllButton = DatatoolGuiResources.createActionButton(
+        "replace", "replace_all", this, null);
+
+      buttonPanel.add(replaceAllButton);
 
       buttonPanel.add(DatatoolGuiResources.createActionButton(
         "find", "close", this,
@@ -100,25 +125,37 @@ public class FindDialog extends JDialog
       searchField.setText(searchText);
    }
 
-   public void display()
+   public String getSearchText()
+   {
+      return searchField.getText();
+   }
+
+   public void display(boolean isReplaceAllowed)
    {
       searchField.requestFocusInWindow();
+
+      replacePanel.setVisible(isReplaceAllowed);
+      replaceButton.setVisible(isReplaceAllowed);
+      replaceAllButton.setVisible(isReplaceAllowed);
+
+      setTitle(isReplaceAllowed ? DatatoolTk.getLabel("replace.title") :
+        DatatoolTk.getLabel("find.title"));
+
+      found = false;
+
+      updateButtons();
+
       setVisible(true);
    }
 
    public void find()
    {
-      if (regexBox.isSelected())
-      {
-         findRegEx();
-      }
-      else
-      {
-         findNoRegEx();
-      }
+      found = regexBox.isSelected() ?  findRegEx() : findNoRegEx();
+
+      updateButtons();
    }
 
-   public void findNoRegEx()
+   public boolean findNoRegEx()
    {
       String searchText = searchField.getText();
 
@@ -152,7 +189,7 @@ public class FindDialog extends JDialog
          {
             JOptionPane.showMessageDialog(this,
                DatatoolTk.getLabel("find.not_found"));
-            return;
+            return false;
          }
       }
 
@@ -160,9 +197,11 @@ public class FindDialog extends JDialog
       component.setSelectionStart(index);
       component.setSelectionEnd(index+searchText.length());
       component.requestFocus();
+
+      return true;
    }
 
-   public void findRegEx()
+   public boolean findRegEx()
    {
       Pattern pattern;
 
@@ -211,7 +250,7 @@ public class FindDialog extends JDialog
          {
             JOptionPane.showMessageDialog(this,
                DatatoolTk.getLabel("find.not_found"));
-            return;
+            return false;
          }
       }
 
@@ -219,15 +258,23 @@ public class FindDialog extends JDialog
       component.setSelectionStart(index);
       component.setSelectionEnd(matcher.end());
       component.requestFocus();
+
+      return true;
    }
 
    private void updateButtons()
    {
       findButton.setEnabled(!searchField.getText().isEmpty());
+      replaceButton.setEnabled(found);
+      replaceAllButton.setEnabled(findButton.isEnabled());
    }
 
-   private JButton findButton;
-   private JTextField searchField;
+   private JButton findButton, replaceButton, replaceAllButton;
+   private JTextField searchField, replaceField;
    private JTextComponent component;
    private JCheckBox caseBox, regexBox;
+
+   private JComponent replacePanel;
+
+   private boolean found = false;
 }
