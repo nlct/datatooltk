@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.undo.*;
+import javax.swing.text.*;
 
 import com.dickimawbooks.datatooltk.*;
 
@@ -105,13 +106,47 @@ public class CellDialog extends JDialog
 
       textArea = new JTextArea(20,40);
       textArea.setFont(gui.getCellFont());
-      textArea.getDocument().addUndoableEditListener(
+
+      Document document = new DefaultStyledDocument()
+      {
+         public void replace(int offset, int length, String text,
+            AttributeSet attrs)
+         throws BadLocationException
+         {
+            compoundEdit = new CompoundEdit();
+
+            try
+            {
+               super.replace(offset, length, text, attrs);
+
+               compoundEdit.end();
+               undoManager.addEdit(compoundEdit);
+
+               undoItem.setEnabled(true);
+            }
+            finally
+            {
+               compoundEdit = null;
+            }
+         }
+      };
+
+      textArea.setDocument(document);
+
+      document.addUndoableEditListener(
        new UndoableEditListener()
        {
           public void undoableEditHappened(UndoableEditEvent event)
           {
-             undoManager.addEdit(event.getEdit());
-             undoItem.setEnabled(true);
+             if (compoundEdit == null)
+             {
+                undoManager.addEdit(event.getEdit());
+                undoItem.setEnabled(true);
+             }
+             else
+             {
+                compoundEdit.addEdit(event.getEdit());
+             }
           }
        });
 
@@ -119,7 +154,7 @@ public class CellDialog extends JDialog
       textArea.setLineWrap(true);
       textArea.setWrapStyleWord(true);
 
-      textArea.getDocument().addDocumentListener(new DocumentListener()
+      document.addDocumentListener(new DocumentListener()
       {
          public void changedUpdate(DocumentEvent e)
          {
@@ -334,6 +369,8 @@ public class CellDialog extends JDialog
    private boolean modified;
 
    private UndoManager undoManager;
+
+   private CompoundEdit compoundEdit;
 
    private FindDialog findDialog;
 }
