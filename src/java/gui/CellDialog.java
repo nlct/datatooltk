@@ -57,6 +57,11 @@ public class CellDialog extends JDialog
 
       editM.add(redoItem);
 
+      editM.add(DatatoolGuiResources.createJMenuItem(
+         "edit", "select_all", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK),
+         toolBar));
+
       textArea = new JTextArea(20,40);
       textArea.setFont(gui.getCellFont());
       textArea.getDocument().addUndoableEditListener(
@@ -167,6 +172,10 @@ public class CellDialog extends JDialog
 
          undoItem.setEnabled(undoManager.canUndo());
          redoItem.setEnabled(undoManager.canRedo());
+      }
+      else if (action.equals("select_all"))
+      {
+         textArea.selectAll();
       }
    }
 

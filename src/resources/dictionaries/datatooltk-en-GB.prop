@@ -91,6 +91,10 @@ edit.preferences=Edit Preferences...
 edit.preferences.mnemonic=P
 edit.preferences.tooltip=Edit application settings
 
+# Edit menu in cell dialog
+edit.select_all=Select All
+edit.select_all.mnemonic=A
+
 # Tools menu
 tools=Tools
 tools.mnemonic=T
