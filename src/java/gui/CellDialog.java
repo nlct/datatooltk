@@ -83,6 +83,14 @@ public class CellDialog extends JDialog
          KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
          toolBar));
 
+      JMenu searchM = DatatoolGuiResources.createJMenu("search");
+      mbar.add(searchM);
+
+      searchM.add(DatatoolGuiResources.createJMenuItem(
+         "search", "find", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK),
+         toolBar));
+
       textArea = new JTextArea(20,40);
       textArea.setFont(gui.getCellFont());
       textArea.getDocument().addUndoableEditListener(
@@ -127,6 +135,8 @@ public class CellDialog extends JDialog
 
       updateEditButtons();
 
+      findDialog = new FindDialog(this, textArea);
+
       mainPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
 
       mainPanel.add(
@@ -156,6 +166,8 @@ public class CellDialog extends JDialog
       revalidate();
 
       modified = false;
+      textArea.requestFocusInWindow();
+      textArea.setCaretPosition(0);
 
       setVisible(true);
 
@@ -220,6 +232,15 @@ public class CellDialog extends JDialog
       {
          textArea.paste();
       }
+      else if (action.equals("find"))
+      {
+         String selectedText = textArea.getSelectedText();
+
+         findDialog.setSearchText(selectedText == null ? "" : 
+          selectedText);
+
+         findDialog.display();
+      }
    }
 
    public void okay()
@@ -280,4 +301,6 @@ public class CellDialog extends JDialog
    private boolean modified;
 
    private UndoManager undoManager;
+
+   private FindDialog findDialog;
 }

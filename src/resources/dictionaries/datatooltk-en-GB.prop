@@ -101,6 +101,12 @@ edit.cut.mnemonic=T
 edit.paste=Paste
 edit.paste.mnemonic=P
 
+# Search menu
+search=Search
+search.mnemonic=S
+search.find=Find...
+search.find.mnemonic=F
+
 # Tools menu
 tools=Tools
 tools.mnemonic=T
@@ -252,6 +258,20 @@ password.prompt.mnemonic=P
 
 # Cell editor dialog box
 celledit.title=Cell Editor
+
+# Find dialog box
+find.title=Find
+find.find=Find
+find.find.mnemonic=F
+find.close=Close
+find.close.mnemonic=C
+find.search_for=Search For: 
+find.search_for.mnemonic=S 
+find.case=Case Sensitive
+find.case.mnemonic=A
+find.query_wrap=Wrap round to the beginning of the cell?
+find.query_wrap.title=Wrap Round?
+find.not_found=Not found in this cell
 
 # Column header dialog box
 header.title=Column '$1'
