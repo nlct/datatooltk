@@ -98,6 +98,11 @@ public class CellDialog extends JDialog
       searchM.add(findAgainItem);
       findAgainItem.setEnabled(false);
 
+      searchM.add(DatatoolGuiResources.createJMenuItem(
+         "search", "replace", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK),
+         toolBar));
+
       textArea = new JTextArea(20,40);
       textArea.setFont(gui.getCellFont());
       textArea.getDocument().addUndoableEditListener(
@@ -143,6 +148,7 @@ public class CellDialog extends JDialog
       updateEditButtons();
 
       findDialog = new FindDialog(this, textArea);
+      replaceDialog = new ReplaceDialog(this, textArea);
 
       mainPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
 
@@ -255,6 +261,17 @@ public class CellDialog extends JDialog
       {
          findDialog.find();
       }
+      else if (action.equals("replace"))
+      {
+         String selectedText = textArea.getSelectedText();
+
+         if (selectedText != null)
+         {
+            replaceDialog.setSearchText(selectedText);
+         }
+
+         replaceDialog.display();
+      }
    }
 
    public void okay()
@@ -318,4 +335,6 @@ public class CellDialog extends JDialog
    private UndoManager undoManager;
 
    private FindDialog findDialog;
+
+   private ReplaceDialog replaceDialog;
 }

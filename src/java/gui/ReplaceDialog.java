@@ -10,12 +10,12 @@ import javax.swing.text.*;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 
-public class FindDialog extends JDialog
+public class ReplaceDialog extends JDialog
   implements ActionListener
 {
-   public FindDialog(JDialog parent, JTextComponent component)
+   public ReplaceDialog(JDialog parent, JTextComponent component)
    {
-      super(parent, DatatoolTk.getLabel("find.title"), false);
+      super(parent, DatatoolTk.getLabel("replace.title"), false);
 
       this.component = component;
 
@@ -52,6 +52,15 @@ public class FindDialog extends JDialog
       panel = Box.createHorizontalBox();
       mainPanel.add(panel);
 
+      replaceField = new JTextField();
+
+      panel.add(DatatoolGuiResources.createJLabel(
+         "replace.replace_text", replaceField));
+      panel.add(replaceField);
+
+      panel = Box.createHorizontalBox();
+      mainPanel.add(panel);
+
       caseBox = DatatoolGuiResources.createJCheckBox("find",
         "case", null);
       panel.add(caseBox);
@@ -63,17 +72,23 @@ public class FindDialog extends JDialog
       JPanel buttonPanel = new JPanel();
       getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-      findButton = DatatoolGuiResources.createActionButton(
-        "find", "find", this,
+      replaceButton = DatatoolGuiResources.createActionButton(
+        "replace", "replace", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
 
-      buttonPanel.add(findButton);
+      buttonPanel.add(replaceButton);
+
+      replaceAllButton = DatatoolGuiResources.createActionButton(
+        "replace", "replace_all", this, null);
+
+      buttonPanel.add(replaceButton);
 
       buttonPanel.add(DatatoolGuiResources.createActionButton(
         "find", "close", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)));
 
-      getRootPane().setDefaultButton(findButton);
+      getRootPane().setDefaultButton(replaceButton);
+
       updateButtons();
       pack();
       setLocationRelativeTo(parent);
@@ -223,11 +238,12 @@ public class FindDialog extends JDialog
 
    private void updateButtons()
    {
-      findButton.setEnabled(!searchField.getText().isEmpty());
+      replaceButton.setEnabled(!searchField.getText().isEmpty());
+      replaceAllButton.setEnabled(replaceButton.isEnabled());
    }
 
-   private JButton findButton;
-   private JTextField searchField;
+   private JButton replaceButton, replaceAllButton;
+   private JTextField searchField, replaceField;
    private JTextComponent component;
    private JCheckBox caseBox, regexBox;
 }

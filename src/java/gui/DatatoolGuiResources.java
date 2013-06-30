@@ -260,11 +260,24 @@ public class DatatoolGuiResources
     public static JComponent createOkayCancelHelpPanel(
        ActionListener listener, DatatoolGUI gui, String helpId)
     {
+      return createOkayCancelHelpPanel(null, listener, gui, helpId);
+    }
+
+    public static JComponent createOkayCancelHelpPanel(
+       JRootPane rootPane, ActionListener listener, DatatoolGUI gui, String helpId)
+    {
        JPanel buttonPanel = new JPanel();
 
-       buttonPanel.add(createOkayButton(listener));
+       JButton okayButton = createOkayButton(listener);
+
+       buttonPanel.add(okayButton);
        buttonPanel.add(createCancelButton(listener));
        buttonPanel.add(gui.createHelpButton(helpId));
+
+       if (rootPane != null)
+       {
+          rootPane.setDefaultButton(okayButton);
+       }
 
        return buttonPanel;
     }
@@ -272,10 +285,24 @@ public class DatatoolGuiResources
     public static JComponent createOkayCancelPanel(
        ActionListener listener)
     {
+       return createOkayCancelPanel(null, listener);
+    }
+
+    public static JComponent createOkayCancelPanel(
+       JRootPane rootPane,
+       ActionListener listener)
+    {
        JPanel buttonPanel = new JPanel();
 
-       buttonPanel.add(createOkayButton(listener));
+       JButton okayButton = createOkayButton(listener);
+
+       buttonPanel.add(okayButton);
        buttonPanel.add(createCancelButton(listener));
+
+       if (rootPane != null)
+       {
+          rootPane.setDefaultButton(okayButton);
+       }
 
        return buttonPanel;
     }

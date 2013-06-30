@@ -108,6 +108,8 @@ search.find=Find...
 search.find.mnemonic=F
 search.find_again=Find Again
 search.find_again.mnemonic=N
+search.replace=Replace
+search.replace.mnemonic=R
 
 # Tools menu
 tools=Tools
@@ -276,6 +278,15 @@ find.regex.mnemonic=X
 find.query_wrap=Wrap round to the beginning of the cell?
 find.query_wrap.title=Wrap Round?
 find.not_found=Not found in this cell
+
+# Extra fields for find & replace dialog
+replace.title=Replace
+replace.replace_text=Replacement Text: 
+replace.replace_text.mnemonic=T 
+replace.replace=Replace
+replace.replace.mnemonic=R
+replace.replace_all=Replace All
+replace.replace_all.mnemonic=A
 
 # Column header dialog box
 header.title=Column '$1'
