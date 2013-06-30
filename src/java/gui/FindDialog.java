@@ -2,6 +2,7 @@ package com.dickimawbooks.datatooltk.gui;
 
 import java.awt.event.*;
 import java.awt.*;
+import java.util.regex.*;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
@@ -48,9 +49,16 @@ public class FindDialog extends JDialog
          }
       });
 
+      panel = Box.createHorizontalBox();
+      mainPanel.add(panel);
+
       caseBox = DatatoolGuiResources.createJCheckBox("find",
         "case", null);
-      mainPanel.add(caseBox);
+      panel.add(caseBox);
+
+      regexBox = DatatoolGuiResources.createJCheckBox("find",
+        "regex", null);
+      panel.add(regexBox);
 
       JPanel buttonPanel = new JPanel();
       getContentPane().add(buttonPanel, BorderLayout.SOUTH);
@@ -99,6 +107,18 @@ public class FindDialog extends JDialog
 
    public void find()
    {
+      if (regexBox.isSelected())
+      {
+         findRegEx();
+      }
+      else
+      {
+         findNoRegEx();
+      }
+   }
+
+   public void findNoRegEx()
+   {
       String searchText = searchField.getText();
 
       int pos = component.getCaretPosition();
@@ -136,9 +156,67 @@ public class FindDialog extends JDialog
       }
 
 
-      component.setCaretPosition(index);
       component.setSelectionStart(index);
       component.setSelectionEnd(index+searchText.length());
+      component.requestFocus();
+   }
+
+   public void findRegEx()
+   {
+      Pattern pattern;
+
+      int pos = component.getCaretPosition();
+
+      String text = component.getText();
+
+      if (caseBox.isSelected())
+      {
+         pattern = Pattern.compile(searchField.getText());
+      }
+      else
+      {
+         pattern = Pattern.compile(searchField.getText(),
+            Pattern.CASE_INSENSITIVE);
+         text = text.toLowerCase();
+      }
+
+      int index = -1;
+
+      Matcher matcher = pattern.matcher(text);
+
+      if (matcher.find(pos))
+      {
+         index = matcher.start();
+      }
+
+      if (index == -1)
+      {
+         if (pos > 0)
+         {
+            if (JOptionPane.showConfirmDialog(this, 
+                 DatatoolTk.getLabel("find.query_wrap"),
+                 DatatoolTk.getLabel("find.query_wrap.title"),
+                 JOptionPane.YES_NO_OPTION)
+               == JOptionPane.YES_OPTION)
+            {
+               if (matcher.find())
+               {
+                  index = matcher.start();
+               }
+            }
+         }
+
+         if (index == -1)
+         {
+            JOptionPane.showMessageDialog(this,
+               DatatoolTk.getLabel("find.not_found"));
+            return;
+         }
+      }
+
+
+      component.setSelectionStart(index);
+      component.setSelectionEnd(matcher.end());
       component.requestFocus();
    }
 
@@ -150,5 +228,5 @@ public class FindDialog extends JDialog
    private JButton findButton;
    private JTextField searchField;
    private JTextComponent component;
-   private JCheckBox caseBox;
+   private JCheckBox caseBox, regexBox;
 }
