@@ -94,6 +94,12 @@ edit.preferences.tooltip=Edit application settings
 # Edit menu in cell dialog
 edit.select_all=Select All
 edit.select_all.mnemonic=A
+edit.copy=Copy
+edit.copy.mnemonic=C
+edit.cut=Cut
+edit.cut.mnemonic=T
+edit.paste=Paste
+edit.paste.mnemonic=P
 
 # Tools menu
 tools=Tools

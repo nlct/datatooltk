@@ -57,9 +57,30 @@ public class CellDialog extends JDialog
 
       editM.add(redoItem);
 
+      editM.addSeparator();
+
       editM.add(DatatoolGuiResources.createJMenuItem(
          "edit", "select_all", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK),
+         toolBar));
+
+      cutItem = DatatoolGuiResources.createJMenuItem(
+         "edit", "cut", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK),
+         toolBar);
+
+      editM.add(cutItem);
+
+      copyItem = DatatoolGuiResources.createJMenuItem(
+         "edit", "copy", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
+         toolBar);
+
+      editM.add(copyItem);
+
+      editM.add(DatatoolGuiResources.createJMenuItem(
+         "edit", "paste", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
          toolBar));
 
       textArea = new JTextArea(20,40);
@@ -95,6 +116,16 @@ public class CellDialog extends JDialog
             modified = true;
          }
       });
+
+      textArea.addCaretListener(new CaretListener()
+      {
+         public void caretUpdate(CaretEvent evt)
+         {
+            updateEditButtons();
+         }
+      });
+
+      updateEditButtons();
 
       mainPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
 
@@ -177,6 +208,18 @@ public class CellDialog extends JDialog
       {
          textArea.selectAll();
       }
+      else if (action.equals("copy"))
+      {
+         textArea.copy();
+      }
+      else if (action.equals("cut"))
+      {
+         textArea.cut();
+      }
+      else if (action.equals("paste"))
+      {
+         textArea.paste();
+      }
    }
 
    public void okay()
@@ -206,9 +249,25 @@ public class CellDialog extends JDialog
       setVisible(false);
    }
 
+   private void updateEditButtons()
+   {
+      String selected = (textArea == null ? null : textArea.getSelectedText());
+
+      if (selected == null || selected.isEmpty())
+      {
+         copyItem.setEnabled(false);
+         cutItem.setEnabled(false);
+      }
+      else
+      {
+         copyItem.setEnabled(true);
+         cutItem.setEnabled(true);
+      }
+   }
+
    private JTextArea textArea;
 
-   private JMenuItem undoItem, redoItem;
+   private JMenuItem undoItem, redoItem, copyItem, cutItem;
 
    private DatatoolDbPanel panel;
 
