@@ -91,6 +91,13 @@ public class CellDialog extends JDialog
          KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK),
          toolBar));
 
+      findAgainItem = DatatoolGuiResources.createJMenuItem(
+         "search", "find_again", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
+         toolBar);
+      searchM.add(findAgainItem);
+      findAgainItem.setEnabled(false);
+
       textArea = new JTextArea(20,40);
       textArea.setFont(gui.getCellFont());
       textArea.getDocument().addUndoableEditListener(
@@ -242,6 +249,11 @@ public class CellDialog extends JDialog
          }
 
          findDialog.display();
+         findAgainItem.setEnabled(true);
+      }
+      else if (action.equals("find_again"))
+      {
+         findDialog.find();
       }
    }
 
@@ -290,7 +302,8 @@ public class CellDialog extends JDialog
 
    private JTextArea textArea;
 
-   private JMenuItem undoItem, redoItem, copyItem, cutItem;
+   private JMenuItem undoItem, redoItem, copyItem, cutItem,
+     findAgainItem;
 
    private DatatoolDbPanel panel;
 
