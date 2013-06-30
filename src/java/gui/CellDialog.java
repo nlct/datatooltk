@@ -236,8 +236,10 @@ public class CellDialog extends JDialog
       {
          String selectedText = textArea.getSelectedText();
 
-         findDialog.setSearchText(selectedText == null ? "" : 
-          selectedText);
+         if (selectedText != null)
+         {
+            findDialog.setSearchText(selectedText);
+         }
 
          findDialog.display();
       }

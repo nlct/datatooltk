@@ -139,6 +139,7 @@ public class FindDialog extends JDialog
       component.setCaretPosition(index);
       component.setSelectionStart(index);
       component.setSelectionEnd(index+searchText.length());
+      component.requestFocus();
    }
 
    private void updateButtons()
