@@ -1,14 +1,8 @@
 TODO List
 =========
 
-* Design a logo and splash screen
-
-* Add search & replace function
-
 * Add template facility
 
 * Add plugin module facility
 
 * Add syntax highlighting to the cell editor?
-
-* Add stuff to bundle up the distribution, including installer

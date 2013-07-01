@@ -569,7 +569,7 @@ public class DatatoolDbPanel extends JPanel
    public void scrollToCell(int row, int column)
    {
       Rectangle rect = table.getCellRect(row, column, true);
-      sp.getViewport().scrollRectToVisible(rect);
+      table.scrollRectToVisible(rect);
    }
 
    public void updateTools()
