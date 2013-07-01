@@ -4,14 +4,13 @@ import java.awt.event.*;
 import java.awt.*;
 import java.util.regex.*;
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
+import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 
 public class FindDialog extends JDialog
-  implements ActionListener
+  implements ActionListener,CaretListener
 {
    public FindDialog(JDialog parent, JTextComponent textComp)
    {
@@ -105,8 +104,20 @@ public class FindDialog extends JDialog
 
       getRootPane().setDefaultButton(findButton);
       updateButtons();
+
+      textComp.addCaretListener(this);
+
       pack();
       setLocationRelativeTo(parent);
+   }
+
+   public void caretUpdate(CaretEvent evt)
+   {
+      if (isVisible() && !updating)
+      {
+         found = false;
+         updateButtons();
+      }
    }
 
    public void actionPerformed(ActionEvent evt)
@@ -145,6 +156,7 @@ public class FindDialog extends JDialog
 
    public void display(boolean isReplaceAllowed)
    {
+      updating = false;
       searchField.requestFocusInWindow();
 
       replacePanel.setVisible(isReplaceAllowed);
@@ -163,6 +175,7 @@ public class FindDialog extends JDialog
 
    public void replace()
    {
+      updating = true;
       if (regexBox.isSelected())
       {
          replaceRegEx();
@@ -171,6 +184,7 @@ public class FindDialog extends JDialog
       {
          replaceNoRegEx();
       }
+      updating = false;
 
       find();
    }
@@ -213,6 +227,7 @@ public class FindDialog extends JDialog
 
    public void replaceAll()
    {
+      updating = true;
       if (regexBox.isSelected())
       {
          replaceAllRegEx();
@@ -223,6 +238,7 @@ public class FindDialog extends JDialog
       }
 
       updateButtons();
+      updating = false;
    }
 
    public void replaceAllRegEx()
@@ -289,9 +305,11 @@ public class FindDialog extends JDialog
 
    public void find()
    {
+      updating = true;
       found = regexBox.isSelected() ?  findRegEx() : findNoRegEx();
 
       updateButtons();
+      updating = false;
    }
 
    public boolean findNoRegEx()
@@ -406,5 +424,5 @@ public class FindDialog extends JDialog
 
    private JComponent replacePanel;
 
-   private boolean found = false;
+   private boolean found = false, updating=false;
 }
