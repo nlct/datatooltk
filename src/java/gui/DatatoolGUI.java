@@ -242,6 +242,10 @@ public class DatatoolGUI extends JFrame
 
       findCellDialog = new FindCellDialog(this);
 
+      findNextItem = DatatoolGuiResources.createJMenuItem(
+         "search", "find_again", this, toolBar);
+      searchM.add(findNextItem);
+
       JMenu toolsM = DatatoolGuiResources.createJMenu("tools");
       mbar.add(toolsM);
 
@@ -550,8 +554,16 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("new"))
       {
          DatatoolDb db = new DatatoolDb(settings);
-         db.setName(DatatoolTk.getLabel("default.untitled"));
-         createNewTab(db);
+
+         String name = JOptionPane.showInputDialog(this,
+            DatatoolTk.getLabel("message.input_database_name"),
+            DatatoolTk.getLabel("default.untitled"));
+
+         if (name != null)
+         {
+            db.setName(name);
+            createNewTab(db);
+         }
       }
       else if (action.equals("edit_dbname"))
       {
@@ -688,6 +700,15 @@ public class DatatoolGUI extends JFrame
          if (panel != null)
          {
             findCellDialog.display(panel);
+         }
+      }
+      else if (action.equals("find_again"))
+      {
+         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+         if (panel != null)
+         {
+            findCellDialog.findNext(panel);
          }
       }
    }
@@ -1081,6 +1102,7 @@ public class DatatoolGUI extends JFrame
       sortItem.setEnabled(enable);
       shuffleItem.setEnabled(enable);
       findCellItem.setEnabled(enable);
+      findNextItem.setEnabled(enable && !findCellDialog.getSearchText().isEmpty());
    }
 
    public Font getCellFont()
@@ -1133,7 +1155,7 @@ public class DatatoolGUI extends JFrame
       addColumnBeforeItem, addRowBeforeItem,
       removeColumnItem, editHeaderItem, editDbNameItem,
       removeRowItem, clearRecentItem, sortItem, shuffleItem,
-      findCellItem;
+      findCellItem, findNextItem;
 
    private ActionListener recentFilesListener;
 

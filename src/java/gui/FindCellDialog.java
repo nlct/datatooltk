@@ -12,9 +12,11 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 public class FindCellDialog extends JDialog
   implements ActionListener
 {
-   public FindCellDialog(JFrame parent)
+   public FindCellDialog(DatatoolGUI gui)
    {
-      super(parent, DatatoolTk.getLabel("find.title"));
+      super(gui, DatatoolTk.getLabel("find.title"));
+
+      this.gui = gui;
 
       JComponent mainPanel = Box.createVerticalBox();
       getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -99,7 +101,7 @@ public class FindCellDialog extends JDialog
       updateButtons();
 
       pack();
-      setLocationRelativeTo(parent);
+      setLocationRelativeTo(gui);
    }
 
    public void actionPerformed(ActionEvent evt)
@@ -114,6 +116,7 @@ public class FindCellDialog extends JDialog
       }
       else if (action.equals("close"))
       {
+         gui.updateTools();
          setVisible(false);
       }
    }
@@ -142,6 +145,18 @@ public class FindCellDialog extends JDialog
       updateButtons();
 
       setVisible(true);
+   }
+
+   public void findNext(DatatoolDbPanel table)
+   {
+      this.table = table;
+
+      column = table.getSelectedColumn();
+      row = table.getSelectedRow();
+
+      found = false;
+
+      find();
    }
 
    public void find()
@@ -347,4 +362,6 @@ public class FindCellDialog extends JDialog
    private boolean found = false;
 
    private int row, column;
+
+   private DatatoolGUI gui;
 }

@@ -378,7 +378,7 @@ message.unsaved_data_query='$1' has been modified. Do you want to save it?
 message.cancelled=Cancelled
 message.discard_edit_query=Discard the edits you have just made?
 message.confirm_discard=Confirm Discard
-message.input_database_name=Database Name:
+message.input_database_name=Database Name (as used in \\DTLnewdb):
 
 # Information messages
 info.view_or_edit=Double-click on the cell to view or edit its contents.

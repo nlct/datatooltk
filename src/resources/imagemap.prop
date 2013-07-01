@@ -9,6 +9,7 @@ close_panel_rollover=/resources/icons/close_panel_rollover.png
 copy=/toolbarButtonGraphics/general/Copy24.gif
 cut=/toolbarButtonGraphics/general/Cut24.gif
 find=/toolbarButtonGraphics/general/Find24.gif
+find_cell=/toolbarButtonGraphics/general/Find24.gif
 find_again=/toolbarButtonGraphics/general/FindAgain24.gif
 replace=/toolbarButtonGraphics/general/Replace24.gif
 replace_all=/resources/icons/replaceAll.png
