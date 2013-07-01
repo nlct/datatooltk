@@ -807,14 +807,13 @@ public class DatatoolSettings extends Properties
          String language = locale.getLanguage();
          String country = locale.getCountry();
 
-         String dictLocation = DICT_DIR+RESOURCE;
+         URL url = getClass().getResource(DICT_DIR + RESOURCE
+          + "-" + language + "-" + country  + ".prop");
 
-         URL url = getClass().getResource(dictLocation
-          + "-" + language + "-" + country + "/" + RESOURCE + ".hs");
          if (url == null)
          {
-            url = getClass().getResource(dictLocation
-              + "-" + language + "/" + RESOURCE + ".hs");
+            url = getClass().getResource(DICT_DIR + RESOURCE
+              + "-" + language + ".prop");
 
             if (url == null)
             {
@@ -863,6 +862,8 @@ public class DatatoolSettings extends Properties
 
             if (hsURL == null)
             {
+               DatatoolTk.debug("Can't find language file for "
+                   +language+"-"+country);
                prop = "en-US";
             }
             else
