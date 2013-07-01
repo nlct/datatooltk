@@ -25,9 +25,10 @@ public class FindDialog extends JDialog
       mainPanel.add(panel);
 
       searchField = new JTextField();
+      JLabel searchLabel = DatatoolGuiResources.createJLabel(
+         "find.search_for", searchField);
 
-      panel.add(DatatoolGuiResources.createJLabel(
-         "find.search_for", searchField));
+      panel.add(searchLabel);
       panel.add(searchField);
 
       Dimension dim = searchField.getMaximumSize();
@@ -56,10 +57,19 @@ public class FindDialog extends JDialog
       mainPanel.add(replacePanel);
 
       replaceField = new JTextField();
+      JLabel replaceLabel = DatatoolGuiResources.createJLabel(
+         "replace.replace_text", replaceField);
 
-      replacePanel.add(DatatoolGuiResources.createJLabel(
-         "replace.replace_text", replaceField));
+      replacePanel.add(replaceLabel);
       replacePanel.add(replaceField);
+
+      dim = searchLabel.getPreferredSize();
+
+      dim.width = Math.max(dim.width, 
+        (int)replaceLabel.getPreferredSize().getWidth());
+
+      searchLabel.setPreferredSize(dim);
+      replaceLabel.setPreferredSize(dim);
 
       panel = Box.createHorizontalBox();
       mainPanel.add(panel);
