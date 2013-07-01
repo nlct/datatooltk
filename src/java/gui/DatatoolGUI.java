@@ -158,7 +158,6 @@ public class DatatoolGUI extends JFrame
       JMenu editM = DatatoolGuiResources.createJMenu("edit");
       mbar.add(editM);
 
-
       undoItem = DatatoolGuiResources.createJMenuItem(
          "edit", "undo", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK),
@@ -232,6 +231,16 @@ public class DatatoolGUI extends JFrame
          "edit", "preferences", this, toolBar));
 
       propertiesDialog = new PropertiesDialog(this);
+
+      JMenu searchM = DatatoolGuiResources.createJMenu("search");
+      mbar.add(searchM);
+
+      findCellItem = DatatoolGuiResources.createJMenuItem(
+         "search", "find_cell", this, toolBar);
+
+      searchM.add(findCellItem);
+
+      findCellDialog = new FindCellDialog(this);
 
       JMenu toolsM = DatatoolGuiResources.createJMenu("tools");
       mbar.add(toolsM);
@@ -672,6 +681,15 @@ public class DatatoolGUI extends JFrame
       {
          propertiesDialog.display(settings);
       }
+      else if (action.equals("find_cell"))
+      {
+         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+         if (panel != null)
+         {
+            findCellDialog.display(panel);
+         }
+      }
    }
 
    public void menuSelected(MenuEvent evt)
@@ -1062,6 +1080,7 @@ public class DatatoolGUI extends JFrame
       addRowAfterItem.setEnabled(enable);
       sortItem.setEnabled(enable);
       shuffleItem.setEnabled(enable);
+      findCellItem.setEnabled(enable);
    }
 
    public Font getCellFont()
@@ -1113,7 +1132,8 @@ public class DatatoolGUI extends JFrame
       addColumnAfterItem, addRowAfterItem,
       addColumnBeforeItem, addRowBeforeItem,
       removeColumnItem, editHeaderItem, editDbNameItem,
-      removeRowItem, clearRecentItem, sortItem, shuffleItem;
+      removeRowItem, clearRecentItem, sortItem, shuffleItem,
+      findCellItem;
 
    private ActionListener recentFilesListener;
 
@@ -1122,4 +1142,6 @@ public class DatatoolGUI extends JFrame
    private ImportSqlDialog importSqlDialog;
 
    private SortDialog sortDialog;
+
+   private FindCellDialog findCellDialog;
 }

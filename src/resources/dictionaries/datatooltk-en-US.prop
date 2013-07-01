@@ -110,6 +110,8 @@ search.find_again=Find Again
 search.find_again.mnemonic=N
 search.replace=Replace
 search.replace.mnemonic=R
+search.find_cell=Find Cell...
+search.find_cell.mnemonic=F
 
 # Tools menu
 tools=Tools
@@ -277,7 +279,14 @@ find.regex=Regular Expression
 find.regex.mnemonic=X
 find.wrap=Wrap round
 find.wrap.mnemonic=W
-find.not_found=Not found in this cell
+find.not_found=Not found
+find.not_found_in_cell=Not found in this cell
+find.cell_containing=Find Cell Containing: 
+find.cell_containing.mnemonic=T 
+find.rowwise=Row Wise
+find.rowwise.mnemonic=R
+find.colwise=Column Wise
+find.colwise.mnemonic=U
 
 # Extra fields for find & replace dialog
 replace.title=Replace

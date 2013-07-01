@@ -1,4 +1,4 @@
-% Created by datatooltk on Tue Jun 25 20:38:36 BST 2013
+% Created by datatooltk on Mon Jul 01 15:34:00 BST 2013
 \DTLifdbexists{problems}%
 {\PackageError{datatool}{Database `problems'
 already exists}{}%
@@ -173,7 +173,7 @@ already exists}{}%
 \db@col@id@end@ %
 \db@col@id@w 2%
 \db@col@id@end@ %
-\db@col@elt@w $A$ is a souce and $C$ is a sink.  %
+\db@col@elt@w $A$ is a source and $C$ is a sink.  %
 \db@col@elt@end@ %
 \db@col@id@w 2%
 \db@col@id@end@ %

@@ -351,7 +351,7 @@ public class FindDialog extends JDialog
          if (index == -1)
          {
             JOptionPane.showMessageDialog(this,
-               DatatoolTk.getLabel("find.not_found"));
+               DatatoolTk.getLabel("find.not_found_in_cell"));
             return false;
          }
       }
@@ -407,7 +407,7 @@ public class FindDialog extends JDialog
          if (index == -1)
          {
             JOptionPane.showMessageDialog(this,
-               DatatoolTk.getLabel("find.not_found"));
+               DatatoolTk.getLabel("find.not_found_in_cell"));
             return false;
          }
       }

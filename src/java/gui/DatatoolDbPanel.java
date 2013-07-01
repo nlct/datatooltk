@@ -566,6 +566,12 @@ public class DatatoolDbPanel extends JPanel
       return table.getRowHeight(row);
    }
 
+   public void scrollToCell(int row, int column)
+   {
+      Rectangle rect = table.getCellRect(row, column, true);
+      sp.getViewport().scrollRectToVisible(rect);
+   }
+
    public void updateTools()
    {
       gui.updateTools();
@@ -713,6 +719,11 @@ public class DatatoolDbPanel extends JPanel
    public void setInfo(String info)
    {
       infoField.setText(info);
+   }
+
+   public Object getValueAt(int row, int column)
+   {
+      return table.getValueAt(row, column);
    }
 
    protected DatatoolDb db;
