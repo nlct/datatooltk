@@ -1,0 +1,9 @@
+datatooltk v0.2b 2013-07-02
+
+To install, download and run datatooltk-installer.jar (either
+double-click on the jar file or run 
+"java -jar datatooltk-installer.jar" from a terminal).
+
+Requires Java 1.7
+
+Licence: GPL
