@@ -146,7 +146,7 @@ public class DatatoolGUI extends JFrame
         "file", "save_as", this, toolBar));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
-        "file", "close", this,
+        "file", "close_db", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK),
          toolBar));
 
@@ -236,14 +236,18 @@ public class DatatoolGUI extends JFrame
       mbar.add(searchM);
 
       findCellItem = DatatoolGuiResources.createJMenuItem(
-         "search", "find_cell", this, toolBar);
+         "search", "find_cell", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK),
+         toolBar);
 
       searchM.add(findCellItem);
 
       findCellDialog = new FindCellDialog(this);
 
       findNextItem = DatatoolGuiResources.createJMenuItem(
-         "search", "find_again", this, toolBar);
+         "search", "find_again", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
+         toolBar);
       searchM.add(findNextItem);
 
       JMenu toolsM = DatatoolGuiResources.createJMenu("tools");
@@ -547,7 +551,7 @@ public class DatatoolGUI extends JFrame
       {
          importProbSoln();
       }
-      else if (action.equals("close"))
+      else if (action.equals("close_db"))
       {
          close();
       }
@@ -1058,7 +1062,7 @@ public class DatatoolGUI extends JFrame
    {
       String label = DatatoolTk.getLabel("default.untitled");
 
-      DatatoolHeader header = new DatatoolHeader(label, label);
+      DatatoolHeader header = new DatatoolHeader(label, "");
 
       return headerDialog.requestEdit(header, panel.db);
    }

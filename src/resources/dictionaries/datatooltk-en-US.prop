@@ -29,9 +29,9 @@ file.save=Save
 file.save.mnemonic=S
 file.save_as=Save As...
 file.save_as.mnemonic=A
-file.close=Close
-file.close.mnemonic=C
-file.close.tooltip=Close current database
+file.close_db=Close
+file.close_db.mnemonic=C
+file.close_db.tooltip=Close current database
 file.quit=Quit
 file.quit.mnemonic=Q
 
@@ -518,6 +518,7 @@ error.not_currency='$1' not in currency format.
 # Warning messages
 warning.title=Warning
 warning.verb_detected=Verbatim text has been detected. You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
+warning.verb_detected_in_cell=Verbatim text has been detected in cell ($1,$2). You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 
 # Context labels in manual
 manual.title=Manual

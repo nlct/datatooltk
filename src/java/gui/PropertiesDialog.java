@@ -374,7 +374,9 @@ public class PropertiesDialog extends JDialog
 
       helpsetLangBox = new JComboBox<String>(gui.getHelpSets());
 
-      box.add(createLabel("preferences.language.helpset", helpsetLangBox));
+      JLabel helpsetLangLabel 
+         = createLabel("preferences.language.helpset", helpsetLangBox);
+      box.add(helpsetLangLabel);
       box.add(helpsetLangBox);
 
       box = new JPanel(new FlowLayout());
@@ -382,8 +384,17 @@ public class PropertiesDialog extends JDialog
 
       dictLangBox = new JComboBox<String>(gui.getDictionaries());
 
-      box.add(createLabel("preferences.language.dictionary", dictLangBox));
+      JLabel dictLangLabel 
+         = createLabel("preferences.language.dictionary", dictLangBox);
+      box.add(dictLangLabel);
       box.add(dictLangBox);
+
+      dim = helpsetLangLabel.getPreferredSize();
+      dim.width = Math.max(dim.width,
+         (int)dictLangBox.getPreferredSize().getWidth());
+
+      helpsetLangLabel.setPreferredSize(dim);
+      dictLangLabel.setPreferredSize(dim);
 
       getContentPane().add(
         DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "preferences"),

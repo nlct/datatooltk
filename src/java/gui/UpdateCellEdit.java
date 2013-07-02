@@ -21,7 +21,9 @@ public class UpdateCellEdit extends AbstractUndoableEdit
 
       if (DatatoolDb.checkForVerbatim(newText))
       {
-         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+         DatatoolTk.warning(DatatoolTk.getLabelWithValues(
+           "warning.verb_detected_in_cell",
+           ""+(row+1), ""+(col+1)));
       }
    }
 
