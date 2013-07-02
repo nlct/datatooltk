@@ -957,7 +957,7 @@ public class DatatoolSettings extends Properties
 
       if (propertiesPath != null)
       {
-         userList = dir.listFiles(new FilenameFilter()
+         userList = propertiesPath.listFiles(new FilenameFilter()
          {
             public boolean accept(File directory, String name)
             {
