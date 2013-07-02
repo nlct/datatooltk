@@ -11,6 +11,9 @@ file.recent.clearrecent.tooltip=Clear recent files list
 file.new=New
 file.new.mnemonic=N
 file.new.tooltip=Create a new empty database
+file.new_from_template=New From Template...
+file.new_from_template.mnemonic=T
+file.new_from_template.tooltip=Create a new database from a template
 file.open=Open...
 file.open.mnemonic=O
 file.open.tooltip=Open a raw datatool database file
@@ -327,6 +330,10 @@ header.type.real.mnemonic=R
 header.type.currency.mnemonic=N
 header.type.unset.mnemonic=U
 
+# New from template dialog
+template.title=New From Template
+template.message=Select Template: 
+
 # File filter
 filter.tex=TeX Files ($1)
 filter.dbtex=Datatool Files ($1)
@@ -523,6 +530,10 @@ error.mismatched_end_prob='BEGIN PROBLEM: $1' ended by 'END PROBLEM: $2' on inpu
 error.internal.import_probdata_failed=(Internal Error) Something's gone wrong. Failed to import data.
 error.missing_texmap_key=Missing mapping character.
 error.not_currency='$1' not in currency format.
+error.no_templates=No templates found.
+error.template.misplaced_tag='$1' tag must be inside '$2' tag.
+error.template.wrong_end_tag=Mismatched closing tag '$1' found.
+error.template.missing_tag=Missing '$1' tag.
 
 # Warning messages
 warning.title=Warning

@@ -1,0 +1,23 @@
+<datatooltktemplate>
+  <header>
+    <label>ID</label>
+  </header>
+  <header>
+    <label>Surname</label>
+  </header>
+  <header>
+    <label>Forename</label>
+  </header>
+  <header>
+    <label>Title</label>
+  </header>
+  <header>
+    <label>Address</label>
+  </header>
+  <header>
+    <label>Telephone</label>
+  </header>
+  <header>
+    <label>Email</label>
+  </header>
+</datatooltktemplate>

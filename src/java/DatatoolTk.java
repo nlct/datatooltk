@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.Properties;
 import java.awt.Cursor;
 import java.net.URISyntaxException;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.datatooltk.io.*;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
@@ -14,6 +16,23 @@ public class DatatoolTk
    public static void doBatchProcess()
    {
       settings.setPasswordReader(new ConsolePasswordReader());
+      settings.setErrorHandler(new ErrorHandler()
+      {
+         public void error(SAXParseException exception)
+         {
+            System.err.println(exception.getMessage());
+         }
+
+         public void warning(SAXParseException exception)
+         {
+            System.err.println(exception.getMessage());
+         }
+
+         public void fatalError(SAXParseException exception)
+         {
+            exception.printStackTrace();
+         }
+      });
 
       if (imp == null && dbtex == null)
       {
@@ -110,6 +129,24 @@ public class DatatoolTk
    public static void createAndShowGUI()
    {
       DatatoolGUI gui = new DatatoolGUI(settings);
+
+      settings.setErrorHandler(new ErrorHandler()
+      {
+         public void error(SAXParseException exception)
+         {
+            DatatoolGuiResources.error(null, exception);
+         }
+
+         public void warning(SAXParseException exception)
+         {
+            DatatoolGuiResources.warning(null, exception.getMessage());
+         }
+
+         public void fatalError(SAXParseException exception)
+         {
+            DatatoolGuiResources.error(null, exception);
+         }
+      });
 
       gui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 

@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Locale;
 import java.net.URL;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
@@ -926,6 +928,59 @@ public class DatatoolSettings extends Properties
 
    }
 
+   public void setErrorHandler(ErrorHandler handler)
+   {
+      errorHandler = handler;
+   }
+
+   public ErrorHandler getErrorHandler()
+   {
+      return errorHandler;
+   }
+
+   public Template[] getTemplates()
+     throws java.net.URISyntaxException
+   {
+      File dir = new File(DatatoolTk.class.getResource(TEMPLATE_DIR).toURI());
+
+      File[] mainList = dir.listFiles(new FilenameFilter()
+      {
+         public boolean accept(File directory, String name)
+         {
+            return name.toLowerCase().endsWith(".xml");
+         }
+      });
+
+      File[] userList = null;
+
+      int num = mainList.length;
+
+      if (propertiesPath != null)
+      {
+         userList = dir.listFiles(new FilenameFilter()
+         {
+            public boolean accept(File directory, String name)
+            {
+               return name.toLowerCase().endsWith(".xml");
+            }
+         });
+
+         num += userList.length;
+      }
+
+      Template[] templates = new Template[num];
+
+      for (int i = 0; i < num; i++)
+      {
+         templates[i] = new Template(i < mainList.length ?
+            mainList[i] : userList[i-mainList.length]);
+      }
+
+      return templates;
+   }
+
+   private ErrorHandler errorHandler;
+
    protected char[] sqlPassword = null;
 
    protected DatatoolPasswordReader passwordReader;
@@ -952,6 +1007,8 @@ public class DatatoolSettings extends Properties
 
    public static final String HELPSET_DIR = "/resources/helpsets/";
    public static final String DICT_DIR = "/resources/dictionaries/";
+
+   public static final String TEMPLATE_DIR = "/resources/templates/";
 
    public static final String RESOURCE = "datatooltk";
 

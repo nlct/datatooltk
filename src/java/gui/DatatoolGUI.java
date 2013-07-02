@@ -86,6 +86,9 @@ public class DatatoolGUI extends JFrame
         KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK),
         toolBar));
 
+      fileM.add(DatatoolGuiResources.createJMenuItem(
+        "file", "new_from_template", this, toolBar));
+
       recentM = DatatoolGuiResources.createJMenu("file.recent");
       recentM.addMenuListener(this);
       fileM.add(recentM);
@@ -578,6 +581,10 @@ public class DatatoolGUI extends JFrame
             createNewTab(db);
          }
       }
+      else if (action.equals("new_from_template"))
+      {
+         newFromTemplate();
+      }
       else if (action.equals("edit_dbname"))
       {
          Component tab = tabbedPane.getSelectedComponent();
@@ -1064,6 +1071,39 @@ public class DatatoolGUI extends JFrame
       }
 
       return db;
+   }
+
+   public void newFromTemplate()
+   {
+      try
+      {
+         Template[] templates = settings.getTemplates();
+
+         if (templates.length == 0)
+         {
+            DatatoolGuiResources.error(this, "error.no_templates");
+            return;
+         }
+
+         Object result = JOptionPane.showInputDialog(this,
+           DatatoolTk.getLabel("template.message"),
+           DatatoolTk.getLabel("template.title"),
+           JOptionPane.PLAIN_MESSAGE,
+           null, templates, templates[0]);
+
+         if (result == null)
+         {
+            return;
+         }
+
+         DatatoolDb db = DatatoolDb.createFromTemplate(settings,
+           (Template)result);
+         createNewTab(db);
+      }
+      catch (Exception e)
+      {
+          DatatoolGuiResources.error(this, e);
+      }
    }
 
    public void selectTab(DatatoolDbPanel panel)

@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.regex.*;
 import java.util.Date;
 
+import org.xml.sax.*;
+import org.xml.sax.helpers.*;
+
 import com.dickimawbooks.datatooltk.io.*;
 
 public class DatatoolDb
@@ -1458,6 +1461,40 @@ public class DatatoolDb
       {
          data.set(i, array[i]);
       }
+   }
+
+   public static DatatoolDb createFromTemplate(
+    DatatoolSettings settings, Template templateFile)
+    throws SAXException,IOException
+   {
+      XMLReader xr = XMLReaderFactory.createXMLReader();
+
+      FileReader reader = null;
+      DatatoolDb db = null;
+
+      try
+      {
+         reader = new FileReader(templateFile.getFile());
+
+         db = new DatatoolDb(settings);
+         db.setName(templateFile.toString());
+
+         TemplateHandler handler = new TemplateHandler(db);
+         xr.setContentHandler(handler);
+         xr.setErrorHandler(settings.getErrorHandler());
+
+         xr.parse(new InputSource(reader));
+
+      }
+      finally
+      {
+         if (reader != null)
+         {
+            reader.close();
+         }
+      }
+
+      return db;
    }
 
    private DatatoolSettings settings;
