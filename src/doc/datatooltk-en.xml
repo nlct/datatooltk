@@ -197,10 +197,12 @@
          src="images/setnamedialog.png" />
      </float>
    <example>
+   <p>
    Suppose you have a<nbsp/>database file called <tt>my-data.dbtex</tt>
    and you have set the database label to just <dq><tt>data</tt></dq>
    (as shown in <ref tag="setnamedialog"/>).
    Then you can load and display the data using:
+   </p>
    <pre>
 \documentclass{article}
 \usepackage{datatool}% remember to load the datatool package
@@ -729,7 +731,9 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    <dict tag="preferences.title"/> dialog box.
    </p>
    <example>
+   <p>
    Consider the <acr tag="csv"/> file shown below:
+   </p>
    <verbinput src="../tests/test-para.csv" />
    This has a cell with multiple lines. When it's imported into
    <app/>, the paragraph break is converted to <cs tag="DTLpar"/>.
@@ -837,8 +841,10 @@ Password:
    data, pretty-printing spaces and comments won't be imported.
    </p>
    <example>
+   <p>
    Consider the file called <tt>prob-mixed.tex</tt> that contains the 
    following:
+   </p>
    <verbinput src="../tests/prob-mixed.tex"/>
    <p>
    This contains a<nbsp/>mixture of <cs tag="newproblem"/> and
@@ -855,20 +861,110 @@ Password:
    <ref text="sorting and shuffling a database" tag="sortshuffle"/>.
    </p>
    </node>
+   <node tag="templates" type="chapter" title="Templates">
+   <p>
+   Templates that come with <app/> are located in the <tt>resources/templates</tt>
+   subdirectory of the <app/> installation directory. You can also write
+   your own templates and store them in the user templates directory 
+   (see <ref tag="writingtemplates"/>). Each template defines a<nbsp/>set
+   of column headers. To create a<nbsp/>new database with a<nbsp/>particular
+   set of column headers, use the <menu tag="file.new_from_template"/>
+   menu item, which opens the dialog box shown in <ref tag="templatedialog"/>.
+   </p>
+   <float type="figure" tag="templatedialog" 
+      caption="New From Template Dialog">
+     <image scale="0.75" alt="Image of template dialog"
+        src="images/templatedialog.png"/>
+   </float>
+   <p>
+   The <app/> application comes with the following templates: 
+   <tt>datagidx</tt> (creates a<nbsp/>database with the same structure as
+   used by the <sty>datagidx</sty> package) and <tt>people</tt> (creates
+   a<nbsp/>database suitable for storing records about people, including
+   columns for forenames, a<nbsp/>surname, title and address.) For example,
+   <ref tag="peopletemplate"/> shows a<nbsp/>database created from the 
+   <tt>people</tt> template.
+   </p>
+   <float type="figure" tag="peopletemplate" 
+      caption="New Database Created from people Template">
+     <image scale="0.75" alt="Image of main window"
+        src="images/peopletemplate.png"/>
+   </float>
+   <p>
+   Rows can now be added to this database using the <menu tag="edit.row"/>
+   menu.
+   </p>
+   </node>
+   <node tag="writingtemplates" type="section" title="Writing a Template File">
+   <p>
+   If you want to write your own template, you need to create an XML file
+   and store it in a<nbsp/>subdirectory  of the <app/> 
+   user properties directory (see <ref tag="preferences"/>) called 
+   <tt>templates</tt>. You will need to create this directory, if it doesn't
+   already exist. For example, on a<nbsp/>UNIX-like system, the user
+   template directory will be <tt><tilde/>/.datatooltk/templates/</tt>.
+   The template file must have the extension <tt>.xml</tt> for it to be
+   listed in the <dq><dict tag="template.title"/></dq> dialog box. (The base
+   name of the file is used in the list.)
+   </p>
+   <p>
+   The template file must have one <element>datatooltktemplate</element> element. This
+   element may contain one or more <element>header</element> elements. Each 
+   <element>header</element> element must contain one <element>label</element> element and 
+   optionally one <element>title</element> and/or one <element>type</element> element.
+   </p>
+   <p>
+   The <element>label</element> element contains the uniquely identifying header label.
+   The <element>title</element> element contains the header title. If omitted, the
+   title is set to the label. The <element>type</element> element must be one of:
+   <tt>-1</tt> (unknown type), <tt>0</tt> (string type), <tt>1</tt> (integer 
+   type), <tt>2</tt> (real type) or <tt>3</tt> (currency type). If omitted the 
+   type is set to <tt>-1</tt>.
+   </p>
+   <example>
+   <p>
+   Suppose I<nbsp/>want to write a<nbsp/>template to create a<nbsp/>database
+   for a<nbsp/>list of products. The database needs three columns: one for
+   the product name, one for the product code and one for the product price.
+   The name should be a<nbsp/>string, the price column could either be set
+   to <dq>real</dq> if you don't need to worry about the currency unit
+   or <dq>currency</dq> if you need a<nbsp/>currency unit for each product.
+   Let's suppose that the code must be an integer.
+   Here's a<nbsp/>template file (the price column is set to <dq>real</dq>
+   rather than <dq>currency</dq>):
+   </p>
+<alltt>
+<lt/>datatooltktemplate<gt/>
+  <lt/>header<gt/>
+    <lt/>label<gt/>Name<lt/>/label<gt/>
+    <lt/>type<gt/>0<lt/>/type<gt/>
+  <lt/>/header<gt/>
+  <lt/>header<gt/>
+    <lt/>label<gt/>Code<lt/>/label<gt/>
+    <lt/>type<gt/>1<lt/>/type<gt/>
+  <lt/>/header<gt/>
+  <lt/>header<gt/>
+    <lt/>label<gt/>Price<lt/>/label<gt/>
+    <lt/>type<gt/>2<lt/>/type<gt/>
+  <lt/>/header<gt/>
+<lt/>/datatooltktemplate<gt/>
+</alltt>
+   </example>
+   </node>
    <node tag="preferences" type="chapter" title="Application Properties">
    <p>
    When <app/> is run, either in batch or <acr tag="gui"/> mode, 
-   the application settings are read in from the properties file, 
+   the application settings are read in from the user properties file, 
    if it exists. Any command line options override those settings.
    If <app/> is run in <acr tag="gui"/> mode, the application properties are saved on exit. They are not saved in batch mode.
    </p>
    <p>
-   The properties directory depends on the operating system.
+   The user properties directory depends on the operating system.
    On Windows, it is a folder called <tt>datatooltk-settings</tt>
    in the folder given by the Java system property <tt>user.home</tt>.
    This is usually the user's home folder but in some versions of
    Java this can be <tt><percent/>userprofile<percent/></tt>.
-   On other operating systems, the properties directory is
+   On other operating systems, the user properties directory is
    called <tt>.datatooltk</tt> and is in the user's home directory.
    </p>
    <p>

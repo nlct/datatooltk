@@ -1179,18 +1179,18 @@ sub start_example{
 
    if ($counters{example})
    {
-      $counters{example} = 1;
+      $counters{example}++;
    }
    else
    {
-      $counters{example}++;
+      $counters{example} = 1;
    }
 
    &handle_html('<blockquote><p><b>'
     . &get_label('manual.example')
     . '&nbsp;' . $counters{example}
     . ($attrs{title}? "($attrs{title})." : '.')
-    . '</b></p><p>');
+    . '</b></p>');
 
    print TEXFD "\\begin{example}";
 
@@ -1203,7 +1203,7 @@ sub start_example{
 sub end_example{
    my ($expat) = @_;
 
-   &handle_html('</p></blockquote>');
+   &handle_html('</blockquote>');
 
    print TEXFD "\\end{example}";
 }
@@ -1404,6 +1404,58 @@ sub start_hash{
 
 sub end_hash{
    my ($expat) = @_;
+}
+
+sub start_tilde{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('~');
+
+   print TEXFD "\\textasciitilde ";
+}
+
+sub end_tilde{
+   my ($expat) = @_;
+}
+
+sub start_lt{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('&lt;');
+
+   print TEXFD "\\textless ";
+}
+
+sub end_lt{
+   my ($expat) = @_;
+}
+
+sub start_gt{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('&gt;');
+
+   print TEXFD "\\textgreater ";
+}
+
+sub end_gt{
+   my ($expat) = @_;
+}
+
+sub start_element{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('<tt>&lt;');
+
+   print TEXFD "\\texttt{\\textless ";
+}
+
+sub end_element{
+   my ($expat) = @_;
+
+   &handle_html('&gt;</tt>');
+
+   print TEXFD "\\textgreater}";
 }
 
 sub start_image{
