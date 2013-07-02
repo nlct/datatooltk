@@ -108,7 +108,7 @@ search.find=Find...
 search.find.mnemonic=F
 search.find_again=Find Again
 search.find_again.mnemonic=N
-search.replace=Replace
+search.replace=Replace...
 search.replace.mnemonic=R
 search.find_cell=Find Cell...
 search.find_cell.mnemonic=F
@@ -296,8 +296,15 @@ replace.replace=Replace
 replace.replace.mnemonic=R
 replace.replace_all=Replace All
 replace.replace_all.mnemonic=A
-replace.one_replaced=One occurrence replaced.
+replace.one_replaced=1 occurrence replaced.
 replace.num_replaced=$1 occurrences replaced.
+replace.all_in=Replace all occurrences within:
+replace.in_row=Selected Row
+replace.in_row.mnemonic=W
+replace.in_column=Selected Column
+replace.in_column.mnemonic=L
+replace.in_db=Selected Database
+replace.in_db.mnemonic=D
 
 # Column header dialog box
 header.title=Column '$1'
@@ -379,6 +386,8 @@ message.cancelled=Canceled
 message.discard_edit_query=Discard the edits you have just made?
 message.confirm_discard=Confirm Discard
 message.input_database_name=Database Name (as used in \\DTLnewdb):
+message.cells_updated=$1 cells updated.
+message.one_cell_updated=1 cell updated.
 
 # Information messages
 info.view_or_edit=Double-click on the cell to view or edit its contents.

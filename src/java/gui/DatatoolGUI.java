@@ -250,6 +250,15 @@ public class DatatoolGUI extends JFrame
          toolBar);
       searchM.add(findNextItem);
 
+      replaceItem = DatatoolGuiResources.createJMenuItem(
+         "search", "replace", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
+         toolBar);
+
+      replaceAllDialog = new ReplaceAllDialog(this);
+
+      searchM.add(replaceItem);
+
       JMenu toolsM = DatatoolGuiResources.createJMenu("tools");
       mbar.add(toolsM);
 
@@ -715,6 +724,15 @@ public class DatatoolGUI extends JFrame
             findCellDialog.findNext(panel);
          }
       }
+      else if (action.equals("replace"))
+      {
+         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+         if (panel != null)
+         {
+            replaceAllDialog.display(panel);
+         }
+      }
    }
 
    public void menuSelected(MenuEvent evt)
@@ -1107,6 +1125,7 @@ public class DatatoolGUI extends JFrame
       shuffleItem.setEnabled(enable);
       findCellItem.setEnabled(enable);
       findNextItem.setEnabled(enable && !findCellDialog.getSearchText().isEmpty());
+      replaceItem.setEnabled(enable);
    }
 
    public Font getCellFont()
@@ -1159,7 +1178,7 @@ public class DatatoolGUI extends JFrame
       addColumnBeforeItem, addRowBeforeItem,
       removeColumnItem, editHeaderItem, editDbNameItem,
       removeRowItem, clearRecentItem, sortItem, shuffleItem,
-      findCellItem, findNextItem;
+      findCellItem, findNextItem, replaceItem;
 
    private ActionListener recentFilesListener;
 
@@ -1170,4 +1189,6 @@ public class DatatoolGUI extends JFrame
    private SortDialog sortDialog;
 
    private FindCellDialog findCellDialog;
+
+   private ReplaceAllDialog replaceAllDialog;
 }

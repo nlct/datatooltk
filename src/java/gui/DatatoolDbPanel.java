@@ -2,6 +2,7 @@ package com.dickimawbooks.datatooltk.gui;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -359,6 +360,167 @@ public class DatatoolDbPanel extends JPanel
    {
       addUndoEvent(new UndoableEditEvent(this, 
          new UpdateCellEdit(this, row, col, text)));
+   }
+
+   public void replaceAllInRow(int row, String search, 
+     String replacement, boolean isCaseSensitive, boolean isRegEx)
+   {
+      int count = 0;
+      CompoundEdit ce = new CompoundEdit();
+
+      for (int i = 0, n = getColumnCount(); i < n; i++)
+      {
+         UndoableEdit edit = replaceAllInCell(row, i, search,
+            replacement, isCaseSensitive, isRegEx);
+
+         if (edit != null)
+         {
+            ce.addEdit(edit);
+            count++;
+         }
+      }
+
+      if (count > 0)
+      {
+         ce.end();
+         addUndoEvent(new UndoableEditEvent(this, ce));
+         JOptionPane.showMessageDialog(this, 
+            count == 1 ?
+            DatatoolTk.getLabel("message.one_cell_updated") :
+            DatatoolTk.getLabelWithValue("message.cells_updated", count)
+         );
+         dataUpdated();
+      }
+      else
+      {
+         JOptionPane.showMessageDialog(this, 
+            DatatoolTk.getLabel("find.not_found"));
+      }
+   }
+
+   public void replaceAllInColumn(int column, String search, 
+     String replacement, boolean isCaseSensitive, boolean isRegEx)
+   {
+      int count = 0;
+      CompoundEdit ce = new CompoundEdit();
+
+      for (int i = 0, n = getRowCount(); i < n; i++)
+      {
+         UndoableEdit edit = replaceAllInCell(i, column, search,
+            replacement, isCaseSensitive, isRegEx);
+
+         if (edit != null)
+         {
+            ce.addEdit(edit);
+            count++;
+         }
+      }
+
+      if (count > 0)
+      {
+         ce.end();
+         addUndoEvent(new UndoableEditEvent(this, ce));
+         JOptionPane.showMessageDialog(this, 
+            count == 1 ?
+            DatatoolTk.getLabel("message.one_cell_updated") :
+            DatatoolTk.getLabelWithValue("message.cells_updated", count)
+         );
+         dataUpdated();
+      }
+      else
+      {
+         JOptionPane.showMessageDialog(this, 
+            DatatoolTk.getLabel("find.not_found"));
+      }
+   }
+
+   public void replaceAll(String search, String replacement, 
+      boolean isCaseSensitive, boolean isRegEx)
+   {
+      int count = 0;
+      CompoundEdit ce = new CompoundEdit();
+
+      for (int row = 0, rowCount = getRowCount(); row < rowCount; row++)
+      {
+         for (int column = 0, columnCount = getColumnCount();
+              column < columnCount; column++)
+         {
+            UndoableEdit edit = replaceAllInCell(row, column, search,
+               replacement, isCaseSensitive, isRegEx);
+
+            if (edit != null)
+            {
+               ce.addEdit(edit);
+               count++;
+            }
+         }
+      }
+
+      if (count > 0)
+      {
+         ce.end();
+         addUndoEvent(new UndoableEditEvent(this, ce));
+         JOptionPane.showMessageDialog(this, 
+            count == 1 ?
+            DatatoolTk.getLabel("message.one_cell_updated") :
+            DatatoolTk.getLabelWithValue("message.cells_updated", count)
+         );
+         dataUpdated();
+      }
+      else
+      {
+         JOptionPane.showMessageDialog(this, 
+            DatatoolTk.getLabel("find.not_found"));
+      }
+   }
+
+   public UndoableEdit replaceAllInCell(int row, int col, 
+     String search, String replacement, boolean isCaseSensitive,
+     boolean isRegEx)
+   {
+      String newText = null;
+      String oldText = db.getRow(row).get(col);
+
+      if (isRegEx)
+      {
+         Pattern pattern = isCaseSensitive ? Pattern.compile(search) :
+            Pattern.compile(search, Pattern.CASE_INSENSITIVE);
+
+         newText = pattern.matcher(oldText).replaceAll(replacement);
+      }
+      else
+      {
+         String matcherText = oldText;
+
+         if (!isCaseSensitive)
+         {
+            matcherText = matcherText.toLowerCase();
+         }
+
+         StringBuilder builder = new StringBuilder(matcherText.length());
+
+         int index;
+         int pos = 0;
+
+         int searchLength = search.length();
+
+         while ((index = matcherText.indexOf(search, pos)) != -1)
+         {
+            builder.append(oldText.substring(pos, index));
+            builder.append(replacement);
+            pos = index + searchLength;
+         }
+
+         if (pos < oldText.length())
+         {
+            builder.append(oldText.substring(pos));
+         }
+
+         newText = builder.toString();
+      }
+
+      return oldText.equals(newText) ? null : 
+         new UpdateCellEdit(this, row, col, newText);
    }
 
    public void requestNewColumnAfter()
