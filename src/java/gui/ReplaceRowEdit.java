@@ -4,9 +4,9 @@ import javax.swing.undo.*;
 
 import com.dickimawbooks.datatooltk.*;
 
-public class ReplaceEdit extends AbstractUndoableEdit
+public class ReplaceRowEdit extends AbstractUndoableEdit
 {
-   public ReplaceEdit(DatatoolDbPanel panel, 
+   public ReplaceRowEdit(DatatoolDbPanel panel, 
      int row, DatatoolRow newRow)
    {
       super();
@@ -17,7 +17,7 @@ public class ReplaceEdit extends AbstractUndoableEdit
       this.oldRow = panel.db.getRow(row);
 
       panel.db.replaceRow(row, newRow);
-
+      panel.dataUpdated();
    }
 
    public boolean canUndo() {return true;}
@@ -27,12 +27,14 @@ public class ReplaceEdit extends AbstractUndoableEdit
    {
       panel.setModified(true);
       panel.db.replaceRow(row, oldRow);
+      panel.dataUpdated();
    }
 
    public void redo() throws CannotRedoException
    {
       panel.setModified(true);
       panel.db.replaceRow(row, newRow);
+      panel.dataUpdated();
    }
 
    public String getPresentationName()

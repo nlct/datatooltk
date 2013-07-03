@@ -17,6 +17,14 @@ for (my $idx = 0; $idx < $rowCount; $idx++)
    push @row, "Entry $idx";
 }
 
-$db->insertRow($selectedRow+1, \@row);
+if ($selectedRow eq -1)
+{
+   $db->appendRow(\@row);
+}
+else
+{
+   #$db->insertRow($selectedRow+1, \@row);
+   $db->replaceRow($selectedRow, \@row);
+}
 
 1;

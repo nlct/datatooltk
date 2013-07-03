@@ -1,6 +1,7 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.io.*;
+import java.util.*;
 import java.util.regex.*;
 
 import org.xml.sax.*;
@@ -177,8 +178,24 @@ public class DatatoolPlugin implements Runnable
    }
 
    private void parseResult(CharSequence xml)
+     throws SAXException,IOException
    {
-System.out.println(xml);
+      XMLReader xr = XMLReaderFactory.createXMLReader();
+
+      PluginHandler handler = new PluginHandler(dbPanel);
+      xr.setContentHandler(handler);
+      xr.setErrorHandler(dbPanel.db.getErrorHandler());
+
+      StringReader reader = new StringReader(xml.toString());
+
+      try
+      {
+         xr.parse(new InputSource(reader));
+      }
+      finally
+      {
+         reader.close();
+      }
    }
 
    private File pluginFile;
@@ -205,7 +222,10 @@ class PluginHandler extends DefaultHandler
 
       if (localName.equals("row"))
       {
-         currentRow = new DatatoolRow();
+         currentRow = new DatatoolRow(dbPanel.db);
+
+         currentAction = attrs.getValue("action");
+         currentValue = attrs.getValue("value");
       }
       else if (localName.equals("entry"))
       {
@@ -220,7 +240,7 @@ class PluginHandler extends DefaultHandler
 
       try
       {
-         index = Integer.parseInteger(currentValue);
+         index = Integer.parseInt(currentValue);
       }
       catch (NumberFormatException e)
       {
@@ -244,6 +264,7 @@ class PluginHandler extends DefaultHandler
 
       if (localName.equals("row"))
       {
+System.out.println("row "+currentAction);
          if (currentAction.equals("insert"))
          {
             dbPanel.insertRow(getCurrentIndex(), currentRow);

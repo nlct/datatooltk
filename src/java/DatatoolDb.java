@@ -1100,7 +1100,9 @@ public class DatatoolDb
 
    public Object getValue(int rowIdx, int colIdx)
    {
-      String value = getRow(rowIdx).get(colIdx);
+      DatatoolRow row = getRow(rowIdx);
+
+      String value = row.get(colIdx);
 
       // What's the data type of this column?
 
@@ -1266,6 +1268,17 @@ public class DatatoolDb
    {
       row.setDatabase(this);
 
+      if (row.size() > headers.size())
+      {
+         // if new row is longer than current number of columns, add
+         // more columns
+
+         for (int i = row.size(); i < headers.size(); i++)
+         {
+            insertColumn(i);
+         }
+      }
+
       int n = data.size();
 
       if (rowIdx == n)
@@ -1289,7 +1302,28 @@ public class DatatoolDb
 
    public void replaceRow(int index, DatatoolRow newRow)
    {
-      data.set(index, newRow);
+      DatatoolRow oldRow = data.set(index, newRow);
+
+      if (newRow.size() < oldRow.size())
+      {
+         // if new row shorter than old row, pad it with values from old row
+
+         for (int i = newRow.size(); i < oldRow.size(); i++)
+         {
+            newRow.add(oldRow.get(i));
+         }
+      }
+      else if (newRow.size() > oldRow.size())
+      {
+         // if new row is longer than old row, add extra columns
+
+         for (int i = oldRow.size(); i < newRow.size(); i++)
+         {
+            insertColumn(i);
+         }
+      }
+
+
    }
 
    public void insertColumn(DatatoolColumn column)
@@ -1505,6 +1539,11 @@ public class DatatoolDb
       }
 
       return db;
+   }
+
+   public ErrorHandler getErrorHandler()
+   {
+      return settings.getErrorHandler();
    }
 
    private DatatoolSettings settings;

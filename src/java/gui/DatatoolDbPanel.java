@@ -581,7 +581,7 @@ public class DatatoolDbPanel extends JPanel
          new RemoveColumnEdit(this, table.getSelectedColumn())));
    }
 
-   public void insertRow(DatatoolRow row, int index)
+   public void insertRow(int index, DatatoolRow row)
    {
       addUndoEvent(new UndoableEditEvent(this, 
          new InsertRowEdit(this, index, row)));
@@ -640,11 +640,13 @@ public class DatatoolDbPanel extends JPanel
    public void fireRowInserted(int rowIdx)
    {
       ((AbstractTableModel)table.getModel()).fireTableRowsInserted(rowIdx, rowIdx);
+      dataUpdated();
    }
 
    public void fireRowDeleted(int rowIdx)
    {
       ((AbstractTableModel)table.getModel()).fireTableRowsDeleted(rowIdx, rowIdx);
+      dataUpdated();
    }
 
    public void selectRow(int row)
