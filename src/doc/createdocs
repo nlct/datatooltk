@@ -146,8 +146,6 @@ unless (-d $helpsetdir)
 # XML::Parser? Let's just stick to utf8
 my $inputenc = 'utf8';
  
-use XML::Parser;
-
 my %section_levels =
 (
    'chapter'       => '1',

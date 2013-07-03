@@ -3,7 +3,7 @@ package com.dickimawbooks.datatooltk.gui;
 import java.io.*;
 import java.util.regex.*;
 
-import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.*;
 
 public class DatatoolPlugin implements Runnable
 {
@@ -49,7 +49,6 @@ public class DatatoolPlugin implements Runnable
    {
       ProcessBuilder pb = new ProcessBuilder(perl, pluginFile.getName());
       pb.directory(pluginFile.getParentFile());
-      pb.redirectErrorStream(true);
 
       BufferedReader reader = null;
       PrintWriter writer = null;
@@ -60,10 +59,7 @@ public class DatatoolPlugin implements Runnable
 
          writer = new PrintWriter(process.getOutputStream());
 
-         writer.println(dbPanel.getRowCount());
-         writer.println(dbPanel.getColumnCount());
-         writer.println(dbPanel.getSelectedRow());
-         writer.println(dbPanel.getSelectedColumn());
+         writeData(writer);
 
          writer.println("--EOF--");
 
@@ -72,11 +68,23 @@ public class DatatoolPlugin implements Runnable
          reader = new BufferedReader(
             new InputStreamReader(process.getInputStream()));
 
-
          String line;
 
          while ((line = reader.readLine()) != null)
          {
+System.out.println(line);
+         }
+
+         reader.close();
+
+         reader = new BufferedReader(
+            new InputStreamReader(process.getErrorStream()));
+
+         String errMess = "";
+
+         while ((line = reader.readLine()) != null)
+         {
+            errMess += line+"\n";
          }
 
          reader.close();
@@ -86,7 +94,8 @@ public class DatatoolPlugin implements Runnable
          if (exitCode != 0)
          {
             DatatoolGuiResources.error(dbPanel,
-               DatatoolTk.getLabelWithValue("error.plugin.exit_code", exitCode));
+               DatatoolTk.getLabelWithValues("error.plugin.exit_code", 
+                 ""+exitCode, errMess));
          }
 
       }
@@ -97,6 +106,69 @@ public class DatatoolPlugin implements Runnable
 
    }
 
+   private void writeData(PrintWriter writer)
+   {
+      writer.println("<datatooltkplugin"
+         +" selectedrow=\""
+         +dbPanel.getSelectedRow()
+         +"\""
+         +" selectedcolumn=\""
+         +dbPanel.getSelectedColumn()
+         +"\""
+         +" name=\""
+         +encodeXml(dbPanel.getName())
+         +"\""
+         +">");
+
+      writer.println("<headers>");
+
+      int numCols = dbPanel.getColumnCount();
+
+      for (int i = 0; i < numCols; i++)
+      {
+         DatatoolHeader header = dbPanel.db.getHeader(i);
+
+         writer.println("<header>");
+         writer.println("<label>"+encodeXml(header.getKey())+"</label>");
+         writer.println("<title>"+encodeXml(header.getTitle())+"</title>");
+         writer.println("<type>"+header.getType()+"</type>");
+         writer.println("</header>");
+      }
+
+      writer.println("</headers>");
+
+      writer.println("<rows>");
+
+      for (int i = 0, n = dbPanel.getRowCount(); i < n; i++)
+      {
+         DatatoolRow row = dbPanel.db.getRow(i);
+
+         writer.println("<row>");
+
+         for (int j = 0; j < numCols; j++)
+         {
+            writer.println("<entry>"+encodeXml(row.get(j))+"</entry>");
+         }
+
+         writer.println("</row>");
+      }
+
+      writer.println("</rows>");
+
+      writer.println("</datatooltkplugin>");
+   }
+
+   private String encodeXml(String string)
+   {
+      return string.replaceAll("\\&", "&amp;").replaceAll("\"", "&quot;")
+         .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+   }
+
+   private String decodeXml(String string)
+   {
+      return string.replaceAll("\\&gt;", ">").replaceAll("\\&lt;", "<")
+         .replaceAll("\\&quot;", "\"").replaceAll("\\&amp;", "\\&");
+   }
 
    private File pluginFile;
    private String name, perl;
