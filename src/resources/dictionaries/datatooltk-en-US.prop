@@ -375,6 +375,7 @@ probsoln.answer=Answer
 # Undo/Redo
 undo.cell_edit=Cell Edit
 undo.header_edit=Header Edit
+undo.header_type=Change Header Type
 undo.edit_name=Edit Database Name
 undo.add_row=Add Row
 undo.add_column=Add Column

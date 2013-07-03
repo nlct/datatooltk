@@ -20,6 +20,7 @@ public class DatatoolDb
       this.settings = settings;
       headers = new Vector<DatatoolHeader>();
       data = new Vector<DatatoolRow>();
+      headerUpdateListeners = new Vector<HeaderUpdateListener>();
    }
 
    public DatatoolDb(DatatoolSettings settings, int rows, int cols)
@@ -27,6 +28,7 @@ public class DatatoolDb
       this.settings = settings;
       headers = new Vector<DatatoolHeader>(cols);
       data = new Vector<DatatoolRow>(rows);
+      headerUpdateListeners = new Vector<HeaderUpdateListener>();
    }
 
    public DatatoolDb(DatatoolSettings settings, int cols)
@@ -34,6 +36,17 @@ public class DatatoolDb
       this.settings = settings;
       headers = new Vector<DatatoolHeader>(cols);
       data = new Vector<DatatoolRow>();
+      headerUpdateListeners = new Vector<HeaderUpdateListener>();
+   }
+
+   public void addHeaderUpdateListener(HeaderUpdateListener listener)
+   {
+      headerUpdateListeners.add(listener);
+   }
+
+   public boolean removeHeaderUpdateListener(HeaderUpdateListener listener)
+   {
+      return headerUpdateListeners.remove(listener);
    }
 
    public static DatatoolDb load(DatatoolSettings settings,
@@ -1055,6 +1068,16 @@ public class DatatoolDb
       return TYPE_STRING;
    }
 
+   public void fireHeaderUpdate(int headerIndex, int oldType, int newType)
+   {
+      if (oldType == newType) return;
+
+      for (HeaderUpdateListener listener : headerUpdateListeners)
+      {
+         listener.headerTypeChanged(headerIndex, oldType, newType);
+      }
+   }
+
    public void setValue(int rowIdx, int colIdx, String value)
    {
       data.get(rowIdx).setCell(colIdx, value);
@@ -1072,12 +1095,15 @@ public class DatatoolDb
          return;
       }
 
-      switch (header.getType())
+      int oldType = header.getType();
+
+      switch (oldType)
       {
          case TYPE_UNKNOWN:
          case TYPE_INTEGER:
             // All other types override unknown and int
             header.setType(type);
+            fireHeaderUpdate(colIdx, oldType, type);
          break;
          case TYPE_CURRENCY:
             // string overrides currency
@@ -1085,6 +1111,7 @@ public class DatatoolDb
             if (type == TYPE_STRING)
             {
                header.setType(type);
+               fireHeaderUpdate(colIdx, oldType, type);
             }
          break;
          case TYPE_REAL:
@@ -1092,6 +1119,7 @@ public class DatatoolDb
             if (type == TYPE_STRING || type == TYPE_CURRENCY)
             {
                header.setType(type);
+               fireHeaderUpdate(colIdx, oldType, type);
             }
          break;
          // nothing overrides string
@@ -1563,6 +1591,8 @@ public class DatatoolDb
    private boolean sortAscending = true;
 
    private boolean sortCaseSensitive = false;
+
+   private Vector<HeaderUpdateListener> headerUpdateListeners;
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;

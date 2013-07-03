@@ -15,6 +15,7 @@ import javax.swing.text.BadLocationException;
 import com.dickimawbooks.datatooltk.*;
 
 public class DatatoolDbPanel extends JPanel
+   implements HeaderUpdateListener
 {
    public DatatoolDbPanel(DatatoolGUI gui, DatatoolDb db)
    {
@@ -24,6 +25,8 @@ public class DatatoolDbPanel extends JPanel
       this.gui = gui;
       setName(db.getName());
       buttonTabComponent = new ButtonTabComponent(this);
+
+      db.addHeaderUpdateListener(this);
 
       initTable();
 
@@ -761,6 +764,13 @@ public class DatatoolDbPanel extends JPanel
       gui.updateTools();
    }
 
+   public void headerTypeChanged(int headerIndex, int oldType, int newType)
+   {
+      addUndoEvent(new UndoableEditEvent(this, 
+         new UpdateHeaderTypeEdit(this, headerIndex, db.getHeader(headerIndex),
+           oldType, newType)));
+   }
+
    public void updateColumnHeader(int column)
    {
       TableColumn tableColumn 
@@ -775,6 +785,11 @@ public class DatatoolDbPanel extends JPanel
 
    public void updateColumnHeaders()
    {
+      updateColumnHeaders(true);
+   }
+
+   public void updateColumnHeaders(boolean adjustWidths)
+   {
       TableColumnModel model = table.getTableHeader().getColumnModel();
 
       for (int i = 0, n = db.getColumnCount(); i < n; i++)
@@ -785,8 +800,11 @@ public class DatatoolDbPanel extends JPanel
          column.setHeaderValue(header.getTitle());
          column.setIdentifier(header.getKey());
 
-         column.setPreferredWidth(Math.max(column.getPreferredWidth(),
-              gui.getCellWidth(header.getType())));
+         if (adjustWidths)
+         {
+            column.setPreferredWidth(Math.max(column.getPreferredWidth(),
+                gui.getCellWidth(header.getType())));
+         }
       }
 
       if (sp.getColumnHeader() != null)
