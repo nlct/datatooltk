@@ -40,6 +40,19 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
          }
       }
 
+      // Have new columns been inserted?
+
+      if (newTypes.length > oldTypes.length)
+      {
+         int n = newTypes.length-oldTypes.length;
+
+         newHeaders = new DatatoolHeader[n];
+
+         for (int i = 0; i < n; i++)
+         {
+            newHeaders[i] = panel.db.getHeader(oldTypes.length+i);
+         }
+      }
    }
 
    public boolean canUndo() {return true;}
@@ -55,6 +68,14 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
          for (int i = 0; i < oldTypes.length; i++)
          {
             panel.db.getHeader(i).setType(oldTypes[i]);
+         }
+      }
+
+      if (newHeaders != null)
+      {
+         for (int i = newTypes.length-1; i >= oldTypes.length; i--)
+         {
+            panel.db.removeColumn(i);
          }
       }
 
@@ -74,6 +95,14 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
          }
       }
 
+      if (newHeaders != null)
+      {
+         for (int i = oldTypes.length; i < newTypes.length; i++)
+         {
+            panel.db.insertColumn(i);
+         }
+      }
+
       panel.dataUpdated();
    }
 
@@ -88,4 +117,6 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
    private DatatoolRow newRow, oldRow;
    private static final String name = DatatoolTk.getLabel("undo.replace_row");
    private DatatoolDbPanel panel;
+
+   private DatatoolHeader[] newHeaders;
 }
