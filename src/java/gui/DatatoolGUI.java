@@ -576,10 +576,6 @@ public class DatatoolGUI extends JFrame
                {
                   DatatoolGuiResources.error(null, e);
                }
-               catch (InterruptedException e)
-               {
-                  DatatoolGuiResources.error(null, e);
-               }
             }
          });
       }

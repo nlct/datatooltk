@@ -5,7 +5,7 @@ import java.util.regex.*;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 
-public class DatatoolPlugin
+public class DatatoolPlugin implements Runnable
 {
    public DatatoolPlugin(File pluginFile)
    {
@@ -27,9 +27,9 @@ public class DatatoolPlugin
    }
 
    public void process(DatatoolDbPanel dbPanel)
-    throws IOException,InterruptedException
+      throws IOException
    {
-      String perl = dbPanel.getPerl();
+      perl = dbPanel.getPerl();
 
       if (perl == null || perl.isEmpty())
       {
@@ -37,55 +37,63 @@ public class DatatoolPlugin
             DatatoolTk.getLabel("error.plugin.no_perl"));
       }
 
+      this.dbPanel = dbPanel;
+
+      Thread thread = new Thread(this);
+
+      thread.start();
+      thread = null;
+   }
+
+   public void run()
+   {
       ProcessBuilder pb = new ProcessBuilder(perl, pluginFile.getName());
       pb.directory(pluginFile.getParentFile());
-
-      Process process = pb.start();
+      pb.redirectErrorStream(true);
 
       BufferedReader reader = null;
-      PrintWriter writer = null;
+      BufferedWriter writer = null;
 
       try
       {
+         Process process = pb.start();
+
          reader = new BufferedReader(
             new InputStreamReader(process.getInputStream()));
 
-         writer = new PrintWriter(process.getOutputStream());
+         writer = new BufferedWriter(
+            new OutputStreamWriter(process.getOutputStream()));
 
          String line;
 
          while ((line = reader.readLine()) != null)
          {
-            if (!processLine(line, writer, dbPanel))
+            if (!processLine(line, writer))
             {
                break;
             }
          }
-      }
-      finally
-      {
-         if (reader != null)
+
+         reader.close();
+         writer.close();
+
+         int exitCode = process.waitFor();
+
+         if (exitCode != 0)
          {
-            reader.close();
+            DatatoolGuiResources.error(dbPanel,
+               DatatoolTk.getLabelWithValue("error.plugin.exit_code", exitCode));
          }
 
-         if (writer != null)
-         {
-            writer.close();
-         }
       }
-
-      int exitCode = process.exitValue();
-
-      if (exitCode != 0)
+      catch (Exception e)
       {
-         DatatoolGuiResources.error(dbPanel,
-            DatatoolTk.getLabelWithValue("error.plugin.exit_code", exitCode));
+         DatatoolGuiResources.error(dbPanel, e);
       }
+
    }
 
-   private boolean processLine(String line, PrintWriter writer, 
-      DatatoolDbPanel dbPanel)
+   private boolean processLine(String line, BufferedWriter writer)
      throws IOException
    {
       Matcher matcher = PATTERN_PLUGIN.matcher(line);
@@ -96,11 +104,11 @@ public class DatatoolPlugin
 
          if (statement.equals("QUERY"))
          {
-            queryStatement(matcher.group(2), writer, dbPanel);
+            queryStatement(matcher.group(2), writer);
          }
          else
          {
-            return commandStatement(matcher.group(2), writer, dbPanel);
+            return commandStatement(matcher.group(2), writer);
          }
       }
       else
@@ -112,8 +120,7 @@ public class DatatoolPlugin
       return true;
    }
 
-   private boolean commandStatement(String command, PrintWriter writer, 
-      DatatoolDbPanel dbPanel)
+   private boolean commandStatement(String command, BufferedWriter writer)
      throws IOException
    {
       if (command.equals("EXIT"))
@@ -127,35 +134,38 @@ public class DatatoolPlugin
       }
    }
 
-   private void queryStatement(String query, PrintWriter writer, 
-      DatatoolDbPanel dbPanel)
+   private void queryStatement(String query, BufferedWriter writer)
    throws IOException
    {
       if (query.equals("ROW COUNT"))
       {
-         writer.println(dbPanel.getRowCount());
+         writer.write(dbPanel.getRowCount()+"\n");
       }
       else if (query.equals("COLUMN COUNT"))
       {
-         writer.println(dbPanel.getColumnCount());
+         writer.write(dbPanel.getColumnCount()+"\n");
       }
       else if (query.equals("SELECTED ROW"))
       {
-         writer.println(dbPanel.getSelectedRow());
+         writer.write(dbPanel.getSelectedRow()+"\n");
       }
       else if (query.equals("SELECTED COLUMN"))
       {
-         writer.println(dbPanel.getSelectedColumn());
+         writer.write(dbPanel.getSelectedColumn()+"\n");
       }
       else
       {
          throw new IOException(DatatoolTk.getLabelWithValue(
             "error.plugin.unknown_query", query));
       }
+
+      writer.flush();
    }
 
    private File pluginFile;
-   private String name;
+   private String name, perl;
+
+   private DatatoolDbPanel dbPanel;
 
    private static final Pattern PATTERN_PLUGIN 
       = Pattern.compile("PLUGIN (QUERY|COMMAND) ([\\w\\s]+):>>");
