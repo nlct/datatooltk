@@ -215,4 +215,17 @@ sub getEntry{
   return $row[$colIndex];
 }
 
+sub insertRow{
+  my $self = shift;
+
+  print "<row>\n";
+
+  foreach my $entry (@_)
+  {
+     print "<entry>$entry</entry>\n";
+  }
+
+  print "</row>\n";
+}
+
 1;
