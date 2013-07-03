@@ -14,6 +14,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
+import com.dickimawbooks.datatooltk.gui.DatatoolPlugin;
 
 public class DatatoolSettings extends Properties
 {
@@ -899,6 +900,16 @@ public class DatatoolSettings extends Properties
       return DICT_DIR + RESOURCE;
    }
 
+   public void setPerl(String perlExe)
+   {
+      setProperty("perl", perlExe);
+   }
+
+   public String getPerl()
+   {
+      return getProperty("perl");
+   }
+
    public void setDefaults()
    {
       setSeparator(',');
@@ -910,6 +921,7 @@ public class DatatoolSettings extends Properties
       setWipePassword(true);
       setStartUp(STARTUP_HOME);
       setTeXMapping(false);
+      setPerl("perl");
 
       setTeXMap('\\', "\\textbackslash ");
       setTeXMap('$', "\\$");
@@ -957,15 +969,20 @@ public class DatatoolSettings extends Properties
 
       if (propertiesPath != null)
       {
-         userList = propertiesPath.listFiles(new FilenameFilter()
-         {
-            public boolean accept(File directory, String name)
-            {
-               return name.toLowerCase().endsWith(".xml");
-            }
-         });
+         File templatesDir = new File(propertiesPath, "templates");
 
-         num += userList.length;
+         if (templatesDir.exists() && templatesDir.isDirectory())
+         {
+            userList = templatesDir.listFiles(new FilenameFilter()
+            {
+               public boolean accept(File directory, String name)
+               {
+                  return name.toLowerCase().endsWith(".xml");
+               }
+            });
+
+            num += userList.length;
+         }
       }
 
       Template[] templates = new Template[num];
@@ -977,6 +994,52 @@ public class DatatoolSettings extends Properties
       }
 
       return templates;
+   }
+
+   public DatatoolPlugin[] getPlugins()
+     throws java.net.URISyntaxException
+   {
+      File dir = new File(DatatoolTk.class.getResource(PLUGIN_DIR).toURI());
+
+      File[] mainList = dir.listFiles(new FilenameFilter()
+      {
+         public boolean accept(File directory, String name)
+         {
+            return name.toLowerCase().endsWith(".pl");
+         }
+      });
+
+      File[] userList = null;
+
+      int num = mainList.length;
+
+      if (propertiesPath != null)
+      {
+         File pluginsDir = new File(propertiesPath, "plugins");
+
+         if (pluginsDir.exists() && pluginsDir.isDirectory())
+         {
+            userList = pluginsDir.listFiles(new FilenameFilter()
+            {
+               public boolean accept(File directory, String name)
+               {
+                  return name.toLowerCase().endsWith(".pl");
+               }
+            });
+
+            num += userList.length;
+         }
+      }
+
+      DatatoolPlugin[] plugins = new DatatoolPlugin[num];
+
+      for (int i = 0; i < num; i++)
+      {
+         plugins[i] = new DatatoolPlugin(i < mainList.length ?
+            mainList[i] : userList[i-mainList.length]);
+      }
+
+      return plugins;
    }
 
    private ErrorHandler errorHandler;
@@ -1009,6 +1072,8 @@ public class DatatoolSettings extends Properties
    public static final String DICT_DIR = "/resources/dictionaries/";
 
    public static final String TEMPLATE_DIR = "/resources/templates/";
+
+   public static final String PLUGIN_DIR = "/resources/plugins/";
 
    public static final String RESOURCE = "datatooltk";
 

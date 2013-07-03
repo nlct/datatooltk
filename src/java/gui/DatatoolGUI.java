@@ -275,6 +275,11 @@ public class DatatoolGUI extends JFrame
          "tools", "shuffle", this, toolBar);
       toolsM.add(shuffleItem);
 
+      pluginsM = DatatoolGuiResources.createJMenu("tools.plugins");
+      toolsM.add(pluginsM);
+
+      initPlugins();
+
       JMenu helpM = DatatoolGuiResources.createJMenu("help");
       mbar.add(helpM);
 
@@ -529,6 +534,57 @@ public class DatatoolGUI extends JFrame
       updateUndoRedoItems(panel);
    }
 
+   private void initPlugins()
+   {
+      try
+      {
+         plugins = settings.getPlugins();
+      }
+      catch (URISyntaxException e)
+      {
+         DatatoolGuiResources.error(this, e);
+         return;
+      }
+
+      for (int i = 0; i < plugins.length; i++)
+      {
+         JMenuItem item = new JMenuItem(plugins[i].toString());
+         pluginsM.add(item);
+         item.setActionCommand(""+i);
+
+         item.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent evt)
+            {
+               DatatoolDbPanel dbPanel 
+                  = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+               if (dbPanel == null) return;
+
+               try
+               {
+                  int index = Integer.parseInt(evt.getActionCommand());
+
+                  DatatoolPlugin plugin = plugins[index];
+
+                  plugin.process(dbPanel);
+               }
+               catch (NumberFormatException e)
+               {
+               }
+               catch (IOException e)
+               {
+                  DatatoolGuiResources.error(null, e);
+               }
+               catch (InterruptedException e)
+               {
+                  DatatoolGuiResources.error(null, e);
+               }
+            }
+         });
+      }
+   }
+
    public void actionPerformed(ActionEvent evt)
    {
       String action = evt.getActionCommand();
@@ -744,7 +800,9 @@ public class DatatoolGUI extends JFrame
 
    public void menuSelected(MenuEvent evt)
    {
-      if (evt.getSource() == recentM)
+      Object source = evt.getSource();
+
+      if (source == recentM)
       {
          recentM.removeAll();
 
@@ -1166,6 +1224,9 @@ public class DatatoolGUI extends JFrame
       findCellItem.setEnabled(enable);
       findNextItem.setEnabled(enable && !findCellDialog.getSearchText().isEmpty());
       replaceItem.setEnabled(enable);
+
+      pluginsM.setEnabled(enable && plugins.length > 0 
+        && settings.getPerl() != null);
    }
 
    public Font getCellFont()
@@ -1211,7 +1272,7 @@ public class DatatoolGUI extends JFrame
 
    private ScrollToolBar toolBar;
 
-   private JMenu recentM;
+   private JMenu recentM, pluginsM;
 
    private JMenuItem undoItem, redoItem, editCellItem, 
       addColumnAfterItem, addRowAfterItem,
@@ -1231,4 +1292,6 @@ public class DatatoolGUI extends JFrame
    private FindCellDialog findCellDialog;
 
    private ReplaceAllDialog replaceAllDialog;
+
+   private DatatoolPlugin[] plugins;
 }

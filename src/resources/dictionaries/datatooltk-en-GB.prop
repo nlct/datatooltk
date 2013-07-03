@@ -123,6 +123,8 @@ tools.sort=Sort...
 tools.sort.mnemonic=S
 tools.shuffle=Shuffle
 tools.shuffle.mnemonic=H
+tools.plugins=Plugins
+tools.plugins.mnemonic=P
 
 # Help menu
 help=Help
@@ -534,6 +536,11 @@ error.no_templates=No templates found.
 error.template.misplaced_tag='$1' tag must be inside '$2' tag.
 error.template.wrong_end_tag=Mismatched closing tag '$1' found.
 error.template.missing_tag=Missing '$1' tag.
+error.plugin.no_perl=You need to specify the path to the perl executable to run a plugin
+error.plugin.exit_code=Plugin terminated with exit code $1.
+error.plugin.unknown_message=Unknown plugin message '$1'.
+error.plugin.unknown_query=Unknown plugin query '$1'.
+error.plugin.unknown_command=Unknown plugin command '$1'.
 
 # Warning messages
 warning.title=Warning

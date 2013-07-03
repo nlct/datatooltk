@@ -1096,7 +1096,7 @@ public class DatatoolTk
 
    private static boolean guiMode = false;
 
-   public static final String appVersion = "0.2b";
+   public static final String appVersion = "0.3b";
    public static final String appName = "datatooltk";
    public static final String appDate = "2013-07-02";
 

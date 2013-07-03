@@ -1376,6 +1376,11 @@ public class DatatoolDb
       return settings.parseCurrency(text);
    }
 
+   public DatatoolSettings getSettings()
+   {
+      return settings;
+   }
+
    public int getSortColumn()
    {
       return sortColumn;

@@ -888,6 +888,11 @@ public class DatatoolDbPanel extends JPanel
       return table.getValueAt(row, column);
    }
 
+   public String getPerl()
+   {
+      return db.getSettings().getPerl();
+   }
+
    protected DatatoolDb db;
 
    protected RowHeaderComponent rowHeaderComponent;
