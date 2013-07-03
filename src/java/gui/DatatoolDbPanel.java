@@ -15,7 +15,6 @@ import javax.swing.text.BadLocationException;
 import com.dickimawbooks.datatooltk.*;
 
 public class DatatoolDbPanel extends JPanel
-   implements HeaderUpdateListener
 {
    public DatatoolDbPanel(DatatoolGUI gui, DatatoolDb db)
    {
@@ -25,8 +24,6 @@ public class DatatoolDbPanel extends JPanel
       this.gui = gui;
       setName(db.getName());
       buttonTabComponent = new ButtonTabComponent(this);
-
-      db.addHeaderUpdateListener(this);
 
       initTable();
 
@@ -762,13 +759,6 @@ public class DatatoolDbPanel extends JPanel
    public void updateTools()
    {
       gui.updateTools();
-   }
-
-   public void headerTypeChanged(int headerIndex, int oldType, int newType)
-   {
-      addUndoEvent(new UndoableEditEvent(this, 
-         new UpdateHeaderTypeEdit(this, headerIndex, db.getHeader(headerIndex),
-           oldType, newType)));
    }
 
    public void updateColumnHeader(int column)

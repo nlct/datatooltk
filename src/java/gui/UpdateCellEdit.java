@@ -17,7 +17,12 @@ public class UpdateCellEdit extends AbstractUndoableEdit
       this.newText = newText;
       this.oldText = panel.db.getRow(row).get(col);
 
+      header = panel.db.getHeader(col);
+      this.oldType = header.getType();
+
       panel.db.setValue(row, col, newText);
+
+      this.newType = header.getType();
 
       if (DatatoolDb.checkForVerbatim(newText))
       {
@@ -33,14 +38,28 @@ public class UpdateCellEdit extends AbstractUndoableEdit
    public void undo() throws CannotUndoException
    {
       panel.setModified(true);
-      panel.db.setValue(row, col, oldText);
+      panel.db.getRow(row).set(col, oldText);
+      header.setType(oldType);
+
+      if (oldType != newType)
+      {
+         panel.updateColumnHeader(col);
+      }
+
       panel.selectCell(row, col);
    }
 
    public void redo() throws CannotRedoException
    {
       panel.setModified(true);
-      panel.db.setValue(row, col, newText);
+      panel.db.getRow(row).set(col, newText);
+      header.setType(newType);
+
+      if (oldType != newType)
+      {
+         panel.updateColumnHeader(col);
+      }
+
       panel.selectCell(row, col);
    }
 
@@ -49,7 +68,8 @@ public class UpdateCellEdit extends AbstractUndoableEdit
       return name;
    }
 
-   private int row, col;
+   private DatatoolHeader header;
+   private int row, col, oldType, newType;
    private String newText, oldText;
    private static final String name = DatatoolTk.getLabel("undo.cell_edit");
    private DatatoolDbPanel panel;
