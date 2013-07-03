@@ -17,6 +17,6 @@ for (my $idx = 0; $idx < $rowCount; $idx++)
    push @row, "Entry $idx";
 }
 
-$db->insertRow(@row);
+$db->insertRow($selectedRow+1, \@row);
 
 1;

@@ -217,10 +217,47 @@ sub getEntry{
 
 sub insertRow{
   my $self = shift;
+  my $rowIndex = shift;
+  my $row = shift;
 
-  print "<row>\n";
+  splice @rows, $rowIndex, 0, $row;
 
-  foreach my $entry (@_)
+  print "<row action=\"insert\" value=\"$rowIndex\">\n";
+
+  foreach my $entry (@{$row})
+  {
+     print "<entry>$entry</entry>\n";
+  }
+
+  print "</row>\n";
+}
+
+sub appendRow{
+  my $self = shift;
+  my $row = shift;
+
+  push @rows, $row;
+
+  print "<row action=\"append\" >\n";
+
+  foreach my $entry (@{$row})
+  {
+     print "<entry>$entry</entry>\n";
+  }
+
+  print "</row>\n";
+}
+
+sub replaceRow{
+  my $self = shift;
+  my $rowIndex = shift;
+  my $row = shift;
+
+  $rows[$rowIndex] = $row;
+
+  print "<row action=\"replace\" value=\"$rowIndex\">\n";
+
+  foreach my $entry (@{$row})
   {
      print "<entry>$entry</entry>\n";
   }

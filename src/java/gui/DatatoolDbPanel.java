@@ -362,6 +362,12 @@ public class DatatoolDbPanel extends JPanel
          new UpdateCellEdit(this, row, col, text)));
    }
 
+   public void replaceRow(int index, DatatoolRow row)
+   {
+      addUndoEvent(new UndoableEditEvent(this, 
+         new ReplaceRowEdit(this, index, row)));
+   }
+
    public void replaceAllInRow(int row, String search, 
      String replacement, boolean isCaseSensitive, boolean isRegEx)
    {
@@ -573,6 +579,20 @@ public class DatatoolDbPanel extends JPanel
    {
       addUndoEvent(new UndoableEditEvent(this, 
          new RemoveColumnEdit(this, table.getSelectedColumn())));
+   }
+
+   public void insertRow(DatatoolRow row, int index)
+   {
+      addUndoEvent(new UndoableEditEvent(this, 
+         new InsertRowEdit(this, index, row)));
+   }
+
+   public void appendRow(DatatoolRow row)
+   {
+      int index = getRowCount();
+
+      addUndoEvent(new UndoableEditEvent(this, 
+         new InsertRowEdit(this, index, row)));
    }
 
    public void insertNewRowAfter()

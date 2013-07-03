@@ -3,6 +3,9 @@ package com.dickimawbooks.datatooltk.gui;
 import java.io.*;
 import java.util.regex.*;
 
+import org.xml.sax.*;
+import org.xml.sax.helpers.*;
+
 import com.dickimawbooks.datatooltk.*;
 
 public class DatatoolPlugin implements Runnable
@@ -70,9 +73,11 @@ public class DatatoolPlugin implements Runnable
 
          String line;
 
+         StringBuffer xml = new StringBuffer();
+
          while ((line = reader.readLine()) != null)
          {
-System.out.println(line);
+            xml.append(line);
          }
 
          reader.close();
@@ -93,11 +98,12 @@ System.out.println(line);
 
          if (exitCode != 0)
          {
-            DatatoolGuiResources.error(dbPanel,
+            throw new IOException(
                DatatoolTk.getLabelWithValues("error.plugin.exit_code", 
                  ""+exitCode, errMess));
          }
 
+         parseResult(xml);
       }
       catch (Exception e)
       {
@@ -170,9 +176,117 @@ System.out.println(line);
          .replaceAll("\\&quot;", "\"").replaceAll("\\&amp;", "\\&");
    }
 
+   private void parseResult(CharSequence xml)
+   {
+System.out.println(xml);
+   }
+
    private File pluginFile;
    private String name, perl;
 
    private DatatoolDbPanel dbPanel;
 
+}
+
+class PluginHandler extends DefaultHandler
+{
+   public PluginHandler(DatatoolDbPanel panel)
+   {
+      super();
+      this.dbPanel = panel;
+      stack = new ArrayDeque<String>();
+   }
+
+   public void startElement(String uri, String localName, String qName,
+     Attributes attrs)
+     throws SAXException
+   {
+      stack.push(localName);
+
+      if (localName.equals("row"))
+      {
+         currentRow = new DatatoolRow();
+      }
+      else if (localName.equals("entry"))
+      {
+         currentBuffer = new StringBuffer();
+      }
+   }
+
+   private int getCurrentIndex()
+     throws SAXException
+   {
+      int index;
+
+      try
+      {
+         index = Integer.parseInteger(currentValue);
+      }
+      catch (NumberFormatException e)
+      {
+         throw new SAXException(e);
+      }
+
+      return index;
+   }
+
+   public void endElement(String uri, String localName, String qName)
+     throws SAXException
+   {
+      try
+      {
+         stack.pop();
+      }
+      catch (NoSuchElementException e)
+      {
+         throw new SAXException(e);
+      }
+
+      if (localName.equals("row"))
+      {
+         if (currentAction.equals("insert"))
+         {
+            dbPanel.insertRow(getCurrentIndex(), currentRow);
+         }
+         else if (currentAction.equals("replace"))
+         {
+            dbPanel.replaceRow(getCurrentIndex(), currentRow);
+         }
+         else if (currentAction.equals("append"))
+         {
+            dbPanel.appendRow(currentRow);
+         }
+
+         currentRow = null;
+         currentValue = null;
+         currentAction = null;
+      }
+      else if (localName.equals("entry"))
+      {
+         currentRow.add(currentBuffer.toString());
+         currentBuffer = null;
+      }
+   }
+
+   public void characters(char[] ch, int start, int length)
+      throws SAXException
+   {
+      String current = stack.peek();
+
+      if (current == null) return;
+
+      if (current.equals("entry"))
+      {
+         currentBuffer.append(ch, start, length);
+      }
+   }
+
+   private DatatoolDbPanel dbPanel;
+   private ArrayDeque<String> stack;
+
+   private DatatoolRow currentRow;
+   private String currentAction;
+   private String currentValue;
+
+   private StringBuffer currentBuffer;
 }

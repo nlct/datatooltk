@@ -27,6 +27,38 @@ public class InsertRowEdit extends AbstractUndoableEdit
       selectedIdx = panel.getSelectedRow();
 
       row = panel.db.insertRow(rowIdx);
+
+      init();
+   }
+
+   public InsertRowEdit(DatatoolDbPanel panel, int rowIdx, DatatoolRow row)
+   {
+      super();
+
+      this.panel = panel;
+      this.rowIdx = rowIdx;
+      this.row = row;
+
+      if (panel.getRowCount() == 0)
+      {
+         undoInfo = DatatoolTk.getLabelWithValue("info.no_rows",
+           DatatoolTk.getLabel("edit")+"->"
+             +DatatoolTk.getLabel("edit.row"));
+      }
+      else
+      {
+         undoInfo = "";
+      }
+
+      selectedIdx = panel.getSelectedRow();
+
+      panel.db.insertRow(rowIdx, this.row);
+
+      init();
+   }
+
+   private void init()
+   {
       panel.addRowButton();
       panel.fireRowInserted(rowIdx);
 

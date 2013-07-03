@@ -1287,6 +1287,11 @@ public class DatatoolDb
       }
    }
 
+   public void replaceRow(int index, DatatoolRow newRow)
+   {
+      data.set(index, newRow);
+   }
+
    public void insertColumn(DatatoolColumn column)
    {
       column.insertIntoData(headers, data);
