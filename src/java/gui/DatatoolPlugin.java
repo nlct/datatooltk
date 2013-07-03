@@ -88,7 +88,7 @@ public class DatatoolPlugin
       DatatoolDbPanel dbPanel)
      throws IOException
    {
-      Matcher matcher = PATTERN_QUERY.matcher(line);
+      Matcher matcher = PATTERN_PLUGIN.matcher(line);
 
       if (matcher.matches())
       {
