@@ -1055,21 +1055,19 @@ public class DatatoolDb
       return TYPE_STRING;
    }
 
-   public void setValue(int rowIdx, int colIdx, String value)
+   public int getDataType(int colIdx, String value)
    {
-      data.get(rowIdx).setCell(colIdx, value);
-
       DatatoolHeader header = headers.get(colIdx);
 
       // What's the data type of this value?
 
       int type = getType(value);
 
-      // If it's unknown, do nothing
+      // If it's unknown, return
 
       if (type == TYPE_UNKNOWN)
       {
-         return;
+         return type;
       }
 
       switch (header.getType())
@@ -1077,24 +1075,37 @@ public class DatatoolDb
          case TYPE_UNKNOWN:
          case TYPE_INTEGER:
             // All other types override unknown and int
-            header.setType(type);
-         break;
+            return type;
          case TYPE_CURRENCY:
             // string overrides currency
 
             if (type == TYPE_STRING)
             {
-               header.setType(type);
+               return type;
             }
          break;
          case TYPE_REAL:
             // string and currency override real
             if (type == TYPE_STRING || type == TYPE_CURRENCY)
             {
-               header.setType(type);
+               return type;
             }
          break;
          // nothing overrides string
+      }
+
+      return header.getType();
+   }
+
+   public void setValue(int rowIdx, int colIdx, String value)
+   {
+      data.get(rowIdx).setCell(colIdx, value);
+
+      int type = getDataType(colIdx, value);
+
+      if (type != TYPE_UNKNOWN)
+      {
+         headers.get(colIdx).setType(type);
       }
    }
 
@@ -1268,26 +1279,40 @@ public class DatatoolDb
    {
       row.setDatabase(this);
 
-      if (row.size() > headers.size())
+      int numCols = headers.size();
+
+      if (row.size() < numCols)
+      {
+         // If new row is shorter than current number of columns,
+         // pad out the row
+
+         for (int i = row.size(); i < numCols; i++)
+         {
+            row.add(new String());
+         }
+      }
+      else if (row.size() > numCols)
       {
          // if new row is longer than current number of columns, add
          // more columns
 
-         for (int i = row.size(); i < headers.size(); i++)
+         for (int i = numCols; i < row.size(); i++)
          {
             insertColumn(i);
          }
+
+         numCols = headers.size();
       }
 
-      int n = data.size();
+      int numRows = data.size();
 
-      if (rowIdx == n)
+      if (rowIdx == numRows)
       {
          data.add(row);
       }
-      else if (rowIdx > n)
+      else if (rowIdx > numRows)
       {
-         for (int i = n; i < rowIdx; i++)
+         for (int i = numRows; i < rowIdx; i++)
          {
             data.add(new DatatoolRow(this, headers.size()));
          }
@@ -1298,32 +1323,54 @@ public class DatatoolDb
       {
          data.add(rowIdx, row);
       }
+
+      for (int colIdx = 0, n = headers.size(); colIdx < n; colIdx++)
+      {
+         int type = getDataType(colIdx, row.get(colIdx));
+
+         if (type != TYPE_UNKNOWN)
+         {
+            headers.get(colIdx).setType(type);
+         }
+      }
    }
 
    public void replaceRow(int index, DatatoolRow newRow)
    {
       DatatoolRow oldRow = data.set(index, newRow);
 
-      if (newRow.size() < oldRow.size())
+      int n = headers.size();
+
+      if (newRow.size() < n)
       {
          // if new row shorter than old row, pad it with values from old row
 
-         for (int i = newRow.size(); i < oldRow.size(); i++)
+         for (int i = newRow.size(); i < n; i++)
          {
             newRow.add(oldRow.get(i));
          }
       }
-      else if (newRow.size() > oldRow.size())
+      else if (newRow.size() > n)
       {
          // if new row is longer than old row, add extra columns
 
-         for (int i = oldRow.size(); i < newRow.size(); i++)
+         for (int i = n; i < newRow.size(); i++)
          {
             insertColumn(i);
          }
+
+         n = headers.size();
       }
 
+      for (int colIdx = 0; colIdx < n; colIdx++)
+      {
+         int type = getDataType(colIdx, newRow.get(colIdx));
 
+         if (type != TYPE_UNKNOWN)
+         {
+            headers.get(colIdx).setType(type);
+         }
+      }
    }
 
    public void insertColumn(DatatoolColumn column)

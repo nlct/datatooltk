@@ -836,6 +836,11 @@ public class DatatoolDbPanel extends JPanel
 
    public void dataUpdated()
    {
+      dataUpdated(true);
+   }
+
+   public void dataUpdated(boolean adjustWidths)
+   {
       setModified(true);
       int rowIdx = getSelectedRow();
       int colIdx = getSelectedColumn();
@@ -850,7 +855,7 @@ public class DatatoolDbPanel extends JPanel
          selectCell(rowIdx, colIdx);
       }
 
-      updateColumnHeaders();
+      updateColumnHeaders(adjustWidths);
       repaint();
    }
 

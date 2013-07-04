@@ -24,7 +24,7 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
       }
 
       panel.db.replaceRow(row, newRow);
-      panel.dataUpdated();
+      panel.dataUpdated(false);
 
       newTypes = new int[panel.getColumnCount()];
 
@@ -79,7 +79,7 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
          }
       }
 
-      panel.dataUpdated();
+      panel.dataUpdated(false);
    }
 
    public void redo() throws CannotRedoException
@@ -99,11 +99,11 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
       {
          for (int i = oldTypes.length; i < newTypes.length; i++)
          {
-            panel.db.insertColumn(i);
+            panel.db.insertColumn(i, newHeaders[i]);
          }
       }
 
-      panel.dataUpdated();
+      panel.dataUpdated(false);
    }
 
    public String getPresentationName()
