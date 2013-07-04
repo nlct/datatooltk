@@ -4,20 +4,26 @@
   </header>
   <header>
     <label>Surname</label>
+    <type>0</type>
   </header>
   <header>
     <label>Forename</label>
+    <type>0</type>
   </header>
   <header>
     <label>Title</label>
+    <type>0</type>
   </header>
   <header>
     <label>Address</label>
+    <type>0</type>
   </header>
   <header>
     <label>Telephone</label>
+    <type>0</type>
   </header>
   <header>
     <label>Email</label>
+    <type>0</type>
   </header>
 </datatooltktemplate>
