@@ -135,6 +135,8 @@ sub doDbUpdate{
 
   $row[$colIndexes{Address}]=~s/\n/\\\\<br\/>/sg;
 
+  $db->startModifications;
+
   if ($selectedRow > -1)
   {
      $db->replaceRow($selectedRow, \@row);
@@ -145,6 +147,8 @@ sub doDbUpdate{
 
      $db->appendRow(\@row);
   }
+
+  $db->endModifications;
 
   exit;
 }
