@@ -17,10 +17,10 @@ public class ErrorPanel extends JPanel
    {
       super(new BorderLayout());
 
-      messageArea = createMessageArea();
-      stackTraceArea = createMessageArea();
+      messageArea = DatatoolGuiResources.createMessageArea();
+      stackTraceArea = DatatoolGuiResources.createMessageArea();
 
-      onlyMessageArea = createMessageArea();
+      onlyMessageArea = DatatoolGuiResources.createMessageArea();
 
       cardLayout = new CardLayout();
 
@@ -53,18 +53,6 @@ public class ErrorPanel extends JPanel
 
       add(buttonPanel, "East");
 
-   }
-
-   private JTextArea createMessageArea()
-   {
-      JTextArea area = new JTextArea(8, 30);
-      area.setWrapStyleWord(true);
-      area.setLineWrap(true);
-      area.setEditable(false);
-      area.setBorder(null);
-      area.setOpaque(false);
-
-      return area;
    }
 
    public synchronized void updateMessage(String message)

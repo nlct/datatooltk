@@ -257,6 +257,37 @@ public class DatatoolGuiResources
        return checkBox;
     }
 
+   public static JTextArea createMessageArea()
+   {
+      return createMessageArea(8, 30);
+   }
+
+   public static JTextArea createMessageArea(String label)
+   {
+      return createMessageArea(8, 30, label);
+   }
+
+   public static JTextArea createMessageArea(int rows, int cols, String label)
+   {
+      JTextArea area = createMessageArea(rows, cols);
+
+      area.setText(DatatoolTk.getLabel(label));
+
+      return area;
+   }
+
+   public static JTextArea createMessageArea(int rows, int cols)
+   {
+      JTextArea area = new JTextArea(rows, cols);
+      area.setWrapStyleWord(true);
+      area.setLineWrap(true);
+      area.setEditable(false);
+      area.setBorder(null);
+      area.setOpaque(false);
+
+      return area;
+   }
+
     public static JComponent createOkayCancelHelpPanel(
        ActionListener listener, DatatoolGUI gui, String helpId)
     {

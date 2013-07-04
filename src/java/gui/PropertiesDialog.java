@@ -396,6 +396,18 @@ public class PropertiesDialog extends JDialog
       helpsetLangLabel.setPreferredSize(dim);
       dictLangLabel.setPreferredSize(dim);
 
+      // Plugins tab
+
+      JComponent pluginsTab = addTab("plugins");
+
+      box = createNewRow(pluginsTab);
+      box.add(DatatoolGuiResources.createMessageArea("preferences.plugins.note"));
+
+      box = createNewRow(pluginsTab);
+      perlFileField = new FileField(this, "perl", fileChooser);
+      box.add(createLabel("preferences.plugins.perl", perlFileField));
+      box.add(perlFileField);
+
       getContentPane().add(
         DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "preferences"),
         BorderLayout.SOUTH);
@@ -468,15 +480,7 @@ public class PropertiesDialog extends JDialog
 
    private JTextArea createTextArea(String label)
    {
-      JTextArea textArea = new JTextArea(2, 40);
-
-      textArea.setText(DatatoolTk.getLabel(label));
-      textArea.setEditable(false);
-      textArea.setWrapStyleWord(true);
-      textArea.setLineWrap(true);
-      textArea.setOpaque(false);
-
-      return textArea;
+      return DatatoolGuiResources.createMessageArea(2, 40, label);
    }
 
    private JCheckBox createCheckBox(String parentLabel, String label)
@@ -579,6 +583,8 @@ public class PropertiesDialog extends JDialog
 
       helpsetLangBox.setSelectedItem(settings.getHelpSet());
       dictLangBox.setSelectedItem(settings.getDictionary());
+
+      perlFileField.setFileName(settings.getPerl());
 
       updateButtons();
 
@@ -849,6 +855,8 @@ public class PropertiesDialog extends JDialog
       settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
       settings.setDictionary(dictLangBox.getSelectedItem().toString());
 
+      settings.setPerl(perlFileField.getFileName());
+
       setVisible(false);
    }
 
@@ -863,7 +871,7 @@ public class PropertiesDialog extends JDialog
    private JCheckBox hasHeaderBox, wipeBox, mapTeXBox,
       hasSeedBox;
 
-   private FileField customFileField, latexFileField;
+   private FileField customFileField, latexFileField, perlFileField;
 
    private JFileChooser fileChooser;
 

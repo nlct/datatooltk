@@ -1825,6 +1825,18 @@ sub end_opt{
    my ($expat) = @_;
 }
 
+sub start_doublebackslash{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<tt>\\\\</tt>");
+
+   print TEXFD "\\cs{\\char`\\\\}";
+}
+
+sub end_doublebackslash{
+   my ($expat) = @_;
+}
+
 sub start_cs{
    my ($expat, %attrs) = @_;
 

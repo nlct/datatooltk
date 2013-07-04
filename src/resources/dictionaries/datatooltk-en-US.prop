@@ -181,7 +181,7 @@ preferences.sql.mnemonic=Q
 preferences.sql.host=Host: 
 preferences.sql.host.mnemonic=S
 preferences.sql.port=Port: 
-preferences.sql.port.mnemonic=P
+preferences.sql.port.mnemonic=T
 preferences.sql.prefix=Prefix: 
 preferences.sql.prefix.mnemonic=X
 preferences.sql.wipe=Wipe Password After Use
@@ -227,6 +227,11 @@ preferences.language.helpset=Manual Language:
 preferences.language.helpset.mnemonic=M 
 preferences.language.dictionary=GUI Language:
 preferences.language.dictionary.mnemonic=A
+preferences.plugins=Plugins
+preferences.plugins.mnemonic=P
+preferences.plugins.note=Perl and the Perl Tk module must be installed for plugins to work. If you have Perl installed but it's not on your path, you need to specify the full path to the Perl executable in the box below.
+preferences.plugins.perl=Perl
+preferences.plugins.perl.mnemonic=L
 
 # TeX mappings table
 texmap.character=Character

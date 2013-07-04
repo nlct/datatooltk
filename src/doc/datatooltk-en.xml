@@ -690,6 +690,52 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    </p>
    </example>
    </node>
+   <node tag="plugins" type="section" title="Plugins">
+   <p>
+   Plugins are usually associated with a<nbsp/>particular template 
+   (see <ref tag="templates"/>) and provide a<nbsp/>convenient way of
+   adding a<nbsp/>row of data to the currently selected database.
+   <b>Note:</b> you must have Perl installed to use the plugins (see 
+   <ref tag="preferences"/>).
+   </p>
+   <example>
+   <p>
+   Suppose you create a<nbsp/>new database using the <tt>people</tt>
+   template. This creates a<nbsp/>database with the following fields:
+   ID, Title, Surname, Forename, Address, Telephone and Email, as
+   illustrated in <ref tag="ex.people"/>.
+   </p>
+     <float type="figure" tag="ex.people" caption="Database Created From people Template">
+      <image scale="0.75" alt="Image of main window" src="images/peopletemplate.png" />
+     </float>
+   <p>
+   Having created this database, I<nbsp/>can just use the 
+   <menu tag="edit.row"/> menu to insert rows and then edit each entry,
+   but suppose I<nbsp/>want to automatically increment the associated ID
+   for each person. I<nbsp/>can do this using the <tt>people</tt> plugin 
+   that corresponds to this template via the <menu tag="tools.plugins"/> menu.
+   </p>
+   <p>
+   If a<nbsp/>row is currently selected, this plugin will allow you to edit
+   the data for that row. Otherwise, it will allow you to insert a<nbsp/>new
+   row. For a<nbsp/>new row of data, the <tt>people</tt> plugin will open
+   the dialog box shown in <ref tag="ex.peopleplugin"/>.
+   </p>
+     <float type="figure" tag="ex.peopleplugin" caption="The people Plugin Dialog">
+      <image scale="0.75" alt="Image of people dialog" src="images/peopleplugin.png" />
+     </float>
+   <p>
+   After entering the data, I<nbsp/>can click on <button tag="button.okay"/>
+   and a<nbsp/>new row of data is added to the database (see 
+   <ref tag="peoplepluginex1"/>). Note that the plugin has converted newline
+   characters in the address into <doublebackslash/>. The ID has automatically 
+   been inserted.
+   </p>
+     <float type="figure" tag="peoplepluginex1" caption="A New Row of Data">
+      <image scale="0.75" alt="Image of main window" src="images/peoplepluginex1.png" />
+     </float>
+   </example>
+   </node>
    <node tag="import" type="chapter" title="Importing Data">
    <p>
    Data can be imported from <acr tag="csv"/> files (see 
@@ -916,7 +962,9 @@ Password:
    <p>
    The <element>label</element> element contains the uniquely identifying header label.
    The <element>title</element> element contains the header title. If omitted, the
-   title is set to the label. The <element>type</element> element must be one of:
+   title is set to the label, unless there is an entry in the resource
+   dictionary file that matches <tt>plugin.</tt><meta>template name</meta><tt>.</tt><meta>label</meta>, 
+   in which case that property is used. The <element>type</element> element must be one of:
    <tt>-1</tt> (unknown type), <tt>0</tt> (string type), <tt>1</tt> (integer 
    type), <tt>2</tt> (real type) or <tt>3</tt> (currency type). If omitted the 
    type is set to <tt>-1</tt>.
@@ -974,7 +1022,7 @@ Password:
    following tabs:
    </p>
    <dl>
-    <dt><dict tag="preferences.general"/></dt>
+    <dt><button tag="preferences.general"/></dt>
     <dd>
      (<ref tag="prefgeneral"/>)
      <float type="figure" tag="prefgeneral" caption="General Tab" pos="htbp">
@@ -994,7 +1042,7 @@ Password:
      (equivalent to <opt tag="seed"/>).
      </p>
     </dd>
-    <dt><dict tag="preferences.csv"/></dt>
+    <dt><button tag="preferences.csv"/></dt>
     <dd>
      (<ref tag="prefcsv"/>)
      <float type="figure" tag="prefcsv" caption="CSV Tab" pos="htbp">
@@ -1011,7 +1059,7 @@ Password:
      <acr tag="csv"/> files have a<nbsp/>header row otherwise uncheck it.
      </p>
     </dd>
-    <dt><dict tag="preferences.sql"/></dt>
+    <dt><button tag="preferences.sql"/></dt>
     <dd>
      (<ref tag="prefsql"/>)
      <float type="figure" tag="prefsql" caption="SQL Tab" pos="htbp">
@@ -1034,7 +1082,7 @@ Password:
     box has been selected.
     </p>
     </dd>
-    <dt><dict tag="preferences.tex"/></dt>
+    <dt><button tag="preferences.tex"/></dt>
     <dd>
      (<ref tag="preftex"/>)
      <float type="figure" tag="preftex" caption="TeX Tab" pos="htbp">
@@ -1065,7 +1113,7 @@ Password:
     the ellipsis button next to the field to browse your filing system.
     </p>
     </dd>
-    <dt><dict tag="preferences.currencies"/></dt>
+    <dt><button tag="preferences.currencies"/></dt>
     <dd>
      (<ref tag="prefcurrencies"/>)
      <float type="figure" tag="prefcurrencies" caption="Currencies Tab" pos="htbp">
@@ -1080,7 +1128,7 @@ Password:
     <cs tag="DTLnewcurrencysymbol"/>.
     </p>
     </dd>
-    <dt><dict tag="preferences.display"/></dt>
+    <dt><button tag="preferences.display"/></dt>
     <dd>
      (<ref tag="prefdisplay"/>)
      <float type="figure" tag="prefdisplay" caption="Display Tab" pos="htbp">
@@ -1100,7 +1148,7 @@ Password:
     as required.
     </p>
     </dd>
-    <dt><dict tag="preferences.language"/></dt>
+    <dt><button tag="preferences.language"/></dt>
     <dd>
      (<ref tag="preflanguage"/>)
      <float type="figure" tag="preflanguage" caption="Language Tab" pos="htbp">
@@ -1114,6 +1162,21 @@ Password:
     <button tag="preferences.language.dictionary"/> drop-down 
     list. Note that you have to restart <app/> for these changes to take 
     effect.
+    </p>
+    </dd>
+    <dt><button tag="preferences.plugins"/></dt>
+    <dd>
+     (<ref tag="prefplugins"/>)
+     <float type="figure" tag="prefplugins" caption="Plugins Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the plugins tab of the preferences dialog box" src="images/pref-plugins.png" />
+     </float>
+    <p>
+    In order to use <app/> plugins, you must have Perl installed (and the
+    Perl Tk module). If the Perl executable is on your path, you can just
+    specify it as <tt>perl</tt> in the <button tag="preferences.plugins.perl"/>
+    field of the <dict tag="preferences.plugins"/> tab. If it's not on your
+    path, you will have to specify the full path name in this tab. You can
+    use the ellipsis button to browse your filing system.
     </p>
     </dd>
    </dl>
