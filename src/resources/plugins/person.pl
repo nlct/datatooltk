@@ -32,7 +32,10 @@ my $mw = MainWindow->new;
 
 my $nameFrame = $mw->Frame()->pack;
 
-$nameFrame->Label(-text => 'Title:')->pack(-side=>'left', -expand=>1);
+$nameFrame->Label
+  (
+    -text => &getWord('Title')
+  )->pack(-side=>'left', -expand=>1);
 
 my $titleEntry = $nameFrame->Entry
   (
@@ -41,13 +44,19 @@ my $titleEntry = $nameFrame->Entry
 
 $titleEntry->insert(0, $row[$colIndexes{Title}]);
 
-$nameFrame->Label(-text => 'Forename:')->pack(-side=>'left', -expand=>1);
+$nameFrame->Label
+  (
+    -text => &getWord('Forename')
+  )->pack(-side=>'left', -expand=>1);
 
 my $forenameEntry = $nameFrame->Entry()->pack(-side=>'left', -expand=>1);
 
 $forenameEntry->insert(0, $row[$colIndexes{Forename}]);
 
-$nameFrame->Label(-text => 'Surname:')->pack(-side=>'left', -expand=>1);
+$nameFrame->Label
+  (
+    -text => &getWord('Surname')
+  )->pack(-side=>'left', -expand=>1);
 
 my $surnameEntry = $nameFrame->Entry()->pack(-side=>'left', -expand=>1);
 
@@ -55,13 +64,19 @@ $surnameEntry->insert(0, $row[$colIndexes{Surname}]);
 
 my $contactFrame = $mw->Frame()->pack;
 
-$contactFrame->Label(-text=>'Email')->pack(-side=>'left', -expand=>1);
+$contactFrame->Label
+  (
+    -text=>&getWord('Email')
+  )->pack(-side=>'left', -expand=>1);
 
 my $emailEntry = $contactFrame->Entry()->pack(-side=>'left', -expand=>1);
 
 $emailEntry->insert(0, $row[$colIndexes{Email}]);
 
-$contactFrame->Label(-text=>'Telephone')->pack(-side=>'left', -expand=>1);
+$contactFrame->Label
+  (
+    -text=>&getWord('Telephone')
+  )->pack(-side=>'left', -expand=>1);
 
 my $telephoneEntry = $contactFrame->Entry()->pack(-side=>'left', -expand=>1);
 
@@ -69,7 +84,11 @@ $telephoneEntry->insert(0, $row[$colIndexes{Telephone}]);
 
 my $addressFrame = $mw->Frame()->pack();
 
-$addressFrame->Label(-text=>'Address')->pack(-side=>'left', -expand=>1);
+$addressFrame->Label
+  (
+    -text=>&getWord('Address')
+  )->pack(-side=>'left', -expand=>1);
+
 my $addressText = $addressFrame->Scrolled('Text', -width=>40, -height=>6)->pack();
 
 $addressText->Contents($row[$colIndexes{Address}]);
@@ -125,6 +144,10 @@ sub doDbUpdate{
   }
 
   exit;
+}
+
+sub getWord{
+  $db->getDictWord('plugin.person.'.shift)
 }
 
 1;

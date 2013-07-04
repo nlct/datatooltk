@@ -549,6 +549,15 @@ warning.title=Warning
 warning.verb_detected=Verbatim text has been detected. You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 warning.verb_detected_in_cell=Verbatim text has been detected in cell ($1,$2). You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 
+# Plugin labels
+plugin.person.ID=ID
+plugin.person.Surname=Surname
+plugin.person.Forename=Forename
+plugin.person.Title=Title
+plugin.person.Address=Address
+plugin.person.Telephone=Telephone
+plugin.person.Email=Email
+
 # Context labels in manual
 manual.title=Manual
 manual.figure=Figure

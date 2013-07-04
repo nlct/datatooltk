@@ -128,6 +128,9 @@ public class DatatoolPlugin implements Runnable
          +" name=\""
          +encodeXml(dbPanel.getName())
          +"\""
+         +" dict=\""
+         + DatatoolTk.getDictionaryUrl()
+         +"\""
          +">");
 
       writer.println("<headers>");

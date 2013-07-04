@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.Properties;
 import java.awt.Cursor;
 import java.net.URISyntaxException;
+import java.net.URL;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
@@ -350,6 +351,16 @@ public class DatatoolTk
       }
    }
 
+   public static String getDictionary()
+   {
+      return dict;
+   }
+
+   public static URL getDictionaryUrl()
+   {
+      return DatatoolTk.class.getResource(dict);
+   }
+
    public static void loadDictionary()
       throws IOException
    {
@@ -360,7 +371,7 @@ public class DatatoolTk
 
       try
       {
-         String dict = settings.getDictionaryLocation()+"-"
+         dict = settings.getDictionaryLocation()+"-"
              + settings.getDictionary()+".prop";
 
          in = DatatoolTk.class.getResourceAsStream(dict);
@@ -1116,6 +1127,8 @@ public class DatatoolTk
    private static String sort=null;
 
    private static String dbname = null;
+
+   private static String dict = null;
 
    private static DatatoolImport imp = null;
 

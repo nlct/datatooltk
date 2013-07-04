@@ -3,6 +3,7 @@
 package DatatoolTk;
 
 use XML::Parser;
+use LWP::Simple;
 
 my @elements;
 my @headers;
@@ -44,6 +45,12 @@ sub _initialise{
 
    $parser->parse($xml);
 
+   # Load dictionary if provided
+
+   if ($dbattrs->{dict})
+   {
+      &_parseDictionary($self, get $dbattrs->{dict});
+   }
 }
 
 sub _handle_start{
@@ -174,6 +181,22 @@ sub _handle_char{
          $row->[scalar(@$row)-1] .= $string;
       }
    }
+}
+
+sub _parseDictionary{
+   my $self = shift;
+   my $content = shift;
+
+   while ($content=~/^([\w\.]+)=(.*)$/mg)
+   {
+      $self->{$1} = $2;
+   }
+}
+
+sub getDictWord{
+   my $self = shift;
+
+   $self->{$_[0]};
 }
 
 sub selectedRow{
