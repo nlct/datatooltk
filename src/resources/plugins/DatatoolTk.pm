@@ -119,9 +119,18 @@ sub _handle_start{
          die "'$element' must be contained in 'row'\n";
       }
 
+       push @{$rows[$#rows]}, '';
+   }
+   elsif ($element eq 'br')
+   {
+      if ($#elements == -1 or $elements[$#elements] ne 'entry')
+      {
+         die "'$element' must be contained in 'entry'\n";
+      }
+
       my $row = $rows[$#rows];
 
-      push @{$row}, '';
+      $row->[scalar(@$row)-1] .= $string;
    }
    else
    {
@@ -134,7 +143,14 @@ sub _handle_start{
 sub _handle_end{
    my( $expat, $element ) = @_;
 
-   pop @elements;
+   my $currentElement = pop @elements;
+
+   if ($element ne $currentElement)
+   {
+      die "Mismatched end $element tag. (</$currentElement>
+expected)\n";
+   }
+
 }
 
 sub _handle_char{
@@ -153,9 +169,9 @@ sub _handle_char{
       }
       elsif ($element eq 'entry')
       {
-         my @row = @{$rows[$#rows]};
+         my $row = $rows[$#rows];
 
-         $row[$#row] .= $string;
+         $row->[scalar(@$row)-1] .= $string;
       }
    }
 }
@@ -182,6 +198,21 @@ sub columnCount{
   my $self = shift;
 
   return $#headers+1;
+}
+
+sub getColumnIndex{
+  my $self = shift;
+  my $label = shift;
+
+  for (my $idx = 0; $idx <= $#headers; $idx++)
+  {
+     if ($headers[$idx]->{label} eq $label)
+     {
+        return $idx;
+     }
+  }
+
+  return -1;
 }
 
 sub getColumnLabel{
@@ -213,6 +244,13 @@ sub getEntry{
   my @row = @{$rows[$rowIndex]};
 
   return $row[$colIndex];
+}
+
+sub getRow{
+  my $self = shift;
+  my $rowIndex = shift;
+
+  return $rows[$rowIndex];
 }
 
 sub insertRow{
@@ -263,6 +301,104 @@ sub replaceRow{
   }
 
   print "</row>\n";
+}
+
+sub maxForColumn{
+   my $self = shift;
+   my $colIdx = shift;
+   my $max;
+
+   # Is the column a string or numerical type?
+
+   if ($headers[$colIdx]->{type} le 0)
+   {
+     # string
+
+     $max = '';
+
+     foreach my $row (@rows)
+     {
+        $max = $row->[$colIdx] if ($row->[$colIdx] gt $max);
+     }
+   }
+   elsif ($headers[$colIdx]->{type} eq 3)
+   {
+     # currency
+
+     $max = 0;
+
+     foreach my $row (@rows)
+     {
+        my $value = $row->[$colIdx];
+
+        if ($value=~/(\d+|(?:\d*\.?\d+))/)
+        {
+           $value = $1;
+
+           $max = $value if ($value > $max);
+        }
+     }
+   }
+   else
+   {
+     $max = 0;
+
+     foreach my $row (@rows)
+     {
+        $max = $row->[$colIdx] if ($row->[$colIdx] > $max);
+     }
+   }
+
+   return $max
+}
+
+sub minForColumn{
+   my $self = shift;
+   my $colIdx = shift;
+   my $min;
+
+   # Is the column a string or numerical type?
+
+   if ($headers[$colIdx]->{type} le 0)
+   {
+     # string
+
+     $min = '';
+
+     foreach my $row (@rows)
+     {
+        $min = $row->[$colIdx] if ($row->[$colIdx] lt $min);
+     }
+   }
+   elsif ($headers[$colIdx]->{type} eq 3)
+   {
+     # currency
+
+     $min = 0;
+
+     foreach my $row (@rows)
+     {
+        my $value = $row->[$colIdx];
+
+        if ($value=~/(\d+|(?:\d*\.?\d+))/)
+        {
+           $value = $1;
+
+           $min = $value if ($value < $min);
+        }
+     }
+   }
+   else
+   {
+     $min = 0;
+
+     foreach my $row (@rows)
+     {
+        $min = $row->[$colIdx] if ($row->[$colIdx] < $min);
+     }
+   }
+
+   return $min
 }
 
 1;

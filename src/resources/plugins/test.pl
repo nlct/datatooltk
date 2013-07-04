@@ -12,9 +12,9 @@ my $selectedColumn = $db->selectedColumn();
 
 my @row = ();
 
-for (my $idx = 0; $idx < $rowCount+1; $idx++)
+for (my $idx = 0; $idx < $rowCount; $idx++)
 {
-   push @row, "Entry $idx";
+   push @row, $db->getColumnLabel($idx);
 }
 
 if ($selectedRow eq -1)
@@ -23,8 +23,8 @@ if ($selectedRow eq -1)
 }
 else
 {
-   #$db->insertRow($selectedRow+1, \@row);
-   $db->replaceRow($selectedRow, \@row);
+   $db->insertRow($selectedRow+1, \@row);
+   #$db->replaceRow($selectedRow, \@row);
 }
 
 1;

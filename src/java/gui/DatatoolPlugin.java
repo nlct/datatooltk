@@ -104,7 +104,10 @@ public class DatatoolPlugin implements Runnable
                  ""+exitCode, errMess));
          }
 
-         parseResult(xml);
+         if (xml.length() > 0)
+         {
+            parseResult(xml);
+         }
       }
       catch (Exception e)
       {
@@ -168,7 +171,7 @@ public class DatatoolPlugin implements Runnable
    private String encodeXml(String string)
    {
       return string.replaceAll("\\&", "&amp;").replaceAll("\"", "&quot;")
-         .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+         .replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>");
    }
 
    private String decodeXml(String string)
@@ -231,6 +234,10 @@ class PluginHandler extends DefaultHandler
       {
          currentBuffer = new StringBuffer();
       }
+      else if (localName.equals("br") && currentBuffer != null)
+      {
+         currentBuffer.append("\n");
+      }
    }
 
    private int getCurrentIndex()
@@ -264,7 +271,6 @@ class PluginHandler extends DefaultHandler
 
       if (localName.equals("row"))
       {
-System.out.println("row "+currentAction);
          if (currentAction.equals("insert"))
          {
             dbPanel.insertRow(getCurrentIndex(), currentRow);
