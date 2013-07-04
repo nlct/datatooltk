@@ -7,10 +7,11 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class TemplateHandler extends DefaultHandler
 {
-   public TemplateHandler(DatatoolDb db)
+   public TemplateHandler(DatatoolDb db, String templateName)
    {
       super();
       this.db = db;
+      this.templateName = templateName;
       stack = new ArrayDeque<String>();
       headerStack = new ArrayDeque<DatatoolHeader>();
    }
@@ -73,7 +74,17 @@ public class TemplateHandler extends DefaultHandler
 
             if (header.getTitle().isEmpty())
             {
-               header.setTitle(header.getKey());
+               // Is there a plugin dictionary entry associated with
+               // this key?
+
+               header.setTitle
+               (
+                  DatatoolTk.getLabelWithAlt
+                  (
+                    "plugin."+templateName+"."+header.getKey(),
+                    header.getKey()
+                  )
+               );
             }
 
             db.addColumn(header);
@@ -122,6 +133,8 @@ public class TemplateHandler extends DefaultHandler
 
 
    private DatatoolDb db;
+
+   private String templateName;
 
    private ArrayDeque<String> stack;
 

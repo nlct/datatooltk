@@ -1565,7 +1565,7 @@ public class DatatoolDb
          db = new DatatoolDb(settings);
          db.setName(templateFile.toString());
 
-         TemplateHandler handler = new TemplateHandler(db);
+         TemplateHandler handler = new TemplateHandler(db, templateFile.toString());
          xr.setContentHandler(handler);
          xr.setErrorHandler(settings.getErrorHandler());
 

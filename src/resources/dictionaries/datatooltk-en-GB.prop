@@ -550,13 +550,15 @@ warning.verb_detected=Verbatim text has been detected. You must remove this befo
 warning.verb_detected_in_cell=Verbatim text has been detected in cell ($1,$2). You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 
 # Plugin labels
-plugin.person.ID=ID
-plugin.person.Surname=Surname
-plugin.person.Forename=Forename
-plugin.person.Title=Title
-plugin.person.Address=Address
-plugin.person.Telephone=Telephone
-plugin.person.Email=Email
+plugin.people.ID=ID
+plugin.people.Surname=Surname
+plugin.people.Forename=Forename
+plugin.people.Title=Title
+plugin.people.Address=Address
+plugin.people.Telephone=Telephone
+plugin.people.Email=Email
+plugin.people.edit_entry=Edit Entry
+plugin.people.new_entry=New Entry
 
 # Context labels in manual
 manual.title=Manual

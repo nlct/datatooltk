@@ -30,6 +30,9 @@ if ($selectedRow > -1)
 
 my $mw = MainWindow->new;
 
+$mw->title($selectedRow > -1 ? 
+  &getWord("edit_entry") : &getWord("new_entry"));
+
 my $nameFrame = $mw->Frame()->pack;
 
 $nameFrame->Label
@@ -96,12 +99,12 @@ $addressText->Contents($row[$colIndexes{Address}]);
 my $buttonFrame = $mw->Frame()->pack;
 
 $buttonFrame->Button(
-    -text    => 'Cancel',
+    -text    => $db->getDictWord('button.cancel'),
     -command => sub { exit },
 )->pack(-side=>'left', -expand=>1);
 
 $buttonFrame->Button(
-    -text    => 'Okay',
+    -text    => $db->getDictWord('button.okay'),
     -command => \&doDbUpdate,
 )->pack(-side=>'left', -expand=>1);
 
@@ -147,7 +150,7 @@ sub doDbUpdate{
 }
 
 sub getWord{
-  $db->getDictWord('plugin.person.'.shift)
+  $db->getDictWord('plugin.people.'.shift)
 }
 
 1;
