@@ -12,7 +12,7 @@ my $selectedColumn = $db->selectedColumn();
 
 my @row = ();
 
-for (my $idx = 0; $idx < $rowCount; $idx++)
+for (my $idx = 0; $idx < $rowCount+1; $idx++)
 {
    push @row, "Entry $idx";
 }

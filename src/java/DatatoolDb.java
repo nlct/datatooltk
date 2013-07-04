@@ -1003,14 +1003,7 @@ public class DatatoolDb
 
    public DatatoolHeader getHeader(int colIdx)
    {
-      if (colIdx >= headers.size())
-      {
-         return null;
-      }
-      else
-      {
-         return headers.get(colIdx);
-      }
+      return headers.get(colIdx);
    }
 
    public int getColumnType(int colIdx)
@@ -1380,7 +1373,9 @@ public class DatatoolDb
 
    public DatatoolHeader insertColumn(int colIdx)
    {
-      return insertColumn(colIdx, new DatatoolHeader());
+      String defName = DatatoolTk.getLabelWithValue(
+         "default.field", (colIdx+1));
+      return insertColumn(colIdx, new DatatoolHeader(defName, defName));
    }
 
    public DatatoolHeader insertColumn(int colIdx, DatatoolHeader header)

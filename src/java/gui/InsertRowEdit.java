@@ -163,14 +163,6 @@ public class InsertRowEdit extends AbstractUndoableEdit
          }
       }
 
-      if (newHeaders != null)
-      {
-         for (int i = oldTypes.length; i < newTypes.length; i++)
-         {
-            panel.db.insertColumn(i, newHeaders[i]);
-         }
-      }
-
       panel.dataUpdated(typesChanged);
       panel.setInfo(redoInfo);
    }
