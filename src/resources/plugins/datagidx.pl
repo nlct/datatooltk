@@ -117,17 +117,34 @@ $frame->Label
    -text=>&getWord('Parent'),
  )->pack(-side=>'left', -expand=>1);
 
-my @labels = $db->getColumn($colIndexes{Label}, $selectedRow);
+# Don't allow user to select a parent that has this as its parent
 
-unshift @labels, '';
+my @allowedParents = ('');
+
+for (my $idx = 0; $idx < $db->rowCount; $idx++)
+{
+   my $thisRow = $db->getRow($idx);
+
+   my $thisLabel = $thisRow->[$colIndexes{Label}];
+
+   if ($thisLabel ne $row[$colIndexes{Label}]
+   and $thisRow->[$colIndexes{Parent}] ne $row[$colIndexes{Label}])
+   {
+      push @allowedParents, $thisLabel;
+   }
+}
 
 my $parent = $row[$colIndexes{Parent}];
 
 $frame->Optionmenu
 (
-  -options=>\@labels,
+  -options=>\@allowedParents,
   -variable=>\$parent
 )->pack(-side=>'left', -expand=>1);
+
+my @labels = $db->getColumn($colIndexes{Label}, $selectedRow);
+
+unshift @labels, '';
 
 $frame->Label
  (
