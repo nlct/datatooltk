@@ -276,6 +276,36 @@ sub getRow{
   return $rows[$rowIndex];
 }
 
+sub getColumn{
+  my $self = shift;
+  my $colIndex = shift;
+  my $excludeRowIndex = shift;
+
+  my @column = ();
+
+  for (my $idx = 0; $idx <= $#rows; $idx++)
+  {
+     unless ($idx == $excludeRowIndex)
+     {
+        push @column, $rows[$idx]->[$colIndex];
+     }
+  }
+
+  @column
+}
+
+sub startModifications{
+   my $self = shift;
+
+   print "<datatooltk>";
+}
+
+sub endModifications{
+   my $self = shift;
+
+   print "</datatooltk>";
+}
+
 sub insertRow{
   my $self = shift;
   my $rowIndex = shift;

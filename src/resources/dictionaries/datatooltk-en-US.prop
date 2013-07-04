@@ -565,6 +565,29 @@ plugin.people.Email=Email
 plugin.people.edit_entry=Edit Entry
 plugin.people.new_entry=New Entry
 
+plugin.datagidx.edit_entry=Edit Entry
+plugin.datagidx.new_entry=New Entry
+plugin.datagidx.Label=Label
+plugin.datagidx.Name=Name
+plugin.datagidx.Text=Text
+plugin.datagidx.Parent=Parent
+plugin.datagidx.Child=Child
+plugin.datagidx.Description=Description
+plugin.datagidx.Symbol=Symbol
+plugin.datagidx.Long=Long
+plugin.datagidx.Short=Short
+plugin.datagidx.See=See
+plugin.datagidx.SeeAlso=See Also
+plugin.datagidx.Plural=Plural
+plugin.datagidx.ShortPlural=Short Plural
+plugin.datagidx.LongPlural=Long Plural
+plugin.datagidx.Sort=Sort
+plugin.datagidx.Location=Location (Reserved)
+plugin.datagidx.CurrentLocation=Current Location (Reserved)
+plugin.datagidx.FirstId=First ID (Reserved)
+plugin.datagidx.Used=Used (Reserved)
+plugin.datagidx.crossref=Cross Reference
+
 # Context labels in manual
 manual.title=Manual
 manual.figure=Figure
