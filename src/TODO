@@ -1,4 +1,7 @@
 TODO List
 =========
 
+* Find out why the table column model sometimes throws an ArrayIndexOutOfBoundsException
+  when a plugin adds a new row.
+
 * Add syntax highlighting to the cell editor?

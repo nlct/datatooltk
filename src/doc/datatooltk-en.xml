@@ -735,6 +735,86 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
       <image scale="0.75" alt="Image of main window" src="images/peoplepluginex1.png" />
      </float>
    </example>
+   <example>
+   <p>
+   The <sty>datagidx</sty> package creates its own custom database 
+   to store terms, symbols and acronyms. The <tt>datagidx</tt> template
+   will create a<nbsp/>database that contains <sty>datagidx</sty>'s require 
+   fields. This has a<nbsp/>lot of fields, some of which are reserved for
+   <sty>datagidx</sty>'s private use. The <tt>datagidx</tt> plugin, 
+   available via the <menu tag="tools.plugins"/> menu, provides 
+   a<nbsp/>convenient interface to add or edit entries. If no row is selected,
+   the plugin will create a<nbsp/>new row. If a<nbsp/>row is selected,
+   the plugin will allow you to edit the row.
+   </p>
+   <p>
+   The new database (created via <menu tag="file.new_from_template"/>) is
+   shown in <ref tag="datagidxplugin1"/>. Once this database has been
+   created, the <tt>datagidx</tt> plugin will open the dialog box shown in
+   <ref tag="datagidxplugin2"/>.
+   </p>
+     <float type="figure" tag="datagidxplugin1" caption="A Database Created From the datagidx Template">
+      <image scale="0.75" alt="Image of main window" src="images/datagidxplugin1.png" />
+     </float>
+     <float type="figure" tag="datagidxplugin2" caption="The datagidx Plugin Dialog">
+      <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin2.png" />
+     </float>
+   <p>
+   Since many of the fields are often duplicated (for example, the 
+   <tt>Name</tt> field is often the same as the <tt>Text</tt> field)
+   if you first enter the name in the <button tag="plugin.datagidx.Name"/>
+   field, when you move the focus to another field, default entries will 
+   be added to most of the empty fields. For example, in 
+   <ref tag="datagidxplugin3"/> I<nbsp/>typed <dq>bird</dq> in the
+   <button tag="plugin.datagidx.Name"/> field and then moved the cursor to
+   the <button tag="plugin.datagidx.Description"> field. This automatically
+   filled in default values for the <button tag="plugin.datagidx.Label"/>,
+   <button tag="plugin.datagidx.Sort"/>,
+   <button tag="plugin.datagidx.Text"/>,
+   <button tag="plugin.datagidx.Short"/>,
+   <button tag="plugin.datagidx.Long"/>,
+   <button tag="plugin.datagidx.Plural"/>,
+   <button tag="plugin.datagidx.ShortPlural"/> and
+   <button tag="plugin.datagidx.LongPlural"/> fields.
+   Since this is the first entry, there are no options for the
+   <button tag="plugin.datagidx.Parent"/> and
+   <button tag="plugin.datagidx.See"/> fields.
+   </p>
+     <float type="figure" tag="datagidxplugin3" caption="Most Fields Are Auto-Filled From the Name Field">
+      <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin3.png" />
+     </float>
+   <p>
+   When I<nbsp/>click on <button tag="button.okay"/>, a<nbsp/>new row is
+   added to the database (see <ref tag="datagidxplugin4"/>).
+   </p>
+     <float type="figure" tag="datagidxplugin4" caption="New Row Added to the Database">
+      <image scale="0.75" alt="Image of main window" src="images/datagidxplugin4.png" />
+     </float>
+   <p>
+   If I<nbsp/>use the <tt>datagidx</tt> plugin to create a<nbsp/>new row,
+   there are now options available in the 
+   <button tag="plugin.datagidx.Parent"/> and 
+   <button tag="plugin.datagidx.See"/> fields 
+   (see <ref tag="datagidxplugin5.png"/>).
+   </p>
+     <float type="figure" tag="datagidxplugin5" caption="Parent and See Fields List Other Entry Labels">
+      <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin5.png" />
+     </float>
+   <p>
+   In <ref tag="datagidxplugin5"/> I<nbsp/>have set the parent to 
+   <tt>bird</tt>. When the new row is added, the plugin automatically adjusts
+   the <tt>bird</tt> to include the new <tt>duck</tt> label as one of its
+   children (see <ref tag="datagidxplugin6"/>).
+   </p>
+     <float type="figure" tag="datagidxplugin6" caption="Child Entry of Automatically Adjusted">
+      <image scale="0.75" alt="Image of main window" src="images/datagidxplugin6.png" />
+     </float>
+   <p>
+   <b>TODO:</b> (1) add an analogous command to <cs tag="newgidx"/> in datagidx
+   that will load the database from file; (2) add `SeeAlso' field to plugin
+   dialog.
+   </p>
+   </example>
    </node>
    <node tag="import" type="chapter" title="Importing Data">
    <p>

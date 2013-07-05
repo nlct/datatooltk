@@ -214,6 +214,8 @@ sub doDbUpdate{
    {
       # Find row corresponding to this value
 
+      my $theLabel = $row[$colIndexes{Label}];
+
       for (my $idx = 0; $idx < $rowCount; $idx++)
       {
          if ($parent eq $db->getEntry($idx, $colIndexes{Label}))
@@ -222,10 +224,10 @@ sub doDbUpdate{
 
             my $children = $parentRow->[$colIndexes{Child}];
 
-            unless ($children=~/(^|,)$parent(,|$)/)
+            unless ($children=~/(^|,)$theLabel(,|$)/)
             {
                $parentRow->[$colIndexes{Child}] =
-                   ($children ? "$children,$parent" : $parent);
+                   ($children ? "$children,$theLabel" : $theLabel);
             }
 
             $db->replaceRow($idx, $parentRow);
