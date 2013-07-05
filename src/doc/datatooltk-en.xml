@@ -767,7 +767,7 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    be added to most of the empty fields. For example, in 
    <ref tag="datagidxplugin3"/> I<nbsp/>typed <dq>bird</dq> in the
    <button tag="plugin.datagidx.Name"/> field and then moved the cursor to
-   the <button tag="plugin.datagidx.Description"> field. This automatically
+   the <button tag="plugin.datagidx.Description"/> field. This automatically
    filled in default values for the <button tag="plugin.datagidx.Label"/>,
    <button tag="plugin.datagidx.Sort"/>,
    <button tag="plugin.datagidx.Text"/>,
@@ -795,7 +795,7 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    there are now options available in the 
    <button tag="plugin.datagidx.Parent"/> and 
    <button tag="plugin.datagidx.See"/> fields 
-   (see <ref tag="datagidxplugin5.png"/>).
+   (see <ref tag="datagidxplugin5"/>).
    </p>
      <float type="figure" tag="datagidxplugin5" caption="Parent and See Fields List Other Entry Labels">
       <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin5.png" />
