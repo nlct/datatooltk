@@ -6,28 +6,27 @@ use DatatoolTk;
 
 my $db = DatatoolTk->new();
 
+my $rowCount    = $db->rowCount;
+my $columnCount = $db->columnCount;
+
 my $selectedRow = $db->selectedRow();
 
-my %colIndexes =
-(
-   'Label'      => $db->getColumnIndex('Label'),
-   'Name'       => $db->getColumnIndex('Name'),
-   'Text'       => $db->getColumnIndex('Text'),
-   'Parent'     => $db->getColumnIndex('Parent'),
-   'Child'      => $db->getColumnIndex('Child'),
-   'Description'=> $db->getColumnIndex('Description'),
-   'Symbol'     => $db->getColumnIndex('Symbol'),
-   'Long'       => $db->getColumnIndex('Long'),
-   'Short'      => $db->getColumnIndex('Short'),
-   'See'        => $db->getColumnIndex('See'),
-   'SeeAlso'    => $db->getColumnIndex('SeeAlso'),
-   'Plural'     => $db->getColumnIndex('Plural'),
-   'ShortPlural'=> $db->getColumnIndex('ShortPlural'),
-   'LongPlural' => $db->getColumnIndex('LongPlural'),
-   'Sort'       => $db->getColumnIndex('Sort')
-);
+my %colIndexes = ();
 
-my @row = ("") x $db->columnCount;
+foreach my $key (qw/Label Name Text Parent Child Description Symbol
+Long Short See SeeAlso Plural ShortPlural LongPlural Sort/)
+{
+   my $idx = $db->getColumnIndex($key);
+
+   if ($idx == -1)
+   {
+      die $db->getDictWord('plugin.error.missing_column', $key), "\n";
+   }
+
+   $colIndexes{$key} = $idx;
+}
+
+my @row = ("") x $columnCount;
 
 if ($selectedRow > -1)
 {
@@ -114,23 +113,41 @@ $frame = $mw->Frame()->pack;
 
 $frame->Label
  (
+   -text=>&getWord('Symbol')
+ )->pack(-side=>'left', -expand=>1);
+
+$entries{'Symbol'} = $frame->Entry
+ (
+ )->pack(-side=>'left', -expand=>1);
+
+$entries{'Symbol'}->insert(0, $row[$colIndexes{Symbol}]);
+
+$frame->Label
+ (
    -text=>&getWord('Parent'),
  )->pack(-side=>'left', -expand=>1);
 
-# Don't allow user to select a parent that has this as its parent
-
 my @allowedParents = ('');
+my @labels = ('');
 
-for (my $idx = 0; $idx < $db->rowCount; $idx++)
+my $theLabel = $row[$colIndexes{Label}];
+
+for (my $idx = 0; $idx < $rowCount; $idx++)
 {
    my $thisRow = $db->getRow($idx);
 
    my $thisLabel = $thisRow->[$colIndexes{Label}];
 
-   if ($thisLabel ne $row[$colIndexes{Label}]
-   and $thisRow->[$colIndexes{Parent}] ne $row[$colIndexes{Label}])
+   unless ($thisLabel eq $theLabel)
    {
-      push @allowedParents, $thisLabel;
+      push @labels, $thisLabel;
+
+      if (not $theLabel or ($thisRow->[$colIndexes{Parent}] ne $theLabel))
+      {
+         # Don't allow user to select an entry that has this as its parent
+
+         push @allowedParents, $thisLabel;
+      }
    }
 }
 
@@ -141,10 +158,6 @@ $frame->Optionmenu
   -options=>\@allowedParents,
   -variable=>\$parent
 )->pack(-side=>'left', -expand=>1);
-
-my @labels = $db->getColumn($colIndexes{Label}, $selectedRow);
-
-unshift @labels, '';
 
 $frame->Label
  (
@@ -201,7 +214,7 @@ sub doDbUpdate{
    {
       # Find row corresponding to this value
 
-      for (my $idx = 0; $idx < $db->rowCount; $idx++)
+      for (my $idx = 0; $idx < $rowCount; $idx++)
       {
          if ($parent eq $db->getEntry($idx, $colIndexes{Label}))
          {
@@ -262,12 +275,16 @@ sub nameValidate{
    $value=~s/\\[a-zA-Z]+\s*//g;
    $value=~s/[\{\}]//g;
 
-   foreach my $key (qw/Label Sort/)
+   unless ($entries{'Sort'}->get)
    {
-      unless ($entries{$key}->get)
-      {
-         $entries{$key}->insert(0, $value);
-      }
+      $entries{'Sort'}->insert(0, $value);
+   }
+
+   unless ($entries{'Label'}->get)
+   {
+      $value=~s/\s+//g;
+
+      $entries{'Label'}->insert(0, $value);
    }
 
    1;

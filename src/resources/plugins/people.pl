@@ -8,16 +8,21 @@ my $db = DatatoolTk->new();
 
 my $selectedRow = $db->selectedRow();
 
-my %colIndexes = 
-(
-   'ID' => $db->getColumnIndex('ID'),
-   'Surname' => $db->getColumnIndex('Surname'),
-   'Forename' => $db->getColumnIndex('Forename'),
-   'Title' => $db->getColumnIndex('Title'),
-   'Address' => $db->getColumnIndex('Address'),
-   'Telephone' => $db->getColumnIndex('Telephone'),
-   'Email' => $db->getColumnIndex('Email')
-);
+my %colIndexes = ();
+
+foreach my $key (qw/ID Surname Forename Title Address Telephone
+Email/)
+{
+   my $idx = $db->getColumnIndex($key);
+
+   if ($idx == -1)
+   {
+      die $db->getDictWord('plugin.error.missing_column', $key),
+"\n";
+   }
+
+   $colIndexes{$key} = $idx;
+}
 
 my @row = ("") x $db->columnCount;
 

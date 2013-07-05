@@ -544,7 +544,7 @@ error.template.misplaced_tag='$1' tag must be inside '$2' tag.
 error.template.wrong_end_tag=Mismatched closing tag '$1' found.
 error.template.missing_tag=Missing '$1' tag.
 error.plugin.no_perl=You need to specify the path to the perl executable to run a plugin
-error.plugin.exit_code=Plugin terminated with exit code $1\n$2.
+error.plugin.exit_code=Plugin terminated with exit code $1\n$2
 error.plugin.unknown_message=Unknown plugin message '$1'.
 error.plugin.unknown_query=Unknown plugin query '$1'.
 error.plugin.unknown_command=Unknown plugin command '$1'.
@@ -555,6 +555,9 @@ warning.verb_detected=Verbatim text has been detected. You must remove this befo
 warning.verb_detected_in_cell=Verbatim text has been detected in cell ($1,$2). You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 
 # Plugin labels
+
+plugin.error.missing_column=Can't find column labeled '$1'.
+
 plugin.people.ID=ID
 plugin.people.Surname=Surname
 plugin.people.Forename=Forename

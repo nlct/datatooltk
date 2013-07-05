@@ -137,7 +137,7 @@ sub _handle_start{
 
       my $row = $rows[$#rows];
 
-      $row->[scalar(@$row)-1] .= $string;
+      $row->[scalar(@$row)-1] .= "\n";
    }
    else
    {
@@ -195,8 +195,16 @@ sub _parseDictionary{
 
 sub getDictWord{
    my $self = shift;
+   my $key = shift;
 
-   $self->{$_[0]};
+   my $word = $self->{$key};
+
+   if ($#_ > -1)
+   {
+      $word=~s/\$(\d)/$_[$1-1]/g;
+   }
+
+   $word;
 }
 
 sub selectedRow{
