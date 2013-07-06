@@ -1206,6 +1206,40 @@ sub end_example{
    print TEXFD "\\end{example}";
 }
 
+sub start_seealso{
+   my ($expat, %attrs) = @_;
+
+   unless ($attrs{tags})
+   {
+      die "Element 'seealso' missing 'tags' attribute on line ",
+        $expat->current_line, "\n";
+   }
+
+   my @tags = split /,/, $attrs{tags};
+
+   my $seealso = &get_label('manual.seealso');
+
+   &handle_html("<p>$seealso<ul>");
+
+   print TEXFD "\n\n\\minisec{$seealso}\n";
+
+   print TEXFD "\\begin{itemize}\n";
+
+   foreach my $tag (@tags)
+   {
+      &handle_html("<li><ref>$tag</ref>");
+      print TEXFD "\\item \\nameref{$tag}\n";
+   }
+
+   print TEXFD "\\end{itemize}\n";
+
+   &handle_html('</ul>');
+}
+
+sub end_seealso{
+   my ($expat) = @_;
+}
+
 sub start_pre{
    my ($expat, %attrs) = @_;
 

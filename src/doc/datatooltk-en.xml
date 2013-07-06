@@ -263,11 +263,7 @@
    here's a<nbsp/>sample document:
    </p>
    <verbinput src="../tests/test-probsoln-doc.tex"/>
-   <p>
-   Related topics: <ref text="shuffling a database" tag="shuffle"/>,
-   <ref text="sorting and shuffling a database" tag="sortshuffle"/> and 
-   <ref text="importing probsoln datasets" tag="importprobsoln"/>.
-   </p>
+   <seealso tags="shuffle,sortshuffle,importprobsoln"/>
    </node>
    <node tag="gui" type="chapter" title="Graphical Mode">
      <p>
@@ -982,10 +978,7 @@ Password:
       <image scale="0.75" alt="Image of the main window" src="images/importps.png" />
      </float>
    </example>
-   <p>
-   Related topics: <ref text="shuffling a database" tag="shuffle"/> and
-   <ref text="sorting and shuffling a database" tag="sortshuffle"/>.
-   </p>
+   <seealso tags="shuffle,sortshuffle"/>
    </node>
    <node tag="templates" type="chapter" title="Templates">
    <p>
@@ -1020,6 +1013,7 @@ Password:
    Rows can now be added to this database using the <menu tag="edit.row"/>
    menu.
    </p>
+   <seealso tags="plugins"/>
    </node>
    <node tag="writingtemplates" type="section" title="Writing a Template File">
    <p>
