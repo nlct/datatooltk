@@ -3,19 +3,13 @@
    <label>Label</label>
  </header>
  <header>
-   <label>Location</label>
- </header>
- <header>
-   <label>CurrentLocation</label>
- </header>
- <header>
-   <label>FirstId</label>
- </header>
- <header>
    <label>Name</label>
  </header>
  <header>
    <label>Text</label>
+ </header>
+ <header>
+   <label>Sort</label>
  </header>
  <header>
    <label>Parent</label>
@@ -25,9 +19,6 @@
  </header>
  <header>
    <label>Description</label>
- </header>
- <header>
-   <label>Used</label>
  </header>
  <header>
    <label>Symbol</label>
@@ -54,6 +45,15 @@
    <label>LongPlural</label>
  </header>
  <header>
-   <label>Sort</label>
+   <label>Location</label>
+ </header>
+ <header>
+   <label>CurrentLocation</label>
+ </header>
+ <header>
+   <label>FirstId</label>
+ </header>
+ <header>
+   <label>Used</label>
  </header>
 </datatooltktemplate>
