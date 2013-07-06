@@ -210,6 +210,15 @@ sub doDbUpdate{
 
    $db->startModifications;
 
+   if ($selectedRow > -1)
+   {
+      $db->replaceRow($selectedRow, \@row);
+   }
+   else
+   {
+      $db->appendRow(\@row);
+   }
+
    if ($parent)
    {
       # Find row corresponding to this value
@@ -235,15 +244,6 @@ sub doDbUpdate{
             last;
          }
       }
-   }
-
-   if ($selectedRow > -1)
-   {
-      $db->replaceRow($selectedRow, \@row);
-   }
-   else
-   {
-      $db->appendRow(\@row);
    }
 
    $db->endModifications;

@@ -1011,9 +1011,8 @@ Password:
    </float>
    <p>
    Rows can now be added to this database using the <menu tag="edit.row"/>
-   menu.
+   menu or via corresponding plugins (see <ref tag="plugins"/>).
    </p>
-   <seealso tags="plugins"/>
    </node>
    <node tag="writingtemplates" type="section" title="Writing a Template File">
    <p>

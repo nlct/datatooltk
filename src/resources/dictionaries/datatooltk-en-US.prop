@@ -391,6 +391,7 @@ undo.remove_row=Remove Row
 undo.sort=Sort
 undo.shuffle=Shuffle
 undo.replace_row=Replace Row
+undo.plugin_action=Plugin '$1' action
 
 # Messages
 

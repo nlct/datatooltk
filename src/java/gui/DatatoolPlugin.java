@@ -188,7 +188,7 @@ public class DatatoolPlugin implements Runnable
    {
       XMLReader xr = XMLReaderFactory.createXMLReader();
 
-      PluginHandler handler = new PluginHandler(dbPanel);
+      PluginHandler handler = new PluginHandler(dbPanel, name);
       xr.setContentHandler(handler);
       xr.setErrorHandler(dbPanel.db.getErrorHandler());
 
@@ -201,6 +201,7 @@ public class DatatoolPlugin implements Runnable
       finally
       {
          reader.close();
+         dbPanel.cancelCompoundEdit();
       }
    }
 
@@ -213,10 +214,11 @@ public class DatatoolPlugin implements Runnable
 
 class PluginHandler extends DefaultHandler
 {
-   public PluginHandler(DatatoolDbPanel panel)
+   public PluginHandler(DatatoolDbPanel panel, String name)
    {
       super();
       this.dbPanel = panel;
+      this.pluginName = name;
       stack = new ArrayDeque<String>();
    }
 
@@ -240,6 +242,10 @@ class PluginHandler extends DefaultHandler
       else if (localName.equals("br") && currentBuffer != null)
       {
          currentBuffer.append("\n");
+      }
+      else if (localName.equals("<datatooltk>"))
+      {
+         dbPanel.startCompoundEdit();
       }
    }
 
@@ -296,6 +302,11 @@ class PluginHandler extends DefaultHandler
          currentRow.add(currentBuffer.toString());
          currentBuffer = null;
       }
+      else if (localName.equals("<datatooltk>"))
+      {
+         dbPanel.commitCompoundEdit(
+            DatatoolTk.getLabelWithValue("undo.plugin_action", pluginName));
+      }
    }
 
    public void characters(char[] ch, int start, int length)
@@ -319,4 +330,6 @@ class PluginHandler extends DefaultHandler
    private String currentValue;
 
    private StringBuffer currentBuffer;
+
+   private String pluginName;
 }

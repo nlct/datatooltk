@@ -166,10 +166,45 @@ public class DatatoolDbPanel extends JPanel
 
    public void addUndoEvent(UndoableEditEvent event)
    {
-      UndoableEdit edit = event.getEdit();
-      undoManager.addEdit(edit);
-      gui.updateUndoRedoItems(this, edit.getPresentationName(), null);
+      addUndoEdit(event.getEdit());
+   }
+
+   public void addUndoEdit(UndoableEdit edit)
+   {
+      if (compoundEdit == null)
+      {
+         undoManager.addEdit(edit);
+         gui.updateUndoRedoItems(this, edit.getPresentationName(), null);
+         setModified(true);
+      }
+      else
+      {
+         compoundEdit.addEdit(edit);
+      }
+   }
+
+   public void startCompoundEdit()
+   {
+      compoundEdit = new CompoundEdit();
+   }
+
+   public void commitCompoundEdit()
+   {
+      commitCompoundEdit(compoundEdit.getPresentationName());
+   }
+
+   public void commitCompoundEdit(String editName)
+   {
+      compoundEdit.end();
+      undoManager.addEdit(compoundEdit);
+      gui.updateUndoRedoItems(this, editName, null);
       setModified(true);
+      compoundEdit = null;
+   }
+
+   public void cancelCompoundEdit()
+   {
+      compoundEdit = null;
    }
 
    public boolean canUndo()
@@ -297,15 +332,14 @@ public class DatatoolDbPanel extends JPanel
       }
 
       gui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      addUndoEvent(new UndoableEditEvent(this, new SortEdit(this)));
+      addUndoEdit(new SortEdit(this));
       gui.setCursor(Cursor.getDefaultCursor());
    }
 
    public void shuffleData(Random random)
    {
       gui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      addUndoEvent(new UndoableEditEvent(this, 
-         new ShuffleEdit(this, random)));
+      addUndoEdit(new ShuffleEdit(this, random));
       gui.setCursor(Cursor.getDefaultCursor());
    }
 
@@ -325,8 +359,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (header != null)
       {
-         addUndoEvent(new UndoableEditEvent(this, 
-            new UpdateHeaderEdit(this, colIdx, header)));
+         addUndoEdit(new UpdateHeaderEdit(this, colIdx, header));
       }
    }
 
@@ -358,14 +391,12 @@ public class DatatoolDbPanel extends JPanel
 
    public void updateCell(int row, int col, String text)
    {
-      addUndoEvent(new UndoableEditEvent(this, 
-         new UpdateCellEdit(this, row, col, text)));
+      addUndoEdit(new UpdateCellEdit(this, row, col, text));
    }
 
    public void replaceRow(int index, DatatoolRow row)
    {
-      addUndoEvent(new UndoableEditEvent(this, 
-         new ReplaceRowEdit(this, index, row)));
+      addUndoEdit(new ReplaceRowEdit(this, index, row));
    }
 
    public void replaceAllInRow(int row, String search, 
@@ -389,7 +420,7 @@ public class DatatoolDbPanel extends JPanel
       if (count > 0)
       {
          ce.end();
-         addUndoEvent(new UndoableEditEvent(this, ce));
+         addUndoEdit(ce);
          JOptionPane.showMessageDialog(this, 
             count == 1 ?
             DatatoolTk.getLabel("message.one_cell_updated") :
@@ -425,7 +456,7 @@ public class DatatoolDbPanel extends JPanel
       if (count > 0)
       {
          ce.end();
-         addUndoEvent(new UndoableEditEvent(this, ce));
+         addUndoEdit(ce);
          JOptionPane.showMessageDialog(this, 
             count == 1 ?
             DatatoolTk.getLabel("message.one_cell_updated") :
@@ -465,7 +496,7 @@ public class DatatoolDbPanel extends JPanel
       if (count > 0)
       {
          ce.end();
-         addUndoEvent(new UndoableEditEvent(this, ce));
+         addUndoEdit(ce);
          JOptionPane.showMessageDialog(this, 
             count == 1 ?
             DatatoolTk.getLabel("message.one_cell_updated") :
@@ -545,8 +576,7 @@ public class DatatoolDbPanel extends JPanel
          colIdx = db.getColumnCount();
       }
 
-      addUndoEvent(new UndoableEditEvent(this, 
-         new InsertColumnEdit(this, header, colIdx)));
+      addUndoEdit(new InsertColumnEdit(this, header, colIdx));
    }
 
    public void requestNewColumnBefore()
@@ -565,34 +595,29 @@ public class DatatoolDbPanel extends JPanel
          colIdx = 0;
       }
 
-      addUndoEvent(new UndoableEditEvent(this, 
-         new InsertColumnEdit(this, header, colIdx)));
+      addUndoEdit(new InsertColumnEdit(this, header, colIdx));
    }
 
    public void removeSelectedRow()
    {
-      addUndoEvent(new UndoableEditEvent(this, 
-         new RemoveRowEdit(this, table.getSelectedRow())));
+      addUndoEdit(new RemoveRowEdit(this, table.getSelectedRow()));
    }
 
    public void removeSelectedColumn()
    {
-      addUndoEvent(new UndoableEditEvent(this, 
-         new RemoveColumnEdit(this, table.getSelectedColumn())));
+      addUndoEdit(new RemoveColumnEdit(this, table.getSelectedColumn()));
    }
 
    public void insertRow(int index, DatatoolRow row)
    {
-      addUndoEvent(new UndoableEditEvent(this, 
-         new InsertRowEdit(this, index, row)));
+      addUndoEdit(new InsertRowEdit(this, index, row));
    }
 
    public void appendRow(DatatoolRow row)
    {
       int index = getRowCount();
 
-      addUndoEvent(new UndoableEditEvent(this, 
-         new InsertRowEdit(this, index, row)));
+      addUndoEdit(new InsertRowEdit(this, index, row));
    }
 
    public void insertNewRowAfter()
@@ -607,8 +632,7 @@ public class DatatoolDbPanel extends JPanel
          rowIdx = db.getRowCount();
       }
 
-      addUndoEvent(new UndoableEditEvent(this, 
-         new InsertRowEdit(this, rowIdx)));
+      addUndoEdit(new InsertRowEdit(this, rowIdx));
    }
 
    public void insertNewRowBefore()
@@ -623,8 +647,7 @@ public class DatatoolDbPanel extends JPanel
          rowIdx = 0;
       }
 
-      addUndoEvent(new UndoableEditEvent(this, 
-         new InsertRowEdit(this, rowIdx)));
+      addUndoEdit(new InsertRowEdit(this, rowIdx));
    }
 
    public void addRowButton()
@@ -763,14 +786,18 @@ public class DatatoolDbPanel extends JPanel
 
    public void updateColumnHeader(int column)
    {
-      TableColumn tableColumn 
-         = table.getTableHeader().getColumnModel().getColumn(column);
+      TableColumnModel model = table.getTableHeader().getColumnModel();
 
-      tableColumn.setHeaderValue(db.getHeader(column).getTitle());
-      tableColumn.setIdentifier(db.getHeader(column).getKey());
+      if (column < model.getColumnCount())
+      {
+         TableColumn tableColumn = model.getColumn(column);
 
-      sp.getColumnHeader().repaint();
-      table.repaint();
+         tableColumn.setHeaderValue(db.getHeader(column).getTitle());
+         tableColumn.setIdentifier(db.getHeader(column).getKey());
+
+         sp.getColumnHeader().repaint();
+         table.repaint();
+      }
    }
 
    public void updateColumnHeaders()
@@ -782,7 +809,7 @@ public class DatatoolDbPanel extends JPanel
    {
       TableColumnModel model = table.getTableHeader().getColumnModel();
 
-      for (int i = 0, n = db.getColumnCount(); i < n; i++)
+      for (int i = 0, n = getColumnCount(); i < n; i++)
       {
          TableColumn column = model.getColumn(i);
          DatatoolHeader header = db.getHeader(i);
@@ -813,7 +840,7 @@ public class DatatoolDbPanel extends JPanel
 
       model.addColumn(new TableColumn());
 
-      for (int i = index, n = db.getColumnCount(); i < n; i++)
+      for (int i = index, n = getColumnCount(); i < n; i++)
       {
          model.getColumn(i).setHeaderValue(db.getHeader(i).getTitle());
          model.getColumn(i).setIdentifier(db.getHeader(i).getKey());
@@ -824,14 +851,12 @@ public class DatatoolDbPanel extends JPanel
 
    public void moveColumn(int fromIndex, int toIndex)
    {
-      addUndoEvent(new UndoableEditEvent(this, 
-         new MoveColumnEdit(this, fromIndex, toIndex)));
+      addUndoEdit(new MoveColumnEdit(this, fromIndex, toIndex));
    }
 
    public void moveRow(int fromIndex, int toIndex)
    {
-      addUndoEvent(new UndoableEditEvent(this, 
-         new MoveRowEdit(this, fromIndex, toIndex)));
+      addUndoEdit(new MoveRowEdit(this, fromIndex, toIndex));
    }
 
    public void dataUpdated()
@@ -849,8 +874,8 @@ public class DatatoolDbPanel extends JPanel
 
       if (rowIdx != -1 && colIdx != -1)
       {
-         if (rowIdx > db.getRowCount()) rowIdx = db.getRowCount()-1;
-         if (colIdx > db.getColumnCount()) colIdx = db.getColumnCount()-1;
+         if (rowIdx > getRowCount()) rowIdx = db.getRowCount()-1;
+         if (colIdx > getColumnCount()) colIdx = db.getColumnCount()-1;
 
          selectCell(rowIdx, colIdx);
       }
@@ -904,8 +929,7 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
-      addUndoEvent(new UndoableEditEvent(this, 
-         new DbNameEdit(this, newName)));
+      addUndoEdit(new DbNameEdit(this, newName));
    }
 
    public void requestSelectedTab()
@@ -941,6 +965,8 @@ public class DatatoolDbPanel extends JPanel
    private JScrollPane sp;
 
    private UndoManager undoManager;
+
+   private CompoundEdit compoundEdit = null;
 
    private ButtonTabComponent buttonTabComponent;
 
@@ -1220,3 +1246,4 @@ class ButtonTabComponent extends JPanel
    private JLabel label;
    private JButton button;
 }
+
