@@ -3,14 +3,10 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.util.regex.*;
 
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-
 import com.dickimawbooks.datatooltk.io.*;
 import com.dickimawbooks.datatooltk.gui.*;
 
-public class DatatoolHeader extends TableColumn
+public class DatatoolHeader
 {
    public DatatoolHeader(DatatoolDb db)
    {
@@ -60,8 +56,6 @@ public class DatatoolHeader extends TableColumn
       }
 
       this.type = type;
-
-      setPreferredWidth(db.getSettings().getCellWidth(type));
    }
 
    public void setKey(String key)

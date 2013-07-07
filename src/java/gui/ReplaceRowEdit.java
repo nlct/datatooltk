@@ -18,7 +18,7 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
 
       oldTypes = new int[panel.getColumnCount()];
 
-      for (int i = 0, n = panel.getColumnCount(); i < n; i++)
+      for (int i = 0, n = oldTypes.length; i < n; i++)
       {
          oldTypes[i] = panel.db.getHeader(i).getType();
       }
@@ -30,7 +30,7 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
 
       typesChanged = false;
 
-      for (int i = 0, n = panel.getColumnCount(); i < n; i++)
+      for (int i = 0, n = newTypes.length; i < n; i++)
       {
          newTypes[i] = panel.db.getHeader(i).getType();
 
