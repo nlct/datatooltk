@@ -333,7 +333,7 @@ public class DatatoolGUI extends JFrame
             {
                DatatoolDbPanel panel = (DatatoolDbPanel)tab;
 
-               enableEditItems(panel.getSelectedRow(), panel.getSelectedColumn());
+               enableEditItems(panel.getModelSelectedRow(), panel.getModelSelectedColumn());
             }
          }
       });

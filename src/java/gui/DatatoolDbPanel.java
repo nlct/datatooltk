@@ -46,20 +46,23 @@ public class DatatoolDbPanel extends JPanel
    {
       undoManager = new UndoManager();
 
-      table = new JTable(new DatatoolDbTableModel(db, this));
+      table = new JTable(new DatatoolDbTableModel(db, this))
+      {
+         public Object getValueAt(int row, int column)
+         {
+            return db.getRow(convertRowIndexToModel(row))
+               .get(convertColumnIndexToModel(column));
+         }
+      };
+
+      table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
+         this));
 
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-      DbNumericalCellEditor editor = new DbNumericalCellEditor();
+      table.setDefaultEditor(Object.class, new DbNumericalCellEditor());
+      table.setDefaultRenderer(Object.class, new DatatoolCellRenderer(db));
 
-      table.setDefaultEditor(Number.class, editor);
-      // Use default renderer for currency (line may need wrapping
-      // to accommodate currency control sequences)
-      table.setDefaultRenderer(Integer.class, new DbNumericalCellRenderer());
-      table.setDefaultRenderer(Float.class, new DbNumericalCellRenderer());
-      table.setDefaultRenderer(String.class, new DbCellRenderer());
-      table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
-         this));
       table.setColumnSelectionAllowed(true);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -67,13 +70,13 @@ public class DatatoolDbPanel extends JPanel
        {
           public void mouseClicked(MouseEvent evt)
           {
-             int row = table.getSelectedRow();
-             int col = table.getSelectedColumn();
+             int viewRow = table.getSelectedRow();
+             int viewCol = table.getSelectedColumn();
 
-             rowHeaderComponent.updateRowSelection(row);
+             rowHeaderComponent.updateRowSelection(viewRow);
              table.getTableHeader().repaint();
 
-             if (row == -1 || col == -1)
+             if (viewRow == -1 || viewCol == -1)
              {
                 // nothing selected
 
@@ -81,7 +84,10 @@ public class DatatoolDbPanel extends JPanel
                 return;
              }
 
-             int type = db.getHeader(col).getType();
+             int modelRow = getModelSelectedRow();
+             int modelCol = getModelSelectedColumn();
+
+             int type = db.getHeader(modelCol).getType();
 
              setInfo(type == DatatoolDb.TYPE_STRING ?
                DatatoolTk.getLabel("info.view_or_edit") :
@@ -90,20 +96,22 @@ public class DatatoolDbPanel extends JPanel
              if (evt.getClickCount() == 2)
              {
                 if (type == DatatoolDb.TYPE_INTEGER
-                 || type == DatatoolDb.TYPE_REAL)
+                 || type == DatatoolDb.TYPE_REAL
+                 || type == DatatoolDb.TYPE_CURRENCY)
                 {
-                   if (table.editCellAt(row, col))
+                   if (table.editCellAt(viewRow, viewCol))
                    {
                       return;
                    }
                    else
                    {
                       DatatoolTk.debug(
-                        "Can't edit cell at col="+col+", row="+row);
+                        "Can't edit cell at (view) col="+viewCol
+                          +", row="+viewRow);
                    }
                 }
 
-                requestCellEditor(row, col);
+                requestCellEditor(modelRow, modelCol);
              }
           }
        });
@@ -134,13 +142,10 @@ public class DatatoolDbPanel extends JPanel
 
    protected void selectionUpdated()
    {
-      int col = table.getSelectedColumn();
-      int row = table.getSelectedRow();
-
-      rowHeaderComponent.updateRowSelection(row);
+      rowHeaderComponent.updateRowSelection(getViewSelectedRow());
       table.getTableHeader().repaint();
 
-      gui.enableEditItems(row, col);
+      gui.enableEditItems(getModelSelectedRow(), getModelSelectedColumn());
    }
 
    public void updateTableSettings()
@@ -154,14 +159,24 @@ public class DatatoolDbPanel extends JPanel
       rowHeaderComponent.revalidate();
    }
 
-   public int getSelectedRow()
+   public int getViewSelectedRow()
    {
       return table.getSelectedRow();
    }
 
-   public int getSelectedColumn()
+   public int getViewSelectedColumn()
    {
       return table.getSelectedColumn();
+   }
+
+   public int getModelSelectedRow()
+   {
+      return table.convertRowIndexToModel(table.getSelectedRow());
+   }
+
+   public int getModelSelectedColumn()
+   {
+      return table.convertColumnIndexToModel(table.getSelectedColumn());
    }
 
    public synchronized void addUndoEvent(UndoableEditEvent event)
@@ -319,7 +334,7 @@ public class DatatoolDbPanel extends JPanel
    {
       // If a column is selected, use that as the default
 
-      int colIdx = getSelectedColumn();
+      int colIdx = getModelSelectedColumn();
 
       if (colIdx > -1)
       {
@@ -345,7 +360,7 @@ public class DatatoolDbPanel extends JPanel
 
    public void requestSelectedHeaderEditor()
    {
-      int colIndex = table.getSelectedColumn();
+      int colIndex = getModelSelectedColumn();
 
       if (colIndex > -1)
       {
@@ -379,14 +394,14 @@ public class DatatoolDbPanel extends JPanel
 
    public void requestSelectedCellEdit()
    {
-      requestCellEditor(table.getSelectedRow(),
-           table.getSelectedColumn());
+      requestCellEditor(getModelSelectedRow(),
+           getModelSelectedColumn());
    }
 
    public void updateCell(String text)
    {
-      updateCell(table.getSelectedRow(),
-        table.getSelectedColumn(), text);
+      updateCell(getModelSelectedRow(),
+        getModelSelectedColumn(), text);
    }
 
    public void updateCell(int row, int col, String text)
@@ -569,7 +584,7 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
-      int colIdx = table.getSelectedColumn()+1;
+      int colIdx = getModelSelectedColumn()+1;
 
       if (colIdx == 0)
       {
@@ -588,7 +603,7 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
-      int colIdx = table.getSelectedColumn();
+      int colIdx = getModelSelectedColumn();
 
       if (colIdx < 0)
       {
@@ -600,12 +615,12 @@ public class DatatoolDbPanel extends JPanel
 
    public void removeSelectedRow()
    {
-      addUndoEdit(new RemoveRowEdit(this, table.getSelectedRow()));
+      addUndoEdit(new RemoveRowEdit(this, getModelSelectedRow()));
    }
 
    public void removeSelectedColumn()
    {
-      addUndoEdit(new RemoveColumnEdit(this, table.getSelectedColumn()));
+      addUndoEdit(new RemoveColumnEdit(this, getModelSelectedColumn()));
    }
 
    public synchronized void insertRow(int index, DatatoolRow row)
@@ -625,7 +640,7 @@ public class DatatoolDbPanel extends JPanel
       // insert new row after selected row or after last row if none
       // selected.
 
-      int rowIdx = table.getSelectedRow()+1;
+      int rowIdx = getModelSelectedRow()+1;
 
       if (rowIdx == 0)
       {
@@ -640,7 +655,7 @@ public class DatatoolDbPanel extends JPanel
       // insert new row before selected row or before first row if none
       // selected.
 
-      int rowIdx = table.getSelectedRow();
+      int rowIdx = getModelSelectedRow();
 
       if (rowIdx < 0)
       {
@@ -674,13 +689,13 @@ public class DatatoolDbPanel extends JPanel
 
    public void selectRow(int row)
    {
+      int col = getModelSelectedColumn();
+
       if (row >= getRowCount() || row < 0)
       {
-         gui.enableEditItems(table.getSelectedRow(), table.getSelectedColumn());
+         gui.enableEditItems(getModelSelectedRow(), col);
          return;
       }
-
-      int col = table.getSelectedColumn();
 
       if (col == -1)
       {
@@ -692,13 +707,13 @@ public class DatatoolDbPanel extends JPanel
 
    public void selectColumn(int col)
    {
+      int row = getModelSelectedRow();
+
       if (col >= db.getColumnCount() || col < 0)
       {
-         gui.enableEditItems(table.getSelectedRow(), table.getSelectedColumn());
+         gui.enableEditItems(row, getModelSelectedColumn());
          return;
       }
-
-      int row = table.getSelectedRow();
 
       if (row == -1)
       {
@@ -710,8 +725,8 @@ public class DatatoolDbPanel extends JPanel
 
    public void selectCell(int row, int col)
    {
-      int oldRow = table.getSelectedRow();
-      int oldCol = table.getSelectedColumn();
+      int oldRow = getModelSelectedRow();
+      int oldCol = getModelSelectedColumn();
 
       if (row >= getRowCount())
       {
@@ -731,6 +746,12 @@ public class DatatoolDbPanel extends JPanel
       }
 
       table.clearSelection();
+
+      oldRow = table.convertRowIndexToView(oldRow);
+      oldCol = table.convertRowIndexToView(oldCol);
+
+      row = table.convertRowIndexToView(row);
+      col = table.convertRowIndexToView(col);
 
       if (row > -1)
       {
@@ -775,7 +796,9 @@ public class DatatoolDbPanel extends JPanel
 
    public void scrollToCell(int row, int column)
    {
-      Rectangle rect = table.getCellRect(row, column, true);
+      Rectangle rect = table.getCellRect(
+        table.convertRowIndexToView(row),
+        table.convertColumnIndexToView(column), true);
       table.scrollRectToVisible(rect);
    }
 
@@ -849,10 +872,12 @@ public class DatatoolDbPanel extends JPanel
       sp.getColumnHeader().repaint();
    }
 
+/*
    public void moveColumn(int fromIndex, int toIndex)
    {
       addUndoEdit(new MoveColumnEdit(this, fromIndex, toIndex));
    }
+*/
 
    public void moveRow(int fromIndex, int toIndex)
    {
@@ -867,8 +892,8 @@ public class DatatoolDbPanel extends JPanel
    public void dataUpdated(boolean adjustWidths)
    {
       setModified(true);
-      int rowIdx = getSelectedRow();
-      int colIdx = getSelectedColumn();
+      int rowIdx = getModelSelectedRow();
+      int colIdx = getModelSelectedColumn();
 
       if (rowIdx != -1 && colIdx != -1)
       {
@@ -941,9 +966,15 @@ public class DatatoolDbPanel extends JPanel
       infoField.setText(info);
    }
 
-   public Object getValueAt(int row, int column)
+   public Object getModelValueAt(int modelRow, int modelColumn)
    {
-      return table.getValueAt(row, column);
+      return db.getRow(modelRow).get(modelColumn);
+   }
+
+   public Object getValueAt(int viewRow, int viewColumn)
+   {
+      return db.getRow(table.convertRowIndexToModel(viewRow))
+        .get(table.convertColumnIndexToModel(viewColumn));
    }
 
    public String getPerl()
@@ -959,7 +990,7 @@ public class DatatoolDbPanel extends JPanel
 
    protected DatatoolGUI gui;
 
-   private JTable table;
+   protected JTable table;
 
    private JScrollPane sp;
 
@@ -999,6 +1030,7 @@ class DatatoolDbTableModel extends AbstractTableModel
       return db.getColumnCount();
    }
 
+/*
    public Class<?> getColumnClass(int column)
    {
       switch (db.getHeader(column).getType())
@@ -1007,15 +1039,28 @@ class DatatoolDbTableModel extends AbstractTableModel
             return Integer.class;
          case DatatoolDb.TYPE_REAL:
             return Float.class;
+         case DatatoolDb.TYPE_CURRENCY:
+            return com.dickimawbooks.datatooltk.Currency.class;
       }
 
 
       return String.class;
    }
+*/
+
+   public int getRowIndex(int viewIndex)
+   {
+      return panel.table.convertRowIndexToModel(viewIndex);
+   }
+
+   public int getColumnIndex(int viewIndex)
+   {
+      return panel.table.convertColumnIndexToModel(viewIndex);
+   }
 
    public Object getValueAt(int row, int col)
    {
-      return db.getValue(row, col);
+      return db.getRow(getRowIndex(row)).get(getColumnIndex(col));
    }
 
    public void setValueAt(Object value, int row, int col)
@@ -1026,7 +1071,8 @@ class DatatoolDbTableModel extends AbstractTableModel
 
    public boolean isCellEditable(int row, int column)
    {
-      return (db.getHeader(column).getType() != DatatoolDb.TYPE_STRING);
+      return (db.getHeader(column).getType() 
+        != DatatoolDb.TYPE_STRING);
    }
 
 }
@@ -1036,8 +1082,6 @@ class DatatoolTableHeader extends JTableHeader
    private DatatoolDbPanel panel;
 
    private JLabel rendererComponent;
-
-   private int fromIndex=-1;
 
    public DatatoolTableHeader(TableColumnModel model,
      DatatoolDbPanel p)
@@ -1064,8 +1108,9 @@ class DatatoolTableHeader extends JTableHeader
       {
          public void mouseClicked(MouseEvent event)
          {
-            int col = ((JTableHeader)event.getSource())
-                 .columnAtPoint(event.getPoint());
+            int col = panel.table.convertColumnIndexToModel(
+               ((JTableHeader)event.getSource())
+                 .columnAtPoint(event.getPoint()));
 
             int clickCount = event.getClickCount();
 
@@ -1086,28 +1131,12 @@ class DatatoolTableHeader extends JTableHeader
 
          public void mousePressed(MouseEvent event)
          {
-            fromIndex =((JTableHeader)event.getSource())
+            int col =((JTableHeader)event.getSource())
                  .columnAtPoint(event.getPoint());
-            panel.selectColumn(fromIndex);
+
+            panel.selectColumn(col);
          }
 
-         public void mouseReleased(MouseEvent event)
-         {
-            if (fromIndex != -1)
-            {
-               int toIndex =((JTableHeader)event.getSource())
-                    .columnAtPoint(event.getPoint());
-
-               if (toIndex != -1 && fromIndex != toIndex)
-               {
-                  panel.moveColumn(fromIndex, toIndex);
-               }
-
-               panel.setInfo("");
-            }
-
-            fromIndex = -1;
-         }
       });
 
       setDefaultRenderer(new DefaultTableCellRenderer()
@@ -1120,7 +1149,7 @@ class DatatoolTableHeader extends JTableHeader
 
             if (table == null) return rendererComponent;
 
-            if (table.getSelectedColumn() == column)
+            if (isSelected)
             {
                rendererComponent.setBackground(table.getSelectionBackground());
                rendererComponent.setOpaque(true);
@@ -1137,7 +1166,8 @@ class DatatoolTableHeader extends JTableHeader
 
    public String getToolTipText(MouseEvent event)
    {
-      int idx = columnAtPoint(event.getPoint());
+      int idx = panel.table.convertColumnIndexToModel
+         (columnAtPoint(event.getPoint()));
 
       if (idx == -1)
       {
@@ -1246,4 +1276,42 @@ class ButtonTabComponent extends JPanel
    private JButton button;
 }
 
+class DatatoolCellRenderer implements TableCellRenderer
+{
+   private DatatoolDb db;
+   private DbNumericalCellRenderer numericalCellRenderer;
+   private DbCellRenderer cellRenderer;
+   private DefaultTableCellRenderer defRenderer;
+
+   public DatatoolCellRenderer(DatatoolDb db)
+   {
+      super();
+      this.db = db;
+      numericalCellRenderer = new DbNumericalCellRenderer();
+      cellRenderer = new DbCellRenderer();
+      defRenderer = new DefaultTableCellRenderer();
+   }
+
+   public Component getTableCellRendererComponent(JTable table,
+     Object value, boolean isSelected, boolean hasFocus,
+     int row, int column)
+   {
+      int type = db.getHeader(table.convertColumnIndexToModel(column))
+         .getType();
+
+      if (type == DatatoolDb.TYPE_INTEGER || type == DatatoolDb.TYPE_REAL)
+      {
+         return numericalCellRenderer.getTableCellRendererComponent(table,
+           value, isSelected, hasFocus, row, column);
+      }
+      else if (type == DatatoolDb.TYPE_STRING)
+      {
+         return cellRenderer.getTableCellRendererComponent(table,
+           value, isSelected, hasFocus, row, column);
+      }
+
+      return defRenderer.getTableCellRendererComponent(table,
+           value, isSelected, hasFocus, row, column);
+   }
+}
 

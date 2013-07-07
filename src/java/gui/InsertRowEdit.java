@@ -24,7 +24,7 @@ public class InsertRowEdit extends AbstractUndoableEdit
          undoInfo = "";
       }
 
-      selectedIdx = panel.getSelectedRow();
+      selectedIdx = panel.getModelSelectedRow();
 
       initOldTypes();
 
@@ -52,7 +52,7 @@ public class InsertRowEdit extends AbstractUndoableEdit
          undoInfo = "";
       }
 
-      selectedIdx = panel.getSelectedRow();
+      selectedIdx = panel.getModelSelectedRow();
 
       initOldTypes();
 

@@ -141,8 +141,8 @@ public class ReplaceAllDialog extends JDialog
    {
       dbPanel = panel;
 
-      replaceInRowButton.setEnabled(panel.getSelectedRow() != -1);
-      replaceInColButton.setEnabled(panel.getSelectedColumn() != -1);
+      replaceInRowButton.setEnabled(panel.getModelSelectedRow() != -1);
+      replaceInColButton.setEnabled(panel.getModelSelectedColumn() != -1);
 
       if ((!replaceInRowButton.isEnabled() && replaceInRowButton.isSelected())
         ||(!replaceInColButton.isEnabled() && replaceInColButton.isSelected()))
@@ -164,13 +164,13 @@ public class ReplaceAllDialog extends JDialog
    {
       if (replaceInRowButton.isSelected())
       {
-         dbPanel.replaceAllInRow(dbPanel.getSelectedRow(),
+         dbPanel.replaceAllInRow(dbPanel.getModelSelectedRow(),
            searchField.getText(), replaceField.getText(),
            caseBox.isSelected(), regexBox.isSelected());
       }
       else if (replaceInColButton.isSelected())
       {
-         dbPanel.replaceAllInColumn(dbPanel.getSelectedColumn(),
+         dbPanel.replaceAllInColumn(dbPanel.getModelSelectedColumn(),
            searchField.getText(), replaceField.getText(),
            caseBox.isSelected(), regexBox.isSelected());
       }

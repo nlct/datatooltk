@@ -12,7 +12,7 @@ public class RemoveRowEdit extends AbstractUndoableEdit
       this.panel = panel;
       this.rowIdx = rowIdx;
 
-      selectedIdx = panel.getSelectedRow();
+      selectedIdx = panel.getModelSelectedRow();
 
       row = panel.db.removeRow(rowIdx);
       panel.removeRowButton();

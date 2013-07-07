@@ -120,10 +120,10 @@ public class DatatoolPlugin implements Runnable
    {
       writer.println("<datatooltkplugin"
          +" selectedrow=\""
-         +dbPanel.getSelectedRow()
+         +dbPanel.getModelSelectedRow()
          +"\""
          +" selectedcolumn=\""
-         +dbPanel.getSelectedColumn()
+         +dbPanel.getModelSelectedColumn()
          +"\""
          +" name=\""
          +encodeXml(dbPanel.getName())

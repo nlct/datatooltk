@@ -13,7 +13,7 @@ public class InsertColumnEdit extends AbstractUndoableEdit
 
       this.panel = panel;
 
-      selectedIdx = panel.getSelectedColumn();
+      selectedIdx = panel.getModelSelectedColumn();
 
       if (panel.getColumnCount() == 0)
       {

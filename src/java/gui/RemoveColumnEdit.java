@@ -11,7 +11,7 @@ public class RemoveColumnEdit extends AbstractUndoableEdit
       super();
       this.panel = panel;
 
-      selectedIdx = panel.getSelectedColumn();
+      selectedIdx = panel.getModelSelectedColumn();
 
       column = panel.db.removeColumn(colIdx);
       panel.dataUpdated();

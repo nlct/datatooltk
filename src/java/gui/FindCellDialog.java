@@ -137,8 +137,8 @@ public class FindCellDialog extends JDialog
 
       searchField.requestFocusInWindow();
 
-      column = table.getSelectedColumn();
-      row = table.getSelectedRow();
+      column = table.getModelSelectedColumn();
+      row = table.getModelSelectedRow();
 
       found = false;
 
@@ -151,8 +151,8 @@ public class FindCellDialog extends JDialog
    {
       this.table = table;
 
-      column = table.getSelectedColumn();
-      row = table.getSelectedRow();
+      column = table.getModelSelectedColumn();
+      row = table.getModelSelectedRow();
 
       found = false;
 

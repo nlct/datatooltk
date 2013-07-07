@@ -1,5 +1,6 @@
 package com.dickimawbooks.datatooltk.gui;
 
+import java.util.Vector;
 import javax.swing.undo.*;
 
 import com.dickimawbooks.datatooltk.*;
@@ -12,6 +13,8 @@ public class MoveColumnEdit extends AbstractUndoableEdit
       this.panel = panel;
       this.fromIndex = fromIndex;
       this.toIndex = toIndex;
+
+      // table has already switched rows but not headers
 
       panel.db.moveColumn(fromIndex, toIndex);
       panel.dataUpdated();
