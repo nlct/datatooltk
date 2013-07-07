@@ -35,9 +35,9 @@ public class DatatoolDbPanel extends JPanel
       String editLabel = DatatoolTk.getLabel("edit");
 
       setInfo(db.getColumnCount() == 0 ?
-         DatatoolTk.getLabelWithValue("info.empty_db", 
+         DatatoolTk.getLabelWithValue("info.empty_db",
           editLabel+"->"+DatatoolTk.getLabel("edit.column")) :
-         DatatoolTk.getLabelWithValues("info.not_empty_db", 
+         DatatoolTk.getLabelWithValues("info.not_empty_db",
           editLabel+"->"+DatatoolTk.getLabel("edit.column"),
           editLabel+"->"+DatatoolTk.getLabel("edit.row")));
    }
@@ -46,37 +46,7 @@ public class DatatoolDbPanel extends JPanel
    {
       undoManager = new UndoManager();
 
-      table = new JTable(db.getData(), db.getHeaders())
-      {
-         public TableColumn getColumn(Object identifier)
-         {
-            return (TableColumn)db.getHeader(identifier.toString());
-         }
-
-         public String getColumnName(int column)
-         {
-            return db.getHeader(column).getTitle();
-         }
-
-         public Class getColumnClass(int column)
-         {
-            int type = db.getHeader(column).getType();
-
-            switch (type)
-            {
-               case DatatoolDb.TYPE_STRING:
-                 return String.class;
-               case DatatoolDb.TYPE_INTEGER:
-                 return Integer.class;
-               case DatatoolDb.TYPE_REAL:
-                 return Float.class;
-               case DatatoolDb.TYPE_CURRENCY:
-                 return com.dickimawbooks.datatooltk.Currency.class;
-            }
-
-            return Object.class;
-         }
-      };
+      table = new JTable(new DatatoolDbTableModel(db, this));
 
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -253,8 +223,8 @@ public class DatatoolDbPanel extends JPanel
       {
          String name = undoManager.getPresentationName();
          undoManager.undo();
-         gui.updateUndoRedoItems(this, 
-            undoManager.canUndo() ? undoManager.getPresentationName():"", 
+         gui.updateUndoRedoItems(this,
+            undoManager.canUndo() ? undoManager.getPresentationName():"",
             name);
          repaint();
       }
@@ -403,7 +373,7 @@ public class DatatoolDbPanel extends JPanel
 
    public boolean hasSelectedCell()
    {
-       return (table.getSelectedColumn() != -1 
+       return (table.getSelectedColumn() != -1
             && table.getSelectedRow() != -1);
    }
 
@@ -429,7 +399,7 @@ public class DatatoolDbPanel extends JPanel
       addUndoEdit(new ReplaceRowEdit(this, index, row));
    }
 
-   public void replaceAllInRow(int row, String search, 
+   public void replaceAllInRow(int row, String search,
      String replacement, boolean isCaseSensitive, boolean isRegEx)
    {
       int count = 0;
@@ -451,7 +421,7 @@ public class DatatoolDbPanel extends JPanel
       {
          ce.end();
          addUndoEdit(ce);
-         JOptionPane.showMessageDialog(this, 
+         JOptionPane.showMessageDialog(this,
             count == 1 ?
             DatatoolTk.getLabel("message.one_cell_updated") :
             DatatoolTk.getLabelWithValue("message.cells_updated", count)
@@ -460,12 +430,12 @@ public class DatatoolDbPanel extends JPanel
       }
       else
       {
-         JOptionPane.showMessageDialog(this, 
+         JOptionPane.showMessageDialog(this,
             DatatoolTk.getLabel("find.not_found"));
       }
    }
 
-   public void replaceAllInColumn(int column, String search, 
+   public void replaceAllInColumn(int column, String search,
      String replacement, boolean isCaseSensitive, boolean isRegEx)
    {
       int count = 0;
@@ -487,7 +457,7 @@ public class DatatoolDbPanel extends JPanel
       {
          ce.end();
          addUndoEdit(ce);
-         JOptionPane.showMessageDialog(this, 
+         JOptionPane.showMessageDialog(this,
             count == 1 ?
             DatatoolTk.getLabel("message.one_cell_updated") :
             DatatoolTk.getLabelWithValue("message.cells_updated", count)
@@ -496,12 +466,12 @@ public class DatatoolDbPanel extends JPanel
       }
       else
       {
-         JOptionPane.showMessageDialog(this, 
+         JOptionPane.showMessageDialog(this,
             DatatoolTk.getLabel("find.not_found"));
       }
    }
 
-   public void replaceAll(String search, String replacement, 
+   public void replaceAll(String search, String replacement,
       boolean isCaseSensitive, boolean isRegEx)
    {
       int count = 0;
@@ -527,7 +497,7 @@ public class DatatoolDbPanel extends JPanel
       {
          ce.end();
          addUndoEdit(ce);
-         JOptionPane.showMessageDialog(this, 
+         JOptionPane.showMessageDialog(this,
             count == 1 ?
             DatatoolTk.getLabel("message.one_cell_updated") :
             DatatoolTk.getLabelWithValue("message.cells_updated", count)
@@ -536,12 +506,12 @@ public class DatatoolDbPanel extends JPanel
       }
       else
       {
-         JOptionPane.showMessageDialog(this, 
+         JOptionPane.showMessageDialog(this,
             DatatoolTk.getLabel("find.not_found"));
       }
    }
 
-   public UndoableEdit replaceAllInCell(int row, int col, 
+   public UndoableEdit replaceAllInCell(int row, int col,
      String search, String replacement, boolean isCaseSensitive,
      boolean isRegEx)
    {
@@ -586,7 +556,7 @@ public class DatatoolDbPanel extends JPanel
          newText = builder.toString();
       }
 
-      return oldText.equals(newText) ? null : 
+      return oldText.equals(newText) ? null :
          new UpdateCellEdit(this, row, col, newText);
    }
 
@@ -816,7 +786,6 @@ public class DatatoolDbPanel extends JPanel
 
    public void updateColumnHeader(int column)
    {
-/*
       TableColumnModel model = table.getTableHeader().getColumnModel();
 
       if (column < model.getColumnCount())
@@ -829,7 +798,6 @@ public class DatatoolDbPanel extends JPanel
          sp.getColumnHeader().repaint();
          table.repaint();
       }
-*/
    }
 
    public void updateColumnHeaders()
@@ -839,7 +807,6 @@ public class DatatoolDbPanel extends JPanel
 
    public void updateColumnHeaders(boolean adjustWidths)
    {
-/*
       TableColumnModel model = table.getTableHeader().getColumnModel();
 
       for (int i = 0, n = getColumnCount(); i < n; i++)
@@ -856,7 +823,6 @@ public class DatatoolDbPanel extends JPanel
                 gui.getCellWidth(header.getType())));
          }
       }
-*/
 
       if (sp.getColumnHeader() != null)
       {
@@ -870,7 +836,6 @@ public class DatatoolDbPanel extends JPanel
 
    public void insertColumnHeader(int index, DatatoolHeader header)
    {
-/*
       TableColumnModel model = table.getTableHeader().getColumnModel();
 
       model.addColumn(new TableColumn());
@@ -880,17 +845,14 @@ public class DatatoolDbPanel extends JPanel
          model.getColumn(i).setHeaderValue(db.getHeader(i).getTitle());
          model.getColumn(i).setIdentifier(db.getHeader(i).getKey());
       }
-*/
 
       sp.getColumnHeader().repaint();
    }
 
-/*
    public void moveColumn(int fromIndex, int toIndex)
    {
       addUndoEdit(new MoveColumnEdit(this, fromIndex, toIndex));
    }
-*/
 
    public void moveRow(int fromIndex, int toIndex)
    {
@@ -962,7 +924,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (invalid)
       {
-         DatatoolGuiResources.error(gui, 
+         DatatoolGuiResources.error(gui,
             DatatoolTk.getLabelWithValue("error.invalid_name", newName));
          return;
       }
@@ -1078,7 +1040,7 @@ class DatatoolTableHeader extends JTableHeader
 
    private int fromIndex=-1;
 
-   public DatatoolTableHeader(TableColumnModel model, 
+   public DatatoolTableHeader(TableColumnModel model,
      DatatoolDbPanel p)
    {
       super(model);
@@ -1139,7 +1101,7 @@ class DatatoolTableHeader extends JTableHeader
 
                if (toIndex != -1 && fromIndex != toIndex)
                {
-                  getColumnModel().moveColumn(fromIndex, toIndex);
+                  panel.moveColumn(fromIndex, toIndex);
                }
 
                panel.setInfo("");
@@ -1190,7 +1152,7 @@ class DatatoolTableHeader extends JTableHeader
          return null;
       }
 
-      return DatatoolTk.getLabelWithValues("header.tooltip_format", 
+      return DatatoolTk.getLabelWithValues("header.tooltip_format",
          header.getKey(), DatatoolDb.TYPE_LABELS[header.getType()+1]);
    }
 
@@ -1284,4 +1246,5 @@ class ButtonTabComponent extends JPanel
    private JLabel label;
    private JButton button;
 }
+
 
