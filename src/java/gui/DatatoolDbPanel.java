@@ -838,7 +838,8 @@ public class DatatoolDbPanel extends JPanel
    {
       TableColumnModel model = table.getTableHeader().getColumnModel();
 
-      model.addColumn(new TableColumn());
+//      model.addColumn(new TableColumn());
+      model.addColumn(header);
 
       for (int i = index, n = getColumnCount(); i < n; i++)
       {

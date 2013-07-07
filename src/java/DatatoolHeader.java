@@ -60,6 +60,8 @@ public class DatatoolHeader extends TableColumn
       }
 
       this.type = type;
+
+      setPreferredWidth(db.getSettings().getCellWidth(type));
    }
 
    public void setKey(String key)
@@ -82,23 +84,6 @@ public class DatatoolHeader extends TableColumn
       return new DatatoolHeader(db, key, title, type);
    }
 
-   public TableCellRenderer getCellRenderer()
-   {
-      if (type == DatatoolDb.TYPE_UNKNOWN || type == DatatoolDb.TYPE_STRING)
-      {
-         return STRING_CELL_RENDERER;
-      }
-      else
-      {
-         return NUMERICAL_CELL_RENDERER;
-      }
-   }
-
-   public TableCellEditor getCellEditor()
-   {
-      return NUMERICAL_CELL_EDITOR;
-   }
-
    public String getHeaderValue()
    {
       return title;
@@ -107,11 +92,6 @@ public class DatatoolHeader extends TableColumn
    public String getIdentifier()
    {
       return key;
-   }
-
-   public int getPreferredWidth()
-   {
-      return db.getSettings().getCellWidth(type);
    }
 
    public DatatoolDb getDb()
@@ -130,12 +110,4 @@ public class DatatoolHeader extends TableColumn
    private String title;
    private int type = DatatoolDb.TYPE_UNKNOWN;
 
-   private static final DbCellRenderer STRING_CELL_RENDERER
-      = new DbCellRenderer();
-
-   private static final DbNumericalCellRenderer NUMERICAL_CELL_RENDERER
-      = new DbNumericalCellRenderer();
-
-   private static final DbNumericalCellEditor NUMERICAL_CELL_EDITOR 
-     = new DbNumericalCellEditor();
 }
