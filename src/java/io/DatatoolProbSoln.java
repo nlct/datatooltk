@@ -42,13 +42,13 @@ public class DatatoolProbSoln implements DatatoolImport
       db.setName(name);
 
       String key = DatatoolTk.getLabel("probsoln.label");
-      db.addColumn(new DatatoolHeader(key, key, DatatoolDb.TYPE_STRING));
+      db.addColumn(new DatatoolHeader(db, key, key, DatatoolDb.TYPE_STRING));
 
       key = DatatoolTk.getLabel("probsoln.question");
-      db.addColumn(new DatatoolHeader(key, key, DatatoolDb.TYPE_STRING));
+      db.addColumn(new DatatoolHeader(db, key, key, DatatoolDb.TYPE_STRING));
 
       key = DatatoolTk.getLabel("probsoln.answer");
-      db.addColumn(new DatatoolHeader(key, key, DatatoolDb.TYPE_STRING));
+      db.addColumn(new DatatoolHeader(db, key, key, DatatoolDb.TYPE_STRING));
 
       PrintWriter out = null;
       BufferedReader in = null;

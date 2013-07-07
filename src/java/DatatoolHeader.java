@@ -12,24 +12,25 @@ import com.dickimawbooks.datatooltk.gui.*;
 
 public class DatatoolHeader extends TableColumn
 {
-   public DatatoolHeader()
+   public DatatoolHeader(DatatoolDb db)
    {
-      this(null);
+      this(db, null);
    }
 
-   public DatatoolHeader(String key)
+   public DatatoolHeader(DatatoolDb db, String key)
    {
-      this(key, key);
+      this(db, key, key);
    }
 
-   public DatatoolHeader(String key, String title)
+   public DatatoolHeader(DatatoolDb db, String key, String title)
    {
-      this(key, title, DatatoolDb.TYPE_UNKNOWN);
+      this(db, key, title, DatatoolDb.TYPE_UNKNOWN);
    }
 
-   public DatatoolHeader(String key, String title, int type)
+   public DatatoolHeader(DatatoolDb db, String key, String title, int type)
    {
       super();
+      this.db = db;
       setKey(key);
       setTitle(title);
       setType(type);
@@ -78,7 +79,7 @@ public class DatatoolHeader extends TableColumn
 
    public Object clone()
    {
-      return new DatatoolHeader(key, title, type);
+      return new DatatoolHeader(db, key, title, type);
    }
 
    public TableCellRenderer getCellRenderer()
@@ -102,6 +103,28 @@ public class DatatoolHeader extends TableColumn
    {
       return title;
    }
+
+   public String getIdentifier()
+   {
+      return key;
+   }
+
+   public int getPreferredWidth()
+   {
+      return db.getSettings().getCellWidth(type);
+   }
+
+   public DatatoolDb getDb()
+   {
+      return db;
+   }
+
+   public void setDb(DatatoolDb db)
+   {
+      this.db = db;
+   }
+
+   private DatatoolDb db;
 
    private String key;
    private String title;

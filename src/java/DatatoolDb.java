@@ -625,7 +625,7 @@ public class DatatoolDb
       }
 
       insertColumn(colIdx.intValue()-1, 
-         new DatatoolHeader(key, title, type.intValue()));
+         new DatatoolHeader(this, key, title, type.intValue()));
 
       return checkForVerbatim ? checkForVerbatim(title): false;
    }
@@ -972,6 +972,11 @@ public class DatatoolDb
       }
 
       return fields;
+   }
+
+   public Vector<DatatoolRow> getData()
+   {
+      return data;
    }
 
    public int getRowCount()
@@ -1375,7 +1380,7 @@ public class DatatoolDb
    {
       String defName = DatatoolTk.getLabelWithValue(
          "default.field", (colIdx+1));
-      return insertColumn(colIdx, new DatatoolHeader(defName, defName));
+      return insertColumn(colIdx, new DatatoolHeader(this, defName, defName));
    }
 
    public DatatoolHeader insertColumn(int colIdx, DatatoolHeader header)
@@ -1390,7 +1395,7 @@ public class DatatoolDb
       {
          for (int i = n; i < colIdx; i++)
          {
-            headers.add(new DatatoolHeader());
+            headers.add(new DatatoolHeader(this));
 
             for (DatatoolRow row : data)
             {

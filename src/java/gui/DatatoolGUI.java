@@ -1174,7 +1174,7 @@ public class DatatoolGUI extends JFrame
    {
       String label = DatatoolTk.getLabel("default.untitled");
 
-      DatatoolHeader header = new DatatoolHeader(label, "");
+      DatatoolHeader header = new DatatoolHeader(panel.db, label, "");
 
       return headerDialog.requestEdit(header, panel.db);
    }

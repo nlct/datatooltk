@@ -117,7 +117,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             {
                for (int i = 0; i < fields.length; i++)
                {
-                  DatatoolHeader header = new DatatoolHeader(fields[i]);
+                  DatatoolHeader header = new DatatoolHeader(db, fields[i]);
                   db.addColumn(header);
                }
             }
@@ -127,7 +127,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    
                for (int i = 0; i < fields.length; i++)
                {
-                  DatatoolHeader header = new DatatoolHeader(
+                  DatatoolHeader header = new DatatoolHeader(db,
                     DatatoolTk.getLabelWithValue("default.field", (i+1)));
                   db.addColumn(header);
    

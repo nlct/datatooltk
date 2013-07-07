@@ -46,7 +46,37 @@ public class DatatoolDbPanel extends JPanel
    {
       undoManager = new UndoManager();
 
-      table = new JTable(new DatatoolDbTableModel(db, this));
+      table = new JTable(db.getData(), db.getHeaders())
+      {
+         public TableColumn getColumn(Object identifier)
+         {
+            return (TableColumn)db.getHeader(identifier.toString());
+         }
+
+         public String getColumnName(int column)
+         {
+            return db.getHeader(column).getTitle();
+         }
+
+         public Class getColumnClass(int column)
+         {
+            int type = db.getHeader(column).getType();
+
+            switch (type)
+            {
+               case DatatoolDb.TYPE_STRING:
+                 return String.class;
+               case DatatoolDb.TYPE_INTEGER:
+                 return Integer.class;
+               case DatatoolDb.TYPE_REAL:
+                 return Float.class;
+               case DatatoolDb.TYPE_CURRENCY:
+                 return com.dickimawbooks.datatooltk.Currency.class;
+            }
+
+            return Object.class;
+         }
+      };
 
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -786,6 +816,7 @@ public class DatatoolDbPanel extends JPanel
 
    public void updateColumnHeader(int column)
    {
+/*
       TableColumnModel model = table.getTableHeader().getColumnModel();
 
       if (column < model.getColumnCount())
@@ -798,6 +829,7 @@ public class DatatoolDbPanel extends JPanel
          sp.getColumnHeader().repaint();
          table.repaint();
       }
+*/
    }
 
    public void updateColumnHeaders()
@@ -807,6 +839,7 @@ public class DatatoolDbPanel extends JPanel
 
    public void updateColumnHeaders(boolean adjustWidths)
    {
+/*
       TableColumnModel model = table.getTableHeader().getColumnModel();
 
       for (int i = 0, n = getColumnCount(); i < n; i++)
@@ -823,6 +856,7 @@ public class DatatoolDbPanel extends JPanel
                 gui.getCellWidth(header.getType())));
          }
       }
+*/
 
       if (sp.getColumnHeader() != null)
       {
@@ -836,6 +870,7 @@ public class DatatoolDbPanel extends JPanel
 
    public void insertColumnHeader(int index, DatatoolHeader header)
    {
+/*
       TableColumnModel model = table.getTableHeader().getColumnModel();
 
       model.addColumn(new TableColumn());
@@ -845,14 +880,17 @@ public class DatatoolDbPanel extends JPanel
          model.getColumn(i).setHeaderValue(db.getHeader(i).getTitle());
          model.getColumn(i).setIdentifier(db.getHeader(i).getKey());
       }
+*/
 
       sp.getColumnHeader().repaint();
    }
 
+/*
    public void moveColumn(int fromIndex, int toIndex)
    {
       addUndoEdit(new MoveColumnEdit(this, fromIndex, toIndex));
    }
+*/
 
    public void moveRow(int fromIndex, int toIndex)
    {
@@ -1101,7 +1139,7 @@ class DatatoolTableHeader extends JTableHeader
 
                if (toIndex != -1 && fromIndex != toIndex)
                {
-                  panel.moveColumn(fromIndex, toIndex);
+                  getColumnModel().moveColumn(fromIndex, toIndex);
                }
 
                panel.setInfo("");

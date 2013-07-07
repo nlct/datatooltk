@@ -41,7 +41,7 @@ public class TemplateHandler extends DefaultHandler
 
       if (localName.equals("header"))
       {
-         DatatoolHeader header = new DatatoolHeader("","");
+         DatatoolHeader header = new DatatoolHeader(db, "","");
          headerStack.push(header);
       }
 
