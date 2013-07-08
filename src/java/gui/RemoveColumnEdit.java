@@ -11,11 +11,11 @@ public class RemoveColumnEdit extends AbstractUndoableEdit
       super();
       this.panel = panel;
 
-      selectedIdx = panel.getModelSelectedColumn();
+      selectedIdx = panel.getViewSelectedColumn();
 
       column = panel.db.removeColumn(colIdx);
       panel.dataUpdated();
-      panel.selectColumn(selectedIdx-1);
+      panel.selectViewColumn(selectedIdx-1);
    }
 
    public boolean canUndo() {return true;}
@@ -25,14 +25,14 @@ public class RemoveColumnEdit extends AbstractUndoableEdit
    {
       panel.db.insertColumn(column);
       panel.dataUpdated();
-      panel.selectColumn(selectedIdx);
+      panel.selectViewColumn(selectedIdx);
    }
 
    public void redo() throws CannotRedoException
    {
       panel.db.removeColumn(column);
       panel.dataUpdated();
-      panel.selectColumn(selectedIdx-1);
+      panel.selectViewColumn(selectedIdx-1);
    }
 
    public String getPresentationName()

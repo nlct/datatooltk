@@ -1,19 +1,20 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import javax.swing.undo.*;
+import javax.swing.table.TableColumn;
 
 import com.dickimawbooks.datatooltk.*;
 
 public class InsertColumnEdit extends AbstractUndoableEdit
 {
    public InsertColumnEdit(DatatoolDbPanel panel,
-     DatatoolHeader header, int colIdx)
+     DatatoolHeader header)
    {
       super();
 
       this.panel = panel;
 
-      selectedIdx = panel.getModelSelectedColumn();
+      selectedIdx = panel.getViewSelectedColumn();
 
       if (panel.getColumnCount() == 0)
       {
@@ -26,9 +27,11 @@ public class InsertColumnEdit extends AbstractUndoableEdit
          undoInfo = "";
       }
 
-      column = new DatatoolColumn(header, colIdx, panel.getRowCount());
+      int n = panel.db.getColumnCount();
+      column = new DatatoolColumn(header, n, panel.getRowCount());
 
       panel.db.insertColumn(column);
+      viewColumn = panel.insertViewColumn(n);
       panel.dataUpdated();
       panel.updateTools();
 
@@ -52,8 +55,9 @@ public class InsertColumnEdit extends AbstractUndoableEdit
    public void undo() throws CannotUndoException
    {
       panel.db.removeColumn(column);
+      panel.removeViewColumn(viewColumn);
       panel.dataUpdated();
-      panel.selectColumn(selectedIdx);
+      panel.selectViewColumn(selectedIdx);
       panel.updateTools();
       panel.setInfo(undoInfo);
    }
@@ -61,6 +65,7 @@ public class InsertColumnEdit extends AbstractUndoableEdit
    public void redo() throws CannotRedoException
    {
       panel.db.insertColumn(column);
+      panel.addViewColumn(viewColumn);
       panel.dataUpdated();
       panel.updateTools();
 
@@ -76,6 +81,8 @@ public class InsertColumnEdit extends AbstractUndoableEdit
    private int selectedIdx;
 
    private DatatoolColumn column;
+
+   private TableColumn viewColumn;
 
    private String undoInfo, redoInfo;
 

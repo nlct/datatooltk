@@ -203,6 +203,17 @@ public class DatatoolDbPanel extends JPanel
       compoundEdit = new CompoundEdit();
    }
 
+   public synchronized void startCompoundEdit(final String name)
+   {
+      compoundEdit = new CompoundEdit()
+      {
+         public String getPresentationName()
+         {
+            return name;
+         }
+      };
+   }
+
    public synchronized void commitCompoundEdit()
    {
       commitCompoundEdit(compoundEdit.getPresentationName());
@@ -597,14 +608,24 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
-      int colIdx = getModelSelectedColumn()+1;
+      int colIdx = getViewSelectedColumn()+1;
 
-      if (colIdx == 0)
+      if (colIdx > 0)
       {
-         colIdx = db.getColumnCount();
-      }
+         startCompoundEdit(DatatoolTk.getLabel("undo.add_column"));
 
-      addUndoEdit(new InsertColumnEdit(this, header, colIdx));
+         addUndoEdit(new InsertColumnEdit(this, header));
+
+         int fromIndex = table.getColumnCount()-1;
+         table.moveColumn(fromIndex, colIdx);
+         addUndoEdit(new MoveColumnEdit(this, fromIndex, colIdx));
+
+         commitCompoundEdit();
+      }
+      else
+      {
+         addUndoEdit(new InsertColumnEdit(this, header));
+      }
    }
 
    public void requestNewColumnBefore()
@@ -616,14 +637,48 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
-      int colIdx = getModelSelectedColumn();
+      startCompoundEdit(DatatoolTk.getLabel("undo.add_column"));
+
+      addUndoEdit(new InsertColumnEdit(this, header));
+
+      int colIdx = getViewSelectedColumn();
 
       if (colIdx < 0)
       {
          colIdx = 0;
       }
 
-      addUndoEdit(new InsertColumnEdit(this, header, colIdx));
+      int fromIndex = table.getColumnCount()-1;
+      table.moveColumn(fromIndex, colIdx);
+      addUndoEdit(new MoveColumnEdit(this, fromIndex, colIdx));
+
+      commitCompoundEdit();
+   }
+
+   public TableColumn insertViewColumn(int modelIdx)
+   {
+      DefaultTableColumnModel model = 
+         (DefaultTableColumnModel)table.getColumnModel();
+
+      TableColumn newColumn = new TableColumn();
+      model.addColumn(newColumn);
+      newColumn.setModelIndex(modelIdx);
+
+      return newColumn;
+   }
+
+   public void addViewColumn(TableColumn column)
+   {
+      DefaultTableColumnModel model = 
+         (DefaultTableColumnModel)table.getColumnModel();
+      model.addColumn(column);
+   }
+
+   public void removeViewColumn(TableColumn column)
+   {
+      DefaultTableColumnModel model = 
+         (DefaultTableColumnModel)table.getColumnModel();
+      model.removeColumn(column);
    }
 
    public void removeSelectedRow()
@@ -718,15 +773,18 @@ public class DatatoolDbPanel extends JPanel
       selectCell(row, col);
    }
 
-   public void selectColumn(int col)
+   public void selectViewColumn(int col)
    {
-      int row = getModelSelectedRow();
+      int row = getViewSelectedRow();
 
       if (col >= db.getColumnCount() || col < 0)
       {
-         gui.enableEditItems(row, getModelSelectedColumn());
+         gui.enableEditItems(row, col);
          return;
       }
+
+      col = table.convertColumnIndexToModel(col);
+      row = table.convertRowIndexToModel(row);
 
       if (row == -1)
       {
@@ -1126,9 +1184,8 @@ class DatatoolTableHeader extends JTableHeader
       {
          public void mouseClicked(MouseEvent event)
          {
-            int col = panel.table.convertColumnIndexToModel(
-               ((JTableHeader)event.getSource())
-                 .columnAtPoint(event.getPoint()));
+            int viewCol = ((JTableHeader)event.getSource())
+                 .columnAtPoint(event.getPoint());
 
             int clickCount = event.getClickCount();
 
@@ -1137,11 +1194,14 @@ class DatatoolTableHeader extends JTableHeader
             if (clickCount == 1)
             {
                panel.setInfo(DatatoolTk.getLabel("info.edit_header"));
-               panel.selectColumn(col);
+               panel.selectViewColumn(viewCol);
             }
             else if (clickCount == 2)
             {
-               panel.requestHeaderEditor(col);
+               int modelCol = panel.table.convertColumnIndexToModel(
+                  viewCol);
+
+               panel.requestHeaderEditor(modelCol);
 
                event.consume();
             }
@@ -1154,7 +1214,7 @@ class DatatoolTableHeader extends JTableHeader
 
             if (fromIndex != -1)
             {
-               panel.selectColumn(fromIndex);
+               panel.selectViewColumn(fromIndex);
             }
          }
 
