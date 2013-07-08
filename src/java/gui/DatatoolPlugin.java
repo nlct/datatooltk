@@ -243,9 +243,10 @@ class PluginHandler extends DefaultHandler
       {
          currentBuffer.append("\n");
       }
-      else if (localName.equals("<datatooltk>"))
+      else if (localName.equals("datatooltk"))
       {
-         dbPanel.startCompoundEdit();
+         dbPanel.startCompoundEdit(
+            DatatoolTk.getLabelWithValue("undo.plugin_action", pluginName));
       }
    }
 
@@ -302,10 +303,9 @@ class PluginHandler extends DefaultHandler
          currentRow.add(currentBuffer.toString());
          currentBuffer = null;
       }
-      else if (localName.equals("<datatooltk>"))
+      else if (localName.equals("datatooltk"))
       {
-         dbPanel.commitCompoundEdit(
-            DatatoolTk.getLabelWithValue("undo.plugin_action", pluginName));
+         dbPanel.commitCompoundEdit();
       }
    }
 

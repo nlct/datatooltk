@@ -305,13 +305,13 @@ sub getColumn{
 sub startModifications{
    my $self = shift;
 
-   print "<datatooltk>";
+   print "<datatooltk>\n";
 }
 
 sub endModifications{
    my $self = shift;
 
-   print "</datatooltk>";
+   print "</datatooltk>\n";
 }
 
 sub insertRow{
