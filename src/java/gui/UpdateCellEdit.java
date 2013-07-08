@@ -46,7 +46,7 @@ public class UpdateCellEdit extends AbstractUndoableEdit
          panel.updateColumnHeader(col);
       }
 
-      panel.selectCell(row, col);
+      panel.selectModelCell(row, col);
    }
 
    public void redo() throws CannotRedoException
@@ -60,7 +60,7 @@ public class UpdateCellEdit extends AbstractUndoableEdit
          panel.updateColumnHeader(col);
       }
 
-      panel.selectCell(row, col);
+      panel.selectModelCell(row, col);
    }
 
    public String getPresentationName()

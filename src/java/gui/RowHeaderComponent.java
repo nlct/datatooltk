@@ -213,13 +213,13 @@ class RowButton extends JLabel
 
             if (event.getClickCount() == 1)
             {
-               panel.selectRow(row);
+               panel.selectModelRow(row);
             }
          }
 
          public void mousePressed(MouseEvent event)
          {
-            panel.selectRow(row);
+            panel.selectModelRow(row);
          }
 
       });

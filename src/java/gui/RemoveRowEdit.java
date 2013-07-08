@@ -17,7 +17,7 @@ public class RemoveRowEdit extends AbstractUndoableEdit
       row = panel.db.removeRow(rowIdx);
       panel.removeRowButton();
       panel.dataUpdated();
-      panel.selectRow(selectedIdx-1);
+      panel.selectModelRow(selectedIdx-1);
    }
 
    public boolean canUndo() {return true;}
@@ -28,7 +28,7 @@ public class RemoveRowEdit extends AbstractUndoableEdit
       panel.db.insertRow(rowIdx, row);
       panel.addRowButton();
       panel.dataUpdated();
-      panel.selectRow(selectedIdx);
+      panel.selectModelRow(selectedIdx);
    }
 
    public void redo() throws CannotRedoException
@@ -36,7 +36,7 @@ public class RemoveRowEdit extends AbstractUndoableEdit
       panel.db.removeRow(rowIdx);
       panel.removeRowButton();
       panel.dataUpdated();
-      panel.selectRow(selectedIdx-1);
+      panel.selectModelRow(selectedIdx-1);
    }
 
    public String getPresentationName()

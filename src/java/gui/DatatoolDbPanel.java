@@ -755,22 +755,40 @@ public class DatatoolDbPanel extends JPanel
       dataUpdated();
    }
 
-   public void selectRow(int row)
+   public void selectModelRow(int modelRow)
    {
-      int col = getModelSelectedColumn();
+      int modelCol = getModelSelectedColumn();
 
-      if (row >= getRowCount() || row < 0)
+      if (modelRow >= getRowCount() || modelRow < 0)
       {
-         gui.enableEditItems(getModelSelectedRow(), col);
+         gui.enableEditItems(modelRow, modelCol);
          return;
       }
 
-      if (col == -1)
+      if (modelCol == -1)
       {
-         col = 0;
+         modelCol = 0;
       }
 
-      selectCell(row, col);
+      selectModelCell(modelRow, modelCol);
+   }
+
+   public void selectViewRow(int viewRow)
+   {
+      int viewCol = getViewSelectedColumn();
+
+      if (viewRow >= getRowCount() || viewRow < 0)
+      {
+         gui.enableEditItems(viewRow, viewCol);
+         return;
+      }
+
+      if (viewCol == -1)
+      {
+         viewCol = 0;
+      }
+
+      selectViewCell(viewRow, viewCol);
    }
 
    public void selectViewColumn(int col)
@@ -783,18 +801,60 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
-      col = table.convertColumnIndexToModel(col);
-      row = table.convertRowIndexToModel(row);
-
       if (row == -1)
       {
          row = 0;
       }
 
-      selectCell(row, col);
+      selectViewCell(row, col);
    }
 
-   public void selectCell(int row, int col)
+   public void selectViewCell(int viewRow, int viewCol)
+   {
+      int oldRow = table.getSelectedRow();
+      int oldCol = table.getSelectedColumn();
+
+      if (viewRow >= getRowCount())
+      {
+         viewRow = getRowCount()-1;
+      }
+
+      if (viewCol >= getColumnCount())
+      {
+         viewCol = getColumnCount()-1;
+      }
+
+      gui.enableEditItems(viewRow, viewCol);
+
+      if (oldRow == viewRow && oldCol == viewCol)
+      {
+         return; // already selected
+      }
+
+      table.clearSelection();
+
+      if (viewRow > -1)
+      {
+         table.setRowSelectionInterval(viewRow, viewRow);
+      }
+
+      if (viewCol > -1)
+      {
+         table.setColumnSelectionInterval(viewCol, viewCol);
+      }
+
+      if (viewRow != oldRow)
+      {
+         rowHeaderComponent.updateRowSelection(viewRow);
+      }
+
+      if (viewCol != oldCol)
+      {
+         table.getTableHeader().repaint();
+      }
+   }
+
+   public void selectModelCell(int row, int col)
    {
       int oldRow = getModelSelectedRow();
       int oldCol = getModelSelectedColumn();
@@ -819,10 +879,10 @@ public class DatatoolDbPanel extends JPanel
       table.clearSelection();
 
       oldRow = table.convertRowIndexToView(oldRow);
-      oldCol = table.convertRowIndexToView(oldCol);
+      oldCol = table.convertColumnIndexToView(oldCol);
 
       row = table.convertRowIndexToView(row);
-      col = table.convertRowIndexToView(col);
+      col = table.convertColumnIndexToView(col);
 
       if (row > -1)
       {
@@ -865,11 +925,18 @@ public class DatatoolDbPanel extends JPanel
       return table.getRowHeight(row);
    }
 
-   public void scrollToCell(int row, int column)
+   public void scrollToModelCell(int row, int column)
    {
       Rectangle rect = table.getCellRect(
         table.convertRowIndexToView(row),
         table.convertColumnIndexToView(column), true);
+      table.scrollRectToVisible(rect);
+   }
+
+   public void scrollToViewCell(int row, int column)
+   {
+      Rectangle rect = table.getCellRect(
+        row, column, true);
       table.scrollRectToVisible(rect);
    }
 
@@ -974,7 +1041,7 @@ public class DatatoolDbPanel extends JPanel
          if (rowIdx > getRowCount()) rowIdx = db.getRowCount()-1;
          if (colIdx > getColumnCount()) colIdx = db.getColumnCount()-1;
 
-         selectCell(rowIdx, colIdx);
+         selectModelCell(rowIdx, colIdx);
       }
 
       updateColumnHeaders(adjustWidths);
@@ -1045,10 +1112,15 @@ public class DatatoolDbPanel extends JPanel
       return db.getRow(modelRow).get(modelColumn);
    }
 
-   public Object getValueAt(int viewRow, int viewColumn)
+   public Object getValueAtView(int viewRow, int viewColumn)
    {
       return db.getRow(table.convertRowIndexToModel(viewRow))
         .get(table.convertColumnIndexToModel(viewColumn));
+   }
+
+   public Object getValueAtModel(int modelRow, int modelColumn)
+   {
+      return db.getRow(modelRow).get(modelColumn);
    }
 
    public String getPerl()

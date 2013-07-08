@@ -146,7 +146,7 @@ public class InsertRowEdit extends AbstractUndoableEdit
       }
 
       panel.dataUpdated(typesChanged);
-      panel.selectRow(selectedIdx);
+      panel.selectModelRow(selectedIdx);
       panel.setInfo(undoInfo);
    }
 

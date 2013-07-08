@@ -165,8 +165,8 @@ public class FindCellDialog extends JDialog
 
       if (found)
       {
-         table.selectCell(row, column);
-         table.scrollToCell(row, column);
+         table.selectModelCell(row, column);
+         table.scrollToModelCell(row, column);
       }
       else
       {
@@ -246,7 +246,7 @@ public class FindCellDialog extends JDialog
 
       while (!(currentRow == row && currentCol == column))
       {
-         String text = table.getValueAt(row, column).toString();
+         String text = table.getValueAtModel(row, column).toString();
 
          if (!caseBox.isSelected())
          {
@@ -270,7 +270,7 @@ public class FindCellDialog extends JDialog
       // If we've reached here we've wrapped round to our starting
       // point. So now check that cell.
 
-      String text = table.getValueAt(row, column).toString();
+      String text = table.getValueAtModel(row, column).toString();
 
       if (!caseBox.isSelected())
       {
@@ -295,7 +295,7 @@ public class FindCellDialog extends JDialog
 
       while (!(currentRow == row && currentCol == column))
       {
-         String text = table.getValueAt(row, column).toString();
+         String text = table.getValueAtModel(row, column).toString();
 
          if (caseBox.isSelected())
          {
@@ -325,7 +325,7 @@ public class FindCellDialog extends JDialog
       // If we've reached here we've wrapped round to our starting
       // point. So now check that cell.
 
-      String text = table.getValueAt(row, column).toString();
+      String text = table.getValueAtModel(row, column).toString();
 
       if (caseBox.isSelected())
       {
