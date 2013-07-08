@@ -129,6 +129,7 @@ $frame->Label
 
 my @allowedParents = ('');
 my @labels = ('');
+my @seealsoLabels = ();
 
 my $theLabel = $row[$colIndexes{Label}];
 
@@ -141,6 +142,7 @@ for (my $idx = 0; $idx < $rowCount; $idx++)
    unless ($thisLabel eq $theLabel)
    {
       push @labels, $thisLabel;
+      push @seealsoLabels, $thisLabel;
 
       if (not $theLabel or ($thisRow->[$colIndexes{Parent}] ne $theLabel))
       {
@@ -159,20 +161,120 @@ $frame->Optionmenu
   -variable=>\$parent
 )->pack(-side=>'left', -expand=>1);
 
-$frame->Label
- (
-   -text=>&getWord('See')
- )->pack(-side=>'left', -expand=>1);
+my $crossrefFrame = $mw->Frame()->pack;
+
+my $hasCrossref = 
+ ($row[$colIndexes{See}] or $row[$colIndexes{SeeAlso}] ? 1 : 0);
+
+my $crossrefCheckbutton = $crossrefFrame->Checkbutton
+(
+  -text=>&getWord('crossref'),
+  -variable=>\$hasCrossref,
+)->pack(-side=>'left', -expand=>1);
+
+my $crossrefButtonFrame = $crossrefFrame->Frame();
+
+$crossrefCheckbutton->configure
+(
+  '-command',
+  sub
+   {
+     if ($hasCrossref)
+     {
+        $crossrefButtonFrame->pack;
+     }
+     else
+     {
+        $crossrefButtonFrame->packForget;
+     }
+
+     $mw->update
+   }
+);
+
+my $crossrefVariable = 'see';
+
+$crossrefButtonFrame->Radiobutton
+(
+  -text=>&getWord('See'),
+  -variable=>\$crossrefVariable,
+  -value=>'see',
+  -command=>\&updateCrossRefWidgets
+)->pack(-side=>'left', -expand=>1);
 
 my $see = $row[$colIndexes{See}];
 
-$frame->Optionmenu
+my $seeOptionmenu = $crossrefButtonFrame->Optionmenu
 (
   -options=>\@labels,
   -variable=>\$see
 )->pack(-side=>'left', -expand=>1);
 
-my $buttonFrame = $mw->Frame()->pack;
+$crossrefButtonFrame->Radiobutton
+(
+  -text=>&getWord('SeeAlso'),
+  -variable=>\$crossrefVariable,
+  -value=>'seealso',
+  -command=>\&updateCrossRefWidgets
+)->pack(-side=>'left', -expand=>1);
+
+my $seealsoVariable = $row[$colIndexes{SeeAlso}];
+
+my $seealsoLabel = $crossrefButtonFrame->Label
+(
+  -textvariable=>\$seealsoVariable,
+  -width=>30,
+  -anchor=>'w',
+  -state=>'disabled'
+)->pack(-side=>'left', -expand=>1);
+
+my $seealsoOption='';
+
+my $seealsoOptionmenu = $crossrefButtonFrame->Optionmenu
+(
+  -options=>\@seealsoLabels,
+  -variable=>\$seealsoOption,
+  -state=>'disabled'
+)->pack(-side=>'left', -expand=>1);
+
+my $crossrefActionFrame = $crossrefButtonFrame->Frame->pack;
+
+my $addCrossrefButton = $crossrefActionFrame->Button
+(
+  -text => &getWord('add_seealso'),
+  -state=>'disabled',
+  -command =>\&addCrossRef
+)->pack(-side=>'top', -expand=>1);
+
+my $removeCrossrefButton = $crossrefActionFrame->Button
+(
+  -text => &getWord('remove_seealso'),
+  -state=>'disabled',
+  -command =>\&removeCrossRef
+)->pack(-side=>'top', -expand=>1);
+
+if ($hasCrossref)
+{
+   $crossrefButtonFrame->pack;
+
+   if ($row[$colIndexes{SeeAlso}])
+   {
+      $crossrefVariable = 'seealso';
+
+      $seeOptionmenu->configure('-state', 'disabled');
+
+      $seealsoLabel->configure('-state', 'normal');
+      $seealsoOptionmenu->configure('-state', 'normal');
+      $addCrossrefButton->configure('-state', 'normal');
+      $removeCrossrefButton->configure('-state', 'normal');
+   }
+}
+else
+{
+   $crossrefButtonFrame->packForget;
+}
+
+my $buttonFrame = $mw->Frame()->pack(-ipadx=>40);
 
 $buttonFrame->Button(
     -text    => $db->getDictWord('button.cancel'),
@@ -213,7 +315,24 @@ sub doDbUpdate{
 
    $row[$colIndexes{Description}]=~s/\n/<br\/>/sg;
 
-   $row[$colIndexes{See}] = $see;
+   if ($hasCrossref)
+   {
+      if ($crossrefVariable eq 'see')
+      {
+         $row[$colIndexes{See}] = $see;
+         $row[$colIndexes{SeeAlso}] = '';
+      }
+      else
+      {
+         $row[$colIndexes{See}] = '';
+         $row[$colIndexes{SeeAlso}] = $seealsoVariable;
+      }
+   }
+   else
+   {
+      $row[$colIndexes{See}] = '';
+      $row[$colIndexes{SeeAlso}] = '';
+   }
 
    $row[$colIndexes{Parent}] = $parent;
 
@@ -366,6 +485,50 @@ sub nameValidate{
    }
 
    1;
+}
+
+sub updateCrossRefWidgets{
+
+   my $active = $crossrefVariable eq 'see' ? 1 : 0;
+
+   my $state = $active ? 'normal' : 'disabled';
+
+   $seeOptionmenu->configure('-state', $state);
+
+   $state = $active ? 'disabled' : 'normal';
+
+   $seealsoLabel->configure('-state', $state);
+
+   $seealsoOptionmenu->configure('-state', $state);
+
+   $addCrossrefButton->configure('-state', $state);
+
+   $removeCrossrefButton->configure('-state', $state);
+
+   $mw->update
+}
+
+sub addCrossRef{
+
+   if ($seealsoVariable)
+   {
+      $seealsoVariable .= ",$seealsoOption";
+   }
+   else
+   {
+      $seealsoVariable = $seealsoOption;
+   }
+
+   $mw->update
+}
+
+sub removeCrossRef{
+
+   $seealsoVariable=~s/(^|,)$seealsoOption(,|$)/$1/;
+
+   $seealsoVariable=~s/,$//;
+
+   $mw->update
 }
 
 sub getWord{

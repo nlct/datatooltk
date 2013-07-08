@@ -591,7 +591,9 @@ plugin.datagidx.Location=Location (Reserved)
 plugin.datagidx.CurrentLocation=Current Location (Reserved)
 plugin.datagidx.FirstId=First ID (Reserved)
 plugin.datagidx.Used=Used (Reserved)
-plugin.datagidx.crossref=Cross Reference
+plugin.datagidx.crossref=Cross-Reference
+plugin.datagidx.add_seealso=Add "See Also" Entry
+plugin.datagidx.remove_seealso=Remove "See Also" Entry
 
 # Context labels in manual
 manual.title=Manual

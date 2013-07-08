@@ -691,8 +691,16 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    Plugins are usually associated with a<nbsp/>particular template 
    (see <ref tag="templates"/>) and provide a<nbsp/>convenient way of
    adding a<nbsp/>row of data to the currently selected database.
+   Typically when a<nbsp/>plugin is run it will add a<nbsp/>new row of data 
+   if no row is selected, otherwise it will allow you to edit the selected row.
    <b>Note:</b> you must have Perl installed to use the plugins (see 
-   <ref tag="preferences"/>).
+   <ref tag="preferences"/>). <b>Really Important Note:</b> the plugin is
+   sent the database information when you start each instance of the plugin, 
+   so if you change the database in <app/> while a<nbsp/>plugin is running 
+   there may be unexpected results. Wait until the plugin has finished 
+   (usually by clicking on <button tag="button.okay"/> or 
+   <button tag="button.cancel"/>) before you make any further edits to the 
+   database.
    </p>
    <example>
    <p>
@@ -730,18 +738,26 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
      <float type="figure" tag="peoplepluginex1" caption="A New Row of Data">
       <image scale="0.75" alt="Image of main window" src="images/peoplepluginex1.png" />
      </float>
+   Since the <tt>people</tt> plugin only adds or modifies a<nbsp/>single
+   row at a<nbsp/>time, if you no longer require an entry, you can delete the
+   unwanted row using <menu tag="edit.row.remove_row"/>.
    </example>
    <example>
    <p>
    The <sty>datagidx</sty> package creates its own custom database 
    to store terms, symbols and acronyms. The <tt>datagidx</tt> template
-   will create a<nbsp/>database that contains <sty>datagidx</sty>'s require 
-   fields. This has a<nbsp/>lot of fields, some of which are reserved for
+   will create a<nbsp/>database that contains <sty>datagidx</sty>'s required 
+   fields. There are a<nbsp/>lot of fields, some of which are reserved for
    <sty>datagidx</sty>'s private use. The <tt>datagidx</tt> plugin, 
    available via the <menu tag="tools.plugins"/> menu, provides 
    a<nbsp/>convenient interface to add or edit entries. If no row is selected,
    the plugin will create a<nbsp/>new row. If a<nbsp/>row is selected,
-   the plugin will allow you to edit the row.
+   the plugin will allow you to edit or remove the row. Since the 
+   <tt>datagidx</tt> plugin can modify other rows at the same time
+   (for example, if you set a<nbsp/>parent entry or cross-reference)
+   it's recommended that you use the <tt>datagidx</tt> plugin to remove an
+   entry (via the <button tag="plugin.remove_entry"/> button) rather than 
+   using <menu tag="edit.row.remove_row"/>.
    </p>
    <p>
    The new database (created via <menu tag="file.new_from_template"/>) is
@@ -793,22 +809,44 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    <button tag="plugin.datagidx.See"/> fields 
    (see <ref tag="datagidxplugin5"/>).
    </p>
-     <float type="figure" tag="datagidxplugin5" caption="Parent and See Fields List Other Entry Labels">
+     <float type="figure" tag="datagidxplugin5" caption="Parent Field Lists Other Entry Labels">
       <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin5.png" />
      </float>
    <p>
    In <ref tag="datagidxplugin5"/> I<nbsp/>have set the parent to 
    <tt>bird</tt>. When the new row is added, the plugin automatically adjusts
-   the <tt>bird</tt> to include the new <tt>duck</tt> label as one of its
+   the <tt>bird</tt> entry to include the new <tt>duck</tt> label as one of its
    children (see <ref tag="datagidxplugin6"/>).
    </p>
      <float type="figure" tag="datagidxplugin6" caption="Child Entry of Automatically Adjusted">
       <image scale="0.75" alt="Image of main window" src="images/datagidxplugin6.png" />
      </float>
    <p>
-   <b>TODO:</b> (1) add an analogous command to <cs tag="newgidx"/> in datagidx
-   that will load the database from file; (2) add `SeeAlso' field to plugin
-   dialog.
+   It's also possible to cross-reference another entry. There are two ways
+   of cross-referencing an entry: (1) using <button tag="plugin.datagidx.See"/>
+   which redirects the reader to a<nbsp/>synonym that has the location list;
+   (2) using <button tag="plugin.datagidx.SeeAlso"/> which in addition to the
+   location list refers the reader to one or more related topics. (See the
+   <sty>datagidx</sty> section of the <sty>datatool</sty> user manual
+   for further details.) To enable
+   either form of cross-referencing, make sure the
+   <button tag="plugin.datagidx.crossref"/> button is selected. This will 
+   display extra options, shown in <ref tag="datagidxplugin7"/>.
+   </p>
+     <float type="figure" tag="datagidxplugin7" caption="Cross-Referencing Entries">
+      <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin7.png" />
+     </float>
+   <p>
+   Either select the <button tag="plugin.datagidx.See"/> button and choose
+   the synonym from the drop-down box next to it, or select the 
+   <button tag="plugin.datagidx.SeeAlso"/> button and select the related 
+   cross-reference from the drop-down box to the right and either click on
+   <button tag="plugin.datagidx.add_seealso"/> to append it to the 
+   <button tag="plugin.datagidx.SeeAlso"/> list or click on 
+   <button tag="plugin.datagidx.remove_seealso"/> to remove it from the list.
+   For example, in <ref tag="datagidxplugin7"/> I've added the <tt>chicken</tt>
+   and <tt>turkey</tt> entries to the <button tag="plugin.datagidx.SeeAlso"/>
+   list.
    </p>
    </example>
    </node>
