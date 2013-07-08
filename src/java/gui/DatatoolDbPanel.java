@@ -302,7 +302,20 @@ public class DatatoolDbPanel extends JPanel
 
       try
       {
-         db.save();
+         int[] columnIndexes = new int[db.getColumnCount()];
+         int[] rowIndexes = new int[db.getRowCount()];
+
+         for (int i = 0; i < columnIndexes.length; i++)
+         {
+            columnIndexes[i] = table.convertColumnIndexToView(i);
+         }
+
+         for (int i = 0; i < rowIndexes.length; i++)
+         {
+            rowIndexes[i] = table.convertRowIndexToView(i);
+         }
+
+         db.save(columnIndexes, rowIndexes);
          setModified(false);
          gui.addRecentFile(db.getFile());
       }
@@ -872,12 +885,15 @@ public class DatatoolDbPanel extends JPanel
       sp.getColumnHeader().repaint();
    }
 
-/*
-   public void moveColumn(int fromIndex, int toIndex)
+   public void moveColumnEdit(int fromIndex, int toIndex)
    {
       addUndoEdit(new MoveColumnEdit(this, fromIndex, toIndex));
    }
-*/
+
+   public void moveViewColumn(int fromIndex, int toIndex)
+   {
+      table.moveColumn(fromIndex, toIndex);
+   }
 
    public void moveRow(int fromIndex, int toIndex)
    {
@@ -1081,6 +1097,8 @@ class DatatoolTableHeader extends JTableHeader
 {
    private DatatoolDbPanel panel;
 
+   private int fromIndex=-1;
+
    private JLabel rendererComponent;
 
    public DatatoolTableHeader(TableColumnModel model,
@@ -1131,10 +1149,29 @@ class DatatoolTableHeader extends JTableHeader
 
          public void mousePressed(MouseEvent event)
          {
-            int col =((JTableHeader)event.getSource())
+            fromIndex =((JTableHeader)event.getSource())
                  .columnAtPoint(event.getPoint());
 
-            panel.selectColumn(col);
+            if (fromIndex != -1)
+            {
+               panel.selectColumn(fromIndex);
+            }
+         }
+
+         public void mouseReleased(MouseEvent event)
+         {
+            if (fromIndex != -1)
+            {
+               int toIndex =((JTableHeader)event.getSource())
+                 .columnAtPoint(event.getPoint());
+
+               if (toIndex != -1)
+               {
+                  panel.moveColumnEdit(fromIndex, toIndex);
+               }
+
+               fromIndex = -1;
+            }
          }
 
       });

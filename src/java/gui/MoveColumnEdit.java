@@ -13,11 +13,6 @@ public class MoveColumnEdit extends AbstractUndoableEdit
       this.panel = panel;
       this.fromIndex = fromIndex;
       this.toIndex = toIndex;
-
-      // table has already switched rows but not headers
-
-      panel.db.moveColumn(fromIndex, toIndex);
-      panel.dataUpdated();
    }
 
    public boolean canUndo() {return true;}
@@ -25,14 +20,12 @@ public class MoveColumnEdit extends AbstractUndoableEdit
 
    public void undo() throws CannotUndoException
    {
-      panel.db.moveColumn(toIndex, fromIndex);
-      panel.dataUpdated();
+      panel.moveViewColumn(toIndex, fromIndex);
    }
 
    public void redo() throws CannotRedoException
    {
-      panel.db.moveColumn(fromIndex, toIndex);
-      panel.dataUpdated();
+      panel.moveViewColumn(fromIndex, toIndex);
    }
 
    public String getPresentationName()
