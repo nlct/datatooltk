@@ -683,7 +683,12 @@ public class DatatoolDbPanel extends JPanel
 
    public void removeSelectedRow()
    {
-      addUndoEdit(new RemoveRowEdit(this, getModelSelectedRow()));
+      removeRow(getModelSelectedRow());
+   }
+
+   public void removeRow(int modelIndex)
+   {
+      addUndoEdit(new RemoveRowEdit(this, modelIndex));
    }
 
    public void removeSelectedColumn()

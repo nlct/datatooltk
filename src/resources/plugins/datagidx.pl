@@ -184,6 +184,15 @@ $buttonFrame->Button(
     -command => \&doDbUpdate,
 )->pack(-side=>'left', -expand=>1);
 
+if ($selectedRow > -1)
+{
+   $buttonFrame->Button(
+       -text    => $db->getDictWord('plugin.remove_entry'),
+       -command => \&doRemoveRow,
+   )->pack(-side=>'left', -expand=>1);
+
+}
+
 $mw->update;
 
 my $xpos = int(($mw->screenwidth-$mw->width)/2);
@@ -246,6 +255,73 @@ sub doDbUpdate{
       }
    }
 
+   $db->endModifications;
+
+   $mw->destroy;
+}
+
+sub doRemoveRow{
+
+   $db->startModifications;
+
+   # Iterate through all the rows and remove any references to this
+   # row
+
+   my $theLabel = $row[$colIndexes{Label}];
+
+   for (my $idx = 0; $idx < $rowCount; $idx++)
+   {
+      my $thisRow = $db->getRow($idx);
+
+      next if ($thisRow->[$colIndexes{Label}] eq $theLabel);
+
+      my $modified = 0;
+
+      if ($thisRow->[$colIndexes{Parent}] eq $theLabel)
+      {
+         $thisRow->[$colIndexes{Parent}] = '';
+         $modified = 1;
+      }
+      else
+      {
+         my $children = $thisRow->[$colIndexes{Child}];
+
+         if ($children =~s/(^|,)$theLabel(,|$)/$1/)
+         {
+            $children =~s/,$//;
+
+            $thisRow->[$colIndexes{Child}] = $children;
+
+            $modified = 1;
+         }
+      }
+
+      if ($thisRow->[$colIndexes{See}] eq $theLabel)
+      {
+         $thisRow->[$colIndexes{See}] = '';
+         $modified = 1;
+      }
+
+      my $seealso = $thisRow->[$colIndexes{SeeAlso}];
+
+      if ($seealso =~s/(^|,)$theLabel(,|$)/$1/)
+      {
+         $seealso =~s/,$//;
+
+         $thisRow->[$colIndexes{SeeAlso}] = $seealso;
+
+         $modified = 1;
+      }
+
+      if ($modified)
+      {
+         $db->replaceRow($idx, $thisRow);
+      }
+   }
+
+   # remove row
+
+   $db->removeRow($selectedRow);
    $db->endModifications;
 
    $mw->destroy;

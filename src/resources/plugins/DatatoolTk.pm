@@ -364,6 +364,15 @@ sub replaceRow{
   print "</row>\n";
 }
 
+sub removeRow{
+  my $self = shift;
+  my $rowIndex = shift;
+
+  print "<row action=\"remove\" value=\"$rowIndex\">\n";
+  print "</row>\n";
+
+}
+
 sub maxForColumn{
    my $self = shift;
    my $colIdx = shift;

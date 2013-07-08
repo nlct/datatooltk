@@ -293,6 +293,10 @@ class PluginHandler extends DefaultHandler
          {
             dbPanel.appendRow(currentRow);
          }
+         else if (currentAction.equals("remove"))
+         {
+            dbPanel.removeRow(getCurrentIndex());
+         }
 
          currentRow = null;
          currentValue = null;

@@ -558,6 +558,7 @@ warning.verb_detected_in_cell=Verbatim text has been detected in cell ($1,$2). Y
 # Plugin labels
 
 plugin.error.missing_column=Can't find column labeled '$1'.
+plugin.remove_entry=Remove Entry
 
 plugin.people.ID=ID
 plugin.people.Surname=Surname
