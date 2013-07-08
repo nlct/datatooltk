@@ -624,8 +624,18 @@ public class DatatoolDb
             new String[] {""+linenum, colIdx.toString(), idx.toString()}));
       }
 
-      insertColumn(colIdx.intValue()-1, 
-         new DatatoolHeader(this, key, title, type.intValue()));
+      int index = colIdx.intValue()-1;
+
+      if (index >= headers.size())
+      {
+         insertColumn(index, 
+            new DatatoolHeader(this, key, title, type.intValue()));
+      }
+      else
+      {
+         headers.set(index, new DatatoolHeader(this, key, title, type.intValue()));
+      }
+
 
       return checkForVerbatim ? checkForVerbatim(title): false;
    }

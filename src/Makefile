@@ -2,6 +2,9 @@ APP_VERSION:=$(shell grep "public static final String appVersion" java/DatatoolT
 IZPACKDIR=/usr/local/IzPack
 
 test-gui	: app
+	bin/datatooltk-gui --debug
+
+test-csv	: app
 	bin/datatooltk-gui --debug --csv tests/test-para.csv
 
 test-cli	: app
