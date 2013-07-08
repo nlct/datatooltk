@@ -262,7 +262,7 @@ public class DatatoolGUI extends JFrame
 
       searchM.add(replaceItem);
 
-      JMenu toolsM = DatatoolGuiResources.createJMenu("tools");
+      toolsM = DatatoolGuiResources.createJMenu("tools");
       mbar.add(toolsM);
 
       sortItem = DatatoolGuiResources.createJMenuItem(
@@ -366,6 +366,8 @@ public class DatatoolGUI extends JFrame
       setSize(width, height);
 
       setLocationRelativeTo(null);
+
+      updateTools();
    }
 
    private void initHelp()
@@ -1210,6 +1212,7 @@ public class DatatoolGUI extends JFrame
       addColumnBeforeItem.setEnabled(enable);
       addColumnAfterItem.setEnabled(enable);
       editDbNameItem.setEnabled(enable);
+      toolsM.setEnabled(enable);
 
       enable = (enable && panel.getColumnCount() > 0);
 
@@ -1268,7 +1271,7 @@ public class DatatoolGUI extends JFrame
 
    private ScrollToolBar toolBar;
 
-   private JMenu recentM, pluginsM;
+   private JMenu recentM, pluginsM, toolsM;
 
    private JMenuItem undoItem, redoItem, editCellItem, 
       addColumnAfterItem, addRowAfterItem,
