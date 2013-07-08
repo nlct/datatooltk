@@ -749,10 +749,23 @@ public class DatatoolDb
      throws IOException
    {
       setFile(filename);
-      save();
+      save(null, null);
+   }
+
+   public void save(String filename, int[] columnIndexes, int[] rowIndexes)
+     throws IOException
+   {
+      setFile(filename);
+      save(columnIndexes, rowIndexes);
    }
 
    public void save()
+     throws IOException
+   {
+      save(null, null);
+   }
+
+   public void save(int[] columnIndexes, int[] rowIndexes)
      throws IOException
    {
       PrintWriter out = null;
@@ -782,7 +795,8 @@ public class DatatoolDb
          {
             DatatoolHeader header = headers.get(i);
 
-            int colIdx = i+1;
+            int colIdx = (columnIndexes == null ? i : columnIndexes[i])
+                       + 1;
 
             int type = header.getType();
 
@@ -812,7 +826,8 @@ public class DatatoolDb
          for (int i = 0, n = data.size(); i < n; i++)
          {
             DatatoolRow row = data.get(i);
-            int rowIdx = i+1;
+            int rowIdx = (rowIndexes == null ? i : rowIndexes[i])
+                       + 1;
 
             out.println("\\db@row@elt@w %");
             out.println("\\db@row@id@w "+rowIdx+"%");
@@ -821,7 +836,8 @@ public class DatatoolDb
             for (int j = 0, m = row.size(); j < m; j++)
             {
                String cell = row.get(j);
-               int colIdx = j+1;
+               int colIdx = (columnIndexes == null ? j : columnIndexes[j])
+                       + 1;
 
                out.println("\\db@col@id@w "+colIdx+"%");
                out.println("\\db@col@id@end@ %");
@@ -860,10 +876,12 @@ public class DatatoolDb
          {
             DatatoolHeader header = headers.get(i);
 
+            int colIdx = (columnIndexes == null ? i : columnIndexes[i])
+                       + 1;
+
             out.println("\\expandafter");
             out.println(" \\gdef\\csname dtl@ci@"+name
-              +"@"+header.getKey()+"\\endcsname{"
-               +(i+1)+"}%");
+              +"@"+header.getKey()+"\\endcsname{" +colIdx+"}%");
          }
 
          out.println("\\egroup");
