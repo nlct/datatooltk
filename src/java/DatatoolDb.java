@@ -47,534 +47,306 @@ public class DatatoolDb
      File dbFile)
      throws IOException
    {
-      BufferedReader in = null;
+      LineNumberReader in = null;
       DatatoolDb db = null;
       boolean hasVerbatim = false;
 
       try
       {
-         in = new BufferedReader(new FileReader(dbFile));
+         in = new LineNumberReader(new FileReader(dbFile));
 
          db = new DatatoolDb(settings);
 
-         db.linenum = 0;
-         String line;
+         // Read until we find \newtoks\csname dtlkeys@<name>\endcsname
 
-         // Skip any comment lines at the start of the file
+         String controlSequence = null;
 
-         while ((line = in.readLine()) != null)
+         while ((controlSequence = readCommand(in)) != null)
          {
-            db.linenum++;
-            Matcher m = PATTERN_COMMENT.matcher(line);
-
-            if (m.matches())
+            if (controlSequence.equals("\\newtoks"))
             {
-               continue;
+               controlSequence = readCommand(in);
+
+               if ("\\csname".equals(controlSequence))
+               {
+                  break;
+               }
             }
+         }
 
-            m = PATTERN_DBNAME.matcher(line);
+         if (controlSequence == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", "\\newtoks\\csname"));
+         }
 
-            if (m.matches())
+         String name = readUntil(in, "\\endcsname");
+
+         if (name == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", "\\endcsname"));
+         }
+
+         if (!name.startsWith("dtlkeys@"))
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues
+              (
+                 "error.dbload.expected",
+                 in.getLineNumber(),
+                 "\\newtoks\\csname dtlkeys@<name>\\endcsname"
+              ));
+         }
+
+         name = name.substring(8);
+
+         db.setName(name);
+
+         // Now look for \csname dtlkeys@<name>\endcsname
+
+         controlSequence = null;
+
+         while ((controlSequence = readCommand(in)) != null)
+         {
+            if (controlSequence.equals("\\csname"))
             {
-               db.setName(m.group(1));
+               if (readUntil(in, "dtlkeys@"+name+"\\endcsname") != null)
+               {
+                  break;
+               }
+            }
+         }
+
+         if (controlSequence == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", 
+                "\\csname dtlkeys@"+name+"\\endcsname"));
+         }
+
+         int c = readChar(in, true);
+
+         if (c == -1)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", 
+                "\\csname dtlkeys@"+name+"\\endcsname="));
+         }
+         else if (c != (int)'=')
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues(
+              "error.dbload.expected_found", 
+               new String[]
+               {
+                  ""+in.getLineNumber(),
+                  "\\csname dtlkeys@"+name+"\\endcsname=",
+                  "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
+               }));
+         }
+
+         c = readChar(in, true);
+
+         if (c == -1)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", 
+                "\\csname dtlkeys@"+name+"\\endcsname={"));
+         }
+         else if (c != (int)'{')
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues(
+              "error.dbload.expected_found", 
+               new String[]
+               {
+                  ""+in.getLineNumber(),
+                  "\\csname dtlkeys@"+name+"\\endcsname={",
+                  "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
+               }));
+         }
+
+         int currentColumn = 0;
+
+         while (true)
+         {
+            readCommand(in, "\\db@plist@elt@w");
+
+            currentColumn = db.parseHeader(in, currentColumn);
+
+            in.mark(80);
+
+            c = readChar(in, true);
+
+            if (c == (int)'}')
+            {
+               // Finished
                break;
+            }
+            else if (c == -1)
+            {
+               throw new IOException(DatatoolTk.getLabelWithValues
+                 (
+                  "error.dbload.not_found",
+                  in.getLineNumber(),
+                  "}"
+                 ));
             }
             else
             {
-               throw new InvalidSyntaxException(
-                 DatatoolTk.getLabelWithValues("error.dbload.expected",
-                  ""+db.linenum, "\\DTLifdbexists"));
+               in.reset();
             }
          }
 
-         if (line == null)
+         // Now read in the database contents
+
+         while ((controlSequence = readCommand(in)) != null)
          {
-            throw new EOFException(
-               DatatoolTk.getLabelWithValue("error.dbload.not_found",
-                 "\\DTLifdbexists"));
-         }
-
-         // skip until we reach "\\csname dtlkeys@<name>\endcsname={"
-
-         Pattern p = Pattern.compile("\\s*\\\\csname\\s+dtlkeys@"
-           + db.name+"\\\\endcsname\\s*=\\s*\\{%.*");
-
-         while ((line = in.readLine()) != null)
-         {
-            db.linenum++;
-            Matcher m = PATTERN_COMMENT.matcher(line);
-
-            if (m.matches())
+            if (controlSequence.equals("\\newtoks"))
             {
-               continue;
-            }
+               controlSequence = readCommand(in);
 
-            m = p.matcher(line);
-
-            if (m.matches())
-            {
-               break;
-            }
-         }
-
-         if (line == null)
-         {
-            throw new EOFException(
-               DatatoolTk.getLabelWithValue("error.dbload.not_found",
-                 p.pattern()));
-         }
-
-         // Now read the header info
-
-         while ((line = in.readLine()) != null)
-         {
-            // Ignore commented lines
-
-            db.linenum++;
-            Matcher m = PATTERN_COMMENT.matcher(line);
-
-            if (m.matches())
-            {
-               continue;
-            }
-
-
-            m = PATTERN_CLOSE.matcher(line);
-
-            if (m.matches())
-            {
-               break;
-            }
-
-            m = PATTERN_PLIST_ELT.matcher(line);
-
-            if (!m.matches())
-            {
-               throw new InvalidSyntaxException(
-                 DatatoolTk.getLabelWithValues("error.dbload.expected",
-                 ""+db.linenum, "\\db@plist@elt@w"));
-            }
-
-            hasVerbatim = db.parseHeader(in, !hasVerbatim) || hasVerbatim;
-
-            while ((line = in.readLine()) != null)
-            {
-               // Ignore commented lines
-
-               db.linenum++;
-               m = PATTERN_COMMENT.matcher(line);
-
-               if (m.matches())
-               {
-                  continue;
-               }
-
-               m = PATTERN_PLIST_ELT_END.matcher(line);
-
-               if (!m.matches())
-               {
-                  throw new InvalidSyntaxException(
-                    DatatoolTk.getLabelWithValues("error.dbload.expected",
-                      ""+db.linenum, "\\db@plist@elt@end@"));
-               }
-
-               break;
-            }
-         }
-
-         // skip until we reach "\\csname dtldb@<name>\endcsname={"
-
-         p = Pattern.compile("\\s*\\\\csname\\s+dtldb@"
-           + db.name+"\\\\endcsname\\s*=\\s*\\{%.*");
-
-         while ((line = in.readLine()) != null)
-         {
-            db.linenum++;
-            Matcher m = PATTERN_COMMENT.matcher(line);
-
-            if (m.matches())
-            {
-               continue;
-            }
-
-            m = p.matcher(line);
-
-            if (m.matches())
-            {
-               break;
-            }
-         }
-
-         if (line == null)
-         {
-            throw new EOFException(
-             DatatoolTk.getLabelWithValue("error.dbload.not_found",
-               p.pattern()));
-         }
-
-         while ((line = in.readLine()) != null)
-         {
-            db.linenum++;
-
-            // skip comments outside of values
-
-            Matcher m = PATTERN_COMMENT.matcher(line);
-
-            if (m.matches())
-            {
-               continue;
-            }
-
-            boolean done = false;
-
-            // Read in each row
-
-            while (line != null)
-            {
-               // Finish if we've reached the closing brace
-
-               m = PATTERN_CLOSE.matcher(line);
-
-               if (m.matches())
-               {
-                  done = true;
-                  break;
-               }
-
-               m = PATTERN_ROW_ELT.matcher(line);
-
-               if (!m.matches())
-               {
-                   throw new InvalidSyntaxException(
-                    DatatoolTk.getLabelWithValues(
-                    "error.dbload.expected",
-                     ""+db.linenum, PATTERN_ROW_ELT.pattern()));
-               }
-
-               line = in.readLine();
-
-               if (line == null)
+               if ("\\csname".equals(controlSequence))
                {
                   break;
                }
-
-               db.linenum++;
-
-               m = PATTERN_ROW_ID.matcher(line);
-
-               if (!m.matches())
-               {
-                   throw new InvalidSyntaxException(
-                    DatatoolTk.getLabelWithValues(
-                    "error.dbload.expected",
-                     ""+db.linenum, PATTERN_ROW_ID.pattern()));
-               }
-
-               int rowIdx = -1;
-
-               try
-               {
-                  rowIdx = Integer.parseInt(m.group(1));
-               }
-               catch (NumberFormatException e)
-               {
-                  // shouldn't happen
-               }
-
-               line = in.readLine();
-
-               if (line == null)
-               {
-                  break;
-               }
-
-               db.linenum++;
-
-               m = PATTERN_ROW_ID_END.matcher(line);
-
-               if (!m.matches())
-               {
-                   throw new InvalidSyntaxException(
-                    DatatoolTk.getLabelWithValues(
-                    "error.dbload.expected",
-                     ""+db.linenum, PATTERN_ROW_ID_END.pattern()));
-               }
-
-               // Now read in columns
-
-               while ((line = in.readLine()) != null)
-               {
-                  db.linenum++;
-
-                  // Finish if we've reached the closing brace
-
-                  m = PATTERN_CLOSE.matcher(line);
-
-                  if (m.matches())
-                  {
-                     done = true;
-                     break;
-                  }
-
-                  // Have we reached the end of the current row?
-
-                  m = PATTERN_ROW_ID.matcher(line);
-
-                  if (m.matches())
-                  {
-                      try
-                      {
-                         int idx = Integer.parseInt(m.group(1));
-
-                         if (idx != rowIdx)
-                         {
-                            throw new InvalidSyntaxException(
-                               DatatoolTk.getLabelWithValues(
-                                 "error.dbload.wrong_end_row_tag",
-                                 new String[]{""+db.linenum, ""+rowIdx, ""+idx}
-                               ));
-                         }
-                      }
-                      catch (NumberFormatException e)
-                      {
-                         // shouldn't happen
-                      }
-
-                      line = in.readLine();
-
-                      if (line == null)
-                      {
-                         throw new EOFException(
-                            DatatoolTk.getLabelWithValue(
-                            "error.dbload.missing_end_row_tag", rowIdx));
-                      }
-
-                      db.linenum++;
-
-                      m = PATTERN_ROW_ID_END.matcher(line);
-
-                      if (!m.matches())
-                      {
-                         throw new InvalidSyntaxException(
-                            DatatoolTk.getLabelWithValues(
-                            "error.dbload.missing_end_row_tag_pat",
-                            new String[]
-                            {
-                              ""+db.linenum,
-                              PATTERN_ROW_ID_END.pattern(),
-                              ""+rowIdx
-                            }));
-                      }
-
-                      line = in.readLine();
-
-                      if (line == null)
-                      {
-                         throw new EOFException(
-                           DatatoolTk.getLabelWithValue(
-                             "error.dbload.missing_end_row_tag", rowIdx));
-                      }
-
-                      db.linenum++;
-
-                      m = PATTERN_ROW_ELT_END.matcher(line);
-
-                      if (!m.matches())
-                      {
-                         throw new InvalidSyntaxException(
-                            DatatoolTk.getLabelWithValues(
-                            "error.dbload.missing_end_row_tag_pat",
-                            new String[]
-                            {
-                              ""+db.linenum,
-                              PATTERN_ROW_ELT_END.pattern(),
-                              ""+rowIdx
-                            }));
-                      }
-
-                      break;
-                  }
-
-                  // read in column data for current row
-
-                  m = PATTERN_COL_ID.matcher(line);
-
-                  int colIdx = -1;
-
-                  if (!m.matches())
-                  {
-                     throw new InvalidSyntaxException(
-                        DatatoolTk.getLabelWithValues(
-                          "error.dbload.missing_col_tag",
-                          ""+db.linenum, PATTERN_COL_ID.pattern()));
-                  }
-
-                  try
-                  {
-                     colIdx = Integer.parseInt(m.group(1));
-                  }
-                  catch (NumberFormatException e)
-                  {
-                     // shouldn't happen
-                  }
-
-                  line = in.readLine();
-
-                  if (line == null)
-                  {
-                     throw new EOFException(
-                        DatatoolTk.getLabelWithValue(
-                          "error.dbload.col_tag_eof", colIdx));
-                  }
-
-                  db.linenum++;
-
-                  m = PATTERN_COL_ID_END.matcher(line);
-
-                  if (!m.matches())
-                  {
-                     throw new InvalidSyntaxException(
-                        DatatoolTk.getLabelWithValues(
-                           "error.dbload.missing_col_tag",
-                           ""+db.linenum, PATTERN_COL_ID_END.pattern()));
-                  }
-
-                  // Read cell data
-
-                  line = in.readLine();
-
-                  if (line == null)
-                  {
-                     throw new EOFException(
-                        DatatoolTk.getLabelWithValue(
-                          "error.dbload.col_data_eof", colIdx));
-                  }
-
-                  db.linenum++;
-
-                  m = PATTERN_COL_ELT.matcher(line);
-
-                  if (!m.matches())
-                  {
-                     throw new InvalidSyntaxException(
-                        DatatoolTk.getLabelWithValues(
-                           "error.dbload.missing_col_tag",
-                            ""+db.linenum, PATTERN_COL_ELT.pattern()));
-                  }
-
-                  String value = m.group(1);
-
-                  while ((line = in.readLine()) != null)
-                  {
-                     db.linenum++;
-
-                     m = PATTERN_COL_ELT_END.matcher(line);
-
-                     if (m.matches())
-                     {
-                        break;
-                     }
-
-                     value += System.getProperty("line.separator", "\n") 
-                            + line;
-                  }
-
-                  if (line == null)
-                  {
-                     throw new EOFException(
-                        DatatoolTk.getLabelWithValue(
-                           "error.dbload.col_data_eof", colIdx));
-                  }
-
-                  // check for end column tag
-
-                  line = in.readLine();
-
-                  if (line == null)
-                  {
-                     throw new EOFException(
-                        DatatoolTk.getLabelWithValue(
-                           "error.dbload.col_end_tag_eof", colIdx));
-                  }
-
-                  db.linenum++;
-
-                  m = PATTERN_COL_ID.matcher(line);
-
-                  if (!m.matches())
-                  {
-                     throw new InvalidSyntaxException(
-                       DatatoolTk.getLabelWithValues(
-                         "error.dbload.missing_end_col", 
-                         ""+db.linenum, ""+colIdx));
-                  }
-
-                  try
-                  {
-                     int idx = Integer.parseInt(m.group(1));
-
-                     if (idx != colIdx)
-                     {
-                         throw new InvalidSyntaxException(
-                           DatatoolTk.getLabelWithValues(
-                             "error.dbload.wrong_end_col_tag",
-                             new String[]{""+db.linenum, ""+colIdx, ""+idx}));
-                     }
-                  }
-                  catch (NumberFormatException e)
-                  {
-                     // shouldn't happen
-                  }
-
-                  line = in.readLine();
-
-                  if (line == null)
-                  {
-                     throw new EOFException(
-                        DatatoolTk.getLabelWithValue(
-                           "error.dbload.col_end_tag_eof", colIdx));
-                  }
-
-                  db.linenum++;
-
-                  m = PATTERN_COL_ID_END.matcher(line);
-
-                  if (!m.matches())
-                  {
-                     throw new InvalidSyntaxException(
-                        DatatoolTk.getLabelWithValues(
-                          "error.dbload.missing_end_col_tag",
-                          ""+db.linenum, ""+colIdx));
-                  }
-
-                  if (value.endsWith("%"))
-                  {
-                     value = value.substring(0, value.length()-1);
-                  }
-
-                  if (!hasVerbatim)
-                  {
-                     hasVerbatim = checkForVerbatim(value);
-                  }
-
-                  db.addCell(rowIdx-1, colIdx-1, value);
-
-               }
-
-               if (done) break;
-
-               line = in.readLine();
-               db.linenum++;
             }
-
-            if (done) break;
          }
 
-         if (line == null)
+         if (controlSequence == null)
          {
-            throw new EOFException(
-               DatatoolTk.getLabelWithValue(
-                 "error.dbload.missing_end_brace", p.pattern()));
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", "\\newtoks\\csname"));
+         }
+
+         String contents = readUntil(in, "\\endcsname");
+
+         if (contents == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", 
+             "\\newtoks\\csname dtldb@"+name+"\\endcsname"));
+         }
+         else if (!contents.equals("dtldb@"+name))
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues(
+              "error.dbload.expected_found",
+                new String[]
+                {
+                  ""+in.getLineNumber(),
+                  "\\newtoks\\csname dtldb@"+name+"\\endcsname",
+                  "\\newtoks\\csname "+contents+"\\endcsname"
+                }
+              ));
+         }
+
+         contents = readUntil(in, "\\csname");
+
+         if (contents == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", 
+             "\\csname dtldb@"+name+"\\endcsname="));
+         }
+
+         // skip any whitespace
+
+         c = readChar(in, true);
+
+         contents = readUntil(in, "\\endcsname");
+
+         if (contents == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", 
+             "\\csname dtldb@"+name+"\\endcsname="));
+         }
+
+         contents = (""+(char)c)+contents;
+
+         if (!contents.equals("dtldb@"+name))
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues(
+              "error.dbload.expected_found",
+                new String[]
+                {
+                  ""+in.getLineNumber(),
+                  "\\csname dtldb@"+name+"\\endcsname",
+                  "\\csname "+contents+"\\endcsname"
+                }
+              ));
+         }
+
+         // Look for ={ assignment
+
+         c = readChar(in, true);
+
+         if (c == -1)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", 
+                "\\csname dtldb@"+name+"\\endcsname="));
+         }
+         else if (c != (int)'=')
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues(
+              "error.dbload.expected_found", 
+               new String[]
+               {
+                  ""+in.getLineNumber(),
+                  "\\csname dtldb@"+name+"\\endcsname=",
+                  "\\csname dtldb@"+name+"\\endcsname"+((char)c)
+               }));
+         }
+
+         c = readChar(in, true);
+
+         if (c == -1)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+              "error.dbload.not_found", 
+                "\\csname dtldb@"+name+"\\endcsname={"));
+         }
+         else if (c != (int)'{')
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues(
+              "error.dbload.expected_found", 
+               new String[]
+               {
+                  ""+in.getLineNumber(),
+                  "\\csname dtldb@"+name+"\\endcsname={",
+                  "\\csname dtldb@"+name+"\\endcsname"+((char)c)
+               }));
+         }
+
+         // Read row data until we reach the closing }
+
+         int currentRow = 0;
+
+         while (true)
+         {
+            in.mark(80);
+
+            c = readChar(in, true);
+
+            if (c == (int)'}')
+            {
+               // Finished
+               break;
+            }
+            else if (c == -1)
+            {
+               throw new IOException(DatatoolTk.getLabelWithValues
+                 (
+                  "error.dbload.not_found",
+                  in.getLineNumber(),
+                  "}"
+                 ));
+            }
+            else
+            {
+               in.reset();
+            }
+
+            currentRow = db.parseRow(in, currentRow);
          }
 
          db.setFile(dbFile);
@@ -595,6 +367,552 @@ public class DatatoolDb
       return db;
    }
 
+   private int parseRow(LineNumberReader in, int currentRow)
+     throws IOException
+   {
+      readCommand(in, "\\db@row@elt@w");
+
+      readCommand(in, "\\db@row@id@w");
+
+      String contents = readUntil(in, "\\db@row@id@end@");
+
+      try
+      {
+         int num = Integer.parseInt(contents);
+
+         if (num == currentRow)
+         {
+            // We've finished with this row
+
+            return currentRow;
+         }
+
+         currentRow = num;
+
+         insertRow(currentRow-1);
+      }
+      catch (NumberFormatException e)
+      {
+         throw new IOException(DatatoolTk.getLabelWithValues
+           (
+              "error.invalid_row_id",
+              in.getLineNumber(),
+              contents
+           ), e);
+      }
+
+      parseEntry(in, currentRow);
+
+      return currentRow;
+   }
+
+   private void parseEntry(LineNumberReader in, int currentRow)
+     throws IOException
+   {
+      String controlSequence = readCommand(in);
+
+      if (controlSequence == null)
+      {
+         throw new IOException(DatatoolTk.getLabelWithValues
+           (
+              "error.dbload.expected",
+              in.getLineNumber(),
+              "\\db@row@elt@w"
+           ));
+      }
+
+      if (controlSequence.equals("\\db@row@id@w"))
+      {
+         // Finished. Read in end marker.
+
+         String contents = readUntil(in, "\\db@row@id@end@");
+
+         try
+         {
+            int num = Integer.parseInt(contents);
+
+            if (num != currentRow)
+            {
+               throw new IOException(DatatoolTk.getLabelWithValues
+                 (
+                    "error.dbload.wrong_end_row_tag",
+                    new String[]
+                    {
+                       ""+in.getLineNumber(),
+                       ""+currentRow,
+                       contents
+                    }
+                 ));
+            }
+         }
+         catch (NumberFormatException e)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues
+              (
+                 "error.dbload.invalid_row_id",
+                 in.getLineNumber(),
+                 contents
+              ), e);
+         }
+
+         readCommand(in, "\\db@row@elt@end@");
+
+         return;
+      }
+
+      if (!controlSequence.equals("\\db@col@id@w"))
+      {
+         throw new IOException(DatatoolTk.getLabelWithValues
+           (
+              "error.dbload.expected_found",
+              new String[]
+              {
+                 ""+in.getLineNumber(),
+                 "\\db@col@id@w",
+                 controlSequence
+              }
+           ));
+      }
+
+      String contents = readUntil(in, "\\db@col@id@end@");
+
+      if (contents == null)
+      {
+         throw new IOException(DatatoolTk.getLabelWithValues
+           (
+              "error.dbload.expected",
+                 in.getLineNumber(),
+                 "\\db@col@id@end@"
+           ));
+      }
+
+      int currentColumn;
+
+      try
+      {
+         currentColumn = Integer.parseInt(contents);
+      }
+      catch (NumberFormatException e)
+      {
+         throw new IOException(DatatoolTk.getLabelWithValues
+           (
+              "error.dbload.invalid_col_id",
+              in.getLineNumber(),
+              contents
+           ), e);
+      }
+
+      readCommand(in, "\\db@col@elt@w");
+
+      contents = readUntil(in, "\\db@col@elt@end@");
+
+      if (contents == null)
+      {
+         throw new IOException(DatatoolTk.getLabelWithValues
+           (
+              "error.dbload.expected",
+                 in.getLineNumber(),
+                 "\\db@col@elt@end@"
+           ));
+      }
+
+      DatatoolRow row = data.get(currentRow-1);
+
+      row.set(currentColumn-1, contents);
+
+      readCommand(in, "\\db@col@id@w");
+
+      contents = readUntil(in, "\\db@col@id@end@");
+
+      try
+      {
+         int num = Integer.parseInt(contents);
+
+         if (num != currentColumn)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues
+              (
+                 "error.dbload.wrong_end_col_tag",
+                 new String[]
+                 {
+                    ""+in.getLineNumber(),
+                    ""+currentColumn,
+                    contents
+                 }
+              ));
+         }
+      }
+      catch (NumberFormatException e)
+      {
+         throw new IOException(DatatoolTk.getLabelWithValues
+           (
+              "error.dbload.invalid_col_id",
+              in.getLineNumber(),
+              contents
+           ), e);
+      }
+
+      parseEntry(in, currentRow);
+   }
+
+   private int parseHeader(LineNumberReader in, int currentColumn)
+     throws IOException
+   {
+      String controlSequence = readCommand(in);
+
+      if (controlSequence == null)
+      {
+         throw new IOException(DatatoolTk.getLabelWithValue(
+            "error.dbload.not_found", "\\db@plist@elt@end@"));
+      }
+
+      if (controlSequence.equals("\\db@plist@elt@end@"))
+      {
+         return currentColumn; // finished
+      }
+
+      if (controlSequence.equals("\\db@col@id@w"))
+      {
+         String content = readUntil(in, "\\db@col@id@end@");
+
+         if (content == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+               "error.dbload.not_found", "\\db@col@id@end@"));
+         }
+
+         try
+         {
+            currentColumn = Integer.parseInt(content);
+         }
+         catch (NumberFormatException e)
+         {
+             throw new IOException(DatatoolTk.getLabelWithValues
+             (
+                "error.invalid_col_id",
+                in.getLineNumber(),
+                content
+             ), e);
+         }
+
+         // Do we have a column with this index?
+         // (This may be the terminating tag or columns may be
+         // listed without order.)
+
+         if (headers.size() < currentColumn)
+         {
+            insertColumn(currentColumn-1);
+         }
+      }
+      else if (controlSequence.equals("\\db@key@id@w"))
+      {
+         String content = readUntil(in, "\\db@key@id@end@");
+
+         if (content == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+               "error.dbload.not_found", "\\db@key@id@end@"));
+         }
+
+         // Get the header for the current column and set this key
+
+         if (headers.size() < currentColumn)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues
+             (
+                "error.db.load.expected_found",
+                new String[]
+                {
+                   ""+in.getLineNumber(),
+                   "\\db@col@id@w",
+                   "\\db@key@id@w"
+                }
+             ));
+         }
+
+         DatatoolHeader header = headers.get(currentColumn-1);
+
+         header.setKey(content);
+      }
+      else if (controlSequence.equals("\\db@header@id@w"))
+      {
+         String content = readUntil(in, "\\db@header@id@end@");
+
+         if (content == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+               "error.dbload.not_found", "\\db@header@id@end@"));
+         }
+
+         // Get the header for the current column and set this title
+
+         if (headers.size() < currentColumn)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValues
+             (
+                "error.db.load.expected_found",
+                new String[]
+                {
+                   ""+in.getLineNumber(),
+                   "\\db@col@id@w",
+                   "\\db@header@id@w"
+                }
+             ));
+         }
+
+         DatatoolHeader header = headers.get(currentColumn-1);
+
+         header.setTitle(content);
+      }
+      else if (controlSequence.equals("\\db@type@id@w"))
+      {
+         String content = readUntil(in, "\\db@type@id@end@");
+
+         if (content == null)
+         {
+            throw new IOException(DatatoolTk.getLabelWithValue(
+               "error.dbload.not_found", "\\db@type@id@end@"));
+         }
+
+         try
+         {
+            int type = Integer.parseInt(content);
+ 
+            // Get the header for the current column and set this title
+
+            if (headers.size() < currentColumn)
+            {
+               throw new IOException(DatatoolTk.getLabelWithValues
+                (
+                   "error.db.load.expected_found",
+                   new String[]
+                   {
+                      ""+in.getLineNumber(),
+                      "\\db@col@id@w",
+                   "   \\db@header@id@w"
+                   }
+                ));
+            }
+
+            DatatoolHeader header = headers.get(currentColumn-1);
+
+            header.setType(type);
+         }
+         catch (NumberFormatException e)
+         {
+             throw new IOException(DatatoolTk.getLabelWithValues
+             (
+                "error.invalid_data_type",
+                in.getLineNumber(),
+                content
+             ), e);
+         }
+         catch (IllegalArgumentException e)
+         {
+             throw new IOException(DatatoolTk.getLabelWithValues
+             (
+                "error.invalid_data_type",
+                in.getLineNumber(),
+                content
+             ), e);
+         }
+
+      }
+
+      return parseHeader(in, currentColumn);
+   }
+
+   // Read in next character ignoring comments and optionally
+   // whitespace
+
+   private static int readChar(BufferedReader in, boolean ignoreSpaces)
+     throws IOException
+   {
+      int c;
+
+      while ((c = in.read()) != -1)
+      {
+         if (ignoreSpaces && Character.isWhitespace(c))
+         {
+            continue;
+         }
+
+         if (c == (int)'%')
+         {
+            in.readLine();
+            continue;
+         }
+
+         return c;
+      }
+
+      return -1;
+   }
+
+   private static String readUntil(BufferedReader in, String stopPoint)
+     throws IOException
+   {
+      StringBuffer buffer = new StringBuffer(256);
+
+      int prefixLength = stopPoint.length();
+
+      int c;
+
+      while ((c = in.read()) != -1)
+      {
+         int n = buffer.length();
+
+         if (c == (int)'%')
+         {
+            // If buffer doesn't end with a backslash or if it ends
+            // with an even number of backslashes, discard
+            // everything up to (and including) the end of line character.
+
+            if (n == 0 || buffer.charAt(n-1) != '\\')
+            {
+               in.readLine();
+               continue;
+            }
+            else
+            {
+               Matcher matcher = PATTERN_END_DBSLASH.matcher(buffer);
+
+               if (matcher.matches())
+               {
+                  in.readLine();
+                  continue;
+               }
+               else
+               {
+                  // odd number of backslashes so we have \%
+
+                  buffer.appendCodePoint(c);
+               }
+            }
+         }
+         else
+         {
+            buffer.appendCodePoint(c);
+         }
+
+         n = buffer.length();
+
+         if (n >= prefixLength)
+         {
+            int idx = n-prefixLength;
+
+            if (buffer.lastIndexOf(stopPoint, idx) != -1)
+            {
+               // found it
+
+               return buffer.substring(0, idx);
+            }
+         }
+      }
+
+      return null;
+   }
+
+
+   // Returns the first command it encounters, skipping anything
+   // that comes before it.
+   private static void readCommand(LineNumberReader in, String requiredCommand)
+     throws IOException
+   {
+      String controlSequence = readCommand(in);
+
+      if (controlSequence == null)
+      {
+         throw new IOException(DatatoolTk.getLabelWithValue(
+           "error.dbload.not_found", 
+             requiredCommand));
+      }
+      else if (!requiredCommand.equals(controlSequence))
+      {
+         throw new IOException(DatatoolTk.getLabelWithValues(
+           "error.dbload.expected_found", 
+            new String[]
+            {
+               ""+in.getLineNumber(),
+               requiredCommand,
+               controlSequence
+            }));
+      }
+   }
+
+   private static String readCommand(BufferedReader in)
+     throws IOException
+   {
+      StringBuffer buffer = new StringBuffer(32);
+
+      int c;
+
+      in.mark(2);
+
+      while ((c = in.read()) != -1)
+      {
+         if (buffer.length() == 0)
+         {
+            if (c == (int)'\\')
+            {
+               buffer.appendCodePoint(c);
+            }
+            else if (c == (int)'%')
+            {
+               // discard everything up to the end of line
+               // character
+
+               if (in.readLine() == null)
+               {
+                  return null; // reached end of file
+               }
+            }
+         }
+         else if (buffer.length() == 1)
+         {
+            buffer.appendCodePoint(c);
+
+            // If c isn't alphabetical, we have a control symbol
+            // (Remember to include @ as a letter)
+
+            if (!(Character.isAlphabetic(c) || c == (int)'@'))
+            {
+               return buffer.toString();
+            }
+
+            // Is alphabetical, so we have the start of a control
+            // word.
+         }
+         else if (Character.isAlphabetic(c) || c == (int)'@')
+         {
+            // Still part of control word
+
+            buffer.appendCodePoint(c);
+         }
+         else
+         {
+            // Reached the end of the control word.
+            // Discard any white space.
+
+            while (Character.isWhitespace(c))
+            {
+               in.mark(2);
+               c = in.read();
+            }
+
+            // Reset back to mark and return control word.
+
+            in.reset();
+
+            return buffer.toString();
+         }
+
+         in.mark(2);
+      }
+
+      return null;
+   }
+
    public static boolean checkForVerbatim(String value)
    {
       for (int i = 0; i < PATTERN_VERBATIM.length; i++)
@@ -605,153 +923,6 @@ public class DatatoolDb
       }
 
       return false;
-   }
-
-   public boolean parseHeader(BufferedReader in, boolean checkForVerbatim)
-    throws IOException
-   {
-      Integer colIdx = (Integer)parseGroup(in, GROUP_COL);
-      String key     = (String)parseGroup(in, GROUP_KEY);
-      Integer type   = (Integer)parseGroup(in, GROUP_TYPE);
-      String title   = (String)parseGroup(in, GROUP_TITLE);
-
-      Integer idx    = (Integer)parseGroup(in, GROUP_COL);
-
-      if (!idx.equals(colIdx))
-      {
-         throw new InvalidSyntaxException(DatatoolTk.getLabelWithValues(
-            "error.dbload.wrong_end_col_tag",
-            new String[] {""+linenum, colIdx.toString(), idx.toString()}));
-      }
-
-      int index = colIdx.intValue()-1;
-
-      if (index >= headers.size())
-      {
-         insertColumn(index, 
-            new DatatoolHeader(this, key, title, type.intValue()));
-      }
-      else
-      {
-         headers.set(index, new DatatoolHeader(this, key, title, type.intValue()));
-      }
-
-
-      return checkForVerbatim ? checkForVerbatim(title): false;
-   }
-
-   private Object parseGroup(BufferedReader in, int groupType)
-    throws IOException
-   {
-      Pattern openPat  = null;
-      Pattern closePat = null;
-
-      switch (groupType)
-      {
-         case GROUP_COL:
-           openPat = PATTERN_COL_ID;
-           closePat = PATTERN_COL_ID_END;
-         break;
-         case GROUP_KEY:
-           openPat = PATTERN_KEY_ID;
-           closePat = PATTERN_KEY_ID_END;
-         break;
-         case GROUP_TITLE:
-           openPat = PATTERN_TITLE_ID;
-           closePat = PATTERN_TITLE_ID_END;
-         break;
-         case GROUP_TYPE:
-           openPat = PATTERN_TYPE_ID;
-           closePat = PATTERN_TYPE_ID_END;
-         break;
-         default:
-            throw new IllegalArgumentException(
-              DatatoolTk.getLabelWithValue("error.invalid_group_id",
-                groupType));
-      }
-
-      String value = null;
-      String line = null;
-
-      while ((line = in.readLine()) != null)
-      {
-         linenum++;
-         Matcher m = DatatoolDb.PATTERN_COMMENT.matcher(line);
-
-         if (m.matches())
-         {
-            continue;
-         }
-
-         m = openPat.matcher(line);
-
-         if (m.matches())
-         {
-            value = m.group(1);
-
-            break;
-         }
-
-         throw new InvalidSyntaxException(
-           DatatoolTk.getLabelWithValues("error.dbload.expected",
-            ""+linenum, openPat.pattern()));
-      }
-
-      while ((line = in.readLine()) != null)
-      {
-         linenum++;
-
-         Matcher m = closePat.matcher(line);
-
-         if (m.matches())
-         {
-            break;
-         }
-
-         value += System.getProperty("line.separator", "\n") + line;
-      }
-
-      if (line == null)
-      {
-         throw new InvalidSyntaxException(
-            DatatoolTk.getLabelWithValues("error.dbload.expected",
-            ""+linenum, closePat.pattern()));
-      }
-
-      switch (groupType)
-      {
-         case GROUP_COL:
-            try
-            {
-               return new Integer(value);
-            }
-            catch (NumberFormatException e)
-            {
-                throw new InvalidSyntaxException(
-                   DatatoolTk.getLabelWithValues(
-                      "error.invalid_col_id", ""+linenum, value));
-            }
-         case GROUP_TYPE:
-            try
-            {
-               if (value.isEmpty())
-               {
-                  return DatatoolDb.TYPE_UNKNOWN;
-               }
-               else
-               {
-                  return new Integer(value);
-               }
-            }
-            catch (NumberFormatException e)
-            {
-                throw new InvalidSyntaxException(
-                   DatatoolTk.getLabelWithValues(
-                      "error.invalid_type_id", ""+linenum, value));
-            }
-      }
-
-      return value;
    }
 
 
@@ -895,6 +1066,8 @@ public class DatatoolDb
          }
 
          out.println("\\egroup");
+
+         out.println("\\def\\string\\dtllastloadeddb{"+name+"}");
       }
       finally
       {
@@ -1658,30 +1831,10 @@ public class DatatoolDb
             DatatoolTk.getMnemonicInt("header.type.real"),
             DatatoolTk.getMnemonicInt("header.type.currency")
          };
-   private static final Pattern PATTERN_DBNAME = Pattern.compile("\\\\DTLifdbexists\\{(.+)\\}%\\s*");
-   public static final Pattern PATTERN_COMMENT = Pattern.compile("\\s*%.*");
-   private static final Pattern PATTERN_CLOSE = Pattern.compile("\\s*\\}%\\s*");
-   private static final Pattern PATTERN_PLIST_ELT = Pattern.compile("\\s*\\\\db@plist@elt@w\\s*(%\\s*)?");
-   private static final Pattern PATTERN_PLIST_ELT_END = Pattern.compile("\\s*\\\\db@plist@elt@end@\\s*(%\\s*)?");
 
-   private static final Pattern PATTERN_ROW_ELT = Pattern.compile("\\s*\\\\db@row@elt@w\\s*(%\\s*)?");
-   private static final Pattern PATTERN_ROW_ELT_END = Pattern.compile("\\s*\\\\db@row@elt@end@\\s*(%\\s*)?");
-   private static final Pattern PATTERN_ROW_ID = Pattern.compile("\\s*\\\\db@row@id@w\\s*([0-9]+)(%\\s*)?");
-   private static final Pattern PATTERN_ROW_ID_END = Pattern.compile("\\s*\\\\db@row@id@end@\\s*(%\\s*)?");
-   private static final Pattern PATTERN_COL_ID = Pattern.compile("\\s*\\\\db@col@id@w\\s*([0-9]+)(%\\s*)?");
-   private static final Pattern PATTERN_COL_ID_END = Pattern.compile("\\s*\\\\db@col@id@end@\\s*(%\\s*)?");
 
-   private static final Pattern PATTERN_COL_ELT = Pattern.compile("\\s*\\\\db@col@elt@w\\s*(.*?)%?");
-   private static final Pattern PATTERN_COL_ELT_END = Pattern.compile("\\s*\\\\db@col@elt@end@\\s*%?");
-
-   private static final int GROUP_COL=0, GROUP_KEY=1, GROUP_TITLE=2, GROUP_TYPE=3;
-
-   private static final Pattern PATTERN_KEY_ID = Pattern.compile("\\s*\\\\db@key@id@w\\s*(.*)%\\s*");
-   private static final Pattern PATTERN_KEY_ID_END = Pattern.compile("\\s*\\\\db@key@id@end@\\s*%\\s*");
-   private static final Pattern PATTERN_TYPE_ID = Pattern.compile("\\s*\\\\db@type@id@w\\s*([0-9]*)%\\s*");
-   private static final Pattern PATTERN_TYPE_ID_END = Pattern.compile("\\s*\\\\db@type@id@end@\\s*%\\s*");
-   private static final Pattern PATTERN_TITLE_ID = Pattern.compile("\\s*\\\\db@header@id@w\\s*(.*)%\\s*");
-   private static final Pattern PATTERN_TITLE_ID_END = Pattern.compile("\\s*\\\\db@header@id@end@\\s*%\\s*");
+   private static final Pattern PATTERN_END_DBSLASH 
+    = Pattern.compile(".*[^\\\\](\\\\\\\\)+");
 
    private static final Pattern[] PATTERN_VERBATIM =
     new Pattern[]

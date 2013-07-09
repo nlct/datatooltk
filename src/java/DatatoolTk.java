@@ -554,6 +554,12 @@ public class DatatoolTk
       return getLabelWithValue(label, ""+value);
    }
 
+   public static String getLabelWithValues(String label, int value1,
+      String value2)
+   {
+      return getLabelWithValues(label, new String[] {""+value1, value2});
+   }
+
    public static String getLabelWithValues(String label, String value1,
       String value2)
    {
