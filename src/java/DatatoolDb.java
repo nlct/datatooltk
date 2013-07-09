@@ -1067,7 +1067,7 @@ public class DatatoolDb
 
          out.println("\\egroup");
 
-         out.println("\\def\\string\\dtllastloadeddb{"+name+"}");
+         out.println("\\def\\dtllastloadeddb{"+name+"}");
       }
       finally
       {
