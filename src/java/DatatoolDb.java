@@ -674,9 +674,14 @@ public class DatatoolDb
                "error.dbload.not_found", "\\db@type@id@end@"));
          }
 
+         int type = TYPE_UNKNOWN;
+
          try
          {
-            int type = Integer.parseInt(content);
+            if (!content.isEmpty())
+            {
+               type = Integer.parseInt(content);
+            }
  
             // Get the header for the current column and set this title
 
@@ -702,7 +707,7 @@ public class DatatoolDb
          {
              throw new IOException(DatatoolTk.getLabelWithValues
              (
-                "error.invalid_data_type",
+                "error.dbload_unknown_type",
                 in.getLineNumber(),
                 content
              ), e);
@@ -711,7 +716,7 @@ public class DatatoolDb
          {
              throw new IOException(DatatoolTk.getLabelWithValues
              (
-                "error.invalid_data_type",
+                "error.dbload_unknown_type",
                 in.getLineNumber(),
                 content
              ), e);
@@ -981,6 +986,7 @@ public class DatatoolDb
 
             int type = header.getType();
 
+out.println("% header block for column "+colIdx);
             out.println("\\db@plist@elt@w %");
             out.println("\\db@col@id@w "+colIdx+"%");
             out.println("\\db@col@id@end@ %");
@@ -1769,7 +1775,11 @@ public class DatatoolDb
          reader = new FileReader(templateFile.getFile());
 
          db = new DatatoolDb(settings);
-         db.setName(templateFile.toString());
+
+         String theName = templateFile.toString();
+
+         db.setName(DatatoolTk.getLabelWithAlt("plugin.datagidx.default_name",
+           theName));
 
          TemplateHandler handler = new TemplateHandler(db, templateFile.toString());
          xr.setContentHandler(handler);

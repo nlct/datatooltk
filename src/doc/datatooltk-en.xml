@@ -27,7 +27,7 @@
      <p>
      The <LaTeX /> <sty>datatool</sty> package is able to save databases 
      in its own internal format to allow for rapid loading (using
-     <cs tag="DTLsaverawdb"/>).
+     <cs tag="DTLsaverawdb"/> or <cs tag="DTLprotectedsaverawdb"/>).
      Files in this format are difficult to 
      edit and only a<nbsp /><TeX />pert should attempt it, but they are 
      by far the fastest way of loading a <sty>datatool</sty> 
@@ -354,9 +354,11 @@
    <cs tag="DTLpar"/>, but with <app/> you don't need to worry about it 
    as blank lines in an entry will automatically be converted behind 
    the scenes. Note that redundant blank lines will be removed.
+   Note also that empty entries aren't the same as null entries. If you want 
+   a<nbsp/>null entry, set the entry to <cs tag="@dtlnovalue"/>.
    </p>
    <p>
-   <b>Note:</b> if you use <sty>datatool</sty>'s <cs tag="DTLsaverawdb"/> 
+   <b>Important:</b> if you use <sty>datatool</sty>'s <cs tag="DTLsaverawdb"/> 
    command to overwrite your file, you will lose any pretty-printing spaces
    or comments in your code.
    </p>
@@ -761,14 +763,17 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    </p>
    <p>
    The new database (created via <menu tag="file.new_from_template"/>) is
-   shown in <ref tag="datagidxplugin1"/>. Once this database has been
-   created, the <tt>datagidx</tt> plugin will open the dialog box shown in
-   <ref tag="datagidxplugin2"/>.
+   shown in <ref tag="datagidxplugin1"/>. The default name of the database
+   is <dq><dict tag="plugin.datagidx.default_name"/></dq>. You can change it 
+   as required, but don't call it <dq>datagidx</dq> as the <sty>datagidx</sty> 
+   package creates a<nbsp/>database with that name for its private use.
+   Once this database has been created, the <tt>datagidx</tt> plugin will 
+   open the dialog box shown in <ref tag="datagidxplugin2"/>.
    </p>
-     <float type="figure" tag="datagidxplugin1" caption="A Database Created From the datagidx Template">
+     <float type="figure" tag="datagidxplugin1" caption="A Database Created From the datagidx Template" pos="htbp">
       <image scale="0.75" alt="Image of main window" src="images/datagidxplugin1.png" />
      </float>
-     <float type="figure" tag="datagidxplugin2" caption="The datagidx Plugin Dialog">
+     <float type="figure" tag="datagidxplugin2" caption="The datagidx Plugin Dialog" pos="htbp">
       <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin2.png" />
      </float>
    <p>
@@ -789,24 +794,32 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    <button tag="plugin.datagidx.ShortPlural"/> and
    <button tag="plugin.datagidx.LongPlural"/> fields.
    Since this is the first entry, there are no options for the
-   <button tag="plugin.datagidx.Parent"/> and
-   <button tag="plugin.datagidx.See"/> fields.
+   <button tag="plugin.datagidx.Parent"/>,
+   <button tag="plugin.datagidx.See"/> and 
+   <button tag="plugin.datagidx.SeeAlso"/> fields. (The last two are hidden in
+   <ref tag="datagidxplugin3"/> as the <button tag="plugin.datagidx.crossref"/>
+   button is unchecked.)
    </p>
-     <float type="figure" tag="datagidxplugin3" caption="Most Fields Are Auto-Filled From the Name Field">
+     <float type="figure" tag="datagidxplugin3" caption="Most Fields Are Auto-Filled From the Name Field" pos="htbp">
       <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin3.png" />
      </float>
    <p>
    When I<nbsp/>click on <button tag="button.okay"/>, a<nbsp/>new row is
-   added to the database (see <ref tag="datagidxplugin4"/>).
+   added to the database (see <ref tag="datagidxplugin4"/>). Note that
+   I<nbsp/>didn't specify a<nbsp/>parent for this entry so the parent has
+   been given the value <cs tag="@dtlnovalue"/>, which ensures it will work
+   correctly when the <sty>datagidx</sty> package tests if the parent entry
+   is null.
    </p>
-     <float type="figure" tag="datagidxplugin4" caption="New Row Added to the Database">
+     <float type="figure" tag="datagidxplugin4" caption="New Row Added to the Database" pos="htbp">
       <image scale="0.75" alt="Image of main window" src="images/datagidxplugin4.png" />
      </float>
    <p>
    If I<nbsp/>use the <tt>datagidx</tt> plugin to create a<nbsp/>new row,
    there are now options available in the 
-   <button tag="plugin.datagidx.Parent"/> and 
-   <button tag="plugin.datagidx.See"/> fields 
+   <button tag="plugin.datagidx.Parent"/>, 
+   <button tag="plugin.datagidx.See"/> and 
+   <button tag="plugin.datagidx.SeeAlso"/> fields 
    (see <ref tag="datagidxplugin5"/>).
    </p>
      <float type="figure" tag="datagidxplugin5" caption="Parent Field Lists Other Entry Labels">
@@ -818,7 +831,7 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    the <tt>bird</tt> entry to include the new <tt>duck</tt> label as one of its
    children (see <ref tag="datagidxplugin6"/>).
    </p>
-     <float type="figure" tag="datagidxplugin6" caption="Child Entry of Automatically Adjusted">
+     <float type="figure" tag="datagidxplugin6" caption="Child Entry Automatically Adjusted For Parent Entry">
       <image scale="0.75" alt="Image of main window" src="images/datagidxplugin6.png" />
      </float>
    <p>
@@ -848,6 +861,15 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    and <tt>turkey</tt> entries to the <button tag="plugin.datagidx.SeeAlso"/>
    list.
    </p>
+   <p>
+   Once I've enter all my terms, I<nbsp/>can sort the data according to 
+   the <button tag="plugin.datagidx.Sort"/> column. (Recall <ref tag="sort"/>.)
+   Now let's suppose I<nbsp/>save this sorted database to a<nbsp/>file
+   called <tt>datagidx-test.dbtex</tt>. I<nbsp/>can now load it into 
+   a<nbsp/><LaTeX/> document as follows<footnote>Ensure you have at least
+   version 2.15 of the <sty>datatool</sty> bundle.</footnote>:
+   </p>
+<verbinput src="../tests/datagidx-doc.tex"/>
    </example>
    </node>
    <node tag="import" type="chapter" title="Importing Data">

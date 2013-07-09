@@ -160,7 +160,8 @@ public class DatatoolPlugin implements Runnable
 
          for (int j = 0; j < numCols; j++)
          {
-            writer.println("<entry>"+encodeXml(row.get(j))+"</entry>");
+            writer.println("<entry>"
+              +encodeXml(row.get(j))+"</entry>");
          }
 
          writer.println("</row>");
@@ -173,8 +174,10 @@ public class DatatoolPlugin implements Runnable
 
    private String encodeXml(String string)
    {
-      return string.replaceAll("\\&", "&amp;").replaceAll("\"", "&quot;")
-         .replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>");
+      return string
+         .replaceAll("\\&", "&amp;").replaceAll("\"", "&quot;")
+         .replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+         .replaceAll("\\\\DTLpar ", "<br/><br/>").replaceAll("\n", "<br/>");
    }
 
    private String decodeXml(String string)
@@ -304,7 +307,8 @@ class PluginHandler extends DefaultHandler
       }
       else if (localName.equals("entry"))
       {
-         currentRow.add(currentBuffer.toString());
+         currentRow.add(currentBuffer.toString().replaceAll("(\\n\\s*\\n)+", 
+           "\\\\DTLpar "));
          currentBuffer = null;
       }
       else if (localName.equals("datatooltk"))

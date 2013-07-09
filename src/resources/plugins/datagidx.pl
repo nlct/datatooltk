@@ -14,7 +14,8 @@ my $selectedRow = $db->selectedRow();
 my %colIndexes = ();
 
 foreach my $key (qw/Label Name Text Parent Child Description Symbol
-Long Short See SeeAlso Plural ShortPlural LongPlural Sort/)
+Long Short See SeeAlso Plural ShortPlural LongPlural Sort Location
+CurrentLocation FirstId Used/)
 {
    my $idx = $db->getColumnIndex($key);
 
@@ -31,7 +32,15 @@ my @row = ("") x $columnCount;
 if ($selectedRow > -1)
 {
    @row = @{$db->getRow($selectedRow)};
+
+   foreach my $key (qw/Parent See SeeAlso/)
+   {
+      $row[$colIndexes{$key}] = '' 
+         if ($row[$colIndexes{$key}]=~/^\\\@dtlnovalue\s*$/);
+   }
 }
+
+$row[$colIndexes{FirstId}] = "\\\@dtlnovalue";
 
 my $mw = MainWindow->new;
 
@@ -320,21 +329,22 @@ sub doDbUpdate{
       if ($crossrefVariable eq 'see')
       {
          $row[$colIndexes{See}] = $see;
-         $row[$colIndexes{SeeAlso}] = '';
+         $row[$colIndexes{SeeAlso}] = "\\\@dtlnovalue";
       }
       else
       {
-         $row[$colIndexes{See}] = '';
+         $row[$colIndexes{See}] = "\\\@dtlnovalue";
          $row[$colIndexes{SeeAlso}] = $seealsoVariable;
       }
    }
    else
    {
-      $row[$colIndexes{See}] = '';
-      $row[$colIndexes{SeeAlso}] = '';
+      $row[$colIndexes{See}] = "\\\@dtlnovalue";
+      $row[$colIndexes{SeeAlso}] = "\\\@dtlnovalue";
    }
 
-   $row[$colIndexes{Parent}] = $parent;
+   $row[$colIndexes{Parent}] = 
+     ($parent ? $parent : "\\\@dtlnovalue");
 
    $db->startModifications;
 

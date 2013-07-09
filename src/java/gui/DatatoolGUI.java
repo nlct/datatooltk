@@ -1034,7 +1034,7 @@ public class DatatoolGUI extends JFrame
       {
          DatatoolGuiResources.error(this,
            DatatoolTk.getLabelWithValues(
-             "error.load.failed", file.toString(), e.getMessage()));
+             "error.load.failed", file.toString(), e.getMessage()), e);
       }
 
       return db;

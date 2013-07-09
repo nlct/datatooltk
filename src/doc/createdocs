@@ -602,6 +602,10 @@ sub get_label{
       $text=~s/\$(\d)/$attrs->{"arg$1"}/eg;
    }
 
+   # strip any trailing ellipsis
+
+   $text=~s/\.{3}$//;
+
    $text
 }
 

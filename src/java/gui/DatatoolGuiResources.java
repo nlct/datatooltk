@@ -43,15 +43,13 @@ public class DatatoolGuiResources
 
     public static void error(Component parent, String message, Exception e)
     {
-       DatatoolTk.debug("Exception: "+e.getClass().toString()+" '"+message+"'");
+       DatatoolTk.debug(e);
 
        errorPanel.updateMessage(message, e);
 
        JOptionPane.showMessageDialog(parent, errorPanel,
           DatatoolTk.getLabelWithAlt("error.title", "Error"),
          JOptionPane.ERROR_MESSAGE);
-
-       e.printStackTrace();
     }
 
     public static void warning(Component parent, String message)

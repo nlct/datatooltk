@@ -503,6 +503,7 @@ error.dbload.expected_found=Line $1: Expected '$2'. Found '$3'.
 error.dbload.not_found=Premature end of file. Failed to find '$1'
 error.dbload.wrong_end_row_tag=Line $1: Row $2 ended with closing tag for row $3
 error.dbload.wrong_end_col_tag=Line $1: Column $2 ended with closing tag for column $3
+error.dbload.unknown_type=Line $1: unknown data type '$2'
 error.nopanel=No current panel!
 error.invalid_data_type=Invalid data type $1
 error.invalid_header=Line $1: Header data for column $2 ended by index $3
@@ -564,6 +565,7 @@ plugin.people.Email=Email
 plugin.people.edit_entry=Edit Entry
 plugin.people.new_entry=New Entry
 
+plugin.datagidx.default_name=index
 plugin.datagidx.edit_entry=Edit Entry
 plugin.datagidx.new_entry=New Entry
 plugin.datagidx.Label=Label
