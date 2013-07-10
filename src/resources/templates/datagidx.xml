@@ -1,5 +1,8 @@
 <datatooltktemplate>
  <header>
+   <label>Sort</label>
+ </header>
+ <header>
    <label>Label</label>
  </header>
  <header>
@@ -7,9 +10,6 @@
  </header>
  <header>
    <label>Text</label>
- </header>
- <header>
-   <label>Sort</label>
  </header>
  <header>
    <label>Parent</label>
