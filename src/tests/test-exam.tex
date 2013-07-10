@@ -24,7 +24,11 @@
   {%
      % If year hasn't been specified, set it to 0 to
      % allow numeric comparisons
-     \ifdefempty{\Year}{\def\Year{0}}{}%
+     \ifdefempty{\Year}{\def\Year{0}}%
+     {% check for null as well, just in case
+        \DTLifnull{\Year}{\def\Year{0}}{}
+        \DTLappendtorow{Year}{0}%
+     }%
      \ifnumgreater{\value{question}}{\maxquestions}
      {%
         % Finished selecting questions, unset any year

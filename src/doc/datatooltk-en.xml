@@ -36,7 +36,8 @@
      It can also import data from <acr tag="csv" /> files, from 
      <acr tag="sql" /> databases and from <sty>probsoln</sty> databases.
      This manual assumes the user has some knowledge of the
-     <sty>datatool</sty> package.
+     <sty>datatool</sty> package. Please ensure you have at least version
+     2.15 of <sty>datatool</sty> installed in your <TeX/> distribution.
      </p>
      <p>The <app/> 
      application can run in either 
@@ -141,7 +142,7 @@
        <dt><opt tag="sqldb"/> <meta>name</meta></dt>
        <dd>The <acr tag="sql"/> database name.</dd>
        <dt><opt tag="sqlprefix"/> <meta>prefix</meta></dt>
-       <dd>The Java <acr tag="sql"/> prefix. (Default: <dq><tt>jdbc:mysql://</tt></dq>.) Currrently, only <term tag="mysql"/> is supported. Additional libraries will be required for other <acr tag="sql"/> databases.</dd>
+       <dd>The Java <acr tag="sql"/> prefix. (Default: <dq><tt>jdbc:mysql://</tt></dq>.) Currently, only <term tag="mysql"/> is supported. Additional libraries will be required for other <acr tag="sql"/> databases.</dd>
        <dt><opt tag="sqlport"/> <meta>port</meta></dt>
        <dd>The <acr tag="sql"/> port number. (Default: 3306.)</dd>
        <dt><opt tag="sqlhost"/> <meta>host</meta></dt>
@@ -243,8 +244,8 @@
    Asked Questions (<url www="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin" text="Why doesn't verbatim work within...?"/>).
    The <app/> application checks for verbatim text<footnote>More
    specifically, it checks for any occurrences of <cs tag="verb"/>, 
-   <cs tag="lstinline"/> or the beginning of the <env tag="verbatim"/>
-   or <env tag="lstlisting"/> environments.</footnote> when you load a<nbsp/>database or import
+   <cs tag="lstinline"/> or the beginning of the <env tag="verbatim"/>,
+   <env tag="lstlisting"/> or <env tag="alltt"/> environments.</footnote> when you load a<nbsp/>database or import
    data (unless the <dq>map <TeX/> special characters</dq> property is set for
    <acr tag="csv"/> or <acr tag="sql"/> imports). Also, <app/> checks for
    verbatim text when you edit the contents of a<nbsp/>cell. If it
@@ -286,10 +287,15 @@
    Empty entries aren't the same as null entries. If you want 
    a<nbsp/>null entry, set the entry to <cs tag="@dtlnovalue"/>. 
    A<nbsp/>convenient way to do this is to select the cell and use
-   <menu tag="edit.cell_to_null"/>. In your <LaTeX/> document, you 
-   can check for null values using <sty>datatool</sty>'s 
-   <cs tag="DTLifnull"/> command. To check for empty values you can use one of
-   <sty>etoolbox</sty>'s commands, such as <cs tag="ifdefempty"/>.
+   <menu tag="edit.cell_to_null"/>. Alternatively, you can set all entries in 
+   a<nbsp/>selected column to null with <menu tag="edit.column.column_to_null"/>
+   and similiarly for a<nbsp/>selected row with <menu tag="edit.row.row_to_null"/>.
+   </p>
+   <p>
+   In your <LaTeX/> document, you can check for null values using 
+   <sty>datatool</sty>'s <cs tag="DTLifnull"/> command. To check for empty 
+   values you can use one of <sty>etoolbox</sty>'s commands, such as 
+   <cs tag="ifdefempty"/>.
    </p>
    </node>
    <node tag="gui" type="chapter" title="Graphical Mode">

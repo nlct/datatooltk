@@ -227,6 +227,11 @@ public class DatatoolGUI extends JFrame
       colM.add(removeColumnItem);
       removeColumnItem.setEnabled(false);
 
+      setColToNullItem = DatatoolGuiResources.createJMenuItem(
+         "edit.column", "column_to_null", this, null, toolBar);
+      colM.add(setColToNullItem);
+      setColToNullItem.setEnabled(false);
+
       JMenu rowM = DatatoolGuiResources.createJMenu("edit.row");
       editM.add(rowM);
 
@@ -244,6 +249,11 @@ public class DatatoolGUI extends JFrame
          "edit.row", "remove_row", this, toolBar);
       rowM.add(removeRowItem);
       removeRowItem.setEnabled(false);
+
+      setRowToNullItem = DatatoolGuiResources.createJMenuItem(
+         "edit.row", "row_to_null", this, null, toolBar);
+      rowM.add(setRowToNullItem);
+      setRowToNullItem.setEnabled(false);
 
       editM.add(DatatoolGuiResources.createJMenuItem(
          "edit", "preferences", this, toolBar));
@@ -689,6 +699,44 @@ public class DatatoolGUI extends JFrame
          if (tab != null && (tab instanceof DatatoolDbPanel))
          {
             ((DatatoolDbPanel)tab).updateCell(DatatoolDb.NULL_VALUE);
+         }
+      }
+      else if (action.equals("column_to_null"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            DatatoolDbPanel dbPanel = ((DatatoolDbPanel)tab);
+
+            dbPanel.startCompoundEdit(DatatoolTk.getLabel("undo.nullify_column"));
+
+            int selectedColumn = dbPanel.getModelSelectedColumn();
+            for (int row = 0, n = dbPanel.getRowCount(); row < n; row++)
+            {
+               dbPanel.updateCell(row, selectedColumn, DatatoolDb.NULL_VALUE);
+            }
+
+            dbPanel.commitCompoundEdit();
+         }
+      }
+      else if (action.equals("row_to_null"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            DatatoolDbPanel dbPanel = ((DatatoolDbPanel)tab);
+
+            dbPanel.startCompoundEdit(DatatoolTk.getLabel("undo.nullify_row"));
+
+            int selectedRow = dbPanel.getModelSelectedRow();
+            for (int column = 0, n = dbPanel.getColumnCount(); column < n; column++)
+            {
+               dbPanel.updateCell(selectedRow, column, DatatoolDb.NULL_VALUE);
+            }
+
+            dbPanel.commitCompoundEdit();
          }
       }
       else if (action.equals("edit_header"))
@@ -1233,6 +1281,8 @@ public class DatatoolGUI extends JFrame
       boolean hasBoth = hasSelectedRow && hasSelectedColumn;
       editCellItem.setEnabled(hasBoth);
       setToNullItem.setEnabled(hasBoth);
+      setColToNullItem.setEnabled(hasSelectedColumn);
+      setRowToNullItem.setEnabled(hasSelectedRow);
       removeColumnItem.setEnabled(hasSelectedColumn);
       removeRowItem.setEnabled(hasSelectedRow);
       editHeaderItem.setEnabled(hasSelectedColumn);
@@ -1316,7 +1366,7 @@ public class DatatoolGUI extends JFrame
       removeColumnItem, editHeaderItem, editDbNameItem,
       removeRowItem, clearRecentItem, sortItem, shuffleItem,
       findCellItem, findNextItem, replaceItem,
-      setToNullItem, deselectItem;
+      setToNullItem, deselectItem, setColToNullItem, setRowToNullItem;
 
    private ActionListener recentFilesListener;
 

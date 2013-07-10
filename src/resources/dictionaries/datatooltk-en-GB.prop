@@ -79,6 +79,9 @@ edit.column.move_column_left.tooltip=Move current column to the left
 edit.column.move_column_right=Move Column Right
 edit.column.move_column_right.mnemonic=R
 edit.column.move_column_right.tooltip=Move current column to the right
+edit.column.column_to_null=Nullify Column
+edit.column.column_to_null.mnemonic=N
+edit.column.column_to_null.tooltip=Set all cells in current column to null
 edit.row=Row
 edit.row.mnemonic=W
 edit.row.add_row_after=Insert Row After
@@ -96,6 +99,9 @@ edit.row.move_row_up.tooltip=Move current row up
 edit.row.move_row_down=Move Row Down
 edit.row.move_row_down.mnemonic=N
 edit.row.move_row_down.tooltip=Move current row down
+edit.row.row_to_null=Nullify Row
+edit.row.row_to_null.mnemonic=N
+edit.row.row_to_null.tooltip=Set all cells in current row to null
 edit.preferences=Edit Preferences...
 edit.preferences.mnemonic=P
 edit.preferences.tooltip=Edit application settings
@@ -398,6 +404,8 @@ undo.sort=Sort
 undo.shuffle=Shuffle
 undo.replace_row=Replace Row
 undo.plugin_action=Plugin '$1' action
+undo.nullify_column=Nullify Column
+undo.nullify_row=Nullify Row
 
 # Messages
 
