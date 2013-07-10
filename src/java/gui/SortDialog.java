@@ -81,6 +81,7 @@ public class SortDialog extends JDialog
 
       isCaseSensitiveBox.setSelected(db.isSortCaseSensitive());
 
+      pack();
       setVisible(true);
 
       return success;
