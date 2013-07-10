@@ -735,6 +735,60 @@ public class DatatoolSettings extends Properties
       return defValue;
    }
 
+   public int getCellEditorHeight()
+   {
+      try
+      {
+         return Integer.parseInt(getProperty("celleditorheight"));
+      }
+      catch (NumberFormatException e)
+      {
+         setCellHeight(10);
+         return 10;
+      }
+   }
+
+   public void setCellEditorHeight(int numLines)
+   {
+      setProperty("celleditorheight", ""+numLines);
+   }
+
+   public int getCellEditorWidth()
+   {
+      try
+      {
+         return Integer.parseInt(getProperty("celleditorwidth"));
+      }
+      catch (NumberFormatException e)
+      {
+         setCellHeight(8);
+         return 8;
+      }
+   }
+
+   public void setCellEditorWidth(int maxCharsPerLine)
+   {
+      setProperty("celleditorwidth", ""+maxCharsPerLine);
+   }
+
+   public void setSyntaxHighlighting(boolean enable)
+   {
+      setProperty("syntaxhighlighting", ""+enable);
+   }
+
+   public boolean isSyntaxHighlightingOn()
+   {
+      String prop = getProperty("syntaxhighlighting");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setSyntaxHighlighting(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
    public int getCellHeight()
    {
       try

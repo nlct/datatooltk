@@ -1,4 +1,4 @@
-% Created by datatooltk on Sat Jun 22 17:08:32 BST 2013
+% Created by datatooltk on Wed Jul 10 23:00:33 BST 2013
 \DTLifdbexists{test-para}%
 {\PackageError{datatool}{Database `test-para'
 already exists}{}%
@@ -11,6 +11,7 @@ already exists}{}%
 \expandafter\global
  \csname dtlkeys@test-para\endcsname={%
 %
+% header block for column 1
 \db@plist@elt@w %
 \db@col@id@w 1%
 \db@col@id@end@ %
@@ -23,6 +24,7 @@ already exists}{}%
 \db@col@id@w 1%
 \db@col@id@end@ %
 \db@plist@elt@end@ %
+% header block for column 2
 \db@plist@elt@w %
 \db@col@id@w 2%
 \db@col@id@end@ %
@@ -41,41 +43,50 @@ already exists}{}%
 \expandafter\global
 \csname dtldb@test-para\endcsname={%
 %
+% Start of row 1
 \db@row@elt@w %
 \db@row@id@w 1%
 \db@row@id@end@ %
+% Column 1
 \db@col@id@w 1%
 \db@col@id@end@ %
 \db@col@elt@w 1%
 \db@col@elt@end@ %
 \db@col@id@w 1%
 \db@col@id@end@ %
+% Column 2
 \db@col@id@w 2%
 \db@col@id@end@ %
-\db@col@elt@w A sample entry with quite a bit of text and here's some more
-text.\DTLpar This is supposed to be the start of a new paragraph. Here's the 
+\db@col@elt@w % Here's a comment
+A sample entry with quite a bit of text and here's some \emph{more}
+text with a~formula: $E = mc^2$.\DTLpar This is supposed to be the start of a new paragraph. Here's the 
 next sentence. How about some more text.%
 \db@col@elt@end@ %
 \db@col@id@w 2%
 \db@col@id@end@ %
+% End of row 1
 \db@row@id@w 1%
 \db@row@id@end@ %
 \db@row@elt@end@ %
+% Start of row 2
 \db@row@elt@w %
 \db@row@id@w 2%
 \db@row@id@end@ %
+% Column 1
 \db@col@id@w 1%
 \db@col@id@end@ %
 \db@col@elt@w 2%
 \db@col@elt@end@ %
 \db@col@id@w 1%
 \db@col@id@end@ %
+% Column 2
 \db@col@id@w 2%
 \db@col@id@end@ %
 \db@col@elt@w A short note.%
 \db@col@elt@end@ %
 \db@col@id@w 2%
 \db@col@id@end@ %
+% End of row 2
 \db@row@id@w 2%
 \db@row@id@end@ %
 \db@row@elt@end@ %
@@ -93,3 +104,4 @@ next sentence. How about some more text.%
 \expandafter
  \gdef\csname dtl@ci@test-para@Notes\endcsname{2}%
 \egroup
+\def\dtllastloadeddb{test-para}

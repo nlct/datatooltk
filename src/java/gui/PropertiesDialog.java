@@ -324,6 +324,54 @@ public class PropertiesDialog extends JDialog
          labels[idx].setPreferredSize(dim);
       }
 
+      box = createNewRow(leftPanel);
+      box.add(Box.createVerticalStrut(20));
+
+      JComponent editorBox = createNewRow(leftPanel);
+      editorBox.setLayout(new BoxLayout(editorBox, BoxLayout.Y_AXIS));
+      editorBox.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(), 
+        DatatoolTk.getLabel("preferences.display.editor")));
+
+      box = createNewRow(editorBox);
+      box.add(DatatoolGuiResources.createMessageArea(2, 22,
+         "preferences.display.editor.info"));
+
+      box = createNewRow(editorBox);
+
+      labels = new JLabel[2];
+      idx = 0;
+      maxWidth = 0;
+
+      editorHeightField = new NonNegativeIntField(10);
+      labels[idx] = createLabel("preferences.display.editorheight",
+         editorHeightField);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+      box.add(editorHeightField);
+
+      box = createNewRow(editorBox);
+
+      editorWidthField = new NonNegativeIntField(8);
+      labels[idx] = createLabel("preferences.display.editorwidth",
+         editorWidthField);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+      box.add(editorWidthField);
+
+      for (idx = 0; idx < labels.length; idx++)
+      {
+         dim = labels[idx].getPreferredSize();
+         dim.width = maxWidth;
+         labels[idx].setPreferredSize(dim);
+      }
+
+      syntaxHighlightingBox = DatatoolGuiResources.createJCheckBox
+        ("preferences.display", "editorsyntax", null);
+      editorBox.add(syntaxHighlightingBox);
+
       JComponent rightPanel = Box.createVerticalBox();
       rightPanel.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(), 
@@ -559,6 +607,10 @@ public class PropertiesDialog extends JDialog
       {
          cellWidthFields[i].setValue(settings.getCellWidth(i-1));
       }
+
+      editorHeightField.setValue(settings.getCellEditorHeight());
+      editorWidthField.setValue(settings.getCellEditorWidth());
+      syntaxHighlightingBox.setSelected(settings.isSyntaxHighlightingOn());
 
       texMapModel = new TeXMapModel(this, texMapTable, settings);
       texMapTable.setModel(texMapModel);
@@ -839,6 +891,10 @@ public class PropertiesDialog extends JDialog
          settings.setCellWidth(cellWidthFields[i].getValue(), i-1);
       }
 
+      settings.setCellEditorHeight(editorHeightField.getValue());
+      settings.setCellEditorWidth(editorWidthField.getValue());
+      settings.setSyntaxHighlighting(syntaxHighlightingBox.isSelected());
+
       gui.updateTableSettings();
 
       if (hasSeedBox.isSelected())
@@ -869,14 +925,14 @@ public class PropertiesDialog extends JDialog
    private CharField sepCharField, delimCharField;
 
    private JCheckBox hasHeaderBox, wipeBox, mapTeXBox,
-      hasSeedBox;
+      hasSeedBox, syntaxHighlightingBox;
 
    private FileField customFileField, latexFileField, perlFileField;
 
    private JFileChooser fileChooser;
 
    private NonNegativeIntField portField, sizeField, cellHeightField,
-      iterationsField, seedField;
+      iterationsField, seedField, editorHeightField, editorWidthField;
 
    private NonNegativeIntField[] cellWidthFields;
 

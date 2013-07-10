@@ -1330,6 +1330,11 @@ public class DatatoolGUI extends JFrame
       return settings.getCellWidth(type);
    }
 
+   public DatatoolSettings getSettings()
+   {
+      return settings;
+   }
+
    public void updateTableSettings()
    {
       for (int i = 0, n = tabbedPane.getTabCount(); i < n; i++)

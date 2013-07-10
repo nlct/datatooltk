@@ -105,7 +105,8 @@ public class CellDialog extends JDialog
          KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK),
          toolBar));
 
-      document = new CellDocument(this);
+      document = new CellDocument(this,
+         gui.getSettings().isSyntaxHighlightingOn());
       textPane = new JTextPane(document);
 
       textPane.setFont(gui.getCellFont());
@@ -113,7 +114,8 @@ public class CellDialog extends JDialog
       FontMetrics fm = getFontMetrics(textPane.getFont());
 
       textPane.setPreferredSize(new Dimension
-         (8*fm.getMaxAdvance(), 10*fm.getHeight()));
+         (gui.getSettings().getCellEditorWidth()*fm.getMaxAdvance(),
+          gui.getSettings().getCellEditorHeight()*fm.getHeight()));
 
       textPane.setEditable(true);
 
@@ -165,6 +167,8 @@ public class CellDialog extends JDialog
       this.db = panel.db;
       this.row = row;
       this.col = col;
+
+      textPane.setFont(gui.getCellFont());
 
       try
       {
@@ -354,11 +358,12 @@ public class CellDialog extends JDialog
 
 class CellDocument extends DefaultStyledDocument
 {
-   public CellDocument(CellDialog dialog)
+   public CellDocument(CellDialog dialog, boolean enableHighlight)
    {
       super();
 
       this.cellDialog = dialog;
+      this.highlightOn = enableHighlight;
 
       StyleContext context = StyleContext.getDefaultStyleContext();
       attrPlain = context.addAttribute(context.getEmptySet(),
@@ -407,6 +412,8 @@ class CellDocument extends DefaultStyledDocument
    private void updateHighlight()
    throws BadLocationException
    {
+      if (!highlightOn) return;
+
       String text = getText(0, getLength());
 
       setCharacterAttributes(0, getLength(), 
@@ -453,14 +460,19 @@ class CellDocument extends DefaultStyledDocument
       updateHighlight();
    }
 
+   // This method is for initialising so bypass the undo/redo
+   // stuff
    public void setText(String text)
      throws BadLocationException
    {
-      remove(0, getLength());
-      insertString(0, text, null);
+      super.remove(0, getLength());
+      super.insertString(0, text, null);
+      updateHighlight();
    }
 
    private CellDialog cellDialog;
+
+   private boolean highlightOn;
 
    private CompoundEdit compoundEdit;
 
