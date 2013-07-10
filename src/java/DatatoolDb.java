@@ -1808,7 +1808,7 @@ out.println("% header block for column "+colIdx);
 
          String theName = templateFile.toString();
 
-         db.setName(DatatoolTk.getLabelWithAlt("plugin.datagidx.default_name",
+         db.setName(DatatoolTk.getLabelWithAlt("plugin."+theName+".default_name",
            theName));
 
          TemplateHandler handler = new TemplateHandler(db, templateFile.toString());
