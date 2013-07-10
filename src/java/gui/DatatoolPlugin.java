@@ -51,14 +51,18 @@ public class DatatoolPlugin implements Runnable
 
    public void run()
    {
-      ProcessBuilder pb = new ProcessBuilder(perl, pluginFile.getName());
-      pb.directory(pluginFile.getParentFile());
-
       BufferedReader reader = null;
       PrintWriter writer = null;
 
       try
       {
+         File mainPluginDir = 
+           new File(DatatoolTk.class.getResource("/resources/plugins").toURI());
+
+         ProcessBuilder pb = new ProcessBuilder(perl,
+           "-I", mainPluginDir.getAbsolutePath(), pluginFile.getName());
+         pb.directory(pluginFile.getParentFile());
+
          Process process = pb.start();
 
          writer = new PrintWriter(process.getOutputStream());
