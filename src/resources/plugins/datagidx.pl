@@ -254,19 +254,61 @@ my $seealsoOptionmenu = $crossrefButtonFrame->Optionmenu
 
 my $crossrefActionFrame = $crossrefButtonFrame->Frame->pack;
 
-my $addCrossrefButton = $crossrefActionFrame->Button
-(
-  -text => &getWord('add_seealso'),
-  -state=>'disabled',
-  -command =>\&addCrossRef
-)->pack(-side=>'top', -expand=>1);
+my $addCrossrefButton;
 
-my $removeCrossrefButton = $crossrefActionFrame->Button
-(
-  -text => &getWord('remove_seealso'),
-  -state=>'disabled',
-  -command =>\&removeCrossRef
-)->pack(-side=>'top', -expand=>1);
+my $shot;
+
+my $imgFile = $db->getImageFile('add.png');
+
+if ($imgFile and -e $imgFile)
+{
+   $shot = $mw->Photo(-file=>$imgFile);
+
+   $addCrossrefButton = $crossrefActionFrame->Button
+   (
+     -text => &getWord('add_seealso'),
+     -state=>'disabled',
+     -command =>\&addCrossRef,
+     -image => $shot,
+     -compound=> 'left'
+   )->pack(-side=>'top', -expand=>1);
+}
+else
+{
+   $addCrossrefButton = $crossrefActionFrame->Button
+   (
+     -text => &getWord('add_seealso'),
+     -state=>'disabled',
+     -command =>\&addCrossRef
+   )->pack(-side=>'top', -expand=>1);
+}
+
+my $removeCrossrefButton;
+
+$imgFile = $db->getImageFile('remove.png');
+
+if ($imgFile and -e $imgFile)
+{
+   $shot = $mw->Photo(-file=>$imgFile);
+
+   $removeCrossrefButton = $crossrefActionFrame->Button
+   (
+     -text => &getWord('remove_seealso'),
+     -state=>'disabled',
+     -command =>\&removeCrossRef,
+     -image => $shot,
+     -compound => 'left'
+   )->pack(-side=>'top', -expand=>1);
+}
+else
+{
+   $removeCrossrefButton = $crossrefActionFrame->Button
+   (
+     -text => &getWord('remove_seealso'),
+     -state=>'disabled',
+     -command =>\&removeCrossRef
+   )->pack(-side=>'top', -expand=>1);
+}
 
 if ($hasCrossref)
 {
@@ -291,9 +333,7 @@ else
 
 my $buttonFrame = $mw->Frame()->pack(-ipadx=>40);
 
-my $shot;
-
-my $imgFile = $db->getImageFile('cancel.png');
+$imgFile = $db->getImageFile('cancel.png');
 
 if ($imgFile and -e $imgFile)
 {
