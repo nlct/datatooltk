@@ -104,55 +104,12 @@ public class CellDialog extends JDialog
          KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK),
          toolBar));
 
-      textArea = new JTextArea(20,40);
-      textArea.setFont(gui.getCellFont());
+      document = new CellDocument(this);
+      textPane = new JTextPane(document);
 
-      Document document = new DefaultStyledDocument()
-      {
-         public void replace(int offset, int length, String text,
-            AttributeSet attrs)
-         throws BadLocationException
-         {
-            compoundEdit = new CompoundEdit();
+      textPane.setFont(gui.getCellFont());
 
-            try
-            {
-               super.replace(offset, length, text, attrs);
-
-               compoundEdit.end();
-               undoManager.addEdit(compoundEdit);
-
-               undoItem.setEnabled(true);
-            }
-            finally
-            {
-               compoundEdit = null;
-            }
-         }
-      };
-
-      textArea.setDocument(document);
-
-      document.addUndoableEditListener(
-       new UndoableEditListener()
-       {
-          public void undoableEditHappened(UndoableEditEvent event)
-          {
-             if (compoundEdit == null)
-             {
-                undoManager.addEdit(event.getEdit());
-                undoItem.setEnabled(true);
-             }
-             else
-             {
-                compoundEdit.addEdit(event.getEdit());
-             }
-          }
-       });
-
-      textArea.setEditable(true);
-      textArea.setLineWrap(true);
-      textArea.setWrapStyleWord(true);
+      textPane.setEditable(true);
 
       document.addDocumentListener(new DocumentListener()
       {
@@ -172,7 +129,7 @@ public class CellDialog extends JDialog
          }
       });
 
-      textArea.addCaretListener(new CaretListener()
+      textPane.addCaretListener(new CaretListener()
       {
          public void caretUpdate(CaretEvent evt)
          {
@@ -182,9 +139,9 @@ public class CellDialog extends JDialog
 
       updateEditButtons();
 
-      findDialog = new FindDialog(this, textArea);
+      findDialog = new FindDialog(this, textPane);
 
-      mainPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
+      mainPanel.add(new JScrollPane(textPane), BorderLayout.CENTER);
 
       mainPanel.add(
          DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "celleditor"),
@@ -203,8 +160,15 @@ public class CellDialog extends JDialog
       this.row = row;
       this.col = col;
 
-      textArea.setText(
-         db.getRow(row).get(col).replaceAll("\\\\DTLpar *", "\n\n"));
+      try
+      {
+         document.setText(
+            db.getRow(row).get(col).replaceAll("\\\\DTLpar *", "\n\n"));
+      }
+      catch (BadLocationException e)
+      {
+         DatatoolGuiResources.error(this, e);
+      }
 
       undoManager.discardAllEdits();
       undoItem.setEnabled(false);
@@ -213,8 +177,8 @@ public class CellDialog extends JDialog
       revalidate();
 
       modified = false;
-      textArea.requestFocusInWindow();
-      textArea.setCaretPosition(0);
+      textPane.requestFocusInWindow();
+      textPane.setCaretPosition(0);
 
       setVisible(true);
 
@@ -265,23 +229,23 @@ public class CellDialog extends JDialog
       }
       else if (action.equals("select_all"))
       {
-         textArea.selectAll();
+         textPane.selectAll();
       }
       else if (action.equals("copy"))
       {
-         textArea.copy();
+         textPane.copy();
       }
       else if (action.equals("cut"))
       {
-         textArea.cut();
+         textPane.cut();
       }
       else if (action.equals("paste"))
       {
-         textArea.paste();
+         textPane.paste();
       }
       else if (action.equals("find"))
       {
-         String selectedText = textArea.getSelectedText();
+         String selectedText = textPane.getSelectedText();
 
          if (selectedText != null)
          {
@@ -296,7 +260,7 @@ public class CellDialog extends JDialog
       }
       else if (action.equals("replace"))
       {
-         String selectedText = textArea.getSelectedText();
+         String selectedText = textPane.getSelectedText();
 
          if (selectedText != null)
          {
@@ -310,7 +274,7 @@ public class CellDialog extends JDialog
    public void okay()
    {
       panel.updateCell(row, col,  
-        textArea.getText().replaceAll("\n *\n+", "\\\\DTLpar "));
+        textPane.getText().replaceAll("\n *\n+", "\\\\DTLpar "));
       setVisible(false);
    }
 
@@ -336,7 +300,7 @@ public class CellDialog extends JDialog
 
    private void updateEditButtons()
    {
-      String selected = (textArea == null ? null : textArea.getSelectedText());
+      String selected = (textPane == null ? null : textPane.getSelectedText());
 
       if (selected == null || selected.isEmpty())
       {
@@ -353,7 +317,16 @@ public class CellDialog extends JDialog
         !findDialog.getSearchText().isEmpty());
    }
 
-   private JTextArea textArea;
+   public void addEdit(UndoableEdit edit)
+   {
+      undoManager.addEdit(edit);
+
+      undoItem.setEnabled(true);
+   }
+
+   private JTextPane textPane;
+
+   private CellDocument document;
 
    private JMenuItem undoItem, redoItem, copyItem, cutItem,
      findAgainItem;
@@ -368,9 +341,65 @@ public class CellDialog extends JDialog
 
    private boolean modified;
 
+   private FindDialog findDialog;
+
    private UndoManager undoManager;
+}
+
+class CellDocument extends DefaultStyledDocument
+{
+   public CellDocument(CellDialog dialog)
+   {
+      super();
+
+      this.cellDialog = dialog;
+
+      addUndoableEditListener(
+       new UndoableEditListener()
+       {
+          public void undoableEditHappened(UndoableEditEvent event)
+          {
+             if (compoundEdit == null)
+             {
+                cellDialog.addEdit(event.getEdit());
+             }
+             else
+             {
+                compoundEdit.addEdit(event.getEdit());
+             }
+          }
+       });
+
+   }
+
+   public void replace(int offset, int length, String text,
+      AttributeSet attrs)
+   throws BadLocationException
+   {
+      compoundEdit = new CompoundEdit();
+
+      try
+      {
+         super.replace(offset, length, text, attrs);
+
+         compoundEdit.end();
+         cellDialog.addEdit(compoundEdit);
+      }
+      finally
+      {
+         compoundEdit = null;
+      }
+   }
+
+   public void setText(String text)
+     throws BadLocationException
+   {
+      remove(0, getLength());
+      insertString(0, text, null);
+   }
+
+   private CellDialog cellDialog;
 
    private CompoundEdit compoundEdit;
 
-   private FindDialog findDialog;
 }
