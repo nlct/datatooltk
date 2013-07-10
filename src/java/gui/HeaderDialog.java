@@ -225,7 +225,10 @@ public class HeaderDialog extends JDialog
          }
       }
 
-      header.setTitle(titleField.getText());
+      String title = titleField.getText();
+
+      header.setTitle(title.isEmpty() ? key : title);
+
       header.setKey(key);
       header.setType(type);
       modified = true;

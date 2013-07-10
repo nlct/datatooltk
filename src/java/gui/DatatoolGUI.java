@@ -189,6 +189,11 @@ public class DatatoolGUI extends JFrame
       editM.add(editCellItem);
       editCellItem.setEnabled(false);
 
+      setToNullItem = DatatoolGuiResources.createJMenuItem(
+         "edit", "cell_to_null", this, null, toolBar);
+      editM.add(setToNullItem);
+      setToNullItem.setEnabled(false);
+
       JMenu colM = DatatoolGuiResources.createJMenu("edit.column");
       editM.add(colM);
 
@@ -333,7 +338,8 @@ public class DatatoolGUI extends JFrame
             {
                DatatoolDbPanel panel = (DatatoolDbPanel)tab;
 
-               enableEditItems(panel.getModelSelectedRow(), panel.getModelSelectedColumn());
+               enableEditItems(panel.getModelSelectedRow() > -1, 
+                 panel.getModelSelectedColumn() > -1);
             }
          }
       });
@@ -655,6 +661,15 @@ public class DatatoolGUI extends JFrame
          if (tab != null && (tab instanceof DatatoolDbPanel))
          {
             ((DatatoolDbPanel)tab).requestSelectedCellEdit();
+         }
+      }
+      else if (action.equals("cell_to_null"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            ((DatatoolDbPanel)tab).updateCell(DatatoolDb.NULL_VALUE);
          }
       }
       else if (action.equals("edit_header"))
@@ -1194,12 +1209,14 @@ public class DatatoolGUI extends JFrame
       }
    }
 
-   public void enableEditItems(int rowIdx, int colIdx)
+   public void enableEditItems(boolean hasSelectedRow, boolean hasSelectedColumn)
    {
-      editCellItem.setEnabled(rowIdx > -1 && colIdx > -1);
-      removeColumnItem.setEnabled(colIdx > -1);
-      removeRowItem.setEnabled(rowIdx > -1);
-      editHeaderItem.setEnabled(colIdx > -1);
+      boolean hasBoth = hasSelectedRow && hasSelectedColumn;
+      editCellItem.setEnabled(hasBoth);
+      setToNullItem.setEnabled(hasBoth);
+      removeColumnItem.setEnabled(hasSelectedColumn);
+      removeRowItem.setEnabled(hasSelectedRow);
+      editHeaderItem.setEnabled(hasSelectedColumn);
    }
 
    public void updateTools()
@@ -1278,7 +1295,8 @@ public class DatatoolGUI extends JFrame
       addColumnBeforeItem, addRowBeforeItem,
       removeColumnItem, editHeaderItem, editDbNameItem,
       removeRowItem, clearRecentItem, sortItem, shuffleItem,
-      findCellItem, findNextItem, replaceItem;
+      findCellItem, findNextItem, replaceItem,
+      setToNullItem;
 
    private ActionListener recentFilesListener;
 

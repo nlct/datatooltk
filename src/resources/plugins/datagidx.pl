@@ -29,6 +29,13 @@ CurrentLocation FirstId Used/)
 
 my @row = ("") x $columnCount;
 
+$row[$colIndexes{Used}] = "0";
+
+foreach my $key (qw/Location CurrentLocation FirstId/)
+{
+   $row[$colIndexes{$key}] = "\\\@dtlnovalue";
+}
+
 if ($selectedRow > -1)
 {
    @row = @{$db->getRow($selectedRow)};
@@ -39,8 +46,6 @@ if ($selectedRow > -1)
          if ($row[$colIndexes{$key}]=~/^\\\@dtlnovalue\s*$/);
    }
 }
-
-$row[$colIndexes{FirstId}] = "\\\@dtlnovalue";
 
 my $mw = MainWindow->new;
 

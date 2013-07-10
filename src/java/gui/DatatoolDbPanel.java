@@ -95,23 +95,19 @@ public class DatatoolDbPanel extends JPanel
 
              if (evt.getClickCount() == 2)
              {
-                if (type == DatatoolDb.TYPE_INTEGER
-                 || type == DatatoolDb.TYPE_REAL
-                 || type == DatatoolDb.TYPE_CURRENCY)
+                if (type == DatatoolDb.TYPE_STRING)
                 {
-                   if (table.editCellAt(viewRow, viewCol))
-                   {
-                      return;
-                   }
-                   else
+                   requestCellEditor(modelRow, modelCol);
+                }
+                else
+                {
+                   if (!table.editCellAt(viewRow, viewCol))
                    {
                       DatatoolTk.debug(
                         "Can't edit cell at (view) col="+viewCol
                           +", row="+viewRow);
                    }
                 }
-
-                requestCellEditor(modelRow, modelCol);
              }
           }
        });
@@ -145,7 +141,8 @@ public class DatatoolDbPanel extends JPanel
       rowHeaderComponent.updateRowSelection(getViewSelectedRow());
       table.getTableHeader().repaint();
 
-      gui.enableEditItems(getModelSelectedRow(), getModelSelectedColumn());
+      gui.enableEditItems(getModelSelectedRow() > -1,
+        getModelSelectedColumn() > -1);
    }
 
    public void updateTableSettings()
@@ -766,7 +763,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (modelRow >= getRowCount() || modelRow < 0)
       {
-         gui.enableEditItems(modelRow, modelCol);
+         gui.enableEditItems(modelRow > -1, modelCol > -1);
          return;
       }
 
@@ -784,7 +781,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (viewRow >= getRowCount() || viewRow < 0)
       {
-         gui.enableEditItems(viewRow, viewCol);
+         gui.enableEditItems(viewRow > -1, viewCol > -1);
          return;
       }
 
@@ -802,7 +799,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (col >= db.getColumnCount() || col < 0)
       {
-         gui.enableEditItems(row, col);
+         gui.enableEditItems(row > -1, col > -1);
          return;
       }
 
@@ -829,7 +826,7 @@ public class DatatoolDbPanel extends JPanel
          viewCol = getColumnCount()-1;
       }
 
-      gui.enableEditItems(viewRow, viewCol);
+      gui.enableEditItems(viewRow > -1, viewCol > -1);
 
       if (oldRow == viewRow && oldCol == viewCol)
       {
@@ -874,7 +871,7 @@ public class DatatoolDbPanel extends JPanel
          col = getColumnCount()-1;
       }
 
-      gui.enableEditItems(row, col);
+      gui.enableEditItems(row > -1, col > -1);
 
       if (oldRow == row && oldCol == col)
       {

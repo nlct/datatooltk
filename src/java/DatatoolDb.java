@@ -389,7 +389,27 @@ public class DatatoolDb
 
          currentRow = num;
 
-         insertRow(currentRow-1);
+         DatatoolRow row;
+
+         // Have rows been defined out of order?
+         // (Row index starts at 1)
+
+         if (currentRow < data.size())
+         {
+            row = data.get(currentRow-1);
+         }
+         else
+         {
+            row = insertRow(currentRow-1);
+         }
+
+         // Populate row with null values in case any entries are
+         // missing.
+
+         for (int i = 0, n = row.size(); i < n; i++)
+         {
+            row.set(i, NULL_VALUE);
+         }
       }
       catch (NumberFormatException e)
       {
@@ -1016,6 +1036,7 @@ out.println("% header block for column "+colIdx);
             int rowIdx = (rowIndexes == null ? i : rowIndexes[i])
                        + 1;
 
+            out.println("% Start of row "+rowIdx);
             out.println("\\db@row@elt@w %");
             out.println("\\db@row@id@w "+rowIdx+"%");
             out.println("\\db@row@id@end@ %");
@@ -1023,19 +1044,25 @@ out.println("% header block for column "+colIdx);
             for (int j = 0, m = row.size(); j < m; j++)
             {
                String cell = row.get(j);
-               int colIdx = (columnIndexes == null ? j : columnIndexes[j])
-                       + 1;
 
-               out.println("\\db@col@id@w "+colIdx+"%");
-               out.println("\\db@col@id@end@ %");
+               if (!cell.equals(NULL_VALUE))
+               {
+                  int colIdx = (columnIndexes == null ? j : columnIndexes[j])
+                          + 1;
 
-               out.println("\\db@col@elt@w "+cell+"%");
-               out.println("\\db@col@elt@end@ %");
+                  out.println("% Column "+colIdx);
+                  out.println("\\db@col@id@w "+colIdx+"%");
+                  out.println("\\db@col@id@end@ %");
 
-               out.println("\\db@col@id@w "+colIdx+"%");
-               out.println("\\db@col@id@end@ %");
+                  out.println("\\db@col@elt@w "+cell+"%");
+                  out.println("\\db@col@elt@end@ %");
+
+                  out.println("\\db@col@id@w "+colIdx+"%");
+                  out.println("\\db@col@id@end@ %");
+               }
             }
 
+            out.println("% End of row "+rowIdx);
             out.println("\\db@row@id@w "+rowIdx+"%");
             out.println("\\db@row@id@end@ %");
             out.println("\\db@row@elt@end@ %");
@@ -1225,7 +1252,10 @@ out.println("% header block for column "+colIdx);
 
    public int getType(String value)
    {
-      if (value == null || value.isEmpty()) return TYPE_UNKNOWN;
+      if (value == null || value.isEmpty() || value.equals(NULL_VALUE))
+      {
+         return TYPE_UNKNOWN;
+      }
 
       try
       {
@@ -1821,6 +1851,8 @@ out.println("% header block for column "+colIdx);
    private boolean sortAscending = true;
 
    private boolean sortCaseSensitive = false;
+
+   public static final String NULL_VALUE="\\@dtlnovalue";
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;

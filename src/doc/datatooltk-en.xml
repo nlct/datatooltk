@@ -265,6 +265,17 @@
    <verbinput src="../tests/test-probsoln-doc.tex"/>
    <seealso tags="shuffle,sortshuffle,importprobsoln"/>
    </node>
+   <node tag="null" type="section" title="Null Values">
+   <p>
+   Empty entries aren't the same as null entries. If you want 
+   a<nbsp/>null entry, set the entry to <cs tag="@dtlnovalue"/>. 
+   A<nbsp/>convenient way to do this is to select the cell and use
+   <menu tag="edit.cell_to_null"/>. In your <LaTeX/> document, you 
+   can check for null values using <sty>datatool</sty>'s 
+   <cs tag="DTLifnull"/> command. To check for empty values you can use one of
+   <sty>etoolbox</sty>'s commands, such as <cs tag="ifdefempty"/>.
+   </p>
+   </node>
    <node tag="gui" type="chapter" title="Graphical Mode">
      <p>
        To run <app/> in graphical mode you must invoke it with either 
@@ -354,13 +365,11 @@
    <cs tag="DTLpar"/>, but with <app/> you don't need to worry about it 
    as blank lines in an entry will automatically be converted behind 
    the scenes. Note that redundant blank lines will be removed.
-   Note also that empty entries aren't the same as null entries. If you want 
-   a<nbsp/>null entry, set the entry to <cs tag="@dtlnovalue"/>.
    </p>
    <p>
    <b>Important:</b> if you use <sty>datatool</sty>'s <cs tag="DTLsaverawdb"/> 
-   command to overwrite your file, you will lose any pretty-printing spaces
-   or comments in your code.
+   or <cs tag="DTLprotectedsaverawdb"/> commands to overwrite your file, you 
+   will lose any pretty-printing spaces or comments in your code.
    </p>
    </node>
    <node tag="editheader" type="section" title="Header Dialog">
