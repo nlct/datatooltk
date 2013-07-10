@@ -1,5 +1,6 @@
 package com.dickimawbooks.datatooltk.gui;
 
+import java.util.regex.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -108,6 +109,11 @@ public class CellDialog extends JDialog
       textPane = new JTextPane(document);
 
       textPane.setFont(gui.getCellFont());
+
+      FontMetrics fm = getFontMetrics(textPane.getFont());
+
+      textPane.setPreferredSize(new Dimension
+         (8*fm.getMaxAdvance(), 10*fm.getHeight()));
 
       textPane.setEditable(true);
 
@@ -354,6 +360,16 @@ class CellDocument extends DefaultStyledDocument
 
       this.cellDialog = dialog;
 
+      StyleContext context = StyleContext.getDefaultStyleContext();
+      attrPlain = context.addAttribute(context.getEmptySet(),
+         StyleConstants.Foreground, Color.BLACK);
+      attrControlSequence = context.addAttribute(context.getEmptySet(),
+         StyleConstants.Foreground, Color.BLUE);
+
+      attrComment = new SimpleAttributeSet();
+      StyleConstants.setItalic(attrComment, true);
+      StyleConstants.setForeground(attrComment, Color.GRAY);
+
       addUndoableEditListener(
        new UndoableEditListener()
        {
@@ -370,6 +386,50 @@ class CellDocument extends DefaultStyledDocument
           }
        });
 
+   }
+
+   public void remove(int offset, int length)
+     throws BadLocationException
+   {
+      super.remove(offset, length);
+
+      updateHighlight();
+   }
+
+   public void insertString(int offset, String str, AttributeSet at)
+     throws BadLocationException
+   {
+      super.insertString(offset, str, at);
+
+      updateHighlight();
+   }
+
+   private void updateHighlight()
+   throws BadLocationException
+   {
+      String text = getText(0, getLength());
+
+      setCharacterAttributes(0, getLength(), 
+        attrPlain, true);
+
+      Matcher matcher = PATTERN_CS.matcher(text);
+
+      while (matcher.find())
+      {
+         int newOffset = matcher.start();
+         int len = matcher.end() - newOffset;
+
+         String group = matcher.group();
+
+         if (group.startsWith("%"))
+         {
+            setCharacterAttributes(newOffset, len, attrComment, true);
+         }
+         else
+         {
+            setCharacterAttributes(newOffset, len, attrControlSequence, true);
+         }
+      }
    }
 
    public void replace(int offset, int length, String text,
@@ -389,6 +449,8 @@ class CellDocument extends DefaultStyledDocument
       {
          compoundEdit = null;
       }
+
+      updateHighlight();
    }
 
    public void setText(String text)
@@ -402,4 +464,10 @@ class CellDocument extends DefaultStyledDocument
 
    private CompoundEdit compoundEdit;
 
+   private AttributeSet attrPlain;
+   private AttributeSet attrControlSequence;
+   private SimpleAttributeSet attrComment;
+
+   private static final Pattern PATTERN_CS = Pattern.compile(
+      "((?:\\\\[^a-zA-Z]{1})|(?:\\\\[a-zA-Z]+)|(?:[#~\\{\\}\\^\\$_])|(?:%.*))");
 }
