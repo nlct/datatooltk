@@ -4,6 +4,7 @@ package DatatoolTk;
 
 use XML::Parser;
 use LWP::Simple;
+use URI;
 
 my @elements;
 my @headers;
@@ -205,6 +206,21 @@ sub getDictWord{
    }
 
    $word;
+}
+
+sub getResourcesUrl{
+   my $self = shift;
+
+   $dbattrs->{resources};
+}
+
+sub getImageFile{
+   my $self = shift;
+   my $filename = shift;
+
+   $uri = URI->new($dbattrs->{resources}.'/icons/'.$filename);
+
+   $uri->path;
 }
 
 sub selectedRow{

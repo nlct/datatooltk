@@ -131,6 +131,9 @@ public class DatatoolPlugin implements Runnable
          +" dict=\""
          + DatatoolTk.getDictionaryUrl()
          +"\""
+         +" resources=\""
+         + DatatoolTk.class.getResource("/resources/")
+         +"\""
          +">");
 
       writer.println("<headers>");

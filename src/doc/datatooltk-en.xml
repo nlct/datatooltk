@@ -215,6 +215,22 @@
 
 \end{document}
    </pre>
+   <p>
+   If you can't remember the name you assigned to the database, you can 
+   access it using <cs tag="dtllastloadeddb"/>.
+   </p>
+   <pre>
+\documentclass{article}
+\usepackage{datatool}% remember to load the datatool package
+
+\input{my-data.dbtex}% load the database from file `my-data.dbtex'
+
+\begin{document}
+
+\DTLdisplaydb{\dtllastloadeddb}% Display the last loaded database
+
+\end{document}
+   </pre>
    </example>
    </node>
    <node tag="verbatim" type="section" title="Verbatim">

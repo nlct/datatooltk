@@ -2,6 +2,7 @@
 
 use strict;
 use Tk;
+use Tk::PNG;
 use DatatoolTk;
 
 my $db = DatatoolTk->new();
@@ -290,23 +291,73 @@ else
 
 my $buttonFrame = $mw->Frame()->pack(-ipadx=>40);
 
-$buttonFrame->Button(
-    -text    => $db->getDictWord('button.cancel'),
-    -command => sub { $mw->destroy },
-)->pack(-side=>'left', -expand=>1);
+my $shot;
 
-$buttonFrame->Button(
-    -text    => $db->getDictWord('button.okay'),
-    -command => \&doDbUpdate,
-)->pack(-side=>'left', -expand=>1);
+my $imgFile = $db->getImageFile('cancel.png');
+
+if ($imgFile and -e $imgFile)
+{
+   $shot = $mw->Photo(-file=>$imgFile);
+
+   $buttonFrame->Button(
+       -text     => $db->getDictWord('button.cancel'),
+       -command  => sub { $mw->destroy },
+       -image    => $shot,
+       -compound => 'left'
+   )->pack(-side=>'left', -expand=>1);
+}
+else
+{
+   $buttonFrame->Button(
+       -text    => $db->getDictWord('button.cancel'),
+       -command => sub { $mw->destroy }
+   )->pack(-side=>'left', -expand=>1);
+}
+
+$imgFile = $db->getImageFile('okay.png');
+
+if ($imgFile and -e $imgFile)
+{
+   $shot = $mw->Photo(-file=>$imgFile);
+
+   $buttonFrame->Button(
+       -text     => $db->getDictWord('button.okay'),
+       -command  => \&doDbUpdate,
+       -image    => $shot,
+       -compound => 'left'
+   )->pack(-side=>'left', -expand=>1);
+}
+else
+{
+   $buttonFrame->Button(
+       -text    => $db->getDictWord('button.okay'),
+       -command => \&doDbUpdate
+   )->pack(-side=>'left', -expand=>1);
+}
+
 
 if ($selectedRow > -1)
 {
-   $buttonFrame->Button(
-       -text    => $db->getDictWord('plugin.remove_entry'),
-       -command => \&doRemoveRow,
-   )->pack(-side=>'left', -expand=>1);
+   $imgFile = $db->getImageFile('recycle.png');
 
+   if ($imgFile and -e $imgFile)
+   {
+      $shot = $mw->Photo(-file=>$imgFile);
+
+      $buttonFrame->Button(
+          -text    => $db->getDictWord('plugin.remove_entry'),
+          -command => \&doRemoveRow,
+          -image    => $shot,
+          -compound => 'left'
+      )->pack(-side=>'left', -expand=>1);
+   }
+   else
+   {
+      $buttonFrame->Button(
+          -text    => $db->getDictWord('plugin.remove_entry'),
+          -command => \&doRemoveRow
+      )->pack(-side=>'left', -expand=>1);
+   }
 }
 
 $mw->update;
@@ -326,6 +377,12 @@ sub doDbUpdate{
    }
 
    $row[$colIndexes{Description}] = $descriptionText->Contents;
+
+   # Check against user accidentally pressing return in the
+   # description box without noticing they've set the description to
+   # a paragraph break
+
+   $row[$colIndexes{Description}]=~s/^\s+$//;
 
    $row[$colIndexes{Description}]=~s/\n/<br\/>/sg;
 
