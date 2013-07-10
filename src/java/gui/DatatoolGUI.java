@@ -177,6 +177,16 @@ public class DatatoolGUI extends JFrame
 
       redoItem.setEnabled(false);
 
+      deselectItem = DatatoolGuiResources.createJMenuItem(
+         "edit", "deselect", this,
+         KeyStroke.getKeyStroke(KeyEvent.VK_A, 
+            InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
+         toolBar);
+      editM.add(deselectItem);
+      deselectItem.setEnabled(false);
+
+      editM.addSeparator();
+
       editDbNameItem = DatatoolGuiResources.createJMenuItem(
          "edit", "edit_dbname", this, toolBar);
       editM.add(editDbNameItem);
@@ -644,6 +654,15 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("new_from_template"))
       {
          newFromTemplate();
+      }
+      else if (action.equals("deselect"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            ((DatatoolDbPanel)tab).selectViewCell(-1, -1);
+         }
       }
       else if (action.equals("edit_dbname"))
       {
@@ -1217,6 +1236,7 @@ public class DatatoolGUI extends JFrame
       removeColumnItem.setEnabled(hasSelectedColumn);
       removeRowItem.setEnabled(hasSelectedRow);
       editHeaderItem.setEnabled(hasSelectedColumn);
+      deselectItem.setEnabled(hasSelectedRow || hasSelectedColumn);
    }
 
    public void updateTools()
@@ -1296,7 +1316,7 @@ public class DatatoolGUI extends JFrame
       removeColumnItem, editHeaderItem, editDbNameItem,
       removeRowItem, clearRecentItem, sortItem, shuffleItem,
       findCellItem, findNextItem, replaceItem,
-      setToNullItem;
+      setToNullItem, deselectItem;
 
    private ActionListener recentFilesListener;
 
