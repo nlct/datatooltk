@@ -884,7 +884,8 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    <button tag="plugin.datagidx.remove_seealso"/> to remove it from the list.
    For example, in <ref tag="datagidxplugin7"/> I've added the <tt>chicken</tt>
    and <tt>turkey</tt> entries to the <button tag="plugin.datagidx.SeeAlso"/>
-   list.
+   list. (Assuming I've already added the <tt>chicken</tt> and <tt>turkey</tt>
+   entries before defining this new entry.)
    </p>
    <p>
    Once I've enter all my terms, I<nbsp/>can sort the data according to 
@@ -1140,20 +1141,20 @@ Password:
    rather than <dq>currency</dq>):
    </p>
 <alltt>
-<lt/>datatooltktemplate<gt/>
-  <lt/>header<gt/>
-    <lt/>label<gt/>Name<lt/>/label<gt/>
-    <lt/>type<gt/>0<lt/>/type<gt/>
-  <lt/>/header<gt/>
-  <lt/>header<gt/>
-    <lt/>label<gt/>Code<lt/>/label<gt/>
-    <lt/>type<gt/>1<lt/>/type<gt/>
-  <lt/>/header<gt/>
-  <lt/>header<gt/>
-    <lt/>label<gt/>Price<lt/>/label<gt/>
-    <lt/>type<gt/>2<lt/>/type<gt/>
-  <lt/>/header<gt/>
-<lt/>/datatooltktemplate<gt/>
+<element>datatooltktemplate</element>
+  <element>header</element>
+    <element>label</element>Name<element>/label</element>
+    <element>type</element>0<element>/type</element>
+  <element>/header</element>
+  <element>header</element>
+    <element>label</element>Code<element>/label</element>
+    <element>type</element>1<element>/type</element>
+  <element>/header</element>
+  <element>header</element>
+    <element>label</element>Price<element>/label</element>
+    <element>type</element>2<element>/type</element>
+  <element>/header</element>
+<element>/datatooltktemplate</element>
 </alltt>
    </example>
    </node>

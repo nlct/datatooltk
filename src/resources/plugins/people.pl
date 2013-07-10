@@ -2,6 +2,7 @@
 
 use strict;
 use Tk;
+use Tk::PNG;
 use DatatoolTk;
 
 my $db = DatatoolTk->new();
@@ -103,15 +104,49 @@ $addressText->Contents($row[$colIndexes{Address}]);
 
 my $buttonFrame = $mw->Frame()->pack;
 
-$buttonFrame->Button(
-    -text    => $db->getDictWord('button.cancel'),
-    -command => sub { exit },
-)->pack(-side=>'left', -expand=>1);
+my $shot;
 
-$buttonFrame->Button(
-    -text    => $db->getDictWord('button.okay'),
-    -command => \&doDbUpdate,
-)->pack(-side=>'left', -expand=>1);
+my $imgFile = $db->getImageFile('cancel.png');
+
+if ($imgFile and -e $imgFile)
+{
+   $shot = $mw->Photo(-file=>$imgFile);
+
+   $buttonFrame->Button(
+       -text     => $db->getDictWord('button.cancel'),
+       -command  => sub { exit },
+       -image    => $shot,
+       -compound => 'left'
+   )->pack(-side=>'left', -expand=>1);
+}
+else
+{
+   $buttonFrame->Button(
+       -text    => $db->getDictWord('button.cancel'),
+       -command => sub { exit },
+   )->pack(-side=>'left', -expand=>1);
+}
+
+$imgFile = $db->getImageFile('okay.png');
+
+if ($imgFile and -e $imgFile)
+{
+   $shot = $mw->Photo(-file=>$imgFile);
+
+   $buttonFrame->Button(
+      -text    => $db->getDictWord('button.okay'),
+      -command => \&doDbUpdate,
+      -image    => $shot,
+      -compound => 'left'
+   )->pack(-side=>'left', -expand=>1);
+}
+else
+{
+   $buttonFrame->Button(
+      -text    => $db->getDictWord('button.okay'),
+      -command => \&doDbUpdate,
+   )->pack(-side=>'left', -expand=>1);
+}
 
 $mw->update;
 

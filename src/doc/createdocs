@@ -1483,7 +1483,7 @@ sub start_element{
 
    &handle_html('<tt>&lt;');
 
-   print TEXFD "\\texttt{\\textless ";
+   print TEXFD "\\element{";
 }
 
 sub end_element{
@@ -1491,7 +1491,7 @@ sub end_element{
 
    &handle_html('&gt;</tt>');
 
-   print TEXFD "\\textgreater}";
+   print TEXFD "}";
 }
 
 sub start_image{

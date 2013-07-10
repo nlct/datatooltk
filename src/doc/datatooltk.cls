@@ -77,6 +77,8 @@
 
 \newcommand*{\button}[1]{\textsf{\bfseries #1}}
 
+\newcommand*{\element}[1]{\texttt{\char`\<#1\char`\>}}
+
 % Default definition.
 % (Overridden by context label in dictionary file.)
 \providecommand{\idxenvname}{environment}
