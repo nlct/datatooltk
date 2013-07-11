@@ -149,6 +149,7 @@ public class CellDialog extends JDialog
 
       findDialog = new FindDialog(this, textPane);
 
+      textPane.setMinimumSize(new Dimension(0,0));
       mainPanel.add(new JScrollPane(textPane), BorderLayout.CENTER);
 
       mainPanel.add(

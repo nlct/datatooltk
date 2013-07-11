@@ -393,9 +393,6 @@
    or <cs tag="DTLprotectedsaverawdb"/> commands to overwrite your file, you 
    will lose any pretty-printing spaces or comments in your code.
    </p>
-   <p><b>Known Issue:</b> the line wrap isn't working properly.
-   Line wrap works with JTextArea but syntax highlighting doesn't. Line wrap doesn't work properly with JTextPane but syntax highlighting does work.
-   </p>
    </node>
    <node tag="editheader" type="section" title="Header Dialog">
      <p>
