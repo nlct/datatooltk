@@ -106,7 +106,7 @@ public class CellDialog extends JDialog
          toolBar));
 
       document = new CellDocument(this,
-         gui.getSettings().isSyntaxHighlightingOn());
+         gui.getSettings());
       textPane = new JTextPane(document);
 
       textPane.setFont(gui.getCellFont());
@@ -358,22 +358,23 @@ public class CellDialog extends JDialog
 
 class CellDocument extends DefaultStyledDocument
 {
-   public CellDocument(CellDialog dialog, boolean enableHighlight)
+   public CellDocument(CellDialog dialog, DatatoolSettings settings)
    {
       super();
 
       this.cellDialog = dialog;
-      this.highlightOn = enableHighlight;
+      this.highlightOn = settings.isSyntaxHighlightingOn();
 
       StyleContext context = StyleContext.getDefaultStyleContext();
       attrPlain = context.addAttribute(context.getEmptySet(),
          StyleConstants.Foreground, Color.BLACK);
       attrControlSequence = context.addAttribute(context.getEmptySet(),
-         StyleConstants.Foreground, Color.BLUE);
+         StyleConstants.Foreground, settings.getControlSequenceHighlight());
 
       attrComment = new SimpleAttributeSet();
       StyleConstants.setItalic(attrComment, true);
-      StyleConstants.setForeground(attrComment, Color.GRAY);
+      StyleConstants.setForeground(attrComment, 
+         settings.getCommentHighlight());
 
       addUndoableEditListener(
        new UndoableEditListener()
@@ -434,7 +435,7 @@ class CellDocument extends DefaultStyledDocument
          }
          else
          {
-            setCharacterAttributes(newOffset, len, attrControlSequence, true);
+            setCharacterAttributes(newOffset, len, attrControlSequence, false);
          }
       }
    }

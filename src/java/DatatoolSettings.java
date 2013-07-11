@@ -6,6 +6,7 @@ import java.util.Vector;
 import java.util.Random;
 import java.util.InvalidPropertiesFormatException;
 import java.awt.Font;
+import java.awt.Color;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Locale;
@@ -787,6 +788,58 @@ public class DatatoolSettings extends Properties
       }
 
       return Boolean.parseBoolean(prop);
+   }
+
+   public Color getControlSequenceHighlight()
+   {
+      String prop = getProperty("highlightcs");
+
+      if (prop == null)
+      {
+         setControlSequenceHighlight(Color.BLUE);
+         return Color.BLUE;
+      }
+
+      try
+      {
+         return new Color(Integer.parseInt(prop));
+      }
+      catch (NumberFormatException e)
+      {
+         setControlSequenceHighlight(Color.BLUE);
+         return Color.BLUE;
+      }
+   }
+
+   public void setControlSequenceHighlight(Color highlight)
+   {
+      setProperty("highlightcs", ""+highlight.getRGB());
+   }
+
+   public Color getCommentHighlight()
+   {
+      String prop = getProperty("highlightcomment");
+
+      if (prop == null)
+      {
+         setCommentHighlight(Color.GRAY);
+         return Color.GRAY;
+      }
+
+      try
+      {
+         return new Color(Integer.parseInt(prop));
+      }
+      catch (NumberFormatException e)
+      {
+         setCommentHighlight(Color.GRAY);
+         return Color.GRAY;
+      }
+   }
+
+   public void setCommentHighlight(Color highlight)
+   {
+      setProperty("highlightcomment", ""+highlight.getRGB());
    }
 
    public int getCellHeight()
