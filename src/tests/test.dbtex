@@ -1,4 +1,4 @@
-% Created by datatooltk on Wed Jul 10 23:00:33 BST 2013
+% Created by datatooltk on Thu Jul 11 08:34:07 BST 2013
 \DTLifdbexists{test-para}%
 {\PackageError{datatool}{Database `test-para'
 already exists}{}%
@@ -59,8 +59,11 @@ already exists}{}%
 \db@col@id@end@ %
 \db@col@elt@w % Here's a comment
 A sample entry with quite a bit of text and here's some \emph{more}
-text with a~formula: $E = mc^2$.\DTLpar This is supposed to be the start of a new paragraph. Here's the 
-next sentence. How about some more text.%
+text with a~formula: $E = mc^2$ and a~displayed equation:
+\[
+  y = \sum_{i=0}^n a_ix^i
+\]\DTLpar This is supposed to be the start of a new paragraph. Here's the 
+next sentence. How about some more text. This sentence ends with a~percentage: 10\%%
 \db@col@elt@end@ %
 \db@col@id@w 2%
 \db@col@id@end@ %

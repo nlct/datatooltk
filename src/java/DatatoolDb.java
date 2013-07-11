@@ -524,7 +524,7 @@ public class DatatoolDb
 
       readCommand(in, "\\db@col@elt@w");
 
-      contents = readUntil(in, "\\db@col@elt@end@");
+      contents = readUntil(in, "\\db@col@elt@end@", false);
 
       if (contents == null)
       {
@@ -535,6 +535,10 @@ public class DatatoolDb
                  "\\db@col@elt@end@"
            ));
       }
+
+      // Trim any final %\n
+
+      contents = contents.replaceFirst("([^\\\\](?:\\\\\\\\)*)%\\s*\\z", "$1");
 
       DatatoolRow row = data.get(currentRow-1);
 
@@ -777,6 +781,13 @@ public class DatatoolDb
    private static String readUntil(BufferedReader in, String stopPoint)
      throws IOException
    {
+      return readUntil(in, stopPoint, true);
+   }
+
+   private static String readUntil(BufferedReader in, String stopPoint,
+    boolean skipComments)
+     throws IOException
+   {
       StringBuffer buffer = new StringBuffer(256);
 
       int prefixLength = stopPoint.length();
@@ -787,7 +798,7 @@ public class DatatoolDb
       {
          int n = buffer.length();
 
-         if (c == (int)'%')
+         if (skipComments && c == (int)'%')
          {
             // If buffer doesn't end with a backslash or if it ends
             // with an even number of backslashes, discard
