@@ -25,23 +25,27 @@ public class RowHeaderComponent extends JPanel implements DropTargetListener
 
       for (int i = 0; i < n; i++)
       {
-         addButton(i);
+         RowButton button = addButton(i);
       }
 
    }
 
-   protected void addButton(int row)
+   protected RowButton addButton(int row)
    {
       RowButton button = new RowButton(row, panel, this);
       button.setBackground(panel.getSelectionBackground());
       button.setOpaque(false);
       add(button);
       buttons.add(button);
+
+      return button;
    }
 
    public void addButton()
    {
-      addButton(buttons.size());
+      int n = buttons.size();
+
+      addButton();
    }
 
    public void removeButton()
@@ -192,7 +196,7 @@ class RowButton extends JLabel
    private DatatoolDbPanel panel;
    private int row;
 
-   private int padx=10;
+   private static final int dx = 10;
 
    public RowButton(final int rowIdx, final DatatoolDbPanel panel,
      final RowHeaderComponent rowHeaderPanel)
@@ -202,7 +206,7 @@ class RowButton extends JLabel
       setBorder(BorderFactory.createRaisedBevelBorder());
       setOpaque(true);
 
-      this.row = new Integer(rowIdx);
+      this.row = rowIdx;
       this.panel = panel;
 
       addMouseListener(new MouseAdapter()
@@ -238,42 +242,30 @@ class RowButton extends JLabel
 
    public Dimension getPreferredSize()
    {
-      Dimension dim = super.getPreferredSize();
+      FontMetrics fm = getFontMetrics(getFont());
 
-      dim.width += padx;
-      dim.height = panel.getRowHeight(row);
+      Dimension dim = new Dimension
+      (
+          fm.stringWidth(""+panel.getRowCount()+dx),
+          panel.getRowHeight(row-1)
+      );
 
       return dim;
    }
 
    public Dimension getMinimumSize()
    {
-      Dimension dim = super.getMinimumSize();
-
-      dim.width += padx;
-      dim.height = panel.getRowHeight(row);
-
-      return dim;
+      return getPreferredSize();
    }
 
    public Dimension getMaximumSize()
    {
-      Dimension dim = super.getMinimumSize();
-
-      dim.width += padx;
-      dim.height = panel.getRowHeight(row);
-
-      return dim;
+      return getPreferredSize();
    }
 
    public Dimension getSize()
    {
-      Dimension dim = super.getSize();
-
-      dim.width += padx;
-      dim.height = panel.getRowHeight(row);
-
-      return dim;
+      return getPreferredSize();
    }
 
    public int getIndex()
