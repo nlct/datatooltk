@@ -415,7 +415,7 @@ public class DatatoolDb
       {
          throw new IOException(DatatoolTk.getLabelWithValues
            (
-              "error.invalid_row_id",
+              "error.dbload.invalid_row_id",
               in.getLineNumber(),
               contents
            ), e);
@@ -613,7 +613,7 @@ public class DatatoolDb
          {
              throw new IOException(DatatoolTk.getLabelWithValues
              (
-                "error.invalid_col_id",
+                "error.dbload.invalid_col_id",
                 in.getLineNumber(),
                 content
              ), e);
