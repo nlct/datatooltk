@@ -1,0 +1,40 @@
+% arara: clean
+% arara: pdflatex
+% arara: makeglossaries
+% arara: pdflatex
+\documentclass{report}
+
+\usepackage[nonumberlist,nogroupskip,toc]{glossaries}
+\usepackage{glossary-mcols}
+
+\makeglossaries
+\renewcommand{\glossaryname}{Index}
+\renewcommand{\glsnamefont}[1]{\textmd{#1}}
+
+\newcommand{\newterm}[1]{%
+  \bgroup
+    \def\c##1{##1}%
+    \let\'\c
+    \xdef\thislabel{#1}%
+  \egroup
+  \def\thisname{#1}%
+  \edef\donewgloss{%
+    \noexpand\newglossaryentry{\thislabel}%
+    {name={\expandonce\thisname},%
+     sort={\thislabel},%
+     description={\noexpand\nopostdesc}}%
+  }%
+  \donewgloss
+}
+
+\input{entries}
+
+\begin{document}
+\tableofcontents
+
+\chapter{Sample}
+\glsaddall
+
+\printglossary[style=mcolindex]
+
+\end{document}

@@ -1,0 +1,21 @@
+% arara: clean
+% arara: pdflatex
+% arara: pdflatex
+\documentclass{report}
+
+\usepackage{datagidx}
+
+\newgidx{index}{Index}
+
+\input{entries}
+
+\begin{document}
+
+\tableofcontents
+
+\chapter{Sample}
+\glsaddall{index}
+
+\printterms[postheading={\addcontentsline{toc}{chapter}{Index}}]
+
+\end{document}

@@ -71,6 +71,8 @@
 
 \newcommand*{\meta}[1]{\ensuremath{\langle}\textit{#1}\ensuremath{\rangle}}
 
+\newcommand{\marg}[1]{\texttt{\char`\{#1\char`\}}}
+
 \DeclareRobustCommand*{\csnoindex}[1]{\texttt{\char`\\#1}}
 
 \DeclareRobustCommand*{\cs}[1]{\csnoindex{#1}\index{#1@\csnoindex{#1}}}

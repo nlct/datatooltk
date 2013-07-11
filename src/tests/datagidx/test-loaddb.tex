@@ -1,0 +1,21 @@
+% arara: clean
+% arara: pdflatex
+% arara: pdflatex
+\documentclass{report}
+
+\usepackage{datagidx}
+
+\loadgidx{index-sorted.dbtex}{Index}
+
+\begin{document}
+
+\tableofcontents
+
+\chapter{Sample}
+
+\setkeys{newterm}{database=index}% patch for \glsaddall bug
+\glsaddall{index}
+
+\printterms[postheading={\addcontentsline{toc}{chapter}{Index}}]
+
+\end{document}

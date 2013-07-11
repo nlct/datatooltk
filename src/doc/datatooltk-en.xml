@@ -735,6 +735,12 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    <button tag="button.cancel"/>) before you make any further edits to the 
    database.
    </p>
+   </node>
+   <node tag="peopleplugin" type="subsection" title="The people Plugin">
+   <p>
+   The <tt>people</tt> plugin is designed for use with databases created
+   using the <tt>people</tt> template.
+   </p>
    <example>
    <p>
    Suppose you create a<nbsp/>new database using the <tt>people</tt>
@@ -775,7 +781,8 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    row at a<nbsp/>time, if you no longer require an entry, you can delete the
    unwanted row using <menu tag="edit.row.remove_row"/>.
    </example>
-   <example>
+   </node>
+   <node tag="datagidxplugin" type="subsection" title="The datagidx Plugin">
    <p>
    The <sty>datagidx</sty> package creates its own custom database 
    to store terms, symbols and acronyms. The <tt>datagidx</tt> template
@@ -792,6 +799,7 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    entry (via the <button tag="plugin.remove_entry"/> button) rather than 
    using <menu tag="edit.row.remove_row"/>.
    </p>
+   <example>
    <p>
    The new database (created via <menu tag="file.new_from_template"/>) is
    shown in <ref tag="datagidxplugin1"/>. The default name of the database
@@ -878,7 +886,7 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    display extra options, shown in <ref tag="datagidxplugin7"/>.
    </p>
      <float type="figure" tag="datagidxplugin7" caption="Cross-Referencing Entries">
-      <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin7.png" />
+      <image scale="0.6" alt="Image of datagidx plugin dialog" src="images/datagidxplugin7.png" />
      </float>
    <p>
    Either select the <button tag="plugin.datagidx.See"/> button and choose
@@ -903,6 +911,128 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    </p>
 <verbinput src="../tests/datagidx-doc.tex"/>
    </example>
+   </node>
+   <node tag="comparison" type="subsection" title="Comparison of glossaries and datagidx">
+   <p>
+   If you're interested in the comparitive efficiency between
+   using <sty>glossaries</sty> and <sty>datagidx</sty>, I<nbsp/>performed
+   a<nbsp/>test with 100 entries randomly selected from a<nbsp/>dictionary.
+   The entries were listed in a<nbsp/>file called <tt>entries</tt> in
+   the form:
+   </p>
+<alltt>
+<cs tag="newterm"/><marg>minnow</marg>
+<cs tag="newterm"/><marg>running board</marg>
+<cs tag="newterm"/><marg>diamant<cs tag="'"/>e</marg>
+</alltt>
+   <p>
+   First, let's look at a<nbsp/>document that uses <sty>datagidx</sty> with <cs tag="newgidx"/>:
+   </p>
+<verbinput src="../tests/datagidx/test-datagidx.tex"/>
+   <p>
+   In general you need three <LaTeX/> runs to compile a<nbsp/><sty>datagidx</sty>
+   document. In this case, you actually only need to do it twice
+   since there are no location lists.
+   </p>
+   <p>
+   Now let's test a<nbsp/><sty>datagidx</sty> document where <app/> does the
+   sorting. First, we need to generate a<nbsp/><tt>.dbtex</tt>
+   file that corresponds the same set of entries. This can be done
+   with the following document:
+   </p>
+<verbinput src="../tests/datagidx/test-savedbtex.tex"/>
+   <p>
+   This just converts the entries listed in <tt>entries.tex</tt>
+   into the appropriate database file, simulating having entered
+   the terms using <app/>'s datagidx plugin. The file is saved
+   as <tt>index.dbtex</tt>. Remember that this data only needs
+   to be sorted when you add a<nbsp/>term. This can either be done
+   in <app/>'s <acr tag="gui"/> mode or it can be done in batch mode:
+   </p>
+<pre>
+datatooltk --in index.dbtex --sort Sort --out index-sorted.dbtex
+</pre>
+   <p>
+   This creates a<nbsp/>file called <tt>index-sorted.dbtex</tt>.
+   This file can be loaded into a<nbsp/>document as follows (NB there's a bug in 
+   <cs tag="glsaddall"/>, which is patched using the <cs tag="setkeys"/> line. This will be fixed in the next version of <sty>datagidx</sty>):
+   </p>
+<verbinput src="../tests/datagidx/test-loaddb.tex"/>
+   <p>
+   Now let's look at the <sty>glossaries</sty> package. Since the terms
+   have been defined using <cs tag="newterm"/>, I've defined a<nbsp/>command
+   that will convert this into an equivalent <cs tag="newglossaryentry"/>.
+   Some of the entries have accents in their name, which
+   <sty>datagidx</sty> automatically strips when generating the default 
+   label, so I've added a<nbsp/>quick way of generating an
+   analogous accent-free label and sort key that can be used with <cs tag="newglossaryentry"/>. Here's the document:
+   </p>
+<verbinput src="../tests/datagidx/test-glossaries.tex"/>
+   <p>
+   In order to compare them, I<nbsp/>used <tt>arara</tt> with 
+   the Linux <tt>time</tt> command. In each case, the <tt>clean</tt>
+   directive is used at the start to ensure the tests start without
+   an auxiliary files. Since there are no location lists, only
+   two <LaTeX/> calls are used on each example. If there were
+   location lists, the <sty>datagidx</sty> examples would both
+   need a<nbsp/>third <LaTeX/> call.<footnote>The <sty>datagidx</sty>
+   package doesn't generate a<nbsp/>location with <cs tag="glsadd"/>
+   or <cs tag="glsaddall"/>, whereas <sty>glossaries</sty> does.
+   I've suppressed the location list in the <sty>glossaries</sty>
+   example to produce an equivalent document.</footnote>
+   Remember that with the example that uses <tt>index-sorted.dbtex</tt>,
+   <app/> needs to sort the database whenever a<nbsp/>new entry is 
+   added to the database. Assuming that all possible required
+   entries have been added to the database, we just need one
+   sort operation:
+   </p>
+<pre>
+datatooltk --in index.dbtex --sort Sort --out index-sorted.dbtex
+</pre>
+   <p noindent="true">
+   Invoking this with the Linux <tt>time</tt> command gives:
+   </p>
+<pre>
+real	0m0.233s
+user	0m0.403s
+sys	0m0.014s
+</pre>
+   <p>
+   Now <tt>arara</tt> can be run on each of the three test documents 
+   (via the <tt>time</tt> command). The result from the first test
+   that uses <sty>datagidx</sty> and <cs tag="newgidx"/>. The results are:
+   </p>
+<pre>
+real	0m12.170s
+user	0m12.199s
+sys	0m0.038s
+</pre>
+  <p>
+  The next test uses <sty>datagidx</sty> and <cs tag="loadgidx"/>. 
+  The result is:
+  </p>
+<pre>
+real	0m2.315s
+user	0m2.343s
+sys	0m0.037s
+</pre>
+  <p>
+  The third test uses <sty>glossaries</sty>. The result is:
+  </p>
+<pre>
+real	0m0.778s
+user	0m0.801s
+sys	0m0.057s
+</pre>
+   <p>
+   Using <sty>glossaries</sty> is clearly faster than using
+   <sty>datagidx</sty>. In the case of <cs tag="loadgidx"/>,
+   <sty>glossaries</sty> is approximately three times faster. In the 
+   case of <cs tag="newgidx"/>, <sty>glossaries</sty> is approximately 
+  15 times faster. If a<nbsp/>third <LaTeX/> run was required
+  for the location lists with <cs tag="newgidx"/>, using <sty>glossaries</sty> would be approximately 
+  24 times faster (with only two <LaTeX/> runs and one <tt>makeglossaries</tt> run).
+   </p>
    </node>
    <node tag="import" type="chapter" title="Importing Data">
    <p>
