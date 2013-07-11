@@ -1,0 +1,12 @@
+index-sorted.dbtex
+index.dbtex
+*.aux
+*.log
+*.pdf
+*.out
+*.dvi
+*.toc
+*.glg
+*.glo
+*.gls
+*.ist
