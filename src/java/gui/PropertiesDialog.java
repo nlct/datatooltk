@@ -339,7 +339,7 @@ public class PropertiesDialog extends JDialog
 
       box = createNewRow(editorBox);
 
-      labels = new JLabel[2];
+      labels = new JLabel[4];
       idx = 0;
       maxWidth = 0;
 
@@ -360,6 +360,36 @@ public class PropertiesDialog extends JDialog
       maxWidth = Math.max(maxWidth, dim.width);
       box.add(labels[idx++]);
       box.add(editorWidthField);
+
+      box = createNewRow(editorBox);
+
+      JButton button = new JButton("...");
+      button.setActionCommand("highlightcs");
+      button.addActionListener(this);
+      labels[idx] = createLabel("preferences.display.highlightcs", button);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+
+      highlightCsSwatch = new JPanel();
+      highlightCsSwatch.setPreferredSize(new Dimension(38,20));
+      box.add(highlightCsSwatch);
+      box.add(button);
+
+      box = createNewRow(editorBox);
+
+      button = new JButton("...");
+      button.setActionCommand("highlightcomment");
+      button.addActionListener(this);
+      labels[idx] = createLabel("preferences.display.highlightcomment", button);
+      dim = labels[idx].getPreferredSize();
+      maxWidth = Math.max(maxWidth, dim.width);
+      box.add(labels[idx++]);
+
+      highlightCommentSwatch = new JPanel();
+      highlightCommentSwatch.setPreferredSize(new Dimension(38,20));
+      box.add(highlightCommentSwatch);
+      box.add(button);
 
       for (idx = 0; idx < labels.length; idx++)
       {
@@ -611,6 +641,8 @@ public class PropertiesDialog extends JDialog
       editorHeightField.setValue(settings.getCellEditorHeight());
       editorWidthField.setValue(settings.getCellEditorWidth());
       syntaxHighlightingBox.setSelected(settings.isSyntaxHighlightingOn());
+      highlightCsSwatch.setBackground(settings.getControlSequenceHighlight());
+      highlightCommentSwatch.setBackground(settings.getCommentHighlight());
 
       texMapModel = new TeXMapModel(this, texMapTable, settings);
       texMapTable.setModel(texMapModel);
@@ -767,6 +799,28 @@ public class PropertiesDialog extends JDialog
             seedField.requestFocusInWindow();
          }
       }
+      else if (action.equals("highlightcs"))
+      {
+         Color col = JColorChooser.showDialog(this, 
+            DatatoolTk.getLabel("preferences.display.highlightcs"),
+            highlightCsSwatch.getBackground());
+
+         if (col != null)
+         {
+            highlightCsSwatch.setBackground(col);
+         }
+      }
+      else if (action.equals("highlightcomment"))
+      {
+         Color col = JColorChooser.showDialog(this, 
+            DatatoolTk.getLabel("preferences.display.highlightcomment"),
+            highlightCommentSwatch.getBackground());
+
+         if (col != null)
+         {
+            highlightCommentSwatch.setBackground(col);
+         }
+      }
    }
 
    private void updateButtons()
@@ -895,6 +949,9 @@ public class PropertiesDialog extends JDialog
       settings.setCellEditorWidth(editorWidthField.getValue());
       settings.setSyntaxHighlighting(syntaxHighlightingBox.isSelected());
 
+      settings.setControlSequenceHighlight(highlightCsSwatch.getBackground());
+      settings.setCommentHighlight(highlightCommentSwatch.getBackground());
+
       gui.updateTableSettings();
 
       if (hasSeedBox.isSelected())
@@ -952,6 +1009,8 @@ public class PropertiesDialog extends JDialog
    private CurrencyListModel currencyListModel;
 
    private JComboBox<String> helpsetLangBox, dictLangBox;
+
+   private JComponent highlightCsSwatch, highlightCommentSwatch;
 
    private JTabbedPane tabbedPane;
 
