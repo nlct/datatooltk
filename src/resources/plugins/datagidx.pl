@@ -411,6 +411,18 @@ MainLoop;
 
 sub doDbUpdate{
 
+   # Has a label been supplied?
+
+   unless ($entries{Label}->get)
+   {
+      $mw->MsgBox(-title=>$db->getDictWord('error.title'),
+       -detail=>&getWord('missing_label'),
+       -type=>'ok',
+       -icon=>'error')->Show();
+
+      return;
+   }
+
    foreach my $key (keys %entries)
    {
       $row[$colIndexes{$key}] = $entries{$key}->get;

@@ -148,12 +148,18 @@ else
    )->pack(-side=>'left', -expand=>1);
 }
 
+$mw->iconify;
 $mw->update;
+$mw->deiconify;
+
+$mw->state('withdrawn');
 
 my $xpos = int(($mw->screenwidth-$mw->width)/2);
 my $ypos = int(($mw->screenheight-$mw->height)/2);
 
 $mw->geometry("+$xpos+$ypos");
+
+$mw->state('normal');
 
 MainLoop;
 

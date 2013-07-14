@@ -43,9 +43,7 @@ public class RowHeaderComponent extends JPanel implements DropTargetListener
 
    public void addButton()
    {
-      int n = buttons.size();
-
-      addButton();
+      addButton(buttons.size());
    }
 
    public void removeButton()

@@ -613,6 +613,7 @@ plugin.datagidx.Used=Used (Reserved)
 plugin.datagidx.crossref=Cross-Reference
 plugin.datagidx.add_seealso=Add "See Also" Entry
 plugin.datagidx.remove_seealso=Remove "See Also" Entry
+plugin.datagidx.missing_label=Missing Label
 
 # Context labels in manual
 manual.title=Manual
