@@ -103,9 +103,7 @@ public class DatatoolDbPanel extends JPanel
                 {
                    if (!table.editCellAt(viewRow, viewCol))
                    {
-                      DatatoolTk.debug(
-                        "Can't edit cell at (view) col="+viewCol
-                          +", row="+viewRow);
+                      requestCellEditor(modelRow, modelCol);
                    }
                 }
              }
