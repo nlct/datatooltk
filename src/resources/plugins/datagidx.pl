@@ -411,16 +411,19 @@ MainLoop;
 
 sub doDbUpdate{
 
-   # Has a label been supplied?
+   # Have compulsory fields been supplied?
 
-   unless ($entries{Label}->get)
+   foreach my $key (qw/Name Label Sort/)
    {
-      $mw->MsgBox(-title=>$db->getDictWord('error.title'),
-       -detail=>&getWord('missing_label'),
-       -type=>'ok',
-       -icon=>'error')->Show();
+      unless ($entries{$key}->get)
+      {
+         $mw->MsgBox(-title=>$db->getDictWord('error.title'),
+          -detail=>&getWord('missing_field', $key),
+          -type=>'ok',
+          -icon=>'error')->Show();
 
-      return;
+         return;
+      }
    }
 
    foreach my $key (keys %entries)
@@ -656,7 +659,7 @@ sub removeCrossRef{
 }
 
 sub getWord{
-  $db->getDictWord('plugin.datagidx.'.shift)
+  $db->getDictWord('plugin.datagidx.'.shift, @_)
 }
 
 1;
