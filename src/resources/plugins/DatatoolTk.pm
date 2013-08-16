@@ -14,7 +14,13 @@ my $dbattrs;
 
 sub new{
   my $class = shift;
-  my $self = {};
+  my $self = ($#_ == 0 ? $_[0] : {});
+
+  unless ($self->{plugin_is_GPL_compatible})
+  {
+     die "Plugin not GPL compatible\n";
+  }
+
   bless $self, $class;
   $self->_initialise();
   return $self;

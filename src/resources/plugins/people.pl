@@ -5,7 +5,7 @@ use Tk;
 use Tk::PNG;
 use DatatoolTk;
 
-my $db = DatatoolTk->new();
+my $db = DatatoolTk->new({plugin_is_GPL_compatible => 1});
 
 my $selectedRow = $db->selectedRow();
 
