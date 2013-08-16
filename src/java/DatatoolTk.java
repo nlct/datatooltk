@@ -298,7 +298,9 @@ public class DatatoolTk
       String info = getLabelWithValues("about.version",
         new String[]{ appName, appVersion, appDate})
         + eol
-        + getLabelWithValue("about.copyright", "Nicola L. C. Talbot")
+// Copyright line shouldn't get translated (according to
+// http://www.gnu.org/prep/standards/standards.html)
+        + "Copyright (C) 2013 Nicola L. C. Talbot (www.dickimaw-books.com)"
         + eol
         + getLabel("about.legal");
 

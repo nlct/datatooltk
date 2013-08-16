@@ -151,7 +151,6 @@ help.manual.mnemonic=M
 # About dialog
 about.title=About $1
 about.version=$1 $2 ($3)
-about.copyright=Copyright (C) 2013 $1
 about.licence=License
 about.legal=License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.
 about.translated_by=Translated by $1
