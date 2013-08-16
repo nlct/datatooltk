@@ -21,12 +21,12 @@ public class DatatoolTk
       {
          public void error(SAXParseException exception)
          {
-            System.err.println(exception.getMessage());
+            System.err.println(appName+": "+exception.getMessage());
          }
 
          public void warning(SAXParseException exception)
          {
-            System.err.println(exception.getMessage());
+            System.err.println(appName+": "+exception.getMessage());
          }
 
          public void fatalError(SAXParseException exception)
@@ -37,15 +37,15 @@ public class DatatoolTk
 
       if (imp == null && dbtex == null)
       {
-         System.err.println(getLabelWithValues("error.cli.no_data",
+         System.err.println(appName+": "+getLabelWithValues("error.cli.no_data",
            "--gui", "--help"));
          System.exit(1);
       }
 
       if (out == null)
       {
-         System.err.println(getLabelWithValues("error.cli.no_out",
-           new String[]{"--out", "--gui", "--help"}));
+         System.err.println(appName+": "+getLabelWithValues("error.cli.no_out",
+           new String[]{"--output", "--gui", "--help"}));
          System.exit(1);
       }
 
@@ -91,6 +91,7 @@ public class DatatoolTk
             if (colIndex == -1)
             {
                throw new InvalidSyntaxException(
+                  appName+": "+
                   DatatoolTk.getLabelWithValue("error.syntax.unknown_field",
                   sort));
             }
@@ -109,12 +110,12 @@ public class DatatoolTk
       }
       catch (IOException e)
       {
-         System.err.println(e.getMessage());
+         System.err.println(appName+": "+e.getMessage());
          System.exit(1);
       }
       catch (DatatoolImportException e)
       {
-         System.err.println(e.getMessage());
+         System.err.println(appName+": "+e.getMessage());
 
          Throwable cause = e.getCause();
 
@@ -235,7 +236,7 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.in", 
         new String[]{"--in", "-i", appName}));
       System.out.println(getLabelWithValue("syntax.name", "--name"));
-      System.out.println(getLabelWithValues("syntax.out", "--out", "-o"));
+      System.out.println(getLabelWithValues("syntax.out", "--output", "-o"));
       System.out.println(getLabelWithValues("syntax.version", "--version", "-v"));
       System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
       System.out.println(getLabelWithValue("syntax.debug", "--debug"));
@@ -331,7 +332,7 @@ public class DatatoolTk
       }
       else
       {
-         System.err.println(message);
+         System.err.println(appName+": "+message);
       }
    }
 
@@ -339,7 +340,7 @@ public class DatatoolTk
    {
       if (debugMode)
       {
-         System.out.println(message);
+         System.err.println(appName+": "+message);
       }
    }
 
@@ -347,6 +348,7 @@ public class DatatoolTk
    {
       if (debugMode)
       {
+         System.err.println(appName+":");
          e.printStackTrace();
       }
    }
@@ -438,7 +440,7 @@ public class DatatoolTk
 
       if (prop == null)
       {
-         System.err.println("No such dictionary property '"+label+"'");
+         System.err.println(appName+": no such dictionary property '"+label+"'");
          return "?"+label+"?";
       }
 
@@ -471,7 +473,7 @@ public class DatatoolTk
 
       if (prop.equals(""))
       {
-         debug("Empty dictionary property '"+prop+"'");
+         debug("empty dictionary property '"+prop+"'");
          return label.charAt(0);
       }
 
@@ -640,7 +642,7 @@ public class DatatoolTk
       }
       catch (IOException e)
       {
-         System.err.println("Unable to load properties:\n" +
+         System.err.println(appName+": unable to load properties:\n" +
            e.getMessage());
       }
 
@@ -650,7 +652,7 @@ public class DatatoolTk
       }
       catch (IOException e)
       {
-         System.err.println("Unable to load dictionary file:\n"
+         System.err.println(appName+": unable to load dictionary file:\n"
            + e.getMessage());
       }
 
@@ -712,7 +714,7 @@ public class DatatoolTk
             {
                settings.setHasCSVHeader(false);
             }
-            else if (args[i].equals("--out") || args[i].equals("-o"))
+            else if (args[i].equals("--output") || args[i].equals("-o"))
             {
                if (out != null)
                {
@@ -1088,7 +1090,7 @@ public class DatatoolTk
          }
          else
          {
-            System.err.println(
+            System.err.println(appName+": "+
               getLabelWithValue("error.syntax", e.getMessage()));
          }
 
