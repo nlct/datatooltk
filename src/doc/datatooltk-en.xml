@@ -452,7 +452,7 @@
    </pre>
 It's better to run, say,
 <pre>
-<dict tag="appname"/> --in mydata.dbtex --sort Surname --out mydata-sorted.dbtex
+<dict tag="appname"/> --in mydata.dbtex --sort Surname --output mydata-sorted.dbtex
 </pre>
    Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
 <pre>
@@ -465,7 +465,7 @@ It's better to run, say,
    </p>
 <pre>
 \immediate\write18{<dict tag="appname"/> --in mydata.dbtex --sort Surname 
---out mydata-sorted.dbtex}
+--output mydata-sorted.dbtex}
 
 \input{mydata-sorted.dbtex}
 % Later in the document:
@@ -594,12 +594,12 @@ It's better to run, say,
    and the database label is <dq><tt>problems</tt></dq>. Then I<nbsp/>can run <app/>
    in batch mode using:
    <pre>
-<dict tag="appname"/> --shuffle --in data.dbtex --out data-shuffled.dbtex
+<dict tag="appname"/> --shuffle --in data.dbtex --output data-shuffled.dbtex
    </pre>
    Remember to use <opt tag="seed"/> if you don't want a<nbsp/>different
    ordering every time you run that command. For example:
    <pre>
-<dict tag="appname"/> --seed 2013 --shuffle --in data.dbtex --out data-shuffled.dbtex
+<dict tag="appname"/> --seed 2013 --shuffle --in data.dbtex --output data-shuffled.dbtex
    </pre>
    This shuffled database can now be loaded in my document:
    </p>
@@ -622,7 +622,7 @@ It's better to run, say,
    </p>
    <pre>
 \immediate\write18{datatooltk --in data.dbtex --seed 2013 --shuffle 
---out data-shuffled.dbtex}
+--output data-shuffled.dbtex}
 
 \input{data-shuffled.dbtex}
    </pre>
@@ -950,7 +950,7 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    in <app/>'s <acr tag="gui"/> mode or it can be done in batch mode:
    </p>
 <pre>
-datatooltk --in index.dbtex --sort Sort --out index-sorted.dbtex
+datatooltk --in index.dbtex --sort Sort --output index-sorted.dbtex
 </pre>
    <p>
    This creates a<nbsp/>file called <tt>index-sorted.dbtex</tt>.
@@ -987,7 +987,7 @@ datatooltk --in index.dbtex --sort Sort --out index-sorted.dbtex
    sort operation:
    </p>
 <pre>
-datatooltk --in index.dbtex --sort Sort --out index-sorted.dbtex
+datatooltk --in index.dbtex --sort Sort --output index-sorted.dbtex
 </pre>
    <p noindent="true">
    Invoking this with the Linux <tt>time</tt> command gives:
@@ -1134,7 +1134,7 @@ sys	0m0.057s
    from the command prompt:
    </p>
    <alltt>
-datatooltk --out customers.dbtex --sql "SELECT * FROM customers" <cont />--sqldb myshop --sqluser shopadmin
+datatooltk --output customers.dbtex --sql "SELECT * FROM customers" <cont />--sqldb myshop --sqluser shopadmin
 Password:
    </alltt>
    <p>
@@ -1143,7 +1143,7 @@ Password:
    database to do any sorting. For example (assuming the table has 
    a<nbsp/>column called <tt>Surname</tt>):
    <alltt>
-datatooltk --out customers.dbtex --sql "SELECT * FROM customers ORDER BY <cont />Surname" --sqldb myshop --sqluser shopadmin
+datatooltk --output customers.dbtex --sql "SELECT * FROM customers ORDER BY <cont />Surname" --sqldb myshop --sqluser shopadmin
 Password:
    </alltt>
    </p>

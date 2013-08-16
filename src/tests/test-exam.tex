@@ -13,7 +13,7 @@
 \newcounter{question}
 
 \immediate\write18{datatooltk --sort Label --seed \examyear\space
---shuffle --in mth-101.dbtex --out mth-101-shuffled.dbtex}
+--shuffle --in mth-101.dbtex --output mth-101-shuffled.dbtex}
 
 \input{mth-101-shuffled.dbtex}
 

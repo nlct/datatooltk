@@ -8,11 +8,11 @@ test-csv	: app
 	bin/datatooltk-gui --debug --csv tests/test-para.csv
 
 test-cli	: app
-	bin/datatooltk --debug --out tests/test-out.dbtex --in tests/data-raw.dbtex
-	bin/datatooltk --debug --out tests/test-csv-out.dbtex --csv tests/test.csv
+	bin/datatooltk --debug --output tests/test-out.dbtex --in tests/data-raw.dbtex
+	bin/datatooltk --debug --output tests/test-csv-out.dbtex --csv tests/test.csv
 
 test-sql	: app
-	bin/datatooltk --debug --out tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
+	bin/datatooltk --debug --output tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
 
 app	: lib lib/datatooltk.jar lib/resources lib/splash.png
 
