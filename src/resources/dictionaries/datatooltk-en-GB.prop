@@ -487,6 +487,8 @@ syntax.sql_wipepassword=$1\t\tFor extra security, wipe the password from memory 
 syntax.sql_nowipepassword=$1\tDon't wipe the password from memory as soon as it has been used to connect to a SQL database.$2
 syntax.probsoln_opts=probsoln Options:
 syntax.probsoln=$1 <filename>\tImport probsoln data from <filename>
+syntax.bugreport=Report bugs to: $1
+syntax.homepage=$1 home page: $2
 
 
 # Error messages

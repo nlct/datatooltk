@@ -289,6 +289,12 @@ public class DatatoolTk
       System.out.println();
       System.out.println(getLabel("syntax.probsoln_opts"));
       System.out.println(getLabelWithValue("syntax.probsoln", "--probsoln"));
+      System.out.println();
+      System.out.println(getLabelWithValue("syntax.bugreport", 
+        "http://www.dickimaw-books.com/bug-report.html"));
+      System.out.println(getLabelWithValues("syntax.homepage", 
+        appName,
+        "http://www.dickimaw-books.com/apps/datatooltk/"));
    }
 
    public static String getAppInfo()
