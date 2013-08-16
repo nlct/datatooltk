@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+mkdir -p datatooltk
+cp ../dist/* datatooltk
+mkdir -p source/datatooltk/src
+cd ../src; cp `git ls-files` ../ctan/source/datatooltk/src/
+cp ../README source/datatooltk
