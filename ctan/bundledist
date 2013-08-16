@@ -2,13 +2,18 @@
 
 mkdir -p datatooltk
 cp ../dist/* datatooltk
-mkdir -p source/datatooltk/src
+mkdir -p doc/support/datatooltk
+cp ../dist/*.pdf ../dist/README doc/support/datatooltk
+mkdir -p scripts/datatooltk
+cp ../dist/*.jar scripts/datatooltk
+mkdir -p source/support/datatooltk/src
 cd ../src
-tar cvf ../ctan/source/datatooltk/src/tmp.tar `git ls-files` 
-cd ../ctan/source/datatooltk/src
-tar xvf tmp.tar
+tar cvf ../ctan/tmp.tar `git ls-files` 
+cd ../ctan/
+tar xvf tmp.tar -C source/support/datatooltk/src
+mkdir -p datatooltk/src
+tar xvf tmp.tar -C datatooltk/src
 rm tmp.tar
-cd ../../..
-cp ../README source/datatooltk
-zip -r datatooltk.tds.zip source
-zip -r datatool.zip datatooltk datatooltk.tds.zip
+cp ../README source/support/datatooltk
+zip -r datatooltk.tds.zip source scripts doc
+zip -r datatooltk.zip datatooltk datatooltk.tds.zip
