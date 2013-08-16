@@ -1,11 +1,16 @@
-Application  : datatooltk v0.5b 2013-07-11
+Application  : datatooltk version 1.0 2013-08-16
 
 Author       : Nicola L. C. Talbot
                www.dickimaw-books.com
 
+Home Page    : http://www.dickimaw-books.com/apps/datatooltk/
+
 License      : GPLv3+ <http://gnu.org/licenses/gpl.html>
 
 Requirements : Java Runtime Environment 1.7 (Java 7)
+               Perl
+               TeX
+               datatool and probsoln LaTeX packages.
 
 DESCRIPTION
 ===========
@@ -25,4 +30,17 @@ INSTALL
 double-click on the jar file or run 
 "java -jar datatooltk-installer.jar" from a terminal).
 
+If you want to use the datatooltk plugins you need to ensure
+you have Perl installed. An up-to-date TeX distribution is also
+required if you want to import data from a probsoln dataset.
 
+Third Party Libraries
+=====================
+
+datatooltk depends on the following third party libraries whose jar
+files are placed in the application's lib directory by the installer: Java Help
+(https://javahelp.java.net/), Open CSV
+(http://opencsv.sourceforge.net/), MySQL connector
+(http://dev.mysql.com/downloads/connector/j/) and the Java Look and
+Feel Graphics Repository
+(http://www.oracle.com/technetwork/java/index-138612.html).

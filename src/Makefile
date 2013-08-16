@@ -14,7 +14,7 @@ test-cli	: app
 test-sql	: app
 	bin/datatooltk --debug --output tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
 
-app	: lib lib/datatooltk.jar lib/resources lib/splash.png
+app	: lib lib/datatooltk.jar lib/resources lib/datatooltk-splash.png
 
 dist	: ../dist/datatooltk-installer.jar
 	cp doc/datatooltk-en-GB.pdf ../dist
@@ -32,8 +32,8 @@ lib/resources   :
 resources/icons	: 
 	cd resources; ln -s ../images/icons
 
-lib/splash.png	: lib
-		cd lib; ln -s -f ../images/splash.png
+lib/datatooltk-splash.png	: lib
+		cd lib; ln -s -f ../images/datatooltk-splash.png
 
 lib/datatooltk.jar	: java/Manifest.txt \
 			resources/icons \

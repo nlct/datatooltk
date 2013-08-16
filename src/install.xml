@@ -12,7 +12,7 @@
   <properties>
     <property name="info.appName" value="datatooltk"/>
     <property name="info.url" value="http://www.dickimaw-books.com/apps/datatooltk/"/>
-    <property name="project.version" value="0.5b" />
+    <property name="project.version" value="1.0" />
   </properties>
 
     <!-- 
@@ -29,7 +29,7 @@
     </info>
 
     <guiprefs width="640" height="480" resizable="yes">
-     <splash>images/splash.png</splash>
+     <splash>images/datatooltk-splash.png</splash>
     </guiprefs>
 
     <locale>
@@ -77,7 +77,7 @@
         </pack>
         <pack name="Source" required="no" preselected="no">
             <description>The source code</description>
-            <file src="doc/createdocs" targetdir="$INSTALL_PATH/src/doc" />
+            <file src="doc/createdatatooltkdocs" targetdir="$INSTALL_PATH/src/doc" />
             <file src="doc/images" targetdir="$INSTALL_PATH/src/doc" />
             <fileset dir="." includes="**/Makefile" 
               targetdir="$INSTALL_PATH/src" />

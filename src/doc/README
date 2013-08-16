@@ -1,8 +1,8 @@
 Application  : datatooltk
 Author       : Nicola L. C. Talbot 
                www.dickimaw-books.com
-License      : GPL
-Requirements : Java Runtime Environment 
+License      : GPLv3+
+Requirements : Java Runtime Environment, Perl, TeX
 
 DESCRIPTION
 ===========
@@ -11,3 +11,15 @@ A Java application that can be used to edit database files
 that use datatool's internal format. It can also be used to
 import data from CSV files, SQL databases and TeX files
 that can be loaded using \loadallproblems from probsoln.sty
+
+Third Party Libraries
+=====================
+
+datatooltk depends on the following third party libraries whose jar
+files are placed in the application's lib directory by the installer: Java Help
+(https://javahelp.java.net/), Open CSV
+(http://opencsv.sourceforge.net/), MySQL connector
+(http://dev.mysql.com/downloads/connector/j/) and the Java Look and
+Feel Graphics Repository
+(http://www.oracle.com/technetwork/java/index-138612.html).
+

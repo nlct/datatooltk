@@ -70,7 +70,7 @@
        <dd>
        Invoke <app/> in batch mode (default).
        </dd>
-       <dt><opt tag="out"/> <meta>filename</meta>
+       <dt><opt tag="output"/> <meta>filename</meta>
          (or <tt>-o</tt> <meta>filename</meta>)</dt>
        <dd>
        Save the database to <meta>filename</meta> (batch mode only).
@@ -635,12 +635,12 @@ It's better to run, say,
    regardless of the option order, but why would you want to sort the data
    if you're going to shuffle it? Consider the command invocation:
 <alltt>
-<dict tag="appname"/> <opt tag="shuffle"/> <opt tag="in"/> <meta>in-file</meta> <opt tag="out"/> <meta>out-file</meta>
+<dict tag="appname"/> <opt tag="shuffle"/> <opt tag="in"/> <meta>in-file</meta> <opt tag="output"/> <meta>out-file</meta>
 </alltt>
    Every time you run this command, you will get a<nbsp/>different ordering.
 If, however, you set a<nbsp/>seed for the random generator, for example:
 <alltt>
-<dict tag="appname"/> <opt tag="seed"/> 2013 <opt tag="shuffle"/> <opt tag="in"/> <meta>in-file</meta> <opt tag="out"/> <meta>out-file</meta>
+<dict tag="appname"/> <opt tag="seed"/> 2013 <opt tag="shuffle"/> <opt tag="in"/> <meta>in-file</meta> <opt tag="output"/> <meta>out-file</meta>
 </alltt>
    You will always get the same random ordering <em>provided the original 
    data in <meta>in-file</meta> has remained unchanged</em>. If you want to 
@@ -689,7 +689,7 @@ If, however, you set a<nbsp/>seed for the random generator, for example:
    on each run, even with the same seed. To overcome this, a<nbsp/>sort on 
    the <tt>Label</tt> column needs to be done before the shuffle:
 <alltt>
-<dict tag="appname"/> <opt tag="sort"/> Label <opt tag="seed"/> 2013 <opt tag="shuffle"/> <opt tag="in"/> mth-101.dbtex <cont/><opt tag="out"/> mth-101-shuffled.dbtex
+<dict tag="appname"/> <opt tag="sort"/> Label <opt tag="seed"/> 2013 <opt tag="shuffle"/> <opt tag="in"/> mth-101.dbtex <cont/><opt tag="output"/> mth-101-shuffled.dbtex
 </alltt>
    <contexplan/>
    This way the shuffle always starts from the same ordering.
