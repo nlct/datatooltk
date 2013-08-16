@@ -12,6 +12,6 @@ datatool's internal format, which can be quickly imported into
 a LaTeX document using \input. It can also be used in batch mode to
 convert from SQL or CSV or import probsoln datasets.
 
-Initial version still under development.
+To compile, see src/README
 
 www.dickimaw-books.com
