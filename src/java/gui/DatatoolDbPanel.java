@@ -1012,17 +1012,26 @@ public class DatatoolDbPanel extends JPanel
 
    public void moveColumnEdit(int fromIndex, int toIndex)
    {
-      addUndoEdit(new MoveColumnEdit(this, fromIndex, toIndex));
+      if (fromIndex != toIndex)
+      {
+         addUndoEdit(new MoveColumnEdit(this, fromIndex, toIndex));
+      }
    }
 
    public void moveViewColumn(int fromIndex, int toIndex)
    {
-      table.moveColumn(fromIndex, toIndex);
+      if (fromIndex != toIndex)
+      {
+         table.moveColumn(fromIndex, toIndex);
+      }
    }
 
    public void moveRow(int fromIndex, int toIndex)
    {
-      addUndoEdit(new MoveRowEdit(this, fromIndex, toIndex));
+      if (fromIndex != toIndex)
+      {
+         addUndoEdit(new MoveRowEdit(this, fromIndex, toIndex));
+      }
    }
 
    public void dataUpdated()
