@@ -1,4 +1,7 @@
 #!/usr/bin/perl
+# Module used by datatooltk plugins
+# Plugins must indicate that they are GPL compatible using
+#    DatatoolTk->new({plugin_is_GPL_compatible => 1});
 
 package DatatoolTk;
 
@@ -12,6 +15,7 @@ my @rows;
 
 my $dbattrs;
 
+# Constructor
 sub new{
   my $class = shift;
   my $self = ($#_ == 0 ? $_[0] : {});
@@ -26,6 +30,8 @@ sub new{
   return $self;
 }
 
+# Read the XML data supplied by datatooltk, and load dictionary
+# resources if provided
 sub _initialise{
   my $self = shift;
 
@@ -60,6 +66,7 @@ sub _initialise{
    }
 }
 
+# Handler for XML start tags
 sub _handle_start{
    my( $expat, $element, %attrs ) = @_;
 
@@ -154,6 +161,7 @@ sub _handle_start{
    push @elements, $element;
 }
 
+# Handler for XML end tags
 sub _handle_end{
    my( $expat, $element ) = @_;
 
@@ -167,6 +175,9 @@ expected)\n";
 
 }
 
+# Handler for character read from XML input 
+# (Current tag path given by @elements. The last item is the current
+# tag element.)
 sub _handle_char{
    my( $expat, $string ) = @_;
 
@@ -190,6 +201,7 @@ sub _handle_char{
    }
 }
 
+# Parse the dictionary resource file
 sub _parseDictionary{
    my $self = shift;
    my $content = shift;
@@ -200,6 +212,7 @@ sub _parseDictionary{
    }
 }
 
+# Get a word defined in the dictionary by the given key
 sub getDictWord{
    my $self = shift;
    my $key = shift;
@@ -214,12 +227,15 @@ sub getDictWord{
    $word;
 }
 
+# Get the location of datatooltk's resources directory (as a URI).
 sub getResourcesUrl{
    my $self = shift;
 
    $dbattrs->{resources};
 }
 
+# Get the full path name of the given image file contained in
+# datatooltk's resources/icons/ directory.
 sub getImageFile{
    my $self = shift;
    my $filename = shift;
@@ -229,30 +245,37 @@ sub getImageFile{
    $uri->path;
 }
 
+# Return the index of the row that was currently selected in
+# datatooltk when the plugin was invoked, or -1 if none selected.
 sub selectedRow{
   my $self = shift;
 
   return $dbattrs->{selectedrow};
 }
 
+# Return the index of the column that was currently selected in
+# datatooltk when the plugin was invoked, or -1 if none selected.
 sub selectedColumn{
   my $self = shift;
 
   return $dbattrs->{selectedcolumn};
 }
 
+# Get the number of rows in the database
 sub rowCount{
   my $self = shift;
 
   return $#rows+1;
 }
 
+# Get the number of columns in the database
 sub columnCount{
   my $self = shift;
 
   return $#headers+1;
 }
 
+# Get the index of the column identified by the given label
 sub getColumnIndex{
   my $self = shift;
   my $label = shift;
@@ -268,6 +291,7 @@ sub getColumnIndex{
   return -1;
 }
 
+# Get the identifying label for the column with the given index.
 sub getColumnLabel{
   my $self = shift;
   my $index = shift;
@@ -275,6 +299,7 @@ sub getColumnLabel{
   return $headers[$index]->{label};
 }
 
+# Get the title for the column with the given index.
 sub getColumnTitle{
   my $self = shift;
   my $index = shift;
@@ -282,6 +307,7 @@ sub getColumnTitle{
   return $headers[$index]->{title};
 }
 
+# Get the data type for the column with the given index.
 sub getColumnType{
   my $self = shift;
   my $index = shift;
@@ -289,6 +315,7 @@ sub getColumnType{
   return $headers[$index]->{type};
 }
 
+# Get the entry for the given row and column index.
 sub getEntry{
   my $self = shift;
   my $rowIndex = shift;
@@ -299,6 +326,7 @@ sub getEntry{
   return $row[$colIndex];
 }
 
+# Get an array containing the data in the given row.
 sub getRow{
   my $self = shift;
   my $rowIndex = shift;
@@ -306,6 +334,8 @@ sub getRow{
   return $rows[$rowIndex];
 }
 
+# Get an array containing the data in the given column,
+# excluding the given row index (use -1 if no row should be excluded).
 sub getColumn{
   my $self = shift;
   my $colIndex = shift;
@@ -324,18 +354,26 @@ sub getColumn{
   @column
 }
 
+# Indicate that the database is about to be modified. Should only be
+# used once per plugin call. Modifications to the database via
+# functions like &insertRow must occur after this function.
 sub startModifications{
    my $self = shift;
 
    print "<datatooltk>\n";
 }
 
+# Indicate that the database modifications have finished. Must occur
+# after &startModifications and should not be used more than once
+# per plugin call. No further modifications can be made to
+# the database after this function.
 sub endModifications{
    my $self = shift;
 
    print "</datatooltk>\n";
 }
 
+# Insert a row (array reference) into the database at the given row index.
 sub insertRow{
   my $self = shift;
   my $rowIndex = shift;
@@ -353,6 +391,7 @@ sub insertRow{
   print "</row>\n";
 }
 
+# Append the given row (array reference) to the database.
 sub appendRow{
   my $self = shift;
   my $row = shift;
@@ -369,6 +408,8 @@ sub appendRow{
   print "</row>\n";
 }
 
+# Replace the row at the given row index with the supplied array
+# reference.
 sub replaceRow{
   my $self = shift;
   my $rowIndex = shift;
@@ -386,6 +427,7 @@ sub replaceRow{
   print "</row>\n";
 }
 
+# Remove the row at the given row index.
 sub removeRow{
   my $self = shift;
   my $rowIndex = shift;
@@ -395,6 +437,9 @@ sub removeRow{
 
 }
 
+# Get the maximum value in the given column.
+# If the data is the string type, an alphabetical comparison is
+# used.
 sub maxForColumn{
    my $self = shift;
    my $colIdx = shift;
@@ -444,6 +489,9 @@ sub maxForColumn{
    return $max
 }
 
+# Get the minimum value in the given column.
+# If the data is the string type, an alphabetical comparison is
+# used.
 sub minForColumn{
    my $self = shift;
    my $colIdx = shift;

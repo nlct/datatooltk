@@ -12,8 +12,8 @@ en-US	: $(TARGETDIR)/datatooltk-en-US/datatooltk.html \
 	  datatooltk-en-US.pdf
 
 $(TARGETDIR)/datatooltk-en-GB/datatooltk.html	: $(TARGETDIR) \
-	  createdocs \
-	  datatooltk-en.xml manual.dtd \
+	  createdatatooltkdocs \
+	  datatooltk-en.xml datatooltk.dtd \
           ../tests/test-para.csv \
           ../tests/HelloWorld.java \
           ../tests/HelloUser.java \
@@ -25,14 +25,14 @@ $(TARGETDIR)/datatooltk-en-GB/datatooltk.html	: $(TARGETDIR) \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-GB.prop \
 	  $(TARGETDIR)/datatooltk-en-GB/images/
-	createdocs en GB
+	createdatatooltkdocs en GB
 	cd $(TARGETDIR)/datatooltk-en-GB; \
 	  \rm -r -f JavaHelpSearch ; \
 	  jh2indexer .
 
 $(TARGETDIR)/datatooltk-en-US/datatooltk.html	: $(TARGETDIR) \
-	  createdocs \
-	  datatooltk-en.xml manual.dtd \
+	  createdatatooltkdocs \
+	  datatooltk-en.xml datatooltk.dtd \
           ../tests/test-para.csv \
           ../tests/HelloWorld.java \
           ../tests/HelloUser.java \
@@ -44,7 +44,7 @@ $(TARGETDIR)/datatooltk-en-US/datatooltk.html	: $(TARGETDIR) \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-US.prop \
 	  $(TARGETDIR)/datatooltk-en-US/images/
-	createdocs en US
+	createdatatooltkdocs en US
 	cd $(TARGETDIR)/datatooltk-en-US; \
 	  \rm -r -f JavaHelpSearch ; \
 	  jh2indexer .
@@ -58,15 +58,15 @@ datatooltk-en-GB.pdf	: datatooltk-en-GB.tex
 datatooltk-en-US.pdf	: datatooltk-en-US.tex
 	arara datatooltk-en-US
 
-datatooltk-en-GB.tex	: createdocs datatooltk-en.xml \
+datatooltk-en-GB.tex	: createdatatooltkdocs datatooltk-en.xml \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-GB.prop
-	createdocs en GB
+	createdatatooltkdocs en GB
 
-datatooltk-en-US.tex	: createdocs datatooltk-en.xml \
+datatooltk-en-US.tex	: createdatatooltkdocs datatooltk-en.xml \
 	  $(MAINCLASS) \
 	  $(DICTDIR)/datatooltk-en-US.prop
-	createdocs en US
+	createdatatooltkdocs en US
 
 $(TARGETDIR)/datatooltk-en-GB/images/	: 
 	mkdir -p $(TARGETDIR)/datatooltk-en-GB

@@ -38,7 +38,7 @@ lib/splash.png	: lib
 lib/datatooltk.jar	: java/Manifest.txt \
 			resources/icons \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class \
-			doc/createdocs doc/datatooltk-*.xml doc/manual.dtd
+			doc/createdatatooltkdocs doc/datatooltk-*.xml doc/datatooltk.dtd
 	make -C doc
 	cd classes; \
 	jar cmf ../java/Manifest.txt ../lib/datatooltk.jar \
