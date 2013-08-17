@@ -14,6 +14,6 @@ tar xvf tmp.tar -C source/support/datatooltk/src
 mkdir -p datatooltk/src
 tar xvf tmp.tar -C datatooltk/src
 rm tmp.tar
-cp ../README source/support/datatooltk
+cp ../dist/README source/support/datatooltk
 zip -r datatooltk.tds.zip source scripts doc
 zip -r datatooltk.zip datatooltk datatooltk.tds.zip
