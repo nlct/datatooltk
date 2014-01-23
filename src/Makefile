@@ -19,8 +19,8 @@ app	: lib lib/datatooltk.jar lib/resources lib/datatooltk-splash.png
 dist	: ../dist/datatooltk-installer.jar
 	cp doc/datatooltk-en-GB.pdf ../dist
 
-../dist/datatooltk-installer.jar	: app install.xml
-	$(IZPACKDIR)/bin/compile install.xml -b . \
+../dist/datatooltk-installer.jar	: app installer/install.xml
+	$(IZPACKDIR)/bin/compile installer/install.xml -b . \
 	-o ../dist/datatooltk-installer.jar -k standard
 
 lib	:
