@@ -37,7 +37,7 @@ public class DatatoolTk
 {
    public static void doBatchProcess()
    {
-      settings.setPasswordReader(new ConsolePasswordReader());
+      settings.setPasswordReader(new ConsolePasswordReader(noConsoleAction));
       settings.setErrorHandler(new ErrorHandler()
       {
          public void error(SAXParseException exception)
@@ -76,20 +76,25 @@ public class DatatoolTk
       {
          if (dbtex != null)
          {
+            debug("Loading '"+dbtex+"'");
             db = DatatoolDb.load(settings, dbtex);
          }
          else
          {
+            debug("Importing data via '"+source+"'");
             db = imp.importData(source);
          }
 
          if (dbname != null)
          {
+            debug("Setting name to '"+dbname+"'");
             db.setName(dbname);
          }
 
          if (!(sort == null || sort.isEmpty()))
          {
+            debug("sorting");
+
             db.setSortCaseSensitive(isCaseSensitive);
 
             boolean ascending = true;
@@ -124,9 +129,11 @@ public class DatatoolTk
 
          if (doShuffle)
          {
+            debug("Shuffling");
             db.shuffle();
          }
 
+         debug("Saving '"+out+"'");
          db.save(out);
       }
       catch (IOException e)
@@ -147,6 +154,9 @@ public class DatatoolTk
 
          System.exit(1);
       }
+
+      debug("Completed");
+      System.exit(0);
    }
 
    public static void createAndShowGUI()
@@ -307,6 +317,8 @@ public class DatatoolTk
         "--nowipepassword", 
         (settings.isWipePasswordEnabled()?
            "":" ("+getLabel("syntax.default")+")")));
+      System.out.println(getLabelWithValue("syntax.sql_noconsole",
+        "--noconsole-action"));
       System.out.println();
       System.out.println(getLabel("syntax.probsoln_opts"));
       System.out.println(getLabelWithValue("syntax.probsoln", "--probsoln"));
@@ -837,6 +849,16 @@ public class DatatoolTk
                }
 
                source = args[i];
+
+               // Strip any accidental duplicated double quotes.
+               // (Can happen when using arara with datatooltk.yaml)
+
+               if (source.startsWith("\"") && source.endsWith("\"")
+                    && source.length() > 2)
+               {
+                  source = source.substring(1, source.length()-1);
+               }
+
                imp = new DatatoolSql(settings);
             }
             else if (args[i].equals("--sqldb"))
@@ -912,6 +934,36 @@ public class DatatoolTk
             else if (args[i].equals("--nowipepassword"))
             {
                settings.setWipePassword(false);
+            }
+            else if (args[i].equals("--noconsole-action"))
+            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValue("error.syntax.missing_noconsole_action",
+                       args[i-1]));
+               }
+
+               if (args[i].equals("stdin"))
+               {
+                  noConsoleAction = ConsolePasswordReader.NO_CONSOLE_STDIN;
+               }
+               else if (args[i].equals("gui"))
+               {
+                  noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
+               }
+               else if (args[i].equals("error"))
+               {
+                  noConsoleAction = ConsolePasswordReader.NO_CONSOLE_ERROR;
+               }
+               else
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValues("error.syntax.invalid_noconsole_action",
+                       args[i-1], args[i]));
+               }
             }
             else if (args[i].equals("--sqlport"))
             {
@@ -1144,9 +1196,9 @@ public class DatatoolTk
 
    private static boolean guiMode = false;
 
-   public static final String appVersion = "1.1";
+   public static final String appVersion = "1.1.1";
    public static final String appName = "datatooltk";
-   public static final String appDate = "2014-01-23";
+   public static final String appDate = "2014-01-24";
 
    private static Properties dictionary;
    private static boolean debugMode = false;
@@ -1154,6 +1206,8 @@ public class DatatoolTk
    private static String out = null;
    private static String dbtex = null;
    private static String source = null;
+
+   private static int noConsoleAction = ConsolePasswordReader.NO_CONSOLE_ERROR;
 
    private static boolean removeTmpFilesOnExit=true;
 

@@ -19,23 +19,67 @@
 package com.dickimawbooks.datatooltk.io;
 
 import java.io.Console;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.IOException;
+
+import java.awt.Frame;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.UserCancelledException;
+import com.dickimawbooks.datatooltk.gui.GuiPasswordReader;
 
 /**
  * Class for reading password in from the console.
  */
 public class ConsolePasswordReader implements DatatoolPasswordReader
 {
+   public ConsolePasswordReader(int noConsoleAction)
+   {
+      this.noConsoleAction = noConsoleAction;
+   }
+
    public char[] requestPassword()
      throws UserCancelledException
    {
-      Console cons;
+      Console cons = System.console();
+
       char[] passwd;
 
-      if ((cons = System.console()) != null
-       && (passwd = cons.readPassword("%s",
+      if (cons == null)
+      {
+         switch (noConsoleAction)
+         {
+            case NO_CONSOLE_STDIN:
+
+              try
+              {
+                 return stdinRequestPassword().toCharArray();
+              }
+              catch (IOException e)
+              {
+                 throw new UserCancelledException(e);
+              }
+
+            case NO_CONSOLE_GUI:
+               GuiPasswordReader reader = new GuiPasswordReader((Frame)null);
+               
+               passwd = reader.requestPassword();
+
+               reader = null;
+
+               return passwd;
+
+            case NO_CONSOLE_ERROR:
+               throw new UserCancelledException(
+                 DatatoolTk.getLabel("error.no_console"));
+            default:
+              throw new IllegalArgumentException(
+                "Invalid noConsoleAction "+noConsoleAction);
+         }
+      }
+
+      if ((passwd = cons.readPassword("%s",
            DatatoolTk.getLabel("password.prompt"))) != null)
       {
          return passwd;
@@ -43,4 +87,55 @@ public class ConsolePasswordReader implements DatatoolPasswordReader
 
       throw new UserCancelledException();
    }
+
+   // Adapted from
+   // http://www.javaxt.com/Tutorials/Console_Apps/How_To_Prompt_a_User_for_a_Username_and_Password_from_the_Command_Line
+   // Provided in the event that there's no console available and
+   // user has requested STDIN alternative.
+
+   private String stdinRequestPassword()
+     throws IOException
+   {
+      String passwd = "";
+      ConsoleEraser eraser = new ConsoleEraser();
+      System.out.print("Password (No Console): ");
+      BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+      eraser.start();
+
+      try
+      {
+         passwd = in.readLine();
+      }
+      finally
+      {
+         eraser.halt();
+         System.out.print("\b");
+      }
+
+      return passwd;
+   }
+
+   private static class ConsoleEraser extends Thread
+   {
+       private boolean running = true;
+
+       public void run()
+       {
+           while (running)
+           {
+               System.out.print("\b ");
+           }
+       }
+
+       public synchronized void halt()
+       {
+           running = false;
+       }
+   }
+
+   public static final int NO_CONSOLE_STDIN = 0,
+     NO_CONSOLE_GUI = 1,
+     NO_CONSOLE_ERROR = 2;
+
+   private int noConsoleAction = NO_CONSOLE_ERROR;
 }
