@@ -1,0 +1,43 @@
+!config
+# DatatoolTk rule for arara
+identifier: datatooltk
+name: DatatoolTk
+command: <arara> datatooltk @{options} @{output} @{csv} @{sql} @{input} @{sqldb} @{sqluser} @{name} @{probsoln} @{sort} @{sortcase} @{seed} @{shuffle} @{sep} @{delim} @{csvheader} @{noconsole} @{debug}
+arguments:
+- identifier: options
+  flag: <arara> @{parameters.options}
+- identifier: output
+  flag: <arara> --output @{parameters.output}
+- identifier: csv
+  flag: <arara> --csv @{parameters.csv}
+- identifier: sep
+  flag: <arara> --sep @{parameters.sep}
+- identifier: delim
+  flag: <arara> --delim @{parameters.delim}
+- identifier: name
+  flag: <arara> @{parameters.name}
+- identifier: sql
+  flag: <arara> --sql "@{parameters.sql}"
+- identifier: sqldb
+  flag: <arara> --sqldb @{parameters.sqldb}
+- identifier: sqluser
+  flag: <arara> --sqluser @{parameters.sqluser}
+- identifier: noconsole
+  flag: <arara> --noconsole-action @{parameters.noconsole}
+  default: --noconsole-action gui
+- identifier: probsoln
+  flag: <arara> --probsoln @{parameters.probsoln}
+- identifier: input
+  flag: <arara> --in @{parameters.input}
+- identifier: sort
+  flag: <arara> --sort @{parameters.sort}
+- identifier: sortcase
+  flag: <arara> @{isTrue(parameters.sortcase, "--sort-case-sensitive", "--sort-case-insensitive")}
+- identifier: seed
+  flag: <arara> --seed @{parameters.seed}
+- identifier: shuffle
+  flag: <arara> @{isTrue(parameters.shuffle, "--shuffle", "--noshuffle")}
+- identifier: csvheader
+  flag: <arara> @{isTrue(parameters.csvheader, "--csvheader", "--nocsvheader")}
+- identifier: debug
+  flag: <arara> @{isTrue(parameters.debug, "--debug", "--nodebug")}

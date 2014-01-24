@@ -978,6 +978,22 @@ sub end_dl{
    print TEXFD "\\end{description}";
 }
 
+sub start_ul{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<ul>");
+
+   print TEXFD "\\begin{itemize}";
+}
+
+sub end_ul{
+   my ($expat) = @_;
+
+   &handle_html("</ul>");
+
+   print TEXFD "\\end{itemize}";
+}
+
 sub start_tt{
    my ($expat, %attrs) = @_;
 
@@ -1025,6 +1041,21 @@ sub end_em{
 
    print TEXFD "}";
 }
+
+sub start_li{
+   my ($expat, %attrs) = @_;
+
+   &handle_html("<li>");
+
+   print TEXFD "\\item ";
+}
+
+sub end_li{
+   my ($expat) = @_;
+
+   &handle_html("</li>");
+}
+
 
 sub start_dt{
    my ($expat, %attrs) = @_;
@@ -1443,6 +1474,18 @@ sub start_nbsp{
 }
 
 sub end_nbsp{
+   my ($expat) = @_;
+}
+
+sub start_emdash{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('&#x2014;');
+
+   print TEXFD "---";
+}
+
+sub end_emdash{
    my ($expat) = @_;
 }
 

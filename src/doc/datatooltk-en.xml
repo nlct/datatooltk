@@ -159,6 +159,21 @@
        <dt><opt tag="nowipepassword"/></dt>
        <dd>Don't wipe the password from memory as soon as it 
        has been used to connect to an <acr tag="sql"/> database.</dd>
+       <dt><opt tag="noconsole-action" /> <meta>action</meta></dt>
+       <dd>If in batch mode and a SQL password is required
+       and <opt tag="sqlpassword"/> hasn't been used, the
+       default action is for <app/> to request a password
+       via the console. If there is no console available
+       the action is determined by <meta>action</meta>
+       which may be one of:
+       <ul>
+        <li><tt>error</tt> <emdash/> issue an error (default)</li>;
+        <li><tt>stdin</tt> <emdash/> request the password via the standard
+        input stream (less secure than using a console, and can produce 
+        an annoying flicker);</li>
+        <li><tt>gui</tt> <emdash/> display a dialog box in which to enter the password.</li>
+       </ul>
+       </dd>
        <dt><opt tag="probsoln"/> <meta>filename</meta></dt>
        <dd>Import <sty>probsoln</sty> data from <meta>filename</meta>.
        (See <ref tag="importprobsoln"/>.)</dd>
@@ -185,10 +200,10 @@
    from other files containing <TeX/>/<LaTeX/> code (such as picture-drawing
    code), <app/> assumes a<nbsp/>default extension of <tt>.dbtex</tt>.
    If you use this extension, remember to include it in the argument of
-   <cs tag="input"/>. Note that the database label (as used in commands
-   like <cs tag="DTLnewdb"/>) is independent of the file name (although
-   when importing data, it defaults to the file base name). The database
-   label can be changed using <menu tag="edit.edit_dbname"/> in 
+   <cs tag="input"/> or <cs tag="DTLloaddbtex"/>. Note that the database label 
+   (as used in commands like <cs tag="DTLnewdb"/>) is independent of the file 
+   name (although when importing data, it defaults to the file base name). 
+   The database label can be changed using <menu tag="edit.edit_dbname"/> in 
    <acr tag="gui"/> mode or via the command line option 
    <opt tag="name"/> <meta>label</meta>.
    </p>
@@ -229,6 +244,21 @@
 \begin{document}
 
 \DTLdisplaydb{\dtllastloadeddb}% Display the last loaded database
+
+\end{document}
+   </pre>
+   <p>
+   Alternatively use <cs tag="DTLloaddbtex"/> instead of <cs tag="input"/>.
+   </p>
+   <pre>
+\documentclass{article}
+\usepackage{datatool}% remember to load the datatool package
+
+\DTLloaddbtex{\mydata}{my-data.dbtex}% load the database from file `my-data.dbtex'
+
+\begin{document}
+
+\DTLdisplaydb{\mydata}% Display the database
 
 \end{document}
    </pre>
@@ -325,8 +355,9 @@
       in a<nbsp/>specific format. The <app/> application assumes 
       a<nbsp/><tt>.dbtex</tt> file extension (see <ref tag="fileext"/>).
       You can load these files into a<nbsp/><LaTeX/> document using 
-      <cs tag="input"/>, but remember to specify the <tt>.dbtex</tt> 
-      extension. (Also remember to load the <sty>datatool</sty> package.)
+      <cs tag="input"/> or <cs tag="DTLloaddbtex"/>, but remember to specify 
+      the <tt>.dbtex</tt> extension. (Also remember to load the 
+      <sty>datatool</sty> package.)
      </p>
      <p>
      Each column has a corresponding data type: string, integer, real
@@ -1102,7 +1133,9 @@ sys	0m0.057s
    <opt tag="sqluser"/>. You can specify the password with 
    <opt tag="sqlpassword"/>, but that isn't secure. If you don't use that, 
    you will be prompted for the password, where the text you enter 
-   won't be visible. See <ref tag="introduction"/> for more details
+   won't be visible. Note that in batch mode, the default action
+   is to use the console to request the password. If there's no console available, you need to use the <opt tag="noconsole-action"/>
+   to determine what action to perform. See <ref tag="introduction"/> for more details
    about command line options.
    </p>
    <p>

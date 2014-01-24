@@ -485,6 +485,7 @@ syntax.sql_user=$1 <user name>\tSQL user name.
 syntax.sql_password=$1  <password>\tSQL password (insecure). If omitted, you will be prompted for the password if you try to import data from a SQL database.
 syntax.sql_wipepassword=$1\t\tFor extra security, wipe the password from memory as soon as it has been used to connect to a SQL database.$2
 syntax.sql_nowipepassword=$1\tDon't wipe the password from memory as soon as it has been used to connect to a SQL database.$2
+syntax.sql_noconsole=$1 <action>\tWhen requesting a SQL password in batch mode if there is no console available do:\n\t<action>: 'stdin' - read from STDIN instead (least secure option)\n\t<action>: 'gui' - use a dialog box\n\t<action>: 'error' - issue an error (default).
 syntax.probsoln_opts=probsoln Options:
 syntax.probsoln=$1 <filename>\tImport probsoln data from <filename>
 syntax.bugreport=Report bugs to: $1
@@ -520,6 +521,7 @@ error.syntax.missing_input=Filename expected after $1
 error.syntax.missing_number=Number expected after $1
 error.syntax.missing_sort_field=Sort field (and optionally '+' or '-' prefix) expected after $1
 error.syntax.unknown_field=Unknown sort field '$1'
+error.syntax.invalid_noconsole_action=Invalid action '$2' for '$1' option
 error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the $1 option. See $2 for help.)
 error.cli.no_out=$1 <file> required for batch mode.\n(If you want the GUI interface, use the $2 option. See $3 for help.)
 error.load.failed=Failed to load '$1'\n$2
@@ -568,6 +570,7 @@ error.plugin.exit_code=Plugin terminated with exit code $1\n$2
 error.plugin.unknown_message=Unknown plugin message '$1'
 error.plugin.unknown_query=Unknown plugin query '$1'
 error.plugin.unknown_command=Unknown plugin command '$1'
+error.no_console=No console available.
 
 # Warning messages
 warning.title=Warning

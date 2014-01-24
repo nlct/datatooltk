@@ -1,0 +1,14 @@
+% arara: datatooltk: { output: test-sql-data.dbtex, sql: "SELECT * FROM testsqldata", sqldb: datatooltk, sqluser: datatool, debug: on }
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage{datatool}
+
+\input{test-sql-data.dbtex}
+\let\mydata\dtllastloadeddb
+
+\begin{document}
+
+\DTLdisplaydb{\mydata}
+
+\end{document}
