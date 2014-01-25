@@ -120,7 +120,19 @@ public class DatatoolSql implements DatatoolImport
 
             for (int i = 1; i <= colCount; i++)
             {
-               row.addCell(i-1, mapFieldIfRequired(rs.getObject(i).toString()).replaceAll("\n\n+", "\\\\DTLpar "));
+               Object obj = rs.getObject(i);
+               String value;
+
+               if (obj == null)
+               {
+                  value = "\\@dtlnovalue ";
+               }
+               else
+               {
+                  value = mapFieldIfRequired(obj.toString()).replaceAll("\n\n+", "\\\\DTLpar ");
+               }
+
+               row.addCell(i-1, value);
             }
 
             db.insertRow(rowIdx, row);
@@ -132,6 +144,11 @@ public class DatatoolSql implements DatatoolImport
       {
          throw new DatatoolImportException(
            DatatoolTk.getLabel("error.sql.query_failed"), e);
+      }
+      catch (Exception e)
+      {
+         throw new DatatoolImportException(
+           e.getMessage(), e);
       }
 
       if (hasVerbatim)
