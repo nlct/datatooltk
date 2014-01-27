@@ -336,7 +336,8 @@ public class DatatoolTk
       System.out.println();
       System.out.println(getLabel("syntax.xls_opts"));
       System.out.println(getLabelWithValue("syntax.xls", "--xls"));
-      System.out.println(getLabelWithValue("syntax.xls_sheet", "--sheet"));
+      System.out.println(getLabelWithValues("syntax.xls_sheet", "--sheet",
+        settings.getSheetRef()));
       System.out.println();
       System.out.println(getLabelWithValue("syntax.bugreport", 
         "http://www.dickimaw-books.com/bug-report.html"));

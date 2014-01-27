@@ -315,7 +315,14 @@ public class DatatoolSettings extends Properties
 
    public void setSheetRef(String ref)
    {
-      setProperty("sheetref", ref);
+      if (ref == null || ref.isEmpty())
+      {
+         setProperty("sheetref", "0");
+      }
+      else
+      {
+         setProperty("sheetref", ref);
+      }
    }
 
    public String getSqlUrl()

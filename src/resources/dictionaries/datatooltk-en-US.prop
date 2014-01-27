@@ -28,6 +28,9 @@ file.import.importsql.tooltip=Import data from a SQL database
 file.import.importprobsoln=Import probsoln File...
 file.import.importprobsoln.mnemonic=P
 file.import.importprobsoln.tooltip=Import data from a probsoln database
+file.import.importxls=Import Excel...
+file.import.importxls.mnemonic=X
+file.import.importxls.tooltip=Import data from an Excel spreadsheet
 file.save=Save
 file.save.mnemonic=S
 file.save_as=Save As...
@@ -295,6 +298,10 @@ password.title=SQL Password
 password.prompt=Password: 
 password.prompt.mnemonic=P
 
+# Import XLS dialog
+importxls.title=Import Excel Sheet
+importxls.sheet=Sheet index (starting from 0) or name:
+
 # Cell editor dialog box
 celledit.title=Cell Editor
 
@@ -370,6 +377,7 @@ filter.dbtex=Datatool Files ($1)
 filter.csv=CSV Files ($1)
 filter.txt=Text Files ($1)
 filter.csvtxt=CSV and TXT Files ($1)
+filter.xls=XLS Files ($1)
 
 # Button labels
 button.okay=Okay
@@ -492,7 +500,7 @@ syntax.probsoln_opts=probsoln Options:
 syntax.probsoln=$1 <filename>\tImport probsoln data from <filename>
 syntax.xls_opts=Excel Options:
 syntax.xls=$1 <filename>\tImport Excel data from <filename>
-syntax.xls_sheet=$1 <ref>\tFetch data from sheet <ref>, where <ref> can be an index (starting from 0) or the name of a sheet.
+syntax.xls_sheet=$1 <ref>\t\tFetch data from sheet <ref>,\n\t\t\twhere <ref> can be an index (starting from 0)\n\t\t\tor the name of a sheet. (Default: $2)
 syntax.bugreport=Report bugs to: $1
 syntax.homepage=$1 home page: $2
 

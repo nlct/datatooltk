@@ -33,7 +33,7 @@
      by far the fastest way of loading a <sty>datatool</sty> 
      <term tag="database" /> in <LaTeX />. This application provides 
      a<nbsp /><acr tag="gui" /> making it easier to edit these files. 
-     It can also import data from <acr tag="csv" /> files, from 
+     It can also import data from <acr tag="csv" /> files and Excel <tt>.xls</tt> files, from 
      <acr tag="sql" /> databases and from <sty>probsoln</sty> databases.
      This manual assumes the user has some knowledge of the
      <sty>datatool</sty> package. Please ensure you have at least version
@@ -129,17 +129,23 @@
        <dd>Use case-insensitive comparison when sorting strings. (Default.)</dd>
        <dt><opt tag="csv" /> <meta>csv file</meta></dt>
        <dd>Import data from the given <acr tag="csv"/> file.
-       (See <ref tag="importcsv"/>)</dd>
+       (See <ref tag="importcsv"/>.)</dd>
        <dt><opt tag="sep" /> <meta>character</meta></dt>
        <dd>Specify the character used to separate values in the 
-       <acr tag="csv" /> file. (Defaults to a<nbsp />comma)</dd>
+       <acr tag="csv" /> file. (Defaults to a<nbsp />comma.)</dd>
        <dt><opt tag="delim" /> <meta>character</meta></dt>
        <dd>Specify the character used to delimit values in the 
-       <acr tag="csv" /> file. (Defaults to a<nbsp />double quote)</dd>
+       <acr tag="csv" /> file. (Defaults to a<nbsp />double quote.)</dd>
        <dt><opt tag="csvheader" /></dt>
        <dd>The <acr tag="csv"/> file has a header row. (Default.)</dd>
        <dt><opt tag="nocsvheader" /></dt>
        <dd>The <acr tag="csv"/> file doesn't have a header row.</dd>
+       <dt><opt tag="xls"/></dt>
+       <dd>Import data from the given Excel <tt>.xls</tt> file. 
+       (See <ref tag="importxls"/>.)</dd>
+       <dt><opt tag="sheet"/></dt>
+       <dd>The sheet to select from the Excel workbook. This may either 
+       be an index (starting from 0) or the name of the sheet.</dd>
        <dt><opt tag="sql"/> <meta>statement</meta></dt>
        <dd>Import data from an <acr tag="sql"/> database where <meta>statement</meta>
            is an <acr tag="sql"/> SELECT statement.
@@ -1126,6 +1132,22 @@ sys	0m0.057s
    has gone as multiple blank lines are replaced by a<nbsp/>single
    <cs tag="DTLpar"/>.
    </example>
+   </node>
+   <node tag="importxls" type="section" title="Import Excel Data">
+   <p>
+   Data can be imported from an Excel <tt>.xls</tt> file (via the 
+   Apache POI library <url www="http://poi.apache.org/" />) using the
+   <opt tag="xls"/> command line option or the 
+   <menu tag="file.import.importxls" /> menu item. You additionally need to 
+   specify the sheet index (starting from 0) or the sheet name using the 
+   <opt tag="sheet"/> command line option, if using <opt tag="xls"/>, or
+   in the dialog box that is displayed after you've selected the file
+   in <acr tag="gui"/> mode. This import option uses the same header row
+   setting as the import <acr tag="csv"/> function. So if the sheet 
+   doesn't have a header row, you need to use <opt tag="nocsvheader"/>
+   or uncheck the <button tag="preferences.csv.hasheader"/> button 
+   in the <dict tag="preferences.title"/> dialog box.
+   </p>
    </node>
    <node tag="importsql" type="section" title="Import SQL Data">
    <p>

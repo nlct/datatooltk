@@ -163,6 +163,9 @@ public class DatatoolGUI extends JFrame
       importM.add(DatatoolGuiResources.createJMenuItem(
         "file.import", "importprobsoln", this, toolBar));
 
+      importM.add(DatatoolGuiResources.createJMenuItem(
+        "file.import", "importxls", this, toolBar));
+
       fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "save", this, toolBar));
 
@@ -395,6 +398,7 @@ public class DatatoolGUI extends JFrame
       csvtxtFilter = new CsvTxtFileFilter();
       csvFilter = new CsvFileFilter();
       txtFilter = new TxtFileFilter();
+      xlsFilter = new XlsFileFilter();
 
       fileChooser = new JFileChooser(settings.getStartUpDirectory());
 
@@ -663,6 +667,10 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("importprobsoln"))
       {
          importProbSoln();
+      }
+      else if (action.equals("importxls"))
+      {
+         importXls();
       }
       else if (action.equals("close_db"))
       {
@@ -1021,6 +1029,25 @@ public class DatatoolGUI extends JFrame
       fileChooser.addChoosableFileFilter(all);
    }
 
+   private void setXlsFileFilters()
+   {
+      FileFilter current = fileChooser.getFileFilter();
+
+      if (current == xlsFilter)
+      {
+         return;
+      }
+
+      fileChooser.resetChoosableFileFilters();
+
+      FileFilter all = fileChooser.getAcceptAllFileFilter();
+
+      fileChooser.removeChoosableFileFilter(all);
+
+      fileChooser.addChoosableFileFilter(xlsFilter);
+      fileChooser.addChoosableFileFilter(all);
+   }
+
    public boolean close()
    {
       DatatoolDbPanel panel 
@@ -1158,6 +1185,46 @@ public class DatatoolGUI extends JFrame
       tabbedPane.setSelectedIndex(idx);
 
       updateTools();
+   }
+
+   public DatatoolDb importXls()
+   {
+      setXlsFileFilters();
+
+      if (fileChooser.showDialog(this, DatatoolTk.getLabel("button.import"))
+       != JFileChooser.APPROVE_OPTION)
+      {
+         return null;
+      }
+
+      Object ref = JOptionPane.showInputDialog(this,
+         DatatoolTk.getLabel("importxls.sheet"),
+         DatatoolTk.getLabel("importxls.title"),
+         JOptionPane.PLAIN_MESSAGE,
+         null, null, settings.getSheetRef());
+
+      if (ref == null)
+      {
+         return null;
+      }
+
+      settings.setSheetRef(ref.toString());
+
+      DatatoolExcel imp = new DatatoolExcel(settings);
+
+      DatatoolDb db = null;
+
+      try
+      {
+         db = imp.importData(fileChooser.getSelectedFile());
+         createNewTab(db);
+      }
+      catch (DatatoolImportException e)
+      {
+         DatatoolGuiResources.error(this, e);
+      }
+
+      return db;
    }
 
    public DatatoolDb importCsv()
@@ -1373,7 +1440,7 @@ public class DatatoolGUI extends JFrame
    private JFileChooser fileChooser;
 
    private FileFilter texFilter, dbtexFilter, csvFilter, txtFilter,
-     csvtxtFilter;
+     csvtxtFilter, xlsFilter;
 
    private HeaderDialog headerDialog;
 
