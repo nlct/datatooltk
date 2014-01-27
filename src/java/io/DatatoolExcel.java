@@ -42,15 +42,43 @@ public class DatatoolExcel implements DatatoolImport
       return importData(new File(source));
    }
 
+   public static String[] getSheetNames(File file)
+    throws IOException,
+           org.apache.poi.openxml4j.exceptions.InvalidFormatException
+   {
+      if (!file.exists())
+      {
+         throw new IOException(
+            DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
+      }
+
+      Workbook workBook = WorkbookFactory.create(file);
+
+      int numSheets = workBook.getNumberOfSheets();
+
+      String[] names = new String[numSheets];
+
+      for (int i = 0; i < numSheets; i++)
+      {
+         names[i] = workBook.getSheetName(i);
+      }
+
+      return names;
+   }
+
    public DatatoolDb importData(File file)
       throws DatatoolImportException
    {
       DatatoolDb db = new DatatoolDb(settings);
 
-      InputStream input = null;
-
       try
       {
+         if (!file.exists())
+         {
+            throw new IOException(
+               DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
+         }
+
          Workbook workBook = WorkbookFactory.create(file);
          Sheet sheet;
 

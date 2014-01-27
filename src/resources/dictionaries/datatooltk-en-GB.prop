@@ -300,7 +300,7 @@ password.prompt.mnemonic=P
 
 # Import XLS dialog
 importxls.title=Import Excel Sheet
-importxls.sheet=Sheet index (starting from 0) or name:
+importxls.sheet=Select sheet:
 
 # Cell editor dialog box
 celledit.title=Cell Editor

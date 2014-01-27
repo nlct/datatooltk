@@ -116,6 +116,12 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       {
          try
          {
+            if (!file.exists())
+            {
+               throw new IOException(
+                  DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
+            }
+
             reader = new BufferedReader(new FileReader(file));
    
             csvReader = new CSVReader(reader, settings.getSeparator(),

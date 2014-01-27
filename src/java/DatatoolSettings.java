@@ -302,26 +302,18 @@ public class DatatoolSettings extends Properties
 
    public String getSheetRef()
    {
-      String prop = getProperty("sheetref");
-
-      if (prop == null || prop.isEmpty())
-      {
-         setSheetRef("0");
-         return "0";
-      }
-
-      return prop;
+      return sheetref;
    }
 
    public void setSheetRef(String ref)
    {
       if (ref == null || ref.isEmpty())
       {
-         setProperty("sheetref", "0");
+         sheetref = "0";
       }
       else
       {
-         setProperty("sheetref", ref);
+         sheetref = ref;
       }
    }
 
@@ -1218,6 +1210,8 @@ public class DatatoolSettings extends Properties
    protected char[] sqlPassword = null;
 
    protected DatatoolPasswordReader passwordReader;
+
+   private String sheetref = "0";
 
    protected Vector<String> currencies;
 

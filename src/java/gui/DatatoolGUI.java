@@ -1197,29 +1197,32 @@ public class DatatoolGUI extends JFrame
          return null;
       }
 
-      Object ref = JOptionPane.showInputDialog(this,
-         DatatoolTk.getLabel("importxls.sheet"),
-         DatatoolTk.getLabel("importxls.title"),
-         JOptionPane.PLAIN_MESSAGE,
-         null, null, settings.getSheetRef());
-
-      if (ref == null)
-      {
-         return null;
-      }
-
-      settings.setSheetRef(ref.toString());
-
       DatatoolExcel imp = new DatatoolExcel(settings);
 
       DatatoolDb db = null;
 
+      File file = fileChooser.getSelectedFile();
+
       try
       {
+         Object ref = JOptionPane.showInputDialog(this,
+            DatatoolTk.getLabel("importxls.sheet"),
+            DatatoolTk.getLabel("importxls.title"),
+            JOptionPane.PLAIN_MESSAGE,
+            null, imp.getSheetNames(file),
+            null);
+
+         if (ref == null)
+         {
+            return null;
+         }
+
+         settings.setSheetRef(ref.toString());
+
          db = imp.importData(fileChooser.getSelectedFile());
          createNewTab(db);
       }
-      catch (DatatoolImportException e)
+      catch (Exception e)
       {
          DatatoolGuiResources.error(this, e);
       }
