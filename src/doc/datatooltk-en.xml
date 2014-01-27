@@ -178,7 +178,7 @@
        the action is determined by <meta>action</meta>
        which may be one of:
        <ul>
-        <li><tt>error</tt> <emdash/> issue an error</li>;
+        <li><tt>error</tt> <emdash/> issue an error;</li>
         <li><tt>stdin</tt> <emdash/> request the password via the standard
         input stream (less secure than using a console, and can produce 
         an annoying flicker);</li>
@@ -190,7 +190,7 @@
        (See <ref tag="importprobsoln"/>.)</dd>
      </dl>
      You can't combine any of the following options: <opt tag="in"/>, 
-     <opt tag="csv"/>, <opt tag="sql"/>, <opt tag="probsoln"/>.
+     <opt tag="csv"/>, <opt tag="xls"/>, <opt tag="sql"/>, <opt tag="probsoln"/>.
      </p>
    </node>
    <node tag="notaspreadsheet" type="section" title="What it isn't">
@@ -1138,15 +1138,23 @@ sys	0m0.057s
    Data can be imported from an Excel <tt>.xls</tt> file (via the 
    Apache POI library <url www="http://poi.apache.org/" />) using the
    <opt tag="xls"/> command line option or the 
-   <menu tag="file.import.importxls" /> menu item. You additionally need to 
-   specify the sheet index (starting from 0) or the sheet name using the 
-   <opt tag="sheet"/> command line option, if using <opt tag="xls"/>, or
-   in the dialog box that is displayed after you've selected the file
-   in <acr tag="gui"/> mode. This import option uses the same header row
-   setting as the import <acr tag="csv"/> function. So if the sheet 
-   doesn't have a header row, you need to use <opt tag="nocsvheader"/>
-   or uncheck the <button tag="preferences.csv.hasheader"/> button 
+   <menu tag="file.import.importxls" /> menu item. When using the command line,
+   you additionally need to specify the sheet index (starting from 0) or the 
+   sheet name using the <opt tag="sheet"/> command line option. If you are 
+   using the <acr tag="gui"/>, after you've selected the <tt>.xls</tt> file 
+   from the file selector dialog, you need to select the required sheet 
+   name.</p>
+   <p>Importing data from an Excel file uses the same header row option and 
+   <TeX/> mapping settings as the import <acr tag="csv"/> function. 
+   So if the sheet doesn't have a header row, you need to use
+   <opt tag="nocsvheader"/> or uncheck the <button tag="preferences.csv.hasheader"/> button 
    in the <dict tag="preferences.title"/> dialog box.
+   </p>
+   <p>
+   <b>Note:</b> no formatting information is read when importing
+   data from an Excel spreadsheet. It's up to you to explicitly
+   add <LaTeX/> font commands when you include the data in your
+   document.
    </p>
    </node>
    <node tag="importsql" type="section" title="Import SQL Data">
