@@ -2,7 +2,7 @@
 # DatatoolTk rule for arara
 identifier: datatooltk
 name: DatatoolTk
-command: <arara> datatooltk @{options} @{output} @{csv} @{sql} @{input} @{sqldb} @{sqluser} @{name} @{probsoln} @{sort} @{sortcase} @{seed} @{shuffle} @{sep} @{delim} @{csvheader} @{noconsole} @{debug}
+command: <arara> datatooltk @{options} @{output} @{csv} @{sql} @{input} @{sqldb} @{sqluser} @{name} @{probsoln} @{sort} @{sortcase} @{seed} @{shuffle} @{sep} @{delim} @{csvheader} @{noconsole} @{debug} @{owneronly}
 arguments:
 - identifier: options
   flag: <arara> @{parameters.options}
@@ -41,3 +41,5 @@ arguments:
   flag: <arara> @{isTrue(parameters.csvheader, "--csvheader", "--nocsvheader")}
 - identifier: debug
   flag: <arara> @{isTrue(parameters.debug, "--debug", "--nodebug")}
+- identifier: owneronly
+  flag: <arara> @{isTrue(parameters.owneronly, "--owner-only", "--noowner-only")}
