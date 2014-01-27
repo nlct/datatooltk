@@ -93,11 +93,28 @@ public class DatatoolExcel implements DatatoolImport
          {
             // First row is header
 
-            for (Cell cell : row)
+            boolean empty = true;
+
+            while (empty)
             {
-               DatatoolHeader header 
-                 = new DatatoolHeader(db, cell.toString());
-               db.addColumn(header);
+               for (Cell cell : row)
+               {
+                  DatatoolHeader header 
+                    = new DatatoolHeader(db, cell.toString());
+                  db.addColumn(header);
+
+                  empty = false;
+               }
+
+               if (empty)
+               {
+                  if (!rowIter.hasNext())
+                  {
+                     return db;
+                  }
+
+                  row = rowIter.next();
+               }
             }
          }
          else
@@ -124,9 +141,14 @@ public class DatatoolExcel implements DatatoolImport
                }
   
                db.addCell(rowIdx, cellIdx, value);
+
+               cellIdx++;
             }
 
-            rowIdx++;
+            if (cellIdx > 0)
+            {
+               rowIdx++;
+            }
          }
    
          while (rowIter.hasNext())
@@ -153,7 +175,10 @@ public class DatatoolExcel implements DatatoolImport
                cellIdx++;
             }
 
-            rowIdx++;
+            if (cellIdx > 0)
+            {
+               rowIdx++;
+            }
          }
       }
       catch (Exception e)
