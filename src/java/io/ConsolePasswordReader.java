@@ -137,5 +137,5 @@ public class ConsolePasswordReader implements DatatoolPasswordReader
      NO_CONSOLE_GUI = 1,
      NO_CONSOLE_ERROR = 2;
 
-   private int noConsoleAction = NO_CONSOLE_ERROR;
+   private int noConsoleAction = NO_CONSOLE_GUI;
 }

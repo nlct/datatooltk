@@ -172,11 +172,11 @@
        the action is determined by <meta>action</meta>
        which may be one of:
        <ul>
-        <li><tt>error</tt> <emdash/> issue an error (default)</li>;
+        <li><tt>error</tt> <emdash/> issue an error</li>;
         <li><tt>stdin</tt> <emdash/> request the password via the standard
         input stream (less secure than using a console, and can produce 
         an annoying flicker);</li>
-        <li><tt>gui</tt> <emdash/> display a dialog box in which to enter the password.</li>
+        <li><tt>gui</tt> <emdash/> display a dialog box in which to enter the password (default).</li>
        </ul>
        </dd>
        <dt><opt tag="probsoln"/> <meta>filename</meta></dt>
