@@ -2,7 +2,7 @@
 # DatatoolTk rule for arara
 identifier: datatooltk
 name: DatatoolTk
-command: <arara> datatooltk @{options} @{output} @{csv} @{sql} @{input} @{sqldb} @{sqluser} @{name} @{probsoln} @{sort} @{sortcase} @{seed} @{shuffle} @{sep} @{delim} @{csvheader} @{noconsole} @{debug} @{owneronly} @{maptex}
+command: <arara> datatooltk @{options} @{output} @{csv} @{sql} @{input} @{sqldb} @{sqluser} @{name} @{probsoln} @{sort} @{sortcase} @{seed} @{shuffle} @{sep} @{delim} @{csvheader} @{noconsole} @{debug} @{owneronly} @{maptex} @{xls} @{sheet}
 arguments:
 - identifier: options
   flag: <arara> @{parameters.options}
@@ -45,3 +45,7 @@ arguments:
   flag: <arara> @{isTrue(parameters.owneronly, "--owner-only", "--noowner-only")}
 - identifier: maptex
   flag: <arara> @{isTrue(parameters.maptex, "--map-tex-specials", "--nomap-tex-specials")}
+- identifier: xls
+  flag: <arara> --xls @{parameters.xls}
+- identifier: sheet
+  flag: <arara> --sheet @{parameters.sheet}
