@@ -129,18 +129,7 @@ public class DatatoolExcel implements DatatoolImport
                  DatatoolTk.getLabelWithValue("default.field", (cellIdx+1)));
                db.addColumn(header);
 
-               String value = cell.toString();
-
-               if (value == null)
-               {
-                  value = "\\@dtlnovalue ";
-               }
-               else
-               {
-                  value = mapFieldIfRequired(value);
-               }
-  
-               db.addCell(rowIdx, cellIdx, value);
+               db.addCell(rowIdx, cellIdx, getCellValue(cell));
 
                cellIdx++;
             }
@@ -159,18 +148,7 @@ public class DatatoolExcel implements DatatoolImport
 
             for (Cell cell : row)
             {
-               String value = cell.toString();
-
-               if (value == null)
-               {
-                  value = "\\@dtlnovalue ";
-               }
-               else
-               {
-                  value = mapFieldIfRequired(value);
-               }
- 
-               db.addCell(rowIdx, cellIdx, value);
+               db.addCell(rowIdx, cellIdx, getCellValue(cell));
 
                cellIdx++;
             }
@@ -189,6 +167,27 @@ public class DatatoolExcel implements DatatoolImport
       }
 
       return db;
+   }
+
+   private String getCellValue(Cell cell)
+   {
+      switch (cell.getCellType())
+      {
+         case Cell.CELL_TYPE_NUMERIC:
+         case Cell.CELL_TYPE_FORMULA:
+           return ""+cell.getNumericCellValue();
+         case Cell.CELL_TYPE_BLANK:
+           return "";
+      }
+
+      String value = cell.toString();
+
+      if (value == null)
+      {
+         return "\\@dtlnovalue ";
+      }
+
+      return mapFieldIfRequired(value);
    }
 
    public String mapFieldIfRequired(String field)
