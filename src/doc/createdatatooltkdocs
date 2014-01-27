@@ -1090,7 +1090,7 @@ sub end_dd{
 sub start_meta{
    my ($expat, %attrs) = @_;
 
-   &handle_html("<em>&lt;");
+   &handle_html("&#x27E8;<em>");
 
    print TEXFD "\\meta{";
 }
@@ -1098,7 +1098,7 @@ sub start_meta{
 sub end_meta{
    my ($expat) = @_;
 
-   &handle_html('&gt;</em>');
+   &handle_html('</em>&#x27E9;');
 
    print TEXFD "}";
 }
@@ -1739,7 +1739,7 @@ sub start_menu{
          $currentlabel .= ".$item";
          print TEXFD "\\mto ";
          $index .= '!';
-         $html .= '-&gt;';
+         $html .= '&#x279C;';
       }
       else
       {
