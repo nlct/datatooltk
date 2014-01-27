@@ -526,6 +526,24 @@ public class DatatoolSettings extends Properties
       setProperty("subtexspecials", ""+enable);
    }
 
+   public void setOwnerOnly(boolean enable)
+   {
+      setProperty("owneronly", ""+enable);
+   }
+
+   public boolean isOwnerOnly()
+   {
+      String prop = getProperty("owneronly");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setOwnerOnly(false);
+         return false;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
    public boolean isTeXMappingOn()
    {
       String prop = getProperty("subtexspecials");

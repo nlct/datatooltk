@@ -275,14 +275,25 @@ public class DatatoolTk
       System.out.println(getLabelWithValue("syntax.deletetmpfiles", "--delete-tmp-files"));
       System.out.println(getLabelWithValue("syntax.nodeletetmpfiles", "--nodelete-tmp-files"));
       System.out.println(getLabelWithValues("syntax.maptexspecials", "--map-tex-specials", (settings.isTeXMappingOn()?" ("+getLabel("syntax.default")+".)":"")));
-      System.out.println(getLabelWithValues("syntax.nomaptexspecials", "--nomap-tex-specials", (settings.isTeXMappingOn()?"":" ("+getLabel("syntax.default")+".)")));
+      System.out.println(getLabelWithValues("syntax.nomaptexspecials",
+         "--nomap-tex-specials",
+         (settings.isTeXMappingOn() ?
+         "": " ("+getLabel("syntax.default")+".)")));
       System.out.println(getLabelWithValue("syntax.seed", "--seed"));
       System.out.println(getLabelWithValue("syntax.shuffle_iter", "--shuffle-iterations"));
       System.out.println(getLabelWithValue("syntax.shuffle", "--shuffle"));
       System.out.println(getLabelWithValue("syntax.no_shuffle", "--noshuffle"));
       System.out.println(getLabelWithValue("syntax.sort", "--sort"));
-      System.out.println(getLabelWithValue("syntax.sort_case_sensitive", "--sort-case-sensitive"));
-      System.out.println(getLabelWithValue("syntax.sort_case_insensitive", "--sort-case-insensitive"));
+      System.out.println(getLabelWithValue("syntax.sort_case_sensitive",
+         "--sort-case-sensitive"));
+      System.out.println(getLabelWithValue("syntax.sort_case_insensitive",
+         "--sort-case-insensitive"));
+      System.out.println(getLabelWithValues("syntax.owner_only",
+         "--owner_only", (settings.isOwnerOnly() ?
+         " ("+getLabel("syntax.default")+".)" : "")));
+      System.out.println(getLabelWithValues("syntax.noowner_only",
+         "--noowner_only", (settings.isOwnerOnly() ?
+         "" : " ("+getLabel("syntax.default")+".)")));
       System.out.println();
       System.out.println(getLabel("syntax.csv_opts"));
       System.out.println(getLabelWithValue("syntax.csv", "--csv"));
@@ -1019,6 +1030,14 @@ public class DatatoolTk
             {
                settings.setTeXMapping(false);
             }
+            else if (args[i].equals("--owner-only"))
+            {
+               settings.setOwnerOnly(true);
+            }
+            else if (args[i].equals("--noowner-only"))
+            {
+               settings.setOwnerOnly(false);
+            }
             else if (args[i].equals("--seed"))
             {
                i++;
@@ -1196,9 +1215,9 @@ public class DatatoolTk
 
    private static boolean guiMode = false;
 
-   public static final String appVersion = "1.1.1";
+   public static final String appVersion = "1.1.2";
    public static final String appName = "datatooltk";
-   public static final String appDate = "2014-01-24";
+   public static final String appDate = "2014-01-25";
 
    private static Properties dictionary;
    private static boolean debugMode = false;

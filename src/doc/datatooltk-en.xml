@@ -95,6 +95,11 @@
        <dd>Delete temporary files on exit. (Default.)</dd>
        <dt><opt tag="nodelete-tmp-files"/></dt>
        <dd>Don't delete temporary files on exit.</dd>
+       <dt><opt tag="owner-only"/></dt>
+       <dd>Set read/write permissions when saving .dbtex files to owner only.
+       (Has no effect on some operating systems.)</dd>
+       <dt><opt tag="noowner-only"/></dt>
+       <dd>Don't change read/write permissions when saving .dbtex files.</dd>
        <dt><opt tag="map-tex-specials"/></dt>
        <dd>Map <TeX/> special characters when importing data from 
        <acr tag="csv"/> or <acr tag="sql"/>.</dd>

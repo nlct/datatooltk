@@ -1140,12 +1140,44 @@ out.println("% header block for column "+colIdx);
          {
             out.close();
          }
+
+         setPermissions();
       }
    }
 
    public void setFile(File file)
    {
       this.file = file;
+   }
+
+   private void setPermissions()
+   {
+      if (settings.isOwnerOnly())
+      {
+         DatatoolTk.debug("Requesting owner only read/write permissions");
+
+         file.setWritable(false, false);
+
+         if (!file.setWritable(true, true))
+         {
+            DatatoolTk.debug(
+             "Can't change owner-only permissions to writeable on '"
+             +file+"'");
+
+            file.setWritable(true);
+         }
+
+         file.setReadable(false, false);
+
+         if (!file.setReadable(true, true))
+         {
+            DatatoolTk.debug(
+             "Can't change owner-only permissions to readable on '"
+             +file+"'");
+
+            file.setReadable(true);
+         }
+      }
    }
 
    public void setFile(String filename)
