@@ -9,11 +9,14 @@ Open CSV (http://opencsv.sourceforge.net/)
 MySQL connector (http://dev.mysql.com/downloads/connector/j/)
 Java Look and Feel Graphics Repository
 (http://www.oracle.com/technetwork/java/index-138612.html)
+Apache POI (http://poi.apache.org/download.html)
 
 Instructions:
 
 Fetch the above and copy or symlink the jar files (javahelp2.jar,
-opencsv.jar mysql-connector-java.jar and jlfgr-1_0.jar)
+opencsv.jar mysql-connector-java.jar, jlfgr-1_0.jar,
+poi-3.9-20121203.jar, poi-ooxml-3.9-20121203.jar and
+poi-ooxml-schemas-3.9-20121203.jar)
 in the lib/ directory (create lib/ if it doesn't exist)
 
 In the lib/ directory, make a symbolic link to resources/

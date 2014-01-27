@@ -300,6 +300,24 @@ public class DatatoolSettings extends Properties
       return getProperty("delim").charAt(0);
    }
 
+   public String getSheetRef()
+   {
+      String prop = getProperty("sheetref");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setSheetRef("0");
+         return "0";
+      }
+
+      return prop;
+   }
+
+   public void setSheetRef(String ref)
+   {
+      setProperty("sheetref", ref);
+   }
+
    public String getSqlUrl()
    {
       return getSqlPrefix() + getSqlHost() + ":" + getSqlPort() + "/";

@@ -490,6 +490,9 @@ syntax.sql_nowipepassword=$1\tDon't wipe the password from memory as soon as it 
 syntax.sql_noconsole=$1 <action>\tWhen requesting a SQL password in batch mode if there is no console available do:\n\t<action>: 'stdin' - read from STDIN instead (least secure option)\n\t<action>: 'gui' - use a dialog box (default)\n\t<action>: 'error' - issue an error.
 syntax.probsoln_opts=probsoln Options:
 syntax.probsoln=$1 <filename>\tImport probsoln data from <filename>
+syntax.xls_opts=Excel Options:
+syntax.xls=$1 <filename>\tImport Excel data from <filename>
+syntax.xls_sheet=$1 <ref>\tFetch data from sheet <ref>, where <ref> can be an index (starting from 0) or the name of a sheet.
 syntax.bugreport=Report bugs to: $1
 syntax.homepage=$1 home page: $2
 
@@ -523,6 +526,7 @@ error.syntax.missing_input=Filename expected after $1
 error.syntax.missing_number=Number expected after $1
 error.syntax.missing_sort_field=Sort field (and optionally '+' or '-' prefix) expected after $1
 error.syntax.unknown_field=Unknown sort field '$1'
+error.syntax.missing_sheet_ref=Reference expected after '$1'
 error.syntax.invalid_noconsole_action=Invalid action '$2' for '$1' option
 error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the $1 option. See $2 for help.)
 error.cli.no_out=$1 <file> required for batch mode.\n(If you want the GUI interface, use the $2 option. See $3 for help.)
