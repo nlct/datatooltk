@@ -71,7 +71,7 @@ public class DatatoolSql implements DatatoolImport
             // characters, but map just in case
 
             DatatoolHeader header 
-               = new DatatoolHeader(db, mapFieldIfRequired(data.getColumnName(i)));
+               = new DatatoolHeader(db, mapFieldIfRequired(data.getColumnLabel(i)));
 
             if (name == null || name.isEmpty())
             {
