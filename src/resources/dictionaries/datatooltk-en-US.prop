@@ -28,9 +28,9 @@ file.import.importsql.tooltip=Import data from a SQL database
 file.import.importprobsoln=Import probsoln File...
 file.import.importprobsoln.mnemonic=P
 file.import.importprobsoln.tooltip=Import data from a probsoln database
-file.import.importxls=Import Excel...
-file.import.importxls.mnemonic=X
-file.import.importxls.tooltip=Import data from an Excel spreadsheet
+file.import.importspread=Import Spreadsheet...
+file.import.importspread.mnemonic=S
+file.import.importspread.tooltip=Import data from an Excel or ODF spreadsheet
 file.save=Save
 file.save.mnemonic=S
 file.save_as=Save As...
@@ -299,8 +299,8 @@ password.prompt=Password:
 password.prompt.mnemonic=P
 
 # Import XLS dialog
-importxls.title=Import Excel Sheet
-importxls.sheet=Select sheet:
+importspread.title=Import Sheet
+importspread.sheet=Select sheet:
 
 # Cell editor dialog box
 celledit.title=Cell Editor
@@ -378,6 +378,8 @@ filter.csv=CSV Files ($1)
 filter.txt=Text Files ($1)
 filter.csvtxt=CSV and TXT Files ($1)
 filter.xls=XLS Files ($1)
+filter.ods=Open Document Spreadsheet ($1)
+filter.xlsods=Spreadsheets ($1)
 
 # Button labels
 button.okay=Okay

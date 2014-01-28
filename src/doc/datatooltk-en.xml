@@ -142,9 +142,12 @@
        <dd>The <acr tag="csv"/> file doesn't have a header row.</dd>
        <dt><opt tag="xls"/></dt>
        <dd>Import data from the given Excel <tt>.xls</tt> file. 
-       (See <ref tag="importxls"/>.)</dd>
+       (See <ref tag="importspread"/>.)</dd>
+       <dt><opt tag="ods"/></dt>
+       <dd>Import data from the given Open Document Spreadsheet <tt>.ods</tt> file. 
+       (See <ref tag="importspread"/>.)</dd>
        <dt><opt tag="sheet"/></dt>
-       <dd>The sheet to select from the Excel workbook. This may either 
+       <dd>The sheet to select from the Excel workbook or Open Document Spreadsheet. This may either 
        be an index (starting from 0) or the name of the sheet.</dd>
        <dt><opt tag="sql"/> <meta>statement</meta></dt>
        <dd>Import data from an <acr tag="sql"/> database where <meta>statement</meta>
@@ -1133,22 +1136,26 @@ sys	0m0.057s
    <cs tag="DTLpar"/>.
    </example>
    </node>
-   <node tag="importxls" type="section" title="Import Excel Data">
+   <node tag="importspread" type="section" title="Import Spreadsheet Data">
    <p>
    Data can be imported from an Excel <tt>.xls</tt> file (via the 
-   Apache POI library <url www="http://poi.apache.org/" />) using the
-   <opt tag="xls"/> command line option or the 
-   <menu tag="file.import.importxls" /> menu item. When using the command line,
+   Apache POI library <url www="http://poi.apache.org/" />)
+   or an Open Document Spreadsheet (via the jOpenDocument Library
+   <url www="http://www.jopendocument.org/"/>) using the
+   <opt tag="xls"/> or <opt tag="ods"/> command line options, respectively.
+   Alternative, in <acr tag="gui"/> mode you can use the 
+   <menu tag="file.import.importspread" /> menu item. When using the command line,
    you additionally need to specify the sheet index (starting from 0) or the 
    sheet name using the <opt tag="sheet"/> command line option. If you are 
-   using the <acr tag="gui"/>, after you've selected the <tt>.xls</tt> file 
+   using the <acr tag="gui"/>, after you've selected the spreadsheet file 
    from the file selector dialog, you need to select the required sheet 
    name.</p>
-   <p>Importing data from an Excel file uses the same header row option and 
+   <p>Importing data from a spreadsheet uses the same header row option and 
    <TeX/> mapping settings as the import <acr tag="csv"/> function. 
    So if the sheet doesn't have a header row, you need to use
    <opt tag="nocsvheader"/> or uncheck the <button tag="preferences.csv.hasheader"/> button 
-   in the <dict tag="preferences.title"/> dialog box.
+   in the <dict tag="preferences.title"/> dialog box. Note that 
+   <tt>.xlsx</tt> files aren't supported.
    </p>
    <p>
    <b>Note:</b> no formatting information is read when importing

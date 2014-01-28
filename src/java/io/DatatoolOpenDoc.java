@@ -27,9 +27,9 @@ import org.jopendocument.dom.spreadsheet.*;
 import com.dickimawbooks.datatooltk.*;
 
 /**
- * Class handling importing and exporting ODS data.
+ * Class handling importing ODS data.
  */
-public class DatatoolOpenDoc implements DatatoolImport
+public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
 {
    public DatatoolOpenDoc(DatatoolSettings settings)
    {
@@ -42,7 +42,7 @@ public class DatatoolOpenDoc implements DatatoolImport
       return importData(new File(source));
    }
 
-   public static String[] getSheetNames(File file)
+   public String[] getSheetNames(File file)
     throws IOException
    {
       if (!file.exists())

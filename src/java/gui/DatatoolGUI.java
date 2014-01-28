@@ -164,7 +164,7 @@ public class DatatoolGUI extends JFrame
         "file.import", "importprobsoln", this, toolBar));
 
       importM.add(DatatoolGuiResources.createJMenuItem(
-        "file.import", "importxls", this, toolBar));
+        "file.import", "importspread", this, toolBar));
 
       fileM.add(DatatoolGuiResources.createJMenuItem(
         "file", "save", this, toolBar));
@@ -399,6 +399,8 @@ public class DatatoolGUI extends JFrame
       csvFilter = new CsvFileFilter();
       txtFilter = new TxtFileFilter();
       xlsFilter = new XlsFileFilter();
+      odsFilter = new OdsFileFilter();
+      spreadFilter = new SpreadSheetFilter();
 
       fileChooser = new JFileChooser(settings.getStartUpDirectory());
 
@@ -668,9 +670,9 @@ public class DatatoolGUI extends JFrame
       {
          importProbSoln();
       }
-      else if (action.equals("importxls"))
+      else if (action.equals("importspread"))
       {
-         importXls();
+         importSpreadSheet();
       }
       else if (action.equals("close_db"))
       {
@@ -1029,11 +1031,12 @@ public class DatatoolGUI extends JFrame
       fileChooser.addChoosableFileFilter(all);
    }
 
-   private void setXlsFileFilters()
+   private void setSpreadSheetFilters()
    {
       FileFilter current = fileChooser.getFileFilter();
 
-      if (current == xlsFilter)
+      if (current == xlsFilter || current == odsFilter
+            || current == spreadFilter)
       {
          return;
       }
@@ -1044,7 +1047,9 @@ public class DatatoolGUI extends JFrame
 
       fileChooser.removeChoosableFileFilter(all);
 
+      fileChooser.addChoosableFileFilter(spreadFilter);
       fileChooser.addChoosableFileFilter(xlsFilter);
+      fileChooser.addChoosableFileFilter(odsFilter);
       fileChooser.addChoosableFileFilter(all);
    }
 
@@ -1187,9 +1192,9 @@ public class DatatoolGUI extends JFrame
       updateTools();
    }
 
-   public DatatoolDb importXls()
+   public DatatoolDb importSpreadSheet()
    {
-      setXlsFileFilters();
+      setSpreadSheetFilters();
 
       if (fileChooser.showDialog(this, DatatoolTk.getLabel("button.import"))
        != JFileChooser.APPROVE_OPTION)
@@ -1197,17 +1202,52 @@ public class DatatoolGUI extends JFrame
          return null;
       }
 
-      DatatoolExcel imp = new DatatoolExcel(settings);
+      File file = fileChooser.getSelectedFile();
+
+      FileFilter filter = fileChooser.getFileFilter();
 
       DatatoolDb db = null;
 
-      File file = fileChooser.getSelectedFile();
+      DatatoolSpreadSheetImport imp;
+
+      if (filter == xlsFilter)
+      {
+         imp = new DatatoolExcel(settings);
+      }
+      else if (filter == odsFilter)
+      {
+         imp = new DatatoolOpenDoc(settings);
+      }
+      else
+      {
+         String name = file.getName();
+
+         int idx = name.lastIndexOf(".");
+
+         String suffix = name.substring(idx+1).toLowerCase();
+
+         if (suffix.equals("xls"))
+         {
+            imp = new DatatoolExcel(settings);
+         }
+         else if (suffix.equals("ods"))
+         {
+            imp = new DatatoolOpenDoc(settings);
+         }
+         else
+         {
+            DatatoolGuiResources.error(this,  
+              DatatoolTk.getLabelWithValue("error.unknown_file_format", name));
+
+            return null;
+         }
+      }
 
       try
       {
          Object ref = JOptionPane.showInputDialog(this,
-            DatatoolTk.getLabel("importxls.sheet"),
-            DatatoolTk.getLabel("importxls.title"),
+            DatatoolTk.getLabel("importspread.sheet"),
+            DatatoolTk.getLabel("importspread.title"),
             JOptionPane.PLAIN_MESSAGE,
             null, imp.getSheetNames(file),
             null);
@@ -1443,7 +1483,7 @@ public class DatatoolGUI extends JFrame
    private JFileChooser fileChooser;
 
    private FileFilter texFilter, dbtexFilter, csvFilter, txtFilter,
-     csvtxtFilter, xlsFilter;
+     csvtxtFilter, xlsFilter, odsFilter, spreadFilter;
 
    private HeaderDialog headerDialog;
 

@@ -27,9 +27,9 @@ import org.apache.poi.ss.usermodel.*;
 import com.dickimawbooks.datatooltk.*;
 
 /**
- * Class handling importing and exporting Excel data.
+ * Class handling importing Excel data.
  */
-public class DatatoolExcel implements DatatoolImport
+public class DatatoolExcel implements DatatoolSpreadSheetImport
 {
    public DatatoolExcel(DatatoolSettings settings)
    {
@@ -42,9 +42,8 @@ public class DatatoolExcel implements DatatoolImport
       return importData(new File(source));
    }
 
-   public static String[] getSheetNames(File file)
-    throws IOException,
-           org.apache.poi.openxml4j.exceptions.InvalidFormatException
+   public String[] getSheetNames(File file)
+    throws IOException
    {
       if (!file.exists())
       {
@@ -52,7 +51,17 @@ public class DatatoolExcel implements DatatoolImport
             DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
       }
 
-      Workbook workBook = WorkbookFactory.create(file);
+      Workbook workBook = null;
+
+      try
+      {
+         workBook = WorkbookFactory.create(file);
+      }
+      catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException e)
+      {
+         throw new IOException(DatatoolTk.getLabelWithValue
+           ("error.unknown_file_format", file.getName()), e);
+      }
 
       int numSheets = workBook.getNumberOfSheets();
 
