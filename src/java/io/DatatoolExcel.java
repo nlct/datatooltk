@@ -79,6 +79,12 @@ public class DatatoolExcel implements DatatoolImport
                DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
          }
 
+         if (file.getName().toLowerCase().endsWith(".xlsx"))
+         {
+            throw new IOException(
+              DatatoolTk.getLabel("error.xlsx_not_supported"));
+         }
+
          Workbook workBook = WorkbookFactory.create(file);
          Sheet sheet;
 
@@ -220,14 +226,14 @@ public class DatatoolExcel implements DatatoolImport
 
    public String mapFieldIfRequired(String field)
    {
-      if (!settings.isTeXMappingOn())
-      {
-         return field.replaceAll("\n\n+", "\\\\DTLpar ");
-      }
-
       if (field.isEmpty())
       {
          return field;
+      }
+
+      if (!settings.isTeXMappingOn())
+      {
+         return field.replaceAll("\n\n+", "\\\\DTLpar ");
       }
 
       String value = field.replaceAll("\\\\DTLpar *", "\n\n");
