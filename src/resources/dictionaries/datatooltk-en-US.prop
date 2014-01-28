@@ -500,7 +500,10 @@ syntax.probsoln_opts=probsoln Options:
 syntax.probsoln=$1 <filename>\tImport probsoln data from <filename>
 syntax.xls_opts=Excel Options:
 syntax.xls=$1 <filename>\tImport Excel data from <filename>
-syntax.xls_sheet=$1 <ref>\t\tFetch data from sheet <ref>,\n\t\t\twhere <ref> can be an index (starting from 0)\n\t\t\tor the name of a sheet. (Default: $2)
+syntax.odf_opts=ODF Options:
+syntax.odf=$1 <filename>\tImport ODF data from <filename>
+syntax.xlsodf_opts=Excel and ODF Options:
+syntax.sheet=$1 <ref>\t\tFetch data from sheet <ref>,\n\t\t\twhere <ref> can be an index (starting from 0)\n\t\t\tor the name of a sheet. (Default: $2)
 syntax.bugreport=Report bugs to: $1
 syntax.homepage=$1 home page: $2
 
@@ -585,6 +588,7 @@ error.plugin.unknown_message=Unknown plugin message '$1'
 error.plugin.unknown_query=Unknown plugin query '$1'
 error.plugin.unknown_command=Unknown plugin command '$1'
 error.no_console=No console available.
+error.xlsx_not_supported=Sorry, .xlsx files not supported.
 
 # Warning messages
 warning.title=Warning

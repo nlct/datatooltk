@@ -49,6 +49,7 @@ installer:
  - The Java Look and Feel Graphics Repository
    (http://www.oracle.com/technetwork/java/index-138612.html).
  - Apache POI (http://poi.apache.org)
+ - jOpenDocument (http://www.jopendocument.org/)
 
 Go to their home pages for their licences.
 

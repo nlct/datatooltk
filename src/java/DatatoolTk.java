@@ -336,7 +336,12 @@ public class DatatoolTk
       System.out.println();
       System.out.println(getLabel("syntax.xls_opts"));
       System.out.println(getLabelWithValue("syntax.xls", "--xls"));
-      System.out.println(getLabelWithValues("syntax.xls_sheet", "--sheet",
+      System.out.println();
+      System.out.println(getLabel("syntax.odf_opts"));
+      System.out.println(getLabelWithValue("syntax.odf", "--odf"));
+      System.out.println();
+      System.out.println(getLabel("syntax.xlsodf_opts"));
+      System.out.println(getLabelWithValues("syntax.sheet", "--sheet",
         settings.getSheetRef()));
       System.out.println();
       System.out.println(getLabelWithValue("syntax.bugreport", 
@@ -841,6 +846,32 @@ public class DatatoolTk
 
                source = args[i];
                imp = new DatatoolExcel(settings);
+            }
+            else if (args[i].equals("--odf"))
+            {
+               if (source != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabel("error.syntax.only_one_import"));
+               }
+
+               if (dbtex != null)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.import_clash", args[i]));
+               }
+
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValue("error.syntax.missing_filename",
+                        args[i-1]));
+               }
+
+               source = args[i];
+               imp = new DatatoolOpenDoc(settings);
             }
             else if (args[i].equals("--sheet"))
             {

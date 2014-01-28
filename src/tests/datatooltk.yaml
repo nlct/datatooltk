@@ -15,7 +15,7 @@ arguments:
 - identifier: delim
   flag: <arara> --delim @{parameters.delim}
 - identifier: name
-  flag: <arara> @{parameters.name}
+  flag: <arara> --name @{parameters.name}
 - identifier: sql
   flag: <arara> --sql "@{parameters.sql}"
 - identifier: sqldb
