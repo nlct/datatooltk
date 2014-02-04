@@ -34,6 +34,8 @@ public class MoveColumnEdit extends AbstractUndoableEdit
       this.panel = panel;
       this.fromIndex = fromIndex;
       this.toIndex = toIndex;
+
+      panel.moveViewColumn(fromIndex, toIndex);
    }
 
    public boolean canUndo() {return true;}

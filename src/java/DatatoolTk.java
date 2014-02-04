@@ -337,10 +337,10 @@ public class DatatoolTk
       System.out.println(getLabel("syntax.xls_opts"));
       System.out.println(getLabelWithValue("syntax.xls", "--xls"));
       System.out.println();
-      System.out.println(getLabel("syntax.odf_opts"));
-      System.out.println(getLabelWithValue("syntax.odf", "--odf"));
+      System.out.println(getLabel("syntax.ods_opts"));
+      System.out.println(getLabelWithValue("syntax.ods", "--ods"));
       System.out.println();
-      System.out.println(getLabel("syntax.xlsodf_opts"));
+      System.out.println(getLabel("syntax.xlsods_opts"));
       System.out.println(getLabelWithValues("syntax.sheet", "--sheet",
         settings.getSheetRef()));
       System.out.println();
@@ -847,7 +847,7 @@ public class DatatoolTk
                source = args[i];
                imp = new DatatoolExcel(settings);
             }
-            else if (args[i].equals("--odf"))
+            else if (args[i].equals("--ods") || args[i].equals("--odf"))
             {
                if (source != null)
                {

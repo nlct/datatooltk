@@ -19,6 +19,7 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import javax.swing.undo.*;
+import javax.swing.table.TableColumn;
 
 import com.dickimawbooks.datatooltk.*;
 
@@ -32,11 +33,12 @@ public class RemoveColumnEdit extends AbstractUndoableEdit
       super();
       this.panel = panel;
 
+      this.columnIndex = colIdx;
+
       selectedIdx = panel.getViewSelectedColumn();
 
-      column = panel.db.removeColumn(colIdx);
-      panel.dataUpdated();
       panel.selectViewColumn(selectedIdx-1);
+      column = panel.removeColumn(colIdx);
    }
 
    public boolean canUndo() {return true;}
@@ -44,15 +46,17 @@ public class RemoveColumnEdit extends AbstractUndoableEdit
 
    public void undo() throws CannotUndoException
    {
+      int n = panel.db.getColumnCount();
       panel.db.insertColumn(column);
+      panel.db.moveColumn(n, columnIndex);
+      panel.insertViewColumn(n);
       panel.dataUpdated();
       panel.selectViewColumn(selectedIdx);
    }
 
    public void redo() throws CannotRedoException
    {
-      panel.db.removeColumn(column);
-      panel.dataUpdated();
+      panel.removeColumn(columnIndex);
       panel.selectViewColumn(selectedIdx-1);
    }
 
@@ -63,7 +67,7 @@ public class RemoveColumnEdit extends AbstractUndoableEdit
 
    private DatatoolDbPanel panel;
 
-   private int selectedIdx=-1;
+   private int selectedIdx=-1, columnIndex;
 
    private DatatoolColumn column;
 

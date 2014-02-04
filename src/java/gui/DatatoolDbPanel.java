@@ -72,8 +72,7 @@ public class DatatoolDbPanel extends JPanel
       {
          public Object getValueAt(int row, int column)
          {
-            return db.getRow(convertRowIndexToModel(row))
-               .get(convertColumnIndexToModel(column));
+            return db.getRow(row).get(column);
          }
       };
 
@@ -81,6 +80,7 @@ public class DatatoolDbPanel extends JPanel
          this));
 
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+      table.getTableHeader().setReorderingAllowed(false);
 
       table.setDefaultEditor(Object.class, new DbNumericalCellEditor());
       table.setDefaultRenderer(Object.class, new DatatoolCellRenderer(db));
@@ -698,6 +698,14 @@ public class DatatoolDbPanel extends JPanel
       model.removeColumn(column);
    }
 
+   protected void addColumn(DatatoolColumn dbColumn, 
+     TableColumn tableColumn)
+   {
+      addViewColumn(tableColumn);
+      db.insertColumn(dbColumn);
+      dataUpdated();
+   }
+
    public void removeSelectedRow()
    {
       removeRow(getModelSelectedRow());
@@ -708,9 +716,32 @@ public class DatatoolDbPanel extends JPanel
       addUndoEdit(new RemoveRowEdit(this, modelIndex));
    }
 
+   public TableColumn getColumn(int viewIdx)
+   {
+      TableColumnModel model = table.getTableHeader().getColumnModel();
+      return model.getColumn(viewIdx);
+   }
+
+   public DatatoolColumn removeColumn(int idx)
+   {
+      TableColumnModel model = table.getTableHeader().getColumnModel();
+
+      int viewIdx = table.convertColumnIndexToView(idx);
+      int n = getColumnCount()-1;
+
+      moveViewColumn(viewIdx, n);
+      model.removeColumn(model.getColumn(n));
+      DatatoolColumn oldCol = db.removeColumn(n);
+
+      dataUpdated();
+
+      return oldCol;
+   }
+
    public void removeSelectedColumn()
    {
-      addUndoEdit(new RemoveColumnEdit(this, getModelSelectedColumn()));
+      int colIdx = getModelSelectedColumn();
+      addUndoEdit(new RemoveColumnEdit(this, colIdx));
    }
 
    public synchronized void insertRow(int index, DatatoolRow row)
@@ -1044,7 +1075,11 @@ public class DatatoolDbPanel extends JPanel
    {
       if (fromIndex != toIndex)
       {
-         table.moveColumn(fromIndex, toIndex);
+         int modelFromIndex = table.convertColumnIndexToModel(fromIndex);
+         int modelToIndex = table.convertColumnIndexToModel(toIndex);
+         db.moveColumn(modelFromIndex, modelToIndex);
+         selectViewColumn(toIndex);
+         dataUpdated();
       }
    }
 
@@ -1312,21 +1347,25 @@ class DatatoolTableHeader extends JTableHeader
 
          public void mousePressed(MouseEvent event)
          {
-            fromIndex =((JTableHeader)event.getSource())
-                 .columnAtPoint(event.getPoint());
+            JTableHeader header = (JTableHeader)event.getSource();
+
+            fromIndex = header.columnAtPoint(event.getPoint());
 
             if (fromIndex != -1)
             {
                panel.selectViewColumn(fromIndex);
+
+               header.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
          }
 
          public void mouseReleased(MouseEvent event)
          {
+            JTableHeader header = (JTableHeader)event.getSource();
+
             if (fromIndex != -1)
             {
-               int toIndex =((JTableHeader)event.getSource())
-                 .columnAtPoint(event.getPoint());
+               int toIndex = header.columnAtPoint(event.getPoint());
 
                if (toIndex != -1)
                {
@@ -1335,6 +1374,8 @@ class DatatoolTableHeader extends JTableHeader
 
                fromIndex = -1;
             }
+
+            header.setCursor(Cursor.getDefaultCursor());
          }
 
       });
@@ -1496,8 +1537,14 @@ class DatatoolCellRenderer implements TableCellRenderer
      Object value, boolean isSelected, boolean hasFocus,
      int row, int column)
    {
-      int type = db.getHeader(table.convertColumnIndexToModel(column))
-         .getType();
+      int modelIndex = table.convertColumnIndexToModel(column);
+
+      if (modelIndex >= table.getColumnCount())
+      {
+         return null;
+      }
+
+      int type = db.getHeader(modelIndex).getType();
 
       if (type == DatatoolDb.TYPE_INTEGER || type == DatatoolDb.TYPE_REAL)
       {
