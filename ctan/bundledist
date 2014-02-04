@@ -8,12 +8,16 @@ mkdir -p scripts/datatooltk
 cp ../dist/*.jar scripts/datatooltk
 mkdir -p source/support/datatooltk/src
 cd ../src
-tar cvf ../ctan/tmp.tar `git ls-files` 
+tar cvf ../ctan/tmp.tar `git ls-files` --exclude=.gitignore
 cd ../ctan/
 tar xvf tmp.tar -C source/support/datatooltk/src
 mkdir -p datatooltk/src
 tar xvf tmp.tar -C datatooltk/src
 rm tmp.tar
 cp ../dist/README source/support/datatooltk
+mv source/support/datatooltk/src/README source/support/datatooltk/src/README-src
+mv source/support/datatooltk/src/doc/README source/support/datatooltk/src/doc/README-doc
+mv datatooltk/src/README datatooltk/src/README-src
+mv datatooltk/src/doc/README datatooltk/src/doc/README-doc
 zip -r datatooltk.tds.zip source scripts doc
 zip -r datatooltk.zip datatooltk datatooltk.tds.zip
