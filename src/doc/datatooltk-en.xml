@@ -33,7 +33,8 @@
      by far the fastest way of loading a <sty>datatool</sty> 
      <term tag="database" /> in <LaTeX />. This application provides 
      a<nbsp /><acr tag="gui" /> making it easier to edit these files. 
-     It can also import data from <acr tag="csv" /> files and Excel <tt>.xls</tt> files, from 
+     It can also import data from <acr tag="csv" /> files, from
+     Excel <tt>.xls</tt> or Open Document <tt>.ods</tt> spreadsheets, from 
      <acr tag="sql" /> databases and from <sty>probsoln</sty> databases.
      This manual assumes the user has some knowledge of the
      <sty>datatool</sty> package. Please ensure you have at least version
@@ -147,11 +148,12 @@
        <dd>Import data from the given Open Document Spreadsheet <tt>.ods</tt> file. 
        (See <ref tag="importspread"/>.)</dd>
        <dt><opt tag="sheet"/></dt>
-       <dd>The sheet to select from the Excel workbook or Open Document Spreadsheet. This may either 
-       be an index (starting from 0) or the name of the sheet.</dd>
+       <dd>The sheet to select from the Excel workbook or Open Document 
+       Spreadsheet. This may either be an index (starting from 0) or 
+       the name of the sheet. If omitted, the first sheet is assumed.</dd>
        <dt><opt tag="sql"/> <meta>statement</meta></dt>
-       <dd>Import data from an <acr tag="sql"/> database where <meta>statement</meta>
-           is an <acr tag="sql"/> SELECT statement.
+       <dd>Import data from an <acr tag="sql"/> database where 
+       <meta>statement</meta> is an <acr tag="sql"/> SELECT statement.
        (See <ref tag="importsql"/>)</dd>
        <dt><opt tag="sqldb"/> <meta>name</meta></dt>
        <dd>The <acr tag="sql"/> database name.</dd>
@@ -199,11 +201,12 @@
    <node tag="notaspreadsheet" type="section" title="What it isn't">
    <p>
    The <app/> application isn't intended to have the full functionality of
-   a<nbsp/>spreadsheet. Its purpose is to allow you to edit <sty>datatool</sty> databases with 
-   multilined entries. If your data just consists of numbers or short 
-   single-lined text, then you'll probably be better off just using 
-   a<nbsp/>spreadsheet to input the data and use <app/> in batch mode to
-   convert from <acr tag="csv"/> to a<nbsp/><sty>datatool</sty> file.
+   a<nbsp/>spreadsheet. Its purpose is to allow you to edit 
+   <sty>datatool</sty> databases with multilined entries. If your data 
+   just consists of numbers or short single-lined text, then you'll probably 
+   be better off just using a<nbsp/>spreadsheet to input the data and 
+   use <app/> in batch mode to convert from <acr tag="csv"/> to 
+   a<nbsp/><sty>datatool</sty> file.
    </p>
    </node>
    <node tag="fileext" type="section" title="File Extensions">
@@ -262,7 +265,8 @@
 \end{document}
    </pre>
    <p>
-   Alternatively use <cs tag="DTLloaddbtex"/> instead of <cs tag="input"/>.
+   Alternatively, as from <sty>datatool</sty> version 2.20, use 
+   <cs tag="DTLloaddbtex"/> instead of <cs tag="input"/>.
    </p>
    <pre>
 \documentclass{article}
