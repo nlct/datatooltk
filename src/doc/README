@@ -22,13 +22,13 @@ datatooltk depends on the following third party libraries whose jar
 files are placed in the application's lib directory by the
 installer:
 
- - Java Help (https://javahelp.java.net/)
- - Open CSV (http://opencsv.sourceforge.net/)
- - MySQL connector (http://dev.mysql.com/downloads/connector/j/)
+ - Java Help (https://javahelp.java.net/) GPL
+ - Open CSV (http://opencsv.sourceforge.net/) Apache 2.0 License
+ - MySQL connector (http://dev.mysql.com/downloads/connector/j/) GPL
  - The Java Look and Feel Graphics Repository
-   (http://www.oracle.com/technetwork/java/index-138612.html).
- - Apache POI (http://poi.apache.org/)
- - jOpenDocument (http://www.jopendocument.org/)
+   (http://www.oracle.com/technetwork/java/index-138612.html)
+   JLFGR License
+ - Apache POI (http://poi.apache.org/) Apache 2.0 License
+ - jOpenDocument (http://www.jopendocument.org/) GPL
 
-Go to their home pages for their licences.
 
