@@ -1292,7 +1292,7 @@ public class DatatoolTk
 
    public static final String appVersion = "1.1.2";
    public static final String appName = "datatooltk";
-   public static final String appDate = "2014-01-25";
+   public static final String appDate = "2014-02-04";
 
    private static Properties dictionary;
    private static boolean debugMode = false;
@@ -1301,7 +1301,7 @@ public class DatatoolTk
    private static String dbtex = null;
    private static String source = null;
 
-   private static int noConsoleAction = ConsolePasswordReader.NO_CONSOLE_ERROR;
+   private static int noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
 
    private static boolean removeTmpFilesOnExit=true;
 
