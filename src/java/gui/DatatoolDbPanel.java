@@ -23,12 +23,16 @@ import java.util.*;
 import java.util.regex.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.TextLayout;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.undo.*;
 import javax.swing.event.*;
 import javax.swing.text.Document;
 import javax.swing.text.BadLocationException;
+import javax.swing.border.Border;
 
 import com.dickimawbooks.datatooltk.*;
 
@@ -1293,9 +1297,12 @@ class DatatoolTableHeader extends JTableHeader
 {
    private DatatoolDbPanel panel;
 
-   private int fromIndex=-1;
+   private int fromIndex=-1, mouseOverIndex=-1;
 
    private JLabel rendererComponent;
+
+   private MoveIndicatorIcon moveRightIcon = null;
+   private MoveIndicatorIcon moveLeftIcon = null;
 
    public DatatoolTableHeader(TableColumnModel model,
      DatatoolDbPanel p)
@@ -1375,9 +1382,35 @@ class DatatoolTableHeader extends JTableHeader
                fromIndex = -1;
             }
 
+            mouseOverIndex = -1;
+
             header.setCursor(Cursor.getDefaultCursor());
          }
 
+      });
+
+      addMouseMotionListener(new MouseMotionListener()
+      {
+         public void mouseDragged(MouseEvent event)
+         {
+            if (fromIndex != -1)
+            {
+               JTableHeader header = (JTableHeader)event.getSource();
+
+               int oldIndex = mouseOverIndex;
+
+               mouseOverIndex = header.columnAtPoint(event.getPoint());
+
+               if (oldIndex != mouseOverIndex)
+               {
+                  header.repaint();
+               }
+            }
+         }
+
+         public void mouseMoved(MouseEvent event)
+         {
+         }
       });
 
       setDefaultRenderer(new DefaultTableCellRenderer()
@@ -1388,12 +1421,42 @@ class DatatoolTableHeader extends JTableHeader
          {
             rendererComponent.setText(value == null ? "" : value.toString());
 
+            rendererComponent.setIcon(null);
+
             if (table == null) return rendererComponent;
 
-            if (isSelected)
+            if (isSelected || (mouseOverIndex == column))
             {
                rendererComponent.setBackground(table.getSelectionBackground());
                rendererComponent.setOpaque(true);
+
+               if (mouseOverIndex == column && column != fromIndex)
+               {
+                  if (moveRightIcon == null)
+                  {
+                     moveRightIcon = new MoveIndicatorIcon(false);
+                     moveRightIcon.updateBounds(rendererComponent);
+                  }
+
+                  if (moveLeftIcon == null)
+                  {
+                     moveLeftIcon = new MoveIndicatorIcon(true);
+                     moveLeftIcon.updateBounds(rendererComponent);
+                  }
+
+                  if (column < fromIndex)
+                  {
+                     rendererComponent.setIcon(moveLeftIcon);
+                     rendererComponent.setHorizontalTextPosition(
+                       SwingConstants.RIGHT);
+                  }
+                  else
+                  {
+                     rendererComponent.setIcon(moveRightIcon);
+                     rendererComponent.setHorizontalTextPosition(
+                       SwingConstants.LEFT);
+                  }
+               }
             }
             else
             {
@@ -1560,5 +1623,74 @@ class DatatoolCellRenderer implements TableCellRenderer
       return defRenderer.getTableCellRendererComponent(table,
            value, isSelected, hasFocus, row, column);
    }
+}
+
+class MoveIndicatorIcon implements Icon
+{
+   public MoveIndicatorIcon(boolean isLeft)
+   {
+      font = new Font("Serif", Font.BOLD, 12);
+      left = isLeft;
+   }
+
+   public int getIconWidth()
+   {
+      return width;
+   }
+
+   public int getIconHeight()
+   {
+      return height;
+   }
+
+   public void paintIcon(Component c, Graphics g, int x, int y)
+   {
+      Graphics2D g2 = (Graphics2D)g;
+      g2.setFont(font);
+      g2.setColor(Color.BLACK);
+
+      Rectangle bounds = c.getBounds();
+
+      if (left)
+      {
+         g2.drawString(leftSymbol, x, (int)bounds.getHeight()-y);
+      }
+      else
+      {
+         g2.drawString(rightSymbol, 
+           (int)bounds.getWidth()-getIconWidth(), 
+           (int)bounds.getHeight()-y);
+      }
+   }
+
+   public void updateBounds(JComponent c)
+   {
+      Graphics2D g2 = (Graphics2D)c.getGraphics();
+
+      if (g2 != null)
+      {
+        g2.setFont(font);
+        FontRenderContext frc = g2.getFontRenderContext();
+        TextLayout layout = new TextLayout(left ? leftSymbol : rightSymbol,
+           font, frc);
+
+        Rectangle2D bounds = layout.getBounds();
+
+        width = (int)Math.ceil(bounds.getX()+bounds.getWidth());
+        height = (int)Math.ceil(bounds.getY()+bounds.getHeight());
+        
+        g2.dispose();
+      }
+   }
+
+   private static final String rightSymbol = "↷";
+
+   private static final String leftSymbol = "↶";
+
+   private boolean left;
+
+   private int width = 12, height = 10;
+
+   private Font font;
 }
 
