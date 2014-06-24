@@ -200,12 +200,14 @@ class FieldFilter
          }
          else if (type == DatatoolDb.TYPE_REAL)
          {
-            Double value = new Double(strVal);
+            Double value = (strVal.isEmpty() ? new Double(0.0) : 
+              new Double(strVal));
             result = value.compareTo((Double)match);
          }
          else if (type == DatatoolDb.TYPE_INTEGER)
          {
-            Integer value = new Integer(strVal);
+            Integer value = (strVal.isEmpty() ? new Integer(0) :
+              new Integer(strVal));
             result = value.compareTo((Integer)match);
          }
          else

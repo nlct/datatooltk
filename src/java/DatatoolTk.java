@@ -93,6 +93,13 @@ public class DatatoolTk
             db.setName(dbname);
          }
 
+         if (mergeFile != null)
+         {
+            debug("Loading '"+mergeFile+"'");
+            DatatoolDb mergeDb = DatatoolDb.load(settings, mergeFile);
+            db.merge(mergeDb, mergeKey);
+         }
+
          if (!(sort == null || sort.isEmpty()))
          {
             debug("sorting");
@@ -230,6 +237,14 @@ public class DatatoolTk
          db = gui.importData(imp, source);
       }
 
+      if (db == null && mergeFile != null)
+      {
+         debug("Loading '"+mergeFile+"'");
+         db = gui.load(mergeFile);
+         mergeFile = null;
+         mergeKey = null;
+      }
+
       if (db != null)
       {
          DatatoolDbPanel panel = gui.getPanel(db);
@@ -238,6 +253,23 @@ public class DatatoolTk
          if (dbname != null)
          {
             db.setName(dbname);
+            modified = true;
+         }
+
+         if (mergeFile != null)
+         {
+            debug("Loading '"+mergeFile+"'");
+
+            try
+            {
+               DatatoolDb mergeDb = DatatoolDb.load(settings, mergeFile);
+               db.merge(mergeDb, mergeKey);
+            }
+            catch (Exception e)
+            {
+               DatatoolGuiResources.warning(null, e.getMessage());
+            }
+
             modified = true;
          }
 
@@ -377,6 +409,8 @@ public class DatatoolTk
          "--filter-exclude"));
       System.out.println(getLabelWithValue("syntax.filter",
          "--filter"));
+      System.out.println(getLabelWithValue("syntax.merge",
+         "--merge"));
       System.out.println();
 
       System.out.println(getLabel("syntax.csv_opts"));
@@ -1362,6 +1396,45 @@ public class DatatoolTk
                      args[i-1], args[i]));
                }
             }
+            else if (args[i].equals("--merge"))
+            {
+               if (mergeFile != null)
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValue("error.syntax.only_one", args[i]));
+               }
+
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_merge_key",
+                      args[i-1]));
+               }
+
+               mergeKey = args[i];
+
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValues("error.syntax.missing_merge_file",
+                      args[i-2], args[i-1]));
+               }
+
+               mergeFile = new File(args[i]);
+
+               if (!mergeFile.exists())
+               {
+                  System.err.println(
+                    getLabelWithValue("error.io.file_not_found",
+                     args[i]));
+                  mergeFile = null;
+                  mergeKey = null;
+               }
+            }
             else if (args[i].equals("--name"))
             {
                i++;
@@ -1469,6 +1542,9 @@ public class DatatoolTk
    private static String out = null;
    private static String dbtex = null;
    private static String source = null;
+
+   private static File mergeFile = null;
+   private static String mergeKey = null;
 
    private static Vector<FilterInfo> filterInfo = null;
    private static boolean filterOr = true;

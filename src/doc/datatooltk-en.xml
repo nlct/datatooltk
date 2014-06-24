@@ -168,6 +168,20 @@
        <dd>When filtering, discard rows that don't match the filter (and keep those that do match). This is the default action.</dd>
        <dt><opt tag="filter-exclude"/></dt>
        <dd>When filtering, discard rows that match the filter (and keep those that don't match).</dd>
+       <dt><opt tag="merge"/> <meta>key</meta> <meta>db file</meta></dt>
+       <dd>Merges the input or imported database with the database stored
+       in the given <meta>db file</meta>. Each row
+       in <meta>db file</meta> is merged with the row that has a matching
+       value in the column whose label is given by <meta>key</meta>.
+       Both databases must contain a column with that label. (Each entry
+       in that column should ideally be unique.)
+       If no matching row is found, a new row is added. If both databases
+       share additional columns, the values in <meta>db file</meta>
+       override those in the original database. If <meta>db file</meta>
+       doesn't exist, a warning is issued and the option is ignored.
+       This option is always implemented before any sorting, shuffling,
+       filtering or truncating. Only one <opt tag="merge"/> is permitted.
+       </dd>
        <dt><opt tag="csv" /> <meta>csv file</meta></dt>
        <dd>Import data from the given <acr tag="csv"/> file.
        (See <ref tag="importcsv"/>.)</dd>

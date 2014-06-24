@@ -1928,6 +1928,82 @@ out.println("% header block for column "+colIdx);
       return settings.getErrorHandler();
    }
 
+   public void merge(DatatoolDb db, String key)
+    throws InvalidSyntaxException
+   {
+      int colIdx1 = getColumnIndex(key);
+
+      if (colIdx1 == -1)
+      {
+         throw new InvalidSyntaxException(
+           DatatoolTk.getLabelWithValues("error.db.unknown_key",
+             key, getName()));
+      }
+
+      int colIdx2 = db.getColumnIndex(key);
+
+      if (colIdx2 == -1)
+      {
+         throw new InvalidSyntaxException(
+           DatatoolTk.getLabelWithValues("error.db.unknown_key", 
+             key, db.getName()));
+      }
+
+      merge(db, colIdx1, colIdx2);
+   }
+
+   public void merge(DatatoolDb db, int colIdx, int dbColIdx)
+   {
+      for (DatatoolHeader header: db.headers)
+      {
+         if (getHeader(header.getKey()) == null)
+         {
+            addColumn(header);
+         }
+      }
+
+      for (DatatoolRow dbRow : db.data)
+      {
+         String dbValue = dbRow.get(dbColIdx);
+
+         DatatoolRow thisRow = null;
+
+         for (DatatoolRow row : data)
+         {
+            String value = row.get(colIdx);
+
+            if (value.equals(dbValue))
+            {
+               thisRow = row;
+               break;
+            }
+         }
+
+         if (thisRow == null)
+         {
+            int n = headers.size();
+
+            thisRow = new DatatoolRow(this, n);
+
+            for (int i = 0; i < n; i++)
+            {
+               thisRow.add(new String());
+            }
+
+            data.add(thisRow);
+         }
+
+         for (int i = 0, n = db.headers.size(); i < n; i++)
+         {
+            DatatoolHeader header = db.headers.get(i);
+
+            int idx = getColumnIndex(header.getKey());
+
+            thisRow.setCell(idx, dbRow.get(i));
+         }
+      }
+   }
+
    private DatatoolSettings settings;
 
    private Vector<DatatoolHeader> headers;
