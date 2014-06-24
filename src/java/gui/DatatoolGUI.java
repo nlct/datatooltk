@@ -974,11 +974,6 @@ public class DatatoolGUI extends JFrame
    {
       FileFilter current = fileChooser.getFileFilter();
 
-      if (current == dbtexFilter || current == texFilter)
-      {
-         return;
-      }
-
       fileChooser.resetChoosableFileFilters();
 
       FileFilter all = fileChooser.getAcceptAllFileFilter();
@@ -988,16 +983,18 @@ public class DatatoolGUI extends JFrame
       fileChooser.addChoosableFileFilter(dbtexFilter);
       fileChooser.addChoosableFileFilter(texFilter);
       fileChooser.addChoosableFileFilter(all);
+
+      if (current != dbtexFilter && current != texFilter)
+      {
+         current = dbtexFilter;
+      }
+
+      fileChooser.setFileFilter(current);
    }
 
    private void setTeXFileFilter()
    {
       FileFilter current = fileChooser.getFileFilter();
-
-      if (current == dbtexFilter || current == texFilter)
-      {
-         return;
-      }
 
       fileChooser.resetChoosableFileFilters();
 
@@ -1007,6 +1004,13 @@ public class DatatoolGUI extends JFrame
 
       fileChooser.addChoosableFileFilter(texFilter);
       fileChooser.addChoosableFileFilter(all);
+
+      if (!(current == texFilter || current == all))
+      {
+         current = texFilter;
+      }
+
+      fileChooser.setFileFilter(current);
    }
 
    private void setCsvFileFilters()
