@@ -1057,6 +1057,22 @@ public class DatatoolGUI extends JFrame
       fileChooser.addChoosableFileFilter(all);
    }
 
+   public DatatoolDbPanel getPanel(DatatoolDb db)
+   {
+      for (int i = 0, n = tabbedPane.getTabCount(); i < n; i++)
+      {
+         DatatoolDbPanel panel 
+            = (DatatoolDbPanel)tabbedPane.getComponentAt(i);
+
+         if (panel.getDatabase() == db)
+         {
+            return panel;
+         }
+      }
+
+      return null;
+   }
+
    public boolean close()
    {
       DatatoolDbPanel panel 

@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk;
 
 import java.io.*;
 import java.util.Properties;
+import java.util.Vector;
 import java.awt.Cursor;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -29,6 +30,7 @@ import org.xml.sax.SAXParseException;
 import com.dickimawbooks.datatooltk.io.*;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 import com.dickimawbooks.datatooltk.gui.DatatoolGUI;
+import com.dickimawbooks.datatooltk.gui.DatatoolDbPanel;
 
 /**
  * Main application class.
@@ -133,15 +135,49 @@ public class DatatoolTk
             db.shuffle();
          }
 
+         if (filterInfo != null)
+         {
+            debug("Filtering");
+            DataFilter filter = new DataFilter(db, filterOr);
+            filter.addFilters(filterInfo);
+
+            if (filterInclude)
+            {
+               db.removeNonMatching(filter);
+            }
+            else
+            {
+               db.removeMatching(filter);
+            }
+         }
+
+         if (truncate > -1)
+         {
+            db.truncate(truncate);
+         }
+
          debug("Saving '"+out+"'");
          db.save(out);
+      }
+      catch (DatatoolImportException e)
+      {
+         System.err.println(appName+": "+e.getMessage());
+
+         Throwable cause = e.getCause();
+
+         if (cause != null)
+         {
+            System.err.println(cause.getMessage());
+         }
+
+         System.exit(1);
       }
       catch (IOException e)
       {
          System.err.println(appName+": "+e.getMessage());
          System.exit(1);
       }
-      catch (DatatoolImportException e)
+      catch (Throwable e)
       {
          System.err.println(appName+": "+e.getMessage());
 
@@ -196,9 +232,13 @@ public class DatatoolTk
 
       if (db != null)
       {
+         DatatoolDbPanel panel = gui.getPanel(db);
+         boolean modified = false;
+
          if (dbname != null)
          {
             db.setName(dbname);
+            modified = true;
          }
 
          if (!(sort == null || sort.isEmpty()))
@@ -234,13 +274,43 @@ public class DatatoolTk
                db.setSortAscending(ascending);
                db.sort();
             }
+
+            modified = true;
          }
 
          if (doShuffle)
          {
             db.shuffle();
+            modified = true;
          }
 
+         if (filterInfo != null)
+         {
+            debug("Filtering");
+            DataFilter filter = new DataFilter(db, filterOr);
+            filter.addFilters(filterInfo);
+
+            if (filterInclude)
+            {
+               db.removeNonMatching(filter);
+            }
+            else
+            {
+               db.removeMatching(filter);
+            }
+            modified = true;
+         }
+
+         if (truncate > -1)
+         {
+            db.truncate(truncate);
+            modified = true;
+         }
+
+         if (modified)
+         {
+            panel.setModified(modified);
+         }
       }
 
       gui.setCursor(Cursor.getDefaultCursor());
@@ -261,6 +331,7 @@ public class DatatoolTk
       System.out.println(getLabel("syntax.or"));
       System.out.println(getLabelWithValue("syntax.opt_sql", appName));
       System.out.println();
+
       System.out.println(getLabel("syntax.general"));
       System.out.println(getLabelWithValues("syntax.gui", "--gui", "-g"));
       System.out.println(getLabelWithValues("syntax.batch", "--batch", "-b"));
@@ -294,7 +365,20 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.noowner_only",
          "--noowner_only", (settings.isOwnerOnly() ?
          "" : " ("+getLabel("syntax.default")+".)")));
+      System.out.println(getLabelWithValue("syntax.truncate",
+         "--truncate"));
+      System.out.println(getLabelWithValue("syntax.filter_or",
+         "--filter-or"));
+      System.out.println(getLabelWithValue("syntax.filter_and",
+         "--filter-and"));
+      System.out.println(getLabelWithValue("syntax.filter_include",
+         "--filter-include"));
+      System.out.println(getLabelWithValue("syntax.filter_exclude",
+         "--filter-exclude"));
+      System.out.println(getLabelWithValue("syntax.filter",
+         "--filter"));
       System.out.println();
+
       System.out.println(getLabel("syntax.csv_opts"));
       System.out.println(getLabelWithValue("syntax.csv", "--csv"));
       System.out.println(getLabelWithValues("syntax.csv_sep", "--sep", 
@@ -331,19 +415,24 @@ public class DatatoolTk
       System.out.println(getLabelWithValue("syntax.sql_noconsole",
         "--noconsole-action"));
       System.out.println();
+
       System.out.println(getLabel("syntax.probsoln_opts"));
       System.out.println(getLabelWithValue("syntax.probsoln", "--probsoln"));
       System.out.println();
+
       System.out.println(getLabel("syntax.xls_opts"));
       System.out.println(getLabelWithValue("syntax.xls", "--xls"));
       System.out.println();
+
       System.out.println(getLabel("syntax.ods_opts"));
       System.out.println(getLabelWithValue("syntax.ods", "--ods"));
       System.out.println();
+
       System.out.println(getLabel("syntax.xlsods_opts"));
       System.out.println(getLabelWithValues("syntax.sheet", "--sheet",
         settings.getSheetRef()));
       System.out.println();
+
       System.out.println(getLabelWithValue("syntax.bugreport", 
         "http://www.dickimaw-books.com/bug-report.html"));
       System.out.println(getLabelWithValues("syntax.homepage", 
@@ -1193,6 +1282,86 @@ public class DatatoolTk
 
                sort = args[i];
             }
+            else if (args[i].equals("--filter-or"))
+            {
+               filterOr = true;
+            }
+            else if (args[i].equals("--filter-and"))
+            {
+               filterOr = false;
+            }
+            else if (args[i].equals("--filter-include"))
+            {
+               filterInclude = true;
+            }
+            else if (args[i].equals("--filter-exclude"))
+            {
+               filterInclude = false;
+            }
+            else if (args[i].equals("--filter"))
+            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_filter_label",
+                      args[i-1]));
+               }
+
+               String label = args[i];
+
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValues("error.syntax.missing_filter_operator",
+                      args[i-2], args[i-1]));
+               }
+
+               String operator = args[i];
+
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValues("error.syntax.missing_filter_value",
+                      new String[] {args[i-3], args[i-2], args[i-1]}));
+               }
+
+               String value = args[i];
+
+               if (filterInfo == null)
+               {
+                  filterInfo = new Vector<FilterInfo>();
+               }
+
+               filterInfo.add(new FilterInfo(label, operator, value));
+            }
+            else if (args[i].equals("--truncate"))
+            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_number",
+                      args[i-1]));
+               }
+
+               try
+               {
+                  truncate = Integer.parseInt(args[i]);
+               }
+               catch (NumberFormatException e)
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValues("error.syntax.not_a_number",
+                     args[i-1], args[i]));
+               }
+            }
             else if (args[i].equals("--name"))
             {
                i++;
@@ -1290,9 +1459,9 @@ public class DatatoolTk
 
    private static boolean guiMode = false;
 
-   public static final String appVersion = "1.2";
+   public static final String appVersion = "1.3";
    public static final String appName = "datatooltk";
-   public static final String appDate = "2014-02-04";
+   public static final String appDate = "2014-06-24";
 
    private static Properties dictionary;
    private static boolean debugMode = false;
@@ -1300,6 +1469,11 @@ public class DatatoolTk
    private static String out = null;
    private static String dbtex = null;
    private static String source = null;
+
+   private static Vector<FilterInfo> filterInfo = null;
+   private static boolean filterOr = true;
+   private static boolean filterInclude = true; 
+   private static int truncate = -1;
 
    private static int noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
 

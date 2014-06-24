@@ -128,6 +128,46 @@
        <dd>Use case-sensitive comparison when sorting strings.</dd>
        <dt><opt tag="sort-case-insensitive"/></dt>
        <dd>Use case-insensitive comparison when sorting strings. (Default.)</dd>
+       <dt><opt tag="truncate"/> <meta>n</meta></dt>
+       <dd>Truncate the database to the first <meta>n</meta> rows.
+       (Has no effect if <meta>n</meta> is greater than or equal
+       to the total number of rows.) Truncation is always performed
+       last. (After any sorting, shuffling and filtering.)</dd>
+       <dt><opt tag="filter"/> <meta>key</meta> <meta>operator</meta> <meta>value</meta></dt>
+       <dd>Adds the filter. This filter returns true if the value in
+       the column whose label is given by <meta>key</meta>
+       matches the operation <meta>operator</meta> <meta>value</meta>
+       where <meta>operator</meta> may be one of:
+       <tt>eq</tt> (equals <meta>value</meta>),
+       <tt>ne</tt> (does not equal <meta>value</meta>),
+       <tt>le</tt> (less than or equal to <meta>value</meta>),
+       <tt>lt</tt> (less than <meta>value</meta>),
+       <tt>ge</tt> (greater than or equal to <meta>value</meta>),
+       <tt>gt</tt> (greater than <meta>value</meta>),
+       <tt>regex</tt> (matches the regular expression <meta>value</meta>). Multiple filters may be used. The regular expression
+       should be in the format used by <url www="http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html" text="java.util.regex.Pattern"/>.
+       Filtering is always performed after sorting and shuffling.
+       Numerical comparisons are used for columns that are identified 
+       as either integer or real data types otherwise string
+       comparisons are used, except in the case of 
+       <tt>regex</tt> where the data type is disregarded
+       and all values are assumed to be strings. (If the column type
+       is identified as having an integer or real data type but
+       <meta>value</meta> is not a number, a string comparison will be used.)
+       For example: <opt tag="filter"/> <tt>Level eq 3</tt>
+       means that the filter should return true if the value in the column
+       whose label is <tt>Level</tt> is equal to 3.
+       </dd>
+       <dt><opt tag="filter-or"/></dt>
+       <dd>Use OR operator when filtering. (Default.)
+       This has no effect if you only supply one filter.</dd>
+       <dt><opt tag="filter-and"/></dt>
+       <dd>Use AND operator when filtering. 
+       This has no effect if you only supply one filter.</dd>
+       <dt><opt tag="filter-include"/></dt>
+       <dd>When filtering, discard rows that don't match the filter (and keep those that do match). This is the default action.</dd>
+       <dt><opt tag="filter-exclude"/></dt>
+       <dd>When filtering, discard rows that match the filter (and keep those that don't match).</dd>
        <dt><opt tag="csv" /> <meta>csv file</meta></dt>
        <dd>Import data from the given <acr tag="csv"/> file.
        (See <ref tag="importcsv"/>.)</dd>

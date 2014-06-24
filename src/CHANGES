@@ -1,0 +1,4 @@
+v1.3:
+
+ - Added --truncate, --filter-or, --filter-and, --filter-include
+   --filter-exclude, --filter options.

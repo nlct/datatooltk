@@ -1536,6 +1536,36 @@ out.println("% header block for column "+colIdx);
       return data.remove(rowIdx);
    }
 
+   public void truncate(int newSize)
+   {
+      if (newSize < data.size())
+      {
+         data.setSize(newSize);
+      }
+   }
+
+   public void removeMatching(DataFilter dataFilter)
+   {
+      for (int i = data.size()-1; i >= 0; i--)
+      {
+         if (dataFilter.matches(data.get(i)))
+         {
+            data.remove(i);
+         }
+      }
+   }
+
+   public void removeNonMatching(DataFilter dataFilter)
+   {
+      for (int i = data.size()-1; i >= 0; i--)
+      {
+         if (!dataFilter.matches(data.get(i)))
+         {
+            data.remove(i);
+         }
+      }
+   }
+
    public DatatoolColumn removeColumn(int colIdx)
    {
       DatatoolHeader header = headers.remove(colIdx);

@@ -1198,6 +1198,11 @@ public class DatatoolDbPanel extends JPanel
       return db.getSettings().getPerl();
    }
 
+   public DatatoolDb getDatabase()
+   {
+      return db;
+   }
+
    protected DatatoolDb db;
 
    protected RowHeaderComponent rowHeaderComponent;
