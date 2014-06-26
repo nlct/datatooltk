@@ -157,6 +157,9 @@
        For example: <opt tag="filter"/> <tt>Level eq 3</tt>
        means that the filter should return true if the value in the column
        whose label is <tt>Level</tt> is equal to 3.
+       If there isn't a<nbsp/>column with the label <meta>key</meta>, 
+       a<nbsp/>warning is printed on the standard error stream and the
+       filter is ignored.
        </dd>
        <dt><opt tag="filter-or"/></dt>
        <dd>Use OR operator when filtering. (Default.)

@@ -146,6 +146,7 @@ public class DatatoolTk
          {
             debug("Filtering");
             DataFilter filter = new DataFilter(db, filterOr);
+
             filter.addFilters(filterInfo);
 
             if (filterInclude)
@@ -263,7 +264,7 @@ public class DatatoolTk
             try
             {
                DatatoolDb mergeDb = DatatoolDb.load(settings, mergeFile);
-               db.merge(mergeDb, mergeKey);
+               panel.merge(mergeDb, mergeKey);
             }
             catch (Exception e)
             {

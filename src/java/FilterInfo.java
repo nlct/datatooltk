@@ -25,35 +25,18 @@ public class FilterInfo
    public FilterInfo(String label, String op, String value)
     throws InvalidSyntaxException
    {
-      if (op.equals("eq"))
+      operator = -1;
+
+      for (int i = 0; i < DataFilter.OPERATORS.length; i++)
       {
-         operator = DataFilter.OPERATOR_EQ;
+         if (op.equals(DataFilter.OPERATORS[i]))
+         {
+            operator = i;
+            break;
+         }
       }
-      else if (op.equals("le"))
-      {
-         operator = DataFilter.OPERATOR_LE;
-      }
-      else if (op.equals("lt"))
-      {
-         operator = DataFilter.OPERATOR_LT;
-      }
-      else if (op.equals("ge"))
-      {
-         operator = DataFilter.OPERATOR_GE;
-      }
-      else if (op.equals("gt"))
-      {
-         operator = DataFilter.OPERATOR_GT;
-      }
-      else if (op.equals("ne"))
-      {
-         operator = DataFilter.OPERATOR_NE;
-      }
-      else if (op.equals("regex"))
-      {
-         operator = DataFilter.OPERATOR_REGEX;
-      }
-      else
+
+      if (operator == -1)
       {
          throw new InvalidSyntaxException(DatatoolTk.getLabelWithValue(
             "error.syntax.invalid_filter_operator", op));
@@ -76,6 +59,11 @@ public class FilterInfo
    public int getOperator()
    {
       return operator;
+   }
+
+   public String toString()
+   {
+      return "'"+label+"' "+DataFilter.OPERATORS[operator]+" '"+value+"'";
    }
 
    private String label, value;

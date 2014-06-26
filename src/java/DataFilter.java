@@ -41,17 +41,27 @@ public class DataFilter
    {
       for (FilterInfo filterInfo: filters)
       {
-         addFilter(filterInfo);
+         try
+         {
+            addFilter(filterInfo);
+         }
+         catch (UnknownLabelException e)
+         {
+            System.err.println(DatatoolTk.getLabelWithValue(
+               "warning.ignoring_filter", filterInfo.toString()));
+         }
       }
    }
 
    public void addFilter(FilterInfo filterInfo)
+      throws UnknownLabelException
    {
       addFilter(filterInfo.getLabel(), filterInfo.getOperator(), 
          filterInfo.getValue());
    }
 
    public void addFilter(String label, int operator, String value)
+      throws UnknownLabelException
    {
       fieldFilters.add(new FieldFilter(db, label, operator, value));
    }
@@ -116,12 +126,18 @@ public class DataFilter
    public static final int OPERATOR_GT=4;
    public static final int OPERATOR_NE=5;
    public static final int OPERATOR_REGEX=6;
+
+   public static final String[] OPERATORS = new String[]
+   {
+      "eq", "le", "lt", "ge", "gt", "ne", "regex"
+   };
 }
 
 class FieldFilter
 {
    public FieldFilter(DatatoolDb db, String label, int operator,
      String value)
+   throws UnknownLabelException
    {
       this.colIdx = 0;
       boolean found = false;
@@ -142,8 +158,7 @@ class FieldFilter
 
       if (!found)
       {
-         throw new IllegalArgumentException(DatatoolTk.getLabelWithValue(
-           "error.unknown_key", label));
+         throw new UnknownLabelException(label);
       }
 
       this.operator = operator;

@@ -427,6 +427,7 @@ undo.replace_row=Replace Row
 undo.plugin_action=Plugin '$1' action
 undo.nullify_column=Nullify Column
 undo.nullify_row=Nullify Row
+undo.merge=Merge Databases
 
 # Messages
 
@@ -611,6 +612,7 @@ error.xlsx_not_supported=Sorry, .xlsx files not supported.
 warning.title=Warning
 warning.verb_detected=Verbatim text has been detected. You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 warning.verb_detected_in_cell=Verbatim text has been detected in cell ($1,$2). You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
+warning.ignoring_filter=Ignoring filter option '$1'. No such column label.
 
 # Plugin labels
 

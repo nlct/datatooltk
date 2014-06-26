@@ -35,6 +35,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.border.Border;
 
 import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.io.InvalidSyntaxException;
 
 /**
  * Panel used in the main GUI window tabs.
@@ -620,6 +621,81 @@ public class DatatoolDbPanel extends JPanel
          new UpdateCellEdit(this, row, col, newText);
    }
 
+   public void merge(DatatoolDb otherDb, String key)
+    throws InvalidSyntaxException
+   {
+      int colIdx1 = db.getColumnIndex(key);
+
+      if (colIdx1 == -1)
+      {
+         throw new InvalidSyntaxException(
+           DatatoolTk.getLabelWithValues("error.db.unknown_key",
+             key, db.getName()));
+      }
+
+      int colIdx2 = otherDb.getColumnIndex(key);
+
+      if (colIdx2 == -1)
+      {
+         throw new InvalidSyntaxException(
+           DatatoolTk.getLabelWithValues("error.db.unknown_key",
+             key, otherDb.getName()));
+      }
+
+      merge(otherDb, colIdx1, colIdx2);
+   }
+
+   public void merge(DatatoolDb otherDb, int thisColIdx, int otherColIdx)
+   {
+      startCompoundEdit(DatatoolTk.getLabel("undo.merge"));
+
+      for (DatatoolHeader header: otherDb.getHeaders())
+      {
+         if (db.getHeader(header.getKey()) == null)
+         {
+            addUndoEdit(new InsertColumnEdit(this, header));
+         }
+      }
+
+      for (DatatoolRow dbRow : otherDb.getData())
+      {
+         String dbValue = dbRow.get(otherColIdx);
+
+         DatatoolRow thisRow = null;
+
+         int rowIdx;
+         int rowCount = db.getRowCount();
+
+         for (rowIdx = 0; rowIdx < rowCount; rowIdx++)
+         {
+            DatatoolRow row = db.getRow(rowIdx);
+            String value = row.get(thisColIdx);
+
+            if (value.equals(dbValue))
+            {
+               thisRow = row;
+               break;
+            }
+         }
+
+         if (thisRow == null)
+         {
+            addUndoEdit(new InsertRowEdit(this, rowIdx));
+         }
+
+         for (int i = 0, n = otherDb.getColumnCount(); i < n; i++)
+         {
+            DatatoolHeader header = otherDb.getHeader(i);
+
+            int idx = db.getColumnIndex(header.getKey());
+
+            updateCell(rowIdx, idx, dbRow.get(i));
+         }
+      }
+
+      commitCompoundEdit();
+   }
+
    public void requestNewColumnAfter()
    {
       DatatoolHeader header = gui.requestNewHeader(this);
@@ -1198,7 +1274,7 @@ public class DatatoolDbPanel extends JPanel
       return db.getSettings().getPerl();
    }
 
-   public DatatoolDb getDatabase()
+   protected DatatoolDb getDatabase()
    {
       return db;
    }
