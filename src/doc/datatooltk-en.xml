@@ -53,7 +53,7 @@
      <dl>
        <dt><opt tag="gui"/> (or <tt>-g</tt>)</dt>
        <dd>
-       Invoke <app/> in <acr tag="gui" /> mode. (The command line invocation
+       Invoke <app/> in <acr tag="gui" /> mode. The command line invocation
        <p align="center">
        <app/><tt>-gui</tt> [<meta>options</meta>] 
        </p>
@@ -64,7 +64,7 @@
        <app/> <opt tag="gui"/> [<meta>options</meta>] 
        </p>
        <p noindent="true">
-       but additionally has a<nbsp/>splash screen.)
+       but additionally has a<nbsp/>splash screen.
        </p>
        </dd>
        <dt><opt tag="batch"/> (or <tt>-b</tt>)</dt>
@@ -81,7 +81,7 @@
        (or <tt>-i</tt>) is optional, so <app/><nbsp/><meta>file</meta>
        is equivalent to <app/><nbsp/><opt tag="in"/> <meta>file</meta>.</dd>
        <dt><opt tag="name"/> <meta>name</meta></dt>
-       <dd>If used with <opt tag="in"/>, <opt tag="csv"/>, <opt tag="sql"/>
+       <dd>If used with <opt tag="in"/>, <opt tag="csv"/>, <opt tag="sql"/>, <opt tag="xls"/>, <opt tag="ods"/>
        or <opt tag="probsoln"/>, sets the database label to 
        <meta>name</meta>. (See <ref tag="fileext"/>.)</dd>
        <dt><opt tag="version"/> (or <tt>-v</tt>)</dt>
@@ -183,11 +183,14 @@
        override those in the original database. If <meta>db file</meta>
        doesn't exist, a warning is issued and the option is ignored.
        This option is always implemented before any sorting, shuffling,
-       filtering or truncating. Only one <opt tag="merge"/> is permitted.
+       filtering or truncating. Only one of the merge options is permitted.
        </dd>
        <dt><opt tag="csv" /> <meta>csv file</meta></dt>
        <dd>Import data from the given <acr tag="csv"/> file.
        (See <ref tag="importcsv"/>.)</dd>
+       <dt><opt tag="merge-csv"/> <meta>key</meta> <meta>csv file</meta></dt>
+       <dd>As <opt tag="merge"/> but the data to be merged is imported from the given <acr tag="csv"/> file.
+       </dd>
        <dt><opt tag="sep" /> <meta>character</meta></dt>
        <dd>Specify the character used to separate values in the 
        <acr tag="csv" /> file. (Defaults to a<nbsp />comma.)</dd>
@@ -198,12 +201,18 @@
        <dd>The <acr tag="csv"/> file has a header row. (Default.)</dd>
        <dt><opt tag="nocsvheader" /></dt>
        <dd>The <acr tag="csv"/> file doesn't have a header row.</dd>
-       <dt><opt tag="xls"/></dt>
+       <dt><opt tag="xls"/> <meta>xls file</meta></dt>
        <dd>Import data from the given Excel <tt>.xls</tt> file. 
        (See <ref tag="importspread"/>.)</dd>
-       <dt><opt tag="ods"/></dt>
+       <dt><opt tag="merge-xls"/> <meta>key</meta> <meta>xls file</meta></dt>
+       <dd>As <opt tag="merge"/> but the data to be merged is imported from the given Excel <tt>.xls</tt> file.
+       </dd>
+       <dt><opt tag="ods"/> <meta>ods file</meta></dt>
        <dd>Import data from the given Open Document Spreadsheet <tt>.ods</tt> file. 
        (See <ref tag="importspread"/>.)</dd>
+       <dt><opt tag="merge-ods"/> <meta>key</meta> <meta>ods file</meta></dt>
+       <dd>As <opt tag="merge"/> but the data to be merged is imported from the given Open Document Spreadsheet <tt>.ods</tt> file.
+       </dd>
        <dt><opt tag="sheet"/></dt>
        <dd>The sheet to select from the Excel workbook or Open Document 
        Spreadsheet. This may either be an index (starting from 0) or 
@@ -212,6 +221,9 @@
        <dd>Import data from an <acr tag="sql"/> database where 
        <meta>statement</meta> is an <acr tag="sql"/> SELECT statement.
        (See <ref tag="importsql"/>)</dd>
+       <dt><opt tag="merge-sql"/> <meta>key</meta> <meta>statement</meta></dt>
+       <dd>As <opt tag="merge"/> but the data to be merged is imported using the given <acr tag="sql"/> SELECT statement.
+       </dd>
        <dt><opt tag="sqldb"/> <meta>name</meta></dt>
        <dd>The <acr tag="sql"/> database name.</dd>
        <dt><opt tag="sqlprefix"/> <meta>prefix</meta></dt>
@@ -250,9 +262,21 @@
        <dt><opt tag="probsoln"/> <meta>filename</meta></dt>
        <dd>Import <sty>probsoln</sty> data from <meta>filename</meta>.
        (See <ref tag="importprobsoln"/>.)</dd>
+       <dt><opt tag="merge-probsoln"/> <meta>key</meta> <meta>filename</meta></dt>
+       <dd>As <opt tag="merge"/> but the data to be merged is imported from the given <sty>probsoln</sty> data set file.
+       </dd>
      </dl>
-     You can't combine any of the following options: <opt tag="in"/>, 
-     <opt tag="csv"/>, <opt tag="xls"/>, <opt tag="sql"/>, <opt tag="probsoln"/>.
+     You can't combine any of the load/import options: <opt tag="in"/>, 
+     <opt tag="csv"/>, <opt tag="xls"/>, <opt tag="ods"/>, <opt tag="sql"/>, <opt tag="probsoln"/>. You also can't combine any of the merge options:
+     <opt tag="merge"/>, 
+     <opt tag="merge-csv"/>, 
+     <opt tag="merge-xls"/>, 
+     <opt tag="merge-ods"/>, 
+     <opt tag="merge-sql"/>, 
+     <opt tag="merge-probsoln"/>. 
+     The merge import options use the same settings as the import options. If you want to merge, for example, sheet<nbsp/>1 and sheet<nbsp/>2
+    from the same spreadsheet, you will have to first import one or both of them to a <tt>.dbtex</tt> file and then perform the merge. 
+     With the exception of <opt tag="merge-sql"/>, all the merge options will ignore a missing file and just print a warning to STDERR.
      </p>
    </node>
    <node tag="notaspreadsheet" type="section" title="What it isn't">

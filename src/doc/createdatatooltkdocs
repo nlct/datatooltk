@@ -634,6 +634,7 @@ sub start_preamble{
 
    print TEXFD "\\usepackage[$inputenc]{inputenc}\n",
       "\\usepackage[$fontenc]{fontenc}\n",
+      "\\usepackage{lmodern}\n",
       "\\usepackage{graphicx}\n",
       "\\usepackage{verbatim}\n",
       "\\usepackage{alltt}\n",

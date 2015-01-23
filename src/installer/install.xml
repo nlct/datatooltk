@@ -9,7 +9,7 @@
   <properties>
     <property name="info.appName" value="datatooltk"/>
     <property name="info.url" value="http://www.dickimaw-books.com/apps/datatooltk/"/>
-    <property name="project.version" value="1.3" />
+    <property name="project.version" value="1.4" />
   </properties>
 
     <!-- 
@@ -19,7 +19,7 @@
         <appname>@{info.appName}</appname>
         <appversion>@{project.version}</appversion>
         <authors>
-            <author name="Nicola L. C. Talbot" email="n.talbot@uea.ac.uk"/>
+            <author name="Nicola L. C. Talbot" email="www.dickimaw-books.com/contact.html"/>
         </authors>
         <url>@{info.url}</url>
         <javaversion>1.7</javaversion>
