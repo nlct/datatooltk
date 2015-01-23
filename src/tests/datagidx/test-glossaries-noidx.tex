@@ -1,13 +1,13 @@
-% arara: clean: {extensions: ['aux', 'gls']}
+% arara: clean: {extensions: ['aux']}
 % arara: pdflatex
-% arara: makeglossaries
 % arara: pdflatex
 \documentclass{report}
 
 \usepackage[nonumberlist,nogroupskip,toc]{glossaries}
 \usepackage{glossary-mcols}
 
-\makeglossaries
+\makenoidxglossaries
+
 \renewcommand{\glossaryname}{Index}
 \renewcommand{\glsnamefont}[1]{\textmd{#1}}
 
@@ -35,6 +35,6 @@
 \chapter{Sample}
 \glsaddall
 
-\printglossary[style=mcolindex]
+\printnoidxglossary[style=mcolindex]
 
 \end{document}

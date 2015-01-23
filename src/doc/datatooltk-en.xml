@@ -1102,7 +1102,7 @@ datatooltk --in index.dbtex --sort Sort --output index-sorted.dbtex
    In order to compare them, I<nbsp/>used <tt>arara</tt> with 
    the Linux <tt>time</tt> command. In each case, the <tt>clean</tt>
    directive is used at the start to ensure the tests start without
-   an auxiliary files. Since there are no location lists, only
+   any auxiliary files. Since there are no location lists, only
    two <LaTeX/> calls are used on each example. If there were
    location lists, the <sty>datagidx</sty> examples would both
    need a<nbsp/>third <LaTeX/> call.<footnote>The <sty>datagidx</sty>
@@ -1123,9 +1123,9 @@ datatooltk --in index.dbtex --sort Sort --output index-sorted.dbtex
    Invoking this with the Linux <tt>time</tt> command gives:
    </p>
 <pre>
-real	0m0.233s
-user	0m0.403s
-sys	0m0.014s
+real	0m0.296s
+user	0m0.466s
+sys	0m0.033s
 </pre>
    <p>
    Now <tt>arara</tt> can be run on each of the three test documents 
@@ -1133,36 +1133,62 @@ sys	0m0.014s
    that uses <sty>datagidx</sty> and <cs tag="newgidx"/>. The results are:
    </p>
 <pre>
-real	0m12.170s
-user	0m12.199s
-sys	0m0.038s
+real	0m13.801s
+user	0m13.925s
+sys	0m0.076s
 </pre>
+  <p>
+  <tt>arara</tt> records the total time taken as 13.39 seconds.
+  </p>
   <p>
   The next test uses <sty>datagidx</sty> and <cs tag="loadgidx"/>. 
   The result is:
   </p>
 <pre>
-real	0m2.315s
-user	0m2.343s
-sys	0m0.037s
+real	0m2.643s
+user	0m2.775s
+sys	0m0.065s
 </pre>
+  <p>
+  <tt>arara</tt> records the total time taken as 2.23 seconds.
+  </p>
   <p>
   The third test uses <sty>glossaries</sty>. The result is:
   </p>
 <pre>
-real	0m0.778s
-user	0m0.801s
-sys	0m0.057s
+real	0m1.156s
+user	0m1.307s
+sys	0m0.069s
 </pre>
+   <p>
+  <tt>arara</tt> records the total time taken as 0.75 seconds.
+   </p>
    <p>
    Using <sty>glossaries</sty> is clearly faster than using
    <sty>datagidx</sty>. In the case of <cs tag="loadgidx"/>,
    <sty>glossaries</sty> is approximately three times faster. In the 
    case of <cs tag="newgidx"/>, <sty>glossaries</sty> is approximately 
-  15 times faster. If a<nbsp/>third <LaTeX/> run was required
+  18 times faster. If a<nbsp/>third <LaTeX/> run was required
   for the location lists with <cs tag="newgidx"/>, using <sty>glossaries</sty> would be approximately 
-  24 times faster (with only two <LaTeX/> runs and one <tt>makeglossaries</tt> run).
+  27 times faster (with only two <LaTeX/> runs and one <tt>makeglossaries</tt> run).
    </p>
+   <p>
+   If you're interested to know how this compares with <cs tag="makenoidxglossaries"/> instead of <cs tag="makeglossaries"/>, here's the revised 
+   <sty>glossaries</sty> code:
+   </p>
+<verbinput src="../tests/datagidx/test-glossaries-noidx.tex"/>
+   <p>
+   The result is:
+   </p>
+<pre>
+real	0m2.463s
+user	0m2.596s
+sys	0m0.065s
+</pre>
+  <p>
+  <tt>arara</tt> records the total time taken as 2.06 seconds.
+  This is slightly quicker than the second <sty>datagidx</sty> test.
+  </p>
    </node>
    <node tag="import" type="chapter" title="Importing Data">
    <p>
