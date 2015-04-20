@@ -5,7 +5,7 @@
   <programGroup defaultName="DickimawBooks\DatatoolTk"
                 location="applications||startMenu"/>
   <shortcut
-    name="Start DatatoolTk"
+    name="DatatoolTk GUI"
     target="$INSTALL_PATH\bin\datatooltk-gui.bat"
     commandLine=""
     workingDirectory="$INSTALL_PATH"
@@ -20,6 +20,58 @@
     startup="yes||no">
 
     <createForPack name="Base"/>
+  </shortcut>
+
+  <shortcut
+    name="DatatoolTK Uninstaller"
+    programGroup="yes"
+    desktop="no"
+    applications="no"
+    startMenu="no"
+    startup="no"
+    target="$INSTALL_PATH\Uninstaller\uninstaller.jar"
+    commandLine=""
+    iconFile="%SystemRoot%\system32\SHELL32.dll"
+    iconIndex="31"
+    description="Uninstall DatatoolTk ${project.version}"
+    initialState="noShow"
+  >
+
+    <createForPack name="Base"/>
+  </shortcut>
+
+  <shortcut
+    name="DatatoolTK Documentation"
+    programGroup="yes"
+    desktop="no"
+    applications="no"
+    startMenu="yes"
+    startup="no"
+    target="$INSTALL_PATH\doc\datatooltk-en-GB.pdf"
+    commandLine=""
+    encoding="UTF-8"
+    iconFile="%SystemRoot%\system32\SHELL32.dll"
+    iconIndex="23"
+    description="DatatoolTK ${project.version} user manual (PDF format)">
+
+    <createForPack name="Documentation GB"/>
+  </shortcut>
+
+  <shortcut
+    name="DatatoolTK Documentation"
+    programGroup="yes"
+    desktop="no"
+    applications="no"
+    startMenu="yes"
+    startup="no"
+    target="$INSTALL_PATH\doc\datatooltk-en-US.pdf"
+    commandLine=""
+    encoding="UTF-8"
+    iconFile="%SystemRoot%\system32\SHELL32.dll"
+    iconIndex="23"
+    description="DatatoolTK ${project.version} user manual (PDF format)">
+
+    <createForPack name="Documentation US"/>
   </shortcut>
 
 </shortcuts>

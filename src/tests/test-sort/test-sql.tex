@@ -1,0 +1,18 @@
+% arara: datatooltk: {sql: "SELECT * FROM words ORDER BY Word",
+% arara: --> sqluser: sampleuser, 
+% arara: --> sqldb: samples, output: entries.dbtex}
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{datatool}
+
+\DTLloaddbtex{\testdb}{entries.dbtex}
+
+\begin{document}
+
+\DTLforeach*{\testdb}{\Word=Word}{\Word. }
+
+\end{document}

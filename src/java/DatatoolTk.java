@@ -1764,9 +1764,9 @@ public class DatatoolTk
 
    private static boolean guiMode = false;
 
-   public static final String appVersion = "1.4";
+   public static final String appVersion = "1.5";
    public static final String appName = "datatooltk";
-   public static final String appDate = "2015-01-23";
+   public static final String appDate = "2015-04-20";
 
    private static Properties dictionary;
    private static boolean debugMode = false;

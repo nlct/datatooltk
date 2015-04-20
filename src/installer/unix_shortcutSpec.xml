@@ -6,12 +6,10 @@
   location="applications"/>
 
   <shortcut
-     name="DatatoolTk"
+     name="DatatoolTk GUI"
      programGroup="yes"
-     desktop="yes"
      applications="no"
-     startMenu="yes"
-     startup="no"
+     desktop="yes"
      target="$INSTALL_PATH/bin/datatooltk-gui"
      commandLine=""
      workingDirectory=""
@@ -27,18 +25,50 @@
    </shortcut>
 
    <shortcut
-     name="Uninstaller"
-     programGroup="no"
+     name="DatatoolTK Documentation"
+     programGroup="yes"
+     application="yes"
      desktop="no"
-     applications="no"
-     startMenu="no"
-     startup="no"
-     target="java"
-     commandLine="-jar &quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
-     initialState="noShow"
-     iconFile="trashcan_full"
-     iconIndex="0"
      workingDirectory=""
+     target="evince"
+     commandLine="$INSTALL_PATH/doc/datatooltk-en-GB.pdf"
+     initialState="normal"
+     url="$INSTALL_PATH/doc/datatooltk-en-GB.pdf"
+     type="Application"
+     mimetype="application/pdf"
+     encoding="UTF-8"
+     description="DatatoolTK user documentation (PDF format)">
+
+     <createForPack name="Documentation GB"/>
+   </shortcut>
+
+   <shortcut
+     name="DatatoolTK Documentation"
+     programGroup="yes"
+     application="yes"
+     desktop="no"
+     workingDirectory=""
+     target="evince"
+     commandLine="$INSTALL_PATH/doc/datatooltk-en-US.pdf"
+     initialState="normal"
+     url="$INSTALL_PATH/doc/datatooltk-en-US.pdf"
+     type="Application"
+     mimetype="application/pdf"
+     encoding="UTF-8"
+     description="DatatoolTK user documentation (PDF format)">
+
+     <createForPack name="Documentation US"/>
+   </shortcut>
+
+   <shortcut
+     name="DatatoolTk Uninstaller"
+     programGroup="yes"
+     application="yes"
+     desktop="no"
+     target="java"
+     workingDirectory=""
+     commandLine="-jar &quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
+     initialState="normal"
      type="Application"
      encoding="UTF-8"
      description="DatatoolTk uninstaller">

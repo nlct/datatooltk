@@ -9,7 +9,7 @@
   <properties>
     <property name="info.appName" value="datatooltk"/>
     <property name="info.url" value="http://www.dickimaw-books.com/apps/datatooltk/"/>
-    <property name="project.version" value="1.4" />
+    <property name="project.version" value="1.5" />
   </properties>
 
     <!-- 
@@ -76,9 +76,13 @@
               <os family="windows"/>
             </file>
         </pack>
-        <pack name="Docs" required="no" preselected="yes">
-            <description>The documentation</description>
-            <fileset dir="doc" includes="**/*.pdf" targetdir="$INSTALL_PATH/doc"/>
+        <pack name="Documentation GB" required="no" preselected="no">
+            <description>The datatooltk documentation</description>
+            <fileset dir="doc" includes="**/*-en-GB.pdf" targetdir="$INSTALL_PATH/doc"/>
+        </pack>
+        <pack name="Documentation US" required="no" preselected="no">
+            <description>The datatooltk documentation</description>
+            <fileset dir="doc" includes="**/*-en-US.pdf" targetdir="$INSTALL_PATH/doc"/>
         </pack>
         <pack name="Source" required="no" preselected="no">
             <description>The source code</description>
