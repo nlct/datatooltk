@@ -962,6 +962,24 @@ public class DatatoolSettings extends Properties
       setProperty("shuffle.iter", ""+number);
    }
 
+   public boolean isRedefNewProblemEnabled()
+   {
+      String prop = getProperty("redefnewprob");
+
+      if (prop == null)
+      {
+         setRedefNewProblem(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setRedefNewProblem(boolean value)
+   {
+      setProperty("redefnewprob", ""+value);
+   }
+
    public String getDictionary()
    {
       String prop = getProperty("dictionary");

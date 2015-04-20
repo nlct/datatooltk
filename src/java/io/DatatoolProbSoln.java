@@ -103,6 +103,22 @@ public class DatatoolProbSoln implements DatatoolImport
          out.println("\\usepackage[usedefaultargs]{probsoln}");
          out.println("\\usepackage{etoolbox}");
 
+         if (settings.isRedefNewProblemEnabled())
+         {
+            out.println("\\makeatletter");
+            out.println("\\renewcommand{\\@ns@newproblem}[4][]{%");
+            out.println("  \\begin{defproblem}[\\@newprob@argN][#1]{#2}%");
+            out.println("    \\begin{onlyproblem}#3\\end{onlyproblem}%");
+            out.println("    \\begin{onlysolution}%");
+            out.println("      \\begin{solution}%");
+            out.println("        #4%");
+            out.println("      \\end{solution}%");
+            out.println("    \\end{onlysolution}%");
+            out.println("  \\end{defproblem}%");
+            out.println("}");
+            out.println("\\makeatother");
+         }
+
          out.println("\\loadallproblems{"+
            (System.getProperty("os.name").toLowerCase().startsWith("win") ?
            file.getAbsolutePath().replaceAll("\\", "/") :
