@@ -2,6 +2,14 @@ v1.6:
 
  - Added --csvescape and --nocsvescape
 
+v1.5:
+
+ - Bug fix in probsoln import and added RedefNewProblem option
+
+v1.4:
+
+ - Extra merge options
+
 v1.3:
 
  - Added --truncate, --filter-or, --filter-and, --filter-include
