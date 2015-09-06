@@ -146,6 +146,25 @@ public class PropertiesDialog extends JDialog
       hasHeaderBox = createCheckBox("preferences.csv", "hasheader");
       csvTab.add(hasHeaderBox);
 
+      box = Box.createHorizontalBox();
+      box.setAlignmentX(0);
+      csvTab.add(box);
+
+      box.add(new JLabel(DatatoolTk.getLabel("preferences.csv.esc")));
+
+      bg = new ButtonGroup();
+
+      noEscCharButton = createRadioButton("preferences.csv", "noesc", bg);
+      box.add(noEscCharButton);
+
+      box.add(new JLabel(DatatoolTk.getLabel("preferences.csv.or")));
+
+      escCharButton = createRadioButton("preferences.csv", "escchar", bg);
+      box.add(escCharButton);
+
+      escCharField = new CharField('\\');
+      box.add(escCharField);
+
       // SQL tab
 
       JComponent sqlTab = addTab("sql");
@@ -627,11 +646,26 @@ public class PropertiesDialog extends JDialog
       {
          sepCharButton.setSelected(true);
          sepCharField.setEnabled(true);
+         sepCharField.setValue(sep);
       }
 
       delimCharField.setValue(settings.getDelimiter());
 
       hasHeaderBox.setSelected(settings.hasCSVHeader());
+
+      char esc = settings.getCSVescape();
+
+      if (esc == '\0')
+      {
+         noEscCharButton.setSelected(true);
+         escCharField.setEnabled(false);
+      }
+      else
+      {
+         escCharButton.setSelected(true);
+         escCharField.setEnabled(true);
+         escCharField.setValue(esc);
+      }
 
       hostField.setText(settings.getSqlHost());
       prefixField.setText(settings.getSqlPrefix());
@@ -766,6 +800,16 @@ public class PropertiesDialog extends JDialog
       {
          sepCharField.setEnabled(true);
          sepCharField.requestFocusInWindow();
+      }
+      else if (action.equals("noesc"))
+      {
+         escCharField.setEnabled(false);
+         escCharField.requestFocusInWindow();
+      }
+      else if (action.equals("escchar"))
+      {
+         escCharField.setEnabled(true);
+         escCharField.requestFocusInWindow();
       }
       else if (action.equals("add_map"))
       {
@@ -915,6 +959,15 @@ public class PropertiesDialog extends JDialog
 
       settings.setHasCSVHeader(hasHeaderBox.isSelected());
 
+      if (noEscCharButton.isSelected())
+      {
+         settings.setCSVescape("");
+      }
+      else
+      {
+         settings.setCSVescape(escCharField.getValue());
+      }
+
       String host = hostField.getText();
 
       if (host.isEmpty())
@@ -998,9 +1051,10 @@ public class PropertiesDialog extends JDialog
 
    private JRadioButton homeButton, cwdButton, lastButton, customButton;
 
-   private JRadioButton sepTabButton, sepCharButton;
+   private JRadioButton sepTabButton, sepCharButton, 
+     noEscCharButton, escCharButton;
 
-   private CharField sepCharField, delimCharField;
+   private CharField sepCharField, delimCharField, escCharField;
 
    private JCheckBox hasHeaderBox, wipeBox, mapTeXBox,
       hasSeedBox, syntaxHighlightingBox;

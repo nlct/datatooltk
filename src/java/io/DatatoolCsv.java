@@ -125,7 +125,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             reader = new BufferedReader(new FileReader(file));
    
             csvReader = new CSVReader(reader, settings.getSeparator(),
-              settings.getDelimiter());
+              settings.getDelimiter(), settings.getCSVescape());
    
             String[] fields = csvReader.readNext();
 
@@ -137,7 +137,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    
                return db;
             }
-   
+
             int rowIdx = 0;
    
             if (settings.hasCSVHeader())

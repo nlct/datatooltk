@@ -201,6 +201,30 @@
        <dd>The <acr tag="csv"/> file has a header row. (Default.)</dd>
        <dt><opt tag="nocsvheader" /></dt>
        <dd>The <acr tag="csv"/> file doesn't have a header row.</dd>
+       <dt><opt tag="csvescape" /> <meta>character</meta></dt>
+       <dd>Set the <acr tag="csv"/> file escape character to 
+       <meta>character</meta>.  If your data includes the delimiter
+       character, you need to escape that character to prevent it from being
+       mistaken for the delimiter. For example, if the delimiter is 
+       the double-quote character and the escape character is the <backslash />
+       character, then a<nbsp />row of data may appear as:
+<pre>
+12345,"A \"sample\" entry."
+</pre> 
+       (This won't actually render properly in <LaTeX/> as won't produce
+       the typographically correct double quotes. ) By default the 
+       <acr tag="csv"/> escape character is the backslash character 
+       <backslash /> (as in the above example) which means that you must 
+       double the backslash if you have any (La)TeX commands within the file. 
+       To avoid this, you can set the escape character to something else 
+       that doesn't occur in your data.
+       </dd>
+       <dt><opt tag="nocsvescape" /></dt>
+       <dd>Don't have an escape character for your <acr tag="csv"/> file.
+       This means that you can use (La)TeX commands without having to use
+       a<nbsp />double-backslash <doublebackslash/> but the data can't include 
+       the delimiter character.
+       </dd>
        <dt><opt tag="xls"/> <meta>xls file</meta></dt>
        <dd>Import data from the given Excel <tt>.xls</tt> file. 
        (See <ref tag="importspread"/>.)</dd>
@@ -278,6 +302,8 @@
     from the same spreadsheet, you will have to first import one or both of them to a <tt>.dbtex</tt> file and then perform the merge. 
      With the exception of <opt tag="merge-sql"/>, all the merge options will ignore a missing file and just print a warning to STDERR.
      </p>
+     <p>The import functions are one-way. You can't export back to any of 
+     those formats.</p>
    </node>
    <node tag="notaspreadsheet" type="section" title="What it isn't">
    <p>
@@ -1202,6 +1228,9 @@ sys	0m0.065s
    <button tag="preferences.tex.map"/> option has been selected in the 
    <dict tag="preferences.title"/> dialog box (see <ref tag="preferences"/>).
    </p>
+   <p>
+   Note that data can't be exported back to any of those formats.
+   </p>
    </node>
    <node tag="importcsv" type="section" title="Import CSV Data">
    <p>
@@ -1533,11 +1562,23 @@ Password:
      In this tab you can specify the separator character. If the separator is
      a<nbsp/>tab character, select the 
      <button tag="preferences.csv.tabsep"/> radio button. Otherwise
-     select the <button tag="preferences.csv.sepchar"/> radio button
+     select the (<button tag="preferences.csv.sep"/>) <button tag="preferences.csv.sepchar"/> radio button
      and enter the character in the neighbouring text box. Set the delimiter
      in the <button tag="preferences.csv.delim"/> field. Check the
      <button tag="preferences.csv.hasheader"/> button if your 
      <acr tag="csv"/> files have a<nbsp/>header row otherwise uncheck it.
+     You can also specify the escape character. This character can be used to 
+     escape the delimiter character if it occurs in any of the fields. Since the
+     escape character is a<nbsp/>backslash <backslash/> by default, this means
+     that if the data contains any (La)TeX commands the backslash will need
+     to be doubled. This conflict can be avoided by changing the 
+     <acr tag="csv"/> escape character to something else (that doesn't occur 
+     in your data). To change it, select the (<button tag="preferences.csv.esc"/>) 
+     <button tag="preferences.csv.escchar"/> button and enter the
+     character in the neighbouring text box. Alternatively, you can suppress the <acr tag="csv"/>
+     escape character, in which case the delimiter character can't occur within 
+     the data. To do this, select the <button tag="preferences.csv.noesc"/>
+     button.
      </p>
     </dd>
     <dt><button tag="preferences.sql"/></dt>

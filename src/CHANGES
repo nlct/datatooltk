@@ -1,3 +1,7 @@
+v1.6:
+
+ - Added --csvescape and --nocsvescape
+
 v1.3:
 
  - Added --truncate, --filter-or, --filter-and, --filter-include

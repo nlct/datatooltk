@@ -459,6 +459,8 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.csv_noheader",
         "--nocsvheader",
         (settings.hasCSVHeader()? "" : " ("+getLabel("syntax.default")+".)")));
+      System.out.println(getLabelWithValue("syntax.csv_noescape", "--csvescape"));
+      System.out.println(getLabelWithValue("syntax.csv_escape", "--nocsvescape"));
       System.out.println();
       System.out.println(getLabel("syntax.sql_opts"));
       System.out.println(getLabelWithValue("syntax.sql", "--sql"));
@@ -936,6 +938,28 @@ public class DatatoolTk
             else if (args[i].equals("--nocsvheader"))
             {
                settings.setHasCSVHeader(false);
+            }
+            else if (args[i].equals("--csvescape"))
+            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValue("error.syntax.missing_char", args[i-1]));
+               }
+
+               if (args[i].length() > 1)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabel("error.syntax.invalid_esc"));
+               }
+
+               settings.setCSVescape(args[i]);
+            }
+            else if (args[i].equals("--nocsvescape"))
+            {
+               settings.setCSVescape("");
             }
             else if (args[i].equals("--output") || args[i].equals("-o"))
             {
@@ -1764,9 +1788,9 @@ public class DatatoolTk
 
    private static boolean guiMode = false;
 
-   public static final String appVersion = "1.5";
+   public static final String appVersion = "1.6";
    public static final String appName = "datatooltk";
-   public static final String appDate = "2015-04-20";
+   public static final String appDate = "2015-09-06";
 
    private static Properties dictionary;
    private static boolean debugMode = false;

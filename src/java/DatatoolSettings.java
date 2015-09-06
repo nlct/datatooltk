@@ -396,6 +396,29 @@ public class DatatoolSettings extends Properties
       setProperty("csvHasHeader", ""+hasHeader);
    }
 
+   public char getCSVescape()
+   {
+      String prop = getProperty("csvescape");
+
+      if (prop == null)
+      {
+         setCSVescape("\\");
+         return '\\';
+      }
+
+      return prop.isEmpty() || prop.equals("\\0") ? '\0' : prop.charAt(0);
+   }
+
+   public void setCSVescape(String esc)
+   {
+      setProperty("csvescape", esc);
+   }
+
+   public void setCSVescape(char esc)
+   {
+      setProperty("csvescape", esc == '\0' ? "" : ""+esc);
+   }
+
    public String getSqlDbName()
    {
       return getProperty("sqlDbName");
@@ -1096,6 +1119,7 @@ public class DatatoolSettings extends Properties
       setSeparator(',');
       setDelimiter('"');
       setHasCSVHeader(true);
+      setCSVescape("\\");
       setSqlHost("localhost");
       setSqlPort(3306);
       setSqlPrefix("jdbc:mysql://");
