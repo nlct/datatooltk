@@ -63,18 +63,15 @@
             <file src="doc/LICENSE" targetdir="$INSTALL_PATH"/>
             <file src="lib" targetdir="$INSTALL_PATH"/>
             <fileset dir="bin" excludes="**/*.bat"
-              targetdir="$INSTALL_PATH/bin"
-              />
-            <executable targetfile="$INSTALL_PATH/bin/@{info.appName}"
+              targetdir="$INSTALL_PATH/bin"/>
+            <fileset dir="bin" includes="**/*.bat"
+              targetdir="$INSTALL_PATH/bin">
+                <os family="windows"/>
+            </fileset>
+            <executable targetfile="$INSTALL_PATH/bin/datatooltk"
             stage="never"/>
-            <executable targetfile="$INSTALL_PATH/bin/@{info.appName}-gui"
+            <executable targetfile="$INSTALL_PATH/bin/datatooltk-gui"
             stage="never"/>
-            <file src="bin/@{info.appName}.bat" targetdir="$INSTALL_PATH/bin">
-              <os family="windows"/>
-            </file>
-            <file src="bin/@{info.appName}-gui.bat" targetdir="$INSTALL_PATH/bin">
-              <os family="windows"/>
-            </file>
         </pack>
         <pack name="Documentation GB" required="no" preselected="no">
             <description>The datatooltk documentation</description>
