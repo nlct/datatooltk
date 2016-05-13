@@ -23,6 +23,7 @@
         </authors>
         <url>@{info.url}</url>
         <javaversion>1.7</javaversion>
+        <run-privileged condition="izpack.windowsinstall.vista|izpack.macinstall"/>
     </info>
 
     <guiprefs width="640" height="480" resizable="yes">
