@@ -207,6 +207,11 @@ public class DatatoolGuiResources
        return createJLabel(label, null);
     }
 
+    public static JLabel createJLabel(String label, int alignment)
+    {
+       return createJLabel(label, null, alignment);
+    }
+
     public static JLabel createJLabel(String label, JComponent comp)
     {
        JLabel jLabel = new JLabel(DatatoolTk.getLabel(label));
@@ -232,6 +237,13 @@ public class DatatoolGuiResources
 
        return jLabel;
    }
+
+    public static JLabel createJLabel(String label, JComponent comp, int alignment)
+    {
+       JLabel jlabel = createJLabel(label, comp);
+       jlabel.setAlignmentX(alignment);
+       return jlabel;
+    }
 
    public static JRadioButton createJRadioButton(String parentLabel,
       String label, ButtonGroup bg, ActionListener listener)
@@ -260,6 +272,16 @@ public class DatatoolGuiResources
       return button;
    }
 
+   public static JRadioButton createJRadioButton(String parentLabel,
+      String label, ButtonGroup bg, ActionListener listener,
+      int alignment)
+   {
+      JRadioButton button = createJRadioButton(parentLabel,
+        label, bg, listener);
+      button.setAlignmentX(alignment);
+      return button;
+   }
+
     public static JCheckBox createJCheckBox(String parentLabel, String label,
        ActionListener listener)
     {
@@ -274,6 +296,15 @@ public class DatatoolGuiResources
        }
 
        return checkBox;
+    }
+
+    public static JCheckBox createJCheckBox(String parentLabel, String label,
+       ActionListener listener, int alignment)
+    {
+       JCheckBox comp = createJCheckBox(parentLabel, label, 
+         listener);
+       comp.setAlignmentX(alignment);
+       return comp;
     }
 
    public static JTextArea createMessageArea()

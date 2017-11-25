@@ -15,6 +15,7 @@
     <newacro short="GUI" long="graphical user interface" tag="gui" />
     <newacro short="CSV" long="comma-separated values" tag="csv" />
     <newacro short="SQL" long="structured query language" tag="sql"/>
+    <newacro short="IETF" long="internet engineering task force" tag="ietf"/>
     <!-- Define Terms. If a description is included it's a glossary
          term otherwise it goes in the index -->
     <newterm tag="mysql" text="MySQL" description="An open source SQL database" />
@@ -39,9 +40,9 @@
      This manual assumes the user has some knowledge of the
      <sty>datatool</sty> package. Please ensure you have at least version
      2.15 of <sty>datatool</sty> installed in your <TeX/> distribution.
+     (Although the latest version is recommended.)
      </p>
-     <p>The <app/> 
-     application can run in either 
+     <p>The <app/> application can run in either 
      batch mode (default) or <acr tag="gui" /> mode (see <ref tag="gui" />).
      Command line invocation:
      </p>
@@ -124,10 +125,23 @@
        <tt>+</tt> (ascending order) or <tt>-</tt> (descending order).
        If <meta>prefix</meta> is omitted, ascending is assumed.
        (See <ref tag="sort"/>.)</dd>
+       <dt><opt tag="sort-locale"/> <meta>value</meta></dt>
+       <dd>If the <meta>value</meta> is the keyword <tt>none</tt> use letter-sorting
+       for strings. That is, compare the Unicode values of each character.
+       Otherwise <meta>value</meta> should be a valid <acr tag="ietf" /> 
+       language tag that identifies a locale. Strings will then be sorted 
+       according to that locale's alphabetical order. Note that <app/> can't 
+       interpret <LaTeX/> commands. (If you need that ability, you might want 
+       to consider using <tt>bib2gls</tt> with <sty>glossaries-extra</sty> 
+       instead.) The default setting is to use a letter-sort for strings.
+       </dd>
        <dt><opt tag="sort-case-sensitive"/></dt>
-       <dd>Use case-sensitive comparison when sorting strings.</dd>
+       <dd>Use case-sensitive comparison when letter-sorting strings.
+       (Ignored with locale-sensitive comparisons.)</dd>
        <dt><opt tag="sort-case-insensitive"/></dt>
-       <dd>Use case-insensitive comparison when sorting strings. (Default.)</dd>
+       <dd>Use case-insensitive comparison when letter-sorting strings.
+       This compares the lower case versions of the strings using a character
+       code comparison.  (Default.)</dd>
        <dt><opt tag="truncate"/> <meta>n</meta></dt>
        <dd>Truncate the database to the first <meta>n</meta> rows.
        (Has no effect if <meta>n</meta> is greater than or equal
@@ -212,7 +226,7 @@
 12345,"A \"sample\" entry."
 </pre> 
        (This won't actually render properly in <LaTeX/> as won't produce
-       the typographically correct double quotes. ) By default the 
+       the typographically correct double quotes.) By default the 
        <acr tag="csv"/> escape character is the backslash character 
        <backslash /> (as in the above example) which means that you must 
        double the backslash if you have any (La)TeX commands within the file. 
@@ -610,7 +624,9 @@ It's better to run, say,
 <pre>
 <dict tag="appname"/> --in mydata.dbtex --sort Surname --output mydata-sorted.dbtex
 </pre>
-   Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
+(Remember that this defaults to letter sorting for strings. Use
+<opt tag="sort-locale"/> to sort according to a locale.)
+Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
 <pre>
 \input{mydata-sorted.dbtex}
 % Later in the document:
@@ -628,15 +644,28 @@ It's better to run, say,
 \DTLdisplaydb{data}% display data in tabular environment
 </pre>
    <p>
+   If you have <tt>arara</tt> version 4.0, there's a rule for <app/>:
+   </p>
+<pre>
+% arara: datatooltk: {input: mydata.dbtex, sort: Surname,
+% arara: --> output: mydata-sorted.dbtex}
+% arara: pdflatex
+</pre>
+   <p>
    A<nbsp/>database can be sorted according to a<nbsp/>particular column
    in either ascending or descending order. In batch mode, this is done
    with the <opt tag="sort"/> option, as shown above, where the sort column is identified
    by the column's unique label. If the label is preceded by <tt>-</tt> then
    descending order is used (for example, <opt tag="sort"/><nbsp/><tt>-Surname</tt>). If the label is preceded by <tt>+</tt> (or has
-   no prefix) then ascending order is used.  For alphabetical comparisons you 
+   no prefix) then ascending order is used. When comparing strings there are 
+   two modes: letter (compare character codes) or locale-sensitive
+   (use the alphabet for the given locale).
+   For letter comparisons you 
    can also use <opt tag="sort-case-sensitive"/> for case-sensitive comparisons
    and <opt tag="sort-case-insensitive"/> for case-insensitive comparisons.
-   The default is case-insensitive.
+   The default is case-insensitive. The locale-sensitive comparisons are
+   typically case-insensitive. The treatment of accented characters depends
+   on the locale's rule.
    </p>
    <p>In <acr tag="gui"/> mode, sorting is
    done using the <menu tag="tools.sort"/> menu item which opens
@@ -649,12 +678,17 @@ It's better to run, say,
    Select the column you wish to sort by from the drop-down list of column
    titles, and check the appropriate radio button for ascending or descending
    sort. If the column has the string data type, you also need to specify
-   whether or not you want to use case-sensitive comparisons by checking or
-   unchecking the <button tag="sort.case_sensitive"/> box.  If the 
-   column type has a<nbsp/>numerical type, the entries will be sorted via 
-   a<nbsp/>numerical comparison (10 is greater than 2) and the case-sensitive
-   option is ignored. If the column type is a string type,
-   the entries will be sorted via an alphabetical comparison (<dq>10</dq>
+   what type of comparison you want to use. For a letter (character code)
+   comparison, select the <button tag="sort.letter"/> box, which will enable
+   the <button tag="sort.case_sensitive"/> box. For a locale comparison,
+   select the <button tag="sort.locale"/> box, which will enable the
+   locale selector.
+   </p>
+   <p>
+   If the column type has a<nbsp/>numerical type, the entries will be sorted via 
+   a<nbsp/>numerical comparison (10 is greater than 2) and the string
+   options are ignored. If the column type is a string type,
+   any numerical entries will be sorted via a character comparison (<dq>10</dq>
    comes before <dq>2</dq>).
    </p>
    <example>

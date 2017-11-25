@@ -21,6 +21,7 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.Locale;
 import java.awt.Cursor;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -111,6 +112,7 @@ public class DatatoolTk
             debug("sorting");
 
             db.setSortCaseSensitive(isCaseSensitive);
+            db.setSortLocale(sortLocale);
 
             boolean ascending = true;
 
@@ -309,6 +311,7 @@ public class DatatoolTk
          if (!(sort == null || sort.isEmpty()))
          {
             db.setSortCaseSensitive(isCaseSensitive);
+            db.setSortLocale(sortLocale);
 
             boolean ascending = true;
 
@@ -1369,6 +1372,26 @@ public class DatatoolTk
 
                sort = args[i];
             }
+            else if (args[i].equals("--sort-locale"))
+            {
+               i++;
+
+               if (i == args.length)
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValue("error.syntax.missing_sort_locale",
+                     args[i-1]));
+               }
+
+               if (args[i].equals("none"))
+               {
+                  sortLocale = null;
+               }
+               else
+               {
+                  sortLocale = Locale.forLanguageTag(args[i]);
+               }
+            }
             else if (args[i].equals("--filter-or"))
             {
                filterOr = true;
@@ -1788,9 +1811,9 @@ public class DatatoolTk
 
    private static boolean guiMode = false;
 
-   public static final String appVersion = "1.6.3";
+   public static final String appVersion = "1.6.3.20171125";
    public static final String appName = "datatooltk";
-   public static final String appDate = "2015-05-13";
+   public static final String appDate = "2017-11-25";
 
    private static Properties dictionary;
    private static boolean debugMode = false;
@@ -1817,6 +1840,8 @@ public class DatatoolTk
    private static boolean isCaseSensitive = false;
 
    private static String sort=null;
+
+   private static Locale sortLocale=null;
 
    private static String dbname = null;
 

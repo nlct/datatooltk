@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.Collections;
 import java.util.regex.*;
 import java.util.Date;
+import java.util.Locale;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -1828,6 +1829,16 @@ out.println("% header block for column "+colIdx);
       sortCaseSensitive = isSensitive;
    }
 
+   public void setSortLocale(Locale locale)
+   {
+      sortLocale = locale;
+   }
+
+   public Locale getSortLocale()
+   {
+      return sortLocale;
+   }
+
    public void sort()
    {
       Collections.sort(data);
@@ -2021,6 +2032,8 @@ out.println("% header block for column "+colIdx);
    private boolean sortAscending = true;
 
    private boolean sortCaseSensitive = false;
+
+   private Locale sortLocale = null;
 
    public static final String NULL_VALUE="\\@dtlnovalue";
 

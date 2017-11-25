@@ -53,10 +53,10 @@ $(TARGETDIR)	:
 	mkdir $(TARGETDIR)
 
 datatooltk-en-GB.pdf	: datatooltk-en-GB.tex
-	arara datatooltk-en-GB
+	arara -H datatooltk-en-GB
 
 datatooltk-en-US.pdf	: datatooltk-en-US.tex
-	arara datatooltk-en-US
+	arara -H datatooltk-en-US
 
 datatooltk-en-GB.tex	: createdatatooltkdocs datatooltk-en.xml \
 	  $(MAINCLASS) \

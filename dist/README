@@ -3,13 +3,13 @@ Application  : datatooltk version 1.6.2 2016-05-12
 Author       : Nicola L. C. Talbot
                www.dickimaw-books.com
 
-Home Page    : http://www.dickimaw-books.com/apps/datatooltk/
+Home Page    : http://www.dickimaw-books.com/software/datatooltk/
 
 Bug Reports  : http://www.dickimaw-books.com/bug-report.html
 
 License      : GPLv3+ <http://gnu.org/licenses/gpl.html>
 
-Requirements : Java Runtime Environment 1.7 (Java 7)
+Requirements : Java Runtime Environment
                Perl (optional)
                TeX
                datatool and (optionally) probsoln LaTeX packages.
@@ -27,7 +27,8 @@ database.
 INSTALL
 =======
 
-1. Ensure you have Java 7 installed (java.com/getjava).
+1. Ensure you have the Java Runtime Environment (JRE) installed
+   (java.com/getjava).
 
 2. Download and run datatooltk-installer.jar (either
 double-click on the jar file or run 

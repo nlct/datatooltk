@@ -19,6 +19,8 @@
 package com.dickimawbooks.datatooltk;
 
 import java.util.Vector;
+import java.util.Locale;
+import java.text.Collator;
 
 /**
  * Class representing a row of data.
@@ -117,6 +119,17 @@ public class DatatoolRow extends Vector<String>
 
       String x = get(sortColumn);
       String y = row.get(sortColumn);
+
+      Locale locale = db.getSortLocale();
+
+      if (locale != null)
+      {
+         Collator collator = Collator.getInstance(locale);
+
+         int result = collator.compare(x, y);
+
+         return db.isSortAscending() ? result : -result;
+      }
 
       if (!db.isSortCaseSensitive())
       {

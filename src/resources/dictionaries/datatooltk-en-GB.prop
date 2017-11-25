@@ -282,6 +282,11 @@ sort.descending=Descending
 sort.descending.mnemonic=D
 sort.case_sensitive=Case sensitive
 sort.case_sensitive.mnemonic=S
+sort.string.message=When comparing strings use:
+sort.letter=Character Code
+sort.letter.mnemonic=T
+sort.locale=Locale
+sort.locale.mnemonic=O
 
 # Import SQL dialog box
 importsql.title=Import SQL Data
@@ -559,6 +564,7 @@ error.syntax.input_clash=<datatool file> can't be used with an import option
 error.syntax=Syntax error: $1
 error.syntax.missing_input=Filename expected after $1
 error.syntax.missing_number=Number expected after $1
+error.syntax.missing_sort_locale=IETF tag or 'none' expected after $1
 error.syntax.missing_sort_field=Sort field (and optionally '+' or '-' prefix) expected after $1
 error.syntax.unknown_field=Unknown sort field '$1'
 error.syntax.missing_sheet_ref=Reference expected after '$1'

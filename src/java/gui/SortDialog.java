@@ -18,6 +18,11 @@
 */
 package com.dickimawbooks.datatooltk.gui;
 
+import java.util.Locale;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.text.Collator;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -43,8 +48,9 @@ public class SortDialog extends JDialog
       mainPanel.add(row);
 
       headerBox = new JComboBox<DatatoolHeader>();
+      headerBox.setAlignmentX(0);
       row.add(DatatoolGuiResources.createJLabel(
-         "sort.column", headerBox));
+         "sort.column", headerBox, 0));
       row.add(headerBox);
 
       row = new JPanel();
@@ -54,19 +60,51 @@ public class SortDialog extends JDialog
       ButtonGroup bg = new ButtonGroup();
 
       ascendingButton = DatatoolGuiResources.createJRadioButton(
-         "sort", "ascending", bg, this);
+         "sort", "ascending", bg, this, 0);
       row.add(ascendingButton);
 
       descendingButton = DatatoolGuiResources.createJRadioButton(
-         "sort", "descending", bg, this);
+         "sort", "descending", bg, this, 0);
       row.add(descendingButton);
 
       row = new JPanel();
       row.setAlignmentX(0);
       mainPanel.add(row);
 
-      isCaseSensitiveBox = DatatoolGuiResources.createJCheckBox("sort", "case_sensitive", this);
+      row.add(DatatoolGuiResources.createJLabel("sort.string.message", 0));
+
+      row = new JPanel();
+      row.setAlignmentX(0);
+      mainPanel.add(row);
+
+      bg = new ButtonGroup();
+
+      letterSortButton = DatatoolGuiResources.createJRadioButton(
+         "sort", "letter", bg, this, 0);
+      row.add(letterSortButton);
+
+      isCaseSensitiveBox = DatatoolGuiResources.createJCheckBox(
+        "sort", "case_sensitive", this, 0);
       row.add(isCaseSensitiveBox);
+
+      row = new JPanel();
+      row.setAlignmentX(0);
+      mainPanel.add(row);
+
+      localeSortButton = DatatoolGuiResources.createJRadioButton(
+         "sort", "locale", bg, this, 0);
+      row.add(localeSortButton);
+
+      Locale[] locales = Locale.getAvailableLocales();
+
+      Arrays.sort(locales, new LocaleComparator());
+
+      localeBox = new JComboBox<Locale>(locales);
+      localeBox.setRenderer(new LocaleItemRenderer());
+      localeBox.setAlignmentX(0);
+      row.add(localeBox);
+
+      localeBox.setSelectedItem(Locale.getDefault());
 
       getContentPane().add(
         DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "sort"),
@@ -102,6 +140,22 @@ public class SortDialog extends JDialog
 
       isCaseSensitiveBox.setSelected(db.isSortCaseSensitive());
 
+      Locale locale = db.getSortLocale();
+
+      if (locale == null)
+      {
+         letterSortButton.setSelected(true);
+         localeBox.setEnabled(false);
+         isCaseSensitiveBox.setEnabled(true);
+      }
+      else
+      {
+         localeSortButton.setSelected(true);
+         localeBox.setEnabled(true);
+         localeBox.setSelectedItem(locale);
+         isCaseSensitiveBox.setEnabled(false);
+      }
+
       pack();
       setVisible(true);
 
@@ -123,6 +177,16 @@ public class SortDialog extends JDialog
          success = false;
          setVisible(false);
       }
+      else if (action.equals("letter"))
+      {
+         localeBox.setEnabled(false);
+         isCaseSensitiveBox.setEnabled(true);
+      }
+      else if (action.equals("locale"))
+      {
+         localeBox.setEnabled(true);
+         isCaseSensitiveBox.setEnabled(false);
+      }
    }
 
    private void okay()
@@ -142,16 +206,72 @@ public class SortDialog extends JDialog
       db.setSortAscending(ascendingButton.isSelected());
       db.setSortCaseSensitive(isCaseSensitiveBox.isSelected());
 
+      if (letterSortButton.isSelected())
+      {
+         db.setSortLocale(null);
+      }
+      else
+      {
+         db.setSortLocale((Locale)localeBox.getSelectedItem());
+      }
+
       success = true;
       setVisible(false);
    }
 
    private JComboBox<DatatoolHeader> headerBox;
+   private JComboBox<Locale> localeBox;
    private JRadioButton ascendingButton, descendingButton;
+   private JRadioButton letterSortButton, localeSortButton;
 
    private JCheckBox isCaseSensitiveBox;
 
    private DatatoolDb db;
 
    private boolean success=false;
+}
+
+class LocaleItemRenderer extends JLabel implements ListCellRenderer<Locale>
+{
+   public LocaleItemRenderer()
+   {
+      setOpaque(true);
+      setHorizontalAlignment(LEFT);
+      setVerticalAlignment(CENTER);
+   }
+
+   public Component getListCellRendererComponent(JList<? extends Locale> list,
+    Locale locale, int index, boolean isSelected, boolean cellHasFocus) 
+   {
+      if (isSelected)
+      {
+         setBackground(list.getSelectionBackground());
+         setForeground(list.getSelectionForeground());
+      }
+      else
+      {
+         setBackground(list.getBackground());
+         setForeground(list.getForeground());
+      }
+
+      setText(locale.getDisplayName());
+
+      return this;
+   }
+}
+
+class LocaleComparator implements Comparator<Locale>
+{
+   public LocaleComparator()
+   {
+      collator = Collator.getInstance();
+   }
+
+   public int compare(Locale locale1, Locale locale2)
+   {
+      return collator.compare(locale1.getDisplayName(), 
+        locale2.getDisplayName());
+   }
+
+   private Collator collator;
 }
