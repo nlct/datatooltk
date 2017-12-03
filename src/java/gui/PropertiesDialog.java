@@ -116,6 +116,17 @@ public class PropertiesDialog extends JDialog
       seedField.setEnabled(false);
       box.add(seedField);
 
+      box = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      box.setAlignmentX(0);
+      generalTab.add(box);
+
+      initialCapacitySpinner = new JSpinner(
+         new SpinnerNumberModel(16, 10, Integer.MAX_VALUE, 1));
+
+      box.add(resources.createJLabel("preferences.initial.capacity", 
+        initialCapacitySpinner));
+      box.add(initialCapacitySpinner);
+
       // CSV tab
 
       JComponent csvTab = addTab("csv");
@@ -243,11 +254,6 @@ public class PropertiesDialog extends JDialog
       // TeX Tab
 
       JComponent texTab = addTab("tex");
-
-      box = createNewRow(texTab);
-      latexFileField = new FileField(messageHandler, this, "latex", fileChooser);
-      box.add(createLabel("preferences.tex.latexapp", latexFileField));
-      box.add(latexFileField);
 
       box = createNewRow(texTab);
       texEncodingBox = new JComboBox<Charset>(
@@ -650,6 +656,9 @@ public class PropertiesDialog extends JDialog
          break;
       }
 
+      initialCapacitySpinner.setValue(Integer.valueOf(
+        settings.getInitialCapacity()));
+
       char sep = settings.getSeparator();
 
       if (sep == '\t')
@@ -696,8 +705,6 @@ public class PropertiesDialog extends JDialog
       databaseField.setText(db == null ? "" : db);
 
       mapTeXBox.setSelected(settings.isTeXMappingOn());
-
-      latexFileField.setFileName(settings.getLaTeX());
 
       String encoding = settings.getTeXEncoding();
 
@@ -954,6 +961,9 @@ public class PropertiesDialog extends JDialog
          settings.setCustomStartUp(file);
       }
 
+      settings.setInitialCapacity(
+        ((Number)initialCapacitySpinner.getValue()).intValue());
+
       if (sepTabButton.isSelected())
       {
          settings.setSeparator('\t');
@@ -1030,8 +1040,6 @@ public class PropertiesDialog extends JDialog
 
       settings.setTeXMapping(mapTeXBox.isSelected());
 
-      settings.setLaTeX(latexFileField.getFileName());
-
       settings.setTeXEncoding((Charset)texEncodingBox.getSelectedItem());
 
       texMapModel.updateSettings();
@@ -1097,7 +1105,7 @@ public class PropertiesDialog extends JDialog
    private JCheckBox hasHeaderBox, wipeBox, mapTeXBox,
       hasSeedBox, syntaxHighlightingBox;
 
-   private FileField customFileField, latexFileField, perlFileField;
+   private FileField customFileField, perlFileField;
 
    private JFileChooser fileChooser;
 
@@ -1130,6 +1138,8 @@ public class PropertiesDialog extends JDialog
    private JTabbedPane tabbedPane;
 
    private DatatoolGUI gui;
+
+   private JSpinner initialCapacitySpinner;
 }
 
 class CurrencyListModel extends AbstractListModel<String>

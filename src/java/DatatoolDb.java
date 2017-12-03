@@ -52,8 +52,9 @@ public class DatatoolDb
       }
 
       this.settings = settings;
+
       headers = new Vector<DatatoolHeader>();
-      data = new Vector<DatatoolRow>();
+      data = new Vector<DatatoolRow>(settings.getInitialCapacity());
    }
 
    public DatatoolDb(DatatoolSettings settings, int rows, int cols)
@@ -77,7 +78,7 @@ public class DatatoolDb
 
       this.settings = settings;
       headers = new Vector<DatatoolHeader>(cols);
-      data = new Vector<DatatoolRow>();
+      data = new Vector<DatatoolRow>(settings.getInitialCapacity());
    }
 
    public static DatatoolDb load(DatatoolSettings settings,

@@ -332,6 +332,37 @@ public class DatatoolSettings extends Properties
       recentFiles.add(0, name);
    }
 
+   public int getInitialCapacity()
+   {
+      String prop = getProperty("initial-capacity");
+
+      int capacity = 100;
+
+      if (prop == null)
+      {
+         setInitialCapacity(capacity);
+      }
+      else
+      {
+         try
+         {
+            capacity = Integer.parseInt(prop);
+         }
+         catch (NumberFormatException e)
+         {
+            messageHandler.debug("Invalid initial capacity setting '"+prop+"'");
+            setInitialCapacity(capacity);
+         }
+      }
+
+      return capacity;
+   }
+
+   public void setInitialCapacity(int capacity)
+   {
+      setProperty("initial-capacity", ""+capacity);
+   }
+
    public String getTeXEncoding()
    {
       return getProperty("tex-encoding");
@@ -798,16 +829,6 @@ public class DatatoolSettings extends Properties
          "error.not_currency", text));
    }
 
-   public void setLaTeX(String app)
-   {
-      setProperty("app.latex", app);
-   }
-
-   public String getLaTeX()
-   {
-      return getProperty("app.latex");
-   }
-
    public String getFontName()
    {
       return getProperty("fontname");
@@ -1249,7 +1270,6 @@ public class DatatoolSettings extends Properties
       setTeXMap('~', "\\textasciitilde ");
       setTeXMap('^', "\\textasciicircum ");
 
-      setLaTeX("latex");
       setFontName("Monospaced");
       setFontSize(12);
       setCellHeight(4);

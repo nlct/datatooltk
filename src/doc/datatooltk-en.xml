@@ -1406,35 +1406,32 @@ Password:
    optionally their solutions) using <cs tag="newproblem"/> or the
    <env tag="defproblem"/> environment. <app/> can load a<nbsp/>file
    containing these definitions and convert the <sty>probsoln</sty> data
-   into a<nbsp/><sty>datatool</sty> database containing three columns
+   into a<nbsp/><sty>datatool</sty> database containing three or four columns
    with keys: <tt><dict tag="probsoln.label"/></tt>, 
    <tt><dict tag="probsoln.question"/></tt> and
-   <tt><dict tag="probsoln.answer"/></tt>. You can import one of these
+   <tt><dict tag="probsoln.answer"/></tt>. If the imported data contains
+   multiple <sty>probsoln</sty> data sets, the fourth column has the
+   key <tt><dict tag="probsoln.set"/></tt> and contains the dataset label. 
+   You can import one of these
    files using the <opt tag="probsoln"/> command line option or (in
    <acr tag="gui"/> mode) using the <menu tag="file.import.importprobsoln"/>
-   menu item.
+   menu item. If you have a large number of problems, you can speed things
+   up by setting the initial capacity to that number. (If the initial
+   capacity is smaller than the total number of problems, the hash map
+   used to store the data will have to be enlarged whenever the current
+   capacity is exceeded.)
    </p>
    <p>
-   <TeX/> is a<nbsp/>difficult language to parse, so <app/> uses 
-   <LaTeX/> to help gather the data from the imported file.
-   The <app/> application creates a<nbsp/>temporary <LaTeX/> file and runs <LaTeX/>
-   on it in the background. It assumes that the <tt>latex</tt> application
-   is on your path. If this isn't the case, you will have to specify
-   the location of the <tt>latex</tt> executable in the 
-   <dict tag="preferences.title"/> dialog box (see <ref tag="preferences"/>).
-   The temporary files are deleted when you quit <app/> unless you have
-   used the <opt tag="nodelete-tmp-files"/> option.
+   <TeX/> is a<nbsp/>difficult language to parse, so <app/> uses the
+   <url www="https://github.com/nlct/texparser"
+   text="texparserlib library"/> to help gather the data from the imported 
+   file. Earlier versions of <app/> used <LaTeX/> but this is no longer 
+   required.
    </p>
    <p>
-   <b>Note:</b> <app/> doesn't support problems that require arguments. Any
-   instance of <hash/><meta>n</meta> will be replaced with
-   <hash/><hash/><meta>n</meta>, but you will have to replace those
-   with something else. Also, recall from <ref tag="verbatim"/> that you
-   can't have verbatim text in a<nbsp/><sty>datatool</sty> database, 
-   but you can use <cs tag="verbatiminput"/> (from the 
-   <sty>verbatim</sty> package) or <cs tag="lstinputlisting"/> (from the
-   <sty>listings</sty> package). Since <LaTeX/> is used to gather the
-   data, pretty-printing spaces and comments won't be imported.
+   <b>Note:</b> <app/> if problems require arguments the default values 
+   will be used. There's no guarantee that the problems will be in the same
+   order in the <app/> database as in the original <tt>.tex</tt> file.
    </p>
    <example>
    <p>
@@ -1446,9 +1443,9 @@ Password:
    This contains a<nbsp/>mixture of <cs tag="newproblem"/> and
    <env tag="defproblem"/>. It also has comments and spaces to make
    the code more readable. As can be seen in <ref tag="importps"/>
-   these have gone in the import.
+   these are now still in the import (whereas in older versions they were lost).
    </p>
-     <float type="figure" tag="importps" caption="Pretty Printing and Comments are Lost When Importing Data from probsoln" pos="hbt">
+     <float type="figure" tag="importps" caption="Pretty Printing and Comments are No Longer Lost When Importing Data from probsoln" pos="hbt">
       <image scale="0.75" alt="Image of the main window" src="images/importps.png" />
      </float>
    </example>
@@ -1588,6 +1585,13 @@ Password:
      and, optionally, a<nbsp/>seed for the random number generator 
      (equivalent to <opt tag="seed"/>).
      </p>
+     <p>
+     The initial capacity can be increased to speed up loading or importing.
+     Ideally it's best to keep it around the typical size of your databases.
+     If it's too big you can run out of memory. If it's too small, the storage
+     has to be enlarged every time the current capacity is exceeded. The
+     minimum allowed value is<nbsp/>10.
+     </p>
     </dd>
     <dt><button tag="preferences.csv"/></dt>
     <dd>
@@ -1665,11 +1669,11 @@ Password:
     select the mapping and click on <button tag="preferences.tex.edit_map"/>.
     </p>
     <p>
-    <LaTeX/> is used to help <app/> import data from 
-    a<nbsp/><sty>probsoln</sty> dataset. If the <tt>latex</tt> executable 
-    isn't on the system path, you will have to specify its full location
-    in the <button tag="preferences.tex.latexapp"/> field. You can use
-    the ellipsis button next to the field to browse your filing system.
+    <LaTeX/> is no longer used to help <app/> import data from 
+    a<nbsp/><sty>probsoln</sty> dataset. Instead the <url 
+     www="https://github.com/nlct/texparser"
+     text="texparserlib library"/> is used to parse <tt>.tex</tt> files. The file encoding for <TeX/>
+    files (including <tt>.dbtex</tt> files read and saved by <app/>) is set in this tab.
     </p>
     </dd>
     <dt><button tag="preferences.currencies"/></dt>

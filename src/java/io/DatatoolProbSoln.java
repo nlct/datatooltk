@@ -91,7 +91,9 @@ public class DatatoolProbSoln implements DatatoolImport
        PreambleParser preambleParser = new PreambleParser(texApp);
        TeXParser texParser = new TeXParser(preambleParser);
 
-       ProbSolnSty probSolnSty = new ProbSolnSty(null, preambleParser);
+       ProbSolnSty probSolnSty = new ProbSolnSty(null, preambleParser,
+         settings.getInitialCapacity());
+
        preambleParser.usepackage(probSolnSty);
 
        if (encoding == null)
@@ -163,8 +165,8 @@ public class DatatoolProbSoln implements DatatoolImport
                 hasVerbatim = true;
              }
 
-             String questionText = question.toString(texParser).trim();
-             String answerText = answer.toString(texParser).trim();
+             String questionText = question.toString(texParser);
+             String answerText = answer.toString(texParser);
 
              row.addCell(colIdx++, questionText);
 
@@ -199,26 +201,37 @@ public class DatatoolProbSoln implements DatatoolImport
 
       TeXObjectList list = (TeXObjectList)object;
 
-      if (list.isEmpty())
+      TeXObject element = list.peek();
+
+      while (element != null && 
+         (element instanceof Ignoreable
+          || element instanceof Eol))
       {
-         return false;
-      }
+         if (element instanceof Comment)
+         {
+            String commentText = ((Comment)element).getText().trim();
 
-      TeXObject element = list.firstElement();
-
-      if (element instanceof Comment)
-      {
-         String commentText = ((Comment)element).getText().trim();
-
-         if (commentText.isEmpty())
+            if (commentText.isEmpty())
+            {
+               list.pop();
+            }
+         }
+         else if (element instanceof Eol
+           || element instanceof SkippedEols)
          {
             list.pop();
          }
+         else
+         {
+            break;
+         }
+
+         element = list.peek();
       }
 
-      element = list.lastElement();
+      element = list.peekLast();
 
-      if (element instanceof Comment)
+      while (element != null && element instanceof Comment)
       {
          String commentText = ((Comment)element).getText().trim();
 
@@ -226,9 +239,17 @@ public class DatatoolProbSoln implements DatatoolImport
          {
             list.remove(list.size()-1);
          }
+
+         element = list.peekLast();
+      }
+
+      if (list.isEmpty())
+      {
+         return false;
       }
 
       boolean hasVerbatim = false;
+      TeXCsRef prev = null;
 
       for (int i = 0; i < list.size(); i++)
       {
@@ -240,14 +261,25 @@ public class DatatoolProbSoln implements DatatoolImport
 
             if (name.equals("par"))
             {
-               list.set(i, new TeXCsRef("DTLpar"));
+               if (i == 0 || prev != null)
+               {
+                  list.remove(i);
+                  i--;
+               }
+               else
+               {
+                  prev = new TeXCsRef("DTLpar");
+                  list.set(i, prev);
+               }
             }
             else if (name.equals("verb") || name.equals("lstinline"))
             {
+               prev = null;
                hasVerbatim = true;
             }
             else if (name.equals("begin"))
             {
+               prev = null;
                TeXObject nextObj = list.get(++i);
 
                while (nextObj instanceof Ignoreable)
@@ -272,6 +304,34 @@ public class DatatoolProbSoln implements DatatoolImport
                   hasVerbatim = true;
                }
             }
+         }
+         else if (element instanceof SkippedEols
+               || element instanceof Eol)
+         {
+            if (i > 0)
+            {
+               TeXObject obj = list.get(i-1);
+
+               if (obj instanceof Eol || obj instanceof SkippedEols)
+               {
+                  list.remove(i--);
+               }
+               else if (i > 1 && obj instanceof SkippedSpaces)
+               {
+                  obj = list.get(i-2);
+
+                  if (obj instanceof Eol  
+                     || obj instanceof SkippedEols)
+                  {
+                     list.remove(i--);
+                     list.remove(i--);
+                  }
+               }
+            }
+         }
+         else
+         {
+            prev = null;
          }
       }
 
