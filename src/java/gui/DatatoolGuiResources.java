@@ -26,24 +26,30 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Application GUI resources.
  */
 public class DatatoolGuiResources
 {
-    public static synchronized void error(Component parent, String message)
+    public DatatoolGuiResources(MessageHandler messageHandler)
     {
-       DatatoolTk.debug("Error: '"+message+"'");
+       this.messageHandler = messageHandler;
+       messageHandler.setDatatoolGuiResources(this);
+       errorPanel = new ErrorPanel(messageHandler);
+    }
 
+    public void error(Component parent, String message)
+    {
        errorPanel.updateMessage(message);
 
        JOptionPane.showMessageDialog(parent, errorPanel,
-          DatatoolTk.getLabelWithAlt("error.title", "Error"),
+          messageHandler.getLabelWithAlt("error.title", "Error"),
           JOptionPane.ERROR_MESSAGE);
     }
 
-    public static synchronized void error(Component parent, Exception e)
+    public void error(Component parent, Exception e)
     {
        String message = e.getMessage();
 
@@ -56,60 +62,56 @@ public class DatatoolGuiResources
 
        if (cause != null)
        {
-          message += "\n"+cause.getMessage();
+          message = String.format("%s%n%s", message, cause.getMessage());
        }
 
        error(parent, message, e);
     }
 
-    public static void error(Component parent, String message, Exception e)
+    public void error(Component parent, String message, Exception e)
     {
-       DatatoolTk.debug(e);
-
        errorPanel.updateMessage(message, e);
 
        JOptionPane.showMessageDialog(parent, errorPanel,
-          DatatoolTk.getLabelWithAlt("error.title", "Error"),
+          messageHandler.getLabelWithAlt("error.title", "Error"),
          JOptionPane.ERROR_MESSAGE);
     }
 
-    public static void warning(Component parent, String message)
+    public void warning(Component parent, String message)
     {
-       DatatoolTk.debug("Warning: '"+message+"'");
-
        errorPanel.updateMessage(message);
 
        JOptionPane.showMessageDialog(parent,
           errorPanel,
-          DatatoolTk.getLabelWithAlt("error.warning", "Warning"),
+          messageHandler.getLabelWithAlt("error.warning", "Warning"),
           JOptionPane.WARNING_MESSAGE);
     }
 
-    public static JButton createOkayButton(ActionListener listener)
+    public JButton createOkayButton(ActionListener listener)
     {
        return createActionButton("button", "okay", 
           listener, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
     }
 
-    public static JButton createCancelButton(ActionListener listener)
+    public JButton createCancelButton(ActionListener listener)
     {
        return createActionButton("button", "cancel", listener,
           KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
     }
 
-    public static JButton createActionButton(String parent, String label, 
+    public JButton createActionButton(String parent, String label, 
       ActionListener listener, KeyStroke keyStroke)
     {
        return createActionButton(parent, label, listener, keyStroke,
-         DatatoolTk.getToolTip(parent, label));
+         messageHandler.getToolTip(parent, label));
     }
 
-    public static JButton createActionButton(String parent, String label, 
+    public JButton createActionButton(String parent, String label, 
       ActionListener listener, KeyStroke keyStroke,
       String tooltipText)
     {
-       String buttonLabel = DatatoolTk.getLabel(parent, label);
-       int mnemonic = DatatoolTk.getMnemonicInt(parent, label);
+       String buttonLabel = messageHandler.getLabel(parent, label);
+       int mnemonic = messageHandler.getMnemonicInt(parent, label);
        String actionCommand = label;
 
        // Is there an associated image?
@@ -202,28 +204,28 @@ public class DatatoolGuiResources
        return button;
     }
 
-    public static JLabel createJLabel(String label)
+    public JLabel createJLabel(String label)
     {
        return createJLabel(label, null);
     }
 
-    public static JLabel createJLabel(String label, int alignment)
+    public JLabel createJLabel(String label, int alignment)
     {
        return createJLabel(label, null, alignment);
     }
 
-    public static JLabel createJLabel(String label, JComponent comp)
+    public JLabel createJLabel(String label, JComponent comp)
     {
-       JLabel jLabel = new JLabel(DatatoolTk.getLabel(label));
+       JLabel jLabel = new JLabel(messageHandler.getLabel(label));
 
-       int mnemonic = DatatoolTk.getMnemonicInt(label);
+       int mnemonic = messageHandler.getMnemonicInt(label);
 
        if (mnemonic != -1)
        {
           jLabel.setDisplayedMnemonic(mnemonic);
        }
 
-       String tooltip = DatatoolTk.getToolTip(label);
+       String tooltip = messageHandler.getToolTip(label);
 
        if (tooltip != null)
        {
@@ -238,22 +240,22 @@ public class DatatoolGuiResources
        return jLabel;
    }
 
-    public static JLabel createJLabel(String label, JComponent comp, int alignment)
+    public JLabel createJLabel(String label, JComponent comp, int alignment)
     {
        JLabel jlabel = createJLabel(label, comp);
        jlabel.setAlignmentX(alignment);
        return jlabel;
     }
 
-   public static JRadioButton createJRadioButton(String parentLabel,
+   public JRadioButton createJRadioButton(String parentLabel,
       String label, ButtonGroup bg, ActionListener listener)
    {
       JRadioButton button = new JRadioButton(
-        DatatoolTk.getLabel(parentLabel, label));
+        messageHandler.getLabel(parentLabel, label));
 
-      button.setMnemonic(DatatoolTk.getMnemonic(parentLabel, label));
+      button.setMnemonic(messageHandler.getMnemonic(parentLabel, label));
 
-      String tooltip = DatatoolTk.getToolTip(parentLabel, label);
+      String tooltip = messageHandler.getToolTip(parentLabel, label);
 
       if (tooltip != null)
       {
@@ -272,7 +274,7 @@ public class DatatoolGuiResources
       return button;
    }
 
-   public static JRadioButton createJRadioButton(String parentLabel,
+   public JRadioButton createJRadioButton(String parentLabel,
       String label, ButtonGroup bg, ActionListener listener,
       int alignment)
    {
@@ -282,12 +284,12 @@ public class DatatoolGuiResources
       return button;
    }
 
-    public static JCheckBox createJCheckBox(String parentLabel, String label,
+    public JCheckBox createJCheckBox(String parentLabel, String label,
        ActionListener listener)
     {
        JCheckBox checkBox = new JCheckBox(
-          DatatoolTk.getLabel(parentLabel, label));
-       checkBox.setMnemonic(DatatoolTk.getMnemonic(parentLabel, label));
+          messageHandler.getLabel(parentLabel, label));
+       checkBox.setMnemonic(messageHandler.getMnemonic(parentLabel, label));
        checkBox.setActionCommand(label);
 
        if (listener != null)
@@ -298,7 +300,7 @@ public class DatatoolGuiResources
        return checkBox;
     }
 
-    public static JCheckBox createJCheckBox(String parentLabel, String label,
+    public JCheckBox createJCheckBox(String parentLabel, String label,
        ActionListener listener, int alignment)
     {
        JCheckBox comp = createJCheckBox(parentLabel, label, 
@@ -307,26 +309,26 @@ public class DatatoolGuiResources
        return comp;
     }
 
-   public static JTextArea createMessageArea()
+   public JTextArea createMessageArea()
    {
       return createMessageArea(8, 30);
    }
 
-   public static JTextArea createMessageArea(String label)
+   public JTextArea createMessageArea(String label)
    {
       return createMessageArea(8, 30, label);
    }
 
-   public static JTextArea createMessageArea(int rows, int cols, String label)
+   public JTextArea createMessageArea(int rows, int cols, String label)
    {
       JTextArea area = createMessageArea(rows, cols);
 
-      area.setText(DatatoolTk.getLabel(label));
+      area.setText(messageHandler.getLabel(label));
 
       return area;
    }
 
-   public static JTextArea createMessageArea(int rows, int cols)
+   public JTextArea createMessageArea(int rows, int cols)
    {
       JTextArea area = new JTextArea(rows, cols);
       area.setWrapStyleWord(true);
@@ -338,13 +340,13 @@ public class DatatoolGuiResources
       return area;
    }
 
-    public static JComponent createOkayCancelHelpPanel(
+    public JComponent createOkayCancelHelpPanel(
        ActionListener listener, DatatoolGUI gui, String helpId)
     {
       return createOkayCancelHelpPanel(null, listener, gui, helpId);
     }
 
-    public static JComponent createOkayCancelHelpPanel(
+    public JComponent createOkayCancelHelpPanel(
        JRootPane rootPane, ActionListener listener, DatatoolGUI gui, String helpId)
     {
        JPanel buttonPanel = new JPanel();
@@ -363,13 +365,13 @@ public class DatatoolGuiResources
        return buttonPanel;
     }
 
-    public static JComponent createOkayCancelPanel(
+    public JComponent createOkayCancelPanel(
        ActionListener listener)
     {
        return createOkayCancelPanel(null, listener);
     }
 
-    public static JComponent createOkayCancelPanel(
+    public JComponent createOkayCancelPanel(
        JRootPane rootPane,
        ActionListener listener)
     {
@@ -388,17 +390,17 @@ public class DatatoolGuiResources
        return buttonPanel;
     }
 
-    public static JMenu createJMenu(String label)
+    public JMenu createJMenu(String label)
     {
        return createJMenu(null, label);
     }
 
-    public static JMenu createJMenu(String parent, String label)
+    public JMenu createJMenu(String parent, String label)
     {
-       JMenu menu = new JMenu(DatatoolTk.getLabel(parent, label));
-       menu.setMnemonic(DatatoolTk.getMnemonic(parent, label));
+       JMenu menu = new JMenu(messageHandler.getLabel(parent, label));
+       menu.setMnemonic(messageHandler.getMnemonic(parent, label));
 
-       String tooltip = DatatoolTk.getToolTip(parent, label);
+       String tooltip = messageHandler.getToolTip(parent, label);
 
        if (tooltip != null)
        {
@@ -408,38 +410,38 @@ public class DatatoolGuiResources
        return menu;
     }
 
-    public static JMenuItem createJMenuItem(String parent, String label)
+    public JMenuItem createJMenuItem(String parent, String label)
     {
        return createJMenuItem(parent, label, null, null, null);
     }
 
-    public static JMenuItem createJMenuItem(String parent, String label,
+    public JMenuItem createJMenuItem(String parent, String label,
        ActionListener listener)
     {
        return createJMenuItem(parent, label, listener, null, null);
     }
 
-    public static JMenuItem createJMenuItem(String parent, String label,
+    public JMenuItem createJMenuItem(String parent, String label,
        ActionListener listener, ScrollToolBar toolBar)
     {
        return createJMenuItem(parent, label, listener, null, toolBar);
     }
 
-    public static JMenuItem createJMenuItem(String parent, String label,
+    public JMenuItem createJMenuItem(String parent, String label,
      ActionListener listener, KeyStroke keyStroke)
     {
        return createJMenuItem(parent, label, listener, keyStroke, null);
     }
 
-    public static JMenuItem createJMenuItem(String parent, String label,
+    public JMenuItem createJMenuItem(String parent, String label,
      ActionListener listener, KeyStroke keyStroke, ScrollToolBar toolBar)
     {
-       return new ItemButton(parent, label, listener, keyStroke, toolBar);
+       return new ItemButton(messageHandler, parent, label, listener, keyStroke, toolBar);
     }
 
     // Get the image URL associated with action
 
-    public static URL getImageUrl(String action)
+    public URL getImageUrl(String action)
     {
        if (imageMap == null)
        {
@@ -483,7 +485,7 @@ public class DatatoolGuiResources
           }
           catch (IOException e)
           {
-             DatatoolTk.debug(e);
+             messageHandler.debug(e);
              return null;
           }
        }
@@ -496,13 +498,20 @@ public class DatatoolGuiResources
 
        if (imageURL == null)
        {
-          DatatoolTk.debug("Can't find resource '"+location+"'");
+          messageHandler.debug("Can't find resource '"+location+"'");
        }
 
        return imageURL;
     }
 
-    private static ErrorPanel errorPanel = new ErrorPanel();
+    public MessageHandler getMessageHandler()
+    {
+       return messageHandler;
+    }
 
-    private static Properties imageMap = null;
+    private ErrorPanel errorPanel;
+
+    private Properties imageMap = null;
+
+    private MessageHandler messageHandler;
 }

@@ -36,13 +36,21 @@ public class UpdateHeaderEdit extends AbstractUndoableEdit
       this.newHeader = header;
       this.oldHeader = panel.db.getHeader(col);
 
+      MessageHandler messageHandler = panel.getMessageHandler();
+
+      if (NAME == null)
+      {
+         NAME = messageHandler.getLabel("undo.header_edit");
+      }
+
       panel.db.setHeader(col, newHeader);
       panel.setModified(true);
       panel.updateColumnHeader(col);
 
       if (DatatoolDb.checkForVerbatim(newHeader.getTitle()))
       {
-         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+         messageHandler.warning(
+            messageHandler.getLabel("warning.verb_detected"));
       }
    }
 
@@ -65,11 +73,11 @@ public class UpdateHeaderEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
    }
 
    private DatatoolDbPanel panel;
    private int col;
    private DatatoolHeader oldHeader, newHeader;
-   private static final String name = DatatoolTk.getLabel("undo.header_edit");
+   private static String NAME = null;
 }

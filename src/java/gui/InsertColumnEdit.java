@@ -34,14 +34,20 @@ public class InsertColumnEdit extends AbstractUndoableEdit
       super();
 
       this.panel = panel;
+      MessageHandler messageHandler = panel.getMessageHandler();
+
+      if (NAME == null)
+      {
+         NAME = messageHandler.getLabel("undo.add_column");
+      }
 
       selectedIdx = panel.getViewSelectedColumn();
 
       if (panel.getColumnCount() == 0)
       {
-         undoInfo = DatatoolTk.getLabelWithValue("info.empty_db",
-           DatatoolTk.getLabel("edit")+"->"
-            + DatatoolTk.getLabel("edit.column"));
+         undoInfo = messageHandler.getLabelWithValue("info.empty_db",
+           messageHandler.getLabel("edit")+"->"
+            + messageHandler.getLabel("edit.column"));
       }
       else
       {
@@ -58,9 +64,9 @@ public class InsertColumnEdit extends AbstractUndoableEdit
 
       if (panel.getRowCount() == 0)
       {
-         redoInfo = DatatoolTk.getLabelWithValue("info.no_rows",
-           DatatoolTk.getLabel("edit")+"->"
-            + DatatoolTk.getLabel("edit.row"));
+         redoInfo = messageHandler.getLabelWithValue("info.no_rows",
+           messageHandler.getLabel("edit")+"->"
+            + messageHandler.getLabel("edit.row"));
       }
       else
       {
@@ -95,7 +101,12 @@ public class InsertColumnEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
+   }
+
+   public MessageHandler getMessageHandler()
+   {
+      return panel.getMessageHandler();
    }
 
    private DatatoolDbPanel panel;
@@ -107,5 +118,5 @@ public class InsertColumnEdit extends AbstractUndoableEdit
 
    private String undoInfo, redoInfo;
 
-   private static final String name = DatatoolTk.getLabel("undo.add_column");
+   private static String NAME = null;
 }

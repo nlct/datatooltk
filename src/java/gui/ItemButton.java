@@ -24,7 +24,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Provides a JMenuItem that optionally has an associated button in
@@ -34,18 +34,20 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 
 public class ItemButton extends JMenuItem
 {
-   public ItemButton(String parentLabel, String actionLabel,
-     ActionListener listener, KeyStroke keyStroke, ScrollToolBar toolBar)
+   public ItemButton(MessageHandler messageHandler, String parentLabel,
+     String actionLabel, ActionListener listener, KeyStroke keyStroke,
+     ScrollToolBar toolBar)
    {
-      super(DatatoolTk.getLabelRemoveArgs(parentLabel, actionLabel));
-      setMnemonic(DatatoolTk.getMnemonic(parentLabel, actionLabel));
+      super(messageHandler.getLabelRemoveArgs(parentLabel, actionLabel));
+      setMnemonic(messageHandler.getMnemonic(parentLabel, actionLabel));
       setActionCommand(actionLabel);
 
       button = null;
 
       if (toolBar != null)
       {
-         URL imageURL = DatatoolGuiResources.getImageUrl(actionLabel);
+         URL imageURL 
+            = messageHandler.getDatatoolGuiResources().getImageUrl(actionLabel);
 
          if (imageURL != null)
          {
@@ -69,7 +71,7 @@ public class ItemButton extends JMenuItem
          } 
       }
 
-      String tooltip = DatatoolTk.getToolTip(parentLabel, actionLabel);
+      String tooltip = messageHandler.getToolTip(parentLabel, actionLabel);
 
       if (tooltip != null)
       {

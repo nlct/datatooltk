@@ -22,16 +22,17 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Class representing a CSV file filter
  */
 public class CsvFileFilter extends FileFilter
 {
-   public CsvFileFilter()
+   public CsvFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = DatatoolTk.getLabelWithValue("filter.csv", "*.csv");
+      description = messageHandler.getLabelWithValue("filter.csv", "*.csv");
    }
 
    public boolean accept(File file)

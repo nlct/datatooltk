@@ -36,6 +36,11 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
       this.settings = settings;
    }
 
+   public MessageHandler getMessageHandler()
+   {
+      return settings.getMessageHandler();
+   }
+
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {
@@ -48,7 +53,7 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
       if (!file.exists())
       {
          throw new IOException(
-            DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
+            getMessageHandler().getLabelWithValue("error.io.file_not_found", ""+file));
       }
 
       SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
@@ -75,7 +80,7 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
          if (!file.exists())
          {
             throw new IOException(
-               DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
+               getMessageHandler().getLabelWithValue("error.io.file_not_found", ""+file));
          }
 
          SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
@@ -147,7 +152,7 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
          {
             for (int colIdx = 0; colIdx < colCount; colIdx++)
             {
-               fields[colIdx] = DatatoolTk.getLabelWithValue("default.field", 
+               fields[colIdx] = getMessageHandler().getLabelWithValue("default.field", 
                   ""+(colIdx+1));
             }
          }
@@ -174,7 +179,7 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
       catch (Exception e)
       {
          throw new DatatoolImportException(
-          DatatoolTk.getLabelWithValue("error.import.failed", 
+          getMessageHandler().getLabelWithValue("error.import.failed", 
            file.toString()), e);
       }
 

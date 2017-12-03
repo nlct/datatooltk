@@ -32,6 +32,11 @@ public class DatatoolSql implements DatatoolImport
       this.settings = settings;
    }
 
+   public MessageHandler getMessageHandler()
+   {
+      return settings.getMessageHandler();
+   }
+
    public DatatoolDb importData(String selectQuery)
      throws DatatoolImportException
    {
@@ -46,7 +51,7 @@ public class DatatoolSql implements DatatoolImport
       catch (SQLException e)
       {
          throw new DatatoolImportException(
-            DatatoolTk.getLabel("error.sql.connection_failed"), e);
+            getMessageHandler().getLabel("error.sql.connection_failed"), e);
       }
 
       hasVerbatim = false;
@@ -84,7 +89,7 @@ public class DatatoolSql implements DatatoolImport
                case Types.DOUBLE:
                case Types.FLOAT:
                case Types.REAL:
-                  header.setType(DatatoolDb.TYPE_REAL);
+                  header.setType(settings.TYPE_REAL);
                break;
                case Types.INTEGER:
                case Types.BINARY:
@@ -93,15 +98,15 @@ public class DatatoolSql implements DatatoolImport
                case Types.BIGINT:
                case Types.SMALLINT:
                case Types.TINYINT:
-                  header.setType(DatatoolDb.TYPE_INTEGER);
+                  header.setType(settings.TYPE_INTEGER);
                break;
                default:
-                  header.setType(DatatoolDb.TYPE_STRING);
+                  header.setType(settings.TYPE_STRING);
             }
 
             if (data.isCurrency(i))
             {
-               header.setType(DatatoolDb.TYPE_CURRENCY);
+               header.setType(settings.TYPE_CURRENCY);
             }
 
             db.addColumn(header);
@@ -143,7 +148,7 @@ public class DatatoolSql implements DatatoolImport
       catch (SQLException e)
       {
          throw new DatatoolImportException(
-           DatatoolTk.getLabel("error.sql.query_failed"), e);
+           getMessageHandler().getLabel("error.sql.query_failed"), e);
       }
       catch (Exception e)
       {
@@ -153,7 +158,8 @@ public class DatatoolSql implements DatatoolImport
 
       if (hasVerbatim)
       {
-         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+         getMessageHandler().warning(
+           getMessageHandler().getLabel("warning.verb_detected"));
       }
 
       return db;

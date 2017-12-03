@@ -35,6 +35,11 @@ public class MoveColumnEdit extends AbstractUndoableEdit
       this.fromIndex = fromIndex;
       this.toIndex = toIndex;
 
+      if (NAME == null)
+      {
+         NAME = panel.getMessageHandler().getLabel("undo.move_column");
+      }
+
       panel.moveViewColumn(fromIndex, toIndex);
    }
 
@@ -53,11 +58,11 @@ public class MoveColumnEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
    }
 
    private DatatoolDbPanel panel;
    private int fromIndex, toIndex;
 
-   private static final String name = DatatoolTk.getLabel("undo.move_column");
+   private static String NAME = null;
 }

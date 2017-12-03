@@ -24,7 +24,7 @@ import java.awt.Dimension;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Dialog box for replacing all instances of one string with
@@ -35,8 +35,11 @@ public class ReplaceAllDialog extends JDialog
 {
    public ReplaceAllDialog(DatatoolGUI gui)
    {
-      super(gui, DatatoolTk.getLabel("replace.title"), true);
+      super(gui, gui.getMessageHandler().getLabel("replace.title"), true);
       this.gui = gui;
+
+      MessageHandler messageHandler = gui.getMessageHandler();
+      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
 
       JComponent mainPanel = Box.createVerticalBox();
       getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -45,7 +48,7 @@ public class ReplaceAllDialog extends JDialog
       mainPanel.add(panel);
 
       searchField = new JTextField();
-      JLabel searchLabel = DatatoolGuiResources.createJLabel(
+      JLabel searchLabel = resources.createJLabel(
          "find.search_for", searchField);
 
       panel.add(searchLabel);
@@ -73,7 +76,7 @@ public class ReplaceAllDialog extends JDialog
       mainPanel.add(panel);
 
       replaceField = new JTextField();
-      JLabel replaceLabel = DatatoolGuiResources.createJLabel(
+      JLabel replaceLabel = resources.createJLabel(
          "replace.replace_text", replaceField);
 
       panel.add(replaceLabel);
@@ -89,11 +92,11 @@ public class ReplaceAllDialog extends JDialog
       panel = Box.createHorizontalBox();
       mainPanel.add(panel);
 
-      caseBox = DatatoolGuiResources.createJCheckBox("find",
+      caseBox = resources.createJCheckBox("find",
         "case", null);
       panel.add(caseBox);
 
-      regexBox = DatatoolGuiResources.createJCheckBox("find",
+      regexBox = resources.createJCheckBox("find",
         "regex", null);
       panel.add(regexBox);
 
@@ -103,24 +106,24 @@ public class ReplaceAllDialog extends JDialog
       panel.setBorder(
         BorderFactory.createTitledBorder(
            BorderFactory.createEtchedBorder(),
-           DatatoolTk.getLabel("replace.all_in")));
+           messageHandler.getLabel("replace.all_in")));
 
       ButtonGroup bg = new ButtonGroup();
 
       replaceInRowButton =
-        DatatoolGuiResources.createJRadioButton("replace", "in_row",
+        resources.createJRadioButton("replace", "in_row",
          bg, null);
 
       panel.add(replaceInRowButton);
 
       replaceInColButton =
-        DatatoolGuiResources.createJRadioButton("replace", "in_column",
+        resources.createJRadioButton("replace", "in_column",
          bg, null);
 
       panel.add(replaceInColButton);
 
       replaceInDbButton =
-        DatatoolGuiResources.createJRadioButton("replace", "in_db",
+        resources.createJRadioButton("replace", "in_db",
          bg, null);
 
       replaceInDbButton.setSelected(true);
@@ -130,13 +133,13 @@ public class ReplaceAllDialog extends JDialog
       panel = new JPanel();
       getContentPane().add(panel, BorderLayout.SOUTH);
 
-      replaceAllButton = DatatoolGuiResources.createActionButton("replace",
+      replaceAllButton = resources.createActionButton("replace",
          "replace_all", this, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
       panel.add(replaceAllButton);
 
       getRootPane().setDefaultButton(replaceAllButton);
 
-      panel.add(DatatoolGuiResources.createActionButton("find",
+      panel.add(resources.createActionButton("find",
         "close", this, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)));
 
       pack();

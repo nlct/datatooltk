@@ -34,11 +34,12 @@ public class ImportSqlDialog extends JDialog
 {
    public ImportSqlDialog(DatatoolGUI gui)
    {
-      super(gui, DatatoolTk.getLabel("importsql.title"), true);
+      super(gui, gui.getMessageHandler().getLabel("importsql.title"), true);
 
       this.gui = gui;
-      this.settings = new DatatoolSettings();
-      this.settings.setPasswordReader(new GuiPasswordReader(this));
+      this.settings = new DatatoolSettings(gui.getDatatoolTk());
+      this.settings.setPasswordReader(new GuiPasswordReader(
+         gui.getMessageHandler(), this));
 
       JComponent mainPanel = Box.createVerticalBox();
       getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -116,7 +117,7 @@ public class ImportSqlDialog extends JDialog
 
 
       getContentPane().add(
-         DatatoolGuiResources.createOkayCancelPanel(this),
+         gui.getResources().createOkayCancelPanel(this),
          BorderLayout.SOUTH);
 
       pack();
@@ -135,7 +136,7 @@ public class ImportSqlDialog extends JDialog
 
    private JLabel createLabel(String label, JComponent comp)
    {
-      return DatatoolGuiResources.createJLabel(label, comp);
+      return gui.getResources().createJLabel(label, comp);
    }
 
    public void requestImport(DatatoolSettings settings)
@@ -175,8 +176,8 @@ public class ImportSqlDialog extends JDialog
    {
       if (portField.getText().isEmpty())
       {
-         DatatoolGuiResources.error(this,
-            DatatoolTk.getLabel("error.missing_port"));
+         getMessageHandler().error(this,
+            getMessageHandler().getLabel("error.missing_port"));
          return;
       }
 
@@ -189,36 +190,36 @@ public class ImportSqlDialog extends JDialog
 
       if (prefix.isEmpty())
       {
-         DatatoolGuiResources.error(this,
-            DatatoolTk.getLabel("error.missing_prefix"));
+         getMessageHandler().error(this,
+            getMessageHandler().getLabel("error.missing_prefix"));
          return;
       }
 
       if (host.isEmpty())
       {
-         DatatoolGuiResources.error(this,
-            DatatoolTk.getLabel("error.missing_host"));
+         getMessageHandler().error(this,
+            getMessageHandler().getLabel("error.missing_host"));
          return;
       }
 
       if (database.isEmpty())
       {
-         DatatoolGuiResources.error(this,
-            DatatoolTk.getLabel("error.missing_dbname"));
+         getMessageHandler().error(this,
+            getMessageHandler().getLabel("error.missing_dbname"));
          return;
       }
 
       if (user.isEmpty())
       {
-         DatatoolGuiResources.error(this,
-            DatatoolTk.getLabel("error.missing_user"));
+         getMessageHandler().error(this,
+            getMessageHandler().getLabel("error.missing_user"));
          return;
       }
 
       if (select.isEmpty())
       {
-         DatatoolGuiResources.error(this,
-            DatatoolTk.getLabel("error.missing_select"));
+         getMessageHandler().error(this,
+            getMessageHandler().getLabel("error.missing_select"));
          return;
       }
 
@@ -231,6 +232,11 @@ public class ImportSqlDialog extends JDialog
       gui.importData(new DatatoolSql(settings), "SELECT "+select);
 
       setVisible(false);
+   }
+
+   public MessageHandler getMessageHandler()
+   {
+      return gui.getMessageHandler();
    }
 
    private JTextField hostField, prefixField, databaseField, userField,

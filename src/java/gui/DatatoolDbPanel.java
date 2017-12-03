@@ -49,9 +49,11 @@ public class DatatoolDbPanel extends JPanel
 
       this.db = db;
       this.gui = gui;
+      DatatoolSettings settings = gui.getSettings();
+      messageHandler = settings.getMessageHandler();
+
       setName(db.getName());
       buttonTabComponent = new ButtonTabComponent(this);
-
       initTable();
 
       infoField = new JTextField();
@@ -59,14 +61,32 @@ public class DatatoolDbPanel extends JPanel
 
       add(infoField, BorderLayout.SOUTH);
 
-      String editLabel = DatatoolTk.getLabel("edit");
+      String editLabel = messageHandler.getLabel("edit");
 
       setInfo(db.getColumnCount() == 0 ?
-         DatatoolTk.getLabelWithValue("info.empty_db",
-          editLabel+"->"+DatatoolTk.getLabel("edit.column")) :
-         DatatoolTk.getLabelWithValues("info.not_empty_db",
-          editLabel+"->"+DatatoolTk.getLabel("edit.column"),
-          editLabel+"->"+DatatoolTk.getLabel("edit.row")));
+         messageHandler.getLabelWithValue("info.empty_db",
+          String.format("%s->%s", editLabel, 
+           messageHandler.getLabel("edit.column"))) :
+         messageHandler.getLabelWithValues("info.not_empty_db",
+          String.format("%s->%s", 
+            editLabel, messageHandler.getLabel("edit.column")),
+          String.format("%s->%s", 
+            editLabel, messageHandler.getLabel("edit.row"))));
+   }
+
+   public MessageHandler getMessageHandler()
+   {
+      return messageHandler;
+   }
+
+   public DatatoolSettings getSettings()
+   {
+      return messageHandler.getSettings();
+   }
+
+   public DatatoolGuiResources getDatatoolGuiResources()
+   {
+      return messageHandler.getDatatoolGuiResources();
    }
 
    private void initTable()
@@ -116,13 +136,13 @@ public class DatatoolDbPanel extends JPanel
 
              int type = db.getHeader(modelCol).getType();
 
-             setInfo(type == DatatoolDb.TYPE_STRING ?
-               DatatoolTk.getLabel("info.view_or_edit") :
-               DatatoolTk.getLabel("info.edit"));
+             setInfo(type == DatatoolSettings.TYPE_STRING ?
+               messageHandler.getLabel("info.view_or_edit") :
+               messageHandler.getLabel("info.edit"));
 
              if (evt.getClickCount() == 2)
              {
-                if (type == DatatoolDb.TYPE_STRING)
+                if (type == DatatoolSettings.TYPE_STRING)
                 {
                    requestCellEditor(modelRow, modelCol);
                 }
@@ -278,7 +298,7 @@ public class DatatoolDbPanel extends JPanel
       }
       catch (CannotUndoException e)
       {
-         DatatoolTk.debug(e);
+         messageHandler.getDatatoolTk().debug(e);
       }
    }
 
@@ -296,7 +316,7 @@ public class DatatoolDbPanel extends JPanel
       }
       catch (CannotRedoException e)
       {
-         DatatoolTk.debug(e);
+         messageHandler.getDatatoolTk().debug(e);
       }
    }
 
@@ -310,9 +330,9 @@ public class DatatoolDbPanel extends JPanel
       if (file.exists())
       {
          if (JOptionPane.showConfirmDialog(this,
-             DatatoolTk.getLabelWithValue("message.overwrite_query",
+             messageHandler.getLabelWithValue("message.overwrite_query",
                file.toString()),
-             DatatoolTk.getLabel("message.confirm_overwrite"),
+             messageHandler.getLabel("message.confirm_overwrite"),
              JOptionPane.YES_NO_OPTION,
              JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
          {
@@ -354,7 +374,7 @@ public class DatatoolDbPanel extends JPanel
       }
       catch (IOException e)
       {
-         DatatoolGuiResources.error(this, e);
+         getMessageHandler().error(this, e);
       }
    }
 
@@ -484,15 +504,15 @@ public class DatatoolDbPanel extends JPanel
          addUndoEdit(ce);
          JOptionPane.showMessageDialog(this,
             count == 1 ?
-            DatatoolTk.getLabel("message.one_cell_updated") :
-            DatatoolTk.getLabelWithValue("message.cells_updated", count)
+            messageHandler.getLabel("message.one_cell_updated") :
+            messageHandler.getLabelWithValue("message.cells_updated", count)
          );
          dataUpdated();
       }
       else
       {
          JOptionPane.showMessageDialog(this,
-            DatatoolTk.getLabel("find.not_found"));
+            messageHandler.getLabel("find.not_found"));
       }
    }
 
@@ -520,15 +540,15 @@ public class DatatoolDbPanel extends JPanel
          addUndoEdit(ce);
          JOptionPane.showMessageDialog(this,
             count == 1 ?
-            DatatoolTk.getLabel("message.one_cell_updated") :
-            DatatoolTk.getLabelWithValue("message.cells_updated", count)
+            messageHandler.getLabel("message.one_cell_updated") :
+            messageHandler.getLabelWithValue("message.cells_updated", count)
          );
          dataUpdated();
       }
       else
       {
          JOptionPane.showMessageDialog(this,
-            DatatoolTk.getLabel("find.not_found"));
+            messageHandler.getLabel("find.not_found"));
       }
    }
 
@@ -560,15 +580,15 @@ public class DatatoolDbPanel extends JPanel
          addUndoEdit(ce);
          JOptionPane.showMessageDialog(this,
             count == 1 ?
-            DatatoolTk.getLabel("message.one_cell_updated") :
-            DatatoolTk.getLabelWithValue("message.cells_updated", count)
+            messageHandler.getLabel("message.one_cell_updated") :
+            messageHandler.getLabelWithValue("message.cells_updated", count)
          );
          dataUpdated();
       }
       else
       {
          JOptionPane.showMessageDialog(this,
-            DatatoolTk.getLabel("find.not_found"));
+            messageHandler.getLabel("find.not_found"));
       }
    }
 
@@ -629,7 +649,7 @@ public class DatatoolDbPanel extends JPanel
       if (colIdx1 == -1)
       {
          throw new InvalidSyntaxException(
-           DatatoolTk.getLabelWithValues("error.db.unknown_key",
+           messageHandler.getLabelWithValues("error.db.unknown_key",
              key, db.getName()));
       }
 
@@ -638,7 +658,7 @@ public class DatatoolDbPanel extends JPanel
       if (colIdx2 == -1)
       {
          throw new InvalidSyntaxException(
-           DatatoolTk.getLabelWithValues("error.db.unknown_key",
+           messageHandler.getLabelWithValues("error.db.unknown_key",
              key, otherDb.getName()));
       }
 
@@ -647,7 +667,7 @@ public class DatatoolDbPanel extends JPanel
 
    public void merge(DatatoolDb otherDb, int thisColIdx, int otherColIdx)
    {
-      startCompoundEdit(DatatoolTk.getLabel("undo.merge"));
+      startCompoundEdit(messageHandler.getLabel("undo.merge"));
 
       for (DatatoolHeader header: otherDb.getHeaders())
       {
@@ -709,7 +729,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (colIdx > 0)
       {
-         startCompoundEdit(DatatoolTk.getLabel("undo.add_column"));
+         startCompoundEdit(messageHandler.getLabel("undo.add_column"));
 
          addUndoEdit(new InsertColumnEdit(this, header));
 
@@ -734,7 +754,7 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
-      startCompoundEdit(DatatoolTk.getLabel("undo.add_column"));
+      startCompoundEdit(messageHandler.getLabel("undo.add_column"));
 
       addUndoEdit(new InsertColumnEdit(this, header));
 
@@ -1210,7 +1230,7 @@ public class DatatoolDbPanel extends JPanel
       String currentName = db.getName();
 
       String newName = JOptionPane.showInputDialog(gui,
-         DatatoolTk.getLabel("message.input_database_name"), currentName);
+         messageHandler.getLabel("message.input_database_name"), currentName);
 
       if (newName == null || currentName.equals(newName))
       {
@@ -1235,8 +1255,8 @@ public class DatatoolDbPanel extends JPanel
 
       if (invalid)
       {
-         DatatoolGuiResources.error(gui,
-            DatatoolTk.getLabelWithValue("error.invalid_name", newName));
+         messageHandler.error(gui,
+            messageHandler.getLabelWithValue("error.invalid_name", newName));
          return;
       }
 
@@ -1285,6 +1305,8 @@ public class DatatoolDbPanel extends JPanel
 
    private boolean isModified = false;
 
+   private MessageHandler messageHandler;
+
    protected DatatoolGUI gui;
 
    protected JTable table;
@@ -1302,9 +1324,6 @@ public class DatatoolDbPanel extends JPanel
 
 class DatatoolDbTableModel extends AbstractTableModel
 {
-   private DatatoolDb db;
-   private DatatoolDbPanel panel;
-
    public DatatoolDbTableModel(DatatoolDb db, DatatoolDbPanel panel)
    {
       super();
@@ -1369,22 +1388,15 @@ class DatatoolDbTableModel extends AbstractTableModel
    public boolean isCellEditable(int row, int column)
    {
       return (db.getHeader(column).getType() 
-        != DatatoolDb.TYPE_STRING);
+        != DatatoolSettings.TYPE_STRING);
    }
 
+   private DatatoolDb db;
+   private DatatoolDbPanel panel;
 }
 
 class DatatoolTableHeader extends JTableHeader
 {
-   private DatatoolDbPanel panel;
-
-   private int fromIndex=-1, mouseOverIndex=-1;
-
-   private JLabel rendererComponent;
-
-   private MoveIndicatorIcon moveRightIcon = null;
-   private MoveIndicatorIcon moveLeftIcon = null;
-
    public DatatoolTableHeader(TableColumnModel model,
      DatatoolDbPanel p)
    {
@@ -1419,7 +1431,8 @@ class DatatoolTableHeader extends JTableHeader
 
             if (clickCount == 1)
             {
-               panel.setInfo(DatatoolTk.getLabel("info.edit_header"));
+               panel.setInfo(panel.getMessageHandler().getLabel(
+                 "info.edit_header"));
                panel.selectViewColumn(viewCol);
             }
             else if (clickCount == 2)
@@ -1566,9 +1579,21 @@ class DatatoolTableHeader extends JTableHeader
          return null;
       }
 
-      return DatatoolTk.getLabelWithValues("header.tooltip_format",
-         header.getKey(), DatatoolDb.TYPE_LABELS[header.getType()+1]);
+      DatatoolSettings settings = panel.getSettings();
+
+      return panel.getMessageHandler().getLabelWithValues(
+        "header.tooltip_format",
+        header.getKey(), settings.getTypeLabel(header.getType()+1));
    }
+
+   private DatatoolDbPanel panel;
+
+   private int fromIndex=-1, mouseOverIndex=-1;
+
+   private JLabel rendererComponent;
+
+   private MoveIndicatorIcon moveRightIcon = null;
+   private MoveIndicatorIcon moveLeftIcon = null;
 
 }
 
@@ -1581,7 +1606,7 @@ class ButtonTabComponent extends JPanel
 
       this.panel = panel;
       label = new JLabel(panel.getName());
-      button = DatatoolGuiResources.createActionButton
+      button = panel.getDatatoolGuiResources().createActionButton
         ("button", "close_panel", this, null);
       label.setToolTipText(panel.db.getFileName());
 
@@ -1611,7 +1636,7 @@ class ButtonTabComponent extends JPanel
       }
       else
       {
-         panel.setInfo(DatatoolTk.getLabel("info.edit_name"));
+         panel.setInfo(panel.getMessageHandler().getLabel("info.edit_name"));
       }
    }
 
@@ -1690,12 +1715,13 @@ class DatatoolCellRenderer implements TableCellRenderer
 
       int type = db.getHeader(modelIndex).getType();
 
-      if (type == DatatoolDb.TYPE_INTEGER || type == DatatoolDb.TYPE_REAL)
+      if (type == DatatoolSettings.TYPE_INTEGER
+       || type == DatatoolSettings.TYPE_REAL)
       {
          return numericalCellRenderer.getTableCellRendererComponent(table,
            value, isSelected, hasFocus, row, column);
       }
-      else if (type == DatatoolDb.TYPE_STRING)
+      else if (type == DatatoolSettings.TYPE_STRING)
       {
          return cellRenderer.getTableCellRendererComponent(table,
            value, isSelected, hasFocus, row, column);
@@ -1734,11 +1760,12 @@ class MoveIndicatorIcon implements Icon
 
       if (left)
       {
-         g2.drawString(leftSymbol, x, (int)bounds.getHeight()-y);
+         g2.drawString(String.format("%c", LEFT_SYMBOL),
+            x, (int)bounds.getHeight()-y);
       }
       else
       {
-         g2.drawString(rightSymbol, 
+         g2.drawString(String.format("%c", RIGHT_SYMBOL), 
            (int)bounds.getWidth()-getIconWidth(), 
            (int)bounds.getHeight()-y);
       }
@@ -1752,7 +1779,8 @@ class MoveIndicatorIcon implements Icon
       {
         g2.setFont(font);
         FontRenderContext frc = g2.getFontRenderContext();
-        TextLayout layout = new TextLayout(left ? leftSymbol : rightSymbol,
+        TextLayout layout = new TextLayout(String.format("%c",
+           left ? LEFT_SYMBOL : RIGHT_SYMBOL),
            font, frc);
 
         Rectangle2D bounds = layout.getBounds();
@@ -1764,14 +1792,15 @@ class MoveIndicatorIcon implements Icon
       }
    }
 
-   private static final String rightSymbol = "↷";
+   private static final int RIGHT_SYMBOL = 0x21B7;;
 
-   private static final String leftSymbol = "↶";
+   private static final int LEFT_SYMBOL = 0x21B6;
 
    private boolean left;
 
    private int width = 12, height = 10;
 
    private Font font;
+
 }
 

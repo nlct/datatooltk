@@ -1,3 +1,7 @@
+v1.7:
+
+ - Added --sort-locale and --tex-encoding
+
 v1.6:
 
  - Added --csvescape and --nocsvescape

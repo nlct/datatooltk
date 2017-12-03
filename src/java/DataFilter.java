@@ -47,7 +47,7 @@ public class DataFilter
          }
          catch (UnknownLabelException e)
          {
-            System.err.println(DatatoolTk.getLabelWithValue(
+            System.err.println(getMessageHandler().getLabelWithValue(
                "warning.ignoring_filter", filterInfo.toString()));
          }
       }
@@ -114,6 +114,11 @@ public class DataFilter
       return result;
    }
 
+   public MessageHandler getMessageHandler()
+   {
+      return db.getMessageHandler();
+   }
+
    private DatatoolDb db;
    private boolean useOr = true;
 
@@ -141,6 +146,7 @@ class FieldFilter
    {
       this.colIdx = 0;
       boolean found = false;
+      MessageHandler messageHandler = db.getMessageHandler();
 
       Vector<DatatoolHeader> headers = db.getHeaders();
 
@@ -158,7 +164,7 @@ class FieldFilter
 
       if (!found)
       {
-         throw new UnknownLabelException(label);
+         throw new UnknownLabelException(messageHandler, label);
       }
 
       this.operator = operator;
@@ -167,7 +173,7 @@ class FieldFilter
       {
          pattern = Pattern.compile(value);
       }
-      else if (type == DatatoolDb.TYPE_REAL)
+      else if (type == DatatoolSettings.TYPE_REAL)
       {
          try
          {
@@ -178,11 +184,11 @@ class FieldFilter
             match = value;
          }
       }
-      else if (type == DatatoolDb.TYPE_INTEGER)
+      else if (type == DatatoolSettings.TYPE_INTEGER)
       {
          try
          {
-            match = new Integer(value);
+            match = Integer.valueOf(value);
          }
          catch (NumberFormatException e)
          {
@@ -213,16 +219,16 @@ class FieldFilter
          {
             result = strVal.compareTo((String)match);
          }
-         else if (type == DatatoolDb.TYPE_REAL)
+         else if (type == DatatoolSettings.TYPE_REAL)
          {
             Double value = (strVal.isEmpty() ? new Double(0.0) : 
               new Double(strVal));
             result = value.compareTo((Double)match);
          }
-         else if (type == DatatoolDb.TYPE_INTEGER)
+         else if (type == DatatoolSettings.TYPE_INTEGER)
          {
-            Integer value = (strVal.isEmpty() ? new Integer(0) :
-              new Integer(strVal));
+            Integer value = (strVal.isEmpty() ? Integer.valueOf(0) :
+              Integer.valueOf(strVal));
             result = value.compareTo((Integer)match);
          }
          else

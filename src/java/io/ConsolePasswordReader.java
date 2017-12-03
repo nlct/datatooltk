@@ -27,6 +27,7 @@ import java.awt.Frame;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.UserCancelledException;
+import com.dickimawbooks.datatooltk.MessageHandler;
 import com.dickimawbooks.datatooltk.gui.GuiPasswordReader;
 
 /**
@@ -34,9 +35,11 @@ import com.dickimawbooks.datatooltk.gui.GuiPasswordReader;
  */
 public class ConsolePasswordReader implements DatatoolPasswordReader
 {
-   public ConsolePasswordReader(int noConsoleAction)
+   public ConsolePasswordReader(MessageHandler messageHandler, 
+     int noConsoleAction)
    {
       this.noConsoleAction = noConsoleAction;
+      this.messageHandler = messageHandler;
    }
 
    public char[] requestPassword()
@@ -62,7 +65,8 @@ public class ConsolePasswordReader implements DatatoolPasswordReader
               }
 
             case NO_CONSOLE_GUI:
-               GuiPasswordReader reader = new GuiPasswordReader((Frame)null);
+               GuiPasswordReader reader = new GuiPasswordReader(
+                  messageHandler, (Frame)null);
                
                passwd = reader.requestPassword();
 
@@ -72,7 +76,7 @@ public class ConsolePasswordReader implements DatatoolPasswordReader
 
             case NO_CONSOLE_ERROR:
                throw new UserCancelledException(
-                 DatatoolTk.getLabel("error.no_console"));
+                 messageHandler.getLabel("error.no_console"));
             default:
               throw new IllegalArgumentException(
                 "Invalid noConsoleAction "+noConsoleAction);
@@ -80,12 +84,12 @@ public class ConsolePasswordReader implements DatatoolPasswordReader
       }
 
       if ((passwd = cons.readPassword("%s",
-           DatatoolTk.getLabel("password.prompt"))) != null)
+           messageHandler.getLabel("password.prompt"))) != null)
       {
          return passwd;
       }
 
-      throw new UserCancelledException();
+      throw new UserCancelledException(messageHandler);
    }
 
    // Adapted from
@@ -138,4 +142,6 @@ public class ConsolePasswordReader implements DatatoolPasswordReader
      NO_CONSOLE_ERROR = 2;
 
    private int noConsoleAction = NO_CONSOLE_GUI;
+
+   private MessageHandler messageHandler;
 }

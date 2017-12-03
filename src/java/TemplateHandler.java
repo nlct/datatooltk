@@ -33,6 +33,8 @@ public class TemplateHandler extends DefaultHandler
       super();
       this.db = db;
       this.templateName = templateName;
+      this.messageHandler = db.getMessageHandler();
+
       stack = new ArrayDeque<String>();
       headerStack = new ArrayDeque<DatatoolHeader>();
    }
@@ -47,7 +49,7 @@ public class TemplateHandler extends DefaultHandler
         || localName.equals("type")) && !parent.equals("header"))
       {
          throw new SAXException(
-            DatatoolTk.getLabelWithValues(
+            messageHandler.getLabelWithValues(
               "error.template.misplaced_tag",
               localName, "header"));
       }
@@ -55,7 +57,7 @@ public class TemplateHandler extends DefaultHandler
          && !parent.equals("datatooltktemplate"))
       {
          throw new SAXException(
-            DatatoolTk.getLabelWithValues(
+            messageHandler.getLabelWithValues(
               "error.template.misplaced_tag",
               localName, "datatooltktemplate"));
       }
@@ -78,7 +80,7 @@ public class TemplateHandler extends DefaultHandler
 
          if (!localName.equals(element))
          {
-            throw new SAXException(DatatoolTk.getLabelWithValue(
+            throw new SAXException(messageHandler.getLabelWithValue(
                "error.template.wrong_end_tag", localName));
          }
 
@@ -89,7 +91,7 @@ public class TemplateHandler extends DefaultHandler
             if (header.getKey().isEmpty())
             {
                throw new SAXException(
-                  DatatoolTk.getLabelWithValue("error.template.missing_tag",
+                  messageHandler.getLabelWithValue("error.template.missing_tag",
                   "label"));
             }
 
@@ -100,7 +102,7 @@ public class TemplateHandler extends DefaultHandler
 
                header.setTitle
                (
-                  DatatoolTk.getLabelWithAlt
+                  messageHandler.getLabelWithAlt
                   (
                     "plugin."+templateName+"."+header.getKey(),
                     header.getKey()
@@ -152,8 +154,9 @@ public class TemplateHandler extends DefaultHandler
       }
    }
 
-
    private DatatoolDb db;
+
+   private MessageHandler messageHandler;
 
    private String templateName;
 

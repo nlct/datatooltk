@@ -19,8 +19,12 @@
 package com.dickimawbooks.datatooltk.io;
 
 import java.io.*;
-import java.util.regex.*;
+import java.nio.charset.Charset;
+import java.util.*;
 
+import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.latex.PreambleParser;
+import com.dickimawbooks.texparserlib.latex.probsoln.*;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -33,262 +37,246 @@ public class DatatoolProbSoln implements DatatoolImport
       this.settings = settings;
    }
 
+   public MessageHandler getMessageHandler()
+   {
+      return settings.getMessageHandler();
+   }
+
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {
-      boolean hasVerbatim = false;
+       File file = new File(source);
 
-      File file = new File(source);
+       if (!file.exists())
+       {
+          throw new DatatoolImportException(
+             getMessageHandler().getLabelWithValue("error.io.file_not_found",
+             file.getAbsolutePath()));
+       }
 
-      if (!file.exists())
-      {
-         throw new DatatoolImportException(
-            DatatoolTk.getLabelWithValue("error.io.file_not_found",
-            file.getAbsolutePath()));
-      }
+       DatatoolDb db = new DatatoolDb(settings);
 
-      File dir = file.getParentFile();
+       String name = file.getName();
 
-      DatatoolDb db = new DatatoolDb(settings);
+       int index = name.lastIndexOf(".");
 
-      String name = file.getName();
+       if (index > -1)
+       {
+          name = name.substring(0, index);
+       }
 
-      int index = name.lastIndexOf(".");
+       db.setName(name);
 
-      if (index > -1)
-      {
-         name = name.substring(0, index);
-      }
+       try
+       {
+          parseData(file, db);
+       }
+       catch (IOException e)
+       {
+          throw new DatatoolImportException(e);
+       }
 
-      db.setName(name);
+       return db;
+    }
 
-      String key = DatatoolTk.getLabel("probsoln.label");
-      db.addColumn(new DatatoolHeader(db, key, key, DatatoolDb.TYPE_STRING));
+    protected void parseData(File file, DatatoolDb db) throws IOException
+    {
+       MessageHandler messageHandler = getMessageHandler();
+       TeXApp texApp = messageHandler.getTeXApp();
 
-      key = DatatoolTk.getLabel("probsoln.question");
-      db.addColumn(new DatatoolHeader(db, key, key, DatatoolDb.TYPE_STRING));
+       boolean hasVerbatim = false;
 
-      key = DatatoolTk.getLabel("probsoln.answer");
-      db.addColumn(new DatatoolHeader(db, key, key, DatatoolDb.TYPE_STRING));
+       String encoding = settings.getTeXEncoding();
 
-      PrintWriter out = null;
-      BufferedReader in = null;
+       PreambleParser preambleParser = new PreambleParser(texApp);
+       TeXParser texParser = new TeXParser(preambleParser);
 
-      try
-      {
-         // TeX is fiddly to parse, so get TeX to write the data out
-         // in a format that's easier for Java to read.
+       ProbSolnSty probSolnSty = new ProbSolnSty(null, preambleParser);
+       preambleParser.usepackage(probSolnSty);
 
-         File texFile = File.createTempFile("dbt", ".tex", dir);
-         DatatoolTk.removeFileOnExit(texFile);
+       if (encoding == null)
+       {
+          texParser.parse(file);
+       }
+       else
+       {
+          texParser.parse(file, Charset.forName(encoding));
+       }
 
-         name = texFile.getName();
+       int numDataSets = probSolnSty.getDatabaseCount();
 
-         name = name.substring(0, name.lastIndexOf("."));
+       String key = messageHandler.getLabel("probsoln.label");
+       db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
 
-         File logFile = new File(dir, name+".log");
-         DatatoolTk.removeFileOnExit(logFile);
+       if (numDataSets > 1)
+       {
+          key = messageHandler.getLabel("probsoln.set");
+          db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
+       }
 
-         File auxFile = new File(dir, name+".aux");
-         DatatoolTk.removeFileOnExit(auxFile);
+       key = messageHandler.getLabel("probsoln.question");
+       db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
 
-         File tmpFile = new File(dir, name+".tmp");
-         DatatoolTk.removeFileOnExit(tmpFile);
+       key = messageHandler.getLabel("probsoln.answer");
+       db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
 
-         out = new PrintWriter(texFile);
+       Set<String> dataSetLabels = probSolnSty.getDatabaseLabels();
+       int rowIdx = 0;
 
-         out.println("\\batchmode");
-         out.println("\\documentclass{article}");
+       for (Iterator<String> dbIt = dataSetLabels.iterator(); dbIt.hasNext();)
+       {
+          String dbLabel = dbIt.next();
+ 
+          ProbSolnDatabase probDb = probSolnSty.getDatabase(dbLabel);
 
-         out.println("\\usepackage[usedefaultargs]{probsoln}");
-         out.println("\\usepackage{etoolbox}");
+          for (Iterator<String> probIt = probDb.keySet().iterator();
+               probIt.hasNext(); )
+          {
+             String probLabel = probIt.next();
 
-         if (settings.isRedefNewProblemEnabled())
-         {
-            out.println("\\makeatletter");
-            out.println("\\renewcommand{\\@ns@newproblem}[4][]{%");
-            out.println("  \\begin{defproblem}[\\@newprob@argN][#1]{#2}%");
-            out.println("    \\begin{onlyproblem}#3\\end{onlyproblem}%");
-            out.println("    \\begin{onlysolution}%");
-            out.println("      \\begin{solution}%");
-            out.println("        #4%");
-            out.println("      \\end{solution}%");
-            out.println("    \\end{onlysolution}%");
-            out.println("  \\end{defproblem}%");
-            out.println("}");
-            out.println("\\makeatother");
-         }
+             DatatoolRow row = new DatatoolRow(db, numDataSets > 1 ? 4 : 3);
+             int colIdx = 0;
 
-         out.println("\\loadallproblems{"+
-           (System.getProperty("os.name").toLowerCase().startsWith("win") ?
-           file.getAbsolutePath().replaceAll("\\", "/") :
-           file.getAbsolutePath())
-           +"}");
+             row.addCell(colIdx++, probLabel);
 
-         out.println("\\newwrite\\probout");
-         out.println("\\immediate\\openout\\probout=\\jobname.tmp");
+             if (numDataSets > 1)
+             {
+                row.addCell(colIdx++, dbLabel);
+             }
 
-         out.println("\\makeatletter");
-         out.println("  \\newcommand{\\writeprob}[1]{%");
-         out.println("    \\immediate\\write\\probout{BEGIN PROBLEM: #1}%");
-         out.println("    \\letcs\\tmp{prob@data@default@#1}%");
-         out.println("    \\@onelevel@sanitize\\tmp");
-         out.println("    \\immediate\\write\\probout{\\tmp}%");
-         out.println("    \\immediate\\write\\probout{END PROBLEM: #1}%");
-         out.println("  }");
-         out.println("\\makeatother");
+             ProbSolnData data = probDb.get(probLabel);
 
-         out.println("\\begin{document}");
-         out.println("\\foreachproblem{\\writeprob\\thisproblemlabel}");
-         out.println("\\immediate\\closeout\\probout");
-         out.println("\\end{document}");
+             TeXObject question = data.getQuestion(texParser);
+             TeXObject answer = data.getAnswer(texParser, true);
 
-         out.close();
-         out = null;
+             boolean hasVerb = checkElement(question);
 
-         // Now run latex on this file
+             if (hasVerb)
+             {
+                hasVerbatim = true;
+             }
 
-         ProcessBuilder pb = new ProcessBuilder(settings.getLaTeX(), name);
-         pb.directory(dir);
+             hasVerb = checkElement(answer);
 
-         Process p = pb.start();
+             if (hasVerb)
+             {
+                hasVerbatim = true;
+             }
 
-         int exitCode = p.waitFor();
+             String questionText = question.toString(texParser).trim();
+             String answerText = answer.toString(texParser).trim();
 
-         if (exitCode != 0)
-         {
-            throw new IOException(DatatoolTk.getLabelWithValues(
-               "error.process_failed",
-                new String[]
-                {
-                   settings.getLaTeX()+" \""+name+"\"",
-                   dir.getAbsolutePath(),
-                   ""+exitCode
-                }));
-         }
+             row.addCell(colIdx++, questionText);
 
-         in = new BufferedReader(new FileReader(tmpFile));
+             if (answerText.equals(questionText))
+             {
+                row.addCell(colIdx++, "");
+             }
+             else
+             {
+                row.addCell(colIdx++, answerText);
+             }
 
-         String line;
-         int linenum = 0;
-         int rowIdx = 0;
+             db.insertRow(rowIdx, row);
 
-         while ((line = in.readLine()) != null)
-         {
-            linenum++;
-            Matcher m = PATTERN_BEGIN_PROB.matcher(line);
-
-            if (!m.matches())
-            {
-               DatatoolTk.debug(DatatoolTk.getLabelWithValues(
-                 "error.missing_begin_prob", ""+linenum,
-                 tmpFile.getAbsolutePath()));
-               throw new DatatoolImportException(
-                 DatatoolTk.getLabel("error.internal.import_probsoln_failed"));
-            }
-
-            String label = m.group(1);
-
-            StringBuilder buffer = new StringBuilder();
-
-            while ((line = in.readLine()) != null)
-            {
-               linenum++;
-               m = PATTERN_END_PROB.matcher(line);
-
-               if (m.matches())
-               {
-                  if (!m.group(1).equals(label))
-                  {
-                     DatatoolTk.debug(DatatoolTk.getLabelWithValues(
-                       "error.mismatched_end_prob",
-                       new String[] {label, m.group(1), ""+linenum,
-                        tmpFile.getAbsolutePath()}));
-
-                     throw new DatatoolImportException(
-                       DatatoolTk.getLabel("error.internal.import_probsoln_failed"));
-                  }
-
-                  break;
-               }
-
-               line = line.replaceAll("\\\\par ", "\\\\DTLpar ");
-               line = line.replaceAll("\n\n+", "\\\\DTLpar ");
-               line = line.replaceAll("([^\\\\])#(\\d{1})", "$1##$2");
-
-               buffer.append(line);
-            }
-
-            String value = new String(buffer);
-
-            String question = value.replaceAll(
-               "\\\\begin *\\{onlysolution\\}.*?\\\\end *\\{onlysolution\\}", "");
-
-            String answer = value.replaceAll(
-               "\\\\begin *\\{onlyproblem\\}.*?\\\\end *\\{onlyproblem\\}", "");
-
-            question = question.replaceAll("\\\\(begin|end) *\\{onlyproblem\\}", "");
-            answer = answer.replaceAll("\\\\(begin|end) *\\{onlysolution\\}", "");
-
-            if (!hasVerbatim)
-            {
-               hasVerbatim = DatatoolDb.checkForVerbatim(question)
-                           || DatatoolDb.checkForVerbatim(answer);
-            }
-
-            DatatoolRow row = new DatatoolRow(db, 3);
-            row.addCell(0, label);
-            row.addCell(1, question);
-            row.addCell(2, question.equals(answer) ? "" : answer);
-
-            db.insertRow(rowIdx, row);
-
-            rowIdx++;
-         }
-
-         in.close();
-         in = null;
-      }
-      catch (IOException e)
-      {
-         throw new DatatoolImportException(e);
-      }
-      catch (InterruptedException e)
-      {
-         throw new DatatoolImportException(e);
-      }
-      finally
-      {
-         if (out != null)
-         {
-            out.close();
-         }
-
-         if (in != null)
-         {
-            try
-            {
-               in.close();
-            }
-            catch (IOException e)
-            {
-               throw new DatatoolImportException(e);
-            }
-         }
-      }
+             rowIdx++;
+          }
+       }
 
       if (hasVerbatim)
       {
-         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+         getMessageHandler().warning(
+            getMessageHandler().getLabel("warning.verb_detected"));
+      }
+   }
+
+   private boolean checkElement(TeXObject object) throws IOException
+   {
+      if (!(object instanceof TeXObjectList))
+      {
+         return false;
       }
 
-      return db;
+      TeXObjectList list = (TeXObjectList)object;
+
+      if (list.isEmpty())
+      {
+         return false;
+      }
+
+      TeXObject element = list.firstElement();
+
+      if (element instanceof Comment)
+      {
+         String commentText = ((Comment)element).getText().trim();
+
+         if (commentText.isEmpty())
+         {
+            list.pop();
+         }
+      }
+
+      element = list.lastElement();
+
+      if (element instanceof Comment)
+      {
+         String commentText = ((Comment)element).getText().trim();
+
+         if (commentText.isEmpty())
+         {
+            list.remove(list.size()-1);
+         }
+      }
+
+      boolean hasVerbatim = false;
+
+      for (int i = 0; i < list.size(); i++)
+      {
+         element = list.get(i);
+
+         if (element instanceof ControlSequence)
+         {
+            String name = ((ControlSequence)element).getName();
+
+            if (name.equals("par"))
+            {
+               list.set(i, new TeXCsRef("DTLpar"));
+            }
+            else if (name.equals("verb") || name.equals("lstinline"))
+            {
+               hasVerbatim = true;
+            }
+            else if (name.equals("begin"))
+            {
+               TeXObject nextObj = list.get(++i);
+
+               while (nextObj instanceof Ignoreable)
+               {
+                  nextObj = list.get(++i);
+               }
+
+               if (nextObj instanceof Group)
+               {
+                  nextObj = ((Group)nextObj).toList();
+               }
+
+               name = nextObj.format().toLowerCase();
+
+               if (name.endsWith("*"))
+               {
+                  name = name.substring(0, name.length()-1);
+               }
+
+               if (name.equals("verbatim") || name.equals("lstlisting"))
+               {
+                  hasVerbatim = true;
+               }
+            }
+         }
+      }
+
+      return hasVerbatim;
    }
 
    private DatatoolSettings settings;
-
-   private static final Pattern PATTERN_BEGIN_PROB
-      = Pattern.compile("BEGIN PROBLEM: (.*)");
-   private static final Pattern PATTERN_END_PROB
-      = Pattern.compile("END PROBLEM: (.*)");
 }

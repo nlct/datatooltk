@@ -22,16 +22,17 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * File filter for .tex and .ltx files.
  */
 public class TeXFileFilter extends FileFilter
 {
-   public TeXFileFilter()
+   public TeXFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = DatatoolTk.getLabelWithValue("filter.tex", "*.tex, *.ltx");
+      description = messageHandler.getLabelWithValue("filter.tex", "*.tex, *.ltx");
    }
 
    public boolean accept(File file)

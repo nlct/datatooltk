@@ -40,12 +40,21 @@ public class TeXMapModel extends AbstractTableModel
       this.settings = settings;
       this.table = table;
 
+      MessageHandler messageHandler = settings.getMessageHandler();
+
+      if (COL_KEY == null)
+      {
+         COL_KEY = messageHandler.getLabel("texmap.character");
+         COL_VAL = messageHandler.getLabel("texmap.replacement");
+      }
+
       table.setModel(this);
 
       keyField = new CharField();
       valueField = new JTextField(20);
 
-      texMapDialog = new TeXMapDialog(dialog);
+      texMapDialog = new TeXMapDialog(messageHandler.getDatatoolGuiResources(),
+         dialog);
 
       keyList = new Vector<Character>();
       valueList = new Vector<String>();
@@ -197,18 +206,27 @@ public class TeXMapModel extends AbstractTableModel
    private static final Pattern PATTERN_KEY 
      = Pattern.compile("tex\\.(.)");
 
-   public static final String COL_KEY 
-      = DatatoolTk.getLabel("texmap.character");
-   public static final String COL_VAL 
-      = DatatoolTk.getLabel("texmap.replacement");
+   public static String COL_KEY = null;
+   public static String COL_VAL = null;
 
 }
 
 class TeXMapDialog extends JDialog implements ActionListener
 {
-   public TeXMapDialog(JDialog parent)
+   public TeXMapDialog(DatatoolGuiResources resources, JDialog parent)
    {
       super(parent, "", true);
+
+      this.resources = resources;
+
+      if (TITLE_ADD == null)
+      {
+         TITLE_ADD 
+            = resources.getMessageHandler().getLabel("texmap.add_mapping");
+
+         TITLE_EDIT 
+            = resources.getMessageHandler().getLabel("texmap.edit_mapping");
+      }
 
       JPanel panel = new JPanel();
       getContentPane().add(panel, BorderLayout.CENTER);
@@ -216,16 +234,16 @@ class TeXMapDialog extends JDialog implements ActionListener
       keyField   = new CharField();
       valueField = new JTextField(20);
 
-      panel.add(DatatoolGuiResources.createJLabel("texmap.character",
+      panel.add(resources.createJLabel("texmap.character",
          keyField));
       panel.add(keyField);
 
-      panel.add(DatatoolGuiResources.createJLabel("texmap.replacement",
+      panel.add(resources.createJLabel("texmap.replacement",
          valueField));
       panel.add(valueField);
       
       getContentPane().add(
-        DatatoolGuiResources.createOkayCancelPanel(this),
+        resources.createOkayCancelPanel(this),
         BorderLayout.SOUTH);
 
       pack();
@@ -285,13 +303,18 @@ class TeXMapDialog extends JDialog implements ActionListener
    {
       if (keyField.getText().isEmpty())
       {
-         DatatoolGuiResources.error(this, 
-            DatatoolTk.getLabel("error.missing_texmap_key"));
+         resources.error(this, 
+            getMessageHandler().getLabel("error.missing_texmap_key"));
          return;
       }
 
       modified = true;
       setVisible(false);
+   }
+
+   public MessageHandler getMessageHandler()
+   {
+      return resources.getMessageHandler();
    }
 
    public Character getKey() { return new Character(keyField.getValue());}
@@ -304,9 +327,9 @@ class TeXMapDialog extends JDialog implements ActionListener
 
    private boolean modified;
 
-   private static final String TITLE_ADD 
-      = DatatoolTk.getLabel("texmap.add_mapping");
+   private DatatoolGuiResources resources;
 
-   private static final String TITLE_EDIT 
-      = DatatoolTk.getLabel("texmap.edit_mapping");
+   private static String TITLE_ADD = null;
+
+   private static String TITLE_EDIT = null;
 }

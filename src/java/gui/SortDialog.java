@@ -37,7 +37,10 @@ public class SortDialog extends JDialog
 {
    public SortDialog(DatatoolGUI gui)
    {
-      super(gui, DatatoolTk.getLabel("sort.title"), true);
+      super(gui, gui.getMessageHandler().getLabel("sort.title"), true);
+
+      messageHandler = gui.getMessageHandler();
+      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
 
       JComponent mainPanel = Box.createVerticalBox();
       mainPanel.setAlignmentX(0);
@@ -49,7 +52,7 @@ public class SortDialog extends JDialog
 
       headerBox = new JComboBox<DatatoolHeader>();
       headerBox.setAlignmentX(0);
-      row.add(DatatoolGuiResources.createJLabel(
+      row.add(resources.createJLabel(
          "sort.column", headerBox, 0));
       row.add(headerBox);
 
@@ -59,11 +62,11 @@ public class SortDialog extends JDialog
 
       ButtonGroup bg = new ButtonGroup();
 
-      ascendingButton = DatatoolGuiResources.createJRadioButton(
+      ascendingButton = resources.createJRadioButton(
          "sort", "ascending", bg, this, 0);
       row.add(ascendingButton);
 
-      descendingButton = DatatoolGuiResources.createJRadioButton(
+      descendingButton = resources.createJRadioButton(
          "sort", "descending", bg, this, 0);
       row.add(descendingButton);
 
@@ -71,7 +74,7 @@ public class SortDialog extends JDialog
       row.setAlignmentX(0);
       mainPanel.add(row);
 
-      row.add(DatatoolGuiResources.createJLabel("sort.string.message", 0));
+      row.add(resources.createJLabel("sort.string.message", 0));
 
       row = new JPanel();
       row.setAlignmentX(0);
@@ -79,11 +82,11 @@ public class SortDialog extends JDialog
 
       bg = new ButtonGroup();
 
-      letterSortButton = DatatoolGuiResources.createJRadioButton(
+      letterSortButton = resources.createJRadioButton(
          "sort", "letter", bg, this, 0);
       row.add(letterSortButton);
 
-      isCaseSensitiveBox = DatatoolGuiResources.createJCheckBox(
+      isCaseSensitiveBox = resources.createJCheckBox(
         "sort", "case_sensitive", this, 0);
       row.add(isCaseSensitiveBox);
 
@@ -91,7 +94,7 @@ public class SortDialog extends JDialog
       row.setAlignmentX(0);
       mainPanel.add(row);
 
-      localeSortButton = DatatoolGuiResources.createJRadioButton(
+      localeSortButton = resources.createJRadioButton(
          "sort", "locale", bg, this, 0);
       row.add(localeSortButton);
 
@@ -107,7 +110,7 @@ public class SortDialog extends JDialog
       localeBox.setSelectedItem(Locale.getDefault());
 
       getContentPane().add(
-        DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "sort"),
+        resources.createOkayCancelHelpPanel(this, gui, "sort"),
         BorderLayout.SOUTH);
 
       pack();
@@ -197,8 +200,8 @@ public class SortDialog extends JDialog
       {
          // This shouldn't happen
 
-         DatatoolGuiResources.error(this, 
-            DatatoolTk.getLabel("error.no_sort_column_selected"));
+         getMessageHandler().error(this, 
+            getMessageHandler().getLabel("error.no_sort_column_selected"));
          return;
       }
 
@@ -219,6 +222,11 @@ public class SortDialog extends JDialog
       setVisible(false);
    }
 
+   public MessageHandler getMessageHandler()
+   {
+      return messageHandler;
+   }
+
    private JComboBox<DatatoolHeader> headerBox;
    private JComboBox<Locale> localeBox;
    private JRadioButton ascendingButton, descendingButton;
@@ -227,6 +235,8 @@ public class SortDialog extends JDialog
    private JCheckBox isCaseSensitiveBox;
 
    private DatatoolDb db;
+
+   private MessageHandler messageHandler;
 
    private boolean success=false;
 }

@@ -24,6 +24,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Panel for error messages.
@@ -31,14 +32,16 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 public class ErrorPanel extends JPanel
   implements ActionListener
 {
-   public ErrorPanel()
+   public ErrorPanel(MessageHandler messageHandler)
    {
       super(new BorderLayout());
 
-      messageArea = DatatoolGuiResources.createMessageArea();
-      stackTraceArea = DatatoolGuiResources.createMessageArea();
+      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
 
-      onlyMessageArea = DatatoolGuiResources.createMessageArea();
+      messageArea = resources.createMessageArea();
+      stackTraceArea = resources.createMessageArea();
+
+      onlyMessageArea = resources.createMessageArea();
 
       cardLayout = new CardLayout();
 
@@ -49,23 +52,25 @@ public class ErrorPanel extends JPanel
       
       tabbedPane = new JTabbedPane();
 
-      tabbedPane.addTab(DatatoolTk.getLabelWithAlt("error.message", "Error Message"),
+      tabbedPane.addTab(messageHandler.getLabelWithAlt(
+          "error.message", "Error Message"),
        new JScrollPane(messageArea));
 
       tabbedPane.setMnemonicAt(tabbedPane.getTabCount()-1,
-         DatatoolTk.getMnemonic("error.message"));
+         messageHandler.getMnemonic("error.message"));
 
-      tabbedPane.addTab(DatatoolTk.getLabelWithAlt("error.stacktrace", "Stack Trace"),
+      tabbedPane.addTab(messageHandler.getLabelWithAlt(
+          "error.stacktrace", "Stack Trace"),
        new JScrollPane(stackTraceArea));
 
       tabbedPane.setMnemonicAt(tabbedPane.getTabCount()-1,
-         DatatoolTk.getMnemonic("error.stacktrace"));
+         messageHandler.getMnemonic("error.stacktrace"));
 
       cardPanel.add(tabbedPane, "tabbedpane");
 
       JPanel buttonPanel = new JPanel();
 
-      buttonPanel.add(DatatoolGuiResources.createActionButton(
+      buttonPanel.add(resources.createActionButton(
          "button", "copy", this, 
          KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.SHIFT_MASK)));
 

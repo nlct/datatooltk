@@ -31,6 +31,9 @@ public class DbNameEdit extends AbstractUndoableEdit
    {
       super();
       this.panel = panel;
+
+      presentationName = panel.getMessageHandler().getLabel("undo.edit_name");
+
       newName = name;
       oldName = panel.db.getName();
 
@@ -64,6 +67,5 @@ public class DbNameEdit extends AbstractUndoableEdit
 
    private String oldName, newName;
 
-   private static final String presentationName 
-     = DatatoolTk.getLabel("undo.edit_name");
+   private final String presentationName;
 }

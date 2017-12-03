@@ -38,27 +38,30 @@ import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 public class GuiPasswordReader extends JDialog 
   implements DatatoolPasswordReader,ActionListener
 {
-   public GuiPasswordReader(Frame parent)
+   public GuiPasswordReader(MessageHandler messageHandler, Frame parent)
    {
-      super(parent, DatatoolTk.getLabel("password.title"), true);
+      super(parent, messageHandler.getLabel("password.title"), true);
 
-      init(parent);
+      init(messageHandler, parent);
    }
 
-   public GuiPasswordReader(Dialog parent)
+   public GuiPasswordReader(MessageHandler messageHandler, Dialog parent)
    {
-      super(parent, DatatoolTk.getLabel("password.title"), true);
+      super(parent, messageHandler.getLabel("password.title"), true);
 
-      init(parent);
+      init(messageHandler, parent);
    }
 
-   private void init(Component parent)
+   private void init(MessageHandler messageHandler, Component parent)
    {
+      this.messageHandler = messageHandler;
+      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
+
       JPanel panel = new JPanel();
 
       getContentPane().add(panel, "Center");
 
-      JLabel label = DatatoolGuiResources.createJLabel("password.prompt");
+      JLabel label = resources.createJLabel("password.prompt");
 
       panel.add(label);
 
@@ -71,10 +74,10 @@ public class GuiPasswordReader extends JDialog
 
       getContentPane().add(buttonPanel, "South");
 
-      JButton okayButton = DatatoolGuiResources.createOkayButton(this);
+      JButton okayButton = resources.createOkayButton(this);
       buttonPanel.add(okayButton);
 
-      JButton cancelButton = DatatoolGuiResources.createCancelButton(this);
+      JButton cancelButton = resources.createCancelButton(this);
       buttonPanel.add(cancelButton);
 
       pack();
@@ -115,10 +118,12 @@ public class GuiPasswordReader extends JDialog
          return passwordField.getPassword();
       }
 
-      throw new UserCancelledException();
+      throw new UserCancelledException(messageHandler);
    }
 
    private boolean success=false;
 
    private JPasswordField passwordField;
+
+   private MessageHandler messageHandler;
 }

@@ -22,7 +22,8 @@ import com.dickimawbooks.datatooltk.io.InvalidSyntaxException;
 
 public class FilterInfo
 {
-   public FilterInfo(String label, String op, String value)
+   public FilterInfo(MessageHandler messageHandler, String label, 
+      String op, String value)
     throws InvalidSyntaxException
    {
       operator = -1;
@@ -38,7 +39,7 @@ public class FilterInfo
 
       if (operator == -1)
       {
-         throw new InvalidSyntaxException(DatatoolTk.getLabelWithValue(
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValue(
             "error.syntax.invalid_filter_operator", op));
       }
 
@@ -63,7 +64,8 @@ public class FilterInfo
 
    public String toString()
    {
-      return "'"+label+"' "+DataFilter.OPERATORS[operator]+" '"+value+"'";
+      return String.format("'%s' %s '%s'", label, 
+        DataFilter.OPERATORS[operator], value);
    }
 
    private String label, value;

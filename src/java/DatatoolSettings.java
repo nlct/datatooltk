@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk;
 
 import java.util.Properties;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Vector;
 import java.util.Random;
 import java.util.InvalidPropertiesFormatException;
@@ -29,8 +30,6 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Locale;
 import java.net.URL;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 import com.dickimawbooks.datatooltk.gui.DatatoolPlugin;
@@ -40,15 +39,68 @@ import com.dickimawbooks.datatooltk.gui.DatatoolPlugin;
  */
 public class DatatoolSettings extends Properties
 {
-   public DatatoolSettings()
+   public DatatoolSettings(DatatoolTk datatooltk)
    {
       super();
+      messageHandler = new MessageHandler(datatooltk);
+
       recentFiles = new Vector<String>();
       currencies = new Vector<String>();
 
       setDefaults();
 
       setPropertiesPath();
+   }
+
+   private void initLabels()
+   {
+      TYPE_LABELS = new String[] 
+      {
+         messageHandler.getLabel("header.type.unset"),
+         messageHandler.getLabel("header.type.string"),
+         messageHandler.getLabel("header.type.int"),
+         messageHandler.getLabel("header.type.real"),
+         messageHandler.getLabel("header.type.currency")
+      };
+
+      TYPE_MNEMONICS = new int[] 
+      {
+         messageHandler.getMnemonicInt("header.type.unset"),
+         messageHandler.getMnemonicInt("header.type.string"),
+         messageHandler.getMnemonicInt("header.type.int"),
+         messageHandler.getMnemonicInt("header.type.real"),
+         messageHandler.getMnemonicInt("header.type.currency")
+      };
+   }
+
+   public String getTypeLabel(int type)
+   {
+      if (TYPE_LABELS == null)
+      {
+         initLabels();
+      }
+
+      return TYPE_LABELS[type];
+   }
+
+   public String[] getTypeLabels()
+   {
+      if (TYPE_LABELS == null)
+      {
+         initLabels();
+      }
+
+      return TYPE_LABELS;
+   }
+
+   public int[] getTypeMnemonics()
+   {
+      if (TYPE_MNEMONICS == null)
+      {
+         initLabels();
+      }
+
+      return TYPE_MNEMONICS;
    }
 
    private void setPropertiesPath()
@@ -68,7 +120,7 @@ public class DatatoolSettings extends Properties
 
       if (home == null)
       {
-         DatatoolTk.debug("No 'user.home' property!");
+         messageHandler.debug("No 'user.home' property!");
          return;
       }
 
@@ -76,7 +128,7 @@ public class DatatoolSettings extends Properties
 
       if (!homeDir.exists())
       {
-         DatatoolTk.debug("Home directory '"+home+"' doesn't exist!");
+         messageHandler.debug("Home directory '"+home+"' doesn't exist!");
          return;
       }
 
@@ -86,7 +138,7 @@ public class DatatoolSettings extends Properties
       {
          if (!propertiesPath.isDirectory())
          {
-            DatatoolTk.debug("'"+propertiesPath+"' isn't a directory");
+            messageHandler.debug("'"+propertiesPath+"' isn't a directory");
             propertiesPath = null;
             return;
          }
@@ -95,7 +147,7 @@ public class DatatoolSettings extends Properties
       {
          if (!propertiesPath.mkdir())
          {
-            DatatoolTk.debug("Unable to mkdir '"+propertiesPath+"'");
+            messageHandler.debug("Unable to mkdir '"+propertiesPath+"'");
             propertiesPath = null;
 
             return;
@@ -280,6 +332,63 @@ public class DatatoolSettings extends Properties
       recentFiles.add(0, name);
    }
 
+   public String getTeXEncoding()
+   {
+      return getProperty("tex-encoding");
+   }
+
+   public void setTeXEncoding(Charset encoding)
+   {
+      if (encoding == null)
+      {
+         remove("tex-encoding");
+      }
+      else
+      {
+         setProperty("tex-encoding", encoding.name());
+      }
+   }
+
+   public void setTeXEncoding(String encoding)
+   {
+      if (encoding == null)
+      {
+         remove("tex-encoding");
+      }
+      else
+      {
+         setProperty("tex-encoding", encoding);
+      }
+   }
+
+   public String getSortLocale()
+   {
+      return getProperty("sort-locale");
+   }
+
+   public void setSortLocale(Locale locale)
+   {
+      if (locale == null)
+      {
+         remove("sort-locale");
+      }
+      else
+      {
+         setProperty("sort-locale", locale.toLanguageTag());
+      }
+   }
+
+   public void setSortLocale(String locale)
+   {
+      if (locale == null || "".equals(locale))
+      {
+         remove("sort-locale");
+      }
+      else
+      {
+         setProperty("sort-locale", locale);
+      }
+   }
    public void setSeparator(char separator)
    {
       setProperty("sep", ""+separator);
@@ -514,7 +623,7 @@ public class DatatoolSettings extends Properties
 
          if (result < 0 || result > STARTUP_CUSTOM)
          {
-            DatatoolTk.debug("Invalid startup setting '"+prop+"'");
+            messageHandler.debug("Invalid startup setting '"+prop+"'");
             return STARTUP_HOME;
          }
 
@@ -522,7 +631,7 @@ public class DatatoolSettings extends Properties
       }
       catch (NumberFormatException e)
       {
-         DatatoolTk.debug("Invalid startup setting '"+prop+"'");
+         messageHandler.debug("Invalid startup setting '"+prop+"'");
          return STARTUP_HOME;
       }
    }
@@ -685,7 +794,7 @@ public class DatatoolSettings extends Properties
          }
       }
 
-      throw new NumberFormatException(DatatoolTk.getLabelWithValue(
+      throw new NumberFormatException(messageHandler.getLabelWithValue(
          "error.not_currency", text));
    }
 
@@ -738,19 +847,19 @@ public class DatatoolSettings extends Properties
 
       switch (type)
       {
-         case DatatoolDb.TYPE_STRING:
+         case TYPE_STRING:
             tag = "string";
          break;
-         case DatatoolDb.TYPE_UNKNOWN:
+         case TYPE_UNKNOWN:
             tag = "unset";
          break;
-         case DatatoolDb.TYPE_INTEGER:
+         case TYPE_INTEGER:
             tag = "int";
          break;
-         case DatatoolDb.TYPE_REAL:
+         case TYPE_REAL:
             tag = "real";
          break;
-         case DatatoolDb.TYPE_CURRENCY:
+         case TYPE_CURRENCY:
             tag = "currency";
          break;
          default:
@@ -768,23 +877,23 @@ public class DatatoolSettings extends Properties
 
       switch (type)
       {
-         case DatatoolDb.TYPE_STRING:
+         case TYPE_STRING:
             tag = "string";
             defValue = 300;
          break;
-         case DatatoolDb.TYPE_UNKNOWN:
+         case TYPE_UNKNOWN:
             tag = "unset";
             defValue = 100;
          break;
-         case DatatoolDb.TYPE_INTEGER:
+         case TYPE_INTEGER:
             tag = "int";
             defValue = 40;
          break;
-         case DatatoolDb.TYPE_REAL:
+         case TYPE_REAL:
             tag = "real";
             defValue = 60;
          break;
-         case DatatoolDb.TYPE_CURRENCY:
+         case TYPE_CURRENCY:
             tag = "currency";
             defValue = 150;
          break;
@@ -808,7 +917,7 @@ public class DatatoolSettings extends Properties
       catch (NumberFormatException e)
       {
          setCellWidth(defValue, type);
-         DatatoolTk.debug("Property 'cellwidth."+tag
+         messageHandler.debug("Property 'cellwidth."+tag
            +"' should be an integer. Found: '"+prop+"'");
       }
 
@@ -1060,17 +1169,19 @@ public class DatatoolSettings extends Properties
 
          String helpsetLocation = HELPSET_DIR+RESOURCE;
 
-         URL hsURL = getClass().getResource(helpsetLocation
-          + "-" + language + "-" + country + "/" + RESOURCE + ".hs");
+         URL hsURL = getClass().getResource(String.format("%s-%s-%s/%s.hs", 
+          helpsetLocation, language, country, RESOURCE));
+
          if (hsURL == null)
          {
-            hsURL = getClass().getResource(helpsetLocation
-              + "-"+language + "/" + RESOURCE + ".hs");
+            hsURL = getClass().getResource(String.format("%s-%s/%s.hs",
+              helpsetLocation, language, RESOURCE));
 
             if (hsURL == null)
             {
-               DatatoolTk.debug("Can't find language file for "
-                   +language+"-"+country);
+               messageHandler.debug(String.format(
+                "Can't find language file for %s-%s", language, country));
+
                prop = "en-US";
             }
             else
@@ -1145,14 +1256,29 @@ public class DatatoolSettings extends Properties
 
    }
 
-   public void setErrorHandler(ErrorHandler handler)
+   public void setMessageHandler(MessageHandler handler)
    {
-      errorHandler = handler;
+      messageHandler = handler;
    }
 
-   public ErrorHandler getErrorHandler()
+   public MessageHandler getMessageHandler()
    {
-      return errorHandler;
+      return messageHandler;
+   }
+
+   public DatatoolTk getDatatoolTk()
+   {
+      return messageHandler.getDatatoolTk();
+   }
+
+   public boolean isBatchMode()
+   {
+      return messageHandler == null ? true : messageHandler.isBatchMode();
+   }
+
+   public void setBatchMode(boolean enabled)
+   {
+      messageHandler.setBatchMode(enabled);
    }
 
    public Template[] getTemplates()
@@ -1241,13 +1367,13 @@ public class DatatoolSettings extends Properties
       for (int i = 0; i < num; i++)
       {
          plugins[i] = new DatatoolPlugin(i < mainList.length ?
-            mainList[i] : userList[i-mainList.length]);
+            mainList[i] : userList[i-mainList.length], messageHandler);
       }
 
       return plugins;
    }
 
-   private ErrorHandler errorHandler;
+   private MessageHandler messageHandler;
 
    protected char[] sqlPassword = null;
 
@@ -1289,4 +1415,10 @@ public class DatatoolSettings extends Properties
 
    public static final Pattern PATTERN_DICT 
      = Pattern.compile("datatooltk-([a-z]{2})(-[A-Z]{2})?\\.prop");
+
+   public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
+     TYPE_REAL=2, TYPE_CURRENCY=3;
+
+   private static String[] TYPE_LABELS = null;
+   private static int[] TYPE_MNEMONICS = null;
 }

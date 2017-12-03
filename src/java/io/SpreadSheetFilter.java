@@ -22,16 +22,17 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Class representing a spreadsheet file filter
  */
 public class SpreadSheetFilter extends FileFilter
 {
-   public SpreadSheetFilter()
+   public SpreadSheetFilter(MessageHandler messageHandler)
    {
       super();
-      description = DatatoolTk.getLabelWithValue("filter.xlsods", 
+      description = messageHandler.getLabelWithValue("filter.xlsods", 
        "*.xls, *.ods");
    }
 

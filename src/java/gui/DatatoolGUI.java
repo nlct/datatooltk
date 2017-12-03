@@ -44,17 +44,30 @@ import com.dickimawbooks.datatooltk.io.*;
 public class DatatoolGUI extends JFrame
   implements ActionListener,MenuListener
 {
+   private DatatoolGUI()
+   {
+      super(DatatoolTk.APP_NAME);
+   }
+
    public DatatoolGUI(DatatoolSettings settings)
    {
-      super(DatatoolTk.appName);
+      super(DatatoolTk.APP_NAME);
+
+      if (settings == null)
+      {
+         throw new NullPointerException();
+      }
 
       this.settings = settings;
+      resources = new DatatoolGuiResources(settings.getMessageHandler());
 
       initGui();
    }
 
    private void initGui()
    {
+      MessageHandler messageHandler = getMessageHandler();
+
       setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
       addWindowListener(new WindowAdapter()
@@ -76,9 +89,9 @@ public class DatatoolGUI extends JFrame
       }
       else
       {
-         DatatoolGuiResources.error(null, 
-            new FileNotFoundException("Can't find resource: '"
-            +imgFile+"'"));
+         getMessageHandler().error(null, 
+           new FileNotFoundException(String.format("Can't find resource: '%s'",
+           imgFile)));
       }
 
       try
@@ -87,34 +100,34 @@ public class DatatoolGUI extends JFrame
       }
       catch (HelpSetException e)
       {
-         DatatoolGuiResources.error(null, e);
+         getMessageHandler().error(null, e);
       }
       catch (FileNotFoundException e)
       {
-         DatatoolGuiResources.error(null, e);
+         getMessageHandler().error(null, e);
       }
 
       JMenuBar mbar = new JMenuBar();
       setJMenuBar(mbar);
 
-      toolBar = new ScrollToolBar(SwingConstants.HORIZONTAL);
+      toolBar = new ScrollToolBar(messageHandler, SwingConstants.HORIZONTAL);
 
-      JMenu fileM = DatatoolGuiResources.createJMenu("file");
+      JMenu fileM = resources.createJMenu("file");
       mbar.add(fileM);
 
-      fileM.add(DatatoolGuiResources.createJMenuItem(
+      fileM.add(resources.createJMenuItem(
         "file", "new", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK),
         toolBar));
 
-      fileM.add(DatatoolGuiResources.createJMenuItem(
+      fileM.add(resources.createJMenuItem(
         "file", "new_from_template", this, toolBar));
 
-      recentM = DatatoolGuiResources.createJMenu("file.recent");
+      recentM = resources.createJMenu("file.recent");
       recentM.addMenuListener(this);
       fileM.add(recentM);
 
-      clearRecentItem = DatatoolGuiResources.createJMenuItem(
+      clearRecentItem = resources.createJMenuItem(
         "file.recent", "clearrecent", this, toolBar);
 
       recentFilesListener = new ActionListener()
@@ -131,7 +144,7 @@ public class DatatoolGUI extends JFrame
 
                if (index < 0 || index >= settings.getRecentFileCount())
                {
-                  DatatoolTk.debug("Invalid recent file index "+index);
+                  getMessageHandler().debug("Invalid recent file index "+index);
                   return;
                }
 
@@ -139,53 +152,53 @@ public class DatatoolGUI extends JFrame
             }
             catch (NumberFormatException e)
             {
-               DatatoolTk.debug("Invalid recent file index "+action);
+               getMessageHandler().debug("Invalid recent file index "+action);
             }
          }
       };
 
-      fileM.add(DatatoolGuiResources.createJMenuItem(
+      fileM.add(resources.createJMenuItem(
         "file", "open", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK),
         toolBar));
 
-      JMenu importM = DatatoolGuiResources.createJMenu("file.import");
+      JMenu importM = resources.createJMenu("file.import");
       fileM.add(importM);
 
-      importM.add(DatatoolGuiResources.createJMenuItem(
+      importM.add(resources.createJMenuItem(
         "file.import", "importcsv", this, toolBar));
 
-      importM.add(DatatoolGuiResources.createJMenuItem(
+      importM.add(resources.createJMenuItem(
         "file.import", "importsql", this, toolBar));
 
       importSqlDialog = new ImportSqlDialog(this);
 
-      importM.add(DatatoolGuiResources.createJMenuItem(
+      importM.add(resources.createJMenuItem(
         "file.import", "importprobsoln", this, toolBar));
 
-      importM.add(DatatoolGuiResources.createJMenuItem(
+      importM.add(resources.createJMenuItem(
         "file.import", "importspread", this, toolBar));
 
-      fileM.add(DatatoolGuiResources.createJMenuItem(
+      fileM.add(resources.createJMenuItem(
         "file", "save", this, toolBar));
 
-      fileM.add(DatatoolGuiResources.createJMenuItem(
+      fileM.add(resources.createJMenuItem(
         "file", "save_as", this, toolBar));
 
-      fileM.add(DatatoolGuiResources.createJMenuItem(
+      fileM.add(resources.createJMenuItem(
         "file", "close_db", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK),
          toolBar));
 
-      fileM.add(DatatoolGuiResources.createJMenuItem(
+      fileM.add(resources.createJMenuItem(
         "file", "quit", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK),
         toolBar));
 
-      JMenu editM = DatatoolGuiResources.createJMenu("edit");
+      JMenu editM = resources.createJMenu("edit");
       mbar.add(editM);
 
-      undoItem = DatatoolGuiResources.createJMenuItem(
+      undoItem = resources.createJMenuItem(
          "edit", "undo", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK),
          toolBar);
@@ -193,7 +206,7 @@ public class DatatoolGUI extends JFrame
 
       undoItem.setEnabled(false);
 
-      redoItem = DatatoolGuiResources.createJMenuItem(
+      redoItem = resources.createJMenuItem(
          "edit", "redo", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK),
          toolBar);
@@ -201,7 +214,7 @@ public class DatatoolGUI extends JFrame
 
       redoItem.setEnabled(false);
 
-      deselectItem = DatatoolGuiResources.createJMenuItem(
+      deselectItem = resources.createJMenuItem(
          "edit", "deselect", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_A, 
             InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
@@ -211,83 +224,83 @@ public class DatatoolGUI extends JFrame
 
       editM.addSeparator();
 
-      editDbNameItem = DatatoolGuiResources.createJMenuItem(
+      editDbNameItem = resources.createJMenuItem(
          "edit", "edit_dbname", this, toolBar);
       editM.add(editDbNameItem);
       editDbNameItem.setEnabled(false);
 
-      editCellItem = DatatoolGuiResources.createJMenuItem(
+      editCellItem = resources.createJMenuItem(
          "edit", "edit_cell", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK),
          toolBar);
       editM.add(editCellItem);
       editCellItem.setEnabled(false);
 
-      setToNullItem = DatatoolGuiResources.createJMenuItem(
+      setToNullItem = resources.createJMenuItem(
          "edit", "cell_to_null", this, null, toolBar);
       editM.add(setToNullItem);
       setToNullItem.setEnabled(false);
 
-      JMenu colM = DatatoolGuiResources.createJMenu("edit.column");
+      JMenu colM = resources.createJMenu("edit.column");
       editM.add(colM);
 
-      editHeaderItem = DatatoolGuiResources.createJMenuItem(
+      editHeaderItem = resources.createJMenuItem(
          "edit.column", "edit_header", this, toolBar);
       colM.add(editHeaderItem);
       editHeaderItem.setEnabled(false);
 
-      addColumnBeforeItem = DatatoolGuiResources.createJMenuItem(
+      addColumnBeforeItem = resources.createJMenuItem(
          "edit.column", "add_column_before", this, toolBar);
       colM.add(addColumnBeforeItem);
       addColumnBeforeItem.setEnabled(false);
 
-      addColumnAfterItem = DatatoolGuiResources.createJMenuItem(
+      addColumnAfterItem = resources.createJMenuItem(
          "edit.column", "add_column_after", this, toolBar);
       colM.add(addColumnAfterItem);
       addColumnAfterItem.setEnabled(false);
 
-      removeColumnItem = DatatoolGuiResources.createJMenuItem(
+      removeColumnItem = resources.createJMenuItem(
          "edit.column", "remove_column", this, toolBar);
       colM.add(removeColumnItem);
       removeColumnItem.setEnabled(false);
 
-      setColToNullItem = DatatoolGuiResources.createJMenuItem(
+      setColToNullItem = resources.createJMenuItem(
          "edit.column", "column_to_null", this, null, toolBar);
       colM.add(setColToNullItem);
       setColToNullItem.setEnabled(false);
 
-      JMenu rowM = DatatoolGuiResources.createJMenu("edit.row");
+      JMenu rowM = resources.createJMenu("edit.row");
       editM.add(rowM);
 
-      addRowBeforeItem = DatatoolGuiResources.createJMenuItem(
+      addRowBeforeItem = resources.createJMenuItem(
          "edit.row", "add_row_before", this, toolBar);
       rowM.add(addRowBeforeItem);
       addRowBeforeItem.setEnabled(false);
 
-      addRowAfterItem = DatatoolGuiResources.createJMenuItem(
+      addRowAfterItem = resources.createJMenuItem(
          "edit.row", "add_row_after", this, toolBar);
       rowM.add(addRowAfterItem);
       addRowAfterItem.setEnabled(false);
 
-      removeRowItem = DatatoolGuiResources.createJMenuItem(
+      removeRowItem = resources.createJMenuItem(
          "edit.row", "remove_row", this, toolBar);
       rowM.add(removeRowItem);
       removeRowItem.setEnabled(false);
 
-      setRowToNullItem = DatatoolGuiResources.createJMenuItem(
+      setRowToNullItem = resources.createJMenuItem(
          "edit.row", "row_to_null", this, null, toolBar);
       rowM.add(setRowToNullItem);
       setRowToNullItem.setEnabled(false);
 
-      editM.add(DatatoolGuiResources.createJMenuItem(
+      editM.add(resources.createJMenuItem(
          "edit", "preferences", this, toolBar));
 
       propertiesDialog = new PropertiesDialog(this);
 
-      JMenu searchM = DatatoolGuiResources.createJMenu("search");
+      JMenu searchM = resources.createJMenu("search");
       mbar.add(searchM);
 
-      findCellItem = DatatoolGuiResources.createJMenuItem(
+      findCellItem = resources.createJMenuItem(
          "search", "find_cell", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK),
          toolBar);
@@ -296,13 +309,13 @@ public class DatatoolGUI extends JFrame
 
       findCellDialog = new FindCellDialog(this);
 
-      findNextItem = DatatoolGuiResources.createJMenuItem(
+      findNextItem = resources.createJMenuItem(
          "search", "find_again", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
          toolBar);
       searchM.add(findNextItem);
 
-      replaceItem = DatatoolGuiResources.createJMenuItem(
+      replaceItem = resources.createJMenuItem(
          "search", "replace", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
          toolBar);
@@ -311,44 +324,44 @@ public class DatatoolGUI extends JFrame
 
       searchM.add(replaceItem);
 
-      toolsM = DatatoolGuiResources.createJMenu("tools");
+      toolsM = resources.createJMenu("tools");
       mbar.add(toolsM);
 
-      sortItem = DatatoolGuiResources.createJMenuItem(
+      sortItem = resources.createJMenuItem(
          "tools", "sort", this, toolBar);
       toolsM.add(sortItem);
 
       sortDialog = new SortDialog(this);
 
-      shuffleItem = DatatoolGuiResources.createJMenuItem(
+      shuffleItem = resources.createJMenuItem(
          "tools", "shuffle", this, toolBar);
       toolsM.add(shuffleItem);
 
-      pluginsM = DatatoolGuiResources.createJMenu("tools.plugins");
+      pluginsM = resources.createJMenu("tools.plugins");
       toolsM.add(pluginsM);
 
       initPlugins();
 
-      JMenu helpM = DatatoolGuiResources.createJMenu("help");
+      JMenu helpM = resources.createJMenu("help");
       mbar.add(helpM);
 
-      helpM.add(DatatoolGuiResources.createJMenuItem(
+      helpM.add(resources.createJMenuItem(
          "help", "manual", csh,
           KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0),
           toolBar));
 
-      JMenuItem item = new JMenuItem(DatatoolTk.getLabel("help",
+      JMenuItem item = new JMenuItem(messageHandler.getLabel("help",
         "licence"));
-      item.setMnemonic(DatatoolTk.getMnemonic("help", "licence"));
+      item.setMnemonic(getMessageHandler().getMnemonic("help", "licence"));
 
       enableHelpOnButton(item, "licence");
 
       helpM.add(item);
 
-      helpM.add(DatatoolGuiResources.createJMenuItem(
+      helpM.add(resources.createJMenuItem(
          "help", "about", this, toolBar));
 
-      settings.setPasswordReader(new GuiPasswordReader(this));
+      settings.setPasswordReader(new GuiPasswordReader(messageHandler, this));
 
       // main panel
 
@@ -393,14 +406,14 @@ public class DatatoolGUI extends JFrame
 
       // File filters
 
-      texFilter = new TeXFileFilter();
-      dbtexFilter = new DbTeXFileFilter();
-      csvtxtFilter = new CsvTxtFileFilter();
-      csvFilter = new CsvFileFilter();
-      txtFilter = new TxtFileFilter();
-      xlsFilter = new XlsFileFilter();
-      odsFilter = new OdsFileFilter();
-      spreadFilter = new SpreadSheetFilter();
+      texFilter = new TeXFileFilter(messageHandler);
+      dbtexFilter = new DbTeXFileFilter(messageHandler);
+      csvtxtFilter = new CsvTxtFileFilter(messageHandler);
+      csvFilter = new CsvFileFilter(messageHandler);
+      txtFilter = new TxtFileFilter(messageHandler);
+      xlsFilter = new XlsFileFilter(messageHandler);
+      odsFilter = new OdsFileFilter(messageHandler);
+      spreadFilter = new SpreadSheetFilter(messageHandler);
 
       fileChooser = new JFileChooser(settings.getStartUpDirectory());
 
@@ -430,8 +443,9 @@ public class DatatoolGUI extends JFrame
       {
          HelpSet mainHelpSet = null;
 
-         String helpset = settings.getHelpSetLocation()
-            + "-"+settings.getHelpSet()+"/"+settings.RESOURCE+".hs";
+         String helpset = String.format("%s-%s/%s.hs", 
+            settings.getHelpSetLocation(),
+            settings.getHelpSet(), settings.RESOURCE);
 
          URL hsURL = getClass().getResource(helpset);
 
@@ -440,7 +454,8 @@ public class DatatoolGUI extends JFrame
             if (hsURL == null)
             {
                throw new FileNotFoundException(
-                  DatatoolTk.getLabelWithValue("error.resource.not_found",
+                  getMessageHandler().getLabelWithValue(
+                    "error.resource.not_found",
                     helpset));
             }
          }
@@ -464,19 +479,19 @@ public class DatatoolGUI extends JFrame
          }
          catch (BadIDException e)
          {
-            DatatoolGuiResources.error(null, e);
+            getMessageHandler().error(null, e);
          }
       }
       else
       {
-         DatatoolTk.debug("Can't enable help on button (id="+id
+         getMessageHandler().debug("Can't enable help on button (id="+id
            +"): null help broker");
       }
    }
 
    public JButton createHelpButton(String id)
    {
-      JButton button = DatatoolGuiResources.createActionButton(
+      JButton button = resources.createActionButton(
          "button", "help", null, 
          KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 
@@ -496,7 +511,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (URISyntaxException e)
       {
-         DatatoolGuiResources.error(this, e);
+         getMessageHandler().error(this, e);
          return null;
       }
 
@@ -536,7 +551,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (URISyntaxException e)
       {
-         DatatoolGuiResources.error(this, e);
+         getMessageHandler().error(this, e);
          return null;
       }
 
@@ -576,13 +591,13 @@ public class DatatoolGUI extends JFrame
    {
       if (undoName != null)
       {
-        undoItem.setText(DatatoolTk.getLabelWithValue("edit.undo",
+        undoItem.setText(getMessageHandler().getLabelWithValue("edit.undo",
            undoName));
       }
 
       if (redoName != null)
       {
-        redoItem.setText(DatatoolTk.getLabelWithValue("edit.redo",
+        redoItem.setText(getMessageHandler().getLabelWithValue("edit.redo",
            redoName));
       }
 
@@ -597,7 +612,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (URISyntaxException e)
       {
-         DatatoolGuiResources.error(this, e);
+         getMessageHandler().error(this, e);
          return;
       }
 
@@ -629,7 +644,7 @@ public class DatatoolGUI extends JFrame
                }
                catch (IOException e)
                {
-                  DatatoolGuiResources.error(null, e);
+                  getMessageHandler().error(null, e);
                }
             }
          });
@@ -683,8 +698,8 @@ public class DatatoolGUI extends JFrame
          DatatoolDb db = new DatatoolDb(settings);
 
          String name = JOptionPane.showInputDialog(this,
-            DatatoolTk.getLabel("message.input_database_name"),
-            DatatoolTk.getLabel("default.untitled"));
+            getMessageHandler().getLabel("message.input_database_name"),
+            getMessageHandler().getLabel("default.untitled"));
 
          if (name != null)
          {
@@ -740,7 +755,8 @@ public class DatatoolGUI extends JFrame
          {
             DatatoolDbPanel dbPanel = ((DatatoolDbPanel)tab);
 
-            dbPanel.startCompoundEdit(DatatoolTk.getLabel("undo.nullify_column"));
+            dbPanel.startCompoundEdit(
+               getMessageHandler().getLabel("undo.nullify_column"));
 
             int selectedColumn = dbPanel.getModelSelectedColumn();
             for (int row = 0, n = dbPanel.getRowCount(); row < n; row++)
@@ -759,7 +775,8 @@ public class DatatoolGUI extends JFrame
          {
             DatatoolDbPanel dbPanel = ((DatatoolDbPanel)tab);
 
-            dbPanel.startCompoundEdit(DatatoolTk.getLabel("undo.nullify_row"));
+            dbPanel.startCompoundEdit(
+              getMessageHandler().getLabel("undo.nullify_row"));
 
             int selectedRow = dbPanel.getModelSelectedRow();
             for (int column = 0, n = dbPanel.getColumnCount(); column < n; column++)
@@ -836,13 +853,15 @@ public class DatatoolGUI extends JFrame
       else if (action.equals("about"))
       {
          JOptionPane.showMessageDialog(this, 
-           DatatoolTk.getAppInfo(),
-           DatatoolTk.getLabelWithValue("about.title", DatatoolTk.appName),
+           getMessageHandler().getDatatoolTk().getAppInfo(),
+           getMessageHandler().getLabelWithValue("about.title", 
+             DatatoolTk.APP_NAME),
            JOptionPane.PLAIN_MESSAGE);
       }
       else if (action.equals("undo"))
       {
-         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+         DatatoolDbPanel panel 
+            = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
 
          if (panel != null)
          {
@@ -851,7 +870,8 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("redo"))
       {
-         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+         DatatoolDbPanel panel  
+            = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
 
          if (panel != null)
          {
@@ -860,7 +880,8 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("sort"))
       {
-         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+         DatatoolDbPanel panel 
+            = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
 
          if (panel != null)
          {
@@ -869,7 +890,8 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("shuffle"))
       {
-         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+         DatatoolDbPanel panel 
+            = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
 
          if (panel != null)
          {
@@ -882,7 +904,8 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("find_cell"))
       {
-         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+         DatatoolDbPanel panel 
+           = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
 
          if (panel != null)
          {
@@ -891,7 +914,8 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("find_again"))
       {
-         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+         DatatoolDbPanel panel 
+            = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
 
          if (panel != null)
          {
@@ -900,7 +924,8 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("replace"))
       {
-         DatatoolDbPanel panel = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+         DatatoolDbPanel panel 
+           = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
 
          if (panel != null)
          {
@@ -964,7 +989,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (IOException e)
       {
-         DatatoolTk.debug(e);
+         getMessageHandler().debug(e);
       }
 
       System.exit(0);
@@ -1088,9 +1113,9 @@ public class DatatoolGUI extends JFrame
       if (panel.isModified())
       {
          switch (JOptionPane.showConfirmDialog(this,
-           DatatoolTk.getLabelWithValue("message.unsaved_data_query",
+           getMessageHandler().getLabelWithValue("message.unsaved_data_query",
              panel.getName()),
-           DatatoolTk.getLabel("message.unsaved_data"),
+           getMessageHandler().getLabel("message.unsaved_data"),
            JOptionPane.YES_NO_CANCEL_OPTION,
            JOptionPane.QUESTION_MESSAGE))
          {
@@ -1120,8 +1145,8 @@ public class DatatoolGUI extends JFrame
 
       if (panel == null)
       {
-         DatatoolGuiResources.error(this, 
-           DatatoolTk.getLabel("error.nopanel"));
+         getMessageHandler().error(this, 
+           getMessageHandler().getLabel("error.nopanel"));
          return;
       }
 
@@ -1135,8 +1160,8 @@ public class DatatoolGUI extends JFrame
 
       if (panel == null)
       {
-         DatatoolGuiResources.error(this, 
-           DatatoolTk.getLabel("error.nopanel"));
+         getMessageHandler().error(this, 
+           getMessageHandler().getLabel("error.nopanel"));
          return;
       }
 
@@ -1187,8 +1212,8 @@ public class DatatoolGUI extends JFrame
       }
       catch (IOException e)
       {
-         DatatoolGuiResources.error(this,
-           DatatoolTk.getLabelWithValues(
+         getMessageHandler().error(this,
+           getMessageHandler().getLabelWithValues(
              "error.load.failed", file.toString(), e.getMessage()), e);
       }
 
@@ -1216,7 +1241,7 @@ public class DatatoolGUI extends JFrame
    {
       setSpreadSheetFilters();
 
-      if (fileChooser.showDialog(this, DatatoolTk.getLabel("button.import"))
+      if (fileChooser.showDialog(this, getMessageHandler().getLabel("button.import"))
        != JFileChooser.APPROVE_OPTION)
       {
          return null;
@@ -1256,8 +1281,8 @@ public class DatatoolGUI extends JFrame
          }
          else
          {
-            DatatoolGuiResources.error(this,  
-              DatatoolTk.getLabelWithValue("error.unknown_file_format", name));
+            getMessageHandler().error(this,  
+              getMessageHandler().getLabelWithValue("error.unknown_file_format", name));
 
             return null;
          }
@@ -1266,8 +1291,8 @@ public class DatatoolGUI extends JFrame
       try
       {
          Object ref = JOptionPane.showInputDialog(this,
-            DatatoolTk.getLabel("importspread.sheet"),
-            DatatoolTk.getLabel("importspread.title"),
+            getMessageHandler().getLabel("importspread.sheet"),
+            getMessageHandler().getLabel("importspread.title"),
             JOptionPane.PLAIN_MESSAGE,
             null, imp.getSheetNames(file),
             null);
@@ -1284,7 +1309,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (Exception e)
       {
-         DatatoolGuiResources.error(this, e);
+         getMessageHandler().error(this, e);
       }
 
       return db;
@@ -1294,7 +1319,8 @@ public class DatatoolGUI extends JFrame
    {
       setCsvFileFilters();
 
-      if (fileChooser.showDialog(this, DatatoolTk.getLabel("button.import"))
+      if (fileChooser.showDialog(this, 
+             getMessageHandler().getLabel("button.import"))
        != JFileChooser.APPROVE_OPTION)
       {
          return null;
@@ -1311,7 +1337,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (DatatoolImportException e)
       {
-         DatatoolGuiResources.error(this, e);
+         getMessageHandler().error(this, e);
       }
 
       return db;
@@ -1321,7 +1347,8 @@ public class DatatoolGUI extends JFrame
    {
       setTeXFileFilter();
 
-      if (fileChooser.showDialog(this, DatatoolTk.getLabel("button.import"))
+      if (fileChooser.showDialog(this, 
+             getMessageHandler().getLabel("button.import"))
        != JFileChooser.APPROVE_OPTION)
       {
          return null;
@@ -1339,7 +1366,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (DatatoolImportException e)
       {
-         DatatoolGuiResources.error(this, e);
+         getMessageHandler().error(this, e);
       }
 
       return db;
@@ -1356,7 +1383,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (DatatoolImportException e)
       {
-         DatatoolGuiResources.error(this, e);
+         getMessageHandler().error(this, e);
       }
 
       return db;
@@ -1370,13 +1397,13 @@ public class DatatoolGUI extends JFrame
 
          if (templates.length == 0)
          {
-            DatatoolGuiResources.error(this, "error.no_templates");
+            getMessageHandler().error(this, "error.no_templates");
             return;
          }
 
          Object result = JOptionPane.showInputDialog(this,
-           DatatoolTk.getLabel("template.message"),
-           DatatoolTk.getLabel("template.title"),
+           getMessageHandler().getLabel("template.message"),
+           getMessageHandler().getLabel("template.title"),
            JOptionPane.PLAIN_MESSAGE,
            null, templates, templates[0]);
 
@@ -1391,7 +1418,7 @@ public class DatatoolGUI extends JFrame
       }
       catch (Exception e)
       {
-          DatatoolGuiResources.error(this, e);
+          getMessageHandler().error(this, e);
       }
    }
 
@@ -1407,7 +1434,7 @@ public class DatatoolGUI extends JFrame
 
    public DatatoolHeader requestNewHeader(DatatoolDbPanel panel)
    {
-      String label = DatatoolTk.getLabel("default.untitled");
+      String label = getMessageHandler().getLabel("default.untitled");
 
       DatatoolHeader header = new DatatoolHeader(panel.db, label, "");
 
@@ -1486,6 +1513,21 @@ public class DatatoolGUI extends JFrame
       return settings;
    }
 
+   public DatatoolTk getDatatoolTk()
+   {
+      return settings.getDatatoolTk();
+   }
+
+   public MessageHandler getMessageHandler()
+   {
+      return settings.getMessageHandler();
+   }
+
+   public DatatoolGuiResources getResources()
+   {
+      return resources;
+   }
+
    public void updateTableSettings()
    {
       for (int i = 0, n = tabbedPane.getTabCount(); i < n; i++)
@@ -1497,6 +1539,8 @@ public class DatatoolGUI extends JFrame
    }
 
    private DatatoolSettings settings;
+
+   private DatatoolGuiResources resources;
 
    private JTabbedPane tabbedPane;
 

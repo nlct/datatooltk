@@ -36,6 +36,11 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       this.settings = settings;
    }
 
+   public MessageHandler getMessageHandler()
+   {
+      return settings.getMessageHandler();
+   }
+
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {
@@ -48,7 +53,8 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       if (!file.exists())
       {
          throw new IOException(
-            DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
+            getMessageHandler().getLabelWithValue("error.io.file_not_found", 
+             file.toString()));
       }
 
       Workbook workBook = null;
@@ -59,7 +65,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       }
       catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException e)
       {
-         throw new IOException(DatatoolTk.getLabelWithValue
+         throw new IOException(getMessageHandler().getLabelWithValue
            ("error.unknown_file_format", file.getName()), e);
       }
 
@@ -85,13 +91,13 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          if (!file.exists())
          {
             throw new IOException(
-               DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
+               getMessageHandler().getLabelWithValue("error.io.file_not_found", ""+file));
          }
 
          if (file.getName().toLowerCase().endsWith(".xlsx"))
          {
             throw new IOException(
-              DatatoolTk.getLabel("error.xlsx_not_supported"));
+              getMessageHandler().getLabel("error.xlsx_not_supported"));
          }
 
          Workbook workBook = WorkbookFactory.create(file);
@@ -169,7 +175,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
             for (Cell cell : row)
             {
                DatatoolHeader header = new DatatoolHeader(db,
-                 DatatoolTk.getLabelWithValue("default.field", (cellIdx+1)));
+                 getMessageHandler().getLabelWithValue("default.field", (cellIdx+1)));
                db.addColumn(header);
 
                db.addCell(rowIdx, cellIdx, getCellValue(cell));
@@ -205,7 +211,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       catch (Exception e)
       {
          throw new DatatoolImportException(
-          DatatoolTk.getLabelWithValue("error.import.failed", 
+          getMessageHandler().getLabelWithValue("error.import.failed", 
            file.toString()), e);
       }
 

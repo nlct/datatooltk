@@ -36,9 +36,11 @@ public class CellDialog extends JDialog
 {
    public CellDialog(DatatoolGUI gui)
    {
-      super(gui, DatatoolTk.getLabel("celledit.title"), true);
+      super(gui, gui.getMessageHandler().getLabel("celledit.title"), true);
 
       this.gui = gui;
+
+      DatatoolGuiResources resources = gui.getResources();
 
       setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -53,7 +55,8 @@ public class CellDialog extends JDialog
       JMenuBar mbar = new JMenuBar();
       setJMenuBar(mbar);
 
-      ScrollToolBar toolBar = new ScrollToolBar(SwingConstants.HORIZONTAL);
+      ScrollToolBar toolBar = new ScrollToolBar(
+       gui.getMessageHandler(), SwingConstants.HORIZONTAL);
 
       getContentPane().add(toolBar, BorderLayout.NORTH);
 
@@ -63,17 +66,17 @@ public class CellDialog extends JDialog
 
       undoManager = new UndoManager();
 
-      JMenu editM = DatatoolGuiResources.createJMenu("edit");
+      JMenu editM = resources.createJMenu("edit");
       mbar.add(editM);
 
-      undoItem = DatatoolGuiResources.createJMenuItem(
+      undoItem = resources.createJMenuItem(
         "edit", "undo", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK),
         toolBar);
 
       editM.add(undoItem);
 
-      redoItem = DatatoolGuiResources.createJMenuItem(
+      redoItem = resources.createJMenuItem(
         "edit", "redo", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK),
         toolBar);
@@ -82,46 +85,46 @@ public class CellDialog extends JDialog
 
       editM.addSeparator();
 
-      editM.add(DatatoolGuiResources.createJMenuItem(
+      editM.add(resources.createJMenuItem(
          "edit", "select_all", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK),
          toolBar));
 
-      cutItem = DatatoolGuiResources.createJMenuItem(
+      cutItem = resources.createJMenuItem(
          "edit", "cut", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK),
          toolBar);
 
       editM.add(cutItem);
 
-      copyItem = DatatoolGuiResources.createJMenuItem(
+      copyItem = resources.createJMenuItem(
          "edit", "copy", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
          toolBar);
 
       editM.add(copyItem);
 
-      editM.add(DatatoolGuiResources.createJMenuItem(
+      editM.add(resources.createJMenuItem(
          "edit", "paste", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
          toolBar));
 
-      JMenu searchM = DatatoolGuiResources.createJMenu("search");
+      JMenu searchM = resources.createJMenu("search");
       mbar.add(searchM);
 
-      searchM.add(DatatoolGuiResources.createJMenuItem(
+      searchM.add(resources.createJMenuItem(
          "search", "find", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK),
          toolBar));
 
-      findAgainItem = DatatoolGuiResources.createJMenuItem(
+      findAgainItem = resources.createJMenuItem(
          "search", "find_again", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
          toolBar);
       searchM.add(findAgainItem);
       findAgainItem.setEnabled(false);
 
-      searchM.add(DatatoolGuiResources.createJMenuItem(
+      searchM.add(resources.createJMenuItem(
          "search", "replace", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK),
          toolBar));
@@ -168,13 +171,13 @@ public class CellDialog extends JDialog
 
       updateEditButtons();
 
-      findDialog = new FindDialog(this, textPane);
+      findDialog = new FindDialog(gui.getMessageHandler(), this, textPane);
 
       textPane.setMinimumSize(new Dimension(0,0));
       mainPanel.add(new JScrollPane(textPane), BorderLayout.CENTER);
 
       mainPanel.add(
-         DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "celleditor"),
+         resources.createOkayCancelHelpPanel(this, gui, "celleditor"),
          BorderLayout.SOUTH);
 
       pack();
@@ -199,7 +202,7 @@ public class CellDialog extends JDialog
       }
       catch (BadLocationException e)
       {
-         DatatoolGuiResources.error(this, e);
+         getMessageHandler().error(this, e);
       }
 
       undoManager.discardAllEdits();
@@ -239,7 +242,7 @@ public class CellDialog extends JDialog
          }
          catch (CannotUndoException e)
          {
-            DatatoolTk.debug(e);
+            getMessageHandler().debug(e);
          }
 
          undoItem.setEnabled(undoManager.canUndo());
@@ -253,7 +256,7 @@ public class CellDialog extends JDialog
          }
          catch (CannotRedoException e)
          {
-            DatatoolTk.debug(e);
+            getMessageHandler().debug(e);
          }
 
          undoItem.setEnabled(undoManager.canUndo());
@@ -315,8 +318,8 @@ public class CellDialog extends JDialog
       if (modified)
       {
          if (JOptionPane.showConfirmDialog(this, 
-            DatatoolTk.getLabel("message.discard_edit_query"),
-            DatatoolTk.getLabel("message.confirm_discard"),
+            getMessageHandler().getLabel("message.discard_edit_query"),
+            getMessageHandler().getLabel("message.confirm_discard"),
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE)
             != JOptionPane.YES_OPTION)
@@ -354,6 +357,11 @@ public class CellDialog extends JDialog
       undoManager.addEdit(edit);
 
       undoItem.setEnabled(true);
+   }
+
+   public MessageHandler getMessageHandler()
+   {
+      return gui.getMessageHandler();
    }
 
    private JTextPane textPane;

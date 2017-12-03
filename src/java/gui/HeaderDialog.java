@@ -32,7 +32,11 @@ public class HeaderDialog extends JDialog
 {
    public HeaderDialog(DatatoolGUI gui)
    {
-      super(gui, DatatoolTk.getLabel("header.title"), true);
+      super(gui, gui.getMessageHandler().getLabel("header.title"), true);
+
+      messageHandler = gui.getMessageHandler();
+
+      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
 
       Box box = Box.createVerticalBox();
       getContentPane().add(box, BorderLayout.CENTER);
@@ -46,7 +50,7 @@ public class HeaderDialog extends JDialog
       JLabel[] labels = new JLabel[3];
 
       titleField = new JTextField(32);
-      labels[idx] = DatatoolGuiResources.createJLabel("header.column_title",
+      labels[idx] = resources.createJLabel("header.column_title",
         titleField);
 
       dim = labels[idx].getPreferredSize();
@@ -60,7 +64,7 @@ public class HeaderDialog extends JDialog
 
       labelField = new JTextField(10);
 
-      labels[idx] = DatatoolGuiResources.createJLabel("header.column_label",
+      labels[idx] = resources.createJLabel("header.column_label",
          labelField);
 
       dim = labels[idx].getPreferredSize();
@@ -68,14 +72,14 @@ public class HeaderDialog extends JDialog
 
       p.add(labels[idx++]);
       p.add(labelField);
-      p.add(DatatoolGuiResources.createJLabel("header.column_label_note"));
+      p.add(resources.createJLabel("header.column_label_note"));
 
       p = new JPanel(new FlowLayout(FlowLayout.LEFT));
       box.add(p);
 
-      typeBox = new JComboBox<String>(DatatoolDb.TYPE_LABELS);
+      typeBox = new JComboBox<String>(getSettings().getTypeLabels());
 
-      labels[idx] = DatatoolGuiResources.createJLabel("header.column_type",
+      labels[idx] = resources.createJLabel("header.column_type",
          typeBox);
 
       dim = labels[idx].getPreferredSize();
@@ -92,7 +96,7 @@ public class HeaderDialog extends JDialog
       }
 
       getContentPane().add(
-       DatatoolGuiResources.createOkayCancelHelpPanel(this,
+       resources.createOkayCancelHelpPanel(this,
         gui, "editheader"),
        BorderLayout.SOUTH);
 
@@ -119,7 +123,7 @@ public class HeaderDialog extends JDialog
       this.checkUnique = checkUnique;
 
       modified = false;
-      setTitle(DatatoolTk.getLabelWithValue("header.title", header.getKey()));
+      setTitle(messageHandler.getLabelWithValue("header.title", header.getKey()));
 
       titleField.setText(header.getTitle());
       labelField.setText(header.getKey());
@@ -153,8 +157,12 @@ public class HeaderDialog extends JDialog
    {
       int type = typeBox.getSelectedIndex()-1;
 
-      if (colIdx > -1 && type != DatatoolDb.TYPE_UNKNOWN
-           && type != DatatoolDb.TYPE_STRING)
+      DatatoolSettings settings = getSettings();
+
+      String[] typeLabels = settings.getTypeLabels();
+
+      if (colIdx > -1 && type != DatatoolSettings.TYPE_UNKNOWN
+           && type != DatatoolSettings.TYPE_STRING)
       {
          // Is the requested data type valid for this column?
 
@@ -171,50 +179,47 @@ public class HeaderDialog extends JDialog
 
             switch (type)
             {
-               case DatatoolDb.TYPE_INTEGER:
-                  if (thisType == DatatoolDb.TYPE_REAL
-                     || thisType == DatatoolDb.TYPE_CURRENCY
-                     || thisType == DatatoolDb.TYPE_STRING)
+               case DatatoolSettings.TYPE_INTEGER:
+                  if (thisType == DatatoolSettings.TYPE_REAL
+                     || thisType == DatatoolSettings.TYPE_CURRENCY
+                     || thisType == DatatoolSettings.TYPE_STRING)
                   {
-                     DatatoolGuiResources.error(this, 
-                        DatatoolTk.getLabelWithValues("error.invalid_header_choice",
-                          new String[]
-                          {
-                            DatatoolDb.TYPE_LABELS[type+1],
-                            ""+rowIdx,
-                            DatatoolDb.TYPE_LABELS[thisType+1]
-                          }));
+                     messageHandler.error(this, 
+                        messageHandler.getLabelWithValues(
+                            "error.invalid_header_choice",
+                            typeLabels[type+1],
+                            rowIdx,
+                            typeLabels[thisType+1]
+                          ));
 
                      return;
                   }
                break;
-               case DatatoolDb.TYPE_REAL:
-                  if (thisType == DatatoolDb.TYPE_CURRENCY
-                   || thisType == DatatoolDb.TYPE_STRING)
+               case DatatoolSettings.TYPE_REAL:
+                  if (thisType == DatatoolSettings.TYPE_CURRENCY
+                   || thisType == DatatoolSettings.TYPE_STRING)
                   {
-                     DatatoolGuiResources.error(this, 
-                        DatatoolTk.getLabelWithValues("error.invalid_header_choice",
-                          new String[]
-                          {
-                            DatatoolDb.TYPE_LABELS[type+1],
-                            ""+rowIdx,
-                            DatatoolDb.TYPE_LABELS[thisType+1]
-                          }));
+                     messageHandler.error(this, 
+                        messageHandler.getLabelWithValues(
+                            "error.invalid_header_choice",
+                            typeLabels[type+1],
+                            rowIdx,
+                            typeLabels[thisType+1]
+                          ));
 
                      return;
                   }
                break;
-               case DatatoolDb.TYPE_CURRENCY:
-                  if (thisType == DatatoolDb.TYPE_STRING)
+               case DatatoolSettings.TYPE_CURRENCY:
+                  if (thisType == DatatoolSettings.TYPE_STRING)
                   {
-                     DatatoolGuiResources.error(this, 
-                        DatatoolTk.getLabelWithValues("error.invalid_header_choice",
-                          new String[]
-                          {
-                            DatatoolDb.TYPE_LABELS[type+1],
-                            ""+rowIdx,
-                            DatatoolDb.TYPE_LABELS[thisType+1]
-                          }));
+                     messageHandler.error(this, 
+                        messageHandler.getLabelWithValues(
+                          "error.invalid_header_choice",
+                          typeLabels[type+1],
+                          rowIdx,
+                          typeLabels[thisType+1]
+                         ));
 
                      return;
                   }
@@ -227,8 +232,8 @@ public class HeaderDialog extends JDialog
 
       if (key.isEmpty())
       {
-         DatatoolGuiResources.error(this, 
-            DatatoolTk.getLabel("error.missing_key"));
+         messageHandler.error(this, 
+            messageHandler.getLabel("error.missing_key"));
          return;
       }
 
@@ -239,8 +244,8 @@ public class HeaderDialog extends JDialog
 
          if (db.getHeader(key) != null)
          {
-            DatatoolGuiResources.error(this, 
-               DatatoolTk.getLabelWithValue("error.key_exists", key));
+            messageHandler.error(this, 
+               messageHandler.getLabelWithValue("error.key_exists", key));
 
             return;
          }
@@ -258,6 +263,16 @@ public class HeaderDialog extends JDialog
       setVisible(false);
    }
 
+   public MessageHandler getMessageHandler()
+   {
+      return messageHandler;
+   }
+
+   public DatatoolSettings getSettings()
+   {
+      return messageHandler.getSettings();
+   }
+
    private JTextField titleField, labelField;
 
    private JComboBox<String> typeBox;
@@ -265,6 +280,8 @@ public class HeaderDialog extends JDialog
    private DatatoolHeader header;
 
    private DatatoolDb db;
+
+   private MessageHandler messageHandler;
 
    private boolean checkUnique;
 

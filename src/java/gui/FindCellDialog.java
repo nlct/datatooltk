@@ -35,9 +35,11 @@ public class FindCellDialog extends JDialog
 {
    public FindCellDialog(DatatoolGUI gui)
    {
-      super(gui, DatatoolTk.getLabel("find.title"));
+      super(gui, gui.getMessageHandler().getLabel("find.title"));
 
       this.gui = gui;
+
+      DatatoolGuiResources resources = gui.getResources();
 
       JComponent mainPanel = Box.createVerticalBox();
       getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -46,7 +48,7 @@ public class FindCellDialog extends JDialog
       mainPanel.add(panel);
 
       searchField = new JTextField();
-      JLabel searchLabel = DatatoolGuiResources.createJLabel(
+      JLabel searchLabel = resources.createJLabel(
          "find.cell_containing", searchField);
 
       panel.add(searchLabel);
@@ -77,15 +79,15 @@ public class FindCellDialog extends JDialog
       panel = Box.createHorizontalBox();
       mainPanel.add(panel);
 
-      caseBox = DatatoolGuiResources.createJCheckBox("find",
+      caseBox = resources.createJCheckBox("find",
         "case", null);
       panel.add(caseBox);
 
-      regexBox = DatatoolGuiResources.createJCheckBox("find",
+      regexBox = resources.createJCheckBox("find",
         "regex", null);
       panel.add(regexBox);
 
-      wrapBox = DatatoolGuiResources.createJCheckBox("find",
+      wrapBox = resources.createJCheckBox("find",
         "wrap", null);
       panel.add(wrapBox);
       wrapBox.setSelected(true);
@@ -95,11 +97,11 @@ public class FindCellDialog extends JDialog
 
       ButtonGroup bg = new ButtonGroup();
 
-      rowWiseButton = DatatoolGuiResources.createJRadioButton("find",
+      rowWiseButton = resources.createJRadioButton("find",
          "rowwise", bg, null);
       panel.add(rowWiseButton);
 
-      columnWiseButton = DatatoolGuiResources.createJRadioButton("find",
+      columnWiseButton = resources.createJRadioButton("find",
          "colwise", bg, null);
       panel.add(columnWiseButton);
 
@@ -108,13 +110,13 @@ public class FindCellDialog extends JDialog
       JPanel buttonPanel = new JPanel();
       getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-      findButton = DatatoolGuiResources.createActionButton(
+      findButton = resources.createActionButton(
         "find", "find", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
 
       buttonPanel.add(findButton);
 
-      buttonPanel.add(DatatoolGuiResources.createActionButton(
+      buttonPanel.add(resources.createActionButton(
         "find", "close", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)));
 
@@ -192,7 +194,7 @@ public class FindCellDialog extends JDialog
       else
       {
          JOptionPane.showMessageDialog(this,
-            DatatoolTk.getLabel("find.not_found"));
+            gui.getMessageHandler().getLabel("find.not_found"));
       }
 
       updateButtons();

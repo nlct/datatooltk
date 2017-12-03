@@ -36,9 +36,11 @@ public class InsertRowEdit extends AbstractUndoableEdit
 
       if (panel.getRowCount() == 0)
       {
-         undoInfo = DatatoolTk.getLabelWithValue("info.no_rows",
-           DatatoolTk.getLabel("edit")+"->"
-             +DatatoolTk.getLabel("edit.row"));
+         MessageHandler messageHandler = panel.getMessageHandler();
+
+         undoInfo = messageHandler.getLabelWithValue("info.no_rows",
+           messageHandler.getLabel("edit")+"->"
+             +messageHandler.getLabel("edit.row"));
       }
       else
       {
@@ -64,9 +66,11 @@ public class InsertRowEdit extends AbstractUndoableEdit
 
       if (panel.getRowCount() == 0)
       {
-         undoInfo = DatatoolTk.getLabelWithValue("info.no_rows",
-           DatatoolTk.getLabel("edit")+"->"
-             +DatatoolTk.getLabel("edit.row"));
+         MessageHandler messageHandler = panel.getMessageHandler();
+
+         undoInfo = messageHandler.getLabelWithValue("info.no_rows",
+           messageHandler.getLabel("edit")+"->"
+             +messageHandler.getLabel("edit.row"));
       }
       else
       {
@@ -94,6 +98,13 @@ public class InsertRowEdit extends AbstractUndoableEdit
 
    private void init()
    {
+      MessageHandler messageHandler = panel.getMessageHandler();
+
+      if (NAME == null)
+      {
+         NAME = messageHandler.getLabel("undo.add_row");
+      }
+
       panel.addRowButton();
 
       newTypes = new int[panel.getColumnCount()];
@@ -128,15 +139,15 @@ public class InsertRowEdit extends AbstractUndoableEdit
 
       if (panel.getRowCount() == 1)
       {
-         String editLabel = DatatoolTk.getLabel("edit");
+         String editLabel = messageHandler.getLabel("edit");
 
-         redoInfo = DatatoolTk.getLabelWithValues("info.not_empty_db",
-           editLabel+"->"+DatatoolTk.getLabel("edit.column"),
-           editLabel+"->"+DatatoolTk.getLabel("edit.row"));
+         redoInfo = messageHandler.getLabelWithValues("info.not_empty_db",
+           editLabel+"->"+messageHandler.getLabel("edit.column"),
+           editLabel+"->"+messageHandler.getLabel("edit.row"));
       }
       else
       {
-         redoInfo = DatatoolTk.getLabel("info.move_row");
+         redoInfo = messageHandler.getLabel("info.move_row");
       }
 
       panel.setInfo(redoInfo);
@@ -190,7 +201,12 @@ public class InsertRowEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
+   }
+
+   public MessageHandler getMessageHandler()
+   {
+      return panel.getMessageHandler();
    }
 
    private DatatoolDbPanel panel;
@@ -203,5 +219,5 @@ public class InsertRowEdit extends AbstractUndoableEdit
 
    private String undoInfo, redoInfo;
 
-   private static final String name = DatatoolTk.getLabel("undo.add_row");
+   private static String NAME = null;
 }

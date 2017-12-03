@@ -38,6 +38,13 @@ public class UpdateCellEdit extends AbstractUndoableEdit
       this.newText = newText;
       this.oldText = panel.db.getRow(row).get(col);
 
+      MessageHandler messageHandler = panel.getMessageHandler();
+
+      if (NAME == null)
+      {
+         NAME = messageHandler.getLabel("undo.cell_edit");
+      }
+
       header = panel.db.getHeader(col);
       this.oldType = header.getType();
 
@@ -47,7 +54,7 @@ public class UpdateCellEdit extends AbstractUndoableEdit
 
       if (DatatoolDb.checkForVerbatim(newText))
       {
-         DatatoolTk.warning(DatatoolTk.getLabelWithValues(
+         messageHandler.warning(messageHandler.getLabelWithValues(
            "warning.verb_detected_in_cell",
            ""+(row+1), ""+(col+1)));
       }
@@ -86,12 +93,12 @@ public class UpdateCellEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
    }
 
    private DatatoolHeader header;
    private int row, col, oldType, newType;
    private String newText, oldText;
-   private static final String name = DatatoolTk.getLabel("undo.cell_edit");
+   private static String NAME = null;
    private DatatoolDbPanel panel;
 }

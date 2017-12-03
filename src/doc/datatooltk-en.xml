@@ -81,6 +81,9 @@
        <dd>Load <meta>datatool file</meta>. The switch <opt tag="in"/>
        (or <tt>-i</tt>) is optional, so <app/><nbsp/><meta>file</meta>
        is equivalent to <app/><nbsp/><opt tag="in"/> <meta>file</meta>.</dd>
+       <dt><opt tag="tex-encoding"/> <meta>encoding</meta></dt>
+       <dd>Set the encoding for the TeX files to <meta>encoding</meta>.
+       </dd>
        <dt><opt tag="name"/> <meta>name</meta></dt>
        <dd>If used with <opt tag="in"/>, <opt tag="csv"/>, <opt tag="sql"/>, <opt tag="xls"/>, <opt tag="ods"/>
        or <opt tag="probsoln"/>, sets the database label to 

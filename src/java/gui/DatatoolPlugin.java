@@ -32,9 +32,10 @@ import com.dickimawbooks.datatooltk.*;
  */
 public class DatatoolPlugin implements Runnable
 {
-   public DatatoolPlugin(File pluginFile)
+   public DatatoolPlugin(File pluginFile, MessageHandler messageHandler)
    {
       this.pluginFile = pluginFile;
+      this.messageHandler = messageHandler;
 
       name = pluginFile.getName();
 
@@ -59,7 +60,7 @@ public class DatatoolPlugin implements Runnable
       if (perl == null || perl.isEmpty())
       {
          throw new FileNotFoundException(
-            DatatoolTk.getLabel("error.plugin.no_perl"));
+            messageHandler.getLabel("error.plugin.no_perl"));
       }
 
       this.dbPanel = dbPanel;
@@ -125,7 +126,7 @@ public class DatatoolPlugin implements Runnable
          if (exitCode != 0)
          {
             throw new IOException(
-               DatatoolTk.getLabelWithValues("error.plugin.exit_code", 
+               messageHandler.getLabelWithValues("error.plugin.exit_code", 
                  ""+exitCode, errMess));
          }
 
@@ -136,30 +137,25 @@ public class DatatoolPlugin implements Runnable
       }
       catch (Exception e)
       {
-         DatatoolGuiResources.error(dbPanel, e);
+         messageHandler.error(dbPanel, e);
       }
 
    }
 
    private void writeData(PrintWriter writer)
    {
-      writer.println("<datatooltkplugin"
-         +" selectedrow=\""
-         +dbPanel.getModelSelectedRow()
-         +"\""
-         +" selectedcolumn=\""
-         +dbPanel.getModelSelectedColumn()
-         +"\""
-         +" name=\""
-         +encodeXml(dbPanel.getName())
-         +"\""
-         +" dict=\""
-         + DatatoolTk.getDictionaryUrl()
-         +"\""
-         +" resources=\""
-         + DatatoolTk.class.getResource("/resources/")
-         +"\""
-         +">");
+      DatatoolTk datatooltk = messageHandler.getDatatoolTk();
+
+      writer.format("<datatooltkplugin selectedrow=\"%d\"",
+        dbPanel.getModelSelectedRow());
+      writer.format(" selectedcolumn=\"%d\"",
+        dbPanel.getModelSelectedColumn());
+      writer.format(" name=\"%s\"", encodeXml(dbPanel.getName()));
+      writer.format(" dict=\"%s\"", datatooltk.getDictionaryUrl());
+      writer.format(" resources=\"%s\"", 
+         DatatoolTk.class.getResource("/resources/"));
+
+      writer.println(">");
 
       writer.println("<headers>");
 
@@ -221,7 +217,7 @@ public class DatatoolPlugin implements Runnable
 
       PluginHandler handler = new PluginHandler(dbPanel, name);
       xr.setContentHandler(handler);
-      xr.setErrorHandler(dbPanel.db.getErrorHandler());
+      xr.setErrorHandler(messageHandler);
 
       StringReader reader = new StringReader(xml.toString());
 
@@ -241,6 +237,7 @@ public class DatatoolPlugin implements Runnable
 
    private DatatoolDbPanel dbPanel;
 
+   private MessageHandler messageHandler;
 }
 
 class PluginHandler extends DefaultHandler
@@ -272,12 +269,13 @@ class PluginHandler extends DefaultHandler
       }
       else if (localName.equals("br") && currentBuffer != null)
       {
-         currentBuffer.append("\n");
+         currentBuffer.append(String.format("%n"));
       }
       else if (localName.equals("datatooltk"))
       {
          dbPanel.startCompoundEdit(
-            DatatoolTk.getLabelWithValue("undo.plugin_action", pluginName));
+            getMessageHandler().getLabelWithValue(
+               "undo.plugin_action", pluginName));
       }
    }
 
@@ -356,6 +354,11 @@ class PluginHandler extends DefaultHandler
       {
          currentBuffer.append(ch, start, length);
       }
+   }
+
+   public MessageHandler getMessageHandler()
+   {
+      return dbPanel.getMessageHandler();
    }
 
    private DatatoolDbPanel dbPanel;

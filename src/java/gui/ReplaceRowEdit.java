@@ -37,6 +37,11 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
       this.newRow = newRow;
       this.oldRow = panel.db.getRow(row);
 
+      if (NAME == null)
+      {
+         NAME = panel.getMessageHandler().getLabel("undo.replace_row");
+      }
+
       oldTypes = new int[panel.getColumnCount()];
 
       for (int i = 0, n = oldTypes.length; i < n; i++)
@@ -129,15 +134,15 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
    }
 
    private int row;
    private int[] oldTypes, newTypes;
    private boolean typesChanged;
    private DatatoolRow newRow, oldRow;
-   private static final String name = DatatoolTk.getLabel("undo.replace_row");
    private DatatoolDbPanel panel;
-
    private DatatoolHeader[] newHeaders;
+
+   private static String NAME=null;
 }

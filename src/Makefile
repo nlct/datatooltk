@@ -1,4 +1,4 @@
-APP_VERSION:=$(shell grep "public static final String appVersion" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sappVersion=//" | tr -d "\"\; ")
+APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION=//" | tr -d "\"\; ")
 IZPACKDIR=/usr/local/IzPack
 POIVER=3.9-20121203
 ODFVER=1.3
@@ -52,11 +52,12 @@ classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbook
 	lib/javahelp2.jar lib/opencsv.jar lib/mysql-connector-java.jar\
 	lib/poi-$(POIVER).jar lib/poi-ooxml-$(POIVER).jar \
 	lib/poi-ooxml-schemas-$(POIVER).jar \
-	lib/jOpenDocument-$(ODFVER).jar
+	lib/jOpenDocument-$(ODFVER).jar \
+	lib/texparserlib.jar
 	cd java; \
-	javac -d ../classes \
+	javac -target 1.7 -source 1.7 -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../lib/javahelp2.jar:../lib/opencsv.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-schemas-$(POIVER).jar:../lib/jOpenDocument-$(ODFVER).jar *.java */*.java
+	-cp ../lib/javahelp2.jar:../lib/opencsv.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-schemas-$(POIVER).jar:../lib/jOpenDocument-$(ODFVER).jar:../lib/texparserlib.jar *.java */*.java
 
 classes/com/dickimawbooks/datatooltk	:
 	mkdir -p classes/com/dickimawbooks/datatooltk

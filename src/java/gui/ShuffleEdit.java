@@ -33,6 +33,11 @@ public class ShuffleEdit extends AbstractUndoableEdit
       super();
       this.panel = panel;
 
+      if (NAME == null)
+      {
+         NAME = panel.getMessageHandler().getLabel("undo.shuffle");
+      }
+
       oldData = panel.db.dataToArray();
 
       panel.db.shuffle(random);
@@ -61,12 +66,12 @@ public class ShuffleEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
    }
 
    private DatatoolDbPanel panel;
 
    private DatatoolRow[] oldData, newData;
 
-   private static final String name = DatatoolTk.getLabel("undo.shuffle");
+   private static String NAME = null;
 }

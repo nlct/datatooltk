@@ -23,9 +23,14 @@ package com.dickimawbooks.datatooltk;
  */
 public class UserCancelledException extends InterruptedException
 {
-   public UserCancelledException()
+   private UserCancelledException()
    {
-      this(DatatoolTk.getLabel("message.cancelled"));
+      this("Cancelled");
+   }
+
+   public UserCancelledException(MessageHandler messageHandler)
+   {
+      this(messageHandler.getLabel("message.cancelled"));
    }
 
    public UserCancelledException(Exception e)

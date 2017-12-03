@@ -32,6 +32,11 @@ public class SortEdit extends AbstractUndoableEdit
       super();
       this.panel = panel;
 
+      if (NAME == null)
+      {
+         NAME = panel.getMessageHandler().getLabel("undo.sort");
+      }
+
       oldData = panel.db.dataToArray();
 
       panel.db.sort();
@@ -60,12 +65,12 @@ public class SortEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
    }
 
    private DatatoolDbPanel panel;
 
    private DatatoolRow[] oldData, newData;
 
-   private static final String name = DatatoolTk.getLabel("undo.sort");
+   private static String NAME=null;
 }

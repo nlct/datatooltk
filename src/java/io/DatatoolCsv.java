@@ -81,7 +81,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       catch (IOException e)
       {
          throw new DatatoolExportException(
-           DatatoolTk.getLabelWithValue("error.export.failed", target), e);
+           getMessageHandler().getLabelWithValue(
+             "error.export.failed", target), e);
       }
    }
 
@@ -119,7 +120,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             if (!file.exists())
             {
                throw new IOException(
-                  DatatoolTk.getLabelWithValue("error.io.file_not_found", ""+file));
+                  getMessageHandler().getLabelWithValues(
+                     "error.io.file_not_found", file));
             }
 
             reader = new BufferedReader(new FileReader(file));
@@ -155,7 +157,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
                for (int i = 0; i < fields.length; i++)
                {
                   DatatoolHeader header = new DatatoolHeader(db,
-                    DatatoolTk.getLabelWithValue("default.field", (i+1)));
+                    getMessageHandler().getLabelWithValue("default.field", (i+1)));
                   db.addColumn(header);
    
                   db.addCell(rowIdx, i, fields[i].replaceAll("\n\n+", "\\\\DTLpar "));
@@ -192,13 +194,14 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       catch (IOException e)
       {
          throw new DatatoolImportException(
-          DatatoolTk.getLabelWithValue("error.import.failed", 
+          getMessageHandler().getLabelWithValue("error.import.failed", 
            file.toString()), e);
       }
 
       if (hasVerbatim)
       {
-         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+         getMessageHandler().warning(
+            getMessageHandler().getLabel("warning.verb_detected"));
       }
 
       return db;
@@ -233,7 +236,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             continue;
          }
 
-         String value = fields[i].replaceAll("\\\\DTLpar *", "\n\n");
+         String value = fields[i].replaceAll("\\\\DTLpar\\s*", "\n\n");
 
          int n = value.length();
 
@@ -259,6 +262,11 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       }
 
       return false;
+   }
+
+   public MessageHandler getMessageHandler()
+   {
+      return settings.getMessageHandler();
    }
 
    private DatatoolSettings settings;

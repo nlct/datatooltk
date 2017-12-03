@@ -87,24 +87,24 @@ public class DatatoolRow extends Vector<String>
 
       try
       {
-         if (columnType == DatatoolDb.TYPE_REAL)
+         if (columnType == DatatoolSettings.TYPE_REAL)
          {
-            Float x = new Float(get(sortColumn));
+            Float x = Float.valueOf(get(sortColumn));
 
-            Float y = new Float(row.get(sortColumn));
+            Float y = Float.valueOf(row.get(sortColumn));
 
             return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
          }
-         else if (columnType == DatatoolDb.TYPE_INTEGER)
+         else if (columnType == DatatoolSettings.TYPE_INTEGER)
          {
 
-            Integer x = new Integer(get(sortColumn));
+            Integer x = Integer.valueOf(get(sortColumn));
 
-            Integer y = new Integer(row.get(sortColumn));
+            Integer y = Integer.valueOf(row.get(sortColumn));
 
             return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
          }
-         else if (columnType == DatatoolDb.TYPE_CURRENCY)
+         else if (columnType == DatatoolSettings.TYPE_CURRENCY)
          {
             Currency x = db.parseCurrency(get(sortColumn));
 

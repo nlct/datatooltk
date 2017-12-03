@@ -19,6 +19,7 @@
 package com.dickimawbooks.datatooltk;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Vector;
 import java.util.Random;
 import java.util.Enumeration;
@@ -37,8 +38,19 @@ import com.dickimawbooks.datatooltk.io.*;
  */
 public class DatatoolDb
 {
+   private DatatoolDb()
+   {
+      headers = new Vector<DatatoolHeader>();
+      data = new Vector<DatatoolRow>();
+   }
+
    public DatatoolDb(DatatoolSettings settings)
    {
+      if (settings == null)
+      {
+         throw new NullPointerException();
+      }
+
       this.settings = settings;
       headers = new Vector<DatatoolHeader>();
       data = new Vector<DatatoolRow>();
@@ -46,6 +58,11 @@ public class DatatoolDb
 
    public DatatoolDb(DatatoolSettings settings, int rows, int cols)
    {
+      if (settings == null)
+      {
+         throw new NullPointerException();
+      }
+
       this.settings = settings;
       headers = new Vector<DatatoolHeader>(cols);
       data = new Vector<DatatoolRow>(rows);
@@ -53,6 +70,11 @@ public class DatatoolDb
 
    public DatatoolDb(DatatoolSettings settings, int cols)
    {
+      if (settings == null)
+      {
+         throw new NullPointerException();
+      }
+
       this.settings = settings;
       headers = new Vector<DatatoolHeader>(cols);
       data = new Vector<DatatoolRow>();
@@ -72,10 +94,21 @@ public class DatatoolDb
       LineNumberReader in = null;
       DatatoolDb db = null;
       boolean hasVerbatim = false;
+      String encoding = settings.getTeXEncoding();
+      MessageHandler messageHandler = settings.getMessageHandler();
 
       try
       {
-         in = new LineNumberReader(new FileReader(dbFile));
+         FileInputStream fis = new FileInputStream(dbFile);
+
+         if (encoding == null)
+         {
+            in = new LineNumberReader(new InputStreamReader(fis));
+         }
+         else
+         {
+            in = new LineNumberReader(new InputStreamReader(fis, encoding));
+         }
 
          db = new DatatoolDb(settings);
 
@@ -83,11 +116,11 @@ public class DatatoolDb
 
          String controlSequence = null;
 
-         while ((controlSequence = readCommand(in)) != null)
+         while ((controlSequence = db.readCommand(in)) != null)
          {
             if (controlSequence.equals("\\newtoks"))
             {
-               controlSequence = readCommand(in);
+               controlSequence = db.readCommand(in);
 
                if ("\\csname".equals(controlSequence))
                {
@@ -98,7 +131,7 @@ public class DatatoolDb
 
          if (controlSequence == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", "\\newtoks\\csname"));
          }
 
@@ -106,13 +139,13 @@ public class DatatoolDb
 
          if (name == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", "\\endcsname"));
          }
 
          if (!name.startsWith("dtlkeys@"))
          {
-            throw new IOException(DatatoolTk.getLabelWithValues
+            throw new IOException(messageHandler.getLabelWithValues
               (
                  "error.dbload.expected",
                  in.getLineNumber(),
@@ -128,7 +161,7 @@ public class DatatoolDb
 
          controlSequence = null;
 
-         while ((controlSequence = readCommand(in)) != null)
+         while ((controlSequence = db.readCommand(in)) != null)
          {
             if (controlSequence.equals("\\csname"))
             {
@@ -141,7 +174,7 @@ public class DatatoolDb
 
          if (controlSequence == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", 
                 "\\csname dtlkeys@"+name+"\\endcsname"));
          }
@@ -150,47 +183,43 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", 
                 "\\csname dtlkeys@"+name+"\\endcsname="));
          }
          else if (c != (int)'=')
          {
-            throw new IOException(DatatoolTk.getLabelWithValues(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.expected_found", 
-               new String[]
-               {
-                  ""+in.getLineNumber(),
+                  in.getLineNumber(),
                   "\\csname dtlkeys@"+name+"\\endcsname=",
                   "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
-               }));
+               ));
          }
 
          c = readChar(in, true);
 
          if (c == -1)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", 
                 "\\csname dtlkeys@"+name+"\\endcsname={"));
          }
          else if (c != (int)'{')
          {
-            throw new IOException(DatatoolTk.getLabelWithValues(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.expected_found", 
-               new String[]
-               {
-                  ""+in.getLineNumber(),
+                  in.getLineNumber(),
                   "\\csname dtlkeys@"+name+"\\endcsname={",
                   "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
-               }));
+               ));
          }
 
          int currentColumn = 0;
 
          while (true)
          {
-            readCommand(in, "\\db@plist@elt@w");
+            db.readCommand(in, "\\db@plist@elt@w");
 
             currentColumn = db.parseHeader(in, currentColumn);
 
@@ -205,7 +234,7 @@ public class DatatoolDb
             }
             else if (c == -1)
             {
-               throw new IOException(DatatoolTk.getLabelWithValues
+               throw new IOException(messageHandler.getLabelWithValues
                  (
                   "error.dbload.not_found",
                   in.getLineNumber(),
@@ -220,11 +249,11 @@ public class DatatoolDb
 
          // Now read in the database contents
 
-         while ((controlSequence = readCommand(in)) != null)
+         while ((controlSequence = db.readCommand(in)) != null)
          {
             if (controlSequence.equals("\\newtoks"))
             {
-               controlSequence = readCommand(in);
+               controlSequence = db.readCommand(in);
 
                if ("\\csname".equals(controlSequence))
                {
@@ -235,7 +264,7 @@ public class DatatoolDb
 
          if (controlSequence == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", "\\newtoks\\csname"));
          }
 
@@ -243,20 +272,17 @@ public class DatatoolDb
 
          if (contents == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", 
              "\\newtoks\\csname dtldb@"+name+"\\endcsname"));
          }
          else if (!contents.equals("dtldb@"+name))
          {
-            throw new IOException(DatatoolTk.getLabelWithValues(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.expected_found",
-                new String[]
-                {
-                  ""+in.getLineNumber(),
+                  in.getLineNumber(),
                   "\\newtoks\\csname dtldb@"+name+"\\endcsname",
                   "\\newtoks\\csname "+contents+"\\endcsname"
-                }
               ));
          }
 
@@ -264,7 +290,7 @@ public class DatatoolDb
 
          if (contents == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", 
              "\\csname dtldb@"+name+"\\endcsname="));
          }
@@ -277,7 +303,7 @@ public class DatatoolDb
 
          if (contents == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", 
              "\\csname dtldb@"+name+"\\endcsname="));
          }
@@ -286,14 +312,11 @@ public class DatatoolDb
 
          if (!contents.equals("dtldb@"+name))
          {
-            throw new IOException(DatatoolTk.getLabelWithValues(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.expected_found",
-                new String[]
-                {
-                  ""+in.getLineNumber(),
+                  in.getLineNumber(),
                   "\\csname dtldb@"+name+"\\endcsname",
                   "\\csname "+contents+"\\endcsname"
-                }
               ));
          }
 
@@ -303,40 +326,36 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", 
                 "\\csname dtldb@"+name+"\\endcsname="));
          }
          else if (c != (int)'=')
          {
-            throw new IOException(DatatoolTk.getLabelWithValues(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.expected_found", 
-               new String[]
-               {
-                  ""+in.getLineNumber(),
+                  in.getLineNumber(),
                   "\\csname dtldb@"+name+"\\endcsname=",
                   "\\csname dtldb@"+name+"\\endcsname"+((char)c)
-               }));
+               ));
          }
 
          c = readChar(in, true);
 
          if (c == -1)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValue(
               "error.dbload.not_found", 
                 "\\csname dtldb@"+name+"\\endcsname={"));
          }
          else if (c != (int)'{')
          {
-            throw new IOException(DatatoolTk.getLabelWithValues(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.expected_found", 
-               new String[]
-               {
-                  ""+in.getLineNumber(),
+                  in.getLineNumber(),
                   "\\csname dtldb@"+name+"\\endcsname={",
                   "\\csname dtldb@"+name+"\\endcsname"+((char)c)
-               }));
+               ));
          }
 
          // Read row data until we reach the closing }
@@ -356,7 +375,7 @@ public class DatatoolDb
             }
             else if (c == -1)
             {
-               throw new IOException(DatatoolTk.getLabelWithValues
+               throw new IOException(messageHandler.getLabelWithValues
                  (
                   "error.dbload.not_found",
                   in.getLineNumber(),
@@ -383,7 +402,7 @@ public class DatatoolDb
 
       if (hasVerbatim)
       {
-         DatatoolTk.warning(DatatoolTk.getLabel("warning.verb_detected"));
+         messageHandler.warning(messageHandler.getLabel("warning.verb_detected"));
       }
 
       return db;
@@ -435,7 +454,7 @@ public class DatatoolDb
       }
       catch (NumberFormatException e)
       {
-         throw new IOException(DatatoolTk.getLabelWithValues
+         throw new IOException(getMessageHandler().getLabelWithValues
            (
               "error.dbload.invalid_row_id",
               in.getLineNumber(),
@@ -455,7 +474,7 @@ public class DatatoolDb
 
       if (controlSequence == null)
       {
-         throw new IOException(DatatoolTk.getLabelWithValues
+         throw new IOException(getMessageHandler().getLabelWithValues
            (
               "error.dbload.expected",
               in.getLineNumber(),
@@ -475,21 +494,18 @@ public class DatatoolDb
 
             if (num != currentRow)
             {
-               throw new IOException(DatatoolTk.getLabelWithValues
+               throw new IOException(getMessageHandler().getLabelWithValues
                  (
                     "error.dbload.wrong_end_row_tag",
-                    new String[]
-                    {
-                       ""+in.getLineNumber(),
-                       ""+currentRow,
+                       in.getLineNumber(),
+                       currentRow,
                        contents
-                    }
                  ));
             }
          }
          catch (NumberFormatException e)
          {
-            throw new IOException(DatatoolTk.getLabelWithValues
+            throw new IOException(getMessageHandler().getLabelWithValues
               (
                  "error.dbload.invalid_row_id",
                  in.getLineNumber(),
@@ -504,15 +520,12 @@ public class DatatoolDb
 
       if (!controlSequence.equals("\\db@col@id@w"))
       {
-         throw new IOException(DatatoolTk.getLabelWithValues
+         throw new IOException(getMessageHandler().getLabelWithValues
            (
               "error.dbload.expected_found",
-              new String[]
-              {
                  ""+in.getLineNumber(),
                  "\\db@col@id@w",
                  controlSequence
-              }
            ));
       }
 
@@ -520,7 +533,7 @@ public class DatatoolDb
 
       if (contents == null)
       {
-         throw new IOException(DatatoolTk.getLabelWithValues
+         throw new IOException(getMessageHandler().getLabelWithValues
            (
               "error.dbload.expected",
                  in.getLineNumber(),
@@ -536,7 +549,7 @@ public class DatatoolDb
       }
       catch (NumberFormatException e)
       {
-         throw new IOException(DatatoolTk.getLabelWithValues
+         throw new IOException(getMessageHandler().getLabelWithValues
            (
               "error.dbload.invalid_col_id",
               in.getLineNumber(),
@@ -550,7 +563,7 @@ public class DatatoolDb
 
       if (contents == null)
       {
-         throw new IOException(DatatoolTk.getLabelWithValues
+         throw new IOException(getMessageHandler().getLabelWithValues
            (
               "error.dbload.expected",
                  in.getLineNumber(),
@@ -576,21 +589,18 @@ public class DatatoolDb
 
          if (num != currentColumn)
          {
-            throw new IOException(DatatoolTk.getLabelWithValues
+            throw new IOException(getMessageHandler().getLabelWithValues
               (
                  "error.dbload.wrong_end_col_tag",
-                 new String[]
-                 {
-                    ""+in.getLineNumber(),
-                    ""+currentColumn,
+                    in.getLineNumber(),
+                    currentColumn,
                     contents
-                 }
               ));
          }
       }
       catch (NumberFormatException e)
       {
-         throw new IOException(DatatoolTk.getLabelWithValues
+         throw new IOException(getMessageHandler().getLabelWithValues
            (
               "error.dbload.invalid_col_id",
               in.getLineNumber(),
@@ -608,7 +618,7 @@ public class DatatoolDb
 
       if (controlSequence == null)
       {
-         throw new IOException(DatatoolTk.getLabelWithValue(
+         throw new IOException(getMessageHandler().getLabelWithValue(
             "error.dbload.not_found", "\\db@plist@elt@end@"));
       }
 
@@ -623,7 +633,7 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(getMessageHandler().getLabelWithValue(
                "error.dbload.not_found", "\\db@col@id@end@"));
          }
 
@@ -633,7 +643,7 @@ public class DatatoolDb
          }
          catch (NumberFormatException e)
          {
-             throw new IOException(DatatoolTk.getLabelWithValues
+             throw new IOException(getMessageHandler().getLabelWithValues
              (
                 "error.dbload.invalid_col_id",
                 in.getLineNumber(),
@@ -656,7 +666,7 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(getMessageHandler().getLabelWithValue(
                "error.dbload.not_found", "\\db@key@id@end@"));
          }
 
@@ -664,15 +674,12 @@ public class DatatoolDb
 
          if (headers.size() < currentColumn)
          {
-            throw new IOException(DatatoolTk.getLabelWithValues
+            throw new IOException(getMessageHandler().getLabelWithValues
              (
                 "error.db.load.expected_found",
-                new String[]
-                {
-                   ""+in.getLineNumber(),
+                   in.getLineNumber(),
                    "\\db@col@id@w",
                    "\\db@key@id@w"
-                }
              ));
          }
 
@@ -686,7 +693,7 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(getMessageHandler().getLabelWithValue(
                "error.dbload.not_found", "\\db@header@id@end@"));
          }
 
@@ -694,15 +701,12 @@ public class DatatoolDb
 
          if (headers.size() < currentColumn)
          {
-            throw new IOException(DatatoolTk.getLabelWithValues
+            throw new IOException(getMessageHandler().getLabelWithValues
              (
                 "error.db.load.expected_found",
-                new String[]
-                {
-                   ""+in.getLineNumber(),
+                   in.getLineNumber(),
                    "\\db@col@id@w",
                    "\\db@header@id@w"
-                }
              ));
          }
 
@@ -716,11 +720,11 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(DatatoolTk.getLabelWithValue(
+            throw new IOException(getMessageHandler().getLabelWithValue(
                "error.dbload.not_found", "\\db@type@id@end@"));
          }
 
-         int type = TYPE_UNKNOWN;
+         int type = DatatoolSettings.TYPE_UNKNOWN;
 
          try
          {
@@ -733,15 +737,12 @@ public class DatatoolDb
 
             if (headers.size() < currentColumn)
             {
-               throw new IOException(DatatoolTk.getLabelWithValues
+               throw new IOException(getMessageHandler().getLabelWithValues
                 (
                    "error.db.load.expected_found",
-                   new String[]
-                   {
                       ""+in.getLineNumber(),
                       "\\db@col@id@w",
                    "   \\db@header@id@w"
-                   }
                 ));
             }
 
@@ -751,7 +752,7 @@ public class DatatoolDb
          }
          catch (NumberFormatException e)
          {
-             throw new IOException(DatatoolTk.getLabelWithValues
+             throw new IOException(getMessageHandler().getLabelWithValues
              (
                 "error.dbload_unknown_type",
                 in.getLineNumber(),
@@ -760,7 +761,7 @@ public class DatatoolDb
          }
          catch (IllegalArgumentException e)
          {
-             throw new IOException(DatatoolTk.getLabelWithValues
+             throw new IOException(getMessageHandler().getLabelWithValues
              (
                 "error.dbload_unknown_type",
                 in.getLineNumber(),
@@ -874,31 +875,28 @@ public class DatatoolDb
 
    // Returns the first command it encounters, skipping anything
    // that comes before it.
-   private static void readCommand(LineNumberReader in, String requiredCommand)
+   private void readCommand(LineNumberReader in, String requiredCommand)
      throws IOException
    {
       String controlSequence = readCommand(in);
 
       if (controlSequence == null)
       {
-         throw new IOException(DatatoolTk.getLabelWithValue(
+         throw new IOException(getMessageHandler().getLabelWithValue(
            "error.dbload.not_found", 
              requiredCommand));
       }
       else if (!requiredCommand.equals(controlSequence))
       {
-         throw new IOException(DatatoolTk.getLabelWithValues(
+         throw new IOException(getMessageHandler().getLabelWithValues(
            "error.dbload.expected_found", 
-            new String[]
-            {
-               ""+in.getLineNumber(),
-               requiredCommand,
-               controlSequence
-            }));
+            in.getLineNumber(),
+            requiredCommand,
+            controlSequence));
       }
    }
 
-   private static String readCommand(BufferedReader in)
+   private String readCommand(BufferedReader in)
      throws IOException
    {
       StringBuffer buffer = new StringBuffer(32);
@@ -1009,14 +1007,23 @@ public class DatatoolDb
    {
       PrintWriter out = null;
 
+      String encoding = settings.getTeXEncoding();
+
       try
       {
-         out = new PrintWriter(file);
+         if (encoding == null)
+         {
+            out = new PrintWriter(file);
+         }
+         else
+         {
+            out = new PrintWriter(file, encoding);
+         }
 
          name = getName();
 
-         out.println("% "+DatatoolTk.getLabelWithValues("default.texheader",
-           DatatoolTk.appName, (new Date()).toString()));
+         out.println("% "+getMessageHandler().getLabelWithValues("default.texheader",
+           DatatoolTk.APP_NAME, (new Date()).toString()));
          out.println("\\DTLifdbexists{"+name+"}%");
          out.println("{\\PackageError{datatool}{Database `"+name+"'");
          out.println("already exists}{}%");
@@ -1046,7 +1053,7 @@ out.println("% header block for column "+colIdx);
             out.println("\\db@key@id@w "+header.getKey()+"%");
             out.println("\\db@key@id@end@ %");
             out.println("\\db@type@id@w "
-               +(type==TYPE_UNKNOWN?"":type)+"%");
+               +(type==DatatoolSettings.TYPE_UNKNOWN?"":type)+"%");
             out.println("\\db@type@id@end@ %");
             out.println("\\db@header@id@w "+header.getTitle()+"%");
             out.println("\\db@header@id@end@ %");
@@ -1155,13 +1162,13 @@ out.println("% header block for column "+colIdx);
    {
       if (settings.isOwnerOnly())
       {
-         DatatoolTk.debug("Requesting owner only read/write permissions");
+         getMessageHandler().debug("Requesting owner only read/write permissions");
 
          file.setWritable(false, false);
 
          if (!file.setWritable(true, true))
          {
-            DatatoolTk.debug(
+            getMessageHandler().debug(
              "Can't change owner-only permissions to writeable on '"
              +file+"'");
 
@@ -1172,7 +1179,7 @@ out.println("% header block for column "+colIdx);
 
          if (!file.setReadable(true, true))
          {
-            DatatoolTk.debug(
+            getMessageHandler().debug(
              "Can't change owner-only permissions to readable on '"
              +file+"'");
 
@@ -1204,7 +1211,7 @@ out.println("% header block for column "+colIdx);
    public String getName()
    {
       return name == null ? (file == null ? 
-        DatatoolTk.getLabel("default.untitled") : file.getName()): name;
+        getMessageHandler().getLabel("default.untitled") : file.getName()): name;
    }
 
    public void addCell(int rowIdx, int colIdx, String value)
@@ -1319,14 +1326,14 @@ out.println("% header block for column "+colIdx);
    {
       if (value == null || value.isEmpty() || value.equals(NULL_VALUE))
       {
-         return TYPE_UNKNOWN;
+         return DatatoolSettings.TYPE_UNKNOWN;
       }
 
       try
       {
          Integer.parseInt(value);
 
-         return TYPE_INTEGER;
+         return DatatoolSettings.TYPE_INTEGER;
       }
       catch (NumberFormatException e)
       {
@@ -1336,7 +1343,7 @@ out.println("% header block for column "+colIdx);
       {
          Float.parseFloat(value);
 
-         return TYPE_REAL;
+         return DatatoolSettings.TYPE_REAL;
       }
       catch (NumberFormatException e)
       {
@@ -1346,13 +1353,13 @@ out.println("% header block for column "+colIdx);
       {
          settings.parseCurrency(value);
 
-         return TYPE_CURRENCY;
+         return DatatoolSettings.TYPE_CURRENCY;
       }
       catch (NumberFormatException e)
       {
       }
 
-      return TYPE_STRING;
+      return DatatoolSettings.TYPE_STRING;
    }
 
    public int getDataType(int colIdx, String value)
@@ -1365,28 +1372,29 @@ out.println("% header block for column "+colIdx);
 
       // If it's unknown, return
 
-      if (type == TYPE_UNKNOWN)
+      if (type == DatatoolSettings.TYPE_UNKNOWN)
       {
          return type;
       }
 
       switch (header.getType())
       {
-         case TYPE_UNKNOWN:
-         case TYPE_INTEGER:
+         case DatatoolSettings.TYPE_UNKNOWN:
+         case DatatoolSettings.TYPE_INTEGER:
             // All other types override unknown and int
             return type;
-         case TYPE_CURRENCY:
+         case DatatoolSettings.TYPE_CURRENCY:
             // string overrides currency
 
-            if (type == TYPE_STRING)
+            if (type == DatatoolSettings.TYPE_STRING)
             {
                return type;
             }
          break;
-         case TYPE_REAL:
+         case DatatoolSettings.TYPE_REAL:
             // string and currency override real
-            if (type == TYPE_STRING || type == TYPE_CURRENCY)
+            if (type == DatatoolSettings.TYPE_STRING
+             || type == DatatoolSettings.TYPE_CURRENCY)
             {
                return type;
             }
@@ -1403,7 +1411,7 @@ out.println("% header block for column "+colIdx);
 
       int type = getDataType(colIdx, value);
 
-      if (type != TYPE_UNKNOWN)
+      if (type != DatatoolSettings.TYPE_UNKNOWN)
       {
          headers.get(colIdx).setType(type);
       }
@@ -1421,16 +1429,16 @@ out.println("% header block for column "+colIdx);
 
       int type = header.getType();
 
-      if (type == TYPE_INTEGER)
+      if (type == DatatoolSettings.TYPE_INTEGER)
       {
          if (value.isEmpty())
          {
-            return new Integer(0);
+            return Integer.valueOf(0);
          }
 
          try
          {
-            return new Integer(value);
+            return Integer.valueOf(value);
          }
          catch (NumberFormatException e)
          {
@@ -1443,7 +1451,7 @@ out.println("% header block for column "+colIdx);
          {
             Float num = new Float(value);
 
-            header.setType(TYPE_REAL);
+            header.setType(DatatoolSettings.TYPE_REAL);
 
             return num;
          }
@@ -1458,7 +1466,7 @@ out.println("% header block for column "+colIdx);
          {
             Currency currency = settings.parseCurrency(value);
 
-            header.setType(TYPE_CURRENCY);
+            header.setType(DatatoolSettings.TYPE_CURRENCY);
 
             return currency;
          }
@@ -1467,9 +1475,9 @@ out.println("% header block for column "+colIdx);
             // Not currency.
          }
 
-         header.setType(TYPE_STRING);
+         header.setType(DatatoolSettings.TYPE_STRING);
       }
-      else if (type == TYPE_REAL)
+      else if (type == DatatoolSettings.TYPE_REAL)
       {
          if (value.isEmpty())
          {
@@ -1491,7 +1499,7 @@ out.println("% header block for column "+colIdx);
          {
             Currency currency = settings.parseCurrency(value);
 
-            header.setType(TYPE_CURRENCY);
+            header.setType(DatatoolSettings.TYPE_CURRENCY);
 
             return currency;
          }
@@ -1502,9 +1510,9 @@ out.println("% header block for column "+colIdx);
 
          // Set to String.
 
-         header.setType(TYPE_STRING);
+         header.setType(DatatoolSettings.TYPE_STRING);
       }
-      else if (type == TYPE_CURRENCY)
+      else if (type == DatatoolSettings.TYPE_CURRENCY)
       {
          if (value.isEmpty())
          {
@@ -1515,7 +1523,7 @@ out.println("% header block for column "+colIdx);
          {
             Currency currency = settings.parseCurrency(value);
 
-            header.setType(TYPE_CURRENCY);
+            header.setType(DatatoolSettings.TYPE_CURRENCY);
 
             return currency;
          }
@@ -1526,7 +1534,7 @@ out.println("% header block for column "+colIdx);
 
          // Set to String.
 
-         header.setType(TYPE_STRING);
+         header.setType(DatatoolSettings.TYPE_STRING);
       }
 
       return value;
@@ -1658,7 +1666,7 @@ out.println("% header block for column "+colIdx);
       {
          int type = getDataType(colIdx, row.get(colIdx));
 
-         if (type != TYPE_UNKNOWN)
+         if (type != DatatoolSettings.TYPE_UNKNOWN)
          {
             headers.get(colIdx).setType(type);
          }
@@ -1696,7 +1704,7 @@ out.println("% header block for column "+colIdx);
       {
          int type = getDataType(colIdx, newRow.get(colIdx));
 
-         if (type != TYPE_UNKNOWN)
+         if (type != DatatoolSettings.TYPE_UNKNOWN)
          {
             headers.get(colIdx).setType(type);
          }
@@ -1710,7 +1718,7 @@ out.println("% header block for column "+colIdx);
 
    public DatatoolHeader insertColumn(int colIdx)
    {
-      String defName = DatatoolTk.getLabelWithValue(
+      String defName = getMessageHandler().getLabelWithValue(
          "default.field", (colIdx+1));
       return insertColumn(colIdx, new DatatoolHeader(this, defName, defName));
    }
@@ -1799,6 +1807,11 @@ out.println("% header block for column "+colIdx);
       return settings;
    }
 
+   public MessageHandler getMessageHandler()
+   {
+      return settings.getMessageHandler();
+   }
+
    public int getSortColumn()
    {
       return sortColumn;
@@ -1831,12 +1844,21 @@ out.println("% header block for column "+colIdx);
 
    public void setSortLocale(Locale locale)
    {
-      sortLocale = locale;
+      settings.setSortLocale(locale);
    }
 
    public Locale getSortLocale()
    {
-      return sortLocale;
+      String prop = settings.getSortLocale();
+
+      if (prop == null)
+      {
+         return null;
+      }
+      else
+      {
+         return Locale.forLanguageTag(prop);
+      }
    }
 
    public void sort()
@@ -1913,12 +1935,13 @@ out.println("% header block for column "+colIdx);
 
          String theName = templateFile.toString();
 
-         db.setName(DatatoolTk.getLabelWithAlt("plugin."+theName+".default_name",
-           theName));
+         db.setName(settings.getMessageHandler().getLabelWithAlt(
+            String.format("plugin.%s.default_name", theName), theName));
 
-         TemplateHandler handler = new TemplateHandler(db, templateFile.toString());
+         TemplateHandler handler = new TemplateHandler(db, 
+            templateFile.toString());
          xr.setContentHandler(handler);
-         xr.setErrorHandler(settings.getErrorHandler());
+         xr.setErrorHandler(settings.getMessageHandler());
 
          xr.parse(new InputSource(reader));
 
@@ -1934,11 +1957,6 @@ out.println("% header block for column "+colIdx);
       return db;
    }
 
-   public ErrorHandler getErrorHandler()
-   {
-      return settings.getErrorHandler();
-   }
-
    public void merge(DatatoolDb db, String key)
     throws InvalidSyntaxException
    {
@@ -1947,7 +1965,7 @@ out.println("% header block for column "+colIdx);
       if (colIdx1 == -1)
       {
          throw new InvalidSyntaxException(
-           DatatoolTk.getLabelWithValues("error.db.unknown_key",
+           getMessageHandler().getLabelWithValues("error.db.unknown_key",
              key, getName()));
       }
 
@@ -1956,7 +1974,7 @@ out.println("% header block for column "+colIdx);
       if (colIdx2 == -1)
       {
          throw new InvalidSyntaxException(
-           DatatoolTk.getLabelWithValues("error.db.unknown_key", 
+           getMessageHandler().getLabelWithValues("error.db.unknown_key", 
              key, db.getName()));
       }
 
@@ -2033,30 +2051,7 @@ out.println("% header block for column "+colIdx);
 
    private boolean sortCaseSensitive = false;
 
-   private Locale sortLocale = null;
-
    public static final String NULL_VALUE="\\@dtlnovalue";
-
-   public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
-     TYPE_REAL=2, TYPE_CURRENCY=3;
-
-   public static final String[] TYPE_LABELS = new String[] 
-         {
-            DatatoolTk.getLabel("header.type.unset"),
-            DatatoolTk.getLabel("header.type.string"),
-            DatatoolTk.getLabel("header.type.int"),
-            DatatoolTk.getLabel("header.type.real"),
-            DatatoolTk.getLabel("header.type.currency")
-         };
-   public static final int[] TYPE_MNEMONICS = new int[] 
-         {
-            DatatoolTk.getMnemonicInt("header.type.unset"),
-            DatatoolTk.getMnemonicInt("header.type.string"),
-            DatatoolTk.getMnemonicInt("header.type.int"),
-            DatatoolTk.getMnemonicInt("header.type.real"),
-            DatatoolTk.getMnemonicInt("header.type.currency")
-         };
-
 
    private static final Pattern PATTERN_END_DBSLASH 
     = Pattern.compile(".*[^\\\\](\\\\\\\\)+");

@@ -33,6 +33,11 @@ public class RemoveColumnEdit extends AbstractUndoableEdit
       super();
       this.panel = panel;
 
+      if (NAME == null)
+      {
+         NAME = panel.getMessageHandler().getLabel("undo.remove_column");
+      }
+
       this.columnIndex = colIdx;
 
       selectedIdx = panel.getViewSelectedColumn();
@@ -62,7 +67,7 @@ public class RemoveColumnEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
    }
 
    private DatatoolDbPanel panel;
@@ -71,5 +76,5 @@ public class RemoveColumnEdit extends AbstractUndoableEdit
 
    private DatatoolColumn column;
 
-   private static final String name = DatatoolTk.getLabel("undo.remove_column");
+   private static String NAME = null;
 }

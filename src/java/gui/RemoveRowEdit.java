@@ -33,6 +33,11 @@ public class RemoveRowEdit extends AbstractUndoableEdit
       this.panel = panel;
       this.rowIdx = rowIdx;
 
+      if (NAME == null)
+      {
+         NAME = panel.getMessageHandler().getLabel("undo.remove_row");
+      }
+
       selectedIdx = panel.getModelSelectedRow();
 
       row = panel.db.removeRow(rowIdx);
@@ -62,7 +67,7 @@ public class RemoveRowEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
    }
 
    private DatatoolDbPanel panel;
@@ -71,5 +76,5 @@ public class RemoveRowEdit extends AbstractUndoableEdit
 
    private DatatoolRow row;
 
-   private static final String name = DatatoolTk.getLabel("undo.remove_row");
+   private static String NAME = null;
 }

@@ -19,6 +19,7 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.regex.*;
@@ -39,8 +40,12 @@ public class PropertiesDialog extends JDialog
 {
    public PropertiesDialog(DatatoolGUI gui)
    {
-      super(gui, DatatoolTk.getLabel("preferences.title"), true);
+      super(gui, gui.getMessageHandler().getLabel("preferences.title"), true);
       this.gui = gui;
+
+      settings = gui.getSettings();
+      DatatoolGuiResources resources = gui.getResources();
+      MessageHandler messageHandler = gui.getMessageHandler();
 
       tabbedPane = new JTabbedPane();
 
@@ -53,7 +58,7 @@ public class PropertiesDialog extends JDialog
       JComponent startupComp = Box.createVerticalBox();
       startupComp.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(),
-        DatatoolTk.getLabel("preferences.startup")));
+        messageHandler.getLabel("preferences.startup")));
       generalTab.add(startupComp);
 
       ButtonGroup bg = new ButtonGroup();
@@ -76,7 +81,7 @@ public class PropertiesDialog extends JDialog
 
       fileChooser = new JFileChooser();
 
-      customFileField = new FileField(startupComp, fileChooser,
+      customFileField = new FileField(messageHandler, startupComp, fileChooser,
          JFileChooser.DIRECTORIES_ONLY);
 
       box.add(customFileField);
@@ -84,7 +89,7 @@ public class PropertiesDialog extends JDialog
       JComponent shuffleComp = Box.createVerticalBox();
       shuffleComp.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(),
-        DatatoolTk.getLabel("preferences.shuffle")
+        messageHandler.getLabel("preferences.shuffle")
       ));
 
       generalTab.add(shuffleComp);
@@ -94,7 +99,7 @@ public class PropertiesDialog extends JDialog
       shuffleComp.add(box);
 
       iterationsField = new NonNegativeIntField(100);
-      box.add(DatatoolGuiResources.createJLabel("preferences.shuffle.iter"), 
+      box.add(resources.createJLabel("preferences.shuffle.iter"), 
          iterationsField);
       box.add(iterationsField);
 
@@ -102,7 +107,7 @@ public class PropertiesDialog extends JDialog
       box.setAlignmentX(0);
       shuffleComp.add(box);
 
-      hasSeedBox = DatatoolGuiResources.createJCheckBox("preferences.shuffle",
+      hasSeedBox = resources.createJCheckBox("preferences.shuffle",
          "seed", this);
       box.add(hasSeedBox);
 
@@ -119,14 +124,14 @@ public class PropertiesDialog extends JDialog
       box.setAlignmentX(0);
       csvTab.add(box);
 
-      box.add(new JLabel(DatatoolTk.getLabel("preferences.csv.sep")));
+      box.add(new JLabel(messageHandler.getLabel("preferences.csv.sep")));
 
       bg = new ButtonGroup();
 
       sepTabButton = createRadioButton("preferences.csv", "tabsep", bg);
       box.add(sepTabButton);
 
-      box.add(new JLabel(DatatoolTk.getLabel("preferences.csv.or")));
+      box.add(new JLabel(messageHandler.getLabel("preferences.csv.or")));
 
       sepCharButton = createRadioButton("preferences.csv", "sepchar", bg);
       box.add(sepCharButton);
@@ -150,14 +155,14 @@ public class PropertiesDialog extends JDialog
       box.setAlignmentX(0);
       csvTab.add(box);
 
-      box.add(new JLabel(DatatoolTk.getLabel("preferences.csv.esc")));
+      box.add(new JLabel(messageHandler.getLabel("preferences.csv.esc")));
 
       bg = new ButtonGroup();
 
       noEscCharButton = createRadioButton("preferences.csv", "noesc", bg);
       box.add(noEscCharButton);
 
-      box.add(new JLabel(DatatoolTk.getLabel("preferences.csv.or")));
+      box.add(new JLabel(messageHandler.getLabel("preferences.csv.or")));
 
       escCharButton = createRadioButton("preferences.csv", "escchar", bg);
       box.add(escCharButton);
@@ -240,9 +245,15 @@ public class PropertiesDialog extends JDialog
       JComponent texTab = addTab("tex");
 
       box = createNewRow(texTab);
-      latexFileField = new FileField(this, "latex", fileChooser);
+      latexFileField = new FileField(messageHandler, this, "latex", fileChooser);
       box.add(createLabel("preferences.tex.latexapp", latexFileField));
       box.add(latexFileField);
+
+      box = createNewRow(texTab);
+      texEncodingBox = new JComboBox<Charset>(
+        Charset.availableCharsets().values().toArray(new Charset[0]));
+      box.add(createLabel("preferences.tex.encoding", texEncodingBox));
+      box.add(texEncodingBox);
 
       mapTeXBox = createCheckBox("preferences.tex", "map");
       texTab.add(mapTeXBox);
@@ -268,14 +279,14 @@ public class PropertiesDialog extends JDialog
       JComponent buttonPanel = Box.createVerticalBox();
       box.add(buttonPanel, BorderLayout.EAST);
 
-      buttonPanel.add(DatatoolGuiResources.createActionButton(
+      buttonPanel.add(resources.createActionButton(
          "preferences.tex", "add_map", this, null));
 
-      editMapButton = DatatoolGuiResources.createActionButton(
+      editMapButton = resources.createActionButton(
          "preferences.tex", "edit_map", this, null);
       buttonPanel.add(editMapButton);
 
-      removeMapButton = DatatoolGuiResources.createActionButton(
+      removeMapButton = resources.createActionButton(
          "preferences.tex", "remove_map", this, null);
       buttonPanel.add(removeMapButton);
 
@@ -298,14 +309,14 @@ public class PropertiesDialog extends JDialog
       currencyTab.add(createTextArea("preferences.currencies.reminder"),
         BorderLayout.NORTH);
 
-      buttonPanel.add(DatatoolGuiResources.createActionButton(
+      buttonPanel.add(resources.createActionButton(
          "preferences.currencies", "add_currency", this, null));
 
-      editCurrencyButton = DatatoolGuiResources.createActionButton(
+      editCurrencyButton = resources.createActionButton(
          "preferences.currencies", "edit_currency", this, null);
       buttonPanel.add(editCurrencyButton);
 
-      removeCurrencyButton = DatatoolGuiResources.createActionButton(
+      removeCurrencyButton = resources.createActionButton(
          "preferences.currencies", "remove_currency", this, null);
       buttonPanel.add(removeCurrencyButton);
 
@@ -371,10 +382,10 @@ public class PropertiesDialog extends JDialog
       editorBox.setLayout(new BoxLayout(editorBox, BoxLayout.Y_AXIS));
       editorBox.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(), 
-        DatatoolTk.getLabel("preferences.display.editor")));
+        messageHandler.getLabel("preferences.display.editor")));
 
       box = createNewRow(editorBox);
-      box.add(DatatoolGuiResources.createMessageArea(2, 22,
+      box.add(resources.createMessageArea(2, 22,
          "preferences.display.editor.info"));
 
       box = createNewRow(editorBox);
@@ -438,28 +449,32 @@ public class PropertiesDialog extends JDialog
          labels[idx].setPreferredSize(dim);
       }
 
-      syntaxHighlightingBox = DatatoolGuiResources.createJCheckBox
+      syntaxHighlightingBox = resources.createJCheckBox
         ("preferences.display", "editorsyntax", null);
       editorBox.add(syntaxHighlightingBox);
 
       JComponent rightPanel = Box.createVerticalBox();
       rightPanel.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(), 
-        DatatoolTk.getLabel("preferences.display.cellwidths")));
+        messageHandler.getLabel("preferences.display.cellwidths")));
       rightPanel.setAlignmentY(0);
       displayTab.add(rightPanel);
 
-      cellWidthFields = new NonNegativeIntField[DatatoolDb.TYPE_LABELS.length];
-      labels = new JLabel[DatatoolDb.TYPE_LABELS.length];
+      String[] typeLabels = settings.getTypeLabels();
+      int[] typeMnemonics = settings.getTypeMnemonics();
+
+      cellWidthFields = new NonNegativeIntField[typeLabels.length];
+      labels = new JLabel[typeLabels.length];
 
       for (int i = 0; i < cellWidthFields.length; i++)
       {
          box = createNewRow(rightPanel);
          cellWidthFields[i] = new NonNegativeIntField(0);
-         labels[i] = new JLabel(DatatoolDb.TYPE_LABELS[i]);
-         if (DatatoolDb.TYPE_MNEMONICS[i] != -1)
+         labels[i] = new JLabel(typeLabels[i]);
+
+         if (typeMnemonics[i] != -1)
          {
-            labels[i].setDisplayedMnemonic(DatatoolDb.TYPE_MNEMONICS[i]);
+            labels[i].setDisplayedMnemonic(typeMnemonics[i]);
             labels[i].setLabelFor(cellWidthFields[i]);
          }
 
@@ -519,15 +534,15 @@ public class PropertiesDialog extends JDialog
       JComponent pluginsTab = addTab("plugins");
 
       box = createNewRow(pluginsTab);
-      box.add(DatatoolGuiResources.createMessageArea("preferences.plugins.note"));
+      box.add(resources.createMessageArea("preferences.plugins.note"));
 
       box = createNewRow(pluginsTab);
-      perlFileField = new FileField(this, "perl", fileChooser);
+      perlFileField = new FileField(messageHandler, this, "perl", fileChooser);
       box.add(createLabel("preferences.plugins.perl", perlFileField));
       box.add(perlFileField);
 
       getContentPane().add(
-        DatatoolGuiResources.createOkayCancelHelpPanel(this, gui, "preferences"),
+        resources.createOkayCancelHelpPanel(this, gui, "preferences"),
         BorderLayout.SOUTH);
       pack();
 
@@ -548,10 +563,10 @@ public class PropertiesDialog extends JDialog
       panel.setBorder(BorderFactory.createEtchedBorder());
       panel.add(tab);
 
-      tabbedPane.addTab(DatatoolTk.getLabel("preferences", label), 
+      tabbedPane.addTab(getMessageHandler().getLabel("preferences", label), 
          panel);
 
-      String tooltip = DatatoolTk.getToolTip("preferences", label);
+      String tooltip = getMessageHandler().getToolTip("preferences", label);
 
       if (tooltip != null)
       {
@@ -559,7 +574,7 @@ public class PropertiesDialog extends JDialog
       }
 
       tabbedPane.setMnemonicAt(index,
-         DatatoolTk.getMnemonic("preferences", label));
+         getMessageHandler().getMnemonic("preferences", label));
 
       return tab;
    }
@@ -581,7 +596,7 @@ public class PropertiesDialog extends JDialog
    private JRadioButton createRadioButton(String parentLabel,
       String label, ButtonGroup bg)
    {
-      JRadioButton button = DatatoolGuiResources.createJRadioButton(parentLabel,
+      JRadioButton button = gui.getResources().createJRadioButton(parentLabel,
          label, bg, this);
 
 
@@ -593,17 +608,17 @@ public class PropertiesDialog extends JDialog
 
    private JLabel createLabel(String label, JComponent comp)
    {
-      return DatatoolGuiResources.createJLabel(label, comp);
+      return getResources().createJLabel(label, comp);
    }
 
    private JTextArea createTextArea(String label)
    {
-      return DatatoolGuiResources.createMessageArea(2, 40, label);
+      return getResources().createMessageArea(2, 40, label);
    }
 
    private JCheckBox createCheckBox(String parentLabel, String label)
    {
-      JCheckBox checkBox = DatatoolGuiResources.createJCheckBox(parentLabel, label, this);
+      JCheckBox checkBox = getResources().createJCheckBox(parentLabel, label, this);
 
       checkBox.setAlignmentX(0);
 
@@ -655,7 +670,7 @@ public class PropertiesDialog extends JDialog
 
       char esc = settings.getCSVescape();
 
-      if (esc == '\0')
+      if (esc == 0)
       {
          noEscCharButton.setSelected(true);
          escCharField.setEnabled(false);
@@ -683,6 +698,17 @@ public class PropertiesDialog extends JDialog
       mapTeXBox.setSelected(settings.isTeXMappingOn());
 
       latexFileField.setFileName(settings.getLaTeX());
+
+      String encoding = settings.getTeXEncoding();
+
+      if (encoding == null)
+      {
+         texEncodingBox.setSelectedItem(Charset.defaultCharset());
+      }
+      else
+      {
+         texEncodingBox.setSelectedItem(Charset.forName(encoding));
+      }
 
       sizeField.setValue(settings.getFontSize());
       fontBox.setSelectedItem(settings.getFontName());
@@ -867,7 +893,7 @@ public class PropertiesDialog extends JDialog
       else if (action.equals("highlightcs"))
       {
          Color col = JColorChooser.showDialog(this, 
-            DatatoolTk.getLabel("preferences.display.highlightcs"),
+            getMessageHandler().getLabel("preferences.display.highlightcs"),
             highlightCsSwatch.getBackground());
 
          if (col != null)
@@ -878,7 +904,7 @@ public class PropertiesDialog extends JDialog
       else if (action.equals("highlightcomment"))
       {
          Color col = JColorChooser.showDialog(this, 
-            DatatoolTk.getLabel("preferences.display.highlightcomment"),
+            getMessageHandler().getLabel("preferences.display.highlightcomment"),
             highlightCommentSwatch.getBackground());
 
          if (col != null)
@@ -919,8 +945,8 @@ public class PropertiesDialog extends JDialog
 
          if (file == null)
          {
-            DatatoolGuiResources.error(this, 
-               DatatoolTk.getLabel("error.missing_custom_file"));
+            getMessageHandler().error(this, 
+               getMessageHandler().getLabel("error.missing_custom_file"));
 
             return;
          }
@@ -938,8 +964,8 @@ public class PropertiesDialog extends JDialog
 
          if (sep == (char)0)
          {
-            DatatoolGuiResources.error(this, 
-               DatatoolTk.getLabel("error.missing_sep"));
+            getMessageHandler().error(this, 
+               getMessageHandler().getLabel("error.missing_sep"));
             return;
          }
 
@@ -948,10 +974,10 @@ public class PropertiesDialog extends JDialog
 
       char delim = delimCharField.getValue();
 
-      if (delim == (char)0)
+      if (delim == 0)
       {
-         DatatoolGuiResources.error(this, 
-            DatatoolTk.getLabel("error.missing_delim"));
+         getMessageHandler().error(this, 
+            getMessageHandler().getLabel("error.missing_delim"));
          return;
       }
 
@@ -972,8 +998,8 @@ public class PropertiesDialog extends JDialog
 
       if (host.isEmpty())
       {
-         DatatoolGuiResources.error(this, 
-            DatatoolTk.getLabel("error.missing_host"));
+         getMessageHandler().error(this, 
+            getMessageHandler().getLabel("error.missing_host"));
          return;
       }
 
@@ -983,8 +1009,8 @@ public class PropertiesDialog extends JDialog
 
       if (prefix.isEmpty())
       {
-         DatatoolGuiResources.error(this,
-            DatatoolTk.getLabel("error.missing_prefix"));
+         getMessageHandler().error(this,
+            getMessageHandler().getLabel("error.missing_prefix"));
          return;
       }
 
@@ -992,8 +1018,8 @@ public class PropertiesDialog extends JDialog
 
       if (portField.getText().isEmpty())
       {
-         DatatoolGuiResources.error(this,
-            DatatoolTk.getLabel("error.missing_port"));
+         getMessageHandler().error(this,
+            getMessageHandler().getLabel("error.missing_port"));
          return;
       }
 
@@ -1005,6 +1031,8 @@ public class PropertiesDialog extends JDialog
       settings.setTeXMapping(mapTeXBox.isSelected());
 
       settings.setLaTeX(latexFileField.getFileName());
+
+      settings.setTeXEncoding((Charset)texEncodingBox.getSelectedItem());
 
       texMapModel.updateSettings();
 
@@ -1047,6 +1075,16 @@ public class PropertiesDialog extends JDialog
       setVisible(false);
    }
 
+   public MessageHandler getMessageHandler()
+   {
+      return settings.getMessageHandler();
+   }
+
+   public DatatoolGuiResources getResources()
+   {
+      return settings.getMessageHandler().getDatatoolGuiResources();
+   }
+
    private DatatoolSettings settings;
 
    private JRadioButton homeButton, cwdButton, lastButton, customButton;
@@ -1081,6 +1119,8 @@ public class PropertiesDialog extends JDialog
 
    private JList<String> currencyList;
 
+   private JComboBox<Charset> texEncodingBox;
+
    private CurrencyListModel currencyListModel;
 
    private JComboBox<String> helpsetLangBox, dictLangBox;
@@ -1098,6 +1138,16 @@ class CurrencyListModel extends AbstractListModel<String>
    {
       this.settings = settings;
       this.list = list;
+
+      if (LABEL_ADD == null)
+      {
+         MessageHandler messageHandler = settings.getMessageHandler();
+
+         LABEL_ADD 
+            = messageHandler.getLabel("preferences.currencies.add_currency");
+         LABEL_EDIT 
+            = messageHandler.getLabel("preferences.currencies.edit_currency");
+      }
 
       list.setModel(this);
 
@@ -1168,9 +1218,7 @@ class CurrencyListModel extends AbstractListModel<String>
 
    private JList<String> list;
 
-   private static final String LABEL_ADD 
-      = DatatoolTk.getLabel("preferences.currencies.add_currency");
+   private static String LABEL_ADD=null;
 
-   private static final String LABEL_EDIT 
-      = DatatoolTk.getLabel("preferences.currencies.edit_currency");
+   private static String LABEL_EDIT=null;
 }

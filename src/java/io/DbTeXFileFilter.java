@@ -22,16 +22,17 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * File filter for dbtex files.
  */
 public class DbTeXFileFilter extends FileFilter
 {
-   public DbTeXFileFilter()
+   public DbTeXFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = DatatoolTk.getLabelWithValue("filter.dbtex", "*.dbtex");
+      description = messageHandler.getLabelWithValue("filter.dbtex", "*.dbtex");
    }
 
    public boolean accept(File file)

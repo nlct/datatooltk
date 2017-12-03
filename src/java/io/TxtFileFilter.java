@@ -22,16 +22,17 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * File filter for .txt files.
  */
 public class TxtFileFilter extends FileFilter
 {
-   public TxtFileFilter()
+   public TxtFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = DatatoolTk.getLabelWithValue("filter.txt", "*.txt");
+      description = messageHandler.getLabelWithValue("filter.txt", "*.txt");
    }
 
    public boolean accept(File file)

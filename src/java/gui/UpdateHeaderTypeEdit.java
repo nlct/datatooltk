@@ -36,6 +36,11 @@ public class UpdateHeaderTypeEdit extends AbstractUndoableEdit
       this.oldType = oldType;
       this.header = header;
 
+      if (NAME == null)
+      {
+         NAME = panel.getMessageHandler().getLabel("undo.header_type");
+      }
+
       panel.setModified(true);
       panel.updateColumnHeader(col);
    }
@@ -59,13 +64,13 @@ public class UpdateHeaderTypeEdit extends AbstractUndoableEdit
 
    public String getPresentationName()
    {
-      return name;
+      return NAME;
    }
 
    private DatatoolDbPanel panel;
    private int col, oldType, newType;
    private DatatoolHeader header;
 
-   private static final String name = DatatoolTk.getLabel("undo.header_type");
+   private static String NAME = null;
 
 }

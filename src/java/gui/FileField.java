@@ -24,6 +24,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Component for specifying a file or directory.
@@ -31,28 +32,33 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 public class FileField extends Box
   implements ActionListener
 {
-   public FileField(Container parent, JFileChooser fileChooser)
+   public FileField(MessageHandler messageHandler, Container parent, 
+       JFileChooser fileChooser)
    {
-      this(parent, null, fileChooser, JFileChooser.FILES_ONLY);
+      this(messageHandler, parent, null, fileChooser, JFileChooser.FILES_ONLY);
    }
 
-   public FileField(Container parent, JFileChooser fileChooser, int mode)
+   public FileField(MessageHandler messageHandler, Container parent,
+      JFileChooser fileChooser, int mode)
    {
-      this(parent, null, fileChooser, mode);
+      this(messageHandler, parent, null, fileChooser, mode);
    }
 
-   public FileField(Container parent, String fileName, JFileChooser fileChooser)
+   public FileField(MessageHandler messageHandler, Container parent, 
+      String fileName, JFileChooser fileChooser)
    {
-      this(parent, fileName, fileChooser, JFileChooser.FILES_ONLY);
+      this(messageHandler, parent, fileName, fileChooser, JFileChooser.FILES_ONLY);
    }
 
-   public FileField(Container parent, String fileName, JFileChooser fileChooser, int mode)
+   public FileField(MessageHandler messageHandler, Container parent, 
+      String fileName, JFileChooser fileChooser, int mode)
    {
       super(BoxLayout.Y_AXIS);
 
       this.fileChooser = fileChooser;
       this.parent = parent;
       this.mode = mode;
+      this.messageHandler = messageHandler;
 
       add(Box.createVerticalGlue());
 
@@ -114,10 +120,11 @@ public class FileField extends Box
             fileChooser.setSelectedFile(file);
          }
 
-         fileChooser.setApproveButtonMnemonic(DatatoolTk.getMnemonic("button.select"));
+         fileChooser.setApproveButtonMnemonic(
+            messageHandler.getMnemonic("button.select"));
 
          if (fileChooser.showDialog(parent,
-            DatatoolTk.getLabel("button.select"))
+            messageHandler.getLabel("button.select"))
             == JFileChooser.APPROVE_OPTION)
          {
             textField.setText(fileChooser.getSelectedFile().getAbsolutePath());
@@ -189,4 +196,6 @@ public class FileField extends Box
    private Container parent;
 
    private int mode;
+
+   private MessageHandler messageHandler;
 }

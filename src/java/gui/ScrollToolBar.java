@@ -23,7 +23,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * A toolbar that scrolls if there are too many buttons to fit
@@ -32,9 +32,10 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 public class ScrollToolBar extends JPanel
    implements ActionListener,ChangeListener
 {
-   public ScrollToolBar(int orientation)
+   public ScrollToolBar(MessageHandler messageHandler, int orientation)
    {
       super();
+      this.messageHandler = messageHandler;
       setLayout(new BorderLayout());
 
       backComponent = createNavButton("scrollback");
@@ -62,8 +63,9 @@ public class ScrollToolBar extends JPanel
 
    private JButton createNavButton(String action)
    {
-      JButton button = DatatoolGuiResources.createActionButton("button",
-        action, this, null, DatatoolTk.getLabel("button", action));
+      JButton button
+         = messageHandler.getDatatoolGuiResources().createActionButton("button",
+        action, this, null, messageHandler.getLabel("button", action));
 
       Icon icon = button.getIcon();
 
@@ -159,4 +161,5 @@ public class ScrollToolBar extends JPanel
    private JScrollPane scrollPane;
    private JComponent toolPanel;
    private JComponent backComponent, forwardComponent;
+   private MessageHandler messageHandler;
 }

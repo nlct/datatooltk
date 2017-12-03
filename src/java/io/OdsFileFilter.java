@@ -22,16 +22,17 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Class representing an ODS file filter
  */
 public class OdsFileFilter extends FileFilter
 {
-   public OdsFileFilter()
+   public OdsFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = DatatoolTk.getLabelWithValue("filter.ods", "*.ods");
+      description = messageHandler.getLabelWithValue("filter.ods", "*.ods");
    }
 
    public boolean accept(File file)

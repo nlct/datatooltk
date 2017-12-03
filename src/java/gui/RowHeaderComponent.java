@@ -27,7 +27,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Component used for the row header.
@@ -212,11 +212,6 @@ public class RowHeaderComponent extends JPanel implements DropTargetListener
 
 class RowButton extends JLabel
 {
-   private DatatoolDbPanel panel;
-   private int row;
-
-   private static final int dx = 10;
-
    public RowButton(final int rowIdx, final DatatoolDbPanel panel,
      final RowHeaderComponent rowHeaderPanel)
    {
@@ -232,7 +227,7 @@ class RowButton extends JLabel
       {
          public void mouseClicked(MouseEvent event)
          {
-            panel.setInfo(DatatoolTk.getLabel("info.move_row"));
+            panel.setInfo(getMessageHandler().getLabel("info.move_row"));
 
             if (event.getClickCount() == 1)
             {
@@ -291,6 +286,16 @@ class RowButton extends JLabel
    {
       return row;
    }
+
+   public MessageHandler getMessageHandler()
+   {
+      return panel.getMessageHandler();
+   }
+
+   private DatatoolDbPanel panel;
+   private int row;
+
+   private static final int dx = 10;
 }
 
 class RowTransferHandler extends TransferHandler

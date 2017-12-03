@@ -44,15 +44,15 @@ my %dict = ();
 
 while (<FD>)
 {
-   if (/public +static +final +String +appName *= *"([^"]+)"/)
+   if (/public +static +final +String +APP_NAME *= *"([^"]+)"/)
    {
       $dict{appname} = $1;
    }
-   elsif (/public +static +final +String +appVersion *= *"([^"]+)"/)
+   elsif (/public +static +final +String +APP_VERSION *= *"([^"]+)"/)
    {
       $dict{appversion} = $1;
    }
-   elsif (/public +static +final +String +appDate *= *"([^"]+)"/)
+   elsif (/public +static +final +String +APP_DATE *= *"([^"]+)"/)
    {
       $dict{appdate} = $1;
    }

@@ -26,6 +26,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Dialog box for searching for text within displayed cell editor dialog.
@@ -33,11 +34,15 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 public class FindDialog extends JDialog
   implements ActionListener,CaretListener
 {
-   public FindDialog(JDialog parent, JTextComponent textComp)
+   public FindDialog(MessageHandler messageHandler, 
+      JDialog parent, JTextComponent textComp)
    {
-      super(parent, DatatoolTk.getLabel("find.title"), false);
+      super(parent, messageHandler.getLabel("find.title"), false);
 
       this.textComp = textComp;
+      this.messageHandler = messageHandler;
+
+      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
 
       JComponent mainPanel = Box.createVerticalBox();
       getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -46,7 +51,7 @@ public class FindDialog extends JDialog
       mainPanel.add(panel);
 
       searchField = new JTextField();
-      JLabel searchLabel = DatatoolGuiResources.createJLabel(
+      JLabel searchLabel = resources.createJLabel(
          "find.search_for", searchField);
 
       panel.add(searchLabel);
@@ -78,7 +83,7 @@ public class FindDialog extends JDialog
       mainPanel.add(replacePanel);
 
       replaceField = new JTextField();
-      JLabel replaceLabel = DatatoolGuiResources.createJLabel(
+      JLabel replaceLabel = resources.createJLabel(
          "replace.replace_text", replaceField);
 
       replacePanel.add(replaceLabel);
@@ -95,15 +100,15 @@ public class FindDialog extends JDialog
       panel = Box.createHorizontalBox();
       mainPanel.add(panel);
 
-      caseBox = DatatoolGuiResources.createJCheckBox("find",
+      caseBox = resources.createJCheckBox("find",
         "case", null);
       panel.add(caseBox);
 
-      regexBox = DatatoolGuiResources.createJCheckBox("find",
+      regexBox = resources.createJCheckBox("find",
         "regex", null);
       panel.add(regexBox);
 
-      wrapBox = DatatoolGuiResources.createJCheckBox("find",
+      wrapBox = resources.createJCheckBox("find",
         "wrap", null);
       panel.add(wrapBox);
       wrapBox.setSelected(true);
@@ -113,23 +118,23 @@ public class FindDialog extends JDialog
       JPanel buttonPanel = new JPanel();
       getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-      findButton = DatatoolGuiResources.createActionButton(
+      findButton = resources.createActionButton(
         "find", "find", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
 
       buttonPanel.add(findButton);
 
-      replaceButton = DatatoolGuiResources.createActionButton(
+      replaceButton = resources.createActionButton(
         "replace", "replace", this, null);
 
       buttonPanel.add(replaceButton);
 
-      replaceAllButton = DatatoolGuiResources.createActionButton(
+      replaceAllButton = resources.createActionButton(
         "replace", "replace_all", this, null);
 
       buttonPanel.add(replaceAllButton);
 
-      buttonPanel.add(DatatoolGuiResources.createActionButton(
+      buttonPanel.add(resources.createActionButton(
         "find", "close", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)));
 
@@ -194,8 +199,8 @@ public class FindDialog extends JDialog
       replaceButton.setVisible(isReplaceAllowed);
       replaceAllButton.setVisible(isReplaceAllowed);
 
-      setTitle(isReplaceAllowed ? DatatoolTk.getLabel("replace.title") :
-        DatatoolTk.getLabel("find.title"));
+      setTitle(isReplaceAllowed ? messageHandler.getLabel("replace.title") :
+        messageHandler.getLabel("find.title"));
 
       found = false;
 
@@ -330,8 +335,8 @@ public class FindDialog extends JDialog
 
       JOptionPane.showMessageDialog(this, 
         count == 1 ?
-        DatatoolTk.getLabel("replace.one_replaced") :
-        DatatoolTk.getLabelWithValue("replace.num_replaced", count));
+        messageHandler.getLabel("replace.one_replaced") :
+        messageHandler.getLabelWithValue("replace.num_replaced", count));
    }
 
    public void find()
@@ -372,7 +377,7 @@ public class FindDialog extends JDialog
          if (index == -1)
          {
             JOptionPane.showMessageDialog(this,
-               DatatoolTk.getLabel("find.not_found_in_cell"));
+               messageHandler.getLabel("find.not_found_in_cell"));
             return false;
          }
       }
@@ -428,7 +433,7 @@ public class FindDialog extends JDialog
          if (index == -1)
          {
             JOptionPane.showMessageDialog(this,
-               DatatoolTk.getLabel("find.not_found_in_cell"));
+               messageHandler.getLabel("find.not_found_in_cell"));
             return false;
          }
       }
@@ -456,4 +461,6 @@ public class FindDialog extends JDialog
    private JComponent replacePanel;
 
    private boolean found = false, updating=false;
+
+   private MessageHandler messageHandler;
 }

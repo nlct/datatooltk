@@ -9,7 +9,7 @@
   <properties>
     <property name="info.appName" value="datatooltk"/>
     <property name="info.url" value="http://www.dickimaw-books.com/apps/datatooltk/"/>
-    <property name="project.version" value="1.6.3" />
+    <property name="project.version" value="1.6.4" />
   </properties>
 
     <!-- 

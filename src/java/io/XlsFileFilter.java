@@ -22,16 +22,17 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Class representing an XLS file filter
  */
 public class XlsFileFilter extends FileFilter
 {
-   public XlsFileFilter()
+   public XlsFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = DatatoolTk.getLabelWithValue("filter.xls", "*.xls");
+      description = messageHandler.getLabelWithValue("filter.xls", "*.xls");
    }
 
    public boolean accept(File file)

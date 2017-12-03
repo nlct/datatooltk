@@ -23,15 +23,16 @@ package com.dickimawbooks.datatooltk;
  */
 public class UnknownLabelException extends Exception
 {
-   public UnknownLabelException(String label)
+   public UnknownLabelException(MessageHandler messageHandler, String label)
    {
-      super(DatatoolTk.getLabelWithValue("error.unknown_key", label));
+      super(messageHandler.getLabelWithValue("error.unknown_key", label));
       this.label = label;
    }
 
-   public UnknownLabelException(String label, Exception e)
+   public UnknownLabelException(MessageHandler messageHandler, String label, 
+       Exception e)
    {
-      super(label, e);
+      super(messageHandler.getLabelWithValue("error.unknown_key", label), e);
       this.label = label;
    }
 
