@@ -4,6 +4,8 @@ v1.7:
 
  - Import probsoln function now uses texparserlib.jar
 
+ - Removed --shuffle-iterations
+
 v1.6:
 
  - Added --csvescape and --nocsvescape

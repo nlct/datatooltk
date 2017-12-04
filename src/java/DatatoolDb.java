@@ -1873,23 +1873,7 @@ out.println("% header block for column "+colIdx);
 
    public void shuffle(Random random)
    {
-      int numRows = data.size();
-      int n = settings.getShuffleIterations();
-
-      for (int i = 0; i < n; i++)
-      {
-         int index1 = random.nextInt(numRows);
-         int index2 = random.nextInt(numRows);
-
-         if (index1 != index2)
-         {
-            DatatoolRow row1 = data.get(index1);
-            DatatoolRow row2 = data.get(index2);
-
-            data.set(index1, row2);
-            data.set(index2, row1);
-         }
-      }
+      Collections.shuffle(data, random);
    }
 
    public Vector<DatatoolHeader> getHeaders()

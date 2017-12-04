@@ -84,7 +84,10 @@
        <dt><opt tag="tex-encoding"/> <meta>encoding</meta></dt>
        <dd>Set the encoding for the <TeX/> (<tt>.tex</tt> and <tt>.dbtex</tt>) files to <meta>encoding</meta>. The <meta>encoding</meta> may
        be the keyword <tt>default</tt> or an empty string to
-       indicate the default file encoding.
+       indicate the default file encoding. Make sure that your <LaTeX/>
+       document matches the given <meta>encoding</meta>. The encoding of 
+       <acr tag="csv"/> files is independent of the <TeX/> (<tt>.dbtex</tt>) 
+       encoding and is set through <opt tag="csv-encoding"/>.
        </dd>
        <dt><opt tag="name"/> <meta>name</meta></dt>
        <dd>If used with <opt tag="in"/>, <opt tag="csv"/>, <opt tag="sql"/>, <opt tag="xls"/>, <opt tag="ods"/>
@@ -112,9 +115,6 @@
        <dt><opt tag="seed"/> <meta>number</meta></dt>
        <dd>Set the random generator seed to <meta>number</meta> or clear it
        if <meta>number</meta> is <tt>""</tt>. (See <ref tag="shuffle"/>.)</dd>
-       <dt><opt tag="shuffle-iterations"/> <meta>number</meta></dt>
-       <dd>Set the number of iterations to perform in a<nbsp/>shuffle to 
-       <meta>number</meta>. (See <ref tag="shuffle"/>.)</dd>
        <dt><opt tag="shuffle"/></dt>
        <dd>Shuffle the database. (Shuffle is always performed after sort,
        regardless of the option order.)</dd>
@@ -214,6 +214,8 @@
        <acr tag="csv" /> file. (Defaults to a<nbsp />double quote. Synonym: <opt tag="delim" /> <meta>character</meta>)</dd>
        <dt><opt tag="csv-encoding"/> <meta>encoding</meta></dt>
        <dd>Set the encoding for the CSV files to <meta>encoding</meta>. The <meta>encoding</meta> may be the keyword <tt>default</tt> or an empty string to indicate the default. (Synonym: <opt tag="csvencoding"/> <meta>encoding</meta>.)
+       The encoding of the <TeX/> (<tt>.dbtex</tt>) file is independent of the 
+       <acr tag="csv"/> encoding and is set through <opt tag="tex-encoding"/>.
        </dd>
        <dt><opt tag="csv-header" /></dt>
        <dd>The <acr tag="csv"/> file has a header row. (Default. Synonym: <opt tag="csvheader" />.)</dd>
@@ -762,13 +764,12 @@ Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
    </node>
    <node tag="shuffle" type="section" title="Shuffling the Data">
    <p>
-   Data can be reordered by randomly swapping pairs of rows. By default, 
-   this random row swapping is done 100 times, but this number can be
-   changed via the <opt tag="shuffle-iterations"/> command line option 
-   or the <button tag="preferences.shuffle.iter"/> field in the 
-   <dict tag="preferences.title"/> dialog box. Data shuffling can be
+   Shuffling involves randomly changing the order of the rows. This can be
    performed either by the <opt tag="shuffle"/> command line option or
-   the <menu tag="tools.shuffle"/> menu item.
+   the <menu tag="tools.shuffle"/> menu item. You can change
+   the seed used by the random number generator with
+   <opt tag="seed"/> or through the 
+   <dict tag="preferences.title"/> dialog box (see <ref tag="preferences"/>).
    </p>
    <example>
    <p>
@@ -1297,6 +1298,14 @@ sys	0m0.065s
    <button tag="preferences.csv.hasheader"/> option is unchecked in the
    <dict tag="preferences.title"/> dialog box.
    </p>
+   <p>
+   Make sure that the <acr tag="csv"/> file encoding is correctly set
+   before importing. This can be done from the <opt tag="csv-encoding"/>
+   command line option or in the 
+   <dict tag="preferences.title"/> dialog box. The encoding
+   of the <TeX/> (<tt>.dbtex</tt>) file is independent of the <acr tag="csv"/>
+   encoding.
+   </p>
    <example>
    <p>
    Consider the <acr tag="csv"/> file shown below:
@@ -1581,9 +1590,7 @@ Password:
      of <app/> or you can specify a<nbsp/>directory of your choice.
      </p>
      <p>
-     In this tab you can also specify the number of iterations to use in
-     a<nbsp/>shuffle operation (equivalent to <opt tag="shuffle-iterations"/>)
-     and, optionally, a<nbsp/>seed for the random number generator 
+     In this tab you can also specify the seed for the random number generator 
      (equivalent to <opt tag="seed"/>).
      </p>
      <p>
@@ -1601,8 +1608,8 @@ Password:
       <image scale="0.75" alt="Image of the csv tab of the preferences dialog box" src="images/pref-csv.png" />
      </float>
      <p>
-     In this tab you can specify the separator character. If the separator is
-     a<nbsp/>tab character, select the 
+     In this tab you can specify the <acr tag="csv"/> settings. If the 
+     separator is a<nbsp/>tab character, select the 
      <button tag="preferences.csv.tabsep"/> radio button. Otherwise
      select the (<button tag="preferences.csv.sep"/>) <button tag="preferences.csv.sepchar"/> radio button
      and enter the character in the neighbouring text box. Set the delimiter
@@ -1620,7 +1627,8 @@ Password:
      character in the neighbouring text box. Alternatively, you can suppress the <acr tag="csv"/>
      escape character, in which case the delimiter character can't occur within 
      the data. To do this, select the <button tag="preferences.csv.noesc"/>
-     button.
+     button. The character encoding can be changed through the 
+     <button tag="preferences.csv.encoding"/> drop-down box.
      </p>
     </dd>
     <dt><button tag="preferences.sql"/></dt>

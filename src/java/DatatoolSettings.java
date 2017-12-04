@@ -1126,24 +1126,6 @@ public class DatatoolSettings extends Properties
       return seed == null ? new Random() : new Random(seed.longValue());
    }
 
-   public int getShuffleIterations()
-   {
-      try
-      {
-         return Integer.parseInt(getProperty("shuffle.iter"));
-      }
-      catch (Exception e)
-      {
-         setShuffleIterations(100);
-         return 100;
-      }
-   }
-
-   public void setShuffleIterations(int number)
-   {
-      setProperty("shuffle.iter", ""+number);
-   }
-
    public boolean isRedefNewProblemEnabled()
    {
       String prop = getProperty("redefnewprob");

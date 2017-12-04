@@ -406,7 +406,6 @@ public class DatatoolTk
          (settings.isTeXMappingOn() ?
          "": " ("+getLabel("syntax.default")+".)")));
       System.out.println(getLabelWithValues("syntax.seed", "--seed"));
-      System.out.println(getLabelWithValues("syntax.shuffle_iter", "--shuffle-iterations"));
       System.out.println(getLabelWithValues("syntax.shuffle", "--shuffle"));
       System.out.println(getLabelWithValues("syntax.no_shuffle", "--noshuffle"));
       System.out.println(getLabelWithValues("syntax.sort", "--sort"));
@@ -1246,28 +1245,6 @@ public class DatatoolTk
                     getLabelWithValues("error.syntax.missing_number",
                       args[i-1]));
                }
-            }
-         }
-         else if (args[i].equals("--shuffle-iterations"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_number",
-                   args[i-1]));
-            }
-
-            try
-            {
-               settings.setShuffleIterations(Integer.valueOf(args[i]));
-            }
-            catch (NumberFormatException e)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_number",
-                   args[i-1]));
             }
          }
          else if (args[i].equals("--shuffle"))

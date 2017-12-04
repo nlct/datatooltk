@@ -98,15 +98,6 @@ public class PropertiesDialog extends JDialog
       box.setAlignmentX(0);
       shuffleComp.add(box);
 
-      iterationsField = new NonNegativeIntField(100);
-      box.add(resources.createJLabel("preferences.shuffle.iter"), 
-         iterationsField);
-      box.add(iterationsField);
-
-      box = new JPanel(new FlowLayout(FlowLayout.LEFT));
-      box.setAlignmentX(0);
-      shuffleComp.add(box);
-
       hasSeedBox = resources.createJCheckBox("preferences.shuffle",
          "seed", this);
       box.add(hasSeedBox);
@@ -757,8 +748,6 @@ public class PropertiesDialog extends JDialog
 
       currencyListModel = new CurrencyListModel(currencyList, settings);
 
-      iterationsField.setValue(settings.getShuffleIterations());
-
       Long seed = settings.getRandomSeed();
 
       if (seed == null)
@@ -1094,8 +1083,6 @@ public class PropertiesDialog extends JDialog
          settings.setRandomSeed(null);
       }
 
-      settings.setShuffleIterations(iterationsField.getValue());
-
       settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
       settings.setDictionary(dictLangBox.getSelectedItem().toString());
 
@@ -1131,7 +1118,7 @@ public class PropertiesDialog extends JDialog
    private JFileChooser fileChooser;
 
    private NonNegativeIntField portField, sizeField, cellHeightField,
-      iterationsField, seedField, editorHeightField, editorWidthField;
+      seedField, editorHeightField, editorWidthField;
 
    private NonNegativeIntField[] cellWidthFields;
 
