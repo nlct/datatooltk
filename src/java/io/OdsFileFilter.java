@@ -32,7 +32,7 @@ public class OdsFileFilter extends FileFilter
    public OdsFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = messageHandler.getLabelWithValue("filter.ods", "*.ods");
+      description = messageHandler.getLabelWithValues("filter.ods", "*.ods");
    }
 
    public boolean accept(File file)

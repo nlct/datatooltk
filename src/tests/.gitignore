@@ -1,6 +1,9 @@
 test-sql-data.dbtex
 mth-101-shuffled.dbtex
 data-shuffled.dbtex
+test-*out.dbtex
+test-merged.dbtex
+*saved.dbtex
 *.aux
 *.log
 *.pdf

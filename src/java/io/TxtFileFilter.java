@@ -32,7 +32,7 @@ public class TxtFileFilter extends FileFilter
    public TxtFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = messageHandler.getLabelWithValue("filter.txt", "*.txt");
+      description = messageHandler.getLabelWithValues("filter.txt", "*.txt");
    }
 
    public boolean accept(File file)

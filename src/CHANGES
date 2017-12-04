@@ -1,6 +1,8 @@
 v1.7:
 
- - Added --sort-locale and --tex-encoding
+ - Added --sort-locale, --tex-encoding and --csv-encoding
+
+ - Import probsoln function now uses texparserlib.jar
 
 v1.6:
 

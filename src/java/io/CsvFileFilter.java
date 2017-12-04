@@ -32,7 +32,7 @@ public class CsvFileFilter extends FileFilter
    public CsvFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = messageHandler.getLabelWithValue("filter.csv", "*.csv");
+      description = messageHandler.getLabelWithValues("filter.csv", "*.csv");
    }
 
    public boolean accept(File file)

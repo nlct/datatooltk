@@ -1,0 +1,43 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+use Data::Random::WordList;
+
+if ($#ARGV != 1)
+{
+   die "Syntax: $0 <rows> <columns>\n";
+}
+
+my $row_count = $ARGV[0];
+my $col_count = $ARGV[1];
+  
+my $wl = new Data::Random::WordList( wordlist => '/usr/share/dict/words');
+
+my @rand_words = $wl->get_words($row_count * $col_count);
+
+$wl->close();
+
+for (my $col = 1; $col <= $col_count; $col++)
+{
+   print "Field", $col, $col == $col_count ? "\n" : ",";
+}
+
+my $idx=0;
+
+for (my $row = 1; $row <= $row_count; $row++)
+{
+   for (my $col = 1; $col <= $col_count; $col++)
+   {
+      my $word = $rand_words[$idx++];
+
+      $word=~s/([\\\&#%_\{\}\$])/\\$1/g;
+
+      $word=~s/\^/\\textasciicircum /g;
+      $word=~s/\^/\\textasciitilde /g;
+
+      print $word, $col == $col_count ? "\n" : ",";
+   }
+}
+
+1;

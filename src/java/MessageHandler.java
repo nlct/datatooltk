@@ -348,31 +348,17 @@ public class MessageHandler extends ErrorManager
       return datatooltk.getLabel(parent, label);
    }
 
-   public String getLabelWithValue(String label, String value)
-   {
-      return datatooltk.getLabelWithValue(label, value);
-   }
-
-   public String getLabelWithValue(String label, int value)
-   {
-      return datatooltk.getLabelWithValue(label, value);
-   }
-
-   public String getLabelWithValues(String label, int value1,
-     int value2)
-   {
-      return datatooltk.getLabelWithValues(label, value1, value2);
-   }
-
-   public String getLabelWithValues(String label, String value1,
-     String value2)
-   {
-      return datatooltk.getLabelWithValues(label, value1, value2);
-   }
-
    public String getLabelWithValues(String label, Object... values)
    {
       return datatooltk.getLabelWithValues(label, values);
+   }
+
+   public String getLabelWithValues(int lineNumber, String label, Object... values)
+   {
+      String msg = datatooltk.getLabelWithValues(label, values);
+
+      return datatooltk.getLabelWithValues("error.line",
+       lineNumber, msg);
    }
 
    public String getToolTip(String label)

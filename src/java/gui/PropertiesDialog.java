@@ -181,6 +181,15 @@ public class PropertiesDialog extends JDialog
       escCharField = new CharField('\\');
       box.add(escCharField);
 
+      box = Box.createHorizontalBox();
+      box.setAlignmentX(0);
+      csvTab.add(box);
+
+      csvEncodingBox = new JComboBox<Charset>(
+        Charset.availableCharsets().values().toArray(new Charset[0]));
+      box.add(createLabel("preferences.csv.encoding", csvEncodingBox));
+      box.add(csvEncodingBox);
+
       // SQL tab
 
       JComponent sqlTab = addTab("sql");
@@ -717,6 +726,17 @@ public class PropertiesDialog extends JDialog
          texEncodingBox.setSelectedItem(Charset.forName(encoding));
       }
 
+      encoding = settings.getCsvEncoding();
+
+      if (encoding == null)
+      {
+         csvEncodingBox.setSelectedItem(Charset.defaultCharset());
+      }
+      else
+      {
+         csvEncodingBox.setSelectedItem(Charset.forName(encoding));
+      }
+
       sizeField.setValue(settings.getFontSize());
       fontBox.setSelectedItem(settings.getFontName());
       cellHeightField.setValue(settings.getCellHeight());
@@ -1041,6 +1061,7 @@ public class PropertiesDialog extends JDialog
       settings.setTeXMapping(mapTeXBox.isSelected());
 
       settings.setTeXEncoding((Charset)texEncodingBox.getSelectedItem());
+      settings.setCsvEncoding((Charset)csvEncodingBox.getSelectedItem());
 
       texMapModel.updateSettings();
 
@@ -1127,7 +1148,7 @@ public class PropertiesDialog extends JDialog
 
    private JList<String> currencyList;
 
-   private JComboBox<Charset> texEncodingBox;
+   private JComboBox<Charset> texEncodingBox, csvEncodingBox;
 
    private CurrencyListModel currencyListModel;
 

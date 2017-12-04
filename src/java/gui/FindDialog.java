@@ -334,9 +334,7 @@ public class FindDialog extends JDialog
       textComp.setText(builder.toString());
 
       JOptionPane.showMessageDialog(this, 
-        count == 1 ?
-        messageHandler.getLabel("replace.one_replaced") :
-        messageHandler.getLabelWithValue("replace.num_replaced", count));
+        messageHandler.getLabelWithValues("replace.num_replaced", count));
    }
 
    public void find()

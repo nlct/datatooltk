@@ -454,7 +454,7 @@ public class DatatoolGUI extends JFrame
             if (hsURL == null)
             {
                throw new FileNotFoundException(
-                  getMessageHandler().getLabelWithValue(
+                  getMessageHandler().getLabelWithValues(
                     "error.resource.not_found",
                     helpset));
             }
@@ -591,13 +591,13 @@ public class DatatoolGUI extends JFrame
    {
       if (undoName != null)
       {
-        undoItem.setText(getMessageHandler().getLabelWithValue("edit.undo",
+        undoItem.setText(getMessageHandler().getLabelWithValues("edit.undo",
            undoName));
       }
 
       if (redoName != null)
       {
-        redoItem.setText(getMessageHandler().getLabelWithValue("edit.redo",
+        redoItem.setText(getMessageHandler().getLabelWithValues("edit.redo",
            redoName));
       }
 
@@ -854,7 +854,7 @@ public class DatatoolGUI extends JFrame
       {
          JOptionPane.showMessageDialog(this, 
            getMessageHandler().getDatatoolTk().getAppInfo(),
-           getMessageHandler().getLabelWithValue("about.title", 
+           getMessageHandler().getLabelWithValues("about.title", 
              DatatoolTk.APP_NAME),
            JOptionPane.PLAIN_MESSAGE);
       }
@@ -1113,7 +1113,7 @@ public class DatatoolGUI extends JFrame
       if (panel.isModified())
       {
          switch (JOptionPane.showConfirmDialog(this,
-           getMessageHandler().getLabelWithValue("message.unsaved_data_query",
+           getMessageHandler().getLabelWithValues("message.unsaved_data_query",
              panel.getName()),
            getMessageHandler().getLabel("message.unsaved_data"),
            JOptionPane.YES_NO_CANCEL_OPTION,
@@ -1282,7 +1282,7 @@ public class DatatoolGUI extends JFrame
          else
          {
             getMessageHandler().error(this,  
-              getMessageHandler().getLabelWithValue("error.unknown_file_format", name));
+              getMessageHandler().getLabelWithValues("error.unknown_file_format", name));
 
             return null;
          }

@@ -392,6 +392,35 @@ public class DatatoolSettings extends Properties
       }
    }
 
+   public String getCsvEncoding()
+   {
+      return getProperty("csv-encoding");
+   }
+
+   public void setCsvEncoding(Charset encoding)
+   {
+      if (encoding == null)
+      {
+         remove("csv-encoding");
+      }
+      else
+      {
+         setProperty("csv-encoding", encoding.name());
+      }
+   }
+
+   public void setCsvEncoding(String encoding)
+   {
+      if (encoding == null)
+      {
+         remove("csv-encoding");
+      }
+      else
+      {
+         setProperty("csv-encoding", encoding);
+      }
+   }
+
    public String getSortLocale()
    {
       return getProperty("sort-locale");
@@ -825,7 +854,7 @@ public class DatatoolSettings extends Properties
          }
       }
 
-      throw new NumberFormatException(messageHandler.getLabelWithValue(
+      throw new NumberFormatException(messageHandler.getLabelWithValues(
          "error.not_currency", text));
    }
 

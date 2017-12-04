@@ -53,7 +53,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       if (!file.exists())
       {
          throw new IOException(
-            getMessageHandler().getLabelWithValue("error.io.file_not_found", 
+            getMessageHandler().getLabelWithValues("error.io.file_not_found", 
              file.toString()));
       }
 
@@ -65,7 +65,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       }
       catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException e)
       {
-         throw new IOException(getMessageHandler().getLabelWithValue
+         throw new IOException(getMessageHandler().getLabelWithValues
            ("error.unknown_file_format", file.getName()), e);
       }
 
@@ -91,7 +91,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          if (!file.exists())
          {
             throw new IOException(
-               getMessageHandler().getLabelWithValue("error.io.file_not_found", ""+file));
+               getMessageHandler().getLabelWithValues("error.io.file_not_found", ""+file));
          }
 
          if (file.getName().toLowerCase().endsWith(".xlsx"))
@@ -175,7 +175,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
             for (Cell cell : row)
             {
                DatatoolHeader header = new DatatoolHeader(db,
-                 getMessageHandler().getLabelWithValue("default.field", (cellIdx+1)));
+                 getMessageHandler().getLabelWithValues("default.field", (cellIdx+1)));
                db.addColumn(header);
 
                db.addCell(rowIdx, cellIdx, getCellValue(cell));
@@ -211,8 +211,8 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       catch (Exception e)
       {
          throw new DatatoolImportException(
-          getMessageHandler().getLabelWithValue("error.import.failed", 
-           file.toString()), e);
+          getMessageHandler().getLabelWithValues("error.import.failed", 
+           file), e);
       }
 
       return db;

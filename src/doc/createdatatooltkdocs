@@ -68,8 +68,7 @@ if (not (-e $propfile) and ($lang ne $locale))
 
    unless (-e $propfile)
    {
-      die "Can't find either '$dictdir/$base-$locale.prop' or
-'$propfile'\n";
+      die "Can't find either '$dictdir/$base-$locale.prop' or '$propfile'\n";
    }
 }
 
@@ -79,9 +78,22 @@ unless (-e $propfile)
 }
 
 open FD, "$propfile" or die "Can't open '$propfile' $!\n";
-binmode(FD, ":$encoding_file");
+
+$_ = <FD>;
+
+if (/# Encoding: ([^s]+)/)
+{
+   binmode(FD, ":encoding($1)");
+}
+else
+{
+   die "Encoding comment line missing from line 1 of '$propfile'\n";
+}
 
 my $linenum = 0;
+
+my $openquote = chr(hex(2018));
+my $closequote = chr(hex(2019));
 
 while (<FD>)
 {
@@ -91,7 +103,27 @@ while (<FD>)
 
    if (/^([^=]+)=(.*)$/)
    {
-      $dict{$1} = $2;
+      my $dictkey = $1;
+      my $value = $2;
+
+      $value=~s/\\{1}[nt]/ /g;
+      $value=~s/(\w)''(\w)/$1$closequote$2/g;
+      $value=~s/'{2}([^']+)'{2}/$openquote$1$closequote/g;
+      $value=~s/'{2}/$closequote/g;
+
+      # strip any trailing ellipsis
+      $value=~s/\.{3}$//g;
+
+      # Prop files don't contain any literal {n,...,...}
+      # Don't need the complexity of the Java application here.
+      # (Many of the messages aren't used in the manual.)
+
+      $value=~s/\{\d,choice,[^\}]+\|<([^\}]*)\}/$1/g;
+
+      $value=~s/\{(\d+)(,[^\}]+)?\}/&arg_placeholder($1)/eg;
+
+      $dict{$dictkey} = $value;
+
    }
    else
    {
@@ -599,12 +631,8 @@ sub get_label{
 
    if ($attrs)
    {
-      $text=~s/\$(\d)/$attrs->{"arg$1"}/eg;
+      $text=~s/<ARG#(\d)\/>/$attrs->{"arg$1"}/eg;
    }
-
-   # strip any trailing ellipsis
-
-   $text=~s/\.{3}$//;
 
    $text
 }
@@ -2281,6 +2309,10 @@ sub html_nav{
   }
 
   "$nav</td></tr></table>"
+}
+
+sub arg_placeholder{
+   "<ARG#" . ($_[0]) . "/>";
 }
  
 1;

@@ -75,7 +75,7 @@ public class DatatoolHeader
        || type > DatatoolSettings.TYPE_CURRENCY)
       {
          throw new IllegalArgumentException(
-            messageHandler.getLabelWithValue(
+            messageHandler.getLabelWithValues(
               "error.invalid_data_type", type));
       }
 

@@ -38,7 +38,7 @@ public class InsertRowEdit extends AbstractUndoableEdit
       {
          MessageHandler messageHandler = panel.getMessageHandler();
 
-         undoInfo = messageHandler.getLabelWithValue("info.no_rows",
+         undoInfo = messageHandler.getLabelWithValues("info.no_rows",
            messageHandler.getLabel("edit")+"->"
              +messageHandler.getLabel("edit.row"));
       }
@@ -68,7 +68,7 @@ public class InsertRowEdit extends AbstractUndoableEdit
       {
          MessageHandler messageHandler = panel.getMessageHandler();
 
-         undoInfo = messageHandler.getLabelWithValue("info.no_rows",
+         undoInfo = messageHandler.getLabelWithValues("info.no_rows",
            messageHandler.getLabel("edit")+"->"
              +messageHandler.getLabel("edit.row"));
       }

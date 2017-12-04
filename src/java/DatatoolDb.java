@@ -132,7 +132,7 @@ public class DatatoolDb
 
          if (controlSequence == null)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", "\\newtoks\\csname"));
          }
 
@@ -140,7 +140,7 @@ public class DatatoolDb
 
          if (name == null)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", "\\endcsname"));
          }
 
@@ -148,8 +148,8 @@ public class DatatoolDb
          {
             throw new IOException(messageHandler.getLabelWithValues
               (
-                 "error.dbload.expected",
                  in.getLineNumber(),
+                 "error.expected",
                  "\\newtoks\\csname dtlkeys@<name>\\endcsname"
               ));
          }
@@ -175,7 +175,7 @@ public class DatatoolDb
 
          if (controlSequence == null)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtlkeys@"+name+"\\endcsname"));
          }
@@ -184,15 +184,15 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtlkeys@"+name+"\\endcsname="));
          }
          else if (c != (int)'=')
          {
             throw new IOException(messageHandler.getLabelWithValues(
-              "error.dbload.expected_found", 
-                  in.getLineNumber(),
+               in.getLineNumber(),
+              "error.expected_found", 
                   "\\csname dtlkeys@"+name+"\\endcsname=",
                   "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
                ));
@@ -202,15 +202,15 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtlkeys@"+name+"\\endcsname={"));
          }
          else if (c != (int)'{')
          {
             throw new IOException(messageHandler.getLabelWithValues(
-              "error.dbload.expected_found", 
-                  in.getLineNumber(),
+              in.getLineNumber(),
+              "error.expected_found", 
                   "\\csname dtlkeys@"+name+"\\endcsname={",
                   "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
                ));
@@ -265,7 +265,7 @@ public class DatatoolDb
 
          if (controlSequence == null)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", "\\newtoks\\csname"));
          }
 
@@ -273,15 +273,15 @@ public class DatatoolDb
 
          if (contents == null)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
              "\\newtoks\\csname dtldb@"+name+"\\endcsname"));
          }
          else if (!contents.equals("dtldb@"+name))
          {
             throw new IOException(messageHandler.getLabelWithValues(
-              "error.dbload.expected_found",
-                  in.getLineNumber(),
+              in.getLineNumber(),
+              "error.expected_found",
                   "\\newtoks\\csname dtldb@"+name+"\\endcsname",
                   "\\newtoks\\csname "+contents+"\\endcsname"
               ));
@@ -291,7 +291,7 @@ public class DatatoolDb
 
          if (contents == null)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
              "\\csname dtldb@"+name+"\\endcsname="));
          }
@@ -304,7 +304,7 @@ public class DatatoolDb
 
          if (contents == null)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
              "\\csname dtldb@"+name+"\\endcsname="));
          }
@@ -314,8 +314,8 @@ public class DatatoolDb
          if (!contents.equals("dtldb@"+name))
          {
             throw new IOException(messageHandler.getLabelWithValues(
-              "error.dbload.expected_found",
-                  in.getLineNumber(),
+              in.getLineNumber(),
+              "error.expected_found",
                   "\\csname dtldb@"+name+"\\endcsname",
                   "\\csname "+contents+"\\endcsname"
               ));
@@ -327,15 +327,15 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtldb@"+name+"\\endcsname="));
          }
          else if (c != (int)'=')
          {
             throw new IOException(messageHandler.getLabelWithValues(
-              "error.dbload.expected_found", 
-                  in.getLineNumber(),
+              in.getLineNumber(),
+              "error.expected_found", 
                   "\\csname dtldb@"+name+"\\endcsname=",
                   "\\csname dtldb@"+name+"\\endcsname"+((char)c)
                ));
@@ -345,15 +345,15 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(messageHandler.getLabelWithValue(
+            throw new IOException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtldb@"+name+"\\endcsname={"));
          }
          else if (c != (int)'{')
          {
             throw new IOException(messageHandler.getLabelWithValues(
-              "error.dbload.expected_found", 
-                  in.getLineNumber(),
+              in.getLineNumber(),
+              "error.expected_found", 
                   "\\csname dtldb@"+name+"\\endcsname={",
                   "\\csname dtldb@"+name+"\\endcsname"+((char)c)
                ));
@@ -457,8 +457,8 @@ public class DatatoolDb
       {
          throw new IOException(getMessageHandler().getLabelWithValues
            (
-              "error.dbload.invalid_row_id",
               in.getLineNumber(),
+              "error.dbload.invalid_row_id",
               contents
            ), e);
       }
@@ -477,8 +477,8 @@ public class DatatoolDb
       {
          throw new IOException(getMessageHandler().getLabelWithValues
            (
-              "error.dbload.expected",
               in.getLineNumber(),
+              "error.expected",
               "\\db@row@elt@w"
            ));
       }
@@ -497,10 +497,9 @@ public class DatatoolDb
             {
                throw new IOException(getMessageHandler().getLabelWithValues
                  (
+                    in.getLineNumber(),
                     "error.dbload.wrong_end_row_tag",
-                       in.getLineNumber(),
-                       currentRow,
-                       contents
+                       currentRow, num
                  ));
             }
          }
@@ -508,8 +507,8 @@ public class DatatoolDb
          {
             throw new IOException(getMessageHandler().getLabelWithValues
               (
-                 "error.dbload.invalid_row_id",
                  in.getLineNumber(),
+                 "error.dbload.invalid_row_id",
                  contents
               ), e);
          }
@@ -523,8 +522,8 @@ public class DatatoolDb
       {
          throw new IOException(getMessageHandler().getLabelWithValues
            (
-              "error.dbload.expected_found",
-                 ""+in.getLineNumber(),
+               in.getLineNumber(),
+              "error.expected_found",
                  "\\db@col@id@w",
                  controlSequence
            ));
@@ -536,9 +535,9 @@ public class DatatoolDb
       {
          throw new IOException(getMessageHandler().getLabelWithValues
            (
-              "error.dbload.expected",
-                 in.getLineNumber(),
-                 "\\db@col@id@end@"
+               in.getLineNumber(),
+              "error.expected",
+              "\\db@col@id@end@"
            ));
       }
 
@@ -552,8 +551,8 @@ public class DatatoolDb
       {
          throw new IOException(getMessageHandler().getLabelWithValues
            (
-              "error.dbload.invalid_col_id",
               in.getLineNumber(),
+              "error.dbload.invalid_col_id",
               contents
            ), e);
       }
@@ -566,8 +565,8 @@ public class DatatoolDb
       {
          throw new IOException(getMessageHandler().getLabelWithValues
            (
-              "error.dbload.expected",
-                 in.getLineNumber(),
+               in.getLineNumber(),
+              "error.expected",
                  "\\db@col@elt@end@"
            ));
       }
@@ -592,10 +591,10 @@ public class DatatoolDb
          {
             throw new IOException(getMessageHandler().getLabelWithValues
               (
+                 in.getLineNumber(),
                  "error.dbload.wrong_end_col_tag",
-                    in.getLineNumber(),
-                    currentColumn,
-                    contents
+                 currentColumn,
+                 num
               ));
          }
       }
@@ -603,8 +602,8 @@ public class DatatoolDb
       {
          throw new IOException(getMessageHandler().getLabelWithValues
            (
-              "error.dbload.invalid_col_id",
               in.getLineNumber(),
+              "error.dbload.invalid_col_id",
               contents
            ), e);
       }
@@ -619,7 +618,7 @@ public class DatatoolDb
 
       if (controlSequence == null)
       {
-         throw new IOException(getMessageHandler().getLabelWithValue(
+         throw new IOException(getMessageHandler().getLabelWithValues(
             "error.dbload.not_found", "\\db@plist@elt@end@"));
       }
 
@@ -634,7 +633,7 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(getMessageHandler().getLabelWithValue(
+            throw new IOException(getMessageHandler().getLabelWithValues(
                "error.dbload.not_found", "\\db@col@id@end@"));
          }
 
@@ -646,8 +645,8 @@ public class DatatoolDb
          {
              throw new IOException(getMessageHandler().getLabelWithValues
              (
-                "error.dbload.invalid_col_id",
                 in.getLineNumber(),
+                "error.dbload.invalid_col_id",
                 content
              ), e);
          }
@@ -667,7 +666,7 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(getMessageHandler().getLabelWithValue(
+            throw new IOException(getMessageHandler().getLabelWithValues(
                "error.dbload.not_found", "\\db@key@id@end@"));
          }
 
@@ -694,7 +693,7 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(getMessageHandler().getLabelWithValue(
+            throw new IOException(getMessageHandler().getLabelWithValues(
                "error.dbload.not_found", "\\db@header@id@end@"));
          }
 
@@ -721,7 +720,7 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(getMessageHandler().getLabelWithValue(
+            throw new IOException(getMessageHandler().getLabelWithValues(
                "error.dbload.not_found", "\\db@type@id@end@"));
          }
 
@@ -755,8 +754,8 @@ public class DatatoolDb
          {
              throw new IOException(getMessageHandler().getLabelWithValues
              (
-                "error.dbload_unknown_type",
                 in.getLineNumber(),
+                "error.dbload_unknown_type",
                 content
              ), e);
          }
@@ -764,8 +763,8 @@ public class DatatoolDb
          {
              throw new IOException(getMessageHandler().getLabelWithValues
              (
-                "error.dbload_unknown_type",
                 in.getLineNumber(),
+                "error.dbload_unknown_type",
                 content
              ), e);
          }
@@ -883,15 +882,15 @@ public class DatatoolDb
 
       if (controlSequence == null)
       {
-         throw new IOException(getMessageHandler().getLabelWithValue(
+         throw new IOException(getMessageHandler().getLabelWithValues(
            "error.dbload.not_found", 
              requiredCommand));
       }
       else if (!requiredCommand.equals(controlSequence))
       {
          throw new IOException(getMessageHandler().getLabelWithValues(
-           "error.dbload.expected_found", 
             in.getLineNumber(),
+           "error.expected_found", 
             requiredCommand,
             controlSequence));
       }
@@ -1024,7 +1023,7 @@ public class DatatoolDb
          name = getName();
 
          out.println("% "+getMessageHandler().getLabelWithValues("default.texheader",
-           DatatoolTk.APP_NAME, (new Date()).toString()));
+           DatatoolTk.APP_NAME, new Date()));
          out.println("\\DTLifdbexists{"+name+"}%");
          out.println("{\\PackageError{datatool}{Database `"+name+"'");
          out.println("already exists}{}%");
@@ -1719,7 +1718,7 @@ out.println("% header block for column "+colIdx);
 
    public DatatoolHeader insertColumn(int colIdx)
    {
-      String defName = getMessageHandler().getLabelWithValue(
+      String defName = getMessageHandler().getLabelWithValues(
          "default.field", (colIdx+1));
       return insertColumn(colIdx, new DatatoolHeader(this, defName, defName));
    }

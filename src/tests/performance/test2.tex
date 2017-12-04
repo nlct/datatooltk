@@ -1,0 +1,12 @@
+% arara: datatooltk: {output: data.dbtex, csv: sample-1000x2.csv}
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage{datatool}
+
+\DTLloaddbtex{\datadb}{data.dbtex}
+
+\begin{document}
+\DTLforeach*{\datadb}{\Fieldi=Field1,\Fieldii=Field2}{\Fieldi, \Fieldii\par}
+
+\end{document}

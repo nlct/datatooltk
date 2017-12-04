@@ -32,7 +32,7 @@ public class TeXFileFilter extends FileFilter
    public TeXFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = messageHandler.getLabelWithValue("filter.tex", "*.tex, *.ltx");
+      description = messageHandler.getLabelWithValues("filter.tex", "*.tex, *.ltx");
    }
 
    public boolean accept(File file)

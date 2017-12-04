@@ -274,7 +274,7 @@ class PluginHandler extends DefaultHandler
       else if (localName.equals("datatooltk"))
       {
          dbPanel.startCompoundEdit(
-            getMessageHandler().getLabelWithValue(
+            getMessageHandler().getLabelWithValues(
                "undo.plugin_action", pluginName));
       }
    }

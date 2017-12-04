@@ -50,7 +50,7 @@ public class DatatoolProbSoln implements DatatoolImport
        if (!file.exists())
        {
           throw new DatatoolImportException(
-             getMessageHandler().getLabelWithValue("error.io.file_not_found",
+             getMessageHandler().getLabelWithValues("error.io.file_not_found",
              file.getAbsolutePath()));
        }
 

@@ -64,7 +64,7 @@ public class DatatoolDbPanel extends JPanel
       String editLabel = messageHandler.getLabel("edit");
 
       setInfo(db.getColumnCount() == 0 ?
-         messageHandler.getLabelWithValue("info.empty_db",
+         messageHandler.getLabelWithValues("info.empty_db",
           String.format("%s->%s", editLabel, 
            messageHandler.getLabel("edit.column"))) :
          messageHandler.getLabelWithValues("info.not_empty_db",
@@ -330,7 +330,7 @@ public class DatatoolDbPanel extends JPanel
       if (file.exists())
       {
          if (JOptionPane.showConfirmDialog(this,
-             messageHandler.getLabelWithValue("message.overwrite_query",
+             messageHandler.getLabelWithValues("message.overwrite_query",
                file.toString()),
              messageHandler.getLabel("message.confirm_overwrite"),
              JOptionPane.YES_NO_OPTION,
@@ -503,9 +503,7 @@ public class DatatoolDbPanel extends JPanel
          ce.end();
          addUndoEdit(ce);
          JOptionPane.showMessageDialog(this,
-            count == 1 ?
-            messageHandler.getLabel("message.one_cell_updated") :
-            messageHandler.getLabelWithValue("message.cells_updated", count)
+            messageHandler.getLabelWithValues("message.cells_updated", count)
          );
          dataUpdated();
       }
@@ -541,7 +539,7 @@ public class DatatoolDbPanel extends JPanel
          JOptionPane.showMessageDialog(this,
             count == 1 ?
             messageHandler.getLabel("message.one_cell_updated") :
-            messageHandler.getLabelWithValue("message.cells_updated", count)
+            messageHandler.getLabelWithValues("message.cells_updated", count)
          );
          dataUpdated();
       }
@@ -581,7 +579,7 @@ public class DatatoolDbPanel extends JPanel
          JOptionPane.showMessageDialog(this,
             count == 1 ?
             messageHandler.getLabel("message.one_cell_updated") :
-            messageHandler.getLabelWithValue("message.cells_updated", count)
+            messageHandler.getLabelWithValues("message.cells_updated", count)
          );
          dataUpdated();
       }
@@ -1256,7 +1254,7 @@ public class DatatoolDbPanel extends JPanel
       if (invalid)
       {
          messageHandler.error(gui,
-            messageHandler.getLabelWithValue("error.invalid_name", newName));
+            messageHandler.getLabelWithValues("error.invalid_name", newName));
          return;
       }
 

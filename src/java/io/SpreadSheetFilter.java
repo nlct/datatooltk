@@ -32,7 +32,7 @@ public class SpreadSheetFilter extends FileFilter
    public SpreadSheetFilter(MessageHandler messageHandler)
    {
       super();
-      description = messageHandler.getLabelWithValue("filter.xlsods", 
+      description = messageHandler.getLabelWithValues("filter.xlsods", 
        "*.xls, *.ods");
    }
 

@@ -82,7 +82,9 @@
        (or <tt>-i</tt>) is optional, so <app/><nbsp/><meta>file</meta>
        is equivalent to <app/><nbsp/><opt tag="in"/> <meta>file</meta>.</dd>
        <dt><opt tag="tex-encoding"/> <meta>encoding</meta></dt>
-       <dd>Set the encoding for the TeX files to <meta>encoding</meta>.
+       <dd>Set the encoding for the <TeX/> (<tt>.tex</tt> and <tt>.dbtex</tt>) files to <meta>encoding</meta>. The <meta>encoding</meta> may
+       be the keyword <tt>default</tt> or an empty string to
+       indicate the default file encoding.
        </dd>
        <dt><opt tag="name"/> <meta>name</meta></dt>
        <dd>If used with <opt tag="in"/>, <opt tag="csv"/>, <opt tag="sql"/>, <opt tag="xls"/>, <opt tag="ods"/>
@@ -96,10 +98,6 @@
        <dd>Enable debug mode.</dd>
        <dt><opt tag="nodebug"/></dt>
        <dd>Disable debug mode. (Default.)</dd>
-       <dt><opt tag="delete-tmp-files"/></dt>
-       <dd>Delete temporary files on exit. (Default.)</dd>
-       <dt><opt tag="nodelete-tmp-files"/></dt>
-       <dd>Don't delete temporary files on exit.</dd>
        <dt><opt tag="owner-only"/></dt>
        <dd>Set read/write permissions when saving .dbtex files to owner only.
        (Has no effect on some operating systems.)</dd>
@@ -208,19 +206,22 @@
        <dt><opt tag="merge-csv"/> <meta>key</meta> <meta>csv file</meta></dt>
        <dd>As <opt tag="merge"/> but the data to be merged is imported from the given <acr tag="csv"/> file.
        </dd>
-       <dt><opt tag="sep" /> <meta>character</meta></dt>
+       <dt><opt tag="csv-sep" /> <meta>character</meta></dt>
        <dd>Specify the character used to separate values in the 
-       <acr tag="csv" /> file. (Defaults to a<nbsp />comma.)</dd>
-       <dt><opt tag="delim" /> <meta>character</meta></dt>
+       <acr tag="csv" /> file. (Defaults to a<nbsp />comma. Synonym: <opt tag="sep" /> <meta>character</meta>.)</dd>
+       <dt><opt tag="csv-delim" /> <meta>character</meta></dt>
        <dd>Specify the character used to delimit values in the 
-       <acr tag="csv" /> file. (Defaults to a<nbsp />double quote.)</dd>
-       <dt><opt tag="csvheader" /></dt>
-       <dd>The <acr tag="csv"/> file has a header row. (Default.)</dd>
-       <dt><opt tag="nocsvheader" /></dt>
-       <dd>The <acr tag="csv"/> file doesn't have a header row.</dd>
-       <dt><opt tag="csvescape" /> <meta>character</meta></dt>
+       <acr tag="csv" /> file. (Defaults to a<nbsp />double quote. Synonym: <opt tag="delim" /> <meta>character</meta>)</dd>
+       <dt><opt tag="csv-encoding"/> <meta>encoding</meta></dt>
+       <dd>Set the encoding for the CSV files to <meta>encoding</meta>. The <meta>encoding</meta> may be the keyword <tt>default</tt> or an empty string to indicate the default. (Synonym: <opt tag="csvencoding"/> <meta>encoding</meta>.)
+       </dd>
+       <dt><opt tag="csv-header" /></dt>
+       <dd>The <acr tag="csv"/> file has a header row. (Default. Synonym: <opt tag="csvheader" />.)</dd>
+       <dt><opt tag="nocsv-header" /></dt>
+       <dd>The <acr tag="csv"/> file doesn't have a header row. (Synonym: <opt tag="nocsvheader" />.)</dd>
+       <dt><opt tag="csv-escape" /> <meta>character</meta></dt>
        <dd>Set the <acr tag="csv"/> file escape character to 
-       <meta>character</meta>.  If your data includes the delimiter
+       <meta>character</meta>. (Synonym: <opt tag="csvescape" /> <meta>character</meta>)  If your data includes the delimiter
        character, you need to escape that character to prevent it from being
        mistaken for the delimiter. For example, if the delimiter is 
        the double-quote character and the escape character is the <backslash />
@@ -236,8 +237,8 @@
        To avoid this, you can set the escape character to something else 
        that doesn't occur in your data.
        </dd>
-       <dt><opt tag="nocsvescape" /></dt>
-       <dd>Don't have an escape character for your <acr tag="csv"/> file.
+       <dt><opt tag="nocsv-escape" /></dt>
+       <dd>Don't have an escape character for your <acr tag="csv"/> file. (Synonym: <opt tag="nocsvescape" />.)
        This means that you can use (La)TeX commands without having to use
        a<nbsp />double-backslash <doublebackslash/> but the data can't include 
        the delimiter character.

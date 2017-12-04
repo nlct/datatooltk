@@ -32,7 +32,7 @@ public class XlsFileFilter extends FileFilter
    public XlsFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = messageHandler.getLabelWithValue("filter.xls", "*.xls");
+      description = messageHandler.getLabelWithValues("filter.xls", "*.xls");
    }
 
    public boolean accept(File file)

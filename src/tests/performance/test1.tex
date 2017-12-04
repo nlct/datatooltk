@@ -1,0 +1,12 @@
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage{datatool}
+
+%\DTLloaddb{data}{sample-10x2.csv}
+\DTLloaddb{data}{sample-1000x2.csv}
+
+\begin{document}
+\DTLforeach*{data}{\Fieldi=Field1,\Fieldii=Field2}{\Fieldi, \Fieldii\par}
+
+\end{document}

@@ -25,14 +25,14 @@ public class UnknownLabelException extends Exception
 {
    public UnknownLabelException(MessageHandler messageHandler, String label)
    {
-      super(messageHandler.getLabelWithValue("error.unknown_key", label));
+      super(messageHandler.getLabelWithValues("error.unknown_key", label));
       this.label = label;
    }
 
    public UnknownLabelException(MessageHandler messageHandler, String label, 
        Exception e)
    {
-      super(messageHandler.getLabelWithValue("error.unknown_key", label), e);
+      super(messageHandler.getLabelWithValues("error.unknown_key", label), e);
       this.label = label;
    }
 

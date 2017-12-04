@@ -32,7 +32,7 @@ public class DbTeXFileFilter extends FileFilter
    public DbTeXFileFilter(MessageHandler messageHandler)
    {
       super();
-      description = messageHandler.getLabelWithValue("filter.dbtex", "*.dbtex");
+      description = messageHandler.getLabelWithValues("filter.dbtex", "*.dbtex");
    }
 
    public boolean accept(File file)

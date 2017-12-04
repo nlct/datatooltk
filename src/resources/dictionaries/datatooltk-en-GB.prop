@@ -1,4 +1,6 @@
-# English language file for datatooltk
+# Encoding: UTF-8
+# GB English language file for datatooltk
+# Tab -> \t newline -> \n literal backslash -> \\
 
 # File menu
 file=File
@@ -44,10 +46,10 @@ file.quit.mnemonic=Q
 # Edit Menu
 edit=Edit
 edit.mnemonic=E
-edit.undo=Undo $1
+edit.undo=Undo {0}
 edit.undo.mnemonic=U
 edit.undo.tooltip=Undo previous operation
-edit.redo=Redo $1
+edit.redo=Redo {0}
 edit.redo.mnemonic=R
 edit.redo.tooltip=Redo previous operation
 edit.deselect=Deselect
@@ -152,11 +154,11 @@ help.manual=Manual
 help.manual.mnemonic=M
 
 # About dialog
-about.title=About $1
-about.version=$1 $2 ($3)
+about.title=About {0}
+about.version={0} {1} ({2})
 about.licence=Licence
 about.legal=License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.
-about.translated_by=Translated by $1
+about.translated_by=Translated by {0}
 about.translator_info=
 about.acknowledgements=
 
@@ -197,6 +199,8 @@ preferences.csv.noesc=None
 preferences.csv.noesc.mnemonic=N
 preferences.csv.escchar=Character
 preferences.csv.escchar.mnemonic=E
+preferences.csv.encoding=Encoding: 
+preferences.csv.encoding.mnemonic=G
 preferences.sql=SQL
 preferences.sql.mnemonic=Q
 preferences.sql.host=Host: 
@@ -350,8 +354,7 @@ replace.replace=Replace
 replace.replace.mnemonic=R
 replace.replace_all=Replace All
 replace.replace_all.mnemonic=A
-replace.one_replaced=1 occurrence replaced.
-replace.num_replaced=$1 occurrences replaced.
+replace.num_replaced={0,number,integer} {0,choice,1#occurrence|1<occurrences} replaced.
 replace.all_in=Replace all occurrences within:
 replace.in_row=Selected Row
 replace.in_row.mnemonic=W
@@ -361,7 +364,7 @@ replace.in_db=Selected Database
 replace.in_db.mnemonic=D
 
 # Column header dialog box
-header.title=Column '$1'
+header.title=Column ''{0}''
 header.column_title=Title
 header.column_title.mnemonic=T
 header.column_label=Label
@@ -369,7 +372,7 @@ header.column_label.mnemonic=L
 header.column_label_note=(Avoid TeX active characters.)
 header.column_type=Type
 header.column_type.mnemonic=Y
-header.tooltip_format=Label: $1. Type: $2
+header.tooltip_format=Label: {0}. Type: {1}
 header.type.string=String
 header.type.int=Integer
 header.type.real=Real
@@ -386,14 +389,14 @@ template.title=New From Template
 template.message=Select Template: 
 
 # File filter
-filter.tex=TeX Files ($1)
-filter.dbtex=Datatool Files ($1)
-filter.csv=CSV Files ($1)
-filter.txt=Text Files ($1)
-filter.csvtxt=CSV and TXT Files ($1)
-filter.xls=XLS Files ($1)
-filter.ods=Open Document Spreadsheet ($1)
-filter.xlsods=Spreadsheets ($1)
+filter.tex=TeX Files ({0})
+filter.dbtex=Datatool Files ({0})
+filter.csv=CSV Files ({0})
+filter.txt=Text Files ({0})
+filter.csvtxt=CSV and TXT Files ({0})
+filter.xls=XLS Files ({0})
+filter.ods=Open Document Spreadsheet ({0})
+filter.xlsods=Spreadsheets ({0})
 
 # Button labels
 button.okay=Okay
@@ -415,9 +418,9 @@ button.scrollback=Scroll Back
 button.scrollforward=Scroll Forward
 
 # Default labels
-default.field=Field$1
+default.field=Field{0,number}
 default.untitled=Untitled
-default.texheader=Created by $1 on $2
+default.texheader=Created by {0} on {1,date}
 
 # Header keys for probsoln imports
 probsoln.label=Label
@@ -439,7 +442,7 @@ undo.remove_row=Remove Row
 undo.sort=Sort
 undo.shuffle=Shuffle
 undo.replace_row=Replace Row
-undo.plugin_action=Plugin '$1' action
+undo.plugin_action=Plugin ''{0}'' action
 undo.nullify_column=Nullify Column
 undo.nullify_row=Nullify Row
 undo.merge=Merge Databases
@@ -447,15 +450,14 @@ undo.merge=Merge Databases
 # Messages
 
 message.confirm_overwrite=Confirm Overwrite
-message.overwrite_query=Overwrite $1?
+message.overwrite_query=Overwrite {0}?
 message.unsaved_data=Unsaved Data
-message.unsaved_data_query='$1' has been modified. Do you want to save it?
+message.unsaved_data_query=''{0}'' has been modified. Do you want to save it?
 message.cancelled=Cancelled
 message.discard_edit_query=Discard the edits you have just made?
 message.confirm_discard=Confirm Discard
 message.input_database_name=Database Name (as used in \\DTLnewdb):
-message.cells_updated=$1 cells updated.
-message.one_cell_updated=1 cell updated.
+message.cells_updated={0,number} {0,choice,1#cell|1<cells} updated.
 
 # Information messages
 info.view_or_edit=Double-click on the cell to view or edit its contents.
@@ -463,81 +465,81 @@ info.edit=Double-click on the cell to edit it.
 info.edit_name=Double-click on the tab to edit the database name. Click on the tab close icon to close this database.
 info.edit_header=Double-click on the column title to edit the header information or single-click and drag sideways to move the column.
 info.move_row=Drag row button vertically to move it up or down.
-info.empty_db=Use $1 to add columns to the database.
-info.not_empty_db=Use $1 and $2 to add or remove columns and rows, or double-click on a cell to edit it.
-info.no_rows=Use $1 to add rows to the database.
+info.empty_db=Use {0} to add columns to the database.
+info.not_empty_db=Use {0} and {1} to add or remove columns and rows, or double-click on a cell to edit it.
+info.no_rows=Use {0} to add rows to the database.
 
 # Syntax
 syntax.title=Syntax:
 syntax.or=or
-syntax.opt_db=$1 [<option>]+ --in <datatool file>
-syntax.opt_csv=$1 [<option>]+ --csv <csv file>
-syntax.opt_sql=$1 [<option>]+ --sqldb <name> --sql <sql statement>
+syntax.opt_db={0} [<option>]+ --in <datatool file>
+syntax.opt_csv={0} [<option>]+ --csv <csv file>
+syntax.opt_sql={0} [<option>]+ --sqldb <name> --sql <sql statement>
 syntax.general=General Options:
-syntax.gui=$1 (or $2)\tGUI interface.
-syntax.batch=$1 (or $2)\tNo GUI interface. (Default.)
-syntax.in=$1 (or $2) <datatool file>\n\t\tLoad <datatool file>. (Can't be used with --csv or --sql or\n\t\t--probsoln.) The $1 (or $2) switch is optional so\n\t\t$3 <file> is equivalent to $3 $1 <file>.
-syntax.name=$1 <name>\tSet the database label (as used in \DTLnewdb) to <name>.
-syntax.out=$1 (or $2) <filename>\tSave to <filename>.
-syntax.version=$1 (or $2)\tPrint version and exit.
-syntax.help=$1 (or $2)\t\tPrint this help message and exit.
-syntax.debug=$1\t\t\tSwitch on debug mode.
-syntax.nodebug=$1\t\tSwitch off debug mode. (Default.)
-syntax.deletetmpfiles=$1\tDelete temporary files on exit. (Default)
-syntax.nodeletetmpfiles=$1\tDon't delete temporary files on exit.
-syntax.maptexspecials=$1\tMap TeX special characters.$2
-syntax.nomaptexspecials=$1\tDon't map TeX special characters.$2
-syntax.owner_only=$1\tSet file permissions to owner read/write on .dbtex files. $2
-syntax.noowner_only=$1\tDon't change file permissions for .dbtex files. $2
-syntax.seed=$1 <number>\tSet the random seed to <number> or clear it if <number> is "".
-syntax.shuffle_iter=$1 <number>\n\t\tSet the number of iterations performed in a shuffle to <number>.
-syntax.shuffle=$1\tShuffle the database. (Shuffle is always performed after sort,\n\t\tregardless of the option order.)
-syntax.no_shuffle=$1\tDon't shuffle the database. (Default.)
-syntax.sort=$1 [+|-]<field>\n\t\tSort the database on the column whose label is given by <field>.\n\t\tIf <field> is preceded by '+', use ascending order. If\n\t\t<field> is preceded by '-', use descending order. If sign\n\t\tprefix is omitted, '+' is assumed. (Sort is always performed\n\t\tbefore shuffle, regardless of option order.)
-syntax.sort_case_sensitive=$1\tUse case sensitive comparison when sorting strings.
-syntax.sort_case_insensitive=$1\tUse case insensitive comparison when sorting strings.\n\t\t\t(Default.)
-syntax.truncate=$1 <n>\tTruncate the database to the first <n> rows.\n\t\t(Has no effect if <n> is greater than the total number of rows.)\n\t\tThis option is always performed last (after any sorting,\n\t\tshuffling and filtering).
-syntax.filter_or=$1\tUse 'OR' operator when filtering. (Default.)
-syntax.filter_and=$1\tUse 'AND' operator when filtering.
-syntax.filter_include=$1\n\t\tWhen filtering discard rows that don't match the filter\n\t\tspecifications (and keep those that do match).\n\t\t(Default.)
-syntax.filter_exclude=$1\n\t\tWhen filtering discard rows that match the filter\n\t\tspecifications (and keep those that don't match).
-syntax.filter=$1 <key> <operator> <value>\n\t\tAdd a filter (may be used multiple times).\n\t\t<key> is the name of a column label and <operator> may be one\n\t\tof: 'eq' (equals), 'ne' (does not equal), 'le' (is less than or\n\t\tequal to), 'lt' (is less than), 'ge' (is greater than or equal\n\t\tto), 'gt' (is greater than), 'regex' (matches the regular\n\t\texpression).
-syntax.merge=$1 <key> <file>\n\t\tMerge input or imported database with the database\n\t\tstored in the given file on the column whose label is <key>.\n\t\t(Only one of the merge options is permitted.)
+syntax.gui={0} (or {1})\tGUI interface.
+syntax.batch={0} (or {1})\tNo GUI interface. (Default.)
+syntax.in={0} (or {1}) <datatool file>\n\t\tLoad <datatool file>. (Can''t be used with --csv or --sql or\n\t\t--probsoln.) The {0} (or {1}) switch is optional so\n\t\t{2} <file> is equivalent to {2} {0} <file>.
+syntax.name={0} <name>\tSet the database label (as used in \\DTLnewdb) to <name>.
+syntax.out={0} (or {1}) <filename>\tSave to <filename>.
+syntax.version={0} (or {1})\tPrint version and exit.
+syntax.help={0} (or {1})\t\tPrint this help message and exit.
+syntax.debug={0}\t\t\tSwitch on debug mode.
+syntax.nodebug={0}\t\tSwitch off debug mode. (Default.)
+syntax.maptexspecials={0}\tMap TeX special characters.{1}
+syntax.nomaptexspecials={0}\tDon''t map TeX special characters.{1}
+syntax.tex_encoding={0} <encoding>\t\tTeX (.tex or .dbtex) file encoding.
+syntax.owner_only={0}\tSet file permissions to owner read/write on .dbtex files. {1}
+syntax.noowner_only={0}\tDon''t change file permissions for .dbtex files. {1}
+syntax.seed={0} <number>\tSet the random seed to <number> or clear it if <number> is "".
+syntax.shuffle_iter={0} <number>\n\t\tSet the number of iterations performed in a shuffle to <number>.
+syntax.shuffle={0}\tShuffle the database. (Shuffle is always performed after sort,\n\t\tregardless of the option order.)
+syntax.no_shuffle={0}\tDon''t shuffle the database. (Default.)
+syntax.sort={0} [+|-]<field>\n\t\tSort the database on the column whose label is given by <field>.\n\t\tIf <field> is preceded by ''+'', use ascending order. If\n\t\t<field> is preceded by ''-'', use descending order. If sign\n\t\tprefix is omitted, ''+'' is assumed. (Sort is always performed\n\t\tbefore shuffle, regardless of option order.)
+syntax.sort_case_sensitive={0}\tUse case sensitive comparison when sorting strings.
+syntax.sort_case_insensitive={0}\tUse case insensitive comparison when sorting strings.\n\t\t\t(Default.)
+syntax.truncate={0} <n>\tTruncate the database to the first <n> rows.\n\t\t(Has no effect if <n> is greater than the total number of rows.)\n\t\tThis option is always performed last (after any sorting,\n\t\tshuffling and filtering).
+syntax.filter_or={0}\tUse ''OR'' operator when filtering. (Default.)
+syntax.filter_and={0}\tUse ''AND'' operator when filtering.
+syntax.filter_include={0}\n\t\tWhen filtering discard rows that don''t match the filter\n\t\tspecifications (and keep those that do match).\n\t\t(Default.)
+syntax.filter_exclude={0}\n\t\tWhen filtering discard rows that match the filter\n\t\tspecifications (and keep those that don''t match).
+syntax.filter={0} <key> <operator> <value>\n\t\tAdd a filter (may be used multiple times).\n\t\t<key> is the name of a column label and <operator> may be one\n\t\tof: ''eq'' (equals), ''ne'' (does not equal), ''le'' (is less than or\n\t\tequal to), ''lt'' (is less than), ''ge'' (is greater than or equal\n\t\tto), ''gt'' (is greater than), ''regex'' (matches the regular\n\t\texpression).
+syntax.merge={0} <key> <file>\n\t\tMerge input or imported database with the database\n\t\tstored in the given file on the column whose label is <key>.\n\t\t(Only one of the merge options is permitted.)
 syntax.csv_opts=CSV Options:
-syntax.csv=$1 <csv file>\tImport <csv file>.
-syntax.merge_csv=$1 <key> <file>\tImport CSV data from <file>\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
-syntax.csv_sep=$1 <character>\tSeparator used in CSV files. (Defaults to '$2'.)
-syntax.csv_delim=$1 <character>\tDelimiter used in CSV files. (Defaults to '$2'.)
+syntax.csv={0} <csv file>\tImport <csv file>.
+syntax.merge_csv={0} <key> <file>\tImport CSV data from <file>\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
+syntax.csv_sep={0} <character>\tSeparator used in CSV files. (Defaults to ''{1}''. Synonym: {2})
+syntax.csv_delim={0} <character>\tDelimiter used in CSV files. (Defaults to '{1}'. Synonym: {2})
 syntax.default=Default
-syntax.csv_header=$1\t\tCSV files have a header row.$2
-syntax.csv_noheader=$1\t\tCSV files don't have a header row.$2
-syntax.csv_escape=$1 <char>\tSet the CSV escape character to <char>.
-syntax.csv_noescape=$1\t\tNo CSV escape character.
+syntax.csv_header={0}\t\tCSV files have a header row.{1} Synonym: {2}.
+syntax.csv_noheader={0}\t\tCSV files don''t have a header row.{1} Synonym: {2}.
+syntax.csv_escape={0} <char>\tSet the CSV escape character to <char>. Synonym: {1}.
+syntax.csv_noescape={0}\t\tNo CSV escape character. Synonym: {1}.
+syntax.csv_encoding={0} <encoding>\t\tCSV file encoding. Synonym: {1}.
 syntax.sql_opts=SQL Options:
-syntax.sql=$1 <statement>\tImport data from SQL database where <statement> is a SQL SELECT statement.
-syntax.merge_sql=$1 <key> <statement>\tImport data from SQL database\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
-syntax.sql_db=$1 <name>\t\tSQL database name.
-syntax.sql_prefix=$1 <prefix>\tSQL prefix. (Default: '$2'.)
-syntax.sql_port=$1 <number>\tSQL port. (Default: $2.)
-syntax.sql_host=$1 <hostname>\tSQL host. (Default: '$2'.)
-syntax.sql_user=$1 <user name>\tSQL user name.
-syntax.sql_password=$1  <password>\n\t\tSQL password (insecure). If omitted, you will be prompted for\n\t\tthe password if you try to import data from a SQL database.
-syntax.sql_wipepassword=$1\tFor extra security, wipe the password from memory as\n\t\tsoon as it has been used to connect to a SQL database.$2
-syntax.sql_nowipepassword=$1\tDon't wipe the password from memory as soon as it has\n\t\t\tbeen used to connect to a SQL database.$2
-syntax.sql_noconsole=$1 <action>\n\tWhen requesting a SQL password in batch mode if there is no\n\tconsole available do:\n\t<action>: 'stdin' - read from STDIN instead (least secure option)\n\t<action>: 'gui' - use a dialog box (default)\n\t<action>: 'error' - issue an error.
+syntax.sql={0} <statement>\tImport data from SQL database where <statement> is a SQL SELECT statement.
+syntax.merge_sql={0} <key> <statement>\tImport data from SQL database\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
+syntax.sql_db={0} <name>\t\tSQL database name.
+syntax.sql_prefix={0} <prefix>\tSQL prefix. (Default: ''{1}''.)
+syntax.sql_port={0} <number>\tSQL port. (Default: {1}.)
+syntax.sql_host={0} <hostname>\tSQL host. (Default: ''{1}''.)
+syntax.sql_user={0} <user name>\tSQL user name.
+syntax.sql_password={0}  <password>\n\t\tSQL password (insecure). If omitted, you will be prompted for\n\t\tthe password if you try to import data from a SQL database.
+syntax.sql_wipepassword={0}\tFor extra security, wipe the password from memory as\n\t\tsoon as it has been used to connect to a SQL database.{1}
+syntax.sql_nowipepassword={0}\tDon''t wipe the password from memory as soon as it has\n\t\t\tbeen used to connect to a SQL database.{1}
+syntax.sql_noconsole={0} <action>\n\tWhen requesting a SQL password in batch mode if there is no\n\tconsole available do:\n\t<action>: ''stdin'' - read from STDIN instead (least secure option)\n\t<action>: ''gui'' - use a dialog box (default)\n\t<action>: ''error'' - issue an error.
 syntax.probsoln_opts=probsoln Options:
-syntax.probsoln=$1 <filename>\tImport probsoln data from <filename>
-syntax.merge_probsoln=$1 <key> <file>\tImport probsoln data from <file>\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
+syntax.probsoln={0} <filename>\tImport probsoln data from <filename>
+syntax.merge_probsoln={0} <key> <file>\tImport probsoln data from <file>\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
 syntax.xls_opts=Excel Options:
-syntax.xls=$1 <filename>\tImport Excel data from <filename>
-syntax.merge_xls=$1 <key> <filename>\tImport Excel data from <filename>\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
+syntax.xls={0} <filename>\tImport Excel data from <filename>
+syntax.merge_xls={0} <key> <filename>\tImport Excel data from <filename>\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
 syntax.ods_opts=ODS Options:
-syntax.ods=$1 <filename>\tImport ODS data from <filename>
-syntax.merge_ods=$1 <key> <filename>\tImport ODS data from <filename>\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
+syntax.ods={0} <filename>\tImport ODS data from <filename>
+syntax.merge_ods={0} <key> <filename>\tImport ODS data from <filename>\n\t\t\t\tand merge with the loaded database\n\t\t\t\ton the column whose label is <key>.\n\t\t\t(Only one of the merge options is permitted.)
 syntax.xlsods_opts=Excel and ODS Options:
-syntax.sheet=$1 <ref>\t\tFetch data from sheet <ref>,\n\t\t\twhere <ref> can be an index (starting from 0)\n\t\t\tor the name of a sheet. (Default: $2)
-syntax.bugreport=Report bugs to: $1
-syntax.homepage=$1 home page: $2
+syntax.sheet={0} <ref>\t\tFetch data from sheet <ref>,\n\t\t\twhere <ref> can be an index (starting from 0)\n\t\t\tor the name of a sheet. (Default: {1})
+syntax.bugreport=Report bugs to: {0}
+syntax.homepage={0} home page: {1}
 
 
 # Error messages
@@ -546,67 +548,68 @@ error.message=Error Message
 error.message.mnemonic=M
 error.stacktrace=Stack Trace
 error.stacktrace.mnemonic=T
-error.syntax.missing_char=Character expected after $1
+error.syntax.missing_char=Character expected after {0}
 error.syntax.invalid_sep=Separator must be a single character not a string
 error.syntax.invalid_delim=Delimiter must be a single character not a string
 error.syntax.invalid_esc=CSV escape must be a single character not a string
-error.syntax.only_one=Only one $1 permitted
-error.syntax.missing_filename=Filename expected after $1
+error.syntax.only_one=Only one {0} permitted
+error.syntax.missing_filename=Filename expected after {0}
 error.syntax.only_one_import=Only one import option permitted
-error.syntax.import_clash=$1 can't be used with <datatool file>
+error.syntax.import_clash={0} can''t be used with <datatool file>
 error.syntax.only_one_merge=Only one merge option permitted
-error.syntax.missing_sql=SQL statement expected after $1
-error.syntax.missing_dbname=Database name expected after $1
-error.syntax.missing_prefix=Prefix expected after $1
-error.syntax.missing_host=Host name expected after $1
-error.syntax.missing_user=User name expected after $1
-error.syntax.missing_password=Password expected after $1 (omit $1 to be prompted for a password)
-error.syntax.missing_port=Port number expected after $1
-error.syntax.missing_tex_encoding=Missing encoding name after $1
-error.syntax.unknown_encoding=Unknown or invalid encoding name '$1'
-error.syntax.not_a_number=Number expected after $1 ('$2' found)
-error.syntax.unknown_option=Unknown option '$1'. (Use --help or -h for help.)
+error.syntax.missing_sql=SQL statement expected after {0}
+error.syntax.missing_dbname=Database name expected after {0}
+error.syntax.missing_prefix=Prefix expected after {0}
+error.syntax.missing_host=Host name expected after {0}
+error.syntax.missing_user=User name expected after {0}
+error.syntax.missing_password=Password expected after {0} (omit {0} to be prompted for a password)
+error.syntax.missing_port=Port number expected after {0}
+error.syntax.missing_encoding=Missing encoding name after {0}
+error.syntax.unknown_encoding=Unknown or invalid encoding name ''{0}''
+error.syntax.not_a_number=Number expected after {0} (''{1}'' found)
+error.syntax.unknown_option=Unknown option ''{0}''. (Use --help or -h for help.)
 error.syntax.only_one_input=Only one <datatool file> permitted
 error.syntax.input_clash=<datatool file> can't be used with an import option
-error.syntax=Syntax error: $1
-error.syntax.missing_input=Filename expected after $1
-error.syntax.missing_number=Number expected after $1
-error.syntax.missing_sort_locale=IETF tag or 'none' expected after $1
-error.syntax.invalid_locale=Invalid or unknown IETF '$1'
-error.syntax.missing_sort_field=Sort field (and optionally '+' or '-' prefix) expected after $1
-error.syntax.unknown_field=Unknown sort field '$1'
-error.syntax.missing_sheet_ref=Reference expected after '$1'
-error.syntax.invalid_noconsole_action=Invalid action '$2' for '$1' option
-error.syntax.missing_filter_label=Missing column label after $1
-error.syntax.missing_filter_operator=Missing operator after $1 $2
-error.syntax.missing_filter_value=Missing operator after $1 $2 $3
-error.syntax.invalid_filter_operator=Invalid filter operator '$1'
-error.syntax.syntax.missing_merge_key=Missing merge key after '$1'
-error.syntax.syntax.missing_merge_file=Missing merge file after $1 $2
-error.syntax.syntax.missing_merge_statement=Missing merge SQL statement after $1 $2
-error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the $1 option. See $2 for help.)
-error.cli.no_out=$1 <file> required for batch mode.\n(If you want the GUI interface, use the $2 option. See $3 for help.)
-error.load.failed=Failed to load '$1'\n$2
-error.export.failed=Failed to export to '$1'
-error.import.failed=Failed to import '$1'
-error.dbload.expected=Line $1: expected '$2'
-error.dbload.expected_found=Line $1: expected '$2', found '$3'
-error.dbload.not_found=Premature end of file. Failed to find '$1'
-error.dbload.wrong_end_row_tag=Line $1: row $2 ended with closing tag for row $3
-error.dbload.wrong_end_col_tag=Line $1: column $2 ended with closing tag for column $3
-error.dbload.unknown_type=Line $1: unknown data type '$2'
+error.syntax=Syntax error: {0}
+error.syntax.missing_input=Filename expected after {0}
+error.syntax.missing_number=Number expected after {0}
+error.syntax.missing_sort_locale=IETF locale tag or ''none'' expected after {0}
+error.syntax.invalid_locale=Invalid or unknown IETF locale tag ''{0}''
+error.syntax.missing_sort_field=Sort field (and optionally ''+'' or ''-'' prefix) expected after {0}
+error.syntax.unknown_field=Unknown sort field ''{0}''
+error.syntax.missing_sheet_ref=Reference expected after ''{0}''
+error.syntax.invalid_noconsole_action=Invalid action ''{1}'' for ''{0}'' option
+error.syntax.missing_filter_label=Missing column label after {0}
+error.syntax.missing_filter_operator=Missing operator after {0} {1}
+error.syntax.missing_filter_value=Missing operator after {0} {1} {2}
+error.syntax.invalid_filter_operator=Invalid filter operator ''{0}''
+error.syntax.syntax.missing_merge_key=Missing merge key after ''{0}''
+error.syntax.syntax.missing_merge_file=Missing merge file after {0} {1}
+error.syntax.syntax.missing_merge_statement=Missing merge SQL statement after {0} {1}
+error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the {0} option. See {1} for help.)
+error.cli.no_out={0} <file> required for batch mode.\n(If you want the GUI interface, use the {1} option. See {2} for help.)
+error.load.failed=Failed to load ''{0}''\n{1}
+error.export.failed=Failed to export to ''{0}''
+error.import.failed=Failed to import ''{0}''
+error.line=Line {0,number}: {1}
+error.expected=expected ''{0}''
+error.expected_found=expected ''{0}'', found ''{1}''
+error.dbload.not_found=Premature end of file. Failed to find ''{0}''
+error.dbload.wrong_end_row_tag=row {0,number} ended with closing tag for row {1,number}
+error.dbload.wrong_end_col_tag=column {0,number} ended with closing tag for column {1,number}
+error.dbload.unknown_type=unknown data type ''{0}''
 error.nopanel=No current panel!
-error.invalid_data_type=Invalid data type $1
-error.dbload.invalid_col_id=Line $1: invalid column index '$2'
-error.dbload.invalid_row_id=Line $1: invalid row index '$2'
+error.invalid_data_type=Invalid data type {0,number}
+error.dbload.invalid_col_id=invalid column index ''{0}''
+error.dbload.invalid_row_id=invalid row index ''{1}''
 error.sql.connection_failed=Can't establish SQL connection
 error.sql.query_failed=SQL query failed
-error.resource.not_found=Can't find resource file '$1'
-error.key_exists=Header key '$1' already exists
+error.resource.not_found=Can''t find resource file ''{0}''
+error.key_exists=Header key ''{0}'' already exists
 error.missing_key=Header key is missing
-error.unknown_key=Unknown header key '$1'
-error.db.unknown_key=Unknown header key '$1' in database '$2'
-error.invalid_name=Invalid name '$1' (can't be empty or contain TeX special characters)
+error.unknown_key=Unknown header key ''{0}''
+error.db.unknown_key=Unknown header key ''{0}'' in database ''{1}''
+error.invalid_name=Invalid name ''{0}'' (can''t be empty or contain TeX special characters)
 error.missing_custom_file=You have opted for a custom start up directory, but you haven't specified a directory
 error.missing_sep=No separator specified
 error.missing_delim=No delimiter specified
@@ -616,36 +619,34 @@ error.missing_prefix=No SQL prefix specified
 error.missing_dbname=Missing Database Name
 error.missing_user=Missing User Name
 error.missing_select=Missing SELECT statement
-error.invalid_header_choice=You can't set the type to '$1': row $2 is of type '$3'.
+error.invalid_header_choice=You can''t set the type to ''{0}'': row {1,number} is of type ''{2}''.
 error.no_sort_column_selected=No sort column selected
-error.io.file_not_found=No such file '$1'
-error.process_failed=Process '$1' (running in '$2') failed with exit code $3
-error.missing_begin_prob=Missing 'BEGIN PROBLEM: ' on line $1 of '$2'
-error.mismatched_end_prob='BEGIN PROBLEM: $1' ended by 'END PROBLEM: $2' on input line $3 of '$4'
+error.io.file_not_found=No such file ''{0}''
+error.process_failed=Process ''{0}'' (running in ''{1}'') failed with exit code {2,number}
 error.internal.import_probdata_failed=(Internal Error) Something's gone wrong. Failed to import data
 error.missing_texmap_key=Missing mapping character
-error.not_currency='$1' not in currency format
+error.not_currency=''{0}'' not in currency format
 error.no_templates=No templates found
-error.template.misplaced_tag='$1' tag must be inside '$2' tag
-error.template.wrong_end_tag=Mismatched closing tag '$1' found
-error.template.missing_tag=Missing '$1' tag
+error.template.misplaced_tag=''{0}'' tag must be inside ''{1}'' tag
+error.template.wrong_end_tag=Mismatched closing tag ''{0}'' found
+error.template.missing_tag=Missing ''{0}'' tag
 error.plugin.no_perl=You need to specify the path to the perl executable to run a plugin
-error.plugin.exit_code=Plugin terminated with exit code $1\n$2
-error.plugin.unknown_message=Unknown plugin message '$1'
-error.plugin.unknown_query=Unknown plugin query '$1'
-error.plugin.unknown_command=Unknown plugin command '$1'
+error.plugin.exit_code=Plugin terminated with exit code {0,number}\n{1}
+error.plugin.unknown_message=Unknown plugin message ''{0}''
+error.plugin.unknown_query=Unknown plugin query ''{0}''
+error.plugin.unknown_command=Unknown plugin command ''{0}''
 error.no_console=No console available.
 error.xlsx_not_supported=Sorry, .xlsx files not supported.
 
 # Warning messages
 warning.title=Warning
 warning.verb_detected=Verbatim text has been detected. You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
-warning.verb_detected_in_cell=Verbatim text has been detected in cell ($1,$2). You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
-warning.ignoring_filter=Ignoring filter option '$1'. No such column label.
+warning.verb_detected_in_cell=Verbatim text has been detected in cell ({0,number},{1,number}). You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
+warning.ignoring_filter=Ignoring filter option ''{0}''. No such column label.
 
 # Plugin labels
 
-plugin.error.missing_column=Can't find column labelled '$1'
+plugin.error.missing_column=Can''t find column labelled ''{0}''
 plugin.remove_entry=Remove Entry
 
 plugin.people.ID=ID
@@ -683,7 +684,7 @@ plugin.datagidx.Used=Used (Reserved)
 plugin.datagidx.crossref=Cross-Reference
 plugin.datagidx.add_seealso=Add "See Also" Entry
 plugin.datagidx.remove_seealso=Remove "See Also" Entry
-plugin.datagidx.missing_field=Missing $1
+plugin.datagidx.missing_field=Missing {0}
 
 # Context labels in manual
 manual.title=Manual
@@ -699,6 +700,62 @@ manual.search=Search
 manual.idxpackage=package
 manual.idxenv=environment
 manual.example=Example
-manual.cont_explanation=(The symbol \continuesymbol\ above indicates a~line wrap. Don't insert a~line break at that point.)
+manual.cont_explanation=(The symbol \\continuesymbol\\ above indicates a~line wrap. Don't insert a~line break at that point.)
 manual.labelled=labelled
 manual.seealso=See also:
+
+# texparserlib messages
+
+# texparserlib TeX Error Messages
+
+tex.error.bad_param=Parameter digit 1 to 9 expected. Found ''{0}''
+tex.error.no_eg=Missing end group
+tex.error.par_before_eg=Paragraph break found before end group
+tex.error.unexpected_eg=Unexpected end group found
+tex.error.missing_endmath=Missing end math
+tex.error.dollar2_ended_with_dollar=$$ ended with $
+tex.error.not_found=Expected ''{0}'' but not found
+tex.error.missing_param=Argument expected for ''{0}'' but not found
+tex.error.empty_stack=Argument expected but not found (empty stack)
+tex.error.not_math_mode={0} is only permitted in math mode
+tex.error.invalid_accent={0} is not a recognised accent 
+tex.error.ambiguous_midcs=Ambiguous use of {0}
+tex.error.missing_closing=Missing closing {0}
+tex.error.dimen_expected=Dimension expected
+tex.error.missing_unit=Missing unit
+tex.error.expected=Expected {0}
+tex.error.undefined=Undefined command {0}
+tex.error.undefined_char=Undefined active character ''{0}''
+tex.error.cs_expected=Control sequence expected (found ''{0}'')
+tex.error.number_expected=Number expected (found ''{0}'')
+tex.error.register_undef=Unknown register ''{0}''
+tex.error.syntax=Invalid syntax for {0}
+tex.error.extra=Extra {0}
+tex.error.extra_or_forgotten=Extra {0}, or forgotten {1}
+tex.error.double_subscript=Double subscript _{0}_ (replaced with _{0}'{}'_)
+tex.error.double_superscript=Double superscript ^{0}^ (replaced with ^{0}'{}'^)
+tex.error.illegal_align=Illegal alignment {0}
+tex.error.misplaced_omit=Misplaced \\omit
+tex.error.improper_alphabetic_constant=Improper alphabetic constant {0}
+
+# texparserlib LaTeX Error Messages
+
+latex.error.no_alignment=No alignment specifiers found
+latex.error.undefined_counter=No counter ''{0}'' defined
+latex.error.multi_begin_doc=Only one \\begin'{'document'}' permitted
+latex.error.no_begin_doc=No \\begin'{'document'}' found
+latex.error.multi_cls=Only one \\documentclass permitted
+latex.error.missing_key=Missing ''{0}'' key
+latex.error.extra_end=Extra \\end'{'{0}'}' found
+latex.error.unaccessible=Unaccessible ''{0}''
+latex.error.defined=''{0}'' already defined
+latex.error.illegal_array_arg_char=Illegal character ''{0}'' in array arg
+latex.error.lonely_item=Lonely \\item
+
+# texparserlib probsoln messages
+probsoln.no_such_db=ProbSoln database ''{0}'' doesn''t exist.
+probsoln.no_such_entry_in_db=Entry ''{0}'' doesn''t exist in ProbSoln database '{1}'.
+probsoln.db_exists=ProbSoln database ''{0}'' already exists.
+probsoln.request_args=Problem ''{0}'' (in database ''{1}'') requires {2} arguments. Please specify
+probsoln.request_arg=Problem ''{0}'' (in database ''{1}'') requires 1 argument. Please specify
+

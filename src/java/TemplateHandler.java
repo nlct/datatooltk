@@ -80,7 +80,7 @@ public class TemplateHandler extends DefaultHandler
 
          if (!localName.equals(element))
          {
-            throw new SAXException(messageHandler.getLabelWithValue(
+            throw new SAXException(messageHandler.getLabelWithValues(
                "error.template.wrong_end_tag", localName));
          }
 
@@ -91,7 +91,7 @@ public class TemplateHandler extends DefaultHandler
             if (header.getKey().isEmpty())
             {
                throw new SAXException(
-                  messageHandler.getLabelWithValue("error.template.missing_tag",
+                  messageHandler.getLabelWithValues("error.template.missing_tag",
                   "label"));
             }
 

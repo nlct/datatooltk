@@ -19,6 +19,8 @@
 package com.dickimawbooks.datatooltk.io;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.charset.Charset;
 import au.com.bytecode.opencsv.CSVWriter;
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -81,7 +83,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       catch (IOException e)
       {
          throw new DatatoolExportException(
-           getMessageHandler().getLabelWithValue(
+           getMessageHandler().getLabelWithValues(
              "error.export.failed", target), e);
       }
    }
@@ -112,6 +114,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
 
       BufferedReader reader = null;
       CSVReader csvReader = null;
+      String csvEncoding = settings.getCsvEncoding();
 
       try
       {
@@ -124,7 +127,15 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
                      "error.io.file_not_found", file));
             }
 
-            reader = new BufferedReader(new FileReader(file));
+            if (csvEncoding == null)
+            {
+               reader = new BufferedReader(new FileReader(file));
+            }
+            else
+            {
+               reader = Files.newBufferedReader(file.toPath(), 
+                 Charset.forName(csvEncoding));
+            }
    
             csvReader = new CSVReader(reader, settings.getSeparator(),
               settings.getDelimiter(), settings.getCSVescape());
@@ -157,7 +168,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
                for (int i = 0; i < fields.length; i++)
                {
                   DatatoolHeader header = new DatatoolHeader(db,
-                    getMessageHandler().getLabelWithValue("default.field", (i+1)));
+                    getMessageHandler().getLabelWithValues("default.field", (i+1)));
                   db.addColumn(header);
    
                   db.addCell(rowIdx, i, fields[i].replaceAll("\n\n+", "\\\\DTLpar "));
@@ -194,7 +205,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       catch (IOException e)
       {
          throw new DatatoolImportException(
-          getMessageHandler().getLabelWithValue("error.import.failed", 
+          getMessageHandler().getLabelWithValues("error.import.failed", 
            file.toString()), e);
       }
 

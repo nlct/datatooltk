@@ -47,7 +47,7 @@ public class DataFilter
          }
          catch (UnknownLabelException e)
          {
-            System.err.println(getMessageHandler().getLabelWithValue(
+            System.err.println(getMessageHandler().getLabelWithValues(
                "warning.ignoring_filter", filterInfo.toString()));
          }
       }

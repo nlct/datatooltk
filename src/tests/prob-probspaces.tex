@@ -1,0 +1,34 @@
+ % This file is public domain
+ %
+ % Finite probability spaces
+
+\newproblem{weightedcoin}{%
+A coin is weighted so that heads is four times as likely
+as tails. Find the probability that:
+\begin{textenum}
+\item tails appears,
+\item heads appears
+\end{textenum}}{%
+Let $p=P(T)$, then $P(H)=4p$. We require $P(H)+P(T)=1$,
+so $4p+p=1$, hence $p=\frac{1}{5}$. Therefore:
+\begin{textenum}
+\item $P(T)=\frac{1}{5}$,
+\item $P(H)=\frac{4}{5}$
+\end{textenum}}
+
+\newproblem*{validprobspaces}{%
+Under which of the following functions does 
+$S=\{a_1,a_2\}$ become a probability space?
+\par
+\begin{textenum}
+\begin{tabular}{ll}
+\incorrectitem $P(a_1)=\frac{1}{3}$, $P(a_2)=\frac{1}{2}$
+&
+\correctitem $P(a_1)=\frac{3}{4}$, $P(a_2)=\frac{1}{4}$
+\\
+\correctitem $P(a_1)=1$, $P(a_2)=0$
+&
+\incorrectitem $P(a_1)=\frac{5}{4}$, $P(a_2)=-\frac{1}{4}$
+\end{tabular}
+\end{textenum}
+}

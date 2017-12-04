@@ -1,0 +1,36 @@
+% arara: datatooltk: {output: entries.dbtex, csv: entries.csv,
+% arara: --> sort: Word, options: [--merge, Word, refs.dbtex, --nocsvescape],
+% arara: --> filters: [[Used, eq, 1]] }
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{datatool}
+
+\DTLloaddbtex{\testdb}{entries.dbtex}
+
+\DTLnewdb{refs}
+\DTLaddcolumn{refs}{Word}
+\DTLaddcolumn{refs}{Used}
+
+\newcommand{\useword}[1]{% assumes no expansion required on #1
+  \dtlgetrowindex{\myrowidx}{refs}{1}{#1}%
+  \ifx\myrowidx\dtlnovalue
+   \DTLnewrow{refs}%
+   \DTLnewdbentry{refs}{Word}{#1}%
+   \DTLnewdbentry{refs}{Used}{1}%
+  \fi
+}
+
+\begin{document}
+
+\DTLforeach*{\testdb}{\Word=Word}{\Word. }
+
+Let's use the words  ``minnow''\useword{minnow}, 
+``android''\useword{android} and ``felcity''\useword{felicity}.
+
+\DTLsaverawdb{refs}{refs.dbtex}
+
+\end{document}

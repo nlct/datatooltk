@@ -39,7 +39,7 @@ public class FilterInfo
 
       if (operator == -1)
       {
-         throw new InvalidSyntaxException(messageHandler.getLabelWithValue(
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
             "error.syntax.invalid_filter_operator", op));
       }
 

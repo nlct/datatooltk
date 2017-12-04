@@ -123,7 +123,7 @@ public class HeaderDialog extends JDialog
       this.checkUnique = checkUnique;
 
       modified = false;
-      setTitle(messageHandler.getLabelWithValue("header.title", header.getKey()));
+      setTitle(messageHandler.getLabelWithValues("header.title", header.getKey()));
 
       titleField.setText(header.getTitle());
       labelField.setText(header.getKey());
@@ -245,7 +245,7 @@ public class HeaderDialog extends JDialog
          if (db.getHeader(key) != null)
          {
             messageHandler.error(this, 
-               messageHandler.getLabelWithValue("error.key_exists", key));
+               messageHandler.getLabelWithValues("error.key_exists", key));
 
             return;
          }

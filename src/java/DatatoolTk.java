@@ -20,10 +20,13 @@ package com.dickimawbooks.datatooltk;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.Locale;
 import java.util.Locale.Builder;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.awt.Cursor;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -60,7 +63,7 @@ public class DatatoolTk
       {
          loadDictionary();
       }
-      catch (IOException e)
+      catch (Exception e)
       {
          messageHandler.error("unable to load dictionary file",
            e, MessageHandler.OPEN_FAILURE);
@@ -156,7 +159,7 @@ public class DatatoolTk
             if (colIndex == -1)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.unknown_field",
+                  getLabelWithValues("error.syntax.unknown_field",
                   sort));
             }
 
@@ -314,7 +317,7 @@ public class DatatoolTk
             if (colIndex == -1)
             {
                getMessageHandler().error(null,
-                  getLabelWithValue("error.syntax.unknown_field",
+                  getLabelWithValues("error.syntax.unknown_field",
                   sort));
             }
             else
@@ -374,39 +377,42 @@ public class DatatoolTk
       System.out.println();
       System.out.println(APP_NAME+" --gui");
       System.out.println(getLabel("syntax.or"));
-      System.out.println(getLabelWithValue("syntax.opt_db", APP_NAME));
+      System.out.println(getLabelWithValues("syntax.opt_db", APP_NAME));
       System.out.println(getLabel("syntax.or"));
-      System.out.println(getLabelWithValue("syntax.opt_csv", APP_NAME));
+      System.out.println(getLabelWithValues("syntax.opt_csv", APP_NAME));
       System.out.println(getLabel("syntax.or"));
-      System.out.println(getLabelWithValue("syntax.opt_sql", APP_NAME));
+      System.out.println(getLabelWithValues("syntax.opt_sql", APP_NAME));
       System.out.println();
 
       System.out.println(getLabel("syntax.general"));
       System.out.println(getLabelWithValues("syntax.gui", "--gui", "-g"));
       System.out.println(getLabelWithValues("syntax.batch", "--batch", "-b"));
       System.out.println(getLabelWithValues("syntax.in", 
-        new String[]{"--in", "-i", APP_NAME}));
-      System.out.println(getLabelWithValue("syntax.name", "--name"));
+        "--in", "-i", APP_NAME));
+      System.out.println(getLabelWithValues("syntax.name", "--name"));
       System.out.println(getLabelWithValues("syntax.out", "--output", "-o"));
       System.out.println(getLabelWithValues("syntax.version", "--version", "-v"));
       System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
-      System.out.println(getLabelWithValue("syntax.debug", "--debug"));
-      System.out.println(getLabelWithValue("syntax.nodebug", "--nodebug"));
-      System.out.println(getLabelWithValue("syntax.deletetmpfiles", "--delete-tmp-files"));
-      System.out.println(getLabelWithValue("syntax.nodeletetmpfiles", "--nodelete-tmp-files"));
-      System.out.println(getLabelWithValues("syntax.maptexspecials", "--map-tex-specials", (settings.isTeXMappingOn()?" ("+getLabel("syntax.default")+".)":"")));
+      System.out.println(getLabelWithValues("syntax.debug", "--debug"));
+      System.out.println(getLabelWithValues("syntax.nodebug", "--nodebug"));
+
+      System.out.println(getLabelWithValues("syntax.tex_encoding",
+         "--tex-encoding"));
+      System.out.println(getLabelWithValues("syntax.maptexspecials",
+          "--map-tex-specials",
+          (settings.isTeXMappingOn()?" ("+getLabel("syntax.default")+".)":"")));
       System.out.println(getLabelWithValues("syntax.nomaptexspecials",
          "--nomap-tex-specials",
          (settings.isTeXMappingOn() ?
          "": " ("+getLabel("syntax.default")+".)")));
-      System.out.println(getLabelWithValue("syntax.seed", "--seed"));
-      System.out.println(getLabelWithValue("syntax.shuffle_iter", "--shuffle-iterations"));
-      System.out.println(getLabelWithValue("syntax.shuffle", "--shuffle"));
-      System.out.println(getLabelWithValue("syntax.no_shuffle", "--noshuffle"));
-      System.out.println(getLabelWithValue("syntax.sort", "--sort"));
-      System.out.println(getLabelWithValue("syntax.sort_case_sensitive",
+      System.out.println(getLabelWithValues("syntax.seed", "--seed"));
+      System.out.println(getLabelWithValues("syntax.shuffle_iter", "--shuffle-iterations"));
+      System.out.println(getLabelWithValues("syntax.shuffle", "--shuffle"));
+      System.out.println(getLabelWithValues("syntax.no_shuffle", "--noshuffle"));
+      System.out.println(getLabelWithValues("syntax.sort", "--sort"));
+      System.out.println(getLabelWithValues("syntax.sort_case_sensitive",
          "--sort-case-sensitive"));
-      System.out.println(getLabelWithValue("syntax.sort_case_insensitive",
+      System.out.println(getLabelWithValues("syntax.sort_case_insensitive",
          "--sort-case-insensitive"));
       System.out.println(getLabelWithValues("syntax.owner_only",
          "--owner_only", (settings.isOwnerOnly() ?
@@ -414,50 +420,56 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.noowner_only",
          "--noowner_only", (settings.isOwnerOnly() ?
          "" : " ("+getLabel("syntax.default")+".)")));
-      System.out.println(getLabelWithValue("syntax.truncate",
+      System.out.println(getLabelWithValues("syntax.truncate",
          "--truncate"));
-      System.out.println(getLabelWithValue("syntax.filter_or",
+      System.out.println(getLabelWithValues("syntax.filter_or",
          "--filter-or"));
-      System.out.println(getLabelWithValue("syntax.filter_and",
+      System.out.println(getLabelWithValues("syntax.filter_and",
          "--filter-and"));
-      System.out.println(getLabelWithValue("syntax.filter_include",
+      System.out.println(getLabelWithValues("syntax.filter_include",
          "--filter-include"));
-      System.out.println(getLabelWithValue("syntax.filter_exclude",
+      System.out.println(getLabelWithValues("syntax.filter_exclude",
          "--filter-exclude"));
-      System.out.println(getLabelWithValue("syntax.filter",
+      System.out.println(getLabelWithValues("syntax.filter",
          "--filter"));
-      System.out.println(getLabelWithValue("syntax.merge",
+      System.out.println(getLabelWithValues("syntax.merge",
          "--merge"));
       System.out.println();
 
       System.out.println(getLabel("syntax.csv_opts"));
-      System.out.println(getLabelWithValue("syntax.csv", "--csv"));
-      System.out.println(getLabelWithValue("syntax.merge_csv", "--merge-csv"));
-      System.out.println(getLabelWithValues("syntax.csv_sep", "--sep", 
-        ""+settings.getSeparator()));
-      System.out.println(getLabelWithValues("syntax.csv_delim", "--delim", 
-        ""+settings.getDelimiter()));
+      System.out.println(getLabelWithValues("syntax.csv", "--csv"));
+      System.out.println(getLabelWithValues("syntax.merge_csv", "--merge-csv"));
+      System.out.println(getLabelWithValues("syntax.csv_sep", "--csv-sep", 
+        settings.getSeparator(), "--sep"));
+      System.out.println(getLabelWithValues("syntax.csv_delim", "--csv-delim", 
+        settings.getDelimiter(), "--delim"));
       System.out.println(getLabelWithValues("syntax.csv_header",
-        "--csvheader",
-        (settings.hasCSVHeader()?" ("+getLabel("syntax.default")+".)":"")));
+        "--csv-header",
+        (settings.hasCSVHeader()?" ("+getLabel("syntax.default")+".)":""),
+        "--csvheader"));
       System.out.println(getLabelWithValues("syntax.csv_noheader",
-        "--nocsvheader",
-        (settings.hasCSVHeader()? "" : " ("+getLabel("syntax.default")+".)")));
-      System.out.println(getLabelWithValue("syntax.csv_noescape", "--csvescape"));
-      System.out.println(getLabelWithValue("syntax.csv_escape", "--nocsvescape"));
+        "--nocsv-header",
+        (settings.hasCSVHeader()? "" : " ("+getLabel("syntax.default")+".)"),
+        "--nocsvheader"));
+      System.out.println(getLabelWithValues("syntax.csv_escape", "--csv-escape",
+        "--csvescape"));
+      System.out.println(getLabelWithValues("syntax.csv_noescape", 
+        "--nocsv-escape", "--nocsvescape"));
+      System.out.println(getLabelWithValues("syntax.csv_encoding", 
+        "--csv-encoding", "--csvencoding"));
       System.out.println();
       System.out.println(getLabel("syntax.sql_opts"));
-      System.out.println(getLabelWithValue("syntax.sql", "--sql"));
-      System.out.println(getLabelWithValue("syntax.merge_sql", "--merge-sql"));
-      System.out.println(getLabelWithValue("syntax.sql_db", "--sqldb"));
+      System.out.println(getLabelWithValues("syntax.sql", "--sql"));
+      System.out.println(getLabelWithValues("syntax.merge_sql", "--merge-sql"));
+      System.out.println(getLabelWithValues("syntax.sql_db", "--sqldb"));
       System.out.println(getLabelWithValues("syntax.sql_prefix",
         "--sqlprefix", settings.getSqlPrefix()));
       System.out.println(getLabelWithValues("syntax.sql_port",
         "--sqlport", ""+settings.getSqlPort()));
       System.out.println(getLabelWithValues("syntax.sql_host",
         "--sqlhost", settings.getSqlHost()));
-      System.out.println(getLabelWithValue("syntax.sql_user", "--sqluser"));
-      System.out.println(getLabelWithValue("syntax.sql_password",
+      System.out.println(getLabelWithValues("syntax.sql_user", "--sqluser"));
+      System.out.println(getLabelWithValues("syntax.sql_password",
         "--sqlpassword"));
       System.out.println(getLabelWithValues("syntax.sql_wipepassword",
         "--wipepassword", 
@@ -467,23 +479,23 @@ public class DatatoolTk
         "--nowipepassword", 
         (settings.isWipePasswordEnabled()?
            "":" ("+getLabel("syntax.default")+")")));
-      System.out.println(getLabelWithValue("syntax.sql_noconsole",
+      System.out.println(getLabelWithValues("syntax.sql_noconsole",
         "--noconsole-action"));
       System.out.println();
 
       System.out.println(getLabel("syntax.probsoln_opts"));
-      System.out.println(getLabelWithValue("syntax.probsoln", "--probsoln"));
-      System.out.println(getLabelWithValue("syntax.merge_probsoln", "--merge-probsoln"));
+      System.out.println(getLabelWithValues("syntax.probsoln", "--probsoln"));
+      System.out.println(getLabelWithValues("syntax.merge_probsoln", "--merge-probsoln"));
       System.out.println();
 
       System.out.println(getLabel("syntax.xls_opts"));
-      System.out.println(getLabelWithValue("syntax.xls", "--xls"));
-      System.out.println(getLabelWithValue("syntax.merge_xls", "--merge-xls"));
+      System.out.println(getLabelWithValues("syntax.xls", "--xls"));
+      System.out.println(getLabelWithValues("syntax.merge_xls", "--merge-xls"));
       System.out.println();
 
       System.out.println(getLabel("syntax.ods_opts"));
-      System.out.println(getLabelWithValue("syntax.ods", "--ods"));
-      System.out.println(getLabelWithValue("syntax.merge_ods", "--merge-ods"));
+      System.out.println(getLabelWithValues("syntax.ods", "--ods"));
+      System.out.println(getLabelWithValues("syntax.merge_ods", "--merge-ods"));
       System.out.println();
 
       System.out.println(getLabel("syntax.xlsods_opts"));
@@ -491,11 +503,11 @@ public class DatatoolTk
         settings.getSheetRef()));
       System.out.println();
 
-      System.out.println(getLabelWithValue("syntax.bugreport", 
-        "http://www.dickimaw-books.com/bug-report.html"));
+      System.out.println(getLabelWithValues("syntax.bugreport", 
+        "https://github.com/nlct/datatooltk/issues"));
       System.out.println(getLabelWithValues("syntax.homepage", 
         APP_NAME,
-        "http://www.dickimaw-books.com/apps/datatooltk/"));
+        "http://www.dickimaw-books.com/software/datatooltk/"));
    }
 
    public String getAppInfo()
@@ -505,19 +517,18 @@ public class DatatoolTk
 
       String info = String.format(
         "%s%nCopyright (C) %d Nicola L. C. Talbot (www.dickimaw-books.com)%n%s",
-        getLabelWithValues("about.version",
-          new String[]{ APP_NAME, APP_VERSION, APP_DATE}),
+        getLabelWithValues("about.version", APP_NAME, APP_VERSION, APP_DATE),
         COPYRIGHT_YEAR,
         getLabel("about.legal"));
 
-      String translator = dictionary.getProperty("about.translator_info");
+      String translator = messages.getMessageIfExists("about.translator_info");
 
       if (translator != null && !translator.isEmpty())
       {
          info = String.format("%s%n%s", info, translator);
       }
 
-      String ack = dictionary.getProperty("about.acknowledgements");
+      String ack = messages.getMessageIfExists("about.acknowledgements");
 
       if (ack != null && !ack.isEmpty())
       {
@@ -558,7 +569,7 @@ public class DatatoolTk
    }
 
    public void loadDictionary()
-      throws IOException
+      throws IOException,URISyntaxException
    {
       String dictLanguage = settings.getDictionary();
 
@@ -582,8 +593,35 @@ public class DatatoolTk
 
          reader = new BufferedReader(new InputStreamReader(in));
 
-         dictionary = new Properties();
+         // read encoding line
+
+         String line = reader.readLine();
+
+         Pattern pattern = Pattern.compile("# Encoding: (.*)");
+         Matcher matcher = pattern.matcher(line);
+
+         if (matcher.matches())
+         {
+            String encoding = matcher.group(1);
+
+            reader.close();
+            in.close();
+            in = null;
+
+            reader = Files.newBufferedReader(
+              (new File(DatatoolTk.class.getResource(dict).toURI())).toPath(),
+               Charset.forName(encoding));
+         }
+         else
+         {
+            throw new InvalidSyntaxException(
+              "Missing encoding comment on line 1 of "+dict);
+         }
+
+         Properties dictionary = new Properties();
          dictionary.load(reader);
+
+         messages = new DatatoolMessages(dictionary);
       }
       finally
       {
@@ -601,21 +639,36 @@ public class DatatoolTk
 
    public String getLabelWithAlt(String label, String alt)
    {
-      if (dictionary == null) return alt;
-
-      String prop = dictionary.getProperty(label);
-
-      if (prop == null)
+      if (messages == null)
       {
          return alt;
       }
 
-      return prop;
+      String msg = messages.getMessageIfExists(label);
+
+      return msg == null ? alt : msg;
    }
 
    public String getLabelRemoveArgs(String parent, String label)
    {
-      return getLabel(parent, label).replaceAll("\\$[0-9]", "");
+      if (messages == null)
+      {
+         debug("Dictionary not loaded.");
+         return null;
+      }
+
+      String propLabel;
+
+      if (parent == null)
+      {
+         propLabel = label;
+      }
+      else
+      {
+         propLabel = String.format("%s.%s", parent, label);
+      }
+
+      return messages.getMessage(propLabel, "", "", "");
    }
 
    public String getLabel(String label)
@@ -625,26 +678,24 @@ public class DatatoolTk
 
    public String getLabel(String parent, String label)
    {
-      if (dictionary == null)
+      if (messages == null)
       {
          debug("Dictionary not loaded.");
-         return label;
+         return null;
       }
 
-      if (parent != null)
+      String propLabel;
+
+      if (parent == null)
       {
-         label = parent+"."+label;
+         propLabel = label;
       }
-
-      String prop = dictionary.getProperty(label);
-
-      if (prop == null)
+      else
       {
-         System.err.println(APP_NAME+": no such dictionary property '"+label+"'");
-         return "?"+label+"?";
+         propLabel = String.format("%s.%s", parent, label);
       }
 
-      return prop;
+      return messages.getMessage(propLabel);
    }
 
    public String getToolTip(String label)
@@ -654,12 +705,23 @@ public class DatatoolTk
 
    public String getToolTip(String parent, String label)
    {
-      if (parent != null)
+      if (messages == null)
       {
-         label = parent+"."+label;
+         return null;
       }
 
-      return dictionary.getProperty(label+".tooltip");
+      String propLabel;
+
+      if (parent == null)
+      {
+         propLabel = String.format("%s.tooltip", label);
+      }
+      else
+      {
+         propLabel = String.format("%s.%s.tooltip", parent, label);
+      }
+
+      return messages.getMessageIfExists(propLabel);
    }
 
    public char getMnemonic(String label)
@@ -669,15 +731,7 @@ public class DatatoolTk
 
    public char getMnemonic(String parent, String label)
    {
-      String prop = getLabel(parent, label+".mnemonic");
-
-      if (prop.equals(""))
-      {
-         debug("empty dictionary property '"+prop+"'");
-         return label.charAt(0);
-      }
-
-      return prop.charAt(0);
+      return (char)getMnemonicInt(parent, label);
    }
 
    public int getMnemonicInt(String label)
@@ -687,200 +741,40 @@ public class DatatoolTk
 
    public int getMnemonicInt(String parent, String label)
    {
-      String prop;
-
-      if (parent == null)
-      {
-         prop = dictionary.getProperty(label+".mnemonic");
-      }
-      else
-      {
-         prop = dictionary.getProperty(parent+"."+label+".mnemonic");
-      }
-
-      if (prop == null || prop.isEmpty())
+      if (messages == null)
       {
          return -1;
       }
 
-      return prop.codePointAt(0);
+      String propLabel;
+
+      if (parent == null)
+      {
+         propLabel = String.format("%s.mnemonic", label);
+      }
+      else
+      {
+         propLabel = String.format("%s.%s.mnemonic", parent, label);
+      }
+
+      String msg = messages.getMessageIfExists(propLabel);
+
+      if (msg == null || msg.isEmpty())
+      {
+         return -1;
+      }
+
+      return msg.codePointAt(0);
    }
 
-   public String getLabelWithValue(String label, String value)
+   public String getLabelWithValues(String label, Object... values)
    {
-      String prop = getLabel(label);
-
-      if (prop == null)
+      if (messages == null)
       {
          return null;
       }
 
-      if (value == null)
-      {
-         value = "";
-      }
-
-      int n = prop.length();
-
-      StringBuffer buffer = new StringBuffer(n);
-
-      for (int i = 0; i < n; i++)
-      {
-         int c = prop.codePointAt(i);
-
-         if (c == (int)'\\' && i != n-1)
-         {
-            buffer.appendCodePoint(prop.codePointAt(++i));
-         }
-         else if (c == (int)'$' && i != n-1)
-         {
-            c = prop.codePointAt(i+1);
-
-            if (c == (int)'1')
-            {
-               buffer.append(value);
-               i++;
-            }
-         }
-         else
-         {
-            buffer.appendCodePoint(c);
-         }
-      }
-
-      return new String(buffer);
-   }
-
-   public String getLabelWithValue(String label, int value)
-   {
-      return getLabelWithValue(label, ""+value);
-   }
-
-   public String getLabelWithValues(String label, int value1,
-      String value2)
-   {
-      return getLabelWithValues(label, new String[] {""+value1, value2});
-   }
-
-   public String getLabelWithValues(String label, String value1,
-      String value2)
-   {
-      return getLabelWithValues(label, new String[] {value1, value2});
-   }
-
-   // Only works for up to nine values.
-
-   public String getLabelWithValues(String label, Object... values)
-   {
-      String prop = getLabel(label);
-
-      if (prop == null)
-      {
-         return prop;
-      }
-
-      int n = prop.length();
-
-      StringBuffer buffer = new StringBuffer(n);
-
-      for (int i = 0; i < n; i++)
-      {
-         int c = prop.codePointAt(i);
-
-         if (c == (int)'\\' && i != n-1)
-         {
-            buffer.appendCodePoint(prop.codePointAt(++i));
-         }
-         else if (c == (int)'$' && i != n-1)
-         {
-            c = prop.codePointAt(i+1);
-
-            if (c >= 48 && c <= 57)
-            {
-               // Digit
-
-               int index = c - 48 - 1;
-
-               if (index >= 0 && index < values.length)
-               {
-                  buffer.append(values[index]);
-               }
-
-               i++;
-            }
-            else
-            {
-               buffer.append('$');
-            }
-         }
-         else
-         {
-            buffer.appendCodePoint(c);
-         }
-      }
-
-      return new String(buffer);
-   }
-
-   public String getLabelWithValues(String label, String[] values)
-   {
-      String prop = getLabel(label);
-
-      if (prop == null)
-      {
-         return prop;
-      }
-
-      int n = prop.length();
-
-      StringBuffer buffer = new StringBuffer(n);
-
-      for (int i = 0; i < n; i++)
-      {
-         int c = prop.codePointAt(i);
-
-         if (c == (int)'\\' && i != n-1)
-         {
-            buffer.appendCodePoint(prop.codePointAt(++i));
-         }
-         else if (c == (int)'$' && i != n-1)
-         {
-            c = prop.codePointAt(i+1);
-
-            if (c >= 48 && c <= 57)
-            {
-               // Digit
-
-               int index = c - 48 - 1;
-
-               if (index >= 0 && index < values.length)
-               {
-                  buffer.append(values[index]);
-               }
-
-               i++;
-            }
-            else
-            {
-               buffer.append('$');
-            }
-         }
-         else
-         {
-            buffer.appendCodePoint(c);
-         }
-      }
-
-      return new String(buffer);
-   }
-
-
-   public void removeFileOnExit(File file)
-   {
-      if (removeTmpFilesOnExit)
-      {
-         file.deleteOnExit();
-      }
+      return messages.getMessage(label, values);
    }
 
    private void parseArgs(String[] args) throws InvalidSyntaxException
@@ -897,14 +791,14 @@ public class DatatoolTk
             help();
             System.exit(0);
          }
-         else if (args[i].equals("--sep"))
+         else if (args[i].equals("--sep") || args[i].equals("--csv-sep"))
          {
             i++;
 
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                getLabelWithValue("error.syntax.missing_char", args[i-1]));
+                getLabelWithValues("error.syntax.missing_char", args[i-1]));
             }
 
             if (args[i].length() > 1)
@@ -915,14 +809,14 @@ public class DatatoolTk
 
             settings.setSeparator(args[i].charAt(0));
          }
-         else if (args[i].equals("--delim"))
+         else if (args[i].equals("--delim") || args[i].equals("--csv-delim"))
          {
             i++;
 
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_char", args[i-1]));
+                 getLabelWithValues("error.syntax.missing_char", args[i-1]));
             }
 
             if (args[i].length() > 1)
@@ -933,22 +827,25 @@ public class DatatoolTk
 
             settings.setDelimiter(args[i].charAt(0));
          }
-         else if (args[i].equals("--csvheader"))
+         else if (args[i].equals("--csv-header")
+                   || args[i].equals("--csvheader"))
          {
             settings.setHasCSVHeader(true);
          }
-         else if (args[i].equals("--nocsvheader"))
+         else if (args[i].equals("--nocsv-header")
+                   || args[i].equals("--nocsvheader"))
          {
             settings.setHasCSVHeader(false);
          }
-         else if (args[i].equals("--csvescape"))
+         else if (args[i].equals("--csv-escape")
+                   || args[i].equals("--csvescape"))
          {
             i++;
 
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_char", args[i-1]));
+                 getLabelWithValues("error.syntax.missing_char", args[i-1]));
             }
 
             if (args[i].length() > 1)
@@ -959,16 +856,55 @@ public class DatatoolTk
 
             settings.setCSVescape(args[i]);
          }
-         else if (args[i].equals("--nocsvescape"))
+         else if (args[i].equals("--nocsv-escape") 
+                  || args[i].equals("--nocsvescape"))
          {
             settings.setCSVescape("");
+         }
+         else if (args[i].equals("--csv-encoding") 
+            || args[i].equals("--csvencoding"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_encoding", args[i-1]));
+            }
+
+            if (args[i].equals("default") || args[i].isEmpty())
+            {
+               settings.setCsvEncoding((String)null);
+            }
+            else
+            {
+               try
+               {
+                  if (Charset.isSupported(args[i]))
+                  {
+                     settings.setCsvEncoding(args[i]);
+                  }
+                  else
+                  {
+                    throw new InvalidSyntaxException(
+                      getLabelWithValues("error.syntax.unknown.encoding",
+                      args[i]));
+                  }
+               }
+               catch (Exception e)
+               {
+                  throw new InvalidSyntaxException(
+                    getLabelWithValues("error.syntax.unknown.encoding",
+                    args[i]), e);
+               }
+            }
          }
          else if (args[i].equals("--output") || args[i].equals("-o"))
          {
             if (out != null)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.only_one", args[i]));
+                 getLabelWithValues("error.syntax.only_one", args[i]));
             }
 
             i++;
@@ -976,7 +912,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_filename",
+                 getLabelWithValues("error.syntax.missing_filename",
                    args[i-1]));
             }
 
@@ -993,7 +929,7 @@ public class DatatoolTk
             if (dbtex != null)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.import_clash", args[i]));
+                 getLabelWithValues("error.syntax.import_clash", args[i]));
             }
 
             i++;
@@ -1001,7 +937,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.missing_filename",
+                  getLabelWithValues("error.syntax.missing_filename",
                      args[i-1]));
             }
 
@@ -1019,7 +955,7 @@ public class DatatoolTk
             if (dbtex != null)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.import_clash", args[i]));
+                 getLabelWithValues("error.syntax.import_clash", args[i]));
             }
 
             i++;
@@ -1027,7 +963,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.missing_filename",
+                  getLabelWithValues("error.syntax.missing_filename",
                      args[i-1]));
             }
 
@@ -1045,7 +981,7 @@ public class DatatoolTk
             if (dbtex != null)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.import_clash", args[i]));
+                 getLabelWithValues("error.syntax.import_clash", args[i]));
             }
 
             i++;
@@ -1053,7 +989,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.missing_filename",
+                  getLabelWithValues("error.syntax.missing_filename",
                      args[i-1]));
             }
 
@@ -1067,7 +1003,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.missing_sheet_ref",
+                  getLabelWithValues("error.syntax.missing_sheet_ref",
                      args[i-1]));
             }
 
@@ -1084,7 +1020,7 @@ public class DatatoolTk
             if (dbtex != null)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.import_clash", args[i]));
+                 getLabelWithValues("error.syntax.import_clash", args[i]));
             }
 
             i++;
@@ -1092,7 +1028,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.missing_filename",
+                  getLabelWithValues("error.syntax.missing_filename",
                      args[i-1]));
             }
 
@@ -1110,7 +1046,7 @@ public class DatatoolTk
             if (dbtex != null)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.import_clash", args[i]));
+                 getLabelWithValues("error.syntax.import_clash", args[i]));
             }
 
             i++;
@@ -1118,7 +1054,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_sql", args[i-1]));
+                 getLabelWithValues("error.syntax.missing_sql", args[i-1]));
             }
 
             source = args[i];
@@ -1132,7 +1068,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_dbname",
+                 getLabelWithValues("error.syntax.missing_dbname",
                    args[i-1]));
             }
 
@@ -1145,7 +1081,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_prefix",
+                 getLabelWithValues("error.syntax.missing_prefix",
                   args[i-1]));
             }
 
@@ -1158,7 +1094,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_host",
+                 getLabelWithValues("error.syntax.missing_host",
                    args[i-1]));
             }
 
@@ -1171,7 +1107,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_user",
+                 getLabelWithValues("error.syntax.missing_user",
                    args[i-1]));
             }
 
@@ -1184,7 +1120,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_password",
+                 getLabelWithValues("error.syntax.missing_password",
                    args[i-1]));
             }
 
@@ -1206,7 +1142,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.missing_noconsole_action",
+                  getLabelWithValues("error.syntax.missing_noconsole_action",
                     args[i-1]));
             }
 
@@ -1236,7 +1172,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_port",
+                 getLabelWithValues("error.syntax.missing_port",
                    args[i-1]));
             }
 
@@ -1267,14 +1203,6 @@ public class DatatoolTk
          {
             debugMode = false;
          }
-         else if (args[i].equals("--delete-tmp-files"))
-         {
-            removeTmpFilesOnExit = true;
-         }
-         else if (args[i].equals("--nodelete-tmp-files"))
-         {
-            removeTmpFilesOnExit = false;
-         }
          else if (args[i].equals("--map-tex-specials"))
          {
             settings.setTeXMapping(true);
@@ -1298,7 +1226,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_number",
+                 getLabelWithValues("error.syntax.missing_number",
                    args[i-1]));
             }
 
@@ -1315,7 +1243,7 @@ public class DatatoolTk
                catch (NumberFormatException e)
                {
                   throw new InvalidSyntaxException(
-                    getLabelWithValue("error.syntax.missing_number",
+                    getLabelWithValues("error.syntax.missing_number",
                       args[i-1]));
                }
             }
@@ -1327,7 +1255,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_number",
+                 getLabelWithValues("error.syntax.missing_number",
                    args[i-1]));
             }
 
@@ -1338,7 +1266,7 @@ public class DatatoolTk
             catch (NumberFormatException e)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_number",
+                 getLabelWithValues("error.syntax.missing_number",
                    args[i-1]));
             }
          }
@@ -1365,7 +1293,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.missing_sort_field",
+                  getLabelWithValues("error.syntax.missing_sort_field",
                   args[i-1]));
             }
 
@@ -1378,7 +1306,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.missing_sort_locale",
+                  getLabelWithValues("error.syntax.missing_sort_locale",
                   args[i-1]));
             }
 
@@ -1399,7 +1327,7 @@ public class DatatoolTk
                catch (Exception e)
                {
                   throw new InvalidSyntaxException(
-                     getLabelWithValue("error.syntax.invalid_locale",
+                     getLabelWithValues("error.syntax.invalid_locale",
                      args[i]), e);
                }
             }
@@ -1411,7 +1339,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.missing_tex_encoding",
+                  getLabelWithValues("error.syntax.missing_encoding",
                   args[i-1]));
             }
 
@@ -1430,14 +1358,14 @@ public class DatatoolTk
                   else
                   {
                     throw new InvalidSyntaxException(
-                      getLabelWithValue("error.syntax.unknown.encoding",
+                      getLabelWithValues("error.syntax.unknown.encoding",
                       args[i]));
                   }
                }
                catch (Exception e)
                {
                   throw new InvalidSyntaxException(
-                    getLabelWithValue("error.syntax.unknown.encoding",
+                    getLabelWithValues("error.syntax.unknown.encoding",
                     args[i]), e);
                }
             }
@@ -1465,7 +1393,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_filter_label",
+                 getLabelWithValues("error.syntax.missing_filter_label",
                    args[i-1]));
             }
 
@@ -1508,7 +1436,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_number",
+                 getLabelWithValues("error.syntax.missing_number",
                    args[i-1]));
             }
 
@@ -1536,7 +1464,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_merge_key",
+                 getLabelWithValues("error.syntax.missing_merge_key",
                    args[i-1]));
             }
 
@@ -1556,7 +1484,7 @@ public class DatatoolTk
             if (!mergeFile.exists())
             {
                System.err.println(
-                 getLabelWithValue("error.io.file_not_found",
+                 getLabelWithValues("error.io.file_not_found",
                   args[i]));
                mergeFile = null;
                mergeKey = null;
@@ -1567,7 +1495,7 @@ public class DatatoolTk
             if (mergeImportSource != null || mergeFile != null)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.only_one", args[i]));
+                  getLabelWithValues("error.syntax.only_one", args[i]));
             }
 
             i++;
@@ -1575,7 +1503,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_merge_key",
+                 getLabelWithValues("error.syntax.missing_merge_key",
                    args[i-1]));
             }
 
@@ -1595,7 +1523,7 @@ public class DatatoolTk
             if (!file.exists())
             {
                System.err.println(
-                 getLabelWithValue("error.io.file_not_found",
+                 getLabelWithValues("error.io.file_not_found",
                   args[i]));
                mergeKey = null;
             }
@@ -1610,7 +1538,7 @@ public class DatatoolTk
             if (mergeImportSource != null || mergeFile != null)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.only_one", args[i]));
+                  getLabelWithValues("error.syntax.only_one", args[i]));
             }
 
             i++;
@@ -1618,7 +1546,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_merge_key",
+                 getLabelWithValues("error.syntax.missing_merge_key",
                    args[i-1]));
             }
 
@@ -1641,7 +1569,7 @@ public class DatatoolTk
             if (mergeImportSource != null || mergeFile != null)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.only_one", args[i]));
+                  getLabelWithValues("error.syntax.only_one", args[i]));
             }
 
             i++;
@@ -1649,7 +1577,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_merge_key",
+                 getLabelWithValues("error.syntax.missing_merge_key",
                    args[i-1]));
             }
 
@@ -1669,7 +1597,7 @@ public class DatatoolTk
             if (!file.exists())
             {
                System.err.println(
-                 getLabelWithValue("error.io.file_not_found",
+                 getLabelWithValues("error.io.file_not_found",
                   args[i]));
                mergeKey = null;
             }
@@ -1684,7 +1612,7 @@ public class DatatoolTk
             if (mergeImportSource != null || mergeFile != null)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.only_one", args[i]));
+                  getLabelWithValues("error.syntax.only_one", args[i]));
             }
 
             i++;
@@ -1692,7 +1620,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_merge_key",
+                 getLabelWithValues("error.syntax.missing_merge_key",
                    args[i-1]));
             }
 
@@ -1712,7 +1640,7 @@ public class DatatoolTk
             if (!file.exists())
             {
                System.err.println(
-                 getLabelWithValue("error.io.file_not_found",
+                 getLabelWithValues("error.io.file_not_found",
                   args[i]));
                mergeKey = null;
             }
@@ -1727,7 +1655,7 @@ public class DatatoolTk
             if (mergeImportSource != null || mergeFile != null)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValue("error.syntax.only_one", args[i]));
+                  getLabelWithValues("error.syntax.only_one", args[i]));
             }
 
             i++;
@@ -1735,7 +1663,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_merge_key",
+                 getLabelWithValues("error.syntax.missing_merge_key",
                    args[i-1]));
             }
 
@@ -1755,7 +1683,7 @@ public class DatatoolTk
             if (!file.exists())
             {
                System.err.println(
-                 getLabelWithValue("error.io.file_not_found",
+                 getLabelWithValues("error.io.file_not_found",
                   args[i]));
                mergeKey = null;
             }
@@ -1772,7 +1700,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_dbname",
+                 getLabelWithValues("error.syntax.missing_dbname",
                    args[i-1]));
             }
 
@@ -1785,7 +1713,7 @@ public class DatatoolTk
             if (i == args.length)
             {
                throw new InvalidSyntaxException(
-                 getLabelWithValue("error.syntax.missing_input",
+                 getLabelWithValues("error.syntax.missing_input",
                    args[i-1]));
             }
 
@@ -1806,7 +1734,7 @@ public class DatatoolTk
          else if (args[i].charAt(0) == '-')
          {
             throw new InvalidSyntaxException(
-             getLabelWithValue("error.syntax.unknown_option",
+             getLabelWithValues("error.syntax.unknown_option",
                args[i]));
          }
          else
@@ -1866,12 +1794,12 @@ public class DatatoolTk
       datatooltk.process();
    }
 
-   public static final String APP_VERSION = "1.6.3.20171126";
+   public static final String APP_VERSION = "1.6.3.20171204";
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_DATE = "2017-11-26";
+   public static final String APP_DATE = "2017-12-04";
    public static final int COPYRIGHT_YEAR = 2017;
 
-   private Properties dictionary;
+   private DatatoolMessages messages;
    private boolean debugMode = false;
 
    private String out = null;
@@ -1888,8 +1816,6 @@ public class DatatoolTk
    private int truncate = -1;
 
    private int noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
-
-   private boolean removeTmpFilesOnExit=true;
 
    private boolean doShuffle = false;
 
