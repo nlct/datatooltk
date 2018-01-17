@@ -292,10 +292,53 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
       }
       catch (ExecutionException | InterruptedException ex)
       {
-         gui.getMessageHandler().error(gui,
-           gui.getMessageHandler().getLabelWithValues(
-             "error.load.failed", file.toString(), 
-              gui.getMessageHandler().getMessage(ex)), ex);
+         Throwable cause = ex.getCause();
+
+         if (cause instanceof DatatoolImportException)
+         {
+            gui.getMessageHandler().error(gui,
+              gui.getMessageHandler().getLabelWithValues(
+                "error.import.failed",
+                 loadSettings.getImportSource(), 
+                 gui.getMessageHandler().getMessage(cause)));
+
+            gui.getMessageHandler().debug(ex);
+         }
+         else if (cause instanceof IOException)
+         {
+            if (file == null)
+            {
+               gui.getMessageHandler().error(gui,
+                 gui.getMessageHandler().getLabelWithValues(
+                   "error.import.failed",
+                    loadSettings.getImportSource(), 
+                    gui.getMessageHandler().getMessage(cause)));
+            }
+            else
+            {
+               gui.getMessageHandler().error(gui,
+                 gui.getMessageHandler().getLabelWithValues(
+                   "error.load.failed", file, 
+                    gui.getMessageHandler().getMessage(cause)));
+            }
+
+            gui.getMessageHandler().debug(ex);
+         }
+         else if (file == null)
+         {
+            gui.getMessageHandler().error(gui,
+              gui.getMessageHandler().getLabelWithValues(
+                "error.import.failed",
+                 loadSettings.getImportSource(), 
+                 gui.getMessageHandler().getMessage(ex)), ex);
+         }
+         else
+         {
+            gui.getMessageHandler().error(gui,
+              gui.getMessageHandler().getLabelWithValues(
+                "error.load.failed", file, 
+                 gui.getMessageHandler().getMessage(ex)), ex);
+         }
       }
       finally
       {

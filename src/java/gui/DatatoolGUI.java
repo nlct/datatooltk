@@ -1293,21 +1293,19 @@ public class DatatoolGUI extends JFrame
       updateTools();
    }
 
-   public DatatoolDb importSpreadSheet()
+   public void importSpreadSheet()
    {
       setSpreadSheetFilters();
 
       if (fileChooser.showDialog(this, getMessageHandler().getLabel("button.import"))
        != JFileChooser.APPROVE_OPTION)
       {
-         return null;
+         return;
       }
 
       File file = fileChooser.getSelectedFile();
 
       FileFilter filter = fileChooser.getFileFilter();
-
-      DatatoolDb db = null;
 
       DatatoolSpreadSheetImport imp;
 
@@ -1340,38 +1338,37 @@ public class DatatoolGUI extends JFrame
             getMessageHandler().error(this,  
               getMessageHandler().getLabelWithValues("error.unknown_file_format", name));
 
-            return null;
+            return;
          }
       }
 
+      Object ref = null;
+
       try
       {
-         Object ref = JOptionPane.showInputDialog(this,
+         ref = JOptionPane.showInputDialog(this,
             getMessageHandler().getLabel("importspread.sheet"),
             getMessageHandler().getLabel("importspread.title"),
             JOptionPane.PLAIN_MESSAGE,
             null, imp.getSheetNames(file),
             null);
 
-         if (ref == null)
-         {
-            return null;
-         }
-
-         settings.setSheetRef(ref.toString());
-
-         db = imp.importData(fileChooser.getSelectedFile());
-         createNewTab(db);
+         if (ref == null) return;
       }
-      catch (Exception e)
+      catch (IOException e)
       {
-         getMessageHandler().error(this, e);
+         getMessageHandler().error(this,  e);
+
+         return;
       }
 
-      return db;
+      settings.setSheetRef(ref.toString());
+
+      importData(imp,
+       fileChooser.getSelectedFile().getAbsolutePath());
    }
 
-   public DatatoolDb importCsv()
+   public void importCsv()
    {
       setCsvFileFilters();
 
@@ -1379,27 +1376,14 @@ public class DatatoolGUI extends JFrame
              getMessageHandler().getLabel("button.import"))
        != JFileChooser.APPROVE_OPTION)
       {
-         return null;
+         return;
       }
 
-      DatatoolCsv imp = new DatatoolCsv(settings);
-
-      DatatoolDb db = null;
-
-      try
-      {
-         db = imp.importData(fileChooser.getSelectedFile());
-         createNewTab(db);
-      }
-      catch (DatatoolImportException e)
-      {
-         getMessageHandler().error(this, e);
-      }
-
-      return db;
+      importData(new DatatoolCsv(settings),
+       fileChooser.getSelectedFile().getAbsolutePath());
    }
 
-   public DatatoolDb importProbSoln()
+   public void importProbSoln()
    {
       setTeXFileFilter();
 
@@ -1407,42 +1391,20 @@ public class DatatoolGUI extends JFrame
              getMessageHandler().getLabel("button.import"))
        != JFileChooser.APPROVE_OPTION)
       {
-         return null;
+         return;
       }
 
-      DatatoolProbSoln imp = new DatatoolProbSoln(settings);
-
-      DatatoolDb db = null;
-
-      try
-      {
-         db = imp.importData(
-            fileChooser.getSelectedFile().getAbsolutePath());
-         createNewTab(db);
-      }
-      catch (DatatoolImportException e)
-      {
-         getMessageHandler().error(this, e);
-      }
-
-      return db;
+      importData(new DatatoolProbSoln(settings),
+       fileChooser.getSelectedFile().getAbsolutePath());
    }
 
-   public DatatoolDb importData(DatatoolImport imp, String source)
+   public void importData(DatatoolImport imp, String source)
    {
-      DatatoolDb db = null;
+      LoadSettings loadSettings = new LoadSettings(settings);
+      loadSettings.setDataImport(imp, source);
 
-      try
-      {
-         db = imp.importData(source);
-         createNewTab(db);
-      }
-      catch (DatatoolImportException e)
-      {
-         getMessageHandler().error(this, e);
-      }
-
-      return db;
+      DatatoolFileLoader loader = new DatatoolFileLoader(this, loadSettings);
+      loader.execute();
    }
 
    public void newFromTemplate()

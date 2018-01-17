@@ -1,0 +1,38 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+use Data::Random::WordList;
+
+if ($#ARGV != 0)
+{
+   die "Syntax: $0 <number of entries>\n";
+}
+
+my $row_count = $ARGV[0];
+  
+my $wl = new Data::Random::WordList( wordlist => '/usr/share/dict/words');
+
+my @rand_words = $wl->get_words(2*$row_count);
+
+$wl->close();
+
+my $idx=0;
+
+for (my $row = 1; $row <= $row_count; $row++)
+{
+   my $word1 = $rand_words[$idx++];
+   my $word2 = $rand_words[$idx++];
+
+   $word1=~s/([\\\&#%_\{\}\$])/\\$1/g;
+   $word1=~s/\^/\\textasciicircum /g;
+   $word1=~s/\^/\\textasciitilde /g;
+
+   $word2=~s/([\\\&#%_\{\}\$])/\\$1/g;
+   $word2=~s/\^/\\textasciicircum /g;
+   $word2=~s/\^/\\textasciitilde /g;
+
+   print "\\newproblem{Label$row}{$word1}{$word2}\n";
+}
+
+1;

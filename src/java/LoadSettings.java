@@ -98,6 +98,13 @@ public class LoadSettings
       return mergeFile;
    }
 
+   public void setDataImport(DatatoolImport dataImport,
+     String importSource)
+   {
+      setDataImport(dataImport);
+      setImportSource(importSource);
+   }
+
    public void setDataImport(DatatoolImport dataImport)
    {
       imp = dataImport;
