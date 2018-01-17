@@ -97,6 +97,30 @@ public class DatatoolDb
      File dbFile)
      throws IOException
    {
+      // using the TeXParser is slower, but it can handle files
+      // containing \DTLnewdb etc, so first try the faster method
+      // and if that fails try the slower method.
+
+      try
+      {
+         return loadNoTeXParser(settings, dbFile);
+      }
+      catch (InvalidSyntaxException e)
+      {
+         MessageHandler messageHandler = settings.getMessageHandler();
+
+         messageHandler.progress(messageHandler.getLabelWithValues(
+           "progress.quick_load_failed", e.getMessage()));
+         messageHandler.debug(e);
+      }
+
+      return loadTeXParser(settings, dbFile);
+   }
+
+   public static DatatoolDb loadTeXParser(DatatoolSettings settings, 
+     File dbFile)
+     throws IOException
+   {
       DatatoolDb db = null;
       boolean hasVerbatim = false;
       String encoding = settings.getTeXEncoding();
@@ -281,9 +305,9 @@ public class DatatoolDb
       return db;
    }
       
-   private static DatatoolDb originalLoad(DatatoolSettings settings, 
+   public static DatatoolDb loadNoTeXParser(DatatoolSettings settings, 
      File dbFile)
-     throws IOException
+     throws IOException,InvalidSyntaxException
    {
       DatatoolDb db = null;
       boolean hasVerbatim = false;
@@ -325,7 +349,7 @@ public class DatatoolDb
 
          if (controlSequence == null)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", "\\newtoks\\csname"));
          }
 
@@ -333,13 +357,13 @@ public class DatatoolDb
 
          if (name == null)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", "\\endcsname"));
          }
 
          if (!name.startsWith("dtlkeys@"))
          {
-            throw new IOException(messageHandler.getLabelWithValues
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues
               (
                  in.getLineNumber(),
                  "error.expected",
@@ -368,7 +392,7 @@ public class DatatoolDb
 
          if (controlSequence == null)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtlkeys@"+name+"\\endcsname"));
          }
@@ -377,13 +401,13 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtlkeys@"+name+"\\endcsname="));
          }
          else if (c != (int)'=')
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
                in.getLineNumber(),
               "error.expected_found", 
                   "\\csname dtlkeys@"+name+"\\endcsname=",
@@ -395,13 +419,13 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtlkeys@"+name+"\\endcsname={"));
          }
          else if (c != (int)'{')
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               in.getLineNumber(),
               "error.expected_found", 
                   "\\csname dtlkeys@"+name+"\\endcsname={",
@@ -428,7 +452,7 @@ public class DatatoolDb
             }
             else if (c == -1)
             {
-               throw new IOException(messageHandler.getLabelWithValues
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
                  (
                   "error.dbload.not_found",
                   in.getLineNumber(),
@@ -458,7 +482,7 @@ public class DatatoolDb
 
          if (controlSequence == null)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", "\\newtoks\\csname"));
          }
 
@@ -466,13 +490,13 @@ public class DatatoolDb
 
          if (contents == null)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
              "\\newtoks\\csname dtldb@"+name+"\\endcsname"));
          }
          else if (!contents.equals("dtldb@"+name))
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               in.getLineNumber(),
               "error.expected_found",
                   "\\newtoks\\csname dtldb@"+name+"\\endcsname",
@@ -484,7 +508,7 @@ public class DatatoolDb
 
          if (contents == null)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
              "\\csname dtldb@"+name+"\\endcsname="));
          }
@@ -497,7 +521,7 @@ public class DatatoolDb
 
          if (contents == null)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
              "\\csname dtldb@"+name+"\\endcsname="));
          }
@@ -506,7 +530,7 @@ public class DatatoolDb
 
          if (!contents.equals("dtldb@"+name))
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               in.getLineNumber(),
               "error.expected_found",
                   "\\csname dtldb@"+name+"\\endcsname",
@@ -520,13 +544,13 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtldb@"+name+"\\endcsname="));
          }
          else if (c != (int)'=')
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               in.getLineNumber(),
               "error.expected_found", 
                   "\\csname dtldb@"+name+"\\endcsname=",
@@ -538,13 +562,13 @@ public class DatatoolDb
 
          if (c == -1)
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               "error.dbload.not_found", 
                 "\\csname dtldb@"+name+"\\endcsname={"));
          }
          else if (c != (int)'{')
          {
-            throw new IOException(messageHandler.getLabelWithValues(
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
               in.getLineNumber(),
               "error.expected_found", 
                   "\\csname dtldb@"+name+"\\endcsname={",
@@ -569,7 +593,7 @@ public class DatatoolDb
             }
             else if (c == -1)
             {
-               throw new IOException(messageHandler.getLabelWithValues
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
                  (
                   "error.dbload.not_found",
                   in.getLineNumber(),
@@ -603,7 +627,7 @@ public class DatatoolDb
    }
 
    private int parseRow(LineNumberReader in, int currentRow)
-     throws IOException
+     throws IOException,InvalidSyntaxException
    {
       readCommand(in, "\\db@row@elt@w");
 
@@ -648,7 +672,7 @@ public class DatatoolDb
       }
       catch (NumberFormatException e)
       {
-         throw new IOException(getMessageHandler().getLabelWithValues
+         throw new InvalidSyntaxException(getMessageHandler().getLabelWithValues
            (
               in.getLineNumber(),
               "error.dbload.invalid_row_id",
@@ -662,13 +686,13 @@ public class DatatoolDb
    }
 
    private void parseEntry(LineNumberReader in, int currentRow)
-     throws IOException
+     throws IOException,InvalidSyntaxException
    {
       String controlSequence = readCommand(in);
 
       if (controlSequence == null)
       {
-         throw new IOException(getMessageHandler().getLabelWithValues
+         throw new InvalidSyntaxException(getMessageHandler().getLabelWithValues
            (
               in.getLineNumber(),
               "error.expected",
@@ -688,7 +712,8 @@ public class DatatoolDb
 
             if (num != currentRow)
             {
-               throw new IOException(getMessageHandler().getLabelWithValues
+               throw new InvalidSyntaxException(
+                 getMessageHandler().getLabelWithValues
                  (
                     in.getLineNumber(),
                     "error.dbload.wrong_end_row_tag",
@@ -698,7 +723,8 @@ public class DatatoolDb
          }
          catch (NumberFormatException e)
          {
-            throw new IOException(getMessageHandler().getLabelWithValues
+            throw new InvalidSyntaxException(
+              getMessageHandler().getLabelWithValues
               (
                  in.getLineNumber(),
                  "error.dbload.invalid_row_id",
@@ -713,7 +739,7 @@ public class DatatoolDb
 
       if (!controlSequence.equals("\\db@col@id@w"))
       {
-         throw new IOException(getMessageHandler().getLabelWithValues
+         throw new InvalidSyntaxException(getMessageHandler().getLabelWithValues
            (
                in.getLineNumber(),
               "error.expected_found",
@@ -726,7 +752,7 @@ public class DatatoolDb
 
       if (contents == null)
       {
-         throw new IOException(getMessageHandler().getLabelWithValues
+         throw new InvalidSyntaxException(getMessageHandler().getLabelWithValues
            (
                in.getLineNumber(),
               "error.expected",
@@ -742,7 +768,7 @@ public class DatatoolDb
       }
       catch (NumberFormatException e)
       {
-         throw new IOException(getMessageHandler().getLabelWithValues
+         throw new InvalidSyntaxException(getMessageHandler().getLabelWithValues
            (
               in.getLineNumber(),
               "error.dbload.invalid_col_id",
@@ -756,7 +782,7 @@ public class DatatoolDb
 
       if (contents == null)
       {
-         throw new IOException(getMessageHandler().getLabelWithValues
+         throw new InvalidSyntaxException(getMessageHandler().getLabelWithValues
            (
                in.getLineNumber(),
               "error.expected",
@@ -782,7 +808,8 @@ public class DatatoolDb
 
          if (num != currentColumn)
          {
-            throw new IOException(getMessageHandler().getLabelWithValues
+            throw new InvalidSyntaxException(
+              getMessageHandler().getLabelWithValues
               (
                  in.getLineNumber(),
                  "error.dbload.wrong_end_col_tag",
@@ -793,7 +820,7 @@ public class DatatoolDb
       }
       catch (NumberFormatException e)
       {
-         throw new IOException(getMessageHandler().getLabelWithValues
+         throw new InvalidSyntaxException(getMessageHandler().getLabelWithValues
            (
               in.getLineNumber(),
               "error.dbload.invalid_col_id",
@@ -805,13 +832,14 @@ public class DatatoolDb
    }
 
    private int parseHeader(LineNumberReader in, int currentColumn)
-     throws IOException
+     throws IOException,InvalidSyntaxException
    {
       String controlSequence = readCommand(in);
 
       if (controlSequence == null)
       {
-         throw new IOException(getMessageHandler().getLabelWithValues(
+         throw new InvalidSyntaxException(
+            getMessageHandler().getLabelWithValues(
             "error.dbload.not_found", "\\db@plist@elt@end@"));
       }
 
@@ -826,7 +854,8 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(getMessageHandler().getLabelWithValues(
+            throw new InvalidSyntaxException(
+               getMessageHandler().getLabelWithValues(
                "error.dbload.not_found", "\\db@col@id@end@"));
          }
 
@@ -836,7 +865,8 @@ public class DatatoolDb
          }
          catch (NumberFormatException e)
          {
-             throw new IOException(getMessageHandler().getLabelWithValues
+             throw new InvalidSyntaxException(
+             getMessageHandler().getLabelWithValues
              (
                 in.getLineNumber(),
                 "error.dbload.invalid_col_id",
@@ -859,7 +889,8 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(getMessageHandler().getLabelWithValues(
+            throw new InvalidSyntaxException(
+               getMessageHandler().getLabelWithValues(
                "error.dbload.not_found", "\\db@key@id@end@"));
          }
 
@@ -867,7 +898,8 @@ public class DatatoolDb
 
          if (headers.size() < currentColumn)
          {
-            throw new IOException(getMessageHandler().getLabelWithValues
+            throw new InvalidSyntaxException(
+             getMessageHandler().getLabelWithValues
              (
                 "error.db.load.expected_found",
                    in.getLineNumber(),
@@ -886,7 +918,8 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(getMessageHandler().getLabelWithValues(
+            throw new InvalidSyntaxException(
+               getMessageHandler().getLabelWithValues(
                "error.dbload.not_found", "\\db@header@id@end@"));
          }
 
@@ -894,7 +927,8 @@ public class DatatoolDb
 
          if (headers.size() < currentColumn)
          {
-            throw new IOException(getMessageHandler().getLabelWithValues
+            throw new InvalidSyntaxException(
+             getMessageHandler().getLabelWithValues
              (
                 "error.db.load.expected_found",
                    in.getLineNumber(),
@@ -913,7 +947,8 @@ public class DatatoolDb
 
          if (content == null)
          {
-            throw new IOException(getMessageHandler().getLabelWithValues(
+            throw new InvalidSyntaxException(
+               getMessageHandler().getLabelWithValues(
                "error.dbload.not_found", "\\db@type@id@end@"));
          }
 
@@ -930,7 +965,8 @@ public class DatatoolDb
 
             if (headers.size() < currentColumn)
             {
-               throw new IOException(getMessageHandler().getLabelWithValues
+               throw new InvalidSyntaxException(
+                getMessageHandler().getLabelWithValues
                 (
                    "error.db.load.expected_found",
                       ""+in.getLineNumber(),
@@ -945,7 +981,8 @@ public class DatatoolDb
          }
          catch (NumberFormatException e)
          {
-             throw new IOException(getMessageHandler().getLabelWithValues
+             throw new InvalidSyntaxException(
+             getMessageHandler().getLabelWithValues
              (
                 in.getLineNumber(),
                 "error.dbload_unknown_type",
@@ -954,7 +991,8 @@ public class DatatoolDb
          }
          catch (IllegalArgumentException e)
          {
-             throw new IOException(getMessageHandler().getLabelWithValues
+             throw new InvalidSyntaxException(
+             getMessageHandler().getLabelWithValues
              (
                 in.getLineNumber(),
                 "error.dbload_unknown_type",
@@ -1069,19 +1107,21 @@ public class DatatoolDb
    // Returns the first command it encounters, skipping anything
    // that comes before it.
    private void readCommand(LineNumberReader in, String requiredCommand)
-     throws IOException
+     throws IOException,InvalidSyntaxException
    {
       String controlSequence = readCommand(in);
 
       if (controlSequence == null)
       {
-         throw new IOException(getMessageHandler().getLabelWithValues(
+         throw new InvalidSyntaxException(
+           getMessageHandler().getLabelWithValues(
            "error.dbload.not_found", 
              requiredCommand));
       }
       else if (!requiredCommand.equals(controlSequence))
       {
-         throw new IOException(getMessageHandler().getLabelWithValues(
+         throw new InvalidSyntaxException(
+            getMessageHandler().getLabelWithValues(
             in.getLineNumber(),
            "error.expected_found", 
             requiredCommand,

@@ -1634,9 +1634,9 @@ public class DatatoolTk
       datatooltk.process();
    }
 
-   public static final String APP_VERSION = "1.6.3.20180116";
+   public static final String APP_VERSION = "1.6.3.20180117";
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_DATE = "2018-01-16";
+   public static final String APP_DATE = "2018-01-17";
    public static final int COPYRIGHT_YEAR = 2018;
 
    private DatatoolMessages messages;

@@ -658,6 +658,7 @@ progress.sorting=Sorting
 progress.shuffling=Shuffling
 progress.filtering=Filtering
 progress.truncating=Truncating
+progress.quick_load_failed=Quick load failed ({0}).\nTrying again with TeX Parser Library.
 progress.confirm.cancel=Cancel current operation?
 progress.confirm.cancel.title=Confirm Abort
 

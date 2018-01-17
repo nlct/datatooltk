@@ -65,6 +65,18 @@ public class MessageHandler extends ErrorManager
       guiResources.progress(percentage);
    }
 
+   public void progress(String msg)
+   {
+      if (isBatchMode)
+      {
+         message(msg);
+      }
+      else
+      {
+         guiResources.progress(msg);
+      }
+   }
+
    public void startBuffering()
    {
       if (isBatchMode) return;

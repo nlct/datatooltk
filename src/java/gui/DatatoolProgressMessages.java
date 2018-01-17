@@ -24,6 +24,7 @@ import java.awt.event.WindowAdapter;
 import javax.swing.JDialog;
 import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 
@@ -49,8 +50,9 @@ public class DatatoolProgressMessages extends JDialog
 
       messageArea = new JTextArea(4, 50);
       messageArea.setEditable(false);
+      messageArea.setLineWrap(true);
 
-      getContentPane().add(messageArea, "Center");
+      getContentPane().add(new JScrollPane(messageArea), "Center");
 
       progressBar = new JProgressBar(0, 100);
       getContentPane().add(progressBar, "South");
