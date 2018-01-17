@@ -24,6 +24,7 @@ import java.util.Vector;
 import java.util.Random;
 import java.util.Enumeration;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.regex.*;
 import java.util.Date;
 import java.util.Locale;
@@ -32,6 +33,10 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
 import com.dickimawbooks.datatooltk.io.*;
+
+import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.latex.PreambleParser;
+import com.dickimawbooks.texparserlib.latex.datatool.*;
 
 /**
  * Class representing a database.
@@ -53,8 +58,8 @@ public class DatatoolDb
 
       this.settings = settings;
 
-      headers = new Vector<DatatoolHeader>();
-      data = new Vector<DatatoolRow>(settings.getInitialCapacity());
+      headers = new Vector<DatatoolHeader>(settings.getInitialColumnCapacity());
+      data = new Vector<DatatoolRow>(settings.getInitialRowCapacity());
    }
 
    public DatatoolDb(DatatoolSettings settings, int rows, int cols)
@@ -78,7 +83,7 @@ public class DatatoolDb
 
       this.settings = settings;
       headers = new Vector<DatatoolHeader>(cols);
-      data = new Vector<DatatoolRow>(settings.getInitialCapacity());
+      data = new Vector<DatatoolRow>(settings.getInitialRowCapacity());
    }
 
    public static DatatoolDb load(DatatoolSettings settings,
@@ -92,9 +97,197 @@ public class DatatoolDb
      File dbFile)
      throws IOException
    {
-      LineNumberReader in = null;
       DatatoolDb db = null;
       boolean hasVerbatim = false;
+      String encoding = settings.getTeXEncoding();
+
+      MessageHandler messageHandler = settings.getMessageHandler();
+      TeXApp texApp = messageHandler.getTeXApp();
+
+      PreambleParser preambleParser = new PreambleParser(texApp);
+      TeXParser texParser = new TeXParser(preambleParser);
+
+      DataToolSty sty = new DataToolSty(null, preambleParser);
+      preambleParser.usepackage(sty);
+      preambleParser.addVerbEnv("lstlisting");
+      preambleParser.addVerbEnv("alltt");
+
+      texParser.addVerbCommand("lstinline");
+
+      try
+      {
+         messageHandler.startBuffering();
+
+         if (encoding == null || encoding.isEmpty())
+         {
+            texParser.parse(dbFile);
+         }
+         else
+         {
+            texParser.parse(dbFile, Charset.forName(encoding));
+         }
+
+         ControlSequence cs = texParser.getControlSequence("dtllastloadeddb");
+         String dbName = null;
+   
+         if (cs != null && cs instanceof Expandable)
+         {
+            // should be expandable since it's defined in the .dbtex
+            // file using \def\dtllastloadeddb{name}
+   
+            TeXObjectList expanded = ((Expandable)cs).expandfully(texParser);
+   
+            if (expanded != null)
+            {
+               dbName = expanded.toString(texParser);
+            }
+         }
+         else
+         {
+            Iterator<String> it = sty.getDataBaseKeySetIterator();
+   
+            if (it == null)
+            {
+               // most likely an old .dbtex file that doesn't
+               // contain \dtllastloadeddb assignment. Find the
+               // first token register whose name matches
+               // \dtlkeys@<label>
+
+               Pattern p = Pattern.compile("dtlkeys@(.*)");
+
+               TokenRegister reg = texParser.getTokenRegister(p);
+
+               if (reg == null)
+               {
+                  throw new IOException(messageHandler.getLabelWithValues(
+                    "error.dbload.missing_data", dbFile));
+               }
+
+               Matcher m = p.matcher(reg.getName());
+
+               if (m.matches())
+               {
+                  dbName = m.group(1);
+               }
+            }
+            else
+            { 
+               for (; it.hasNext(); )
+               {
+                  if (dbName != null)
+                  {
+                     throw new IOException(messageHandler.getLabelWithValues(
+                       "error.dbload.multiple_db_found", dbFile));
+                  }
+   
+                  dbName = it.next();
+               }
+            }
+         }
+   
+         if (dbName == null)
+         {// shouldn't happen unless file has code missing
+            throw new IOException(messageHandler.getLabelWithValues(
+              "error.dbload.missing_data", dbFile));
+         }
+
+         DataBase texDb = sty.getDataBase(dbName);
+   
+         int rowCount = texDb.getRowCount();
+         int columnCount = texDb.getColumnCount();
+
+         messageHandler.debug(String.format("%s (%dx%d)", dbName,
+          rowCount, columnCount));
+   
+         db = new DatatoolDb(settings, rowCount, columnCount);
+         db.setFile(dbFile);
+         db.setName(dbName);
+   
+         DataToolHeaderRow headerRow = texDb.getHeaders();
+   
+         for (int i = 0; i < columnCount; i++)
+         {
+            DataToolHeader header = headerRow.getHeader(i+1);
+   
+            String key = header.getColumnLabel();
+            String title = header.getTitle().toString(texParser);
+   
+            int type = header.getType();
+   
+            db.addColumn(new DatatoolHeader(db, key, title, type));
+         }
+   
+         DataToolRows contents = texDb.getData();
+   
+         for (int i = 0; i < rowCount; i++)
+         {
+            DataToolEntryRow texRow = contents.get(i);
+   
+            DatatoolRow row = new DatatoolRow(db, columnCount);
+            db.data.add(row);
+
+            for (int j = 0; j < columnCount; j++)
+            {
+               row.add(NULL_VALUE);
+            }
+
+            for (DataToolEntry entry : texRow)
+            { 
+               int columnIndex = entry.getColumnIndex()-1;
+
+               TeXObject entryContents = null;
+   
+               if (entry != null)
+               {
+                  entryContents = entry.getContents();
+               }
+   
+               if (entryContents != null)
+               {
+                  if (!hasVerbatim && entryContents instanceof TeXObjectList)
+                  {
+                     hasVerbatim = preambleParser.containsVerbatim(
+                        entryContents);
+                  }
+
+                  if (entryContents instanceof TeXObjectList
+                      && ((TeXObjectList)entryContents).size() > 0)
+                  {
+                     TeXObjectList list = (TeXObjectList)entryContents;
+                     TeXObject obj = list.lastElement();
+
+                     if (obj instanceof Comment 
+                         && ((Comment)obj).isEmpty())
+                     {
+                        list.remove(list.size()-1);
+                     }
+                  }
+   
+                  row.setCell(columnIndex, entryContents.toString(texParser));
+               }
+            }
+         }
+      }
+      finally
+      {
+         messageHandler.stopBuffering();
+      }
+
+      if (hasVerbatim)
+      {
+         messageHandler.warning(messageHandler.getLabel("warning.verb_detected"));
+      }
+
+      return db;
+   }
+      
+   private static DatatoolDb originalLoad(DatatoolSettings settings, 
+     File dbFile)
+     throws IOException
+   {
+      DatatoolDb db = null;
+      boolean hasVerbatim = false;
+      LineNumberReader in = null;
       String encoding = settings.getTeXEncoding();
       MessageHandler messageHandler = settings.getMessageHandler();
 
@@ -982,6 +1175,13 @@ public class DatatoolDb
    }
 
 
+   public void save(File file)
+     throws IOException
+   {
+      setFile(file);
+      save(null, null);
+   }
+
    public void save(String filename)
      throws IOException
    {
@@ -1022,7 +1222,8 @@ public class DatatoolDb
 
          name = getName();
 
-         out.println("% "+getMessageHandler().getLabelWithValues("default.texheader",
+         out.print("% ");
+         out.println(getMessageHandler().getLabelWithValues("default.texheader",
            DatatoolTk.APP_NAME, new Date()));
          out.println("\\DTLifdbexists{"+name+"}%");
          out.println("{\\PackageError{datatool}{Database `"+name+"'");
@@ -1873,7 +2074,36 @@ out.println("% header block for column "+colIdx);
 
    public void shuffle(Random random)
    {
-      Collections.shuffle(data, random);
+      if (settings.isCompatibilityLevel(settings.COMPAT_1_6))
+      {
+         shuffle16(random);
+      }
+      else
+      {
+         Collections.shuffle(data, random);
+      }
+   }
+
+   public void shuffle16(Random random)
+   {
+      int numRows = data.size();
+
+      int n = settings.getShuffleIterations();
+
+      for (int i = 0; i < n; i++)
+      {
+         int index1 = random.nextInt(numRows);
+         int index2 = random.nextInt(numRows);
+
+         if (index1 != index2)
+         {
+            DatatoolRow row1 = data.get(index1);
+            DatatoolRow row2 = data.get(index2);
+
+            data.set(index1, row2);
+            data.set(index2, row1);
+         }
+      }
    }
 
    public Vector<DatatoolHeader> getHeaders()

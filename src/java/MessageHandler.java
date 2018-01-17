@@ -50,33 +50,50 @@ public class MessageHandler extends ErrorManager
    {
       this.isBatchMode = isBatchMode;
 
-      texApp = new TeXAppAdapter()
-      {
-         public String getMessage(String label, Object... params)
-         {
-            return getLabelWithValues(label, params);
-         }
-
-         public void message(String text)
-         {
-            message(text);
-         }
-
-         public void warning(TeXParser parser, String message)
-         {
-            warning(parser, message);
-         }
-      
-         public void error(Exception e)
-         {
-            error(e);
-         }
-      };
+      texApp = new DatatoolTeXApp(this);
    }
 
    public TeXApp getTeXApp()
    {
       return texApp;
+   }
+
+   public void progress(int percentage)
+   {
+      if (isBatchMode) return;
+
+      guiResources.progress(percentage);
+   }
+
+   public void startBuffering()
+   {
+      if (isBatchMode) return;
+
+      errorBuffer = new StringBuffer();
+      warningBuffer = new StringBuffer();
+   }
+
+   public void stopBuffering()
+   {
+      if (isBatchMode) return;
+
+      if (errorBuffer.length() > 0)
+      {
+         guiResources.error(bufferingComponent, errorBuffer.toString());
+      }
+
+      if (warningBuffer.length() > 0)
+      {
+         guiResources.warning(bufferingComponent, warningBuffer.toString());
+      }
+
+      errorBuffer = null;
+      warningBuffer = null;
+   }
+
+   public boolean buffering()
+   {
+      return errorBuffer != null;
    }
 
    public void setBatchMode(boolean isBatchMode)
@@ -104,6 +121,18 @@ public class MessageHandler extends ErrorManager
       if (isBatchMode)
       {
          System.out.println(msg);
+      }
+   }
+
+   public String getMessage(Throwable throwable)
+   {
+      if (throwable instanceof TeXSyntaxException)
+      {
+         return ((TeXSyntaxException)throwable).getMessage(texApp);
+      }
+      else
+      {
+         return throwable.getMessage();
       }
    }
 
@@ -153,7 +182,15 @@ public class MessageHandler extends ErrorManager
       }
       else
       {
-         guiResources.warning(parent, message);
+         if (buffering())
+         {
+            bufferingComponent = parent;
+            warningBuffer.append(message);
+         }
+         else
+         {
+            guiResources.warning(parent, message);
+         }
       }
    }
 
@@ -164,7 +201,7 @@ public class MessageHandler extends ErrorManager
 
    public void warning(Component parent, Exception e)
    {
-      warning(parent, e.getMessage());
+      warning(parent, getMessage(e));
 
       if (debugMode)
       {
@@ -193,7 +230,7 @@ public class MessageHandler extends ErrorManager
 
    public void debug(Exception e)
    {
-      debug(e.getMessage(), e);
+      debug(getMessage(e), e);
    }
 
    public void error(Throwable throwable)
@@ -202,15 +239,9 @@ public class MessageHandler extends ErrorManager
       {
          error(null, null, (Exception)throwable, GENERIC_FAILURE);
       }
-      else if (throwable instanceof TeXSyntaxException)
-      {
-         TeXSyntaxException e = (TeXSyntaxException)throwable;
-
-         error(null, e.getMessage(texApp), e, SYNTAX_FAILURE);
-      }
       else
       {
-         error(throwable.getMessage(), null, RUNTIME_FAILURE);
+         error(getMessage(throwable), null, RUNTIME_FAILURE);
 
          if (debugMode)
          {
@@ -272,7 +303,7 @@ public class MessageHandler extends ErrorManager
          if (msg == null)
          {
             System.err.println(String.format("%s: %s", 
-              DatatoolTk.APP_NAME, exception.getMessage()));
+              DatatoolTk.APP_NAME, getMessage(exception)));
          }
          else
          {
@@ -286,23 +317,39 @@ public class MessageHandler extends ErrorManager
 
             if (cause != null)
             {
-               System.err.println(cause.getMessage());
+               System.err.println(getMessage(cause));
             }
          }
       }
       else
       {
-         if (msg != null && exception != null)
+         if (buffering())
          {
-            guiResources.error(parent, msg, exception);
-         }
-         else if (exception == null)
-         {
-            guiResources.error(parent, msg);
+            bufferingComponent = parent;
+
+            if (msg == null)
+            {
+               errorBuffer.append(getMessage(exception));
+            }
+            else
+            {
+               errorBuffer.append(msg);
+            }
          }
          else
          {
-            guiResources.error(parent, exception);
+            if (msg != null && exception != null)
+            {
+               guiResources.error(parent, msg, exception);
+            }
+            else if (exception == null)
+            {
+               guiResources.error(parent, msg);
+            }
+            else
+            {
+               guiResources.error(parent, exception);
+            }
          }
       }
 
@@ -314,7 +361,7 @@ public class MessageHandler extends ErrorManager
 
    public void error(SAXParseException exception)
    {
-      error(exception.getMessage(), exception, FORMAT_FAILURE);
+      error(getMessage(exception), exception, FORMAT_FAILURE);
    }
 
    public void warning(SAXParseException exception)
@@ -324,7 +371,7 @@ public class MessageHandler extends ErrorManager
 
    public void fatalError(SAXParseException exception)
    {
-      error(exception.getMessage(), exception, GENERIC_FAILURE);
+      error(getMessage(exception), exception, GENERIC_FAILURE);
       exception.printStackTrace();
    }
 
@@ -416,6 +463,10 @@ public class MessageHandler extends ErrorManager
    private DatatoolGuiResources guiResources;
 
    private TeXApp texApp;
+
+   private StringBuffer errorBuffer, warningBuffer;
+
+   private Component bufferingComponent=null;
 
    public static final int SYNTAX_FAILURE=7;
    public static final int RUNTIME_FAILURE=8;

@@ -35,7 +35,7 @@ public class DatatoolRow extends Vector<String>
 
    public DatatoolRow(DatatoolDb db)
    {
-      super();
+      super(db.getSettings().getInitialColumnCapacity());
       this.db = db;
    }
 

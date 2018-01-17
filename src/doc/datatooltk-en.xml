@@ -101,6 +101,11 @@
        <dd>Enable debug mode.</dd>
        <dt><opt tag="nodebug"/></dt>
        <dd>Disable debug mode. (Default.)</dd>
+       <dt><opt tag="compat"/> <meta>level</meta></dt>
+       <dd>Set the compatibility level. The argument
+       may be <tt>latest</tt> (no backward compatibility required) or <tt>1.6</tt> (compatible with version 1.6 and below).
+       The <opt tag="compat"/><tt> 1.6</tt> setting only
+       affects <opt tag="shuffle"/> and is provided for old documents.</dd>
        <dt><opt tag="owner-only"/></dt>
        <dd>Set read/write permissions when saving .dbtex files to owner only.
        (Has no effect on some operating systems.)</dd>
@@ -669,7 +674,7 @@ Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
    For letter comparisons you 
    can also use <opt tag="sort-case-sensitive"/> for case-sensitive comparisons
    and <opt tag="sort-case-insensitive"/> for case-insensitive comparisons.
-   The default is case-insensitive. The locale-sensitive comparisons are
+   The default is case-insensitive. The locale comparisons are
    typically case-insensitive. The treatment of accented characters depends
    on the locale's rule.
    </p>
@@ -760,6 +765,11 @@ Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
      </tr>
     </tabular>
    </float>
+   <p>Remember that <app/> doesn't have any knowledge of currency conversions.
+   In this example it would be better to have a column of real numbers
+   containing the price in a single base currency. (In fact, it would
+   be better to store the original data in a spreadsheet or database
+   and just use <app/> in batch mode.)</p>
    </example>
    </node>
    <node tag="shuffle" type="section" title="Shuffling the Data">
@@ -770,7 +780,15 @@ Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
    the seed used by the random number generator with
    <opt tag="seed"/> or through the 
    <dict tag="preferences.title"/> dialog box (see <ref tag="preferences"/>).
+   The method used to shuffle data has changed since version 1.6.
+   If you need to use the old method (for example, if you
+   have set a seed with an existing document), then use
+   <opt tag="compat"/> 1.6 when invoking <app/>. For example
    </p>
+   <pre>
+datatooltk --compat 1.6 --seed 2000 --shuffle infile.dbtex -o outfile.dbtex
+   </pre>
+   The newer version is more efficient.
    <example>
    <p>
    Consider the database shown in <ref tag="shuffleex1"/>. This database

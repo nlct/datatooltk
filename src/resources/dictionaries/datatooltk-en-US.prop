@@ -178,8 +178,11 @@ preferences.startup.custom.mnemonic=T
 preferences.shuffle=Shuffle
 preferences.shuffle.seed=Random Seed
 preferences.shuffle.seed.mnemonic=R
-preferences.initial.capacity=Initial Capacity
-preferences.initial.capacity.mnemonic=P
+preferences.initial.capacities=Memory vs Speed Optimization
+preferences.initial.row.capacity=Initial Row Capacity
+preferences.initial.row.capacity.mnemonic=W
+preferences.initial.column.capacity=Initial Column Capacity
+preferences.initial.column.capacity.mnemonic=U
 preferences.csv=CSV
 preferences.csv.mnemonic=V
 preferences.csv.sep=Separator: 
@@ -483,6 +486,7 @@ syntax.version={0} (or {1})\tPrint version and exit.
 syntax.help={0} (or {1})\t\tPrint this help message and exit.
 syntax.debug={0}\t\t\tSwitch on debug mode.
 syntax.nodebug={0}\t\tSwitch off debug mode. (Default.)
+syntax.compat={0} <level>\t\tSet the compatibility level.
 syntax.maptexspecials={0}\tMap TeX special characters.{1}
 syntax.nomaptexspecials={0}\tDon''t map TeX special characters.{1}
 syntax.tex_encoding={0} <encoding>\t\tTeX (.tex or .dbtex) file encoding.
@@ -583,6 +587,8 @@ error.syntax.invalid_filter_operator=Invalid filter operator ''{0}''
 error.syntax.syntax.missing_merge_key=Missing merge key after ''{0}''
 error.syntax.syntax.missing_merge_file=Missing merge file after {0} {1}
 error.syntax.syntax.missing_merge_statement=Missing merge SQL statement after {0} {1}
+error.syntax.missing_value=Missing value after {0}
+error.syntax.invalid_compat=Invalid compatibility setting {0}
 error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the {0} option. See {1} for help.)
 error.cli.no_out={0} <file> required for batch mode.\n(If you want the GUI interface, use the {1} option. See {2} for help.)
 error.load.failed=Failed to load ''{0}''\n{1}
@@ -634,12 +640,26 @@ error.plugin.unknown_query=Unknown plugin query ''{0}''
 error.plugin.unknown_command=Unknown plugin command ''{0}''
 error.no_console=No console available.
 error.xlsx_not_supported=Sorry, .xlsx files not supported.
+error.dbload.missing_data=No database information found in ''{0}''.
+error.dbload.multiple_db_found=Multiple databases found in ''{0}''. (Only one permitted.)
 
 # Warning messages
 warning.title=Warning
 warning.verb_detected=Verbatim text has been detected. You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 warning.verb_detected_in_cell=Verbatim text has been detected in cell ({0,number},{1,number}). You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 warning.ignoring_filter=Ignoring filter option ''{0}''. No such column label.
+
+# Progress Messages
+progress.title={0} Messages
+progress.loading=Loading {0}
+progress.importing=Importing {0}
+progress.merging=Merging {0}
+progress.sorting=Sorting
+progress.shuffling=Shuffling
+progress.filtering=Filtering
+progress.truncating=Truncating
+progress.confirm.cancel=Cancel current operation?
+progress.confirm.cancel.title=Confirm Abort
 
 # Plugin labels
 
@@ -734,6 +754,12 @@ tex.error.double_superscript=Double superscript ^{0}^ (replaced with ^{0}'{}'^)
 tex.error.illegal_align=Illegal alignment {0}
 tex.error.misplaced_omit=Misplaced \\omit
 tex.error.improper_alphabetic_constant=Improper alphabetic constant {0}
+tex.error.register_expected=Register expected
+tex.error.register_expected_but_found=Register expected (found ''{0}'')
+tex.error.numeric register_expected=Numeric register expected
+tex.error.register_not_token=Register ''{0}'' not a token register
+tex.error.generic={0}
+tex.error.file.not.found=File ''{0}'' not found.
 
 # texparserlib LaTeX Error Messages
 

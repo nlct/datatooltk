@@ -49,7 +49,7 @@ public class DatatoolGUI extends JFrame
       super(DatatoolTk.APP_NAME);
    }
 
-   public DatatoolGUI(DatatoolSettings settings)
+   public DatatoolGUI(DatatoolSettings settings, LoadSettings loadSettings)
    {
       super(DatatoolTk.APP_NAME);
 
@@ -59,9 +59,16 @@ public class DatatoolGUI extends JFrame
       }
 
       this.settings = settings;
-      resources = new DatatoolGuiResources(settings.getMessageHandler());
+      resources = new DatatoolGuiResources(this, settings.getMessageHandler());
 
       initGui();
+      setVisible(true);
+
+      if (loadSettings.hasInputAction())
+      {
+         DatatoolFileLoader loader = new DatatoolFileLoader(this, loadSettings);
+         loader.execute();
+      }
    }
 
    private void initGui()
@@ -78,6 +85,10 @@ public class DatatoolGUI extends JFrame
             }
          }
       );
+
+      progressMessages = new DatatoolProgressMessages(this);
+
+      DEFAULT_UNTITLED = messageHandler.getLabel("default.untitled");
 
       String imgFile = "/resources/icons/datatooltk-logosmall.png";
 
@@ -365,25 +376,7 @@ public class DatatoolGUI extends JFrame
 
       // main panel
 
-      tabbedPane = new JTabbedPane()
-      {
-         public String getToolTipText(MouseEvent event) 
-         {
-            javax.swing.plaf.TabbedPaneUI ui = getUI();
-
-            if (ui != null)
-            {
-               int index = ui.tabForCoordinate(this, event.getX(), event.getY());
-
-               if (index != -1)
-               {
-                  return ((DatatoolDbPanel)getComponentAt(index)).getToolTipText();
-               }
-            }
-
-            return super.getToolTipText(event);
-         }
-      };
+      tabbedPane = new JTabbedPane();
 
       tabbedPane.addChangeListener(new ChangeListener()
       {
@@ -397,6 +390,8 @@ public class DatatoolGUI extends JFrame
 
                enableEditItems(panel.getModelSelectedRow() > -1, 
                  panel.getModelSelectedColumn() > -1);
+
+               updateTitle(panel);
             }
          }
       });
@@ -420,14 +415,20 @@ public class DatatoolGUI extends JFrame
       headerDialog = new HeaderDialog(this);
       cellEditor = new CellDialog(this);
 
-      // Set default dimensions
+      int width = settings.getWindowWidth();
+      int height = settings.getWindowHeight();
 
-      Toolkit tk = Toolkit.getDefaultToolkit();
+      if (width == 0 || height == 0)
+      {
+         // Set default dimensions
 
-      Dimension d = tk.getScreenSize();
+         Toolkit tk = Toolkit.getDefaultToolkit();
 
-      int width = 3*d.width/4;
-      int height = d.height/2;
+         Dimension d = tk.getScreenSize();
+
+         width = 3*d.width/4;
+         height = d.height/2;
+      }
 
       setSize(width, height);
 
@@ -580,6 +581,56 @@ public class DatatoolGUI extends JFrame
       return list;
    }
 
+   public boolean cancelProgress()
+   {
+      if (resources.getProgressMonitor() == null)
+      {
+         return true;
+      }
+
+      if (JOptionPane.showConfirmDialog(progressMessages,
+           getMessageHandler().getLabel("progress.confirm.cancel"),
+           getMessageHandler().getLabel("progress.confirm.cancel.title"),
+           JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+      {
+         return resources.getProgressMonitor().cancelProgress();
+      }
+
+      return false;
+   }
+
+   public void startProgressMessages(ProgressMonitor progressMonitor)
+   {
+      resources.setProgressMonitor(progressMonitor);
+
+      progressMessages.reset();
+      progressMessages.setVisible(true);
+
+      progressMessages.setCursor(
+         Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+   }
+
+   public void stopProgressMessages()
+   {
+      resources.setProgressMonitor(null);
+
+      progressMessages.setCursor(Cursor.getDefaultCursor());
+      setCursor(Cursor.getDefaultCursor());
+
+      progressMessages.setVisible(false);
+   }
+
+   public void addProgressMessage(String msg)
+   {
+      progressMessages.addMessage(msg);
+   }
+
+   public void setProgress(int value)
+   {
+      progressMessages.setProgress(value);
+   }
+
    public void updateUndoRedoItems(DatatoolDbPanel panel)
    {
       undoItem.setEnabled(panel.canUndo());
@@ -699,7 +750,7 @@ public class DatatoolGUI extends JFrame
 
          String name = JOptionPane.showInputDialog(this,
             getMessageHandler().getLabel("message.input_database_name"),
-            getMessageHandler().getLabel("default.untitled"));
+            DEFAULT_UNTITLED);
 
          if (name != null)
          {
@@ -982,6 +1033,12 @@ public class DatatoolGUI extends JFrame
          }
       }
 
+      if ((getExtendedState() & 
+          (MAXIMIZED_BOTH | ICONIFIED | MAXIMIZED_VERT | MAXIMIZED_HORIZ)) == 0)
+      {
+         settings.setWindowSize(getSize());
+      }
+
       try
       {
          settings.directoryOnExit(fileChooser.getCurrentDirectory());
@@ -1182,56 +1239,55 @@ public class DatatoolGUI extends JFrame
       settings.addRecentFile(file);
    }
 
-   public DatatoolDb load()
+   public void load()
    {
       setTeXFileFilters();
 
       if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
       {
-         return load(fileChooser.getSelectedFile());
+         load(fileChooser.getSelectedFile());
+      }
+   }
+
+   public void load(String filename)
+   {
+      load(new File(filename));
+   }
+
+   public void load(File file)
+   {
+      DatatoolFileLoader loader = new DatatoolFileLoader(this, file);
+      loader.execute();
+   }
+
+   public DatatoolDb getCurrentDatabase()
+   {
+      Component tab = tabbedPane.getSelectedComponent();
+
+      if (tab != null && (tab instanceof DatatoolDbPanel))
+      {
+         return ((DatatoolDbPanel)tab).getDatabase();
       }
 
       return null;
    }
 
-   public DatatoolDb load(String filename)
+   public void createNewTab(DatatoolDb db)
    {
-      return load(new File(filename));
+      createNewTab(db, false);
    }
 
-   public DatatoolDb load(File file)
-   {
-      DatatoolDb db = null;
-
-      try
-      {
-         db = DatatoolDb.load(settings, file);
-         createNewTab(db);
-
-         settings.addRecentFile(file);
-      }
-      catch (IOException e)
-      {
-         getMessageHandler().error(this,
-           getMessageHandler().getLabelWithValues(
-             "error.load.failed", file.toString(), e.getMessage()), e);
-      }
-
-      return db;
-   }
-
-   private void createNewTab(DatatoolDb db)
+   public void createNewTab(DatatoolDb db, boolean modified)
    {
       DatatoolDbPanel panel = new DatatoolDbPanel(this, db);
 
-      tabbedPane.addTab(panel.getName(), panel);
+      panel.setModified(modified);
+
+      tabbedPane.addTab(panel.getName(), null, panel, panel.getToolTipText());
 
       int idx = tabbedPane.getTabCount()-1;
 
-      tabbedPane.setToolTipTextAt(idx, db.getFileName());
-
       tabbedPane.setTabComponentAt(idx, panel.getButtonTabComponent());
-
       tabbedPane.setSelectedIndex(idx);
 
       updateTools();
@@ -1432,9 +1488,14 @@ public class DatatoolGUI extends JFrame
       return sortDialog.requestInput(db);
    }
 
+   public String getDefaultUntitled()
+   {
+      return DEFAULT_UNTITLED;
+   }
+
    public DatatoolHeader requestNewHeader(DatatoolDbPanel panel)
    {
-      String label = getMessageHandler().getLabel("default.untitled");
+      String label = DEFAULT_UNTITLED;
 
       DatatoolHeader header = new DatatoolHeader(panel.db, label, "");
 
@@ -1451,6 +1512,29 @@ public class DatatoolGUI extends JFrame
       if (cellEditor.requestEdit(row, col, panel))
       {
          panel.setModified(true);
+      }
+   }
+
+   public void updateTitle()
+   {
+      int idx = tabbedPane.getSelectedIndex();
+
+      updateTitle(idx == -1 ? null : 
+        (DatatoolDbPanel)tabbedPane.getComponentAt(idx));
+   }
+
+   private void updateTitle(DatatoolDbPanel panel)
+   {
+      if (panel == null)
+      {
+         setTitle(DatatoolTk.APP_NAME);
+      }
+      else
+      {
+         File file = panel.getDatabase().getFile();
+
+         setTitle(String.format("%s - %s", DatatoolTk.APP_NAME,
+            file == null ? getDefaultUntitled() : file.getName()));
       }
    }
 
@@ -1471,6 +1555,8 @@ public class DatatoolGUI extends JFrame
    {
       DatatoolDbPanel panel = 
          (DatatoolDbPanel)tabbedPane.getSelectedComponent();
+
+      updateTitle(panel);
 
       boolean enable = (panel != null);
 
@@ -1581,4 +1667,8 @@ public class DatatoolGUI extends JFrame
    private ReplaceAllDialog replaceAllDialog;
 
    private DatatoolPlugin[] plugins;
+
+   private String DEFAULT_UNTITLED;
+
+   private DatatoolProgressMessages progressMessages;
 }

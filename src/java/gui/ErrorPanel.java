@@ -35,6 +35,7 @@ public class ErrorPanel extends JPanel
    public ErrorPanel(MessageHandler messageHandler)
    {
       super(new BorderLayout());
+      this.messageHandler = messageHandler;
 
       DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
 
@@ -93,7 +94,14 @@ public class ErrorPanel extends JPanel
       }
       else
       {
-         messageArea.setText(message == null ? exception.getMessage() : message);
+         if (message == null)
+         {
+            messageArea.setText(messageHandler.getMessage(exception));
+         }
+         else
+         {
+            messageArea.setText(message);
+         }
 
          ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -157,4 +165,6 @@ public class ErrorPanel extends JPanel
    private CardLayout cardLayout;
 
    private JPanel cardPanel;
+
+   private MessageHandler messageHandler;
 }

@@ -92,7 +92,7 @@ public class DatatoolProbSoln implements DatatoolImport
        TeXParser texParser = new TeXParser(preambleParser);
 
        ProbSolnSty probSolnSty = new ProbSolnSty(null, preambleParser,
-         settings.getInitialCapacity());
+         settings.getInitialRowCapacity(), true);
 
        preambleParser.usepackage(probSolnSty);
 
@@ -122,67 +122,58 @@ public class DatatoolProbSoln implements DatatoolImport
        key = messageHandler.getLabel("probsoln.answer");
        db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
 
-       Set<String> dataSetLabels = probSolnSty.getDatabaseLabels();
-       int rowIdx = 0;
+       Iterator<ProbSolnData> allDataIt = probSolnSty.allEntriesIterator();
 
-       for (Iterator<String> dbIt = dataSetLabels.iterator(); dbIt.hasNext();)
+       for (int rowIdx = 0; allDataIt.hasNext(); rowIdx++)
        {
-          String dbLabel = dbIt.next();
- 
-          ProbSolnDatabase probDb = probSolnSty.getDatabase(dbLabel);
+          ProbSolnData data = allDataIt.next();
+       
+          String probLabel = data.getName();
+          String dbLabel = data.getDataBaseLabel();
 
-          for (Iterator<String> probIt = probDb.keySet().iterator();
-               probIt.hasNext(); )
+          DatatoolRow row = new DatatoolRow(db, numDataSets > 1 ? 4 : 3);
+          int colIdx = 0;
+
+          row.addCell(colIdx++, probLabel);
+
+          if (numDataSets > 1)
           {
-             String probLabel = probIt.next();
-
-             DatatoolRow row = new DatatoolRow(db, numDataSets > 1 ? 4 : 3);
-             int colIdx = 0;
-
-             row.addCell(colIdx++, probLabel);
-
-             if (numDataSets > 1)
-             {
-                row.addCell(colIdx++, dbLabel);
-             }
-
-             ProbSolnData data = probDb.get(probLabel);
-
-             TeXObject question = data.getQuestion(texParser);
-             TeXObject answer = data.getAnswer(texParser, true);
-
-             boolean hasVerb = checkElement(question);
-
-             if (hasVerb)
-             {
-                hasVerbatim = true;
-             }
-
-             hasVerb = checkElement(answer);
-
-             if (hasVerb)
-             {
-                hasVerbatim = true;
-             }
-
-             String questionText = question.toString(texParser);
-             String answerText = answer.toString(texParser);
-
-             row.addCell(colIdx++, questionText);
-
-             if (answerText.equals(questionText))
-             {
-                row.addCell(colIdx++, "");
-             }
-             else
-             {
-                row.addCell(colIdx++, answerText);
-             }
-
-             db.insertRow(rowIdx, row);
-
-             rowIdx++;
+             row.addCell(colIdx++, dbLabel);
           }
+
+          TeXObject question = data.getQuestion(texParser);
+          TeXObject answer = data.getAnswer(texParser, true);
+
+          boolean hasVerb = checkElement(question);
+
+          if (hasVerb)
+          {
+             hasVerbatim = true;
+          }
+
+          hasVerb = checkElement(answer);
+
+          if (hasVerb)
+          {
+             hasVerbatim = true;
+          }
+
+          String questionText = question.toString(texParser);
+          String answerText = answer.toString(texParser);
+
+          row.addCell(colIdx++, questionText);
+
+          if (answerText.equals(questionText))
+          {
+             row.addCell(colIdx++, "");
+          }
+          else
+          {
+             row.addCell(colIdx++, answerText);
+          }
+
+          db.insertRow(rowIdx, row);
+
        }
 
       if (hasVerbatim)

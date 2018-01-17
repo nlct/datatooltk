@@ -33,7 +33,7 @@ import com.dickimawbooks.datatooltk.MessageHandler;
  */
 public class DatatoolGuiResources
 {
-    public DatatoolGuiResources(MessageHandler messageHandler)
+    public DatatoolGuiResources(DatatoolGUI gui, MessageHandler messageHandler)
     {
        this.messageHandler = messageHandler;
        messageHandler.setDatatoolGuiResources(this);
@@ -51,7 +51,7 @@ public class DatatoolGuiResources
 
     public void error(Component parent, Exception e)
     {
-       String message = e.getMessage();
+       String message = messageHandler.getMessage(e);
 
        if (message == null)
        {
@@ -62,7 +62,8 @@ public class DatatoolGuiResources
 
        if (cause != null)
        {
-          message = String.format("%s%n%s", message, cause.getMessage());
+          message = String.format("%s%n%s", message, 
+           messageHandler.getMessage(cause));
        }
 
        error(parent, message, e);
@@ -509,9 +510,39 @@ public class DatatoolGuiResources
        return messageHandler;
     }
 
+    public void progress(int percentage)
+    {
+       progress(null, percentage);
+    }
+
+    public void progress(String msg)
+    {
+       progress(msg, -1);
+    }
+
+    public void progress(String msg, int percentage)
+    {
+       if (progressMonitor != null)
+       {
+          progressMonitor.publishProgress(msg, percentage);
+       }
+    }
+
+    public void setProgressMonitor(ProgressMonitor monitor)
+    {
+       this.progressMonitor = monitor;
+    }
+
+    public ProgressMonitor getProgressMonitor()
+    {
+       return progressMonitor;
+    }
+
     private ErrorPanel errorPanel;
 
     private Properties imageMap = null;
 
     private MessageHandler messageHandler;
+
+    private ProgressMonitor progressMonitor=null;
 }

@@ -107,16 +107,56 @@ public class PropertiesDialog extends JDialog
       seedField.setEnabled(false);
       box.add(seedField);
 
+      JComponent capacityBox = Box.createVerticalBox();
+      capacityBox.setAlignmentX(0);
+      generalTab.add(capacityBox);
+
+      capacityBox.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(),
+        messageHandler.getLabel("preferences.initial.capacities")));
+
       box = new JPanel(new FlowLayout(FlowLayout.LEFT));
       box.setAlignmentX(0);
-      generalTab.add(box);
+      capacityBox.add(box);
 
-      initialCapacitySpinner = new JSpinner(
+      initialRowCapacitySpinner = new JSpinner(
          new SpinnerNumberModel(16, 10, Integer.MAX_VALUE, 1));
 
-      box.add(resources.createJLabel("preferences.initial.capacity", 
-        initialCapacitySpinner));
-      box.add(initialCapacitySpinner);
+      JLabel rowCapacityLabel = resources.createJLabel(
+        "preferences.initial.row.capacity", 
+        initialRowCapacitySpinner);
+
+      box.add(rowCapacityLabel);
+      box.add(initialRowCapacitySpinner);
+
+      box = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      box.setAlignmentX(0);
+      capacityBox.add(box);
+
+      initialColumnCapacitySpinner = new JSpinner(
+         new SpinnerNumberModel(16, 10, Integer.MAX_VALUE, 1));
+
+      JLabel columnCapacityLabel = resources.createJLabel(
+        "preferences.initial.column.capacity", 
+        initialColumnCapacitySpinner);
+
+      box.add(columnCapacityLabel);
+      box.add(initialColumnCapacitySpinner);
+
+      Dimension rowDim = rowCapacityLabel.getPreferredSize();
+
+      Dimension colDim = columnCapacityLabel.getPreferredSize();
+
+      if (colDim.width < rowDim.width)
+      {
+         colDim.width = rowDim.width;
+         columnCapacityLabel.setPreferredSize(colDim);
+      }
+      else
+      {
+         rowDim.width = colDim.width;
+         rowCapacityLabel.setPreferredSize(rowDim);
+      }
 
       // CSV tab
 
@@ -656,8 +696,11 @@ public class PropertiesDialog extends JDialog
          break;
       }
 
-      initialCapacitySpinner.setValue(Integer.valueOf(
-        settings.getInitialCapacity()));
+      initialRowCapacitySpinner.setValue(Integer.valueOf(
+        settings.getInitialRowCapacity()));
+
+      initialColumnCapacitySpinner.setValue(Integer.valueOf(
+        settings.getInitialColumnCapacity()));
 
       char sep = settings.getSeparator();
 
@@ -970,8 +1013,11 @@ public class PropertiesDialog extends JDialog
          settings.setCustomStartUp(file);
       }
 
-      settings.setInitialCapacity(
-        ((Number)initialCapacitySpinner.getValue()).intValue());
+      settings.setInitialRowCapacity(
+        ((Number)initialRowCapacitySpinner.getValue()).intValue());
+      settings.setInitialColumnCapacity(
+        ((Number)initialColumnCapacitySpinner.getValue()).intValue());
+
 
       if (sepTabButton.isSelected())
       {
@@ -1147,7 +1193,8 @@ public class PropertiesDialog extends JDialog
 
    private DatatoolGUI gui;
 
-   private JSpinner initialCapacitySpinner;
+   private JSpinner initialRowCapacitySpinner;
+   private JSpinner initialColumnCapacitySpinner;
 }
 
 class CurrencyListModel extends AbstractListModel<String>

@@ -26,6 +26,7 @@ import java.util.Random;
 import java.util.InvalidPropertiesFormatException;
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Locale;
@@ -332,15 +333,15 @@ public class DatatoolSettings extends Properties
       recentFiles.add(0, name);
    }
 
-   public int getInitialCapacity()
+   public int getInitialRowCapacity()
    {
-      String prop = getProperty("initial-capacity");
+      String prop = getProperty("initial-row-capacity");
 
       int capacity = 100;
 
       if (prop == null)
       {
-         setInitialCapacity(capacity);
+         setInitialRowCapacity(capacity);
       }
       else
       {
@@ -350,17 +351,114 @@ public class DatatoolSettings extends Properties
          }
          catch (NumberFormatException e)
          {
-            messageHandler.debug("Invalid initial capacity setting '"+prop+"'");
-            setInitialCapacity(capacity);
+            messageHandler.debug("Invalid initial row capacity setting '"
+               +prop+"'");
+            setInitialRowCapacity(capacity);
          }
       }
 
       return capacity;
    }
 
-   public void setInitialCapacity(int capacity)
+   public void setInitialRowCapacity(int capacity)
    {
-      setProperty("initial-capacity", ""+capacity);
+      setProperty("initial-row-capacity", ""+capacity);
+   }
+
+   public int getInitialColumnCapacity()
+   {
+      String prop = getProperty("initial-column-capacity");
+
+      int capacity = 10;
+
+      if (prop == null)
+      {
+         setInitialColumnCapacity(capacity);
+      }
+      else
+      {
+         try
+         {
+            capacity = Integer.parseInt(prop);
+         }
+         catch (NumberFormatException e)
+         {
+            messageHandler.debug("Invalid initial column capacity setting '"
+               +prop+"'");
+            setInitialColumnCapacity(capacity);
+         }
+      }
+
+      return capacity;
+   }
+
+   public void setInitialColumnCapacity(int capacity)
+   {
+      setProperty("initial-column-capacity", ""+capacity);
+   }
+
+   public int getWindowWidth()
+   {
+      String prop = getProperty("window-width");
+
+      if (prop == null) return 0;
+
+      int width = 0;
+
+      try
+      {
+         width = Integer.parseInt(prop);
+
+         if (width < 0)
+         {
+            return 0;
+         }
+      }
+      catch (NumberFormatException e)
+      {
+      }
+
+      return width;
+   }
+
+   public void setWindowWidth(int width)
+   {
+      setProperty("window-width", ""+width);
+   }
+
+   public int getWindowHeight()
+   {
+      String prop = getProperty("window-height");
+
+      if (prop == null) return 0;
+
+      int height = 0;
+
+      try
+      {
+         height = Integer.parseInt(prop);
+
+         if (height < 0)
+         {
+            return 0;
+         }
+      }
+      catch (NumberFormatException e)
+      {
+      }
+
+      return height;
+   }
+
+   public void setWindowHeight(int height)
+   {
+      setProperty("window-height", ""+height);
+   }
+
+   public void setWindowSize(Dimension dim)
+   {
+      setWindowWidth(dim.width);
+      setWindowHeight(dim.height);
    }
 
    public String getTeXEncoding()
@@ -1126,6 +1224,24 @@ public class DatatoolSettings extends Properties
       return seed == null ? new Random() : new Random(seed.longValue());
    }
 
+   public int getShuffleIterations()
+   {
+      try
+      {
+         return Integer.parseInt(getProperty("shuffle.iter"));
+      }
+      catch (Exception e)
+      {
+         setShuffleIterations(100);
+         return 100;
+      }
+   }
+
+   public void setShuffleIterations(int number)
+   {
+      setProperty("shuffle.iter", ""+number);
+   }
+
    public boolean isRedefNewProblemEnabled()
    {
       String prop = getProperty("redefnewprob");
@@ -1404,6 +1520,25 @@ public class DatatoolSettings extends Properties
       return plugins;
    }
 
+   public boolean isCompatibilityLevel(int level)
+   {
+      return compatLevel == level;
+   }
+
+   public void setCompatibilityLevel(int level)
+   {
+      switch (level)
+      {
+         case COMPAT_LATEST:
+         case COMPAT_1_6:
+           compatLevel = level;
+           break;
+         default:
+            throw new IllegalArgumentException(
+              "Invalid compatibility level setting "+level);
+      }
+   }
+
    private MessageHandler messageHandler;
 
    protected char[] sqlPassword = null;
@@ -1423,6 +1558,11 @@ public class DatatoolSettings extends Properties
    private final String recentName = "recentfiles";
 
    private final String currencyFileName = "currencies";
+
+   private int compatLevel = COMPAT_LATEST;
+
+   public static final int COMPAT_LATEST=0;
+   public static final int COMPAT_1_6=1;
 
    public static final int STARTUP_HOME   = 0;
    public static final int STARTUP_CWD    = 1;

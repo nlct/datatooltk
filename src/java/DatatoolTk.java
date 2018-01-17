@@ -85,14 +85,19 @@ public class DatatoolTk
       settings.setPasswordReader(new ConsolePasswordReader(
         getMessageHandler(), noConsoleAction));
 
-      if (imp == null && dbtex == null)
+      File inFile = loadSettings.getInputFile();
+      DatatoolImport imp = loadSettings.getDataImport();
+
+      if (imp == null && inFile == null)
       {
          getMessageHandler().error(getLabelWithValues("error.cli.no_data",
            "--gui", "--help"), MessageHandler.SYNTAX_FAILURE);
          System.exit(1);
       }
 
-      if (out == null)
+      File outFile = loadSettings.getOutputFile();
+
+      if (outFile == null)
       {
          getMessageHandler().error(getLabelWithValues("error.cli.no_out",
            "--output", "--gui", "--help"), MessageHandler.SYNTAX_FAILURE);
@@ -103,22 +108,31 @@ public class DatatoolTk
 
       try
       {
-         if (dbtex != null)
+         if (inFile != null)
          {
-            debug("Loading '"+dbtex+"'");
-            db = DatatoolDb.load(settings, dbtex);
+            debug("Loading '"+inFile+"'");
+            db = DatatoolDb.load(settings, inFile);
          }
          else
          {
+            String source = loadSettings.getImportSource();
+
             debug("Importing data via '"+source+"'");
             db = imp.importData(source);
          }
+
+         String dbname = loadSettings.getDbName();
 
          if (dbname != null)
          {
             debug("Setting name to '"+dbname+"'");
             db.setName(dbname);
          }
+
+         File mergeFile = loadSettings.getMergeFile();
+         DatatoolImport mergeImport = loadSettings.getMergeImport();
+         String mergeImportSource = loadSettings.getMergeImportSource();
+         String mergeKey = loadSettings.getMergeKey();
 
          if (mergeFile != null)
          {
@@ -133,26 +147,13 @@ public class DatatoolTk
             db.merge(mergeDb, mergeKey);
          }
 
-         if (!(sort == null || sort.isEmpty()))
+         String sort = loadSettings.getSort();
+
+         if (sort != null)
          {
             debug("sorting");
 
-            db.setSortCaseSensitive(isCaseSensitive);
-
-            boolean ascending = true;
-
-            char c = sort.charAt(0);
-
-            if (c == '+')
-            {
-               ascending = true;
-               sort = sort.substring(1);
-            }
-            else if (c == '-')
-            {
-               ascending = false;
-               sort = sort.substring(1);
-            }
+            db.setSortCaseSensitive(loadSettings.isCaseSensitive());
 
             int colIndex = db.getColumnIndex(sort);
 
@@ -164,24 +165,26 @@ public class DatatoolTk
             }
 
             db.setSortColumn(colIndex);
-            db.setSortAscending(ascending);
+            db.setSortAscending(loadSettings.isAscending());
             db.sort();
          }
 
-         if (doShuffle)
+         if (loadSettings.isShuffleOn())
          {
             debug("Shuffling");
             db.shuffle();
          }
 
+         Vector<FilterInfo> filterInfo = loadSettings.getFilterInfo();
+
          if (filterInfo != null)
          {
             debug("Filtering");
-            DataFilter filter = new DataFilter(db, filterOr);
+            DataFilter filter = new DataFilter(db, loadSettings.isFilterOr());
 
             filter.addFilters(filterInfo);
 
-            if (filterInclude)
+            if (loadSettings.isFilterInclude())
             {
                db.removeNonMatching(filter);
             }
@@ -191,13 +194,15 @@ public class DatatoolTk
             }
          }
 
+         int truncate = loadSettings.getTruncate();
+
          if (truncate > -1)
          {
             db.truncate(truncate);
          }
 
-         debug("Saving '"+out+"'");
-         db.save(out);
+         debug("Saving '"+outFile+"'");
+         db.save(outFile);
       }
       catch (InvalidSyntaxException e)
       {
@@ -212,161 +217,6 @@ public class DatatoolTk
 
       debug("Completed");
       System.exit(0);
-   }
-
-   public void createAndShowGUI()
-   {
-      DatatoolGUI gui = new DatatoolGUI(settings);
-
-      gui.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-      DatatoolDb db = null;
-
-      if (dbtex != null)
-      {
-         db = gui.load(dbtex);
-      }
-      else if (imp != null)
-      {
-         db = gui.importData(imp, source);
-      }
-
-      if (db == null)
-      {
-         if (mergeFile != null)
-         {
-            debug("Loading '"+mergeFile+"'");
-            db = gui.load(mergeFile);
-            mergeFile = null;
-            mergeKey = null;
-         }
-         else if (mergeImportSource != null)
-         {
-            debug("Importing via '"+mergeImportSource+"'");
-            db = gui.importData(mergeImport, mergeImportSource);
-            mergeImportSource = null;
-            mergeKey = null;
-         }
-      }
-
-      if (db != null)
-      {
-         DatatoolDbPanel panel = gui.getPanel(db);
-         boolean modified = false;
-
-         if (dbname != null)
-         {
-            db.setName(dbname);
-            modified = true;
-         }
-
-         if (mergeFile != null)
-         {
-            debug("Loading '"+mergeFile+"'");
-
-            try
-            {
-               DatatoolDb mergeDb = DatatoolDb.load(settings, mergeFile);
-               panel.merge(mergeDb, mergeKey);
-            }
-            catch (Exception e)
-            {
-               getMessageHandler().warning(e);
-            }
-
-            modified = true;
-         }
-         else if (mergeImportSource != null)
-         {
-            debug("Importing via '"+mergeImportSource+"'");
-
-            try
-            {
-               DatatoolDb mergeDb = mergeImport.importData(mergeImportSource);
-               panel.merge(mergeDb, mergeKey);
-            }
-            catch (Exception e)
-            {
-               getMessageHandler().warning(e);
-            }
-
-            modified = true;
-         }
-
-         if (!(sort == null || sort.isEmpty()))
-         {
-            db.setSortCaseSensitive(isCaseSensitive);
-
-            boolean ascending = true;
-
-            char c = sort.charAt(0);
-
-            if (c == '+')
-            {
-               ascending = true;
-               sort = sort.substring(1);
-            }
-            else if (c == '-')
-            {
-               ascending = false;
-               sort = sort.substring(1);
-            }
-
-            int colIndex = db.getColumnIndex(sort);
-
-            if (colIndex == -1)
-            {
-               getMessageHandler().error(null,
-                  getLabelWithValues("error.syntax.unknown_field",
-                  sort));
-            }
-            else
-            {
-               db.setSortColumn(colIndex);
-               db.setSortAscending(ascending);
-               db.sort();
-            }
-
-            modified = true;
-         }
-
-         if (doShuffle)
-         {
-            db.shuffle();
-            modified = true;
-         }
-
-         if (filterInfo != null)
-         {
-            debug("Filtering");
-            DataFilter filter = new DataFilter(db, filterOr);
-            filter.addFilters(filterInfo);
-
-            if (filterInclude)
-            {
-               db.removeNonMatching(filter);
-            }
-            else
-            {
-               db.removeMatching(filter);
-            }
-            modified = true;
-         }
-
-         if (truncate > -1)
-         {
-            db.truncate(truncate);
-            modified = true;
-         }
-
-         if (modified)
-         {
-            panel.setModified(modified);
-         }
-      }
-
-      gui.setCursor(Cursor.getDefaultCursor());
-      gui.setVisible(true);
    }
 
    public void help()
@@ -395,6 +245,7 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
       System.out.println(getLabelWithValues("syntax.debug", "--debug"));
       System.out.println(getLabelWithValues("syntax.nodebug", "--nodebug"));
+      System.out.println(getLabelWithValues("syntax.compat", "--compat"));
 
       System.out.println(getLabelWithValues("syntax.tex_encoding",
          "--tex-encoding"));
@@ -778,6 +629,8 @@ public class DatatoolTk
 
    private void parseArgs(String[] args) throws InvalidSyntaxException
    {
+      loadSettings = new LoadSettings(settings);
+
       for (int i = 0; i < args.length; i++)
       {
          if (args[i].equals("--version") || args[i].equals("-v"))
@@ -900,7 +753,7 @@ public class DatatoolTk
          }
          else if (args[i].equals("--output") || args[i].equals("-o"))
          {
-            if (out != null)
+            if (loadSettings.getOutputFile() != null)
             {
                throw new InvalidSyntaxException(
                  getLabelWithValues("error.syntax.only_one", args[i]));
@@ -915,17 +768,17 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            out = args[i];
+            loadSettings.setOutputFile(args[i]);
          }
          else if (args[i].equals("--csv"))
          {
-            if (source != null)
+            if (loadSettings.getImportSource() != null)
             {
                throw new InvalidSyntaxException(
                  getLabel("error.syntax.only_one_import"));
             }
 
-            if (dbtex != null)
+            if (loadSettings.getInputFile() != null)
             {
                throw new InvalidSyntaxException(
                  getLabelWithValues("error.syntax.import_clash", args[i]));
@@ -940,18 +793,18 @@ public class DatatoolTk
                      args[i-1]));
             }
 
-            source = args[i];
-            imp = new DatatoolCsv(settings);
+            loadSettings.setImportSource(args[i]);
+            loadSettings.setDataImport(new DatatoolCsv(settings));
          }
          else if (args[i].equals("--xls"))
          {
-            if (source != null)
+            if (loadSettings.getImportSource() != null)
             {
                throw new InvalidSyntaxException(
                  getLabel("error.syntax.only_one_import"));
             }
 
-            if (dbtex != null)
+            if (loadSettings.getInputFile() != null)
             {
                throw new InvalidSyntaxException(
                  getLabelWithValues("error.syntax.import_clash", args[i]));
@@ -966,18 +819,18 @@ public class DatatoolTk
                      args[i-1]));
             }
 
-            source = args[i];
-            imp = new DatatoolExcel(settings);
+            loadSettings.setImportSource(args[i]);
+            loadSettings.setDataImport(new DatatoolExcel(settings));
          }
          else if (args[i].equals("--ods") || args[i].equals("--odf"))
          {
-            if (source != null)
+            if (loadSettings.getImportSource() != null)
             {
                throw new InvalidSyntaxException(
                  getLabel("error.syntax.only_one_import"));
             }
 
-            if (dbtex != null)
+            if (loadSettings.getInputFile() != null)
             {
                throw new InvalidSyntaxException(
                  getLabelWithValues("error.syntax.import_clash", args[i]));
@@ -992,8 +845,8 @@ public class DatatoolTk
                      args[i-1]));
             }
 
-            source = args[i];
-            imp = new DatatoolOpenDoc(settings);
+            loadSettings.setImportSource(args[i]);
+            loadSettings.setDataImport(new DatatoolOpenDoc(settings));
          }
          else if (args[i].equals("--sheet"))
          {
@@ -1010,13 +863,13 @@ public class DatatoolTk
          }
          else if (args[i].equals("--probsoln"))
          {
-            if (source != null)
+            if (loadSettings.getImportSource() != null)
             {
                throw new InvalidSyntaxException(
                  getLabel("error.syntax.only_one_import"));
             }
 
-            if (dbtex != null)
+            if (loadSettings.getInputFile() != null)
             {
                throw new InvalidSyntaxException(
                  getLabelWithValues("error.syntax.import_clash", args[i]));
@@ -1031,18 +884,18 @@ public class DatatoolTk
                      args[i-1]));
             }
 
-            source = args[i];
-            imp = new DatatoolProbSoln(settings);
+            loadSettings.setImportSource(args[i]);
+            loadSettings.setDataImport(new DatatoolProbSoln(settings));
          }
          else if (args[i].equals("--sql"))
          {
-            if (imp != null)
+            if (loadSettings.getDataImport() != null)
             {
                throw new InvalidSyntaxException(
                  getLabel("error.syntax.only_one_import"));
             }
 
-            if (dbtex != null)
+            if (loadSettings.getInputFile() != null)
             {
                throw new InvalidSyntaxException(
                  getLabelWithValues("error.syntax.import_clash", args[i]));
@@ -1056,9 +909,8 @@ public class DatatoolTk
                  getLabelWithValues("error.syntax.missing_sql", args[i-1]));
             }
 
-            source = args[i];
-
-            imp = new DatatoolSql(settings);
+            loadSettings.setImportSource(args[i]);
+            loadSettings.setDataImport(new DatatoolSql(settings));
          }
          else if (args[i].equals("--sqldb"))
          {
@@ -1196,11 +1048,11 @@ public class DatatoolTk
          }
          else if (args[i].equals("--debug"))
          {
-            debugMode = true;
+            settings.getMessageHandler().setDebugMode(true);
          }
          else if (args[i].equals("--nodebug"))
          {
-            debugMode = false;
+            settings.getMessageHandler().setDebugMode(false);
          }
          else if (args[i].equals("--map-tex-specials"))
          {
@@ -1247,21 +1099,71 @@ public class DatatoolTk
                }
             }
          }
+         else if (args[i].equals("--compat"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_value",
+                   args[i-1]));
+            }
+
+            if (args[i].equals("latest"))
+            {
+               settings.setCompatibilityLevel(settings.COMPAT_LATEST);
+            }
+            else if (args[i].equals("1.6"))
+            {
+               settings.setCompatibilityLevel(settings.COMPAT_1_6);
+            }
+            else
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.invalid_compat",
+                   args[i]));
+            }
+         }
+         else if (args[i].equals("--shuffle-iterations"))
+         {
+            // only provided for backward compatibility when using
+            // --compat=1.6 (not documented anymore)
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_number",
+                   args[i-1]));
+            }
+
+            try
+            {
+               settings.setShuffleIterations(Integer.valueOf(args[i]));
+            }
+            catch (NumberFormatException e)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_number",
+                   args[i-1]));
+            }
+         }
          else if (args[i].equals("--shuffle"))
          {
-            doShuffle = true;
+            loadSettings.setShuffle(true);
          }
          else if (args[i].equals("--noshuffle"))
          {
-            doShuffle = false;
+            loadSettings.setShuffle(false);
          }
          else if (args[i].equals("--sort-case-sensitive"))
          {
-            isCaseSensitive = true;
+            loadSettings.setCaseSensitive(true);
          }
          else if (args[i].equals("--sort-case-insensitive"))
          {
-            isCaseSensitive = false;
+            loadSettings.setCaseSensitive(false);
          }
          else if (args[i].equals("--sort"))
          {
@@ -1274,7 +1176,7 @@ public class DatatoolTk
                   args[i-1]));
             }
 
-            sort = args[i];
+            loadSettings.setSort(args[i]);
          }
          else if (args[i].equals("--sort-locale"))
          {
@@ -1349,19 +1251,19 @@ public class DatatoolTk
          }
          else if (args[i].equals("--filter-or"))
          {
-            filterOr = true;
+            loadSettings.setFilterOp(true);
          }
          else if (args[i].equals("--filter-and"))
          {
-            filterOr = false;
+            loadSettings.setFilterOp(false);
          }
          else if (args[i].equals("--filter-include"))
          {
-            filterInclude = true;
+            loadSettings.setFilterInclude(true);
          }
          else if (args[i].equals("--filter-exclude"))
          {
-            filterInclude = false;
+            loadSettings.setFilterInclude(false);
          }
          else if (args[i].equals("--filter"))
          {
@@ -1398,13 +1300,8 @@ public class DatatoolTk
 
             String value = args[i];
 
-            if (filterInfo == null)
-            {
-               filterInfo = new Vector<FilterInfo>();
-            }
-
-            filterInfo.add(new FilterInfo(getMessageHandler(), label, 
-              operator, value));
+            loadSettings.addFilterInfo(new FilterInfo(getMessageHandler(),
+              label, operator, value));
          }
          else if (args[i].equals("--truncate"))
          {
@@ -1419,7 +1316,7 @@ public class DatatoolTk
 
             try
             {
-               truncate = Integer.parseInt(args[i]);
+               loadSettings.setTruncate(Integer.parseInt(args[i]));
             }
             catch (NumberFormatException e)
             {
@@ -1430,7 +1327,8 @@ public class DatatoolTk
          }
          else if (args[i].equals("--merge"))
          {
-            if (mergeFile != null || mergeImportSource != null)
+            if (loadSettings.getMergeImportSource() != null
+                || loadSettings.getMergeFile() != null)
             {
                throw new InvalidSyntaxException(
                   getLabel("error.syntax.only_one_merge"));
@@ -1445,7 +1343,7 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            mergeKey = args[i];
+            String mergeKey = args[i];
 
             i++;
 
@@ -1456,7 +1354,7 @@ public class DatatoolTk
                    args[i-2], args[i-1]));
             }
 
-            mergeFile = new File(args[i]);
+            File mergeFile = new File(args[i]);
 
             if (!mergeFile.exists())
             {
@@ -1466,10 +1364,14 @@ public class DatatoolTk
                mergeFile = null;
                mergeKey = null;
             }
+
+            loadSettings.setMergeKey(mergeKey);
+            loadSettings.setMergeFile(mergeFile);
          }
          else if (args[i].equals("--merge-csv"))
          {
-            if (mergeImportSource != null || mergeFile != null)
+            if (loadSettings.getMergeImportSource() != null
+                || loadSettings.getMergeFile() != null)
             {
                throw new InvalidSyntaxException(
                   getLabelWithValues("error.syntax.only_one", args[i]));
@@ -1484,7 +1386,7 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            mergeKey = args[i];
+            String mergeKey = args[i];
 
             i++;
 
@@ -1495,24 +1397,14 @@ public class DatatoolTk
                      args[i-2], args[i-1]));
             }
 
-            File file = new File(args[i]);
-
-            if (!file.exists())
-            {
-               System.err.println(
-                 getLabelWithValues("error.io.file_not_found",
-                  args[i]));
-               mergeKey = null;
-            }
-            else
-            {
-               mergeImportSource = args[i];
-               mergeImport = new DatatoolCsv(settings);
-            }
+            loadSettings.setMergeKey(mergeKey);
+            loadSettings.setMergeImportSource(args[i]);
+            loadSettings.setMergeImport(new DatatoolCsv(settings));
          }
          else if (args[i].equals("--merge-sql"))
          {
-            if (mergeImportSource != null || mergeFile != null)
+            if (loadSettings.getMergeImportSource() != null
+                || loadSettings.getMergeFile() != null)
             {
                throw new InvalidSyntaxException(
                   getLabelWithValues("error.syntax.only_one", args[i]));
@@ -1527,7 +1419,7 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            mergeKey = args[i];
+            String mergeKey = args[i];
 
             i++;
 
@@ -1538,12 +1430,14 @@ public class DatatoolTk
                      args[i-2], args[i-1]));
             }
 
-            mergeImportSource = args[i];
-            mergeImport = new DatatoolSql(settings);
+            loadSettings.setMergeKey(mergeKey);
+            loadSettings.setMergeImportSource(args[i]);
+            loadSettings.setMergeImport(new DatatoolSql(settings));
          }
          else if (args[i].equals("--merge-probsoln"))
          {
-            if (mergeImportSource != null || mergeFile != null)
+            if (loadSettings.getMergeImportSource() != null
+                || loadSettings.getMergeFile() != null)
             {
                throw new InvalidSyntaxException(
                   getLabelWithValues("error.syntax.only_one", args[i]));
@@ -1558,7 +1452,7 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            mergeKey = args[i];
+            String mergeKey = args[i];
 
             i++;
 
@@ -1569,24 +1463,14 @@ public class DatatoolTk
                      args[i-2], args[i-1]));
             }
 
-            File file = new File(args[i]);
-
-            if (!file.exists())
-            {
-               System.err.println(
-                 getLabelWithValues("error.io.file_not_found",
-                  args[i]));
-               mergeKey = null;
-            }
-            else
-            {
-               mergeImportSource = args[i];
-               mergeImport = new DatatoolProbSoln(settings);
-            }
+            loadSettings.setMergeKey(mergeKey);
+            loadSettings.setMergeImportSource(args[i]);
+            loadSettings.setMergeImport(new DatatoolProbSoln(settings));
          }
          else if (args[i].equals("--merge-xls"))
          {
-            if (mergeImportSource != null || mergeFile != null)
+            if (loadSettings.getMergeImportSource() != null
+                || loadSettings.getMergeFile() != null)
             {
                throw new InvalidSyntaxException(
                   getLabelWithValues("error.syntax.only_one", args[i]));
@@ -1601,7 +1485,7 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            mergeKey = args[i];
+            String mergeKey = args[i];
 
             i++;
 
@@ -1612,24 +1496,14 @@ public class DatatoolTk
                      args[i-2], args[i-1]));
             }
 
-            File file = new File(args[i]);
-
-            if (!file.exists())
-            {
-               System.err.println(
-                 getLabelWithValues("error.io.file_not_found",
-                  args[i]));
-               mergeKey = null;
-            }
-            else
-            {
-               mergeImportSource = args[i];
-               mergeImport = new DatatoolExcel(settings);
-            }
+            loadSettings.setMergeKey(mergeKey);
+            loadSettings.setMergeImportSource(args[i]);
+            loadSettings.setMergeImport(new DatatoolExcel(settings));
          }
          else if (args[i].equals("--merge-ods"))
          {
-            if (mergeImportSource != null || mergeFile != null)
+            if (loadSettings.getMergeImportSource() != null
+                || loadSettings.getMergeFile() != null)
             {
                throw new InvalidSyntaxException(
                   getLabelWithValues("error.syntax.only_one", args[i]));
@@ -1644,7 +1518,7 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            mergeKey = args[i];
+            String mergeKey = args[i];
 
             i++;
 
@@ -1655,20 +1529,9 @@ public class DatatoolTk
                      args[i-2], args[i-1]));
             }
 
-            File file = new File(args[i]);
-
-            if (!file.exists())
-            {
-               System.err.println(
-                 getLabelWithValues("error.io.file_not_found",
-                  args[i]));
-               mergeKey = null;
-            }
-            else
-            {
-               mergeImportSource = args[i];
-               mergeImport = new DatatoolOpenDoc(settings);
-            }
+            loadSettings.setMergeKey(mergeKey);
+            loadSettings.setMergeImportSource(args[i]);
+            loadSettings.setMergeImport(new DatatoolOpenDoc(settings));
          }
          else if (args[i].equals("--name"))
          {
@@ -1681,7 +1544,7 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            dbname = args[i];
+            loadSettings.setDbName(args[i]);
          }
          else if (args[i].equals("--in") || args[i].equals("-i"))
          {
@@ -1694,19 +1557,19 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            if (dbtex != null)
+            if (loadSettings.getInputFile() != null)
             {
                throw new InvalidSyntaxException(
                  getLabel("error.syntax.only_one_input"));
             }
 
-            if (imp != null)
+            if (loadSettings.getDataImport() != null)
             {
                throw new InvalidSyntaxException(
                  getLabel("error.syntax.input_clash"));
             }
 
-            dbtex = args[i];
+            loadSettings.setInputFile(args[i]);
          }
          else if (args[i].charAt(0) == '-')
          {
@@ -1718,19 +1581,19 @@ public class DatatoolTk
          {
             // if no option specified, assume --in
 
-            if (dbtex != null)
+            if (loadSettings.getInputFile() != null)
             {
                throw new InvalidSyntaxException(
                  getLabel("error.syntax.only_one_input"));
             }
 
-            if (imp != null)
+            if (loadSettings.getDataImport() != null)
             {
                throw new InvalidSyntaxException(
                  getLabel("error.syntax.input_clash"));
             }
 
-            dbtex = args[i];
+            loadSettings.setInputFile(args[i]);
          }
       }
    }
@@ -1747,7 +1610,7 @@ public class DatatoolTk
           {
              public void run()
              {
-                createAndShowGUI();
+                new DatatoolGUI(settings, loadSettings);
              }
           });
       } 
@@ -1771,42 +1634,19 @@ public class DatatoolTk
       datatooltk.process();
    }
 
-   public static final String APP_VERSION = "1.6.3.20171204";
+   public static final String APP_VERSION = "1.6.3.20180116";
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_DATE = "2017-12-04";
-   public static final int COPYRIGHT_YEAR = 2017;
+   public static final String APP_DATE = "2018-01-16";
+   public static final int COPYRIGHT_YEAR = 2018;
 
    private DatatoolMessages messages;
-   private boolean debugMode = false;
 
-   private String out = null;
-   private String dbtex = null;
-   private String source = null;
-   private String mergeImportSource = null;
-
-   private File mergeFile = null;
-   private String mergeKey = null;
-
-   private Vector<FilterInfo> filterInfo = null;
-   private boolean filterOr = true;
-   private boolean filterInclude = true; 
-   private int truncate = -1;
+   private LoadSettings loadSettings;
 
    private int noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
 
-   private boolean doShuffle = false;
-
-   private boolean isCaseSensitive = false;
-
-   private String sort=null;
-
-   private String dbname = null;
-
    private String dict = null;
 
-   private DatatoolImport imp = null;
-
-   private DatatoolImport mergeImport = null;
 
    private DatatoolSettings settings;
 }

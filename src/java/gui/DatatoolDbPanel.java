@@ -393,7 +393,7 @@ public class DatatoolDbPanel extends JPanel
    {
       File file = db.getFile();
 
-      return file == null ? null : file.toString();
+      return file == null ? gui.getDefaultUntitled() : file.toString();
    }
 
    public void sortData()
@@ -1292,7 +1292,7 @@ public class DatatoolDbPanel extends JPanel
       return db.getSettings().getPerl();
    }
 
-   protected DatatoolDb getDatabase()
+   public DatatoolDb getDatabase()
    {
       return db;
    }
@@ -1606,7 +1606,7 @@ class ButtonTabComponent extends JPanel
       label = new JLabel(panel.getName());
       button = panel.getDatatoolGuiResources().createActionButton
         ("button", "close_panel", this, null);
-      label.setToolTipText(panel.db.getFileName());
+      label.setToolTipText(panel.getToolTipText());
 
       button.setText(null);
       button.setRolloverEnabled(true);
@@ -1664,7 +1664,7 @@ class ButtonTabComponent extends JPanel
       }
 
       label.setText(name);
-      label.setToolTipText(panel.db.getFileName());
+      label.setToolTipText(getToolTipText());
    }
 
    public void actionPerformed(ActionEvent evt)
