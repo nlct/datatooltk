@@ -18,16 +18,22 @@
 */
 package com.dickimawbooks.datatooltk.gui;
 
+import java.net.URL;
+
 import java.awt.Frame;
 import java.awt.Dialog;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
@@ -61,29 +67,139 @@ public class GuiPasswordReader extends JDialog
 
       getContentPane().add(panel, "Center");
 
-      JLabel label = resources.createJLabel("password.prompt");
+      passwordField = new JPasswordField(10);
+
+      JLabel label = createJLabel(messageHandler, "password.prompt",
+         passwordField);
 
       panel.add(label);
-
-      passwordField = new JPasswordField(10);
-      label.setLabelFor(passwordField);
-
       panel.add(passwordField);
 
       JPanel buttonPanel = new JPanel();
 
       getContentPane().add(buttonPanel, "South");
 
-      JButton okayButton = resources.createOkayButton(this);
-      buttonPanel.add(okayButton);
+      buttonPanel.add(createActionButton(messageHandler, "button", "okay",
+          KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0)));
 
-      JButton cancelButton = resources.createCancelButton(this);
-      buttonPanel.add(cancelButton);
+      buttonPanel.add(createActionButton(messageHandler, "button", "cancel",
+          KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)));
 
       pack();
 
       setLocationRelativeTo(parent);
    }
+
+   // GUI resources won't have been created if password dialog is
+   // required in batch mode, so provide local methods:
+   private JLabel createJLabel(MessageHandler messageHandler, String label,
+     JComponent comp)
+   {
+       JLabel jLabel = new JLabel(messageHandler.getLabel(label));
+
+       int mnemonic = messageHandler.getMnemonicInt(label);
+
+       if (mnemonic != -1)
+       {
+          jLabel.setDisplayedMnemonic(mnemonic);
+       }
+
+       String tooltip = messageHandler.getToolTip(label);
+
+       if (tooltip != null)
+       {
+          jLabel.setToolTipText(tooltip);
+       }
+
+       if (comp != null)
+       {
+          jLabel.setLabelFor(comp);
+       }
+
+       return jLabel;
+   }
+
+    public JButton createActionButton(MessageHandler messageHandler,
+      String parent, String label, KeyStroke keyStroke)
+    {
+       String tooltipText = messageHandler.getToolTip(parent, label);
+       
+       DatatoolGuiResources resources
+          = messageHandler.getDatatoolGuiResources();
+
+       URL imageUrl = null;
+       URL rollOverImageUrl = null;
+       URL pressedImageUrl = null;
+       URL selectedImageUrl = null;
+
+       if (resources != null)
+       {
+          imageUrl = resources.getImageUrl(label);
+
+          if (imageUrl != null)
+          {
+             rollOverImageUrl = resources.getImageUrl(label+"_rollover");
+             pressedImageUrl = resources.getImageUrl(label+"_pressed");
+             selectedImageUrl = resources.getImageUrl(label+"_selected");
+          }
+       }
+
+       String buttonLabel = messageHandler.getLabel(parent, label);
+       int mnemonic = messageHandler.getMnemonicInt(parent, label);
+       String actionCommand = label;
+
+       JButton button;
+
+       if (imageUrl == null)
+       {
+          button = new JButton(buttonLabel);
+       }
+       else
+       {
+          button = new JButton(buttonLabel, new ImageIcon(imageUrl));
+
+          if (rollOverImageUrl != null)
+          {
+             button.setRolloverIcon(new ImageIcon(rollOverImageUrl));
+          }
+
+          if (pressedImageUrl != null)
+          {
+             button.setPressedIcon(new ImageIcon(pressedImageUrl));
+          }
+
+          if (selectedImageUrl != null)
+          {
+             button.setSelectedIcon(new ImageIcon(selectedImageUrl));
+          }
+       }
+
+       if (mnemonic != -1)
+       {
+          button.setMnemonic(mnemonic);
+       }
+
+       button.addActionListener(this);
+
+       if (actionCommand != null)
+       {
+          button.setActionCommand(actionCommand);
+
+          if (keyStroke != null)
+          {
+             button.registerKeyboardAction(this,
+               actionCommand, keyStroke,
+               JComponent.WHEN_IN_FOCUSED_WINDOW);
+          }
+       }
+
+       if (tooltipText != null)
+       {
+          button.setToolTipText(tooltipText);
+       }
+
+       return button;
+    }
 
    public void actionPerformed(ActionEvent evt)
    {
