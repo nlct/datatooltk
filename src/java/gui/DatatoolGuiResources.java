@@ -108,18 +108,31 @@ public class DatatoolGuiResources
     }
 
     public JButton createActionButton(String parent, String label, 
+      ActionListener listener, KeyStroke keyStroke, URL imageURL)
+    {
+       return createActionButton(parent, label, listener, keyStroke,
+         messageHandler.getToolTip(parent, label), imageURL);
+    }
+
+    public JButton createActionButton(String parent, String label, 
       ActionListener listener, KeyStroke keyStroke,
       String tooltipText)
+    {
+       return createActionButton(parent, label, listener, keyStroke,
+         tooltipText, getImageUrl(label));
+    }
+
+    public JButton createActionButton(String parent, String label, 
+      ActionListener listener, KeyStroke keyStroke,
+      String tooltipText, URL imageURL)
     {
        String buttonLabel = messageHandler.getLabel(parent, label);
        int mnemonic = messageHandler.getMnemonicInt(parent, label);
        String actionCommand = label;
 
-       // Is there an associated image?
-
-       URL imageURL = getImageUrl(label);
-
        JButton button;
+
+       // Is there an associated image?
 
        if (imageURL == null)
        {

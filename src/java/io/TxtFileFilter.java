@@ -27,39 +27,11 @@ import com.dickimawbooks.datatooltk.MessageHandler;
 /**
  * File filter for .txt files.
  */
-public class TxtFileFilter extends FileFilter
+public class TxtFileFilter extends DatatoolFileFilter
 {
    public TxtFileFilter(MessageHandler messageHandler)
    {
-      super();
-      description = messageHandler.getLabelWithValues("filter.txt", "*.txt");
+      super(messageHandler.getLabelWithValues("filter.txt", "*.txt"), "txt");
    }
 
-   public boolean accept(File file)
-   {
-      if (file.isDirectory())
-      {
-         return true;
-      }
-
-      String name = file.getName();
-
-      int idx = name.lastIndexOf(".");
-
-      if (idx == -1)
-      {
-         return false;
-      }
-
-      String suffix = name.substring(idx+1).toLowerCase();
-
-      return suffix.equals("txt");
-   }
-
-   public String getDescription()
-   {
-      return description;
-   }
-
-   private String description;
 }

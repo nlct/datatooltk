@@ -1249,6 +1249,8 @@ public class DatatoolDb
 
       String encoding = settings.getTeXEncoding();
 
+      MessageHandler messageHandler = getMessageHandler();
+
       try
       {
          if (encoding == null)
@@ -1263,7 +1265,7 @@ public class DatatoolDb
          name = getName();
 
          out.print("% ");
-         out.println(getMessageHandler().getLabelWithValues("default.texheader",
+         out.println(messageHandler.getLabelWithValues("default.texheader",
            DatatoolTk.APP_NAME, new Date()));
          out.println("\\DTLifdbexists{"+name+"}%");
          out.println("{\\PackageError{datatool}{Database `"+name+"'");
@@ -1277,6 +1279,10 @@ public class DatatoolDb
          out.println("\\expandafter\\global");
          out.println(" \\csname dtlkeys@"+name+"\\endcsname={%");
          out.println("%");
+
+         messageHandler.progress(0);
+         int maxProgress = 2*headers.size()+data.size();
+         int progress=0;
 
          for (int i = 0, n = headers.size(); i < n; i++)
          {
@@ -1301,6 +1307,8 @@ out.println("% header block for column "+colIdx);
             out.println("\\db@col@id@w "+colIdx+"%");
             out.println("\\db@col@id@end@ %");
             out.println("\\db@plist@elt@end@ %");
+
+            messageHandler.progress((100*(++progress))/maxProgress);
          }
 
          out.println("}%"); // end of dtlkeys@<name>
@@ -1347,6 +1355,8 @@ out.println("% header block for column "+colIdx);
             out.println("\\db@row@id@w "+rowIdx+"%");
             out.println("\\db@row@id@end@ %");
             out.println("\\db@row@elt@end@ %");
+
+            messageHandler.progress((100*(++progress))/maxProgress);
          }
 
          out.println("}%"); // end of dtldb@<name>
@@ -1377,6 +1387,8 @@ out.println("% header block for column "+colIdx);
             out.println("\\expandafter");
             out.println(" \\gdef\\csname dtl@ci@"+name
               +"@"+header.getKey()+"\\endcsname{" +colIdx+"}%");
+
+            messageHandler.progress((100*(++progress))/maxProgress);
          }
 
          out.println("\\egroup");

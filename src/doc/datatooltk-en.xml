@@ -35,7 +35,8 @@
      <term tag="database" /> in <LaTeX />. This application provides 
      a<nbsp /><acr tag="gui" /> making it easier to edit these files. 
      It can also import data from <acr tag="csv" /> files, from
-     Excel <tt>.xls</tt> or Open Document <tt>.ods</tt> spreadsheets, from 
+     Excel <tt>.xls</tt> (but not <tt>.xlsx</tt>)
+     or Open Document <tt>.ods</tt> spreadsheets, from 
      <acr tag="sql" /> databases and from <sty>probsoln</sty> databases.
      This manual assumes the user has some knowledge of the
      <sty>datatool</sty> package. Please ensure you have at least version
@@ -1349,7 +1350,10 @@ sys	0m0.065s
    <url www="http://www.jopendocument.org/"/>) using the
    <opt tag="xls"/> or <opt tag="ods"/> command line options, respectively.
    Alternative, in <acr tag="gui"/> mode you can use the 
-   <menu tag="file.import.importspread" /> menu item. When using the command line,
+   <menu tag="file.import.importspread" /> menu item.
+   Note that the <tt>.xlsx</tt> is currently unsupported.
+   </p>
+   <p> When using the command line,
    you additionally need to specify the sheet index (starting from 0) or the 
    sheet name using the <opt tag="sheet"/> command line option. If you are 
    using the <acr tag="gui"/>, after you've selected the spreadsheet file 
@@ -1454,12 +1458,13 @@ Password:
    <url www="https://github.com/nlct/texparser"
    text="texparserlib library"/> to help gather the data from the imported 
    file. Earlier versions of <app/> used <LaTeX/> but this is no longer 
-   required.
+   required. This import function is governed by the <TeX/> file encoding
+   and the <button tag="preferences.tex.stripsolnenv"/> settings 
+   (see <ref tag="preferences"/>).
    </p>
    <p>
-   <b>Note:</b> <app/> if problems require arguments the default values 
-   will be used. There's no guarantee that the problems will be in the same
-   order in the <app/> database as in the original <tt>.tex</tt> file.
+   <b>Note:</b> if any problems require arguments the default values 
+   will be used.
    </p>
    <example>
    <p>
@@ -1477,6 +1482,15 @@ Password:
       <image scale="0.75" alt="Image of the main window" src="images/importps.png" />
      </float>
    </example>
+   <p>
+   The problem defined with the unstarred version of <cs tag="newproblem"/>
+   has a different result depending on whether or not the 
+   <button tag="preferences.tex.stripsolnenv"/> setting is on. The 
+   normal definition of this command (as provided by <sty>probsoln</sty>)
+   wraps the solution (given in the final argument) in the 
+   <env tag="solution"/> environment. This is stripped when the setting is
+   on, otherwise it's included in the <dq><tt>Answer</tt></dq> column.
+   </p>
    <seealso tags="shuffle,sortshuffle"/>
    </node>
    <node tag="templates" type="chapter" title="Templates">
@@ -1588,6 +1602,10 @@ Password:
    called <tt>.datatooltk</tt> and is in the user's home directory.
    </p>
    <p>
+   Alternatively, set the environment variable <tt>DATATOOLTK</tt>
+   to the directory of your choice.
+   </p>
+   <p>
    In <acr tag="gui"/> mode, the settings can be changed using
    <menu tag="edit.preferences"/>. This opens the 
    <button tag="preferences.title"/> dialog box, which has the 
@@ -1679,13 +1697,32 @@ Password:
       <image scale="0.75" alt="Image of the tex tab of the preferences dialog box" src="images/pref-tex.png" />
      </float>
     <p>
-    In this tab you can specify whether or not to map <TeX/> special 
+    <LaTeX/> is no longer used to help <app/> import data from 
+    a<nbsp/><sty>probsoln</sty> dataset. Instead the <url 
+     www="https://github.com/nlct/texparser"
+     text="texparserlib library"/> is used to parse <tt>.tex</tt> files. The file encoding for <TeX/>
+    files (including <tt>.dbtex</tt> files read and saved by <app/>) is set in this tab in the <button tag="preferences.tex.encoding"/> dropdown list.
+    </p>
+    <p>
+    When importing <sty>probsoln</sty> data, you may find it more convenient
+    to strip any instances of the <env tag="solution"/> environment, 
+    particularly the implicit use of this environment by the
+    unstarred version of <cs tag="newproblem"/>. You can now choose whether or 
+    not to omit <verb>\begin{solution}</verb> and <verb>\end{solution}</verb>
+    by selecting the <button tag="preferences.tex.stripsolnenv"/> button.
+    If checked, any instances of <env tag="solution"/> contained within 
+    definitions (provided by <cs tag="newproblem"/> or <env tag="defproblem"/>) 
+    will be removed.
+    </p>
+    <p>In this tab you can also specify whether or not to map <TeX/> special 
     characters when you import data from <acr tag="csv"/> or <acr tag="sql"/>.
     If you want the mapping, make sure the <button tag="preferences.tex.map"/>
-    box is checked. If it is checked, the performed mappings are listed
+    box is checked. The mapping table and buttons are hidden if 
+    <button tag="preferences.tex.map"/> is unchecked. If it is checked, 
+    the performed mappings are listed
     in the table in the tab. To add another mapping, click on the
     <button tag="preferences.tex.add_map"/> button, which opens the 
-    dialog box shown in <ref tag="addmap"/>.
+    dialog box shown in <ref tag="addmap"/>. 
     </p>
      <float type="figure" tag="addmap" caption="Add Mapping Dialog" pos="htbp">
       <image scale="0.75" alt="Image of the add mapping dialog box" src="images/addmap.png" />
@@ -1694,13 +1731,6 @@ Password:
     To remove a<nbsp/>mapping, select the unwanted mapping and click on 
     <button tag="preferences.tex.remove_map"/>. To edit a<nbsp/>mapping,
     select the mapping and click on <button tag="preferences.tex.edit_map"/>.
-    </p>
-    <p>
-    <LaTeX/> is no longer used to help <app/> import data from 
-    a<nbsp/><sty>probsoln</sty> dataset. Instead the <url 
-     www="https://github.com/nlct/texparser"
-     text="texparserlib library"/> is used to parse <tt>.tex</tt> files. The file encoding for <TeX/>
-    files (including <tt>.dbtex</tt> files read and saved by <app/>) is set in this tab.
     </p>
     </dd>
     <dt><button tag="preferences.currencies"/></dt>
@@ -1737,6 +1767,12 @@ Password:
     <button tag="preferences.display.cellwidths"/> area. These can be changed
     as required.
     </p>
+    <p>The <dq>Look And Feel</dq> refers to the way the graphical interface
+    is rendered. You can use the drop-down menu to
+    select a different look and feel, but you need to restart <app/> 
+    for the change to take effect. For example, <ref tag="prefdisplay"/>
+    shows the <dq>Metal</dq> look and feel whereas <ref tag="prefdisplay"/>
+    shows the same window but with the <dq>Nimbus</dq> look and feel.</p>
     </dd>
     <dt><button tag="preferences.language"/></dt>
     <dd>

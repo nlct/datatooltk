@@ -27,39 +27,11 @@ import com.dickimawbooks.datatooltk.MessageHandler;
 /**
  * Class representing an ODS file filter
  */
-public class OdsFileFilter extends FileFilter
+public class OdsFileFilter extends DatatoolFileFilter
 {
    public OdsFileFilter(MessageHandler messageHandler)
    {
-      super();
-      description = messageHandler.getLabelWithValues("filter.ods", "*.ods");
+      super(messageHandler.getLabelWithValues("filter.ods", "*.ods"), "ods");
    }
 
-   public boolean accept(File file)
-   {
-      if (file.isDirectory())
-      {
-         return true;
-      }
-
-      String name = file.getName();
-
-      int idx = name.lastIndexOf(".");
-
-      if (idx == -1)
-      {
-         return false;
-      }
-
-      String suffix = name.substring(idx+1).toLowerCase();
-
-      return suffix.equals("ods");
-   }
-
-   public String getDescription()
-   {
-      return description;
-   }
-
-   private String description;
 }

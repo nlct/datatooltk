@@ -301,10 +301,15 @@ public class PropertiesDialog extends JDialog
       box.add(createLabel("preferences.tex.encoding", texEncodingBox));
       box.add(texEncodingBox);
 
+      stripSolnEnvBox = createCheckBox("preferences.tex", "stripsolnenv");
+      texTab.add(stripSolnEnvBox);
+
       mapTeXBox = createCheckBox("preferences.tex", "map");
+      mapTeXBox.addActionListener(this);
+      mapTeXBox.setActionCommand("texmap");
       texTab.add(mapTeXBox);
 
-      box = createNewRow(texTab, new BorderLayout());
+      texMappingsComp = createNewRow(texTab, new BorderLayout());
       texMapTable = new JTable();
       texMapTable.addMouseListener(this);
       texMapTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -320,10 +325,10 @@ public class PropertiesDialog extends JDialog
       sp.setBorder(BorderFactory.createEmptyBorder());
 
       sp.setPreferredSize(new Dimension(150, 11*rowHeight));
-      box.add(sp, BorderLayout.CENTER);
+      texMappingsComp.add(sp, BorderLayout.CENTER);
 
       JComponent buttonPanel = Box.createVerticalBox();
-      box.add(buttonPanel, BorderLayout.EAST);
+      texMappingsComp.add(buttonPanel, BorderLayout.EAST);
 
       buttonPanel.add(resources.createActionButton(
          "preferences.tex", "add_map", this, null));
@@ -500,11 +505,40 @@ public class PropertiesDialog extends JDialog
       editorBox.add(syntaxHighlightingBox);
 
       JComponent rightPanel = Box.createVerticalBox();
-      rightPanel.setBorder(BorderFactory.createTitledBorder(
-        BorderFactory.createEtchedBorder(), 
-        messageHandler.getLabel("preferences.display.cellwidths")));
       rightPanel.setAlignmentY(0);
       displayTab.add(rightPanel);
+
+      JComponent lookAndFeelPanel = Box.createVerticalBox();
+      lookAndFeelPanel.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(), 
+        messageHandler.getLabel("preferences.display.lookandfeel.title")));
+      rightPanel.add(lookAndFeelPanel);
+
+      box = createNewRow(lookAndFeelPanel);
+
+      availableLookAndFeels = UIManager.getInstalledLookAndFeels();
+
+      String[] names = new String[availableLookAndFeels.length];
+
+      for (int i = 0; i < names.length; i++)
+      {
+         names[i] = availableLookAndFeels[i].getName();
+      }
+
+      lookAndFeelBox = new JComboBox<String>(names);
+
+      box.add(createLabel("preferences.display.lookandfeel", lookAndFeelBox));
+      box.add(lookAndFeelBox);
+
+      box = createNewRow(lookAndFeelPanel);
+      box.add(createTextArea(4, 16, "preferences.display.lookandfeel.restart"));
+
+      JComponent cellWidthsPanel = Box.createVerticalBox();
+      cellWidthsPanel.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(), 
+        messageHandler.getLabel("preferences.display.cellwidths")));
+      cellWidthsPanel.setAlignmentY(0);
+      rightPanel.add(cellWidthsPanel);
 
       String[] typeLabels = settings.getTypeLabels();
       int[] typeMnemonics = settings.getTypeMnemonics();
@@ -514,7 +548,7 @@ public class PropertiesDialog extends JDialog
 
       for (int i = 0; i < cellWidthFields.length; i++)
       {
-         box = createNewRow(rightPanel);
+         box = createNewRow(cellWidthsPanel);
          cellWidthFields[i] = new NonNegativeIntField(0);
          labels[i] = new JLabel(typeLabels[i]);
 
@@ -659,7 +693,12 @@ public class PropertiesDialog extends JDialog
 
    private JTextArea createTextArea(String label)
    {
-      return getResources().createMessageArea(2, 40, label);
+      return createTextArea(2, 40, label);
+   }
+
+   private JTextArea createTextArea(int rows, int columns, String label)
+   {
+      return getResources().createMessageArea(rows, columns, label);
    }
 
    private JCheckBox createCheckBox(String parentLabel, String label)
@@ -748,6 +787,8 @@ public class PropertiesDialog extends JDialog
       databaseField.setText(db == null ? "" : db);
 
       mapTeXBox.setSelected(settings.isTeXMappingOn());
+      texMappingsComp.setVisible(mapTeXBox.isSelected());
+      stripSolnEnvBox.setSelected(settings.isSolutionEnvStripped());
 
       String encoding = settings.getTeXEncoding();
 
@@ -785,6 +826,21 @@ public class PropertiesDialog extends JDialog
       syntaxHighlightingBox.setSelected(settings.isSyntaxHighlightingOn());
       highlightCsSwatch.setBackground(settings.getControlSequenceHighlight());
       highlightCommentSwatch.setBackground(settings.getCommentHighlight());
+
+      String lookAndFeelClassName = settings.getLookAndFeel();
+
+      if (lookAndFeelClassName != null)
+      {
+         for (int i = 0; i < availableLookAndFeels.length; i++)
+         {
+            if (lookAndFeelClassName.equals(
+                   availableLookAndFeels[i].getClassName()))
+            {
+               lookAndFeelBox.setSelectedIndex(i);
+               break;
+            }
+         }
+      }
 
       texMapModel = new TeXMapModel(this, texMapTable, settings);
       texMapTable.setModel(texMapModel);
@@ -895,6 +951,10 @@ public class PropertiesDialog extends JDialog
       {
          escCharField.setEnabled(true);
          escCharField.requestFocusInWindow();
+      }
+      else if (action.equals("texmap"))
+      {
+         texMappingsComp.setVisible(mapTeXBox.isSelected());
       }
       else if (action.equals("add_map"))
       {
@@ -1094,6 +1154,7 @@ public class PropertiesDialog extends JDialog
       settings.setSqlDbName(databaseField.getText());
 
       settings.setTeXMapping(mapTeXBox.isSelected());
+      settings.setSolutionEnvStripped(stripSolnEnvBox.isSelected());
 
       settings.setTeXEncoding((Charset)texEncodingBox.getSelectedItem());
       settings.setCsvEncoding((Charset)csvEncodingBox.getSelectedItem());
@@ -1117,6 +1178,14 @@ public class PropertiesDialog extends JDialog
 
       settings.setControlSequenceHighlight(highlightCsSwatch.getBackground());
       settings.setCommentHighlight(highlightCommentSwatch.getBackground());
+
+      int lookAndFeelIdx = lookAndFeelBox.getSelectedIndex();
+
+      if (lookAndFeelIdx > -1)
+      {
+         settings.setLookAndFeel(
+            availableLookAndFeels[lookAndFeelIdx].getClassName()); 
+      }
 
       gui.updateTableSettings();
 
@@ -1157,7 +1226,9 @@ public class PropertiesDialog extends JDialog
    private CharField sepCharField, delimCharField, escCharField;
 
    private JCheckBox hasHeaderBox, wipeBox, mapTeXBox,
-      hasSeedBox, syntaxHighlightingBox;
+      hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox;
+
+   private JComponent texMappingsComp;
 
    private FileField customFileField, perlFileField;
 
@@ -1195,6 +1266,11 @@ public class PropertiesDialog extends JDialog
 
    private JSpinner initialRowCapacitySpinner;
    private JSpinner initialColumnCapacitySpinner;
+
+   private JComboBox<String> lookAndFeelBox;
+
+   private UIManager.LookAndFeelInfo[] availableLookAndFeels;
+
 }
 
 class CurrencyListModel extends AbstractListModel<String>

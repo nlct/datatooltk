@@ -27,40 +27,12 @@ import com.dickimawbooks.datatooltk.MessageHandler;
 /**
  * File filter for CSV or TXT files.
  */
-public class CsvTxtFileFilter extends FileFilter
+public class CsvTxtFileFilter extends DatatoolFileFilter
 {
    public CsvTxtFileFilter(MessageHandler messageHandler)
    {
-      super();
-      description = messageHandler.getLabelWithValues(
-        "filter.csvtxt", "*.csv, *.txt");
+      super(messageHandler.getLabelWithValues(
+        "filter.csvtxt", "*.csv, *.txt"), "csv", "txt");
    }
 
-   public boolean accept(File file)
-   {
-      if (file.isDirectory())
-      {
-         return true;
-      }
-
-      String name = file.getName();
-
-      int idx = name.lastIndexOf(".");
-
-      if (idx == -1)
-      {
-         return false;
-      }
-
-      String suffix = name.substring(idx+1).toLowerCase();
-
-      return suffix.equals("csv") || suffix.equals("txt");
-   }
-
-   public String getDescription()
-   {
-      return description;
-   }
-
-   private String description;
 }

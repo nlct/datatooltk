@@ -353,29 +353,22 @@ public class DatatoolDbPanel extends JPanel
          return;
       }
 
-      try
+      int[] columnIndexes = new int[db.getColumnCount()];
+      int[] rowIndexes = new int[db.getRowCount()];
+
+      for (int i = 0; i < columnIndexes.length; i++)
       {
-         int[] columnIndexes = new int[db.getColumnCount()];
-         int[] rowIndexes = new int[db.getRowCount()];
-
-         for (int i = 0; i < columnIndexes.length; i++)
-         {
-            columnIndexes[i] = table.convertColumnIndexToView(i);
-         }
-
-         for (int i = 0; i < rowIndexes.length; i++)
-         {
-            rowIndexes[i] = table.convertRowIndexToView(i);
-         }
-
-         db.save(columnIndexes, rowIndexes);
-         setModified(false);
-         gui.addRecentFile(db.getFile());
+         columnIndexes[i] = table.convertColumnIndexToView(i);
       }
-      catch (IOException e)
+
+      for (int i = 0; i < rowIndexes.length; i++)
       {
-         getMessageHandler().error(this, e);
+         rowIndexes[i] = table.convertRowIndexToView(i);
       }
+
+      DatatoolFileWriter writer = new DatatoolFileWriter(this,
+        columnIndexes, rowIndexes);
+      writer.execute();
    }
 
    public boolean isModified()
@@ -1297,6 +1290,11 @@ public class DatatoolDbPanel extends JPanel
       return db;
    }
 
+   public DatatoolGUI getDatatoolGUI()
+   {
+      return gui;
+   }
+
    protected DatatoolDb db;
 
    protected RowHeaderComponent rowHeaderComponent;
@@ -1664,7 +1662,7 @@ class ButtonTabComponent extends JPanel
       }
 
       label.setText(name);
-      label.setToolTipText(getToolTipText());
+      label.setToolTipText(panel.getToolTipText());
    }
 
    public void actionPerformed(ActionEvent evt)

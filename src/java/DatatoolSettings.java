@@ -106,34 +106,59 @@ public class DatatoolSettings extends Properties
 
    private void setPropertiesPath()
    {
-      String base;
+      String dirname = System.getenv("DATATOOLTK");
 
-      if (System.getProperty("os.name").toLowerCase().startsWith("win"))
+      if (dirname != null && !dirname.isEmpty())
       {
-         base = "datatooltk-settings";
-      }
-      else
-      {
-         base = ".datatooltk";
-      }
+         propertiesPath = new File(dirname);
 
-      String home = System.getProperty("user.home");
-
-      if (home == null)
-      {
-         messageHandler.debug("No 'user.home' property!");
-         return;
-      }
-
-      File homeDir = new File(home);
-
-      if (!homeDir.exists())
-      {
-         messageHandler.debug("Home directory '"+home+"' doesn't exist!");
-         return;
+         if (!propertiesPath.exists())
+         {
+            if (!propertiesPath.mkdir())
+            {
+               messageHandler.debug(String.format("Unable to mkdir '%s'", propertiesPath));
+               propertiesPath = null;
+            }
+         }
+         else if (!propertiesPath.isDirectory())
+         {
+            messageHandler.debug(String.format(
+             "DATATOOLTK environment variable '%s' is not a directory.", propertiesPath));
+            propertiesPath = null;
+         }
       }
 
-      propertiesPath = new File(homeDir, base);
+      if (propertiesPath == null)
+      {
+         String base;
+
+         if (System.getProperty("os.name").toLowerCase().startsWith("win"))
+         {
+            base = "datatooltk-settings";
+         }
+         else
+         {
+            base = ".datatooltk";
+         }
+
+         String home = System.getProperty("user.home");
+
+         if (home == null)
+         {
+            messageHandler.debug("No 'user.home' property! (Set DATATOOLTK environment variable to appropriate directory.)");
+            return;
+         }
+
+         File dir = new File(home);
+
+         if (!dir.exists())
+         {
+            messageHandler.debug("Home directory '"+home+"' doesn't exist!");
+            return;
+         }
+
+         propertiesPath = new File(dir, base);
+      }
 
       if (propertiesPath.exists())
       {
@@ -459,6 +484,23 @@ public class DatatoolSettings extends Properties
    {
       setWindowWidth(dim.width);
       setWindowHeight(dim.height);
+   }
+
+   public void setLookAndFeel(String lookAndFeel)
+   {
+      if (lookAndFeel == null)
+      {
+         remove("lookandfeel");
+      }
+      else
+      {
+         setProperty("lookandfeel", lookAndFeel);
+      }
+   }
+
+   public String getLookAndFeel()
+   {
+      return getProperty("lookandfeel");
    }
 
    public String getTeXEncoding()
@@ -831,6 +873,24 @@ public class DatatoolSettings extends Properties
    public void setTeXMapping(boolean enable)
    {
       setProperty("subtexspecials", ""+enable);
+   }
+
+   public boolean isSolutionEnvStripped()
+   {
+      String prop = getProperty("probsolnstripenv");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setSolutionEnvStripped(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setSolutionEnvStripped(boolean stripEnv)
+   {
+      setProperty("probsolnstripenv", ""+stripEnv);
    }
 
    public void setOwnerOnly(boolean enable)

@@ -79,102 +79,107 @@ public class DatatoolProbSoln implements DatatoolImport
        return db;
     }
 
-    protected void parseData(File file, DatatoolDb db) throws IOException
-    {
-       MessageHandler messageHandler = getMessageHandler();
-       TeXApp texApp = messageHandler.getTeXApp();
+   protected void parseData(File file, DatatoolDb db) throws IOException
+   {
+      MessageHandler messageHandler = getMessageHandler();
+      TeXApp texApp = messageHandler.getTeXApp();
 
-       boolean hasVerbatim = false;
+      boolean hasVerbatim = false;
 
-       String encoding = settings.getTeXEncoding();
+      String encoding = settings.getTeXEncoding();
 
-       PreambleParser preambleParser = new PreambleParser(texApp);
-       TeXParser texParser = new TeXParser(preambleParser);
+      PreambleParser preambleParser = new PreambleParser(texApp);
+      TeXParser texParser = new TeXParser(preambleParser);
 
-       ProbSolnSty probSolnSty = new ProbSolnSty(null, preambleParser,
-         settings.getInitialRowCapacity(), true);
+      ProbSolnSty probSolnSty = new ProbSolnSty(null, preambleParser,
+        settings.getInitialRowCapacity(), true);
 
-       preambleParser.usepackage(probSolnSty);
+      preambleParser.usepackage(probSolnSty);
 
-       if (encoding == null)
-       {
-          texParser.parse(file);
-       }
-       else
-       {
-          texParser.parse(file, Charset.forName(encoding));
-       }
+      if (encoding == null)
+      {
+         texParser.parse(file);
+      }
+      else
+      {
+         texParser.parse(file, Charset.forName(encoding));
+      }
 
-       int numDataSets = probSolnSty.getDatabaseCount();
+      int numDataSets = probSolnSty.getDatabaseCount();
 
-       String key = messageHandler.getLabel("probsoln.label");
-       db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
+      String key = messageHandler.getLabel("probsoln.label");
+      db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
 
-       if (numDataSets > 1)
-       {
-          key = messageHandler.getLabel("probsoln.set");
-          db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
-       }
+      if (numDataSets > 1)
+      {
+         key = messageHandler.getLabel("probsoln.set");
+         db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
+      }
 
-       key = messageHandler.getLabel("probsoln.question");
-       db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
+      key = messageHandler.getLabel("probsoln.question");
+      db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
 
-       key = messageHandler.getLabel("probsoln.answer");
-       db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
+      key = messageHandler.getLabel("probsoln.answer");
+      db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
 
-       Iterator<ProbSolnData> allDataIt = probSolnSty.allEntriesIterator();
+      Iterator<ProbSolnData> allDataIt = probSolnSty.allEntriesIterator();
 
-       for (int rowIdx = 0; allDataIt.hasNext(); rowIdx++)
-       {
-          ProbSolnData data = allDataIt.next();
+      texApp.progress(0);
+      int maxRows = probSolnSty.getTotalProblemCount();
+
+      for (int rowIdx = 0; allDataIt.hasNext(); rowIdx++)
+      {
+         ProbSolnData data = allDataIt.next();
        
-          String probLabel = data.getName();
-          String dbLabel = data.getDataBaseLabel();
+         String probLabel = data.getName();
+         String dbLabel = data.getDataBaseLabel();
 
-          DatatoolRow row = new DatatoolRow(db, numDataSets > 1 ? 4 : 3);
-          int colIdx = 0;
+         DatatoolRow row = new DatatoolRow(db, numDataSets > 1 ? 4 : 3);
+         int colIdx = 0;
 
-          row.addCell(colIdx++, probLabel);
+         row.addCell(colIdx++, probLabel);
 
-          if (numDataSets > 1)
-          {
-             row.addCell(colIdx++, dbLabel);
-          }
+         if (numDataSets > 1)
+         {
+            row.addCell(colIdx++, dbLabel);
+         }
 
-          TeXObject question = data.getQuestion(texParser);
-          TeXObject answer = data.getAnswer(texParser, true);
+         TeXObject question = data.getQuestion(texParser);
+         TeXObject answer = data.getAnswer(texParser,
+            settings.isSolutionEnvStripped());
 
-          boolean hasVerb = checkElement(question);
+         boolean hasVerb = checkElement(question);
 
-          if (hasVerb)
-          {
-             hasVerbatim = true;
-          }
+         if (hasVerb)
+         {
+            hasVerbatim = true;
+         }
 
-          hasVerb = checkElement(answer);
+         hasVerb = checkElement(answer);
 
-          if (hasVerb)
-          {
-             hasVerbatim = true;
-          }
+         if (hasVerb)
+         {
+            hasVerbatim = true;
+         }
 
-          String questionText = question.toString(texParser);
-          String answerText = answer.toString(texParser);
+         String questionText = question.toString(texParser);
+         String answerText = answer.toString(texParser);
 
-          row.addCell(colIdx++, questionText);
+         row.addCell(colIdx++, questionText);
 
-          if (answerText.equals(questionText))
-          {
-             row.addCell(colIdx++, "");
-          }
-          else
-          {
-             row.addCell(colIdx++, answerText);
-          }
+         if (answerText.equals(questionText))
+         {
+            row.addCell(colIdx++, "");
+         }
+         else
+         {
+            row.addCell(colIdx++, answerText);
+         }
 
-          db.insertRow(rowIdx, row);
+         db.insertRow(rowIdx, row);
 
-       }
+         texApp.progress((100*rowIdx)/maxRows);
+      }
 
       if (hasVerbatim)
       {

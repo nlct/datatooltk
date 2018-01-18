@@ -49,13 +49,34 @@ public class DatatoolMessages extends Hashtable<String,MessageFormat>
              int n = message.length();
 
              StringBuilder builder = new StringBuilder(n);
+             StringBuilder csBuilder = null;
 
              for (int i = 0; i < n; )
              {
                 int cp = message.codePointAt(i);
                 i += Character.charCount(cp);
 
-                if (cp == '\\' && i < n)
+                if (csBuilder != null)
+                {
+                   if (cp == '|')
+                   {
+                      builder.append('\\');
+                      builder.append(csBuilder);
+                      csBuilder = null;
+                   }
+                   else if (Character.isAlphabetic(cp))
+                   {
+                      csBuilder.appendCodePoint(cp);
+                   }
+                   else
+                   {
+                      builder.append('|');
+                      builder.append(csBuilder);
+                      builder.appendCodePoint(cp);
+                      csBuilder = null;
+                   }
+                }
+                else if (cp == '\\' && i < n)
                 {
                    int nextCp = message.codePointAt(i);
                    i += Character.charCount(nextCp);
@@ -73,10 +94,20 @@ public class DatatoolMessages extends Hashtable<String,MessageFormat>
                       builder.appendCodePoint(nextCp);
                    }
                 }
+                else if (cp == '|')
+                {
+                   csBuilder = new StringBuilder();
+                }
                 else
                 {
                    builder.appendCodePoint(cp);
                 }
+             }
+
+             if (csBuilder != null)
+             {
+                builder.append('|');
+                builder.append(csBuilder);
              }
 
              put((String)key, new MessageFormat(builder.toString()));

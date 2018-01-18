@@ -1,6 +1,7 @@
 # Encoding: UTF-8
 # GB English language file for datatooltk
 # Tab -> \t newline -> \n literal backslash -> \\
+# Control sequence (literal) -> |csname|
 
 # File menu
 file=File
@@ -222,6 +223,8 @@ preferences.tex.encoding=Encoding:
 preferences.tex.encoding.mnemonic=N
 preferences.tex.map=Map TeX characters when importing data from CSV or SQL
 preferences.tex.map.mnemonic=M
+preferences.tex.stripsolnenv=Strip solution environment from probsoln problems
+preferences.tex.stripsolnenv.mnemonic=V
 preferences.tex.latexapp=LaTeX Executable: 
 preferences.tex.latexapp.mnemonic=L 
 preferences.tex.add_map=Add
@@ -236,6 +239,10 @@ preferences.display.font=Font
 preferences.display.font.mnemonic=F
 preferences.display.fontsize=Font Size
 preferences.display.fontsize.mnemonic=Z
+preferences.display.lookandfeel.title=Graphical Interface
+preferences.display.lookandfeel=Look and Feel:
+preferences.display.lookandfeel.mnemonic=F
+preferences.display.lookandfeel.restart=Application needs a restart for a change in look and feel to take effect.
 preferences.display.cellheight=Cell Height
 preferences.display.cellheight.mnemonic=G
 preferences.display.cellwidths=Cell Widths
@@ -259,7 +266,7 @@ preferences.currencies.remove_currency=Remove
 preferences.currencies.remove_currency.mnemonic=R
 preferences.currencies.edit_currency=Edit
 preferences.currencies.edit_currency.mnemonic=T
-preferences.currencies.reminder=If you add new currencies here, remember to also add them in your document using \\DTLnewcurrencysymbol
+preferences.currencies.reminder=If you add new currencies here, remember to also add them in your document using |DTLnewcurrencysymbol|
 preferences.language=Language
 preferences.language.mnemonic=L
 preferences.language.restart=Application needs to be restarted for language change to take effect.
@@ -457,7 +464,7 @@ message.unsaved_data_query=''{0}'' has been modified. Do you want to save it?
 message.cancelled=Cancelled
 message.discard_edit_query=Discard the edits you have just made?
 message.confirm_discard=Confirm Discard
-message.input_database_name=Database Name (as used in \\DTLnewdb):
+message.input_database_name=Database Name (as used in |DTLnewdb|):
 message.cells_updated={0,number} {0,choice,1#cell|1<cells} updated.
 
 # Information messages
@@ -480,7 +487,7 @@ syntax.general=General Options:
 syntax.gui={0} (or {1})\tGUI interface.
 syntax.batch={0} (or {1})\tNo GUI interface. (Default.)
 syntax.in={0} (or {1}) <datatool file>\n\t\tLoad <datatool file>. (Can''t be used with --csv or --sql or\n\t\t--probsoln.) The {0} (or {1}) switch is optional so\n\t\t{2} <file> is equivalent to {2} {0} <file>.
-syntax.name={0} <name>\tSet the database label (as used in \\DTLnewdb) to <name>.
+syntax.name={0} <name>\tSet the database label (as used in |DTLnewdb|) to <name>.
 syntax.out={0} (or {1}) <filename>\tSave to <filename>.
 syntax.version={0} (or {1})\tPrint version and exit.
 syntax.help={0} (or {1})\t\tPrint this help message and exit.
@@ -591,6 +598,7 @@ error.syntax.missing_value=Missing value after {0}
 error.syntax.invalid_compat=Invalid compatibility setting {0}
 error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the {0} option. See {1} for help.)
 error.cli.no_out={0} <file> required for batch mode.\n(If you want the GUI interface, use the {1} option. See {2} for help.)
+error.save.failed=Failed to save ''{0}''.\n{1}
 error.load.failed=Failed to load ''{0}''.\n{1}
 error.export.failed=Failed to export to ''{0}''.
 error.import.failed=Failed to import ''{0}''.\n{1}
@@ -651,6 +659,7 @@ warning.ignoring_filter=Ignoring filter option ''{0}''. No such column label.
 
 # Progress Messages
 progress.title={0} Messages
+progress.saving=Saving {0}
 progress.loading=Loading {0}
 progress.importing=Importing {0}
 progress.merging=Merging {0}
@@ -753,7 +762,7 @@ tex.error.extra_or_forgotten=Extra {0}, or forgotten {1}
 tex.error.double_subscript=Double subscript _{0}_ (replaced with _{0}'{}'_)
 tex.error.double_superscript=Double superscript ^{0}^ (replaced with ^{0}'{}'^)
 tex.error.illegal_align=Illegal alignment {0}
-tex.error.misplaced_omit=Misplaced \\omit
+tex.error.misplaced_omit=Misplaced |omit|
 tex.error.improper_alphabetic_constant=Improper alphabetic constant {0}
 tex.error.register_expected=Register expected
 tex.error.register_expected_but_found=Register expected (found ''{0}'')
@@ -766,15 +775,15 @@ tex.error.file.not.found=File ''{0}'' not found.
 
 latex.error.no_alignment=No alignment specifiers found
 latex.error.undefined_counter=No counter ''{0}'' defined
-latex.error.multi_begin_doc=Only one \\begin'{'document'}' permitted
-latex.error.no_begin_doc=No \\begin'{'document'}' found
-latex.error.multi_cls=Only one \\documentclass permitted
+latex.error.multi_begin_doc=Only one |begin|'{'document'}' permitted
+latex.error.no_begin_doc=No |begin|'{'document'}' found
+latex.error.multi_cls=Only one |documentclass| permitted
 latex.error.missing_key=Missing ''{0}'' key
-latex.error.extra_end=Extra \\end'{'{0}'}' found
+latex.error.extra_end=Extra |end|'{'{0}'}' found
 latex.error.unaccessible=Unaccessible ''{0}''
 latex.error.defined=''{0}'' already defined
 latex.error.illegal_array_arg_char=Illegal character ''{0}'' in array arg
-latex.error.lonely_item=Lonely \\item
+latex.error.lonely_item=Lonely |item|
 latex.package.error=Package {0} Error: {1}
 latex.class.error=Class {0} Error: {1}
 

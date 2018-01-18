@@ -68,9 +68,9 @@ public class DatatoolFileFilter extends FileFilter
 
    public String getDefaultExtension()
    {
-      return extensions.get(0);
+      return extensions[0];
    }
 
    private String description;
-   private List<String> extensions;
+   private String[] extensions;
 }

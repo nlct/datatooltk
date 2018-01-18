@@ -27,39 +27,11 @@ import com.dickimawbooks.datatooltk.MessageHandler;
 /**
  * Class representing a CSV file filter
  */
-public class CsvFileFilter extends FileFilter
+public class CsvFileFilter extends DatatoolFileFilter
 {
    public CsvFileFilter(MessageHandler messageHandler)
    {
-      super();
-      description = messageHandler.getLabelWithValues("filter.csv", "*.csv");
+      super(messageHandler.getLabelWithValues("filter.csv", "*.csv"), "csv");
    }
 
-   public boolean accept(File file)
-   {
-      if (file.isDirectory())
-      {
-         return true;
-      }
-
-      String name = file.getName();
-
-      int idx = name.lastIndexOf(".");
-
-      if (idx == -1)
-      {
-         return false;
-      }
-
-      String suffix = name.substring(idx+1).toLowerCase();
-
-      return suffix.equals("csv");
-   }
-
-   public String getDescription()
-   {
-      return description;
-   }
-
-   private String description;
 }

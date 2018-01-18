@@ -27,40 +27,12 @@ import com.dickimawbooks.datatooltk.MessageHandler;
 /**
  * Class representing a spreadsheet file filter
  */
-public class SpreadSheetFilter extends FileFilter
+public class SpreadSheetFilter extends DatatoolFileFilter
 {
    public SpreadSheetFilter(MessageHandler messageHandler)
    {
-      super();
-      description = messageHandler.getLabelWithValues("filter.xlsods", 
-       "*.xls, *.ods");
+      super(messageHandler.getLabelWithValues("filter.xlsods", 
+       "*.xls, *.ods"), "xls", "ods");
    }
 
-   public boolean accept(File file)
-   {
-      if (file.isDirectory())
-      {
-         return true;
-      }
-
-      String name = file.getName();
-
-      int idx = name.lastIndexOf(".");
-
-      if (idx == -1)
-      {
-         return false;
-      }
-
-      String suffix = name.substring(idx+1).toLowerCase();
-
-      return suffix.equals("xls") || suffix.equals("ods");
-   }
-
-   public String getDescription()
-   {
-      return description;
-   }
-
-   private String description;
 }

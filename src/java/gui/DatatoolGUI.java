@@ -75,6 +75,41 @@ public class DatatoolGUI extends JFrame
    {
       MessageHandler messageHandler = getMessageHandler();
 
+      // Need to set L&F before creating components
+
+      String lookAndFeel = settings.getLookAndFeel();
+
+      if (lookAndFeel == null || lookAndFeel.isEmpty())
+      {
+         lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName();
+         settings.setLookAndFeel(lookAndFeel);
+      }
+
+      try
+      {
+         UIManager.setLookAndFeel(lookAndFeel);
+      }
+      catch (Exception e)
+      {
+         LookAndFeel currentLF = UIManager.getLookAndFeel();
+
+         if (currentLF == null)
+         {
+            settings.setLookAndFeel("");
+
+            messageHandler.debug(String.format("Can't set look and feel '%s'",
+             lookAndFeel), e);
+         }
+         else
+         {
+            String currentLFName = currentLF.getClass().getName();
+            settings.setLookAndFeel(currentLFName);
+
+            messageHandler.debug(String.format("Can't set look and feel '%s' (fallback '%s')",
+             lookAndFeel, currentLFName), e);
+         }
+      }
+
       setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
       addWindowListener(new WindowAdapter()
@@ -1054,6 +1089,7 @@ public class DatatoolGUI extends JFrame
 
    private void setTeXFileFilters()
    {
+      File file = fileChooser.getSelectedFile();
       FileFilter current = fileChooser.getFileFilter();
 
       fileChooser.resetChoosableFileFilters();
@@ -1066,18 +1102,34 @@ public class DatatoolGUI extends JFrame
       fileChooser.addChoosableFileFilter(texFilter);
       fileChooser.addChoosableFileFilter(all);
 
-      if (current != dbtexFilter && current != texFilter)
+      if (current != dbtexFilter)
       {
-         current = dbtexFilter;
-      }
+         fileChooser.setFileFilter(dbtexFilter);
 
-      fileChooser.setFileFilter(current);
+         if (file != null && !dbtexFilter.accept(file))
+         {
+            String name = file.getName();
+
+            int idx = name.lastIndexOf(".");
+
+            if (idx > 0)
+            {
+               file = new File(file.getParent(), 
+                 String.format("%s.%s", name.substring(0, idx),
+                    dbtexFilter.getDefaultExtension()));
+
+               if (file.exists())
+               {
+                  fileChooser.setSelectedFile(file);
+               }
+            }
+         }
+      }
    }
 
    private void setTeXFileFilter()
    {
-      FileFilter current = fileChooser.getFileFilter();
-
+      File file = fileChooser.getSelectedFile();
       fileChooser.resetChoosableFileFilters();
 
       FileFilter all = fileChooser.getAcceptAllFileFilter();
@@ -1087,12 +1139,26 @@ public class DatatoolGUI extends JFrame
       fileChooser.addChoosableFileFilter(texFilter);
       fileChooser.addChoosableFileFilter(all);
 
-      if (!(current == texFilter || current == all))
-      {
-         current = texFilter;
-      }
+      fileChooser.setFileFilter(texFilter);
 
-      fileChooser.setFileFilter(current);
+      if (file != null && !texFilter.accept(file))
+      {
+         String name = file.getName();
+
+         int idx = name.lastIndexOf(".");
+
+         if (idx > 0)
+         {
+            file = new File(file.getParent(), 
+              String.format("%s.%s", name.substring(0, idx),
+                 texFilter.getDefaultExtension()));
+
+            if (file.exists())
+            {
+               fileChooser.setSelectedFile(file);
+            }
+         }
+      }
    }
 
    private void setCsvFileFilters()
@@ -1105,6 +1171,8 @@ public class DatatoolGUI extends JFrame
          return;
       }
 
+      File file = fileChooser.getSelectedFile();
+
       fileChooser.resetChoosableFileFilters();
 
       FileFilter all = fileChooser.getAcceptAllFileFilter();
@@ -1115,6 +1183,27 @@ public class DatatoolGUI extends JFrame
       fileChooser.addChoosableFileFilter(csvFilter);
       fileChooser.addChoosableFileFilter(txtFilter);
       fileChooser.addChoosableFileFilter(all);
+
+      fileChooser.setFileFilter(csvtxtFilter);
+
+      if (file != null && !csvtxtFilter.accept(file))
+      {
+         String name = file.getName();
+
+         int idx = name.lastIndexOf(".");
+
+         if (idx > 0)
+         {
+            file = new File(file.getParent(), 
+              String.format("%s.%s", name.substring(0, idx),
+                 csvtxtFilter.getDefaultExtension()));
+
+            if (file.exists())
+            {
+               fileChooser.setSelectedFile(file);
+            }
+         }
+      }
    }
 
    private void setSpreadSheetFilters()
@@ -1127,6 +1216,7 @@ public class DatatoolGUI extends JFrame
          return;
       }
 
+      File file = fileChooser.getSelectedFile();
       fileChooser.resetChoosableFileFilters();
 
       FileFilter all = fileChooser.getAcceptAllFileFilter();
@@ -1137,6 +1227,27 @@ public class DatatoolGUI extends JFrame
       fileChooser.addChoosableFileFilter(xlsFilter);
       fileChooser.addChoosableFileFilter(odsFilter);
       fileChooser.addChoosableFileFilter(all);
+
+      fileChooser.setFileFilter(spreadFilter);
+
+      if (file != null && !spreadFilter.accept(file))
+      {
+         String name = file.getName();
+
+         int idx = name.lastIndexOf(".");
+
+         if (idx > 0)
+         {
+            file = new File(file.getParent(), 
+              String.format("%s.%s", name.substring(0, idx),
+                 spreadFilter.getDefaultExtension()));
+
+            if (file.exists())
+            {
+               fileChooser.setSelectedFile(file);
+            }
+         }
+      }
    }
 
    public DatatoolDbPanel getPanel(DatatoolDb db)
@@ -1485,7 +1596,7 @@ public class DatatoolGUI extends JFrame
         (DatatoolDbPanel)tabbedPane.getComponentAt(idx));
    }
 
-   private void updateTitle(DatatoolDbPanel panel)
+   public void updateTitle(DatatoolDbPanel panel)
    {
       if (panel == null)
       {
@@ -1495,8 +1606,11 @@ public class DatatoolGUI extends JFrame
       {
          File file = panel.getDatabase().getFile();
 
-         setTitle(String.format("%s - %s", DatatoolTk.APP_NAME,
+         setTitle(String.format("%s - %s", DatatoolTk.APP_NAME, 
             file == null ? getDefaultUntitled() : file.getName()));
+
+         tabbedPane.setToolTipTextAt(tabbedPane.indexOfComponent(panel), 
+            panel.getToolTipText());
       }
    }
 
@@ -1594,7 +1708,7 @@ public class DatatoolGUI extends JFrame
 
    private JFileChooser fileChooser;
 
-   private FileFilter texFilter, dbtexFilter, csvFilter, txtFilter,
+   private DatatoolFileFilter texFilter, dbtexFilter, csvFilter, txtFilter,
      csvtxtFilter, xlsFilter, odsFilter, spreadFilter;
 
    private HeaderDialog headerDialog;
