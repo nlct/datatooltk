@@ -110,6 +110,7 @@ while (<FD>)
       $value=~s/(\w)''(\w)/$1$closequote$2/g;
       $value=~s/'{2}([^']+)'{2}/$openquote$1$closequote/g;
       $value=~s/'{2}/$closequote/g;
+      $value=~s/\|([a-zA-Z]+)\|/\\cs{$1}/g;
 
       # strip any trailing ellipsis
       $value=~s/\.{3}$//g;
@@ -1350,6 +1351,22 @@ sub end_alltt{
    &handle_html('</pre>');
 
    print TEXFD "\\end{alltt}";
+}
+
+sub start_verb{
+   my ($expat, %attrs) = @_;
+
+   &handle_html('<pre style="display: inline;">');
+
+   print TEXFD "\\verb|";
+}
+
+sub end_verb{
+   my ($expat) = @_;
+
+   &handle_html('</pre>');
+
+   print TEXFD "|";
 }
 
 sub start_verbinput{
