@@ -741,7 +741,7 @@ public class PropertiesDialog extends JDialog
       initialColumnCapacitySpinner.setValue(Integer.valueOf(
         settings.getInitialColumnCapacity()));
 
-      char sep = settings.getSeparator();
+      int sep = settings.getSeparator();
 
       if (sep == '\t')
       {
@@ -759,7 +759,7 @@ public class PropertiesDialog extends JDialog
 
       hasHeaderBox.setSelected(settings.hasCSVHeader());
 
-      char esc = settings.getCSVescape();
+      int esc = settings.getCSVescape();
 
       if (esc == 0)
       {
@@ -1085,9 +1085,9 @@ public class PropertiesDialog extends JDialog
       }
       else
       {
-         char sep = sepCharField.getValue();
+         int sep = sepCharField.getValue();
 
-         if (sep == (char)0)
+         if (sep == 0)
          {
             getMessageHandler().error(this, 
                getMessageHandler().getLabel("error.missing_sep"));
@@ -1097,7 +1097,7 @@ public class PropertiesDialog extends JDialog
          settings.setSeparator(sep);
       }
 
-      char delim = delimCharField.getValue();
+      int delim = delimCharField.getValue();
 
       if (delim == 0)
       {

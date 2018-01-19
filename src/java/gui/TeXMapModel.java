@@ -56,20 +56,50 @@ public class TeXMapModel extends AbstractTableModel
       texMapDialog = new TeXMapDialog(messageHandler.getDatatoolGuiResources(),
          dialog);
 
-      keyList = new Vector<Character>();
+      keyList = new Vector<Integer>();
       valueList = new Vector<String>();
 
       for (Enumeration en=settings.keys(); en.hasMoreElements();)
       {
          String key = (String)en.nextElement();
 
-         Matcher m = PATTERN_KEY.matcher(key);
+         Matcher m = OLD_PATTERN_KEY.matcher(key);
 
          if (m.matches())
          {
-            char c = m.group(1).charAt(0);
-            keyList.add(new Character(c));
-            valueList.add(settings.getTeXMap(c));
+            int c = m.group(1).codePointAt(0);
+
+            Integer codePoint = Integer.valueOf(c);
+
+            if (!keyList.contains(codePoint))
+            {
+               keyList.add(codePoint);
+               valueList.add(settings.getTeXMap(c));
+            }
+         }
+         else
+         {
+            m = PATTERN_KEY.matcher(key);
+
+            if (m.matches())
+            {
+               try
+               {
+                  int c = Integer.parseInt(m.group(1));
+
+                  Integer codePoint = Integer.valueOf(c);
+
+                  if (!keyList.contains(codePoint))
+                  {
+                     keyList.add(codePoint);
+                     valueList.add(settings.getTeXMap(c));
+                  }
+               }
+               catch (NumberFormatException e)
+               {// shouldn't happen
+                  settings.getMessageHandler().debug(e);
+               }
+            }
          }
       }
 
@@ -95,7 +125,8 @@ public class TeXMapModel extends AbstractTableModel
    {
       if (columnIndex == 0)
       {
-         keyList.set(rowIndex, new Character(aValue.toString().charAt(0)));
+         keyList.set(rowIndex, 
+            Integer.valueOf(aValue.toString().codePointAt(0)));
       }
       else
       {
@@ -109,29 +140,30 @@ public class TeXMapModel extends AbstractTableModel
 
    public Object getValueAt(int rowIndex, int columnIndex)
    {
-      return columnIndex == 0 ? keyList.get(rowIndex) : valueList.get(rowIndex);
+      return columnIndex == 0 ? 
+        String.format("%c", keyList.get(rowIndex)) : valueList.get(rowIndex);
    }
 
    public void updateSettings()
    {
       for (int i = 0; i < originals.length; i++)
       {
-         Character c = (Character)originals[i];
+         Integer codePoint = (Integer)originals[i];
 
-         int index = keyList.indexOf(c);
+         int index = keyList.indexOf(codePoint);
 
          if (index == -1)
          {
             // User has removed this mapping.
 
-            settings.removeTeXMap(c.charValue());
+            settings.removeTeXMap(codePoint.intValue());
          }
          else
          {
-            Character key = keyList.remove(index);
+            Integer key = keyList.remove(index);
             String value = valueList.remove(index);
 
-            settings.setTeXMap(key.charValue(), value);
+            settings.setTeXMap(key.intValue(), value);
          }
       }
 
@@ -139,7 +171,7 @@ public class TeXMapModel extends AbstractTableModel
 
       for (int i = 0, n = keyList.size(); i < n; i++)
       {
-         settings.setTeXMap(keyList.get(i).charValue(), valueList.get(i));
+         settings.setTeXMap(keyList.get(i).intValue(), valueList.get(i));
       }
    }
 
@@ -198,12 +230,15 @@ public class TeXMapModel extends AbstractTableModel
 
    private TeXMapDialog texMapDialog;
 
-   private Vector<Character> keyList;
+   private Vector<Integer> keyList;
    private Vector<String> valueList;
 
    private Object[] originals;
 
    private static final Pattern PATTERN_KEY 
+     = Pattern.compile("tex\\.(\\d{4,})");
+
+   private static final Pattern OLD_PATTERN_KEY 
      = Pattern.compile("tex\\.(.)");
 
    public static String COL_KEY = null;
@@ -261,9 +296,9 @@ class TeXMapDialog extends JDialog implements ActionListener
    }
 
    
-   public boolean displayEdit(Character c, String value)
+   public boolean displayEdit(Integer c, String value)
    {
-      if (c != null) keyField.setValue(c.charValue());
+      if (c != null) keyField.setValue(c.intValue());
       if (value != null) valueField.setText(value);
 
       setTitle(TITLE_EDIT);
@@ -317,7 +352,7 @@ class TeXMapDialog extends JDialog implements ActionListener
       return resources.getMessageHandler();
    }
 
-   public Character getKey() { return new Character(keyField.getValue());}
+   public Integer getKey() { return Integer.valueOf(keyField.getValue());}
 
    public String getValue() { return valueField.getText(); }
 

@@ -6,6 +6,8 @@ v1.7:
 
  - Removed --shuffle-iterations
 
+ - Improved GUI
+
 v1.6:
 
  - Added --csvescape and --nocsvescape

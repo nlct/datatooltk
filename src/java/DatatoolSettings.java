@@ -201,7 +201,23 @@ public class DatatoolSettings extends Properties
 
             in.close();
             in = null;
+
+            if (getProperty("version") == null)
+            {
+               upgrade=true;
+
+               if (getProperty("tex.&") == null)
+               {
+                  setTeXMap((int)'&', "\\&");// missing from pre v1.7
+               }
+            }
          }
+         else
+         {
+            setDefaultTeXMaps();
+         }
+
+         setProperty("version", DatatoolTk.APP_VERSION);
 
          file = new File(propertiesPath, recentName);
 
@@ -589,24 +605,25 @@ public class DatatoolSettings extends Properties
          setProperty("sort-locale", locale);
       }
    }
-   public void setSeparator(char separator)
+
+   public void setSeparator(int separator)
    {
-      setProperty("sep", ""+separator);
+      setProperty("sep", String.format("%c", separator));
    }
 
-   public char getSeparator()
+   public int getSeparator()
    {
-      return getProperty("sep").charAt(0);
+      return getProperty("sep").codePointAt(0);
    }
 
-   public void setDelimiter(char delimiter)
+   public void setDelimiter(int delimiter)
    {
-      setProperty("delim", ""+delimiter);
+      setProperty("delim", String.format("%c", delimiter));
    }
 
-   public char getDelimiter()
+   public int getDelimiter()
    {
-      return getProperty("delim").charAt(0);
+      return getProperty("delim").codePointAt(0);
    }
 
    public String getSheetRef()
@@ -705,7 +722,7 @@ public class DatatoolSettings extends Properties
       setProperty("csvHasHeader", ""+hasHeader);
    }
 
-   public char getCSVescape()
+   public int getCSVescape()
    {
       String prop = getProperty("csvescape");
 
@@ -715,7 +732,7 @@ public class DatatoolSettings extends Properties
          return '\\';
       }
 
-      return prop.isEmpty() || prop.equals("\\0") ? '\0' : prop.charAt(0);
+      return prop.isEmpty() || prop.equals("\\0") ? 0 : prop.codePointAt(0);
    }
 
    public void setCSVescape(String esc)
@@ -723,9 +740,9 @@ public class DatatoolSettings extends Properties
       setProperty("csvescape", esc);
    }
 
-   public void setCSVescape(char esc)
+   public void setCSVescape(int esc)
    {
-      setProperty("csvescape", esc == '\0' ? "" : ""+esc);
+      setProperty("csvescape", esc == 0 ? "" : String.format("%c", esc));
    }
 
    public String getSqlDbName()
@@ -924,21 +941,40 @@ public class DatatoolSettings extends Properties
       return Boolean.parseBoolean(prop);
    }
 
-   public String getTeXMap(char c)
+   public String getTeXMap(int codePoint)
    {
-      String prop = getProperty("tex."+c);
+      if (upgrade)
+      {
+         // backward compatibility check first
 
-      return prop;
+         String key = String.format("tex.%c", codePoint);
+
+         String prop = getProperty(key);
+
+         if (prop != null)
+         {
+            remove(key);
+            setProperty(getTeXMapKey(codePoint), prop);
+            return prop;
+         }
+      }
+
+      return getProperty(getTeXMapKey(codePoint));
    }
 
-   public void setTeXMap(char c, String value)
+   public String removeTeXMap(int codePoint)
    {
-      setProperty("tex."+c, value);
+      return (String)remove(getTeXMapKey(codePoint));
    }
 
-   public String removeTeXMap(char c)
+   public void setTeXMap(int codePoint, String value)
    {
-      return (String)remove("tex."+c);
+      setProperty(getTeXMapKey(codePoint), value);
+   }
+
+   private String getTeXMapKey(int codePoint)
+   {
+      return String.format("tex.%04d", codePoint);
    }
 
    public int getCurrencyCount()
@@ -1447,20 +1483,24 @@ public class DatatoolSettings extends Properties
       setTeXMapping(false);
       setPerl("perl");
 
-      setTeXMap('\\', "\\textbackslash ");
-      setTeXMap('$', "\\$");
-      setTeXMap('#', "\\#");
-      setTeXMap('%', "\\%");
-      setTeXMap('_', "\\_");
-      setTeXMap('{', "\\{");
-      setTeXMap('}', "\\}");
-      setTeXMap('~', "\\textasciitilde ");
-      setTeXMap('^', "\\textasciicircum ");
-
       setFontName("Monospaced");
       setFontSize(12);
       setCellHeight(4);
 
+   }
+
+   private void setDefaultTeXMaps()
+   {
+      setTeXMap((int)'\\', "\\textbackslash ");
+      setTeXMap((int)'$', "\\$");
+      setTeXMap((int)'#', "\\#");
+      setTeXMap((int)'%', "\\%");
+      setTeXMap((int)'_', "\\_");
+      setTeXMap((int)'{', "\\{");
+      setTeXMap((int)'}', "\\}");
+      setTeXMap((int)'&', "\\&");
+      setTeXMap((int)'~', "\\textasciitilde ");
+      setTeXMap((int)'^', "\\textasciicircum ");
    }
 
    public void setMessageHandler(MessageHandler handler)
@@ -1618,6 +1658,8 @@ public class DatatoolSettings extends Properties
    private final String recentName = "recentfiles";
 
    private final String currencyFileName = "currencies";
+
+   private boolean upgrade=false;
 
    private int compatLevel = COMPAT_LATEST;
 

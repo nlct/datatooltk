@@ -188,15 +188,16 @@ public class DatatoolSql implements DatatoolImport
 
       StringBuilder builder = new StringBuilder(n);
 
-      for (int j = 0; j < n; j++)
+      for (int j = 0; j < n; )
       {
-         char c = value.charAt(j);
+         int c = value.codePointAt(j);
+         j += Character.charCount(c);
 
          String map = settings.getTeXMap(c);
 
          if (map == null)
          {
-            builder.append(c);
+            builder.appendCodePoint(c);
          }
          else
          {

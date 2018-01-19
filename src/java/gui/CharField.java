@@ -34,9 +34,9 @@ public class CharField extends JTextField
     * Initialise with given value
     */
 
-   public CharField(char defVal)
+   public CharField(int defVal)
    {
-      super(""+defVal, 1);
+      super(String.format("%c", defVal), 1);
    }
 
    public CharField()
@@ -49,21 +49,21 @@ public class CharField extends JTextField
       return new CharDocument();
    }
 
-   public void setValue(char val)
+   public void setValue(int val)
    {
-      super.setText(""+val);
+      super.setText(String.format("%c", val));
    }
 
-   public char getValue()
+   public int getValue()
    {
       String text = super.getText();
 
       if (text.length() == 0)
       {
-         return (char)0;
+         return (int)0;
       }
 
-      return text.charAt(0);
+      return text.codePointAt(0);
    }
 
    public Dimension getMaximumSize()

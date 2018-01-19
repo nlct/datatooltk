@@ -52,8 +52,9 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
          {
             writer = new BufferedWriter(new FileWriter(file));
    
-            csvWriter = new CSVWriter(writer, settings.getSeparator(),
-              settings.getDelimiter());
+            csvWriter = new CSVWriter(writer, 
+              (char)settings.getSeparator(),
+              (char)settings.getDelimiter());
    
             if (settings.hasCSVHeader())
             {
@@ -137,8 +138,10 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
                  Charset.forName(csvEncoding));
             }
    
-            csvReader = new CSVReader(reader, settings.getSeparator(),
-              settings.getDelimiter(), settings.getCSVescape());
+            csvReader = new CSVReader(reader, 
+              (char)settings.getSeparator(),
+              (char)settings.getDelimiter(), 
+              (char)settings.getCSVescape());
    
             String[] fields = csvReader.readNext();
 
@@ -206,7 +209,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       {
          throw new DatatoolImportException(
           getMessageHandler().getLabelWithValues("error.import.failed", 
-           file.toString()), e);
+           file.toString(), e.getMessage()), e);
       }
 
       if (hasVerbatim)
@@ -253,15 +256,16 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
 
          StringBuilder builder = new StringBuilder(n);
 
-         for (int j = 0; j < n; j++)
+         for (int j = 0; j < n; )
          {
-            char c = value.charAt(j);
+            int c = value.codePointAt(j);
+            j += Character.charCount(c);
 
             String map = settings.getTeXMap(c);
 
             if (map == null)
             {
-               builder.append(c);
+               builder.appendCodePoint(c);
             }
             else
             {

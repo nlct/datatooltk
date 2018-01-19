@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+datatooltk --map-tex-specials --nocsv-escape --csv sample-1000x3-spchar.csv -o data.dbtex || exit $?
+pdflatex -jobname test-dbtex-doc4 test-dbtex-doc

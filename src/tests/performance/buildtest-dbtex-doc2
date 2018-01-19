@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
-datatooltk --sort Field1 --sort-locale none --sort-case-insensitive --csv sample-1000x3.csv -o data.dbtex || exit $?
-pdflatex -jobname test-dbtex-doc2 test-dbtex-doc1
+datatooltk --nomap-tex-specials --nocsv-escape --sort Field1 --sort-locale none --sort-case-insensitive --csv sample-1000x3.csv -o data.dbtex || exit $?
+pdflatex -jobname test-dbtex-doc2 test-dbtex-doc

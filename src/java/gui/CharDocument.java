@@ -36,7 +36,9 @@ public class CharDocument extends PlainDocument
       String newString = oldString.substring(0,offs)
                        +str+oldString.substring(offs);
 
-      if (newString.length() <= 1)
+
+      if (newString.isEmpty() 
+       || newString.length() == Character.charCount(newString.codePointAt(0)))
       {
          super.insertString(offs, str, a);
       }
