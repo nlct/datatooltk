@@ -258,16 +258,7 @@ public class DatatoolSettings extends Properties
          }
          else
          {
-            addCurrency("\\$");
-            addCurrency("\\pounds");
-            addCurrency("\\texteuro");
-            addCurrency("\\textdollar");
-            addCurrency("\\textstirling");
-            addCurrency("\\textyen");
-            addCurrency("\\textwon");
-            addCurrency("\\textcurrency");
-            addCurrency("\\euro");
-            addCurrency("\\yen");
+            setDefaultCurrency();
          }
       }
       finally
@@ -608,7 +599,7 @@ public class DatatoolSettings extends Properties
 
    public void setSeparator(int separator)
    {
-      setProperty("sep", String.format("%c", separator));
+      setProperty("sep", MessageHandler.codePointToString(separator));
    }
 
    public int getSeparator()
@@ -618,7 +609,7 @@ public class DatatoolSettings extends Properties
 
    public void setDelimiter(int delimiter)
    {
-      setProperty("delim", String.format("%c", delimiter));
+      setProperty("delim", MessageHandler.codePointToString(delimiter));
    }
 
    public int getDelimiter()
@@ -742,7 +733,7 @@ public class DatatoolSettings extends Properties
 
    public void setCSVescape(int esc)
    {
-      setProperty("csvescape", esc == 0 ? "" : String.format("%c", esc));
+      setProperty("csvescape", esc == 0 ? "" : MessageHandler.codePointToString(esc));
    }
 
    public String getSqlDbName()
@@ -1501,6 +1492,20 @@ public class DatatoolSettings extends Properties
       setTeXMap((int)'&', "\\&");
       setTeXMap((int)'~', "\\textasciitilde ");
       setTeXMap((int)'^', "\\textasciicircum ");
+   }
+
+   private void setDefaultCurrency()
+   {
+      addCurrency("\\$");
+      addCurrency("\\pounds");
+      addCurrency("\\texteuro");
+      addCurrency("\\textdollar");
+      addCurrency("\\textstirling");
+      addCurrency("\\textyen");
+      addCurrency("\\textwon");
+      addCurrency("\\textcurrency");
+      addCurrency("\\euro");
+      addCurrency("\\yen");
    }
 
    public void setMessageHandler(MessageHandler handler)

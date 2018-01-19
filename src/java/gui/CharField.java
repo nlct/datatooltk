@@ -23,6 +23,8 @@ import java.awt.FontMetrics;
 import javax.swing.JTextField;
 import javax.swing.text.Document;
 
+import com.dickimawbooks.datatooltk.MessageHandler;
+
 /**
  * Text field that only allows a single character.
  * @author Nicola L C Talbot
@@ -36,12 +38,14 @@ public class CharField extends JTextField
 
    public CharField(int defVal)
    {
-      super(String.format("%c", defVal), 1);
+      super(MessageHandler.codePointToString(defVal), 1);
+      setHorizontalAlignment(CENTER);
    }
 
    public CharField()
    {
       super(1);
+      setHorizontalAlignment(CENTER);
    }
 
    protected Document createDefaultModel()
@@ -51,7 +55,7 @@ public class CharField extends JTextField
 
    public void setValue(int val)
    {
-      super.setText(String.format("%c", val));
+      super.setText(MessageHandler.codePointToString(val));
    }
 
    public int getValue()

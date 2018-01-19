@@ -1756,12 +1756,12 @@ class MoveIndicatorIcon implements Icon
 
       if (left)
       {
-         g2.drawString(String.format("%c", LEFT_SYMBOL),
+         g2.drawString(MessageHandler.codePointToString(LEFT_SYMBOL),
             x, (int)bounds.getHeight()-y);
       }
       else
       {
-         g2.drawString(String.format("%c", RIGHT_SYMBOL), 
+         g2.drawString(MessageHandler.codePointToString(RIGHT_SYMBOL), 
            (int)bounds.getWidth()-getIconWidth(), 
            (int)bounds.getHeight()-y);
       }
@@ -1775,7 +1775,7 @@ class MoveIndicatorIcon implements Icon
       {
         g2.setFont(font);
         FontRenderContext frc = g2.getFontRenderContext();
-        TextLayout layout = new TextLayout(String.format("%c",
+        TextLayout layout = new TextLayout(MessageHandler.codePointToString(
            left ? LEFT_SYMBOL : RIGHT_SYMBOL),
            font, frc);
 
@@ -1788,7 +1788,7 @@ class MoveIndicatorIcon implements Icon
       }
    }
 
-   private static final int RIGHT_SYMBOL = 0x21B7;;
+   private static final int RIGHT_SYMBOL = 0x21B7;
 
    private static final int LEFT_SYMBOL = 0x21B6;
 

@@ -58,6 +58,11 @@ public class MessageHandler extends ErrorManager
       return texApp;
    }
 
+   public static String codePointToString(int codePoint)
+   {
+      return new String(Character.toChars(codePoint));
+   }
+
    public void progress(int percentage)
    {
       if (isBatchMode) return;

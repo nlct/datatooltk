@@ -141,7 +141,7 @@ public class TeXMapModel extends AbstractTableModel
    public Object getValueAt(int rowIndex, int columnIndex)
    {
       return columnIndex == 0 ? 
-        String.format("%c", keyList.get(rowIndex)) : valueList.get(rowIndex);
+        MessageHandler.codePointToString(keyList.get(rowIndex)) : valueList.get(rowIndex);
    }
 
    public void updateSettings()

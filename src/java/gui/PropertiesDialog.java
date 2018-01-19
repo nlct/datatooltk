@@ -173,7 +173,9 @@ public class PropertiesDialog extends JDialog
       sepTabButton = createRadioButton("preferences.csv", "tabsep", bg);
       box.add(sepTabButton);
 
+      box.add(Box.createHorizontalStrut(10));
       box.add(new JLabel(messageHandler.getLabel("preferences.csv.or")));
+      box.add(Box.createHorizontalStrut(10));
 
       sepCharButton = createRadioButton("preferences.csv", "sepchar", bg);
       box.add(sepCharButton);
@@ -204,7 +206,9 @@ public class PropertiesDialog extends JDialog
       noEscCharButton = createRadioButton("preferences.csv", "noesc", bg);
       box.add(noEscCharButton);
 
+      box.add(Box.createHorizontalStrut(10));
       box.add(new JLabel(messageHandler.getLabel("preferences.csv.or")));
+      box.add(Box.createHorizontalStrut(10));
 
       escCharButton = createRadioButton("preferences.csv", "escchar", bg);
       box.add(escCharButton);
@@ -1093,6 +1097,14 @@ public class PropertiesDialog extends JDialog
                getMessageHandler().getLabel("error.missing_sep"));
             return;
          }
+         else if (sep > 0xFFFF)
+         {
+            getMessageHandler().error(this, 
+               getMessageHandler().getLabelWithValues("error.char_sep_required", 
+               MessageHandler.codePointToString(sep), 
+               "0xFFFF"));
+            return;
+         }
 
          settings.setSeparator(sep);
       }
@@ -1103,6 +1115,14 @@ public class PropertiesDialog extends JDialog
       {
          getMessageHandler().error(this, 
             getMessageHandler().getLabel("error.missing_delim"));
+         return;
+      }
+      else if (delim > 0xFFFF)
+      {
+         getMessageHandler().error(this, 
+            getMessageHandler().getLabelWithValues("error.char_delim_required", 
+            MessageHandler.codePointToString(delim), 
+            "0xFFFF"));
          return;
       }
 
@@ -1116,7 +1136,18 @@ public class PropertiesDialog extends JDialog
       }
       else
       {
-         settings.setCSVescape(escCharField.getValue());
+         int escChar = escCharField.getValue();
+
+         if (escChar > 0xFFFF)
+         {
+            getMessageHandler().error(this, 
+               getMessageHandler().getLabelWithValues("error.char_esc_required", 
+               MessageHandler.codePointToString(escChar), 
+               "0xFFFF"));
+            return;
+         }
+
+         settings.setCSVescape(escChar);
       }
 
       String host = hostField.getText();
