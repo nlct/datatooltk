@@ -1097,7 +1097,7 @@ public class PropertiesDialog extends JDialog
                getMessageHandler().getLabel("error.missing_sep"));
             return;
          }
-         else if (sep > 0xFFFF)
+         else if (sep >= 0xFFFF)
          {
             getMessageHandler().error(this, 
                getMessageHandler().getLabelWithValues("error.char_sep_required", 
@@ -1117,7 +1117,7 @@ public class PropertiesDialog extends JDialog
             getMessageHandler().getLabel("error.missing_delim"));
          return;
       }
-      else if (delim > 0xFFFF)
+      else if (delim >= 0xFFFF)
       {
          getMessageHandler().error(this, 
             getMessageHandler().getLabelWithValues("error.char_delim_required", 
@@ -1138,7 +1138,7 @@ public class PropertiesDialog extends JDialog
       {
          int escChar = escCharField.getValue();
 
-         if (escChar > 0xFFFF)
+         if (escChar >= 0xFFFF)
          {
             getMessageHandler().error(this, 
                getMessageHandler().getLabelWithValues("error.char_esc_required", 
