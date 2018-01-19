@@ -1,4 +1,9 @@
 % arara: datatooltk: {output: test-out.dbtex, input: data-raw.dbtex}
+% arara: datatooltk: {output: test-csv-out.dbtex, csv: test.csv}
+% arara: datatooltk: {output: test-sql-data.dbtex,
+% arara: --> sql: "SELECT * FROM testsqldata", sqldb: datatooltk,
+% arara: --> sqluser: datatool, options: [--debug]}
+% arara: pdflatex
 \documentclass{article}
 
 \usepackage{datatool}
@@ -7,32 +12,37 @@
 \input{data-raw.dbtex}
 
 \begin{document}
+\section{data-raw.dbtex}
 
 \DTLdisplaydb{mydata}
 
 \DTLdeletedb{mydata}
 
+\section{test-out.dbtex}
 % output from datatooltk
-\input{test-out.dbtex}
+\DTLloaddbtex{\mydata}{test-out.dbtex}
 
-\DTLdisplaydb{mydata}
+\DTLdisplaydb{\mydata}
 
+\section{test.csv}
 % load csv file
 
 \DTLloaddb{testcsv}{test.csv}
 
 \DTLdisplaydb{testcsv}
 
+\section{test-csv-out.dbtex}
 % load db created from csv file
 
-\input{test-csv-out.dbtex}
+\DTLloaddbtex{\testcsvdata}{test-csv-out.dbtex}
 
-\DTLdisplaydb{test}
+\DTLdisplaydb{\testcsvdata}
 
+\section{test-sql-data.dbtex}
 % load db create from sql query
 
-\input{test-sql-data.dbtex}
+\DTLloaddbtex{\testsqldata}{test-sql-data.dbtex}
 
-\DTLdisplaydb{testsqldata}
+\DTLdisplaydb{\testsqldata}
 
 \end{document}
