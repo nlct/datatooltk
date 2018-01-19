@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+function build
+{
+  filename=$1
+
+  /usr/bin/time -f "$filename:\t%e\t(%E)" --append --output=$logfile $filename  || exit $?
+}
+
+logfile='runtest.log'
+
+echo "Performance test results (seconds)" > $logfile
+
+build "buildtest-csv-doc1"
+build "buildtest-csv-doc2"
+build "buildtest-dbtex-doc1"
+build "buildtest-dbtex-doc2"
+build "buildtest-dbtex-doc3"

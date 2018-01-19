@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+datatooltk --csv sample-1000x3.csv -o data.dbtex || exit $?
+pdflatex test-dbtex-doc1
