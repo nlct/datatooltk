@@ -248,7 +248,7 @@ public class DatatoolGuiResources
 
        if (comp != null)
        {
-         jLabel.setLabelFor(comp);
+          jLabel.setLabelFor(comp);
        }
 
        return jLabel;
