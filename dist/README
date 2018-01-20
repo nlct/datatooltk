@@ -1,28 +1,29 @@
-Application  : datatooltk version 1.6.2 2016-05-12
+Application  : datatooltk
 
 Author       : Nicola L. C. Talbot
                www.dickimaw-books.com
 
 Home Page    : http://www.dickimaw-books.com/software/datatooltk/
 
-Bug Reports  : http://www.dickimaw-books.com/bug-report.html
+Bug Reports  : https://github.com/nlct/datatooltk
 
 License      : GPLv3+ <http://gnu.org/licenses/gpl.html>
 
-Requirements : Java Runtime Environment
-               Perl (optional)
-               TeX
-               datatool and (optionally) probsoln LaTeX packages.
+Requirements : Java Runtime Environment (at least Java 7)
+               and, if plugins required, Perl
 
 DESCRIPTION
 ===========
 
 A Java GUI that can be used to create datatool.sty databases in
 datatool's internal format, which can be quickly imported into a
-LaTeX document using \input (or datatool's \DTLloadbtex). It can
+LaTeX document using \input (or datatool's \DTLloaddbtex). It can
 also be used in batch mode to import data from SQL, CSV, XLS, ODS or
-probsoln datasets. Tools are available to sort or shuffle the
-database.
+probsoln.sty datasets. Tools are available to sort or shuffle
+or filter the database. The batch mode means that it can be
+incorporated into the document build process and provides
+a much faster build than using datatool's \DTLloaddb and 
+\dtlsort commands.
 
 INSTALL
 =======
@@ -35,28 +36,43 @@ double-click on the jar file or run
 "java -jar datatooltk-installer.jar" from a terminal).
 
 If you want to use the datatooltk plugins you need to ensure
-you have Perl installed. An up-to-date TeX distribution is also
-required if you want to import data from a probsoln dataset.
+you have Perl installed.
 
-Third Party Libraries
-=====================
+Libraries
+=========
 
-datatooltk depends on the following third party libraries whose jar
-files are placed in the application's lib directory by the
-installer:
+The datatooltk.jar file in the lib directory is the main
+application. The other .jar files are required libraries
+provided by other sources. The texparserlib.jar library
+is by the same author and is also GPL 3.0. The source code
+is available from https://github.com/nlct/texparser
+
+The other .jar files are third party libraries:
 
  - Java Help (https://javahelp.java.net/) GPL
- - Open CSV (http://opencsv.sourceforge.net/) Apache 2.0 license
+ - Open CSV (http://opencsv.sourceforge.net/) Apache 2.0 License
  - MySQL connector (http://dev.mysql.com/downloads/connector/j/) GPL
  - The Java Look and Feel Graphics Repository
    (http://www.oracle.com/technetwork/java/index-138612.html)
    JLFGR License
- - Apache POI (http://poi.apache.org) Apache 2.0 license
+ - Apache POI (http://poi.apache.org/) Apache 2.0 License
  - jOpenDocument (http://www.jopendocument.org/) GPL
 
 
 Compiling PDF Documentation
 ===========================
+
+The documentation is contained within the doc/ subdirectory
+of the source code. The documentation source is in XML format
+datatool-en.xml which is converted to both LaTeX and Java
+HelpSet files to provide the standalone PDF documentation and 
+the built-in help accessed while the application is running.
+
+The conversion is performed by the Perl script included in
+the doc directory. The relative paths need to be maintained
+for the script to fetch the application resource files to
+supply the labels for menus and buttons and for LaTeX to find
+the image files.
 
 Requirements: TeX, arara, Perl.
 
