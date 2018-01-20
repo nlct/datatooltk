@@ -87,22 +87,21 @@
         <pack name="Source" required="no" preselected="no">
             <description>The source code</description>
             <file src="doc/createdatatooltkdocs" targetdir="$INSTALL_PATH/src/doc" />
+            <file src="doc/datatooltk.pod" targetdir="$INSTALL_PATH/src/doc" />
+            <file src="doc/datatooltk.dtd" targetdir="$INSTALL_PATH/src/doc" />
+            <file src="doc/datatooltk-en.xml" targetdir="$INSTALL_PATH/src/doc" />
+            <file src="doc/datatooltk.cls" targetdir="$INSTALL_PATH/src/doc" />
+            <file src="doc/Makefile" targetdir="$INSTALL_PATH/src/doc" />
             <file src="doc/images" targetdir="$INSTALL_PATH/src/doc" />
-            <fileset dir="." includes="**/Makefile" 
-              targetdir="$INSTALL_PATH/src" />
-            <fileset dir="." includes="**/README" 
-              targetdir="$INSTALL_PATH/src" />
-            <fileset dir="." includes="**/LICENSE" 
-              targetdir="$INSTALL_PATH/src" />
-            <fileset dir="." includes="**/*.xml" 
-              targetdir="$INSTALL_PATH/src" />
-            <fileset dir="." includes="**/*.pod" 
-              targetdir="$INSTALL_PATH/src" />
+            <file src="Makefile" targetdir="$INSTALL_PATH/src" />
+            <file src="README" targetdir="$INSTALL_PATH/src" />
+            <file src="doc/LICENSE" targetdir="$INSTALL_PATH/src" />
             <file src="bin" targetdir="$INSTALL_PATH/src" />
             <file src="images" targetdir="$INSTALL_PATH/src" />
             <file src="java" targetdir="$INSTALL_PATH/src" />
-            <fileset dir="resources" targetdir="$INSTALL_PATH/src/resources"
-              includes="**/*.prop" />
+            <file src="resources/imagemap.prop" targetdir="$INSTALL_PATH/src/resources" />
+            <fileset dir="resources/plugins" targetdir="$INSTALL_PATH/src/resources/plugins"/>
+            <fileset dir="resources/templates" targetdir="$INSTALL_PATH/src/resources/templates"/>
             <fileset dir="tests" targetdir="$INSTALL_PATH/src/tests"
               includes="**/*.tex" />
             <fileset dir="tests" targetdir="$INSTALL_PATH/src/tests"

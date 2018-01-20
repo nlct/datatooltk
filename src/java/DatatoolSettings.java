@@ -1644,6 +1644,16 @@ public class DatatoolSettings extends Properties
       }
    }
 
+   public LoadSettings getLoadSettings()
+   {
+      return loadSettings;
+   }
+
+   public void setLoadSettings(LoadSettings settings)
+   {
+      this.loadSettings = settings;
+   }
+
    private MessageHandler messageHandler;
 
    protected char[] sqlPassword = null;
@@ -1667,6 +1677,8 @@ public class DatatoolSettings extends Properties
    private boolean upgrade=false;
 
    private int compatLevel = COMPAT_LATEST;
+
+   private LoadSettings loadSettings;
 
    public static final int COMPAT_LATEST=0;
    public static final int COMPAT_1_6=1;

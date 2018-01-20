@@ -5,7 +5,8 @@ Author       : Nicola L. C. Talbot
 
 License      : GPLv3+
 
-Requirements : Java Runtime Environment, Perl, TeX
+Requirements : Java Runtime Environment (at least Java 7)
+               and, if plugins required, Perl
 
 DESCRIPTION
 ===========
@@ -15,12 +16,16 @@ that use datatool's internal format. It can also be used to
 import data from CSV files, SQL databases and TeX files
 that can be loaded using \loadallproblems from probsoln.sty
 
-Third Party Libraries
-=====================
+Libraries
+=========
 
-datatooltk depends on the following third party libraries whose jar
-files are placed in the application's lib directory by the
-installer:
+The datatooltk.jar file in the lib directory is the main
+application. The other .jar files are required libraries
+provided by other sources. The texparserlib.jar library
+is by the same author and is also GPL 3.0. The source code
+is available from https://github.com/nlct/texparser
+
+The other .jar files are third party libraries:
 
  - Java Help (https://javahelp.java.net/) GPL
  - Open CSV (http://opencsv.sourceforge.net/) Apache 2.0 License

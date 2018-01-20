@@ -28,6 +28,7 @@ public class LoadSettings
    public LoadSettings(DatatoolSettings settings)
    {
       this.settings = settings;
+      settings.setLoadSettings(this);
    }
 
    public boolean hasOutputAction()

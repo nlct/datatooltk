@@ -45,14 +45,17 @@
      </p>
      <p>The <app/> application can be run in either 
      batch mode (default) or <acr tag="gui" /> mode (see <ref tag="gui" />).
-     Command line invocation:
      </p>
+   </node>
+   <node tag="commandoptions" type="section" title="Command Line Options">
+     <p>The command line invocation is:</p>
      <p align="center">
       <app/> [<meta>options</meta>]
      </p>
      <p noindent="true">
      Available options are listed below. Note that some of the 
      default values may be changed through the <acr tag="gui" />.
+     These will be picked up by the next batch invocation.
      <dl>
        <dt><opt tag="gui"/> (or <tt>-g</tt>)</dt>
        <dd>
@@ -82,18 +85,10 @@
        now forbids the <tt>.tex</tt> extension for output files.
        </dd>
        <dt><opt tag="in"/> <meta>datatool file</meta> (or <tt>-i</tt> <meta>datatool file</meta>)</dt>
-       <dd>Load <meta>datatool file</meta>. The switch <opt tag="in"/>
+       <dd><p>Load <meta>datatool file</meta>. The switch <opt tag="in"/>
        (or <tt>-i</tt>) is optional, so <app/><nbsp/><meta>file</meta>
-       is equivalent to <app/><nbsp/><opt tag="in"/> <meta>file</meta>.</dd>
-       <dt><opt tag="tex-encoding"/> <meta>encoding</meta></dt>
-       <dd>Set the encoding for the <TeX/> (<tt>.tex</tt> and <tt>.dbtex</tt>) files to <meta>encoding</meta>. The <meta>encoding</meta> may
-       be the keyword <tt>default</tt> or an empty string to
-       indicate the default file encoding. Make sure that your <LaTeX/>
-       document matches the given <meta>encoding</meta>. The encoding of 
-       <acr tag="csv"/> files is independent of the <TeX/> (<tt>.dbtex</tt>) 
-       encoding and is set through <opt tag="csv-encoding"/>.
-       </dd>
-       <dd>
+       is equivalent to <app/><nbsp/><opt tag="in"/> <meta>file</meta>.</p>
+       <p>
        When loading a <tt>.dbtex</tt> file, <app/> assumes the <tt>.dbtex</tt> 
        file is in the format created by <cs tag="DTLsaverawdb"/> and will
        try parsing the file according to that format. If this fails, <app/>
@@ -106,12 +101,20 @@
        switch to using the <TeX/> Parser Library, which can interpret these
        commands, but note that if the file is subsequently saved
        <b>it will be saved in the <tt>.dbtex</tt> format</b>. Since this is
-       potentially dangerous, as there's a possibility that you might
-       accidentally load your document <tt>.tex</tt> file, if the <TeX/>
-       Parser Library is used to load the file then, in <acro tag="gui"/>
+       potentially dangerous (as there's a possibility that you might
+       accidentally load your document <tt>.tex</tt> file) if the <TeX/>
+       Parser Library is used to load the file then, in <acr tag="gui"/>
        mode, the filename for that database will be unset, which will 
        trigger the <button tag="file.save_as"/>
-       dialog if you try to save the database.
+       dialog if you try to save the database.</p>
+       </dd>
+       <dt><opt tag="tex-encoding"/> <meta>encoding</meta></dt>
+       <dd>Set the encoding for the <TeX/> (<tt>.tex</tt> and <tt>.dbtex</tt>) files to <meta>encoding</meta>. The <meta>encoding</meta> may
+       be the keyword <tt>default</tt> or an empty string to
+       indicate the default file encoding. Make sure that your <LaTeX/>
+       document matches the given <meta>encoding</meta>. The encoding of 
+       <acr tag="csv"/> files is independent of the <TeX/> (<tt>.dbtex</tt>) 
+       encoding and is set through <opt tag="csv-encoding"/>.
        </dd>
        <dt><opt tag="name"/> <meta>name</meta></dt>
        <dd>If used with <opt tag="in"/>, <opt tag="csv"/>, <opt tag="sql"/>, <opt tag="xls"/>, <opt tag="ods"/>
@@ -156,22 +159,27 @@
        If <meta>prefix</meta> is omitted, ascending is assumed.
        (See <ref tag="sort"/>.)</dd>
        <dt><opt tag="sort-locale"/> <meta>value</meta></dt>
-       <dd>If the <meta>value</meta> is the keyword <tt>none</tt> use letter-sorting
+       <dd>
+       <p>If the <meta>value</meta> is the keyword <tt>none</tt> use letter-sorting
        for strings. That is, compare the Unicode values of each character.
        Otherwise <meta>value</meta> should be a valid <acr tag="ietf" /> 
        language tag that identifies a locale. Strings will then be sorted 
        according to that locale's alphabetical order. Note that <app/> can't 
        interpret <LaTeX/> commands. (If you need that ability, you might want 
        to consider using <tt>bib2gls</tt> with <sty>glossaries-extra</sty> 
-       instead.) The default setting is to use a letter-sort for strings.
+       instead.) The default setting is to use a letter-sort for strings.</p>
+       <p>This setting also governs the string comparison functions used by 
+       the filter option <opt tag="filter"/>.</p>
        </dd>
        <dt><opt tag="sort-case-sensitive"/></dt>
-       <dd>Use case-sensitive comparison when letter-sorting strings.
-       (Ignored with locale-sensitive comparisons.)</dd>
+       <dd>(Ignored with locale-sensitive comparisons.)
+       Use case-sensitive comparison when letter-sorting strings.
+       This setting also governs the string comparison functions
+        used by the filter option <opt tag="filter"/>.</dd>
        <dt><opt tag="sort-case-insensitive"/></dt>
-       <dd>Use case-insensitive comparison when letter-sorting strings.
+       <dd>(Default.) Use case-insensitive comparison when letter-sorting strings.
        This compares the lower case versions of the strings using a character
-       code comparison.  (Default.)</dd>
+       code comparison. This setting also governs the string comparison functions used by the filter option <opt tag="filter"/>.</dd>
        <dt><opt tag="truncate"/> <meta>n</meta></dt>
        <dd>Truncate the database to the first <meta>n</meta> rows.
        (Has no effect if <meta>n</meta> is greater than or equal
@@ -504,7 +512,8 @@
    In your <LaTeX/> document, you can check for null values using 
    <sty>datatool</sty>'s <cs tag="DTLifnull"/> command. To check for empty 
    values you can use one of <sty>etoolbox</sty>'s commands, such as 
-   <cs tag="ifdefempty"/>.
+   <cs tag="ifdefempty"/>. As from <sty>datatool</sty> version 2.20, you
+   can also use <cs tag="DTLifnullorempty"/>.
    </p>
    </node>
    <node tag="gui" type="chapter" title="Graphical Mode">

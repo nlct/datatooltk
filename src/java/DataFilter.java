@@ -19,7 +19,9 @@
 package com.dickimawbooks.datatooltk;
 
 import java.util.Vector;
+import java.util.Locale;
 import java.util.regex.*;
+import java.text.Collator;
 
 import com.dickimawbooks.datatooltk.io.*;
 
@@ -147,6 +149,18 @@ class FieldFilter
       this.colIdx = 0;
       boolean found = false;
       MessageHandler messageHandler = db.getMessageHandler();
+      DatatoolSettings settings = db.getSettings();
+
+      String sortLocale = settings.getSortLocale();
+
+      if (sortLocale == null)
+      {
+         isCaseSensitive = settings.getLoadSettings().isCaseSensitive();
+      }
+      else
+      {
+         collator = Collator.getInstance(Locale.forLanguageTag(sortLocale));
+      }
 
       Vector<DatatoolHeader> headers = db.getHeaders();
 
@@ -217,7 +231,22 @@ class FieldFilter
       {
          if (match instanceof String)
          {
-            result = strVal.compareTo((String)match);
+            if (collator == null)
+            {
+               if (isCaseSensitive)
+               {
+                  result = strVal.compareTo((String)match);
+               }
+               else
+               {
+                  result = strVal.toLowerCase().compareTo(
+                     ((String)match).toLowerCase());
+               }
+            }
+            else
+            {
+               result = collator.compare(strVal, match);
+            }
          }
          else if (type == DatatoolSettings.TYPE_REAL)
          {
@@ -259,4 +288,6 @@ class FieldFilter
    private int operator;
    private Object match = null;
    private Pattern pattern = null;
+   private Collator collator=null;
+   private boolean isCaseSensitive;
 }
