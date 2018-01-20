@@ -1,0 +1,370 @@
+=head1 SYNOPSIS
+
+B<datatooltk> [I<option>]+
+
+or
+
+B<datatooltk-gui> [I<option>]+
+
+=head1 DESCRIPTION
+
+Reads and writes B<.dbtex> files for use with the B<datatool> LaTeX
+package. This application can also import data from CSV files,
+spreadsheets (B<ods> or B<xls>), SQL (only MySQL supported) or
+B<.tex> files that define problems using the B<probsoln> package.
+The use of this application as a helper for the B<datatool> package
+can significantly speed document build time.
+
+The B<datatooltk> application can either be run in batch mode or GUI
+mode.
+
+=head1 OPTIONS
+
+Some of the options may have the default settings change through the
+GUI interface. You can't combine any of the load/import options:
+B<--in>, B<--csv>, B<--xls>, B<--ods>, B<--sql>, B<--probsoln>. You
+also can't combine any of the merge options: B<--merge>,
+B<--merge-csv>, B<--merge-xls>, B<--merge-ods>, B<--merge-sql>, 
+B<--merge-probsoln>. The merge import options use the same settings
+as the import options. See the B<datatooltk> user manual for further
+details.
+
+=over 4
+
+=item B<--gui> (or B<-g>)
+
+Invoke B<datatooltk> in GUI mode. The command line invocation
+
+B<datatooltk-gui> [I<option>]+
+
+is equivalent to
+
+B<datatooltk> B<--gui> [I<option>]+
+
+but additionally has a splash screen.
+
+=item B<--batch> (or B<-b>)
+
+Invoke B<datatooltk> in batch mode.
+
+=item B<--output> I<filename> (or B<-o> I<filename>)
+
+Save the database to I<filename> (batch mode only).
+
+=item B<--in> I<filename> (or B<-i> I<filename>) 
+
+Load I<filename> which must be a file that can be loaded in a
+document using B<\input> or B<\DTLloaddbtex>.
+
+=item B<--tex-encoding> I<encoding>
+
+Set the encoding for the TeX (B<.tex> and B<.dbtex>) files to 
+I<encoding>. The I<encoding> may be the keyword B<default>
+or an empty string to indicate the default file encoding (as
+understood by the Java Virtual Machine). Make sure that your LaTeX
+document matches the given encoding.
+
+=item B<--name> I<name>
+
+If used with B<--in>, B<--csv>, B<--sql>, B<--xls>, B<--ods>
+or B<--probsoln> this sets the database label to I<name>.
+
+=item B<--version> (or B<-v>)
+
+Print the version details to STDOUT and exit.
+
+=item B<--help> (or B<-h>)
+
+Print a brief summary of available options to STDOUT and exit.
+
+=item B<--debug>
+
+Enable debug mode.
+
+=item B<--nodebug>
+
+Disable debug mode.
+
+=item B<--compat> I<level>
+
+Set the compatibility level. The argument I<level> may be B<latest>
+or B<1.6>. The B<1.6> setting only affects B<--shuffle> and is
+provided for old documents.
+
+=item B<--owner-only>
+
+Set read/write permissions when saving B<.dbtex> files to owner
+only. (Has no effect on some operating systems.)
+
+=item B<--noowner-only>
+
+Don't change read/write permissions when saving B<.dbtex> files.
+
+=item B<--map-tex-specials>
+
+Map TeX special characters when importing data from CSV or SQL.
+
+=item B<--nomap-tex-specials>
+
+Don't map TeX special characters when importing data from CSV or
+SQL.
+
+=item B<--seed> I<number>
+
+Set the random generator seed to I<number> or clear if if I<number>
+is the empty string.
+
+=item B<--shuffle>
+
+Shuffle the database. (Always performed after B<--sort> regardless
+of the option order.)
+
+=item B<--noshuffle>
+
+Don't shuffle the database.
+
+=item B<--sort> [I<prefix>]I<field>
+
+Sort the database according to the column whose label is I<field>.
+Optionally, I<prefix> may be B<+> (ascending order) or B<-> (descending
+order). If I<prefix> is omitted, ascending is assumed.
+
+=item B<--sort-locale> I<value>
+
+If the I<value> is B<none> then use letter-sorting for strings.
+(That is, compare the Unicode values for each character.) Otherwise
+I<value> should be a valid IETF language tag that identifies the
+locale to sort by.
+
+=item B<--sort-case-sensitive>
+
+Use case-sensitive comparison when letter-sorting strings. (Ignored
+with locale-sensitive comparisons.)
+
+=item B<--sort-case-insensitive>
+
+Use case-insensitive comparison when letter-sorting strings. (Ignored
+with locale-sensitive comparisons.)
+
+=item B<--truncate> I<n>
+
+Truncate the database to the first I<n> rows. Truncation is always 
+performed last (after any sorting, shuffling and filtering).
+
+=item B<--filter> I<key> I<operator> I<value>
+
+Adds the given filter. This filter returns true if the value in the
+column whose label is given by I<key> matches the operation 
+I<operator> I<value> where I<operator> may be one of: B<eq> (equals), 
+B<ne> (does not equal), B<le> (less than or equal to), B<lt> (less
+than), B<ge> (greater than or equal to), B<gt> (greater than) or
+B<regex> (matches the regular expression given by I<value>).
+
+Filtering is always performed after sorting and shuffling (when
+those actions are specified). Numerical comparisons are used for
+columns identified as containing numerical data otherwise string
+comparisons are used, except in the case of B<regex> where the data
+type is disregarded and all values are assumed to be strings.
+
+This option may be used multiple times.
+
+=item B<--filter-or>
+
+Use OR operator when filtering. (Has no effect with only one
+instance of B<--filter>.)
+
+=item B<--filter-and>
+
+Use AND operator when filtering. (Has no effect with only one
+instance of B<--filter>.)
+
+=item B<--filter-include>
+
+When filtering, only retain rows that match the filter. Non-matching
+rows are discarded.
+
+=item B<--filter-exclude>
+
+When filtering, only retain rows that don't match the filter.
+Matching rows are discarded.
+
+=item B<--merge> I<key> I<db file>
+
+Merges the input or imported database with the database stored in
+the given B<db file>. Each row in B<db file> is merged with the row
+that has a matching value in the column whose label is given by
+I<key>. Both databases must contain a column with that label.
+If both databases share additional columns, the values in I<db file>
+override those in the original database. This options is always
+implemented before any sorting, shuffling, filtering or truncating.
+Only one of the merge options is permitted.
+
+=item B<--csv> I<csv file>
+
+Import data from the given CSV file.
+
+=item B<--merge-csv> I<key> I<csv file>
+
+As B<--merge> but the data to be merged is imported from the given
+CSV file.
+
+=item B<--csv-sep> I<character>
+
+Specify the character used to separate values in the CSV file.
+
+=item B<--csv-delim> I<character>
+
+Specify the character used to delimit values in the CSV file.
+
+=item B<--csv-encoding> I<encoding>
+
+Set the encoding for the CSV files to I<encoding>. The value may
+be B<default> or the empty string to indicate the default (as
+recognised by the Java Virtual Machine). This setting is independent
+of the TeX file encoding.
+
+=item B<--csv-header>
+
+The CSV file has a header row.
+
+=item B<--nocsv-header>
+
+The CSV file doesn't have a header row.
+
+=item B<--csv-escape> I<character>
+
+Set the CSV file escape character to I<character>.
+
+=item B<--nocsv-escape>
+
+Don't have an escape character for the CSV file.
+
+=item B<--xls> I<xls file>
+
+Import data from the given Excel B<.xls> file.
+
+=item B<--merge-xls> I<key> I<xls file>
+
+As B<--merge> but the data to be merged is imported from the given
+Excel file.
+
+=item B<--ods> I<ods file>
+
+Import data from the given Open Document Spreadsheet B<.ods> file.
+
+=item B<--merge-ods> I<key> I<ods file>
+
+As B<--merge> but the data to be merged is imported from the given
+Open Document Spreadsheet B<.ods> file.
+
+=item B<--sheet> I<sheet id>
+
+The sheet to select from the Excel workbook or Open Document
+Spreadsheet. The I<sheet id> may be either an index (starting from 0) 
+or the name of the sheet. If this option is omitted, the first sheet
+is assumed.
+
+=item B<--sql> I<statement>
+
+Import data from an SQL database where I<statement> is a SELECT
+statement.
+
+=item B<--merge-sql> I<key> I<statement>
+
+As B<--merge> but the data to be merged is imported using the given
+SQL statement.
+
+=item B<--sqldb> I<name>
+
+The SQL database name.
+
+=item B<--sqlprefix> I<prefix>
+
+The Java SQL prefix. Currently only MySQL is supported.
+
+=item B<--sqlport> I<port>
+
+The SQL port number.
+
+=item B<--sqlhost> I<host>
+
+The SQL host.
+
+=item B<--sqluser>  I<user name>
+
+The SQL user name.
+
+=item B<--sqlpassword> I<password>
+
+(Insecure!) The SQL password. If omitted, you will be prompted for
+the password if you try to import data from an SQL database.
+
+=item B<--wipepassword>
+
+For extra security, wipe the password from memory as soon as it has
+been connected to an SQL database.
+
+=item B<--nowipepassword>
+
+Don't wipe the password from memory as soon as it has been used to
+connect to an SQL database.
+
+=item B<--noconsole-action> I<action>
+
+If in batch mode and an SQL password is required and B<--sqlpassword>
+hasn't been used, the default action is for B<datatooltk> to request
+a password via the console. If there is no console available the
+action is determined by I<action> which may be one of:
+
+=over 4
+
+=item B<error>
+
+Issue an error;
+
+=back B<stdin>
+
+Request the password via STDIN (less secure than a console and can 
+produce an annoying flicker);
+
+=back B<gui>
+
+Display a dialog box in which to enter the password.
+
+=back
+
+=item B<--probsoln> I<filename>
+
+Import B<probsoln.sty> data from I<filename>.
+
+=item B<--merge-probsoln> I<key> I<filename>
+
+As B<--merge> but the data to be merged is imported from the given
+B<probsoln.sty> file.
+
+=head1 REQUIRES
+
+Java 7 and also Perl if plugins are required.
+
+=head1 LICENSE
+
+License GPLv3+: GNU GPL version 3 or later
+<http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+=head1 RECOMMENDED READING
+
+The datatooltk manual (available as a PDF or through the GUI).
+
+The datatool manual:
+
+        texdoc datatool
+
+=head1 AUTHOR
+
+Nicola L. C. Talbot,
+L<http://www.dickimaw-books.com/>
+
+=cut
+
