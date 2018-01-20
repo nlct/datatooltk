@@ -18,9 +18,10 @@
 */
 package com.dickimawbooks.datatooltk;
 
+import java.io.File;
 import java.util.logging.ErrorManager;
 import java.awt.Component;
-import java.io.File;
+import javax.swing.JOptionPane;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
@@ -355,17 +356,55 @@ public class MessageHandler extends ErrorManager
          }
          else
          {
+            // guiResources may be null if there's an error
+            // in the command line syntax
+
             if (msg != null && exception != null)
             {
-               guiResources.error(parent, msg, exception);
+               if (guiResources == null)
+               {
+                  JOptionPane.showMessageDialog(null, msg, 
+                    getLabel("error.title"),
+                    JOptionPane.ERROR_MESSAGE);
+                  System.err.println(msg);
+
+                  debug(exception);
+               }
+               else
+               {
+                  guiResources.error(parent, msg, exception);
+               }
             }
             else if (exception == null)
             {
-               guiResources.error(parent, msg);
+               if (guiResources == null)
+               {
+                  JOptionPane.showMessageDialog(null, msg, 
+                    getLabel("error.title"),
+                    JOptionPane.ERROR_MESSAGE);
+                  System.err.println(msg);
+               }
+               else
+               {
+                  guiResources.error(parent, msg);
+               }
             }
             else
             {
-               guiResources.error(parent, exception);
+               if (guiResources == null)
+               {
+                  JOptionPane.showMessageDialog(null, 
+                    exception.getMessage(), 
+                    getLabel("error.title"),
+                    JOptionPane.ERROR_MESSAGE);
+
+                  System.err.println(exception.getMessage());
+                  debug(exception);
+               }
+               else
+               {
+                  guiResources.error(parent, exception);
+               }
             }
          }
       }
