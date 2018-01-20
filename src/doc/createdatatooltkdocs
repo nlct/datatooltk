@@ -143,7 +143,8 @@ my %tags    = ();
 my $languagedefinitions = 
   "\\def\\idxpackagename{".&get_label('manual.idxpackage')."}\n"
  ."\\def\\idxenvname{".&get_label('manual.idxenv')."}\n"
- ."\\def\\examplename{".&get_label('manual.example')."}\n";
+ ."\\def\\examplename{".&get_label('manual.example')."}\n"
+ ."\\def\\abbrvname{".&get_label('manual.abbreviations')."}\n";
 
 my $xmlfile = "$base-$locale.xml";
 
@@ -671,7 +672,7 @@ sub start_preamble{
       "\\usepackage{makeidx}\n",
       "\\usepackage{babel}\n",
       "\\usepackage[colorlinks]{hyperref}\n",
-      "\\usepackage[acronym,toc]{glossaries}\n",
+      "\\usepackage[acronym,toc,nogroupskip]{glossaries}\n",
       "\\makeglossaries\n\\makeindex\n",
       $languagedefinitions;
 }
@@ -2162,7 +2163,7 @@ sub end_printglossary{
 sub start_printacronyms{
    my ($expat, %attrs) = @_;
 
-   print TEXFD "\\printglossary[type=acronym]";
+   print TEXFD "\\printglossary[type=acronym,title=\\abbrvname]";
 }
 
 sub end_printacronyms{

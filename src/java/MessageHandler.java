@@ -203,7 +203,7 @@ public class MessageHandler extends ErrorManager
          if (buffering())
          {
             bufferingComponent = parent;
-            warningBuffer.append(message);
+            warningBuffer.append(String.format("%s%n", message));
          }
          else
          {

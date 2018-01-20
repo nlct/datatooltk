@@ -11,7 +11,7 @@
     <author>Translated by Some One<br />Affliation or URL</author>
 -->
     <date><dict tag="appdate" /></date>
-    <!-- Define Acronyms -->
+    <!-- Define Abbreviations -->
     <newacro short="GUI" long="graphical user interface" tag="gui" />
     <newacro short="CSV" long="comma-separated values" tag="csv" />
     <newacro short="SQL" long="structured query language" tag="sql"/>
@@ -32,7 +32,7 @@
      Files in this format are difficult to 
      edit and only a<nbsp /><TeX />pert should attempt it, but they are 
      by far the fastest way of loading a <sty>datatool</sty> 
-     <term tag="database" /> in <LaTeX />. This application provides 
+     <term tag="database" /> in <LaTeX />. The <app/> application provides 
      a<nbsp /><acr tag="gui" /> making it easier to edit these files. 
      It can also import data from <acr tag="csv" /> files, from
      Excel <tt>.xls</tt> (but not <tt>.xlsx</tt>)
@@ -43,7 +43,7 @@
      2.15 of <sty>datatool</sty> installed in your <TeX/> distribution.
      (Although the latest version is recommended.)
      </p>
-     <p>The <app/> application can run in either 
+     <p>The <app/> application can be run in either 
      batch mode (default) or <acr tag="gui" /> mode (see <ref tag="gui" />).
      Command line invocation:
      </p>
@@ -51,7 +51,8 @@
       <app/> [<meta>options</meta>]
      </p>
      <p noindent="true">
-     Available options:
+     Available options are listed below. Note that some of the 
+     default values may be changed through the <acr tag="gui" />.
      <dl>
        <dt><opt tag="gui"/> (or <tt>-g</tt>)</dt>
        <dd>
@@ -77,8 +78,10 @@
          (or <tt>-o</tt> <meta>filename</meta>)</dt>
        <dd>
        Save the database to <meta>filename</meta> (batch mode only).
+       To guard against accidentally overwriting a document file, <app/>
+       now forbids the <tt>.tex</tt> extension for output files.
        </dd>
-       <dt><opt tag="in"/> (or <tt>-i</tt>) <meta>datatool file</meta></dt>
+       <dt><opt tag="in"/> <meta>datatool file</meta> (or <tt>-i</tt> <meta>datatool file</meta>)</dt>
        <dd>Load <meta>datatool file</meta>. The switch <opt tag="in"/>
        (or <tt>-i</tt>) is optional, so <app/><nbsp/><meta>file</meta>
        is equivalent to <app/><nbsp/><opt tag="in"/> <meta>file</meta>.</dd>
@@ -89,6 +92,26 @@
        document matches the given <meta>encoding</meta>. The encoding of 
        <acr tag="csv"/> files is independent of the <TeX/> (<tt>.dbtex</tt>) 
        encoding and is set through <opt tag="csv-encoding"/>.
+       </dd>
+       <dd>
+       When loading a <tt>.dbtex</tt> file, <app/> assumes the <tt>.dbtex</tt> 
+       file is in the format created by <cs tag="DTLsaverawdb"/> and will
+       try parsing the file according to that format. If this fails, <app/>
+       will retry using the <TeX/> Parser Library, which has some limited
+       understanding of <TeX/> syntax and <sty>datatool</sty> commands.
+       This is more sophisticated than a simple pattern match, but it's slower.
+       For example, suppose the file contains:
+       <verbinput src="../tests/test-dtlnewdb.tex"/>
+       This doesn't match the raw <tt>.dbtex</tt> format, so <app/> will
+       switch to using the <TeX/> Parser Library, which can interpret these
+       commands, but note that if the file is subsequently saved
+       <b>it will be saved in the <tt>.dbtex</tt> format</b>. Since this is
+       potentially dangerous, as there's a possibility that you might
+       accidentally load your document <tt>.tex</tt> file, if the <TeX/>
+       Parser Library is used to load the file then, in <acro tag="gui"/>
+       mode, the filename for that database will be unset, which will 
+       trigger the <button tag="file.save_as"/>
+       dialog if you try to save the database.
        </dd>
        <dt><opt tag="name"/> <meta>name</meta></dt>
        <dd>If used with <opt tag="in"/>, <opt tag="csv"/>, <opt tag="sql"/>, <opt tag="xls"/>, <opt tag="ods"/>
@@ -155,7 +178,7 @@
        to the total number of rows.) Truncation is always performed
        last. (After any sorting, shuffling and filtering.)</dd>
        <dt><opt tag="filter"/> <meta>key</meta> <meta>operator</meta> <meta>value</meta></dt>
-       <dd>Adds the filter. This filter returns true if the value in
+       <dd>Adds the given filter. This filter returns true if the value in
        the column whose label is given by <meta>key</meta>
        matches the operation <meta>operator</meta> <meta>value</meta>
        where <meta>operator</meta> may be one of:
@@ -263,10 +286,10 @@
        <dt><opt tag="merge-ods"/> <meta>key</meta> <meta>ods file</meta></dt>
        <dd>As <opt tag="merge"/> but the data to be merged is imported from the given Open Document Spreadsheet <tt>.ods</tt> file.
        </dd>
-       <dt><opt tag="sheet"/></dt>
+       <dt><opt tag="sheet"/> <meta>sheet id</meta></dt>
        <dd>The sheet to select from the Excel workbook or Open Document 
        Spreadsheet. This may either be an index (starting from 0) or 
-       the name of the sheet. If omitted, the first sheet is assumed.</dd>
+       the name of the sheet. If this option is omitted, the first sheet is assumed.</dd>
        <dt><opt tag="sql"/> <meta>statement</meta></dt>
        <dd>Import data from an <acr tag="sql"/> database where 
        <meta>statement</meta> is an <acr tag="sql"/> SELECT statement.
@@ -350,10 +373,15 @@
    from other files containing <TeX/>/<LaTeX/> code (such as picture-drawing
    code), <app/> assumes a<nbsp/>default extension of <tt>.dbtex</tt>.
    If you use this extension, remember to include it in the argument of
-   <cs tag="input"/> or <cs tag="DTLloaddbtex"/>. Note that the database label 
-   (as used in commands like <cs tag="DTLnewdb"/>) is independent of the file 
-   name (although when importing data, it defaults to the file base name). 
-   The database label can be changed using <menu tag="edit.edit_dbname"/> in 
+   <cs tag="input"/> or <cs tag="DTLloaddbtex"/>.
+   <b>To guard against accidentally overwriting a document file, <app/>
+   now forbids the <tt>.tex</tt> extension for output files.</b>
+   </p>
+   <p>
+   Note that the database label (as used in commands like <cs tag="DTLnewdb"/>)
+   is independent of the file name (although when importing data, it defaults 
+   to the file base name).  The database label can be changed using 
+   <menu tag="edit.edit_dbname"/> in 
    <acr tag="gui"/> mode or via the command line option 
    <opt tag="name"/> <meta>label</meta>.
    </p>
@@ -492,8 +520,9 @@
        <TeX/>'s special characters or any other active characters that could 
        cause problems.  An asterisk <tt>*</tt> following the label in the tab 
        indicates that the database has been modified. If you move the mouse
-       over the tab, you will see the filename appear in a<nbsp/>tooltip,
-       if the database has been saved to a<nbsp/><sty>datatool</sty> file.
+       over the tab, you will see the full pathname appear in a<nbsp/>tooltip,
+       if the database has been saved to a<nbsp/><sty>datatool</sty> file,
+       and the filename (without the path) will be shown in the title bar.
      </p>
      <float type="figure" tag="mainwindow" caption="Main Window" pos="htb">
       <image scale="0.75" alt="Image of main window" src="images/mainwindow.png" />

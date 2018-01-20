@@ -3,7 +3,10 @@ DICTDIR=../resources/dictionaries
 TARGETBACKREF=../../doc
 MAINCLASS=../java/DatatoolTk.java
 
-all	: en-GB en-US
+all	: en-GB en-US datatooltk.1
+
+datatooltk.1	: datatooltk.pod
+		pod2man -c datatooltk datatooltk.pod datatooltk.1
 
 en-GB	: $(TARGETDIR)/datatooltk-en-GB/datatooltk.html \
 	  datatooltk-en-GB.pdf

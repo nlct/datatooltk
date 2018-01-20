@@ -77,10 +77,12 @@
         <pack name="Documentation GB" required="no" preselected="no">
             <description>The datatooltk documentation</description>
             <fileset dir="doc" includes="**/*-en-GB.pdf" targetdir="$INSTALL_PATH/doc"/>
+            <fileset dir="doc" includes="**/*.1" targetdir="$INSTALL_PATH/man"/>
         </pack>
         <pack name="Documentation US" required="no" preselected="no">
             <description>The datatooltk documentation</description>
             <fileset dir="doc" includes="**/*-en-US.pdf" targetdir="$INSTALL_PATH/doc"/>
+            <fileset dir="doc" includes="**/*.1" targetdir="$INSTALL_PATH/man"/>
         </pack>
         <pack name="Source" required="no" preselected="no">
             <description>The source code</description>
@@ -93,6 +95,8 @@
             <fileset dir="." includes="**/LICENSE" 
               targetdir="$INSTALL_PATH/src" />
             <fileset dir="." includes="**/*.xml" 
+              targetdir="$INSTALL_PATH/src" />
+            <fileset dir="." includes="**/*.pod" 
               targetdir="$INSTALL_PATH/src" />
             <file src="bin" targetdir="$INSTALL_PATH/src" />
             <file src="images" targetdir="$INSTALL_PATH/src" />

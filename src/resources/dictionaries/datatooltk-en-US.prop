@@ -598,6 +598,7 @@ error.syntax.missing_value=Missing value after {0}
 error.syntax.invalid_compat=Invalid compatibility setting {0}
 error.cli.no_data=A database must either be loaded or imported when using batch mode.\n(If you want the GUI interface, use the {0} option. See {1} for help.)
 error.cli.no_out={0} <file> required for batch mode.\n(If you want the GUI interface, use the {1} option. See {2} for help.)
+error.output.tex.not_permitted=.tex extension not permitted on output files
 error.save.failed=Failed to save ''{0}''.\n{1}
 error.load.failed=Failed to load ''{0}''.\n{1}
 error.export.failed=Failed to export to ''{0}''.
@@ -659,6 +660,7 @@ warning.title=Warning
 warning.verb_detected=Verbatim text has been detected. You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 warning.verb_detected_in_cell=Verbatim text has been detected in cell ({0,number},{1,number}). You must remove this before inputting the database into a LaTeX document. See http://www.tex.ac.uk/cgi-bin/texfaq2html?label=verbwithin for more details.
 warning.ignoring_filter=Ignoring filter option ''{0}''. No such column label.
+warning.texparser.used=This file was not in the expected .dbtex format, so the TeX Parser Library was used to interpret it. If you save to this file, the data will be saved in the .dbtex format not it its current format. Please check that you haven''t accidentally loaded your LaTeX document.
 
 # Progress Messages
 progress.title={0} Messages
@@ -730,6 +732,7 @@ manual.search=Search
 manual.idxpackage=package
 manual.idxenv=environment
 manual.example=Example
+manual.abbreviations=Abbreviations
 manual.cont_explanation=(The symbol \\continuesymbol\\ above indicates a~line wrap. Don't insert a~line break at that point.)
 manual.labelled=labeled
 manual.seealso=See also:
@@ -754,7 +757,7 @@ tex.error.missing_closing=Missing closing {0}
 tex.error.dimen_expected=Dimension expected
 tex.error.missing_unit=Missing unit
 tex.error.expected=Expected {0}
-tex.error.undefined=Undefined command {0}
+tex.error.undefined=Undefined command \\\\{0}
 tex.error.undefined_char=Undefined active character ''{0}''
 tex.error.cs_expected=Control sequence expected (found ''{0}'')
 tex.error.number_expected=Number expected (found ''{0}'')

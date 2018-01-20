@@ -35,6 +35,7 @@ import org.xml.sax.helpers.*;
 import com.dickimawbooks.datatooltk.io.*;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.primitives.Undefined;
 import com.dickimawbooks.texparserlib.latex.PreambleParser;
 import com.dickimawbooks.texparserlib.latex.datatool.*;
 
@@ -101,6 +102,8 @@ public class DatatoolDb
       // containing \DTLnewdb etc, so first try the faster method
       // and if that fails try the slower method.
 
+      boolean unsetFile = false;
+
       try
       {
          return loadNoTeXParser(settings, dbFile);
@@ -112,9 +115,35 @@ public class DatatoolDb
          messageHandler.progress(messageHandler.getLabelWithValues(
            "progress.quick_load_failed", e.getMessage()));
          messageHandler.debug(e);
+
+         if (!messageHandler.isBatchMode())
+         {
+            messageHandler.warning(messageHandler.getLabel(
+              "warning.texparser.used"));
+         }
+
+         /*
+          * It's possible that the user may have accidentally loaded
+          * a document file containing \input or \DTLloaddbtex.
+          * For simple preambles, the TeX Parser Library may be able
+          * to correctly find the database without error. This could
+          * mean that if the user then tries to save the database,
+          * their document will be overwritten. To guard against
+          * this, null the file to force the user to "Save As" so
+          * they can select a new file name.
+          */  
+
+         unsetFile = true;
       }
 
-      return loadTeXParser(settings, dbFile);
+      DatatoolDb db = loadTeXParser(settings, dbFile);
+
+      if (unsetFile)
+      {
+         db.file = null;
+      }
+
+      return db;
    }
 
    public static DatatoolDb loadTeXParser(DatatoolSettings settings, 
@@ -128,7 +157,8 @@ public class DatatoolDb
       MessageHandler messageHandler = settings.getMessageHandler();
       TeXApp texApp = messageHandler.getTeXApp();
 
-      PreambleParser preambleParser = new PreambleParser(texApp);
+      PreambleParser preambleParser = new PreambleParser(texApp,
+        Undefined.ACTION_WARN);
       TeXParser texParser = new TeXParser(preambleParser);
 
       DataToolSty sty = new DataToolSty(null, preambleParser);
@@ -234,7 +264,14 @@ public class DatatoolDb
             DataToolHeader header = headerRow.getHeader(i+1);
    
             String key = header.getColumnLabel();
-            String title = header.getTitle().toString(texParser);
+            String title = key;
+
+            TeXObject headerTitle = header.getTitle();
+
+            if (headerTitle != null)
+            {
+               key = headerTitle.toString(texParser);
+            }
    
             int type = header.getType();
    
@@ -1245,6 +1282,12 @@ public class DatatoolDb
    public void save(int[] columnIndexes, int[] rowIndexes)
      throws IOException
    {
+      if (file.getName().toLowerCase().endsWith(".tex"))
+      {
+         throw new IOException(
+           getMessageHandler().getLabel("error.output.tex.not_permitted"));
+      }
+
       PrintWriter out = null;
 
       String encoding = settings.getTeXEncoding();

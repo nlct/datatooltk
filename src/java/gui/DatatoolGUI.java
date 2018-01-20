@@ -1087,7 +1087,7 @@ public class DatatoolGUI extends JFrame
       System.exit(0);
    }
 
-   private void setTeXFileFilters()
+   private void setTeXFileFilters(boolean includeTeXFilter)
    {
       File file = fileChooser.getSelectedFile();
       FileFilter current = fileChooser.getFileFilter();
@@ -1099,7 +1099,12 @@ public class DatatoolGUI extends JFrame
       fileChooser.removeChoosableFileFilter(all);
 
       fileChooser.addChoosableFileFilter(dbtexFilter);
-      fileChooser.addChoosableFileFilter(texFilter);
+
+      if (includeTeXFilter)
+      {
+         fileChooser.addChoosableFileFilter(texFilter);
+      }
+
       fileChooser.addChoosableFileFilter(all);
 
       if (current != dbtexFilter)
@@ -1333,7 +1338,7 @@ public class DatatoolGUI extends JFrame
          return;
       }
 
-      setTeXFileFilters();
+      setTeXFileFilters(false);
 
       fileChooser.setSelectedFile(new File(panel.getName()+".dbtex"));
 
@@ -1352,7 +1357,7 @@ public class DatatoolGUI extends JFrame
 
    public void load()
    {
-      setTeXFileFilters();
+      setTeXFileFilters(true);
 
       if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
       {
