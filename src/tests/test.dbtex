@@ -1,4 +1,4 @@
-% Created by datatooltk on Thu Jul 11 08:34:07 BST 2013
+% Created by datatooltk on 20-Jan-2018
 \DTLifdbexists{test-para}%
 {\PackageError{datatool}{Database `test-para'
 already exists}{}%
@@ -63,7 +63,8 @@ text with a~formula: $E = mc^2$ and a~displayed equation:
 \[
   y = \sum_{i=0}^n a_ix^i
 \]\DTLpar This is supposed to be the start of a new paragraph. Here's the 
-next sentence. How about some more text. This sentence ends with a~percentage: 10\%%
+next sentence. How about some more text. This sentence ends with a~percentage: 10\%
+% Here's another comment%
 \db@col@elt@end@ %
 \db@col@id@w 2%
 \db@col@id@end@ %
