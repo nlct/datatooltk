@@ -31,12 +31,30 @@ INSTALL
 1. Ensure you have the Java Runtime Environment (JRE) installed
    (java.com/getjava).
 
-2. Download and run datatooltk-installer.jar (either
-double-click on the jar file or run 
-"java -jar datatooltk-installer.jar" from a terminal).
+2. Download and run datatooltk-installer.jar (either double-click on
+   the jar file, if supported by your operating system, or run 
+ 
+    java -jar datatooltk-installer.jar
+
+   from a terminal).
 
 If you want to use the datatooltk plugins you need to ensure
 you have Perl installed.
+
+The installer should create the following subdirectories in the
+installation directory:
+
+ - bin/ (contains scripts to run the application's .jar file)
+ - doc/ (contains documentation if corresponding option was selected 
+   during the installation)
+ - lib/ (contains the application, datatooltk.jar, the libraries
+   required by the application, see below, and the application
+   resource files)
+ - man/ (contains the man file datatooltk.1 if documentation option
+   was selected during installation)
+ - src/ (contains the source code, if the source option was selected
+   during installation)
+ - Uninstaller/ (contains the uninstaller)
 
 Libraries
 =========
@@ -58,25 +76,32 @@ The other .jar files are third party libraries:
  - Apache POI (http://poi.apache.org/) Apache 2.0 License
  - jOpenDocument (http://www.jopendocument.org/) GPL
 
+Source Code
+===========
+
+The source code is bundled in the CTAN upload as datatooltk-src.zip.
+It can also be fetched from GitHub (https://github.com/nlct/datatooltk)
+or extracted during the installation process if the source code
+option is selected.
 
 Compiling PDF Documentation
 ===========================
 
-The documentation is contained within the doc/ subdirectory
+The documentation is contained within the src/doc/ subdirectory
 of the source code. The documentation source is in XML format
-datatool-en.xml which is converted to both LaTeX and Java
+src/doc/datatool-en.xml which is converted to both LaTeX and Java
 HelpSet files to provide the standalone PDF documentation and 
 the built-in help accessed while the application is running.
 
 The conversion is performed by the Perl script included in
-the doc directory. The relative paths need to be maintained
-for the script to fetch the application resource files to
-supply the labels for menus and buttons and for LaTeX to find
-the image files.
+the src/doc/ directory. The relative paths need to be maintained
+for the script to fetch the application resource files
+(src/resources/dictionaries/*.prop) to supply the labels for menus 
+and buttons and for LaTeX to find the image files (src/doc/images/).
 
-Requirements: TeX, arara, Perl.
+Requirements: TeX, Perl.
 
-Either:
+Either (requires arara):
 
 make -C src/doc datatooltk-en-GB.pdf
 
@@ -100,3 +125,5 @@ Or:
    Alternative run pdflatex, makeindex and makeglossaries as
    per the arara directives at the start of the .tex file
 
+The man file datatooltk.1 can be created from src/doc/datatooltk.pod
+using pod2man.

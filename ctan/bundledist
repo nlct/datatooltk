@@ -2,7 +2,9 @@
 
 mkdir -p datatooltk
 cp ../dist/* datatooltk
-cd ../src
-zip --exclude="*.gitignore" ../ctan/datatooltk/datatooltk-src.zip `git ls-files`
-cd ../ctan/
+cd ..
+echo "creating datatooltk-src.zip"
+zip --exclude=README --exclude="*.gitignore" --exclude="dist/*" --exclude="ctan/*" ctan/datatooltk/datatooltk-src.zip `git ls-files`
+cd ctan/
+echo "creating datatooltk.zip"
 zip -r datatooltk.zip datatooltk

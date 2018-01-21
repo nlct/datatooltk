@@ -3,8 +3,7 @@ Author       : Nicola L. C. Talbot
                www.dickimaw-books.com
 License      : GPL
 Requirements : Java Runtime Environment 
-               Perl
-               TeX
+               and, if plugins required, Perl
 
 DESCRIPTION
 ===========
