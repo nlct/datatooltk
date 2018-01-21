@@ -141,7 +141,9 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             csvReader = new CSVReader(reader, 
               (char)settings.getSeparator(),
               (char)settings.getDelimiter(), 
-              (char)settings.getCSVescape());
+              (char)settings.getCSVescape(),
+              settings.getCSVskiplines(),
+              settings.hasCSVstrictquotes());
    
             String[] fields = csvReader.readNext();
 
@@ -186,6 +188,13 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
 
                for (int i = 0; i < fields.length; i++)
                {
+                  if (i >= db.getColumnCount())
+                  {
+                     db.addColumn(new DatatoolHeader(db,
+                        getMessageHandler().getLabelWithValues(
+                          "default.field", (i+1))));
+                  }
+
                   db.addCell(rowIdx, i, fields[i]);
                }
    

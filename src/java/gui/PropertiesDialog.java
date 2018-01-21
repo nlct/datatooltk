@@ -192,8 +192,23 @@ public class PropertiesDialog extends JDialog
       box.add(createLabel("preferences.csv.delim", delimCharField));
       box.add(delimCharField);
 
+      box = Box.createHorizontalBox();
+      box.setAlignmentX(0);
+      csvTab.add(box);
+
       hasHeaderBox = createCheckBox("preferences.csv", "hasheader");
-      csvTab.add(hasHeaderBox);
+      box.add(hasHeaderBox);
+
+      strictQuotesBox = createCheckBox("preferences.csv", "strictquotes");
+      box.add(strictQuotesBox);
+
+      box = Box.createHorizontalBox();
+      box.setAlignmentX(0);
+      csvTab.add(box);
+
+      skipLinesBox = new JSpinner(new SpinnerNumberModel(0, 0, MAX_INT_SPINNER, 1));
+      box.add(resources.createJLabel("preferences.csv.skiplines", skipLinesBox));
+      box.add(skipLinesBox);
 
       box = Box.createHorizontalBox();
       box.setAlignmentX(0);
@@ -762,6 +777,9 @@ public class PropertiesDialog extends JDialog
       delimCharField.setValue(settings.getDelimiter());
 
       hasHeaderBox.setSelected(settings.hasCSVHeader());
+      strictQuotesBox.setSelected(settings.hasCSVstrictquotes());
+
+      skipLinesBox.setValue(Integer.valueOf(settings.getCSVskiplines()));
 
       int esc = settings.getCSVescape();
 
@@ -1129,6 +1147,9 @@ public class PropertiesDialog extends JDialog
       settings.setDelimiter(delim);
 
       settings.setHasCSVHeader(hasHeaderBox.isSelected());
+      settings.setCSVstrictquotes(strictQuotesBox.isSelected());
+
+      settings.setCSVskiplines((Integer)skipLinesBox.getValue());
 
       if (noEscCharButton.isSelected())
       {
@@ -1256,8 +1277,10 @@ public class PropertiesDialog extends JDialog
 
    private CharField sepCharField, delimCharField, escCharField;
 
-   private JCheckBox hasHeaderBox, wipeBox, mapTeXBox,
+   private JCheckBox hasHeaderBox, strictQuotesBox, wipeBox, mapTeXBox,
       hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox;
+
+   private JSpinner skipLinesBox;
 
    private JComponent texMappingsComp;
 
@@ -1302,6 +1325,10 @@ public class PropertiesDialog extends JDialog
 
    private UIManager.LookAndFeelInfo[] availableLookAndFeels;
 
+   // Integer.MAX_VALUE is excessive and will make the
+   // spinner box unnecessarily wide. If the user needs a larger
+   // value it's easier to type it than use the widgets.
+   private static final int MAX_INT_SPINNER = 100;
 }
 
 class CurrencyListModel extends AbstractListModel<String>

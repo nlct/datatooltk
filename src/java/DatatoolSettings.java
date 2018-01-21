@@ -713,6 +713,24 @@ public class DatatoolSettings extends Properties
       setProperty("csvHasHeader", ""+hasHeader);
    }
 
+   public boolean hasCSVstrictquotes()
+   {
+      String prop = getProperty("csvstrictquotes");
+
+      if (prop == null)
+      {
+         setCSVstrictquotes(false);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setCSVstrictquotes(boolean strictquotes)
+   {
+      setProperty("csvstrictquotes", ""+strictquotes);
+   }
+
    public int getCSVescape()
    {
       String prop = getProperty("csvescape");
@@ -734,6 +752,38 @@ public class DatatoolSettings extends Properties
    public void setCSVescape(int esc)
    {
       setProperty("csvescape", esc == 0 ? "" : MessageHandler.codePointToString(esc));
+   }
+
+   public int getCSVskiplines()
+   {
+      String prop = getProperty("csvskiplines");
+
+      if (prop == null)
+      {
+         setCSVskiplines(0);
+         return 0;
+      }
+
+      try
+      {
+         return Integer.parseInt(prop);
+      }
+      catch (NumberFormatException e)
+      {
+         getMessageHandler().debug(e);
+         setCSVskiplines(0);
+         return 0;
+      }
+   }
+
+   public void setCSVskiplines(int lines)
+   {
+      if (lines < 0)
+      {
+         throw new IllegalArgumentException("Invalid skip lines value: "+lines);
+      }
+
+      setProperty("csvskiplines", ""+lines);
    }
 
    public String getSqlDbName()

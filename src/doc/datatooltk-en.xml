@@ -249,8 +249,15 @@
        <dt><opt tag="csv-delim" /> <meta>character</meta></dt>
        <dd>Specify the character used to delimit values in the 
        <acr tag="csv" /> file. (Defaults to a<nbsp />double quote. Synonym: <opt tag="delim" /> <meta>character</meta>)</dd>
+       <dt><opt tag="csv-skiplines" /> <meta>n</meta></dt>
+       <dd>Skip the first <meta>n</meta> rows of the <opt tag="csv"/> file. 
+       The value <meta>n</meta> may be 0 (don't skip) or a positive integer indicating the number of rows to skip.</dd>
+       <dt><opt tag="csv-strictquotes" /></dt>
+       <dd>Ignore any undelimited information (where the delimiter is given by <opt tag="csv-delim"/>).</dd>
+       <dt><opt tag="nocsv-strictquotes" /></dt>
+       <dd>Allow undelimited data.</dd>
        <dt><opt tag="csv-encoding"/> <meta>encoding</meta></dt>
-       <dd>Set the encoding for the CSV files to <meta>encoding</meta>. The <meta>encoding</meta> may be the keyword <tt>default</tt> or an empty string to indicate the default. (Synonym: <opt tag="csvencoding"/> <meta>encoding</meta>.)
+       <dd>Set the encoding for the <acr tag="csv"/> files to <meta>encoding</meta>. The <meta>encoding</meta> may be the keyword <tt>default</tt> or an empty string to indicate the default. (Synonym: <opt tag="csvencoding"/> <meta>encoding</meta>.)
        The encoding of the <TeX/> (<tt>.dbtex</tt>) file is independent of the 
        <acr tag="csv"/> encoding and is set through <opt tag="tex-encoding"/>.
        </dd>
@@ -1334,10 +1341,12 @@ sys	0m0.065s
    the <opt tag="csv"/> command line option or (in <acr tag="gui"/> mode)
    using the <menu tag="file.import.importcsv"/> menu item. The default
    separator is a<nbsp/>comma and the default delimiter is the double-quote
-   character. These can be changed using the <opt tag="sep"/> and 
-   <opt tag="delim"/> command line options or in the 
+   character. These can be changed using the <opt tag="csv-sep"/> and 
+   <opt tag="csv-delim"/> command line options or in the 
    <dict tag="preferences.title"/>
-   dialog box (see <ref tag="preferences"/>). Unlike <sty>datatool</sty>'s
+   dialog box (see <ref tag="preferences"/>).
+   </p>
+   <p>Unlike <sty>datatool</sty>'s
    <cs tag="DTLloaddb"/> command, <app/> can import data with multilined
    entries (via the Open<nbsp/>CSV library 
    <url www="http://opencsv.sourceforge.net/"/>).
@@ -1689,7 +1698,11 @@ Password:
      and enter the character in the neighbouring text box. Set the delimiter
      in the <button tag="preferences.csv.delim"/> field. Check the
      <button tag="preferences.csv.hasheader"/> button if your 
-     <acr tag="csv"/> files have a<nbsp/>header row otherwise uncheck it.
+     <acr tag="csv"/> files have a<nbsp/>header row otherwise uncheck it. 
+     Check the <button tag="preferences.csv.strictquotes"/> button
+     if you want to ignore any data that hasn't been delimited.
+     </p>
+     <p>
      You can also specify the escape character. This character can be used to 
      escape the delimiter character if it occurs in any of the fields. Since the
      escape character is a<nbsp/>backslash <backslash/> by default, this means
@@ -1701,7 +1714,14 @@ Password:
      character in the neighbouring text box. Alternatively, you can suppress the <acr tag="csv"/>
      escape character, in which case the delimiter character can't occur within 
      the data. To do this, select the <button tag="preferences.csv.noesc"/>
-     button. The character encoding can be changed through the 
+     button.
+     </p>
+     <p>If the <acr tag="csv"/> file contains blank or comment
+     or other no-header/data lines at the start of the file,
+     you can instruct <app/> to skip these lines by specifying
+     the number of lines to skip in the 
+     <button tag="preferences.csv.skiplines"/> box.
+     The character encoding can be changed through the 
      <button tag="preferences.csv.encoding"/> drop-down box.
      </p>
     </dd>

@@ -216,6 +216,21 @@ Specify the character used to separate values in the CSV file.
 
 Specify the character used to delimit values in the CSV file.
 
+=item B<--csv-skiplines> I<n>
+
+Skip the first I<n> rows from the start of the CSV file.
+The I<n> may be 0 (don't skip any rows) or a positive
+integer indicating the number of rows to skip.
+
+=item B<--csv-strictquotes>
+
+Ignore any data that hasn't been delimited (by the character
+identified with B<--csv-delim>).
+
+=item B<--nocsv-strictquotes>
+
+Allow undelimited values.
+
 =item B<--csv-encoding> I<encoding>
 
 Set the encoding for the CSV files to I<encoding>. The value may

@@ -1,4 +1,9 @@
-v1.7:
+v1.8:
+
+ - Added --csv-skiplines, --csv-strictquotes and
+   --nocsv-strictquotes
+
+v1.7 (2018-01-20):
 
  - Added --sort-locale, --tex-encoding and --csv-encoding
 
@@ -8,7 +13,7 @@ v1.7:
 
  - Improved GUI
 
-v1.6:
+v1.6 (2015-09-06):
 
  - Added --csvescape and --nocsvescape
 

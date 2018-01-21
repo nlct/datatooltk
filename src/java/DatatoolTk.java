@@ -305,6 +305,9 @@ public class DatatoolTk
         "--csvescape"));
       System.out.println(getLabelWithValues("syntax.csv_noescape", 
         "--nocsv-escape", "--nocsvescape"));
+      System.out.println(getLabelWithValues("syntax.csv_skiplines", "--csv-skiplines"));
+      System.out.println(getLabelWithValues("syntax.csv_strictquotes", "--csv-strictquotes"));
+      System.out.println(getLabelWithValues("syntax.csv_nostrictquotes", "--nocsv-strictquotes"));
       System.out.println(getLabelWithValues("syntax.csv_encoding", 
         "--csv-encoding", "--csvencoding"));
       System.out.println();
@@ -712,6 +715,34 @@ public class DatatoolTk
                   || args[i].equals("--nocsvescape"))
          {
             settings.setCSVescape("");
+         }
+         else if (args[i].equals("--csv-skiplines"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_number", args[i-1]));
+            }
+
+            try
+            {
+               settings.setCSVskiplines(Integer.parseInt(args[i]));
+            }
+            catch (Exception e)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.syntax.invalid_skiplines", args[i]), e);
+            }
+         }
+         else if (args[i].equals("--csv-strictquotes"))
+         {
+            settings.setCSVstrictquotes(true);
+         }
+         else if (args[i].equals("--nocsv-strictquotes"))
+         {
+            settings.setCSVstrictquotes(false);
          }
          else if (args[i].equals("--csv-encoding") 
             || args[i].equals("--csvencoding"))
@@ -1634,9 +1665,9 @@ public class DatatoolTk
       datatooltk.process();
    }
 
-   public static final String APP_VERSION = "1.7";
+   public static final String APP_VERSION = "1.7.20180121";
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_DATE = "2018-01-20";
+   public static final String APP_DATE = "2018-01-21";
    public static final int COPYRIGHT_YEAR = 2018;
 
    private DatatoolMessages messages;
