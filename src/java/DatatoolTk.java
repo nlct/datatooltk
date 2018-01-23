@@ -290,9 +290,9 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.csv", "--csv"));
       System.out.println(getLabelWithValues("syntax.merge_csv", "--merge-csv"));
       System.out.println(getLabelWithValues("syntax.csv_sep", "--csv-sep", 
-        settings.getSeparator(), "--sep"));
+        MessageHandler.codePointToString(settings.getSeparator()), "--sep"));
       System.out.println(getLabelWithValues("syntax.csv_delim", "--csv-delim", 
-        settings.getDelimiter(), "--delim"));
+        MessageHandler.codePointToString(settings.getDelimiter()), "--delim"));
       System.out.println(getLabelWithValues("syntax.csv_header",
         "--csv-header",
         (settings.hasCSVHeader()?" ("+getLabel("syntax.default")+".)":""),
@@ -1665,9 +1665,9 @@ public class DatatoolTk
       datatooltk.process();
    }
 
-   public static final String APP_VERSION = "1.7.20180121";
+   public static final String APP_VERSION = "1.7.20180123";
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_DATE = "2018-01-21";
+   public static final String APP_DATE = "2018-01-23";
    public static final int COPYRIGHT_YEAR = 2018;
 
    private DatatoolMessages messages;
