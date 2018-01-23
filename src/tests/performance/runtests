@@ -11,8 +11,34 @@ logfile='runtest.log'
 
 echo "Performance test results (seconds)" > $logfile
 
-for file in buildtest-*; do
+for file in buildtest-csv-doc*; do
  [ -e "$file" ] || continue
  build $file
 done
+
+for file in buildtest-newdb-doc*; do
+ [ -e "$file" ] || continue
+ build $file
+done
+
+for file in buildtest-dbtex-doc*; do
+ [ -e "$file" ] || continue
+ build $file
+done
+
+for file in buildtest-csv-*x*-doc*; do
+ [ -e "$file" ] || continue
+ build $file
+done
+
+for file in buildtest-newdb-*x*-doc*; do
+ [ -e "$file" ] || continue
+ build $file
+done
+
+for file in buildtest-dbtex-*x*-doc*; do
+ [ -e "$file" ] || continue
+ build $file
+done
+
 

@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+pdflatex -jobname test-dbtex-doc6 test-dbtex-doc

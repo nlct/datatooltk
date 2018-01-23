@@ -1,0 +1,20 @@
+\documentclass{article}
+
+\usepackage{datatool}
+
+\DTLloaddb{testdata}{sample-1000x3.csv}
+
+\begin{document}
+
+\newcount\rowctr
+\loop
+  \advance\rowctr by 1\relax
+  \dtlgetrow{testdata}{\rowctr}%
+  \dtlgetentryfromcurrentrow{\Fieldi}{1}%
+  \dtlgetentryfromcurrentrow{\Fieldii}{2}%
+  \dtlgetentryfromcurrentrow{\Fieldiii}{3}%
+  \Fieldi, \Fieldii, \Fieldiii.\par
+\ifnum\rowctr<\DTLrowcount{testdata}
+\repeat
+
+\end{document}
