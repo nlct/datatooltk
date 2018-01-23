@@ -1,3 +1,4 @@
 #!/usr/bin/bash
 
+datatooltk --map-tex-specials --csv-escape '\' --csv sample-1000x6.csv -o data.dbtex || exit $?
 pdflatex -jobname test-dbtex-1000x6-doc2 test-dbtex-doc

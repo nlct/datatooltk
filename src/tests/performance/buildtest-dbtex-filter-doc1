@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+datatooltk --nomap-tex-specials --nocsv-escape --filter Field1 lt B --filter-include --sort-locale en-GB --csv sample-1000x3-utf8.csv -o data.dbtex || exit $?
+pdflatex -jobname test-dbtex-filter-doc1 test-dbtex-utf8-doc

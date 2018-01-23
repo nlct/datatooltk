@@ -1,0 +1,19 @@
+\documentclass{article}
+
+\usepackage{datatool}
+
+\DTLloaddbtex{\testdata}{data.dbtex}
+
+\begin{document}
+
+\newcount\rowctr
+\loop
+  \advance\rowctr by 1\relax
+  \DTLgetvalue{\Fieldi}{\testdata}{\rowctr}{1}%
+  \DTLgetvalue{\Fieldii}{\testdata}{\rowctr}{2}%
+  \DTLgetvalue{\Fieldiii}{\testdata}{\rowctr}{3}%
+  \Fieldi, \Fieldii, \Fieldiii.\par
+\ifnum\rowctr<\DTLrowcount{\testdata}
+\repeat
+
+\end{document}

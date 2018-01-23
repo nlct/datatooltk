@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+pdflatex test-iter-getvalue-doc1

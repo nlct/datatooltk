@@ -1,0 +1,18 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{datatool}
+
+\DTLloaddb{testdata}{sample-1000x3-utf8.csv}
+
+\begin{document}
+\DTLforeach*{testdata}
+ {\Fieldi=Field1,\Fieldii=Field2,\Fieldiii=Field3}
+ {%
+   \DTLifstringlt*{\Fieldi}{B}%
+   {\Fieldi, \Fieldii, \Fieldiii.\DTLpar}%
+   {}%
+ }
+
+\end{document}

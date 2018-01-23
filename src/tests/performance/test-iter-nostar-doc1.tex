@@ -1,0 +1,12 @@
+\documentclass{article}
+
+\usepackage{datatool}
+
+\DTLloaddbtex{\testdata}{data.dbtex}
+
+\begin{document}
+\DTLforeach{\testdata}
+ {\Fieldi=Field1,\Fieldii=Field2,\Fieldiii=Field3}
+ {\Fieldi, \Fieldii, \Fieldiii.\par}
+
+\end{document}

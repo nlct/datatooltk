@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+pdflatex test-iter-assign-doc1

@@ -1,3 +1,0 @@
-#!/usr/bin/bash
-
-pdflatex test-csv-doc1-nostar
