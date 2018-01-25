@@ -4,12 +4,13 @@ function build
 {
   filename=$1
 
-  /usr/bin/time -f "$filename:\t%e\t(%E)" --append --output=$logfile $filename  || exit $?
+  /usr/bin/time -f "$filename:\t%e\t%E" --append --output=$logfile $filename  || exit $?
 }
 
 logfile='runtest.log'
 
-echo "Performance test results (seconds)" > $logfile
+rm -f $logfile
+touch $logfile
 
 for file in buildtest-csv-doc*; do
  [ -e "$file" ] || continue

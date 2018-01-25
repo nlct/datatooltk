@@ -231,6 +231,32 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
          modified = true;
       }
 
+      String columnList = loadSettings.getRemoveColumnList();
+
+      if (columnList != null)
+      {
+         publish(gui.getMessageHandler().getLabel(
+           "progress.removing_columns"));
+
+         db.removeColumns(columnList);
+
+         modified = true;
+      }
+      else
+      {
+         columnList = loadSettings.getRemoveExceptColumnList();
+
+         if (columnList != null)
+         {
+            publish(gui.getMessageHandler().getLabel(
+              "progress.removing_columns"));
+
+            db.removeExceptColumns(columnList);
+
+            modified = true;
+         }
+      }
+
       return db;
    }
 

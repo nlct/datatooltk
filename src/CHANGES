@@ -1,7 +1,12 @@
 v1.8:
 
- - Added --csv-skiplines, --csv-strictquotes and
-   --nocsv-strictquotes
+ - Added commands line options:
+
+    --csv-skiplines
+    --csv-strictquotes
+    --nocsv-strictquotes
+    --remove-columns
+    --remove-except-columns
 
 v1.7 (2018-01-20):
 

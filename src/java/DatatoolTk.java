@@ -201,6 +201,22 @@ public class DatatoolTk
             db.truncate(truncate);
          }
 
+         String columnList = loadSettings.getRemoveColumnList();
+
+         if (columnList != null)
+         {
+            db.removeColumns(columnList);
+         }
+         else
+         {
+            columnList = loadSettings.getRemoveExceptColumnList();
+
+            if (columnList != null)
+            {
+               db.removeExceptColumns(columnList);
+            }
+         }
+
          debug("Saving '"+outFile+"'");
          db.save(outFile);
       }
@@ -272,6 +288,10 @@ public class DatatoolTk
          "" : " ("+getLabel("syntax.default")+".)")));
       System.out.println(getLabelWithValues("syntax.truncate",
          "--truncate"));
+      System.out.println(getLabelWithValues("syntax.remove_cols",
+         "--remove-columns"));
+      System.out.println(getLabelWithValues("syntax.remove_except_cols",
+         "--remove-except-columns"));
       System.out.println(getLabelWithValues("syntax.filter_or",
          "--filter-or"));
       System.out.println(getLabelWithValues("syntax.filter_and",
@@ -1356,6 +1376,46 @@ public class DatatoolTk
                   args[i-1], args[i]));
             }
          }
+         else if (args[i].equals("--remove-columns"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_arg",
+                   args[i-1]));
+            }
+
+            if (loadSettings.getRemoveExceptColumnList() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.option_clash",
+                   args[i-1], "--remove-except-columns"));
+            }
+
+            loadSettings.setRemoveColumnList(args[i]);
+         }
+         else if (args[i].equals("--remove-except-columns"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_arg",
+                   args[i-1]));
+            }
+
+            if (loadSettings.getRemoveColumnList() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.option_clash",
+                   args[i-1], "--remove-columns"));
+            }
+
+            loadSettings.setRemoveExceptColumnList(args[i]);
+         }
          else if (args[i].equals("--merge"))
          {
             if (loadSettings.getMergeImportSource() != null
@@ -1665,9 +1725,9 @@ public class DatatoolTk
       datatooltk.process();
    }
 
-   public static final String APP_VERSION = "1.7.20180123";
+   public static final String APP_VERSION = "1.7.20180124";
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_DATE = "2018-01-23";
+   public static final String APP_DATE = "2018-01-24";
    public static final int COPYRIGHT_YEAR = 2018;
 
    private DatatoolMessages messages;

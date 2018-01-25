@@ -289,6 +289,26 @@ public class LoadSettings
       return settings;
    }
 
+   public void setRemoveColumnList(String list)
+   {
+      removeColumnList = list;
+   }
+
+   public String getRemoveColumnList()
+   {
+      return removeColumnList;
+   }
+
+   public void setRemoveExceptColumnList(String list)
+   {
+      keepColumnList = list;
+   }
+
+   public String getRemoveExceptColumnList()
+   {
+      return keepColumnList;
+   }
+
    private File inFile=null, mergeFile=null, outFile=null;
    private DatatoolImport imp=null, mergeImport=null;
    private String source=null, mergeImportSource=null, mergeKey=null;
@@ -298,6 +318,8 @@ public class LoadSettings
    private Vector<FilterInfo> filterInfo=null;
    private boolean filterOr=true, filterInclude=true;
    private int truncate = -1;
+
+   private String removeColumnList = null, keepColumnList = null;
 
    private DatatoolSettings settings;
 }

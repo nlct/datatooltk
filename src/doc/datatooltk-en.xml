@@ -184,7 +184,33 @@
        <dd>Truncate the database to the first <meta>n</meta> rows.
        (Has no effect if <meta>n</meta> is greater than or equal
        to the total number of rows.) Truncation is always performed
-       last. (After any sorting, shuffling and filtering.)</dd>
+       after any sorting, shuffling and filtering, but before column 
+       removal.</dd>
+       <dt><opt tag="remove-columns"/> <meta>column list</meta></dt>
+       <dd>Remove the columns identified by <meta>column list</meta>, which
+       may be a comma-separated list of column labels (for example, 
+       <tt>Details,Comments</tt>) or a comma-separated list of column indexes
+       or ranges (where the first column has the index 1). For example,
+       <tt>3,5-7,9</tt> indicates columns 3, 5, 6, 7 and 9. You can't mix
+       labels and indexes, so <tt>Details,5,Comments</tt> would mean the
+       columns identified by the labels <tt>Details</tt> <tt>5</tt> (which
+       might not correspond to the fifth column) and <tt>Comments</tt>.
+       Ranges are only permitted with indexes and may be open ended. For 
+       example, <tt>-4</tt> is equivalent to <tt>1-4</tt> and <tt>3-</tt> means
+       the third column onwards. This option is not cumulative and
+       may not be used with <opt tag="remove-except-columns"/>. Column removal
+       is always performed last, so you can still use <app/> to sort or merge 
+       by a column that isn't required in the document.
+       </dd>
+       <dt><opt tag="remove-except-columns"/> <meta>column list</meta></dt>
+       <dd>This option is similar to <opt tag="remove-columns"/> but the
+       <meta>column list</meta> indicates which columns to keep. All other
+       columns are removed. The argument has the same syntax as for
+       <opt tag="remove-columns"/>. This option is not cummulative and 
+       may not be used with <opt tag="remove-columns"/>. Column removal
+       is always performed last, so you can still use <app/> to sort or merge 
+       by a column that isn't required in the document.
+       </dd>
        <dt><opt tag="filter"/> <meta>key</meta> <meta>operator</meta> <meta>value</meta></dt>
        <dd>Adds the given filter. This filter returns true if the value in
        the column whose label is given by <meta>key</meta>

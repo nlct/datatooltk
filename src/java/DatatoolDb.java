@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.regex.*;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Arrays;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -1895,6 +1896,184 @@ out.println("% header block for column "+colIdx);
       }
    }
 
+   public void removeColumns(int[] indexes)
+   {
+      Arrays.parallelSort(indexes);
+
+      for (int i = indexes.length-1; i >= 0; i--)
+      {
+         headers.remove(indexes[i]);
+      }
+
+      for (DatatoolRow row : data)
+      {
+         for (int i = indexes.length-1; i >= 0; i--)
+         {
+            row.remove(indexes[i]);
+         }
+      }
+   }
+
+   public void removeColumns(List<Integer> indexes)
+   {
+      Collections.sort(indexes);
+
+      for (int i = indexes.size()-1; i >= 0; i--)
+      {
+         headers.remove(indexes.get(i));
+      }
+
+      for (DatatoolRow row : data)
+      {
+         for (int i = indexes.size()-1; i >= 0; i--)
+         {
+            row.remove(indexes.get(i));
+         }
+      }
+   }
+
+   public void removeColumns(String removeColumnList)
+     throws InvalidSyntaxException
+   {
+      removeColumns(toColumnIndexes(removeColumnList));
+   }
+
+   public void removeExceptColumns(String keepColumnList)
+     throws InvalidSyntaxException
+   {
+      Vector<Integer> keepIndexes = toColumnIndexes(keepColumnList);
+
+      int n = getColumnCount();
+
+      Vector<Integer> indexes = new Vector<Integer>(n);
+
+      for (int i = 0; i < n; i++)
+      {
+         Integer val = Integer.valueOf(i);
+
+         if (!keepIndexes.contains(val))
+         {
+            indexes.add(val);
+         }
+      }
+
+      removeColumns(indexes);
+   }
+
+   public Vector<Integer> toColumnIndexes(String columnList)
+     throws InvalidSyntaxException
+   {
+      String[] split = removeColumnList.split(",");
+
+      Vector<Integer> indexList = new Vector<Integer>(getColumnCount());
+
+      // has a list of integers or integer ranges been
+      // supplied?
+
+      try
+      {
+         for (String elem : split)
+         {
+            Matcher m = INT_RANGE_PATTERN.matcher(elem);
+
+            if (m.matches())
+            {
+               int startRange = 1;
+               int endRange = getColumnCount();
+
+               String startGroup = m.group("start");
+               String endGroup = m.group("end");
+
+               if (startGroup != null && !startGroup.isEmpty())
+               {
+                  startRange = Integer.parseInt(startGroup);
+               }
+
+               if (endGroup != null && !endGroup.isEmpty())
+               {
+                  endRange = Integer.parseInt(endGroup);
+               }
+
+               if (endRange < startRange)
+               {
+                  throw new InvalidSyntaxException(
+                    getMessageHandler().getLabelWithValues(
+                       "error.syntax.invalid_end_range",
+                       endRange, startRange));
+               }
+
+               for (int i = startRange; i <= endRange; i++)
+               {
+                  Integer val = Integer.valueOf(i)-1;
+
+                  if (val < 0 || val > getColumnCount())
+                  {
+                     throw new InvalidSyntaxException(
+                       getMessageHandler().getLabelWithValues(
+                          "error.dbload.invalid_col_id", val));
+                  }
+
+                  if (!indexList.contains(val))
+                  {
+                     indexList.add(val);
+                  }
+               }
+            }
+            else
+            {
+               Integer val = Integer.parseInt(elem)-1;
+
+               if (val < 0 || val > getColumnCount())
+               {
+                  throw new InvalidSyntaxException(
+                    getMessageHandler().getLabelWithValues(
+                       "error.dbload.invalid_col_id", val));
+               }
+
+               if (!indexList.contains(val))
+               {
+                  indexList.add(val);
+               }
+            }
+         }
+      }
+      catch (NumberFormatException e)
+      {
+         // list of labels
+
+         for (String elem : split)
+         {
+            int index = -1;
+
+            for (int i = 0, n = getColumnCount(); i < n; i++)
+            {
+               DatatoolHeader header = headers.get(i);
+
+               if (elem.equals(header.getKey()))
+               {
+                  index = i;
+               }
+            }
+
+            if (index == -1)
+            {
+               throw new InvalidSyntaxException(
+                  getMessageHandler().getLabelWithValues(
+                     "error.unknown_key", elem));
+            }
+
+            Integer val = Integer.valueOf(index);
+
+            if (!indexList.contains(val))
+            {
+               indexList.add(val);
+            }
+         }
+      }
+
+      return indexList;
+   }
+
    public DatatoolRow insertRow(int rowIdx)
    {
       DatatoolRow row = new DatatoolRow(this, headers.size());
@@ -2374,4 +2553,7 @@ out.println("% header block for column "+colIdx);
        Pattern.compile(".*\\\\lstinline\\b.*", Pattern.DOTALL),
        Pattern.compile(".*\\\\begin\\s*\\{alltt\\}.*", Pattern.DOTALL)
     };
+
+   public static final Pattern INT_RANGE_PATTERN =
+     Pattern.compile("(?<start>\\d*)-(?<end>\\d*)");
 }
