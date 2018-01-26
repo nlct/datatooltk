@@ -8,9 +8,9 @@
 \DTLforeach*{testdata}
  {\Fieldi=Field1,\Fieldii=Field2,\Fieldiii=Field3}
  {%
-   \ifdefstring{\Fieldi}{grammatically}
-   {\Fieldi, \Fieldii, \Fieldiii.\par\dtlbreak}
-   {}%
+   \ifdefstring{\Fieldi}{grammatically}{\dtlbreak}{}%
  }
+
+\Fieldi, \Fieldii, \Fieldiii.
 
 \end{document}

@@ -280,12 +280,19 @@
        <acr tag="csv" /> file. (Defaults to a<nbsp />comma. Synonym: <opt tag="sep" /> <meta>character</meta>.)</dd>
        <dt><opt tag="csv-delim" /> <meta>character</meta></dt>
        <dd>Specify the character used to delimit values in the 
-       <acr tag="csv" /> file. (Defaults to a<nbsp />double quote. Synonym: <opt tag="delim" /> <meta>character</meta>)</dd>
+       <acr tag="csv" /> file. (Defaults to a<nbsp />double quote. 
+       Synonym: <opt tag="delim" /> <meta>character</meta>)</dd>
        <dt><opt tag="csv-skiplines" /> <meta>n</meta></dt>
        <dd>Skip the first <meta>n</meta> rows of the <opt tag="csv"/> file. 
-       The value <meta>n</meta> may be 0 (don't skip) or a positive integer indicating the number of rows to skip.</dd>
+       (Useful if you have a comment block at the start of the file that
+       needs to be skipped.)
+       The value <meta>n</meta> may be 0 (don't skip) or a positive integer 
+       indicating the number of rows to skip. Blank rows are always included
+       in this count, even if <opt tag="csv-skip-empty-rows"/> is set.
+       The spreadsheet import functions also use this setting.</dd>
        <dt><opt tag="csv-strictquotes" /></dt>
-       <dd>Ignore any undelimited information (where the delimiter is given by <opt tag="csv-delim"/>).</dd>
+       <dd>Ignore any undelimited information (where the delimiter is given 
+       by <opt tag="csv-delim"/>).</dd>
        <dt><opt tag="nocsv-strictquotes" /></dt>
        <dd>Allow undelimited data.</dd>
        <dt><opt tag="csv-encoding"/> <meta>encoding</meta></dt>
@@ -294,9 +301,19 @@
        <acr tag="csv"/> encoding and is set through <opt tag="tex-encoding"/>.
        </dd>
        <dt><opt tag="csv-header" /></dt>
-       <dd>The <acr tag="csv"/> file has a header row. (Default. Synonym: <opt tag="csvheader" />.)</dd>
+       <dd>The <acr tag="csv"/> file has a header row. (Default. 
+       Synonym: <opt tag="csvheader" />.) The spreadsheet import functions
+       also use this setting.</dd>
        <dt><opt tag="nocsv-header" /></dt>
-       <dd>The <acr tag="csv"/> file doesn't have a header row. (Synonym: <opt tag="nocsvheader" />.)</dd>
+       <dd>The <acr tag="csv"/> file doesn't have a header row. (Synonym: 
+       <opt tag="nocsvheader" />.) The spreadsheet import functions
+       also use this setting.</dd>
+       <dt><opt tag="csv-skip-empty-rows" /></dt>
+       <dd>Skip empty lines found in the <acr tag="csv"/> file.
+       (Spreadsheet import also uses this setting.)</dd>
+       <dt><opt tag="nocsv-skip-empty-rows" /></dt>
+       <dd>Don't skip empty lines found in the <acr tag="csv"/> file.
+       (Spreadsheet import also uses this setting.)</dd>
        <dt><opt tag="csv-escape" /> <meta>character</meta></dt>
        <dd>Set the <acr tag="csv"/> file escape character to 
        <meta>character</meta>. (Synonym: <opt tag="csvescape" /> <meta>character</meta>)  If your data includes the delimiter
@@ -1392,6 +1409,11 @@ sys	0m0.065s
    <opt tag="map-tex-specials"/> command line option is used or the
    <button tag="preferences.tex.map"/> option has been selected in the 
    <dict tag="preferences.title"/> dialog box (see <ref tag="preferences"/>).
+   Both the column title and label will be obtained from the appropriate data 
+   header.  The title will have any mappings applied (if set). The label will 
+   have forbidden content (control sequences and the standard set of special 
+   characters) removed. In the case of <acr tag="csv"/> files or spreadsheets
+   imported without headers, default values will be used.
    </p>
    <p>
    Note that data can't be exported back to any of those formats.
@@ -1756,15 +1778,15 @@ Password:
       <image scale="0.75" alt="Image of the csv tab of the preferences dialog box" src="images/pref-csv.png" />
      </float>
      <p>
-     In this tab you can specify the <acr tag="csv"/> settings. If the 
-     separator is a<nbsp/>tab character, select the 
+     In this tab you can specify the <acr tag="csv"/> settings. Some of
+     these settings are also used by the spreadsheet import functions.
+     </p>
+     <p>If the separator is a<nbsp/>tab character, select the 
      <button tag="preferences.csv.tabsep"/> radio button. Otherwise
      select the (<button tag="preferences.csv.sep"/>) <button tag="preferences.csv.sepchar"/> radio button
      and enter the character in the neighbouring text box. Set the delimiter
-     in the <button tag="preferences.csv.delim"/> field. Check the
-     <button tag="preferences.csv.hasheader"/> button if your 
-     <acr tag="csv"/> files have a<nbsp/>header row otherwise uncheck it. 
-     Check the <button tag="preferences.csv.strictquotes"/> button
+     in the <button tag="preferences.csv.delim"/> field, and
+     check the <button tag="preferences.csv.strictquotes"/> button
      if you want to ignore any data that hasn't been delimited.
      </p>
      <p>
@@ -1779,15 +1801,22 @@ Password:
      character in the neighbouring text box. Alternatively, you can suppress the <acr tag="csv"/>
      escape character, in which case the delimiter character can't occur within 
      the data. To do this, select the <button tag="preferences.csv.noesc"/>
-     button.
-     </p>
-     <p>If the <acr tag="csv"/> file contains blank or comment
-     or other no-header/data lines at the start of the file,
-     you can instruct <app/> to skip these lines by specifying
-     the number of lines to skip in the 
-     <button tag="preferences.csv.skiplines"/> box.
-     The character encoding can be changed through the 
+     button.  The character encoding can be changed through the 
      <button tag="preferences.csv.encoding"/> drop-down box.
+     </p>
+     <p>Check the
+     <button tag="preferences.csv.hasheader"/> button if your 
+     <acr tag="csv"/> files have a<nbsp/>header row otherwise uncheck it, and
+     check the  <button tag="preferences.csv.skipemptyrows"/> button
+     to skip empty rows. To skip a set number of rows, change the
+     <button tag="preferences.csv.skiplines"/> value to the required number 
+     of rows. (Use 0 to switch off this function.) Note that the skip lines
+     function is independent of the skip empty rows. If you have set the 
+     skip lines value to, say, 3 then the first 3 lines are automatically 
+     skipped regardless of whether or not they have any content. The check for 
+     empty rows won't start until the next row (row 4, in this case).
+     The header, skip empty rows and skip lines settings are also used by
+     the spreadsheet import functions.
      </p>
     </dd>
     <dt><button tag="preferences.sql"/></dt>

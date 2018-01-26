@@ -126,34 +126,29 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
 
          String[] fields = new String[colCount];
 
+         int skipLines = settings.getCSVskiplines();
+
+         for (int i = 0; i < skipLines && rowIdx < rowCount; i++)
+         {
+            rowIdx = readRow(sheet, rowIdx, fields, false, rowCount);
+         }
+
+         if (rowIdx >= rowCount) return db;
+
+         boolean skipEmptyRows = settings.isSkipEmptyRowsOn();
+
          if (settings.hasCSVHeader())
          {
             // First row is header
 
-            boolean isEmpty = true;
-
-            while (isEmpty && rowIdx < rowCount)
-            {
-               for (int colIdx = 0; colIdx < colCount; colIdx++)
-               {
-                  fields[colIdx] = 
-                     getCellValue(sheet.getImmutableCellAt(colIdx, rowIdx));
-
-                  if (!fields[colIdx].isEmpty())
-                  {
-                     isEmpty = false;
-                  }
-               }
-
-               rowIdx++;
-            }
+            rowIdx = readRow(sheet, rowIdx, fields, skipEmptyRows, rowCount);
          }
          else
          {
             for (int colIdx = 0; colIdx < colCount; colIdx++)
             {
-               fields[colIdx] = getMessageHandler().getLabelWithValues("default.field", 
-                  ""+(colIdx+1));
+               fields[colIdx] = getMessageHandler().getLabelWithValues(
+                  "default.field", ""+(colIdx+1));
             }
          }
 
@@ -165,12 +160,13 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
 
          int dataRowIdx = 0;
 
-         for (; rowIdx < rowCount; rowIdx++)
+         while (rowIdx < rowCount)
          {
-            for (int colIdx = 0; colIdx < colCount; colIdx++)
+            rowIdx = readRow(sheet, rowIdx, fields, skipEmptyRows, rowCount);
+
+            for (int colIdx = 0; colIdx < fields.length; colIdx++)
             {
-               db.addCell(dataRowIdx, colIdx,
-                  getCellValue(sheet.getImmutableCellAt(colIdx, rowIdx)));
+               db.addCell(dataRowIdx, colIdx, fields[colIdx]);
             }
 
             dataRowIdx++;
@@ -184,6 +180,43 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
       }
 
       return db;
+   }
+
+   private int readRow(Sheet sheet, int rowIdx, String[] fields, 
+     boolean skipEmpty, int rowCount)
+   {
+      if (skipEmpty)
+      {
+         boolean isEmpty = true;
+
+         while (isEmpty && rowIdx < rowCount)
+         {
+            for (int colIdx = 0; colIdx < fields.length; colIdx++)
+            {
+               fields[colIdx] = 
+                  getCellValue(sheet.getImmutableCellAt(colIdx, rowIdx));
+
+               if (!fields[colIdx].isEmpty())
+               {
+                  isEmpty = false;
+               }
+            }
+
+            rowIdx++;
+         }
+      }
+      else
+      {
+         for (int colIdx = 0; colIdx < fields.length; colIdx++)
+         {
+            fields[colIdx] = 
+               getCellValue(sheet.getImmutableCellAt(colIdx, rowIdx));
+         }
+
+         rowIdx++;
+      }
+
+      return rowIdx;
    }
 
    private String getCellValue(Cell cell)
@@ -207,10 +240,11 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
 
       if (!settings.isTeXMappingOn())
       {
-         return field.replaceAll("\n\n+", "\\\\DTLpar ");
+         return DatatoolDb.PATTERN_PARAGRAPH.matcher(field)
+                         .replaceAll("\\\\DTLpar ");
       }
 
-      String value = field.replaceAll("\\\\DTLpar *", "\n\n");
+      String value = field.replaceAll("\\\\DTLpar *", String.format("%n%n"));
 
       int n = value.length();
 
@@ -233,7 +267,8 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
          }
       }
 
-      return builder.toString().replaceAll("\n\n+", "\\\\DTLpar ");
+      return DatatoolDb.PATTERN_PARAGRAPH.matcher(builder.toString())
+                         .replaceAll("\\\\DTLpar ");
    }
 
    private DatatoolSettings settings;

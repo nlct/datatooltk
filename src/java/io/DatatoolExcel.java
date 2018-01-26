@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk.io;
 
 import java.io.*;
 import java.util.Iterator;
+import java.util.Vector;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -136,76 +137,71 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
             return db;
          }
 
-         Row row = rowIter.next();
+         Vector<String> fields = new Vector<String>();
+         boolean skipEmpty = settings.isSkipEmptyRowsOn();
+
+         int skipLines = settings.getCSVskiplines();
+
+         for (int i = 0; i < skipLines; i++)
+         {
+            if (readRow(rowIter, fields, skipEmpty) == null)
+            {
+               return db;
+            }
+         }
 
          if (settings.hasCSVHeader())
          {
             // First row is header
 
-            boolean empty = true;
-
-            while (empty)
+            if (readRow(rowIter, fields, skipEmpty) == null)
             {
-               for (Cell cell : row)
-               {
-                  DatatoolHeader header 
-                    = new DatatoolHeader(db, cell.toString());
-                  db.addColumn(header);
+               return db;
+            }
 
-                  empty = false;
+            for (int colIdx = 0, n = fields.size(); colIdx < n; colIdx++)
+            {
+               String field = fields.get(colIdx);
+
+               if (field.isEmpty())
+               {
+                  field = getMessageHandler().getLabelWithValues(
+                     "default.field", (colIdx+1));
                }
 
-               if (empty)
-               {
-                  if (!rowIter.hasNext())
-                  {
-                     return db;
-                  }
-
-                  row = rowIter.next();
-               }
+               db.addColumn(new DatatoolHeader(db, field));
             }
          }
          else
          {
             // First row of data
    
-            int cellIdx = 0;
+            if (readRow(rowIter, fields, skipEmpty) == null)
+            {
+               return db;
+            }
 
-            for (Cell cell : row)
+            for (int colIdx = 0, n = fields.size(); colIdx < n; colIdx++)
             {
                DatatoolHeader header = new DatatoolHeader(db,
-                 getMessageHandler().getLabelWithValues("default.field", (cellIdx+1)));
+                 getMessageHandler().getLabelWithValues("default.field", 
+                   (colIdx+1)));
                db.addColumn(header);
 
-               db.addCell(rowIdx, cellIdx, getCellValue(cell));
-
-               cellIdx++;
+               db.addCell(rowIdx, colIdx, fields.get(colIdx));
             }
 
-            if (cellIdx > 0)
-            {
-               rowIdx++;
-            }
+            rowIdx++;
          }
    
-         while (rowIter.hasNext())
+         while (readRow(rowIter, fields, skipEmpty) != null)
          {
-            row = rowIter.next();
-
-            int cellIdx = 0;
-
-            for (Cell cell : row)
+            for (int colIdx = 0, n = fields.size(); colIdx < n; colIdx++)
             {
-               db.addCell(rowIdx, cellIdx, getCellValue(cell));
-
-               cellIdx++;
+               db.addCell(rowIdx, colIdx, fields.get(colIdx));
             }
-
-            if (cellIdx > 0)
-            {
-               rowIdx++;
-            }
+            
+            rowIdx++;
          }
       }
       catch (Exception e)
@@ -216,6 +212,52 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       }
 
       return db;
+   }
+
+   public Vector<String> readRow(Iterator<Row> rowIter, Vector<String> fields,
+     boolean skipEmpty)
+   {
+      if (!rowIter.hasNext()) return null;
+
+      Row row = rowIter.next();
+
+      if (skipEmpty)
+      {
+         boolean empty = true;
+
+         while (empty)
+         {
+            fields.clear();
+
+            for (Cell cell : row)
+            {
+               fields.add(getCellValue(cell));
+
+               empty = false;
+            }
+
+            if (empty)
+            {
+               if (!rowIter.hasNext())
+               {
+                  return null;
+               }
+
+               row = rowIter.next();
+            }
+         }
+      }
+      else
+      {
+         fields.clear();
+
+         for (Cell cell : row)
+         {
+            fields.add(getCellValue(cell));
+         }
+      }
+
+      return fields;
    }
 
    private String getCellValue(Cell cell)
@@ -248,10 +290,11 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
 
       if (!settings.isTeXMappingOn())
       {
-         return field.replaceAll("\n\n+", "\\\\DTLpar ");
+         return DatatoolDb.PATTERN_PARAGRAPH.matcher(field)
+            .replaceAll("\\\\DTLpar ");
       }
 
-      String value = field.replaceAll("\\\\DTLpar *", "\n\n");
+      String value = field.replaceAll("\\\\DTLpar *", String.format("%n%n"));
 
       int n = value.length();
 
@@ -274,7 +317,8 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          }
       }
 
-      return builder.toString().replaceAll("\n\n+", "\\\\DTLpar ");
+      return DatatoolDb.PATTERN_PARAGRAPH.matcher(builder.toString())
+         .replaceAll("\\\\DTLpar ");
    }
 
    private DatatoolSettings settings;

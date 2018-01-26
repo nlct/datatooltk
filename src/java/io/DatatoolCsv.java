@@ -117,6 +117,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       CSVReader csvReader = null;
       String csvEncoding = settings.getCsvEncoding();
 
+      boolean skipEmpty = db.getSettings().isSkipEmptyRowsOn();
+
       try
       {
          try
@@ -145,10 +147,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
               settings.getCSVskiplines(),
               settings.hasCSVstrictquotes());
    
-            String[] fields = csvReader.readNext();
+            String[] fields = readNextRow(csvReader, skipEmpty);
 
-            hasVerbatim = mapFieldsIfRequired(fields, !hasVerbatim) || hasVerbatim;
-   
             if (fields == null)
             {
                // empty database
@@ -156,6 +156,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
                return db;
             }
 
+            hasVerbatim = mapFieldsIfRequired(fields, !hasVerbatim) || hasVerbatim;
+   
             int rowIdx = 0;
    
             if (settings.hasCSVHeader())
@@ -176,13 +178,14 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
                     getMessageHandler().getLabelWithValues("default.field", (i+1)));
                   db.addColumn(header);
    
-                  db.addCell(rowIdx, i, fields[i].replaceAll("\n\n+", "\\\\DTLpar "));
+                  hasVerbatim = mapFieldsIfRequired(fields, !hasVerbatim) || hasVerbatim;
+                  db.addCell(rowIdx, i, fields[i]);
                }
    
                rowIdx++;
             }
    
-            while ((fields = csvReader.readNext()) != null)
+            while ((fields = readNextRow(csvReader, skipEmpty)) != null)
             {
                hasVerbatim = mapFieldsIfRequired(fields, !hasVerbatim) || hasVerbatim;
 
@@ -230,6 +233,41 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       return db;
    }
 
+   public static String[] readNextRow(CSVReader csvReader, boolean skipEmpty)
+      throws IOException
+   {
+      String[] fields = null;
+
+      if (skipEmpty)
+      {
+         boolean foundNonEmpty = false;
+
+         while (!foundNonEmpty)
+         {
+            fields = csvReader.readNext();
+
+            if (fields == null) return null;
+
+            foundNonEmpty = false;
+
+            for (String field : fields)
+            {
+               if (!field.isEmpty())
+               {
+                  foundNonEmpty = true;
+                  break;
+               }
+            }
+         }
+      }
+      else
+      {
+         fields = csvReader.readNext();
+      }
+
+      return fields;
+   }
+
    public boolean mapFieldsIfRequired(String[] fields, boolean checkForVerbatim)
    {
       if (!settings.isTeXMappingOn())
@@ -238,7 +276,13 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
 
          for (int i = 0; i < fields.length; i++)
          {
-            fields[i].replaceAll("\n\n+", "\\\\DTLpar ");
+            if (fields[i].isEmpty())
+            {
+               continue;
+            }
+
+            fields[i] = DatatoolDb.PATTERN_PARAGRAPH.matcher(fields[i])
+                         .replaceAll("\\\\DTLpar ");
 
             if (!hasVerbatim)
             {
@@ -259,7 +303,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             continue;
          }
 
-         String value = fields[i].replaceAll("\\\\DTLpar\\s*", "\n\n");
+         String value = fields[i].replaceAll("\\\\DTLpar\\s*", 
+           String.format("%n%n"));
 
          int n = value.length();
 
@@ -282,7 +327,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
             }
          }
 
-         fields[i] = builder.toString().replaceAll("\n\n+", "\\\\DTLpar ");
+         fields[i] = DatatoolDb.PATTERN_PARAGRAPH.matcher(builder.toString())
+                     .replaceAll("\\\\DTLpar ");
       }
 
       return false;
@@ -294,4 +340,5 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    }
 
    private DatatoolSettings settings;
+
 }

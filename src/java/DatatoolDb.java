@@ -2578,4 +2578,10 @@ public class DatatoolDb
 
    public static final Pattern INT_RANGE_PATTERN =
      Pattern.compile("(?<start>\\d*)-(?<end>\\d*)");
+
+   public static final Pattern PATTERN_PARAGRAPH =
+     Pattern.compile("(^[ \t]*[\n\r])+", Pattern.MULTILINE);
+
+   public static final Pattern INVALID_LABEL_CONTENT =
+     Pattern.compile("([#^_\\&%{}~]|\\\\(?:[a-zA-Z]+\\s*)|(?:[^a-zA-Z]{1}))");
 }

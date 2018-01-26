@@ -265,6 +265,7 @@ public class DatatoolTk
 
       System.out.println(getLabelWithValues("syntax.tex_encoding",
          "--tex-encoding"));
+
       System.out.println(getLabelWithValues("syntax.maptexspecials",
           "--map-tex-specials",
           (settings.isTeXMappingOn()?" ("+getLabel("syntax.default")+".)":"")));
@@ -272,12 +273,16 @@ public class DatatoolTk
          "--nomap-tex-specials",
          (settings.isTeXMappingOn() ?
          "": " ("+getLabel("syntax.default")+".)")));
+
       System.out.println(getLabelWithValues("syntax.autotrimlabels",
           "--auto-trim-labels",
           (settings.isAutoTrimLabelsOn() ? 
              " ("+getLabel("syntax.default")+".)":"")));
       System.out.println(getLabelWithValues("syntax.noautotrimlabels",
-           "--noauto-trim-labels"));
+          "--noauto-trim-labels",
+          (settings.isAutoTrimLabelsOn() ? 
+             "":" ("+getLabel("syntax.default")+".)")));
+
       System.out.println(getLabelWithValues("syntax.seed", "--seed"));
       System.out.println(getLabelWithValues("syntax.shuffle", "--shuffle"));
       System.out.println(getLabelWithValues("syntax.no_shuffle", "--noshuffle"));
@@ -327,6 +332,15 @@ public class DatatoolTk
         "--nocsv-header",
         (settings.hasCSVHeader()? "" : " ("+getLabel("syntax.default")+".)"),
         "--nocsvheader"));
+      System.out.println(getLabelWithValues("syntax.skipemptyrows",
+          "--csv-skip-empty-rows",
+          (settings.isSkipEmptyRowsOn() ? 
+             " ("+getLabel("syntax.default")+".)":"")));
+      System.out.println(getLabelWithValues("syntax.noskipemptyrows",
+          "--nocsv-skip-empty-rows",
+          (settings.isSkipEmptyRowsOn() ? 
+             "":" ("+getLabel("syntax.default")+".)")));
+
       System.out.println(getLabelWithValues("syntax.csv_escape", "--csv-escape",
         "--csvescape"));
       System.out.println(getLabelWithValues("syntax.csv_noescape", 
@@ -1126,6 +1140,14 @@ public class DatatoolTk
          else if (args[i].equals("--noauto-trim-labels"))
          {
             settings.setAutoTrimLabels(false);
+         }
+         else if (args[i].equals("--csv-skip-empty-rows"))
+         {
+            settings.setSkipEmptyRows(true);
+         }
+         else if (args[i].equals("--nocsv-skip-empty-rows"))
+         {
+            settings.setSkipEmptyRows(false);
          }
          else if (args[i].equals("--owner-only"))
          {

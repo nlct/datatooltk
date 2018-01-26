@@ -49,14 +49,27 @@ public class DatatoolHeader
       super();
       this.db = db;
       messageHandler = db.getMessageHandler();
-      setKey(key);
 
       if (key == title)
-      {// in case key has been trimmed
-         setTitle(getKey());
+      {
+         if (key == null)
+         {
+            setKey(null);
+            setTitle(null);
+         }
+         else
+         {
+            setTitle(title.trim());
+
+            // strip any invalid markup from the key
+
+            setKey(
+               DatatoolDb.INVALID_LABEL_CONTENT.matcher(key).replaceAll(""));
+         }
       }
       else
       {
+         setKey(key);
          setTitle(title);
       }
 
@@ -144,5 +157,4 @@ public class DatatoolHeader
    private String key;
    private String title;
    private int type = DatatoolSettings.TYPE_UNKNOWN;
-
 }

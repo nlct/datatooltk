@@ -5,6 +5,8 @@ v1.8:
     --csv-skiplines
     --csv-strictquotes
     --nocsv-strictquotes
+    --csv-skip-empty-rows
+    --nocsv-skip-empty-rows
     --remove-columns
     --remove-except-columns
     --auto-trim-labels

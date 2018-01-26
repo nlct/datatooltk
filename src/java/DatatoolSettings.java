@@ -754,6 +754,24 @@ public class DatatoolSettings extends Properties
       setProperty("csvescape", esc == 0 ? "" : MessageHandler.codePointToString(esc));
    }
 
+   public void setSkipEmptyRows(boolean enable)
+   {
+      setProperty("skip-empty-rows", ""+enable);
+   }
+
+   public boolean isSkipEmptyRowsOn()
+   {
+      String prop = getProperty("skip-empty-rows");
+
+      if (prop == null)
+      {
+         setSkipEmptyRows(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
    public int getCSVskiplines()
    {
       String prop = getProperty("csvskiplines");

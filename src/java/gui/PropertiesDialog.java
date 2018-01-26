@@ -205,6 +205,10 @@ public class PropertiesDialog extends JDialog
       strictQuotesBox = createCheckBox("preferences.csv", "strictquotes");
       box.add(strictQuotesBox);
 
+      skipEmptyRowsBox = resources.createJCheckBox("preferences.csv",
+        "skipemptyrows", null, 0);
+      csvTab.add(skipEmptyRowsBox);
+
       box = Box.createHorizontalBox();
       box.setAlignmentX(0);
       csvTab.add(box);
@@ -887,6 +891,7 @@ public class PropertiesDialog extends JDialog
       }
 
       autoTrimBox.setSelected(settings.isAutoTrimLabelsOn());
+      skipEmptyRowsBox.setSelected(settings.isSkipEmptyRowsOn());
 
       helpsetLangBox.setSelectedItem(settings.getHelpSet());
       dictLangBox.setSelectedItem(settings.getDictionary());
@@ -1256,6 +1261,7 @@ public class PropertiesDialog extends JDialog
       }
 
       settings.setAutoTrimLabels(autoTrimBox.isSelected());
+      settings.setSkipEmptyRows(skipEmptyRowsBox.isSelected());
 
       settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
       settings.setDictionary(dictLangBox.getSelectedItem().toString());
@@ -1285,7 +1291,8 @@ public class PropertiesDialog extends JDialog
    private CharField sepCharField, delimCharField, escCharField;
 
    private JCheckBox hasHeaderBox, strictQuotesBox, wipeBox, mapTeXBox,
-      hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox, autoTrimBox;
+      hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox, autoTrimBox,
+      skipEmptyRowsBox;
 
    private JSpinner skipLinesBox;
 
