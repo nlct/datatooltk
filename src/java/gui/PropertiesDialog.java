@@ -195,6 +195,11 @@ public class PropertiesDialog extends JDialog
       box.add(createLabel("preferences.csv.delim", delimCharField));
       box.add(delimCharField);
 
+      box.add(Box.createHorizontalStrut(10));
+
+      strictQuotesBox = createCheckBox("preferences.csv", "strictquotes");
+      box.add(strictQuotesBox);
+
       box = Box.createHorizontalBox();
       box.setAlignmentX(0);
       csvTab.add(box);
@@ -202,12 +207,11 @@ public class PropertiesDialog extends JDialog
       hasHeaderBox = createCheckBox("preferences.csv", "hasheader");
       box.add(hasHeaderBox);
 
-      strictQuotesBox = createCheckBox("preferences.csv", "strictquotes");
-      box.add(strictQuotesBox);
+      box.add(Box.createHorizontalStrut(10));
 
       skipEmptyRowsBox = resources.createJCheckBox("preferences.csv",
         "skipemptyrows", null, 0);
-      csvTab.add(skipEmptyRowsBox);
+      box.add(skipEmptyRowsBox);
 
       box = Box.createHorizontalBox();
       box.setAlignmentX(0);

@@ -133,7 +133,7 @@
 .\" ========================================================================
 .\"
 .IX Title "DATATOOLTK 1"
-.TH DATATOOLTK 1 "2018-01-20" "perl v5.18.4" "datatooltk"
+.TH DATATOOLTK 1 "2018-01-21" "perl v5.18.4" "datatooltk"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -318,6 +318,18 @@ Specify the character used to separate values in the \s-1CSV\s0 file.
 .IP "\fB\-\-csv\-delim\fR \fIcharacter\fR" 4
 .IX Item "--csv-delim character"
 Specify the character used to delimit values in the \s-1CSV\s0 file.
+.IP "\fB\-\-csv\-skiplines\fR \fIn\fR" 4
+.IX Item "--csv-skiplines n"
+Skip the first \fIn\fR rows from the start of the \s-1CSV\s0 file.
+The \fIn\fR may be 0 (don't skip any rows) or a positive
+integer indicating the number of rows to skip.
+.IP "\fB\-\-csv\-strictquotes\fR" 4
+.IX Item "--csv-strictquotes"
+Ignore any data that hasn't been delimited (by the character
+identified with \fB\-\-csv\-delim\fR).
+.IP "\fB\-\-nocsv\-strictquotes\fR" 4
+.IX Item "--nocsv-strictquotes"
+Allow undelimited values.
 .IP "\fB\-\-csv\-encoding\fR \fIencoding\fR" 4
 .IX Item "--csv-encoding encoding"
 Set the encoding for the \s-1CSV\s0 files to \fIencoding\fR. The value may

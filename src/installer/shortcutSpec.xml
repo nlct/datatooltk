@@ -8,7 +8,7 @@
   <shortcut
     name="DatatoolTk GUI"
     target="$JAVA_HOME\bin\javaw.exe"
-    commandLine="-splash:&quot;$INSTALL_PATH\lib\datatooltk-splash.png&quot; -jar &quot;$INSTALL_PATH\lib\datatooltk.jar&quot; --gui"
+    commandLine="-splash:&quot;$INSTALL_PATH\lib\datatooltk-splash.png&quot; -Djava.locale.providers=CLDR,JRE -jar &quot;$INSTALL_PATH\lib\datatooltk.jar&quot; --gui"
     workingDirectory="$INSTALL_PATH"
     description="GUI to accompany datatool.sty"
     iconFile="$INSTALL_PATH\lib\resources\icons\datatooltk.ico"

@@ -2,6 +2,7 @@
 
 mkdir -p datatooltk
 cp ../dist/* datatooltk
+cp ../src/CHANGES datatooltk
 cd ..
 echo "creating datatooltk-src.zip"
 zip --exclude=README --exclude="*.gitignore" --exclude="dist/*" --exclude="ctan/*" ctan/datatooltk/datatooltk-src.zip `git ls-files`
