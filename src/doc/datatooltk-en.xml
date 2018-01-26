@@ -144,6 +144,12 @@
        <dt><opt tag="nomap-tex-specials"/></dt>
        <dd>Don't map <TeX/> special characters when importing data from
        <acr tag="csv"/> or <acr tag="sql"/>. (Default.)</dd>
+       <dt><opt tag="auto-trim-labels"/></dt>
+       <dd>Automatically strip leading and trailing spaces from database 
+       and column identifiers. (See also <ref tag="spaces"/>.)</dd>
+       <dt><opt tag="noauto-trim-labels"/></dt>
+       <dd>Don't automatically strip leading and trailing spaces from database 
+       and column identifiers.</dd>
        <dt><opt tag="seed"/> <meta>number</meta></dt>
        <dd>Set the random generator seed to <meta>number</meta> or clear it
        if <meta>number</meta> is <tt>""</tt>. (See <ref tag="shuffle"/>.)</dd>
@@ -532,6 +538,31 @@
    <verbinput src="../tests/test-probsoln-doc.tex"/>
    <seealso tags="shuffle,sortshuffle,importprobsoln"/>
    </node>
+   <node tag="spaces" type="section" title="Leading/Trailing Spaces">
+   <p>
+   Spaces characters at the start and end of cell contents and column titles 
+   are removed when writing the <tt>.dbtex</tt> file (but they will still show
+   in the <acr tag="gui"/> until the file is saved and reloaded).
+   </p>
+   <p>Leading space characters are naturally ignored in <sty>datatool</sty>'s 
+   internal format. For consistency, <app/> now trims leading and trailing 
+   spaces from each cell and column title when writing the <tt>.dbtex</tt> 
+   file as they are usually unwanted and easy to miss. If you explicitly want
+   a space you need to use <LaTeX/> markup, such as <cs tag="space"/>. 
+   A trailing space can also be hidden by a final comment. For
+   example, with the cell contents set to:
+<pre>
+\space text % comment
+</pre>
+   then there will be a leading and trailing space if the value is used in the 
+   document. Any space characters at the end of the comment line will be 
+   stripped, but those would naturally be ignored by <LaTeX/> anyway.
+   Remember that blank lines are converted to <cs tag="DTLpar"/>, 
+   so paragraph breaks won't be recognised as spaces by the trimming code.</p>
+   <p>Column and database <em>labels</em> will only have leading and
+   trailing spaces stripped if the auto trim labels setting is on.
+   Column titles are always trimmed when writing the <tt>.dbtex</tt> file.</p>
+   </node>
    <node tag="null" type="section" title="Null Values">
    <p>
    Empty entries aren't the same as null entries. If you want 
@@ -639,7 +670,10 @@
    if you want a paragraph break in your cell entries you need to use 
    <cs tag="DTLpar"/>, but with <app/> you don't need to worry about it 
    as blank lines in an entry will automatically be converted behind 
-   the scenes. Note that redundant blank lines will be removed.
+   the scenes. Note that redundant blank lines will be removed. Leading
+   and trailing spaces are ignored when writing the <tt>.dbtex</tt> file,
+   but they will still be present in the cell editor until the file is
+   saved and reloaded (see <ref tag="spaces"/>).
    </p>
    <p>
    <b>Important:</b> if you use <sty>datatool</sty>'s <cs tag="DTLsaverawdb"/> 
@@ -660,9 +694,11 @@
      menu item or by double-clicking on the column header which opens the 
      header dialog box (see <ref tag="headerdialog"/>). The label corresponds 
      to the label used to identify the column in commands such
-     as <cs tag="DTLforeach"/>. The title is used in commands like
-     <cs tag="DTLdisplaydb"/>. See <ref tag="preferences"/> for 
-     currency mappings.
+     as <cs tag="DTLforeach"/> and will be trimmed if the 
+     <opt tag="auto-trim-labels"/> setting is on. The title is used in 
+     commands like <cs tag="DTLdisplaydb"/>. See <ref tag="preferences"/> for 
+     currency mappings. If the title field is left blank, it will be assigned 
+     the same value as the label.
      </p>
      <float type="figure" tag="headerdialog" caption="Header Dialog" pos="htbp">
       <image scale="0.75" alt="Image of header dialog box" src="images/headerdialog.png" />
@@ -1700,7 +1736,10 @@ Password:
      </p>
      <p>
      In this tab you can also specify the seed for the random number generator 
-     (equivalent to <opt tag="seed"/>).
+     (equivalent to <opt tag="seed"/>) and whether or not to automatically
+     strip leading and trailing spaces from database and column labels
+     (equivalent to <opt tag="auto-trim-labels"/> and 
+     <opt tag="noauto-trim-labels"/>).
      </p>
      <p>
      The initial capacity can be increased to speed up loading or importing.

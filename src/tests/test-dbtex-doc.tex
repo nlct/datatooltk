@@ -1,0 +1,14 @@
+\documentclass{article}
+
+\usepackage{datatool}
+
+\DTLloaddbtex{\testdata}{test.dbtex}
+%\DTLloaddbtex{\testdata}{test-out.dbtex}
+
+\begin{document}
+
+\DTLforeach*{\testdata}{\Number=Number,\Notes=Notes}{%
+ ``\Number'', ``\Notes''\par
+}
+
+\end{document}

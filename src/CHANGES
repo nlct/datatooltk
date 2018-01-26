@@ -7,6 +7,8 @@ v1.8:
     --nocsv-strictquotes
     --remove-columns
     --remove-except-columns
+    --auto-trim-labels
+    --noauto-trim-labels
 
 v1.7 (2018-01-20):
 

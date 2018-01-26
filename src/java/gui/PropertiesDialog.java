@@ -86,6 +86,9 @@ public class PropertiesDialog extends JDialog
 
       box.add(customFileField);
 
+      autoTrimBox = resources.createJCheckBox("preferences", "autotrim",null,0);
+      generalTab.add(autoTrimBox);
+
       JComponent shuffleComp = Box.createVerticalBox();
       shuffleComp.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(),
@@ -883,6 +886,8 @@ public class PropertiesDialog extends JDialog
          seedField.setValue(seed.intValue());
       }
 
+      autoTrimBox.setSelected(settings.isAutoTrimLabelsOn());
+
       helpsetLangBox.setSelectedItem(settings.getHelpSet());
       dictLangBox.setSelectedItem(settings.getDictionary());
 
@@ -1250,6 +1255,8 @@ public class PropertiesDialog extends JDialog
          settings.setRandomSeed(null);
       }
 
+      settings.setAutoTrimLabels(autoTrimBox.isSelected());
+
       settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
       settings.setDictionary(dictLangBox.getSelectedItem().toString());
 
@@ -1278,7 +1285,7 @@ public class PropertiesDialog extends JDialog
    private CharField sepCharField, delimCharField, escCharField;
 
    private JCheckBox hasHeaderBox, strictQuotesBox, wipeBox, mapTeXBox,
-      hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox;
+      hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox, autoTrimBox;
 
    private JSpinner skipLinesBox;
 

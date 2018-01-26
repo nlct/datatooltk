@@ -969,6 +969,24 @@ public class DatatoolSettings extends Properties
       return Boolean.parseBoolean(prop);
    }
 
+   public void setAutoTrimLabels(boolean enable)
+   {
+      setProperty("trimlabels", ""+enable);
+   }
+
+   public boolean isAutoTrimLabelsOn()
+   {
+      String prop = getProperty("trimlabels");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setAutoTrimLabels(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
    public boolean isTeXMappingOn()
    {
       String prop = getProperty("subtexspecials");

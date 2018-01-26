@@ -230,6 +230,11 @@ public class HeaderDialog extends JDialog
 
       String key = labelField.getText();
 
+      if (settings.isAutoTrimLabelsOn())
+      {// trim here, to help empty and non-unique checks
+         key = key.trim();
+      }
+
       if (key.isEmpty())
       {
          messageHandler.error(this, 

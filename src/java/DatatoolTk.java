@@ -272,6 +272,12 @@ public class DatatoolTk
          "--nomap-tex-specials",
          (settings.isTeXMappingOn() ?
          "": " ("+getLabel("syntax.default")+".)")));
+      System.out.println(getLabelWithValues("syntax.autotrimlabels",
+          "--auto-trim-labels",
+          (settings.isAutoTrimLabelsOn() ? 
+             " ("+getLabel("syntax.default")+".)":"")));
+      System.out.println(getLabelWithValues("syntax.noautotrimlabels",
+           "--noauto-trim-labels"));
       System.out.println(getLabelWithValues("syntax.seed", "--seed"));
       System.out.println(getLabelWithValues("syntax.shuffle", "--shuffle"));
       System.out.println(getLabelWithValues("syntax.no_shuffle", "--noshuffle"));
@@ -1113,6 +1119,14 @@ public class DatatoolTk
          {
             settings.setTeXMapping(false);
          }
+         else if (args[i].equals("--auto-trim-labels"))
+         {
+            settings.setAutoTrimLabels(true);
+         }
+         else if (args[i].equals("--noauto-trim-labels"))
+         {
+            settings.setAutoTrimLabels(false);
+         }
          else if (args[i].equals("--owner-only"))
          {
             settings.setOwnerOnly(true);
@@ -1725,9 +1739,9 @@ public class DatatoolTk
       datatooltk.process();
    }
 
-   public static final String APP_VERSION = "1.7.20180124";
+   public static final String APP_VERSION = "1.7.20180126";
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_DATE = "2018-01-24";
+   public static final String APP_DATE = "2018-01-26";
    public static final int COPYRIGHT_YEAR = 2018;
 
    private DatatoolMessages messages;

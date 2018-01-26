@@ -1,0 +1,13 @@
+\documentclass{article}
+
+\usepackage{datatool}
+
+\DTLloaddbtex{\testdata}{data.dbtex}
+
+\begin{document}
+
+\DTLassign{\testdata}{1}{\Fieldi=Field1,\Fieldii=Field2,\Fieldiii=Field3}
+
+\Fieldi, \Fieldii, \Fieldiii.
+
+\end{document}

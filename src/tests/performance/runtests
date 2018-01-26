@@ -42,6 +42,11 @@ for file in buildtest-*-filter-doc*; do
  build $file
 done
 
+for file in buildtest-*-single-doc*; do
+ [ -e "$file" ] || continue
+ build $file
+done
+
 for file in buildtest-csv-*x*-doc*; do
  [ -e "$file" ] || continue
  build $file

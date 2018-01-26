@@ -21,6 +21,7 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Vector;
+import java.util.List;
 import java.util.Random;
 import java.util.Enumeration;
 import java.util.Collections;
@@ -412,6 +413,9 @@ public class DatatoolDb
          name = name.substring(8);
 
          db.setName(name);
+
+         // db.name may have been trimmed, but local name
+         // shouldn't been to ensure regex match
 
          // Now look for \csname dtlkeys@<name>\endcsname
 
@@ -1306,6 +1310,7 @@ public class DatatoolDb
             out = new PrintWriter(file, encoding);
          }
 
+         // in case name hasn't be set:
          name = getName();
 
          out.print("% ");
@@ -1337,7 +1342,7 @@ public class DatatoolDb
 
             int type = header.getType();
 
-out.println("% header block for column "+colIdx);
+            out.println("% header block for column "+colIdx);
             out.println("\\db@plist@elt@w %");
             out.println("\\db@col@id@w "+colIdx+"%");
             out.println("\\db@col@id@end@ %");
@@ -1346,7 +1351,7 @@ out.println("% header block for column "+colIdx);
             out.println("\\db@type@id@w "
                +(type==DatatoolSettings.TYPE_UNKNOWN?"":type)+"%");
             out.println("\\db@type@id@end@ %");
-            out.println("\\db@header@id@w "+header.getTitle()+"%");
+            out.println("\\db@header@id@w "+header.getTitle().trim()+"%");
             out.println("\\db@header@id@end@ %");
             out.println("\\db@col@id@w "+colIdx+"%");
             out.println("\\db@col@id@end@ %");
@@ -1387,7 +1392,14 @@ out.println("% header block for column "+colIdx);
                   out.println("\\db@col@id@w "+colIdx+"%");
                   out.println("\\db@col@id@end@ %");
 
-                  out.println("\\db@col@elt@w "+cell+"%");
+                  // Leading spaces will always be ignored
+                  // since they immediately follow a control word
+                  // (\db@col@id@end@). For consistency, also
+                  // trim trailing spaces. Any intentional 
+                  // leading/trailing spaces must be identified
+                  // using a command (e.g. \space)
+
+                  out.println("\\db@col@elt@w "+cell.trim()+"%");
                   out.println("\\db@col@elt@end@ %");
 
                   out.println("\\db@col@id@w "+colIdx+"%");
@@ -1502,11 +1514,21 @@ out.println("% header block for column "+colIdx);
 
    public void setName(String name)
    {
-      this.name = name;
+      if (settings.isAutoTrimLabelsOn())
+      {
+         this.name = name.trim();
+      }
+      else
+      {
+         this.name = name;
+      }
    }
 
    public String getName()
    {
+      // name may not have been set, in which case return default
+      // (no trimming applied to default value)
+
       return name == null ? (file == null ? 
         getMessageHandler().getLabel("default.untitled") : file.getName()): name;
    }
@@ -1963,7 +1985,7 @@ out.println("% header block for column "+colIdx);
    public Vector<Integer> toColumnIndexes(String columnList)
      throws InvalidSyntaxException
    {
-      String[] split = removeColumnList.split(",");
+      String[] split = columnList.split(",");
 
       Vector<Integer> indexList = new Vector<Integer>(getColumnCount());
 

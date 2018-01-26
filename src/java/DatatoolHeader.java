@@ -50,7 +50,16 @@ public class DatatoolHeader
       this.db = db;
       messageHandler = db.getMessageHandler();
       setKey(key);
-      setTitle(title);
+
+      if (key == title)
+      {// in case key has been trimmed
+         setTitle(getKey());
+      }
+      else
+      {
+         setTitle(title);
+      }
+
       setType(type);
    }
 
@@ -84,7 +93,14 @@ public class DatatoolHeader
 
    public void setKey(String key)
    {
-      this.key = key;
+      if (key != null && db.getSettings().isAutoTrimLabelsOn())
+      {
+         this.key = key.trim();
+      }
+      else
+      {
+         this.key = key;
+      }
    }
 
    public void setTitle(String title)
