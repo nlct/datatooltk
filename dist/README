@@ -7,10 +7,16 @@ Home Page    : http://www.dickimaw-books.com/software/datatooltk/
 
 Bug Reports  : https://github.com/nlct/datatooltk
 
-License      : GPLv3+ <http://gnu.org/licenses/gpl.html>
-
 Requirements : Java Runtime Environment (at least Java 7)
                and, if plugins required, Perl
+
+License      : GPLv3+ <http://gnu.org/licenses/gpl.html>
+
+Copyright (C) 2014-2018 Nicola L. C. Talbot (www.dickimaw-books.com)
+License GPLv3+: GNU GPL version 3 or later
+<http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
 
 DESCRIPTION
 ===========

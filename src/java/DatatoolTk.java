@@ -1764,7 +1764,7 @@ public class DatatoolTk
    public static final String APP_VERSION = "1.8";
    public static final String APP_NAME = "datatooltk";
    public static final String APP_DATE = "2018-01-26";
-   public static final int COPYRIGHT_YEAR = 2018;
+   public static final String COPYRIGHT_YEAR = "2014-2018";
 
    private DatatoolMessages messages;
 
