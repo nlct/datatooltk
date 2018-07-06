@@ -91,8 +91,8 @@ public class DatatoolProbSoln implements DatatoolImport
       PreambleParser preambleParser = new PreambleParser(texApp);
       TeXParser texParser = new TeXParser(preambleParser);
 
-      ProbSolnSty probSolnSty = new ProbSolnSty(null, preambleParser,
-        settings.getInitialRowCapacity(), true);
+      ProbSolnSty probSolnSty = new ProbSolnSty(settings.getInitialRowCapacity(), true, 
+       null, preambleParser, false);
 
       preambleParser.usepackage(probSolnSty);
 

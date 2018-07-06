@@ -291,6 +291,8 @@ public class DatatoolTk
          "--sort-case-sensitive"));
       System.out.println(getLabelWithValues("syntax.sort_case_insensitive",
          "--sort-case-insensitive"));
+      System.out.println(getLabelWithValues("syntax.sort_locale",
+         "--sort-locale"));
       System.out.println(getLabelWithValues("syntax.owner_only",
          "--owner_only", (settings.isOwnerOnly() ?
          " ("+getLabel("syntax.default")+".)" : "")));
@@ -409,7 +411,7 @@ public class DatatoolTk
 // http://www.gnu.org/prep/standards/standards.html)
 
       String info = String.format(
-        "%s%nCopyright (C) %d Nicola L. C. Talbot (www.dickimaw-books.com)%n%s",
+        "%s%nCopyright (C) %s Nicola L. C. Talbot (www.dickimaw-books.com)%n%s",
         getLabelWithValues("about.version", APP_NAME, APP_VERSION, APP_DATE),
         COPYRIGHT_YEAR,
         getLabel("about.legal"));
@@ -1761,9 +1763,9 @@ public class DatatoolTk
       datatooltk.process();
    }
 
-   public static final String APP_VERSION = "1.8";
+   public static final String APP_VERSION = "1.9";
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_DATE = "2018-01-26";
+   public static final String APP_DATE = "2018-07-06";
    public static final String COPYRIGHT_YEAR = "2014-2018";
 
    private DatatoolMessages messages;

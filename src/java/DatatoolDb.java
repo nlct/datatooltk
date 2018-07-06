@@ -163,7 +163,7 @@ public class DatatoolDb
         Undefined.ACTION_WARN);
       TeXParser texParser = new TeXParser(preambleParser);
 
-      DataToolSty sty = new DataToolSty(null, preambleParser);
+      DataToolSty sty = new DataToolSty(null, preambleParser, false);
       preambleParser.usepackage(sty);
       preambleParser.addVerbEnv("lstlisting");
       preambleParser.addVerbEnv("alltt");

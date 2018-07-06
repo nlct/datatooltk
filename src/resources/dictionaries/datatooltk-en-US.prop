@@ -516,6 +516,7 @@ syntax.no_shuffle={0}\tDon''t shuffle the database. (Default.)
 syntax.sort={0} [+|-]<field>\n\t\tSort the database on the column whose label is given by <field>.\n\t\tIf <field> is preceded by ''+'', use ascending order. If\n\t\t<field> is preceded by ''-'', use descending order. If sign\n\t\tprefix is omitted, ''+'' is assumed. (Sort is always performed\n\t\tbefore shuffle, regardless of option order.)
 syntax.sort_case_sensitive={0}\tUse case sensitive comparison when sorting strings.
 syntax.sort_case_insensitive={0}\tUse case insensitive comparison when sorting strings.\n\t\t\t(Default.)
+syntax.sort_locale={0} <tag>\tSort according to the alphabet identified\n\t\t\tby <tag> (which should be a valid IETF\n\t\t\tlanguage tag) or, if <tag> is the keyword\n\t\t\t''none'' use non-locale letter order.
 syntax.truncate={0} <n>\tTruncate the database to the first <n> rows.\n\t\t(Has no effect if <n> is greater than the total number of rows.)\n\t\tThis option is always performed last (after any sorting,\n\t\tshuffling and filtering).
 syntax.remove_cols={0} <col-1>,...,<col-n>\tRemove given list of columns (labels or indexes starting from 1).
 syntax.remove_except_cols={0} <col-1>,...,<col-n>\tRemove all columns except those identified (labels or indexes starting from 1).
