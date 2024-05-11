@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -160,7 +160,7 @@ public class DatatoolDb
       TeXApp texApp = messageHandler.getTeXApp();
 
       PreambleParser preambleParser = new PreambleParser(texApp,
-        Undefined.ACTION_WARN);
+        UndefAction.WARN);
       TeXParser texParser = new TeXParser(preambleParser);
 
       DataToolSty sty = new DataToolSty(null, preambleParser, false);
