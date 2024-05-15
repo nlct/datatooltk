@@ -1,22 +1,42 @@
-TARGETDIR=../resources/helpsets
-DICTDIR=../resources/dictionaries
-TARGETBACKREF=../../doc
-MAINCLASS=../java/DatatoolTk.java
+targetdir=../resources/helpsets
+dictdir=../resources/dictionaries
+targetbackref=../../doc
+mainclass=../java/DatatoolTk.java
+arara=arara --verbose
 
 all	: en-GB en-US datatooltk.1
 
 datatooltk.1	: datatooltk.pod
 		pod2man -c datatooltk datatooltk.pod datatooltk.1
 
-en-GB	: $(TARGETDIR)/datatooltk-en-GB/datatooltk.html \
+datatooltk-props-en.bib	: $(dictdir)/datatooltk-en.xml
+	xml2bib $(dictdir)/datatooltk-en.xml -o datatooltk-props-en.bib
+
+datatooltk-props-en-GB.bib	: $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml
+	xml2bib $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml -o datatooltk-props-en-GB.bib
+
+version.tex	: $(mainclass)
+	@echo "\\date{Version " > version.tex
+	@grep 'String APP_VERSION = ' $(mainclass) | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION\s=//" | tr -d "\"\; " >> version.tex
+	@grep 'String APP_DATE = ' $(mainclass) | sed "s/public\sstatic\sfinal\sString\sAPP_DATE\s=//" | tr -d "\"\; " >> version.tex
+	@echo "}" >> version.tex
+
+datatooltk-en-GB.pdf	: datatooltk.bib datatooltk-props-en-GB.bib \
+			 datatooltk-en-GB.tex datatooltk-main.tex version.tex
+	$(arara) datatooltk-en-GB
+
+datatooltk-en-US.pdf	: datatooltk.bib datatooltk-props-en.bib \
+			  datatooltk-en-US.tex datatooltk-main.tex version.tex
+	$(arara) datatooltk-en-US
+
+en-GB	: $(targetdir)/datatooltk-en-GB/datatooltk.html \
 	  datatooltk-en-GB.pdf
 
-en-US	: $(TARGETDIR)/datatooltk-en-US/datatooltk.html \
+en-US	: $(targetdir)/datatooltk-en-US/datatooltk.html \
 	  datatooltk-en-US.pdf
 
-$(TARGETDIR)/datatooltk-en-GB/datatooltk.html	: $(TARGETDIR) \
-	  createdatatooltkdocs \
-	  datatooltk-en.xml datatooltk.dtd \
+$(targetdir)/datatooltk-en-GB/datatooltk.html	: $(targetdir) \
+	  datatooltk-en-GB.pdf datatooltk.dtd \
           ../tests/test-para.csv \
           ../tests/HelloWorld.java \
           ../tests/HelloUser.java \
@@ -25,17 +45,16 @@ $(TARGETDIR)/datatooltk-en-GB/datatooltk.html	: $(TARGETDIR) \
           ../tests/test-shuffle.tex \
           ../tests/test-shuffle-level.tex \
 	  images/*.png \
-	  $(MAINCLASS) \
-	  $(DICTDIR)/datatooltk-en-GB.prop \
-	  $(TARGETDIR)/datatooltk-en-GB/images/
+	  $(mainclass) \
+	  $(dictdir)/datatooltk-en-GB.prop \
+	  $(targetdir)/datatooltk-en-GB/images/
 	createdatatooltkdocs en GB
-	cd $(TARGETDIR)/datatooltk-en-GB; \
+	cd $(targetdir)/datatooltk-en-GB; \
 	  \rm -r -f JavaHelpSearch ; \
 	  jh2indexer .
 
-$(TARGETDIR)/datatooltk-en-US/datatooltk.html	: $(TARGETDIR) \
-	  createdatatooltkdocs \
-	  datatooltk-en.xml datatooltk.dtd \
+$(targetdir)/datatooltk-en-US/datatooltk.html	: $(targetdir) \
+	  datatooltk-en.pdf datatooltk.dtd \
           ../tests/test-para.csv \
           ../tests/HelloWorld.java \
           ../tests/HelloUser.java \
@@ -44,44 +63,28 @@ $(TARGETDIR)/datatooltk-en-US/datatooltk.html	: $(TARGETDIR) \
           ../tests/test-shuffle.tex \
           ../tests/test-shuffle-level.tex \
 	  images/*.png \
-	  $(MAINCLASS) \
-	  $(DICTDIR)/datatooltk-en-US.prop \
-	  $(TARGETDIR)/datatooltk-en-US/images/
+	  $(mainclass) \
+	  $(dictdir)/datatooltk-en-US.prop \
+	  $(targetdir)/datatooltk-en-US/images/
 	createdatatooltkdocs en US
-	cd $(TARGETDIR)/datatooltk-en-US; \
+	cd $(targetdir)/datatooltk-en-US; \
 	  \rm -r -f JavaHelpSearch ; \
 	  jh2indexer .
 
-$(TARGETDIR)	:
-	mkdir $(TARGETDIR)
+$(targetdir)	:
+	mkdir $(targetdir)
 
-datatooltk-en-GB.pdf	: datatooltk-en-GB.tex
-	arara -H datatooltk-en-GB
 
-datatooltk-en-US.pdf	: datatooltk-en-US.tex
-	arara -H datatooltk-en-US
+$(targetdir)/datatooltk-en-GB/images/	: 
+	mkdir -p $(targetdir)/datatooltk-en-GB
+	cd $(targetdir)/datatooltk-en-GB/ ; \
+	ln -s ../$(targetbackref)/images
 
-datatooltk-en-GB.tex	: createdatatooltkdocs datatooltk-en.xml \
-	  $(MAINCLASS) \
-	  $(DICTDIR)/datatooltk-en-GB.prop
-	createdatatooltkdocs en GB
-
-datatooltk-en-US.tex	: createdatatooltkdocs datatooltk-en.xml \
-	  $(MAINCLASS) \
-	  $(DICTDIR)/datatooltk-en-US.prop
-	createdatatooltkdocs en US
-
-$(TARGETDIR)/datatooltk-en-GB/images/	: 
-	mkdir -p $(TARGETDIR)/datatooltk-en-GB
-	cd $(TARGETDIR)/datatooltk-en-GB/ ; \
-	ln -s ../$(TARGETBACKREF)/images
-
-$(TARGETDIR)/datatooltk-en-US/images/	: 
-	mkdir -p $(TARGETDIR)/datatooltk-en-US
-	cd $(TARGETDIR)/datatooltk-en-US/ ; \
-	ln -s ../$(TARGETBACKREF)/images
+$(targetdir)/datatooltk-en-US/images/	: 
+	mkdir -p $(targetdir)/datatooltk-en-US
+	cd $(targetdir)/datatooltk-en-US/ ; \
+	ln -s ../$(targetbackref)/images
 
 clean	:
-	\rm -f datatooltk-en-GB.{tex,aux,log,pdf,glg,glo,gls,ist,ilg,ind,idx,acr,acn,alg}
-	\rm -f datatooltk-en-US.{tex,aux,log,pdf,glg,glo,gls,ist,ilg,ind,idx,acr,acn,alg}
+	\rm -f datatooltk-en*.{aux,log,pdf,glg,glstex,out,toc,lof}
 

@@ -1,0 +1,2082 @@
+
+\usepackage{fontspec}
+\setmainfont{Linux Libertine O}
+\usepackage{verbatim}
+\usepackage
+ [
+%   debug=showwrgloss
+ ]{texjavahelp}
+
+\hypersetup{colorlinks,linkcolor=blue}
+
+\newcommand{\appname}{DatatoolTk}
+
+\title{User Manual for \appname}
+\author{Nicola L.C. Talbot\\\href{https://www.dickimaw-books.com/}{\nolinkurl{dickimaw-books.com}}}
+
+\InputIfFileExists{version}{}{}
+
+\GlsXtrLoadResources[src={datatooltk},
+ \TeXJavaHelpSymbolResourceOptions
+]
+
+\GlsXtrLoadResources[src={datatooltk,\langbibsrcs},
+ \TeXJavaHelpGlsResourceOptions,
+ match-action=add,match={category=menu}
+]
+
+\begin{document}
+\maketitle
+\tableofcontents
+\listoffigures
+
+\chapter{Introduction}
+\label{introduction}
+
+The \LaTeX\ \sty{datatool} package is able to save databases in its
+own internal format to allow for rapid loading (using
+\code{\gls+{DTLwrite}\oarg{\opt{format}=dbtex}\margm{file}} with
+\sty{datatool} v3.0 or, for earlier versions,
+\code{\gls+{DTLsaverawdb}\margm{file}} or
+\code{\gls+{DTLprotectedsaverawdb}\margm{file}}).  Files in this
+\ext{dbtex} format are difficult to edit and only a \TeX pert should
+attempt it, but they are by far the fastest way of loading a
+\sty{datatool} \gls{database} in \LaTeX. The \app{datatooltk}
+application provides a \gls{gui} making it easier to edit these
+files. 
+
+\appname\ can also import data from \ext{csv} files, from
+Excel \ext{xls} (but not \ext{xlsx})
+or Open Document \ext{ods} spreadsheets, from 
+\gls{sql} databases and from \sty{probsoln} databases.
+This manual assumes the user has some knowledge of the
+\sty{datatool} package. Please ensure you have at least version
+2.15 of \sty{datatool} installed in your \TeX\ distribution.
+(Although the latest version is recommended.)
+
+The \app{datatooltk} application can be run in either 
+batch mode (default) or \gls{gui} (see \sectionref{gui}).
+
+\section{Command Line Options}
+\label{commandoptions}
+
+The \appname\ application may be run from the command line in batch
+mode:
+\appdef{datatooltk}
+In this case, a load or import option must be used (such as
+\switch{in} or \switch{csv}), as well as an output file specified
+with \switch{output}. The application may also be run with a
+graphical interface:
+\appdef{datatooltk-gui}
+This is essentially equivalent to
+\begin{terminal}
+\app{datatooltk} \switch{gui} \oargm{options}
+\end{terminal}
+but additionally has a splash screen. In \gls{gui} mode, the output
+file should not be specified, and the load\slash import switches may
+be omitted. The \menu{file} menu may be used to load, import and
+save files.
+
+Available options for the command line invocation are listed below.
+Note that some of the default values may be changed through the
+\gls{gui}, which saves your preferences.  These will be picked up by
+the next batch invocation.
+
+You can't combine any of the load/import options: \switch{in},
+\switch{csv}, \switch{xls}, \switch{ods}, \switch{sql},
+\switch{probsoln}. You also can't combine any of the merge options:
+\switch{merge}, \switch{merge-csv}, \switch{merge-xls},
+\switch{merge-ods}, \switch{merge-sql}, \switch{merge-probsoln}.
+The merge import options use the same settings as the import
+options. If you want to merge, for example, sheet~1 and sheet~2 from
+the same spreadsheet, you will have to first import one or both of
+them to a \ext{dbtex} file and then perform the merge.  With the
+exception of \switch{merge-sql}, all the merge options will ignore a
+missing file and just print a warning to STDERR.
+
+The import functions are one-way. You can't export back to any of 
+those formats.
+
+\switchdef{gui}
+Invoke \app{datatooltk} in \gls{gui} mode.
+
+\switchdef{batch}
+Invoke \app{datatooltk} in batch mode (default).
+
+\switchdef{output}
+Save the database to \meta{filename} (batch mode only).
+To guard against accidentally overwriting a document file, \app{datatooltk}
+now forbids the \ext{tex} extension for output files.
+
+\switchdef{in}
+Load \meta{datatool file}. The switch \switch{in}
+(or \swch{in}) is optional, so:
+\begin{terminal}
+\app{datatooltk} \meta{file}
+\end{terminal}
+is equivalent to 
+\begin{terminal}
+\app{datatooltk} \switch{in} \meta{file}
+\end{terminal}
+
+When loading a \ext{dbtex} file, \app{datatooltk} assumes the
+\ext{dbtex} file is in the format created by \gls{DTLsaverawdb} or,
+with \sty{datatool} v3.0+, \gls{DTLwrite} with the \opt{format} option
+set to \code{dbtex}. The file format is described in the user
+manual for \sty{datatool} v3.0+ and now has a newer version, 
+DBTEX v3.0. Older versions of \app{datatooltk} only support the
+older DBTEX v2.0 format.
+
+\appname\ will first try parsing the file according to the \ext{dbtex} format. 
+If this fails, \app{datatooltk}
+will retry using the \TeX\ Parser Library, which has some limited
+understanding of \TeX\ syntax and \sty{datatool} commands.
+This is more sophisticated than a simple pattern match, but it's slower.
+For example, suppose the file contains:
+\verbatiminput{../tests/test-dtlnewdb.tex}
+This doesn't match the \ext{dbtex} format, so \app{datatooltk} will
+switch to using the \TeX\ Parser Library, which can interpret these
+commands, but note that if the file is subsequently saved
+\strong{it will be saved in the \ext{dbtex} format}. Since this is
+potentially dangerous (as there's a possibility that you might
+accidentally load your document \ext{tex} file) if the 
+\TeX\ Parser Library is used to load the file then, in \gls{gui}
+mode, the filename for that database will be unset, which will 
+trigger the \dgls{file.save_as} dialog if you try to save the database.
+
+\switchdef{tex-encoding}
+Set the encoding for the \TeX\ (\ext{tex}, \ext{dtltex} and \ext{dbtex}) files to 
+\meta{encoding}. The \meta{encoding} may
+be the keyword \qtt{default} or an empty string to
+indicate the default file encoding. Make sure that your \LaTeX\
+document matches the given \meta{encoding}. The encoding of 
+\gls{csv} files is independent of the \TeX\ (\ext{dbtex}) 
+encoding and is set through \switch{csv-encoding}.
+
+\switchdef{name}
+If used with \switch{in}, \switch{csv}, \switch{sql}, \switch{xls}, \switch{ods}
+or \switch{probsoln}, the \switch{name} switch sets the database label to 
+\meta{name}. (See \sectionref{fileext}.)
+
+\switchdef{version}
+Print the version details to STDOUT and exit.
+
+\switchdef{help}
+Print a brief summary of available options to STDOUT and exit.
+
+\switchdef{debug}
+Enable debug mode.
+
+\switchdef{nodebug}
+Disable debug mode. (Default.)
+
+\switchdef{compat} \meta{level}
+Set the compatibility level. The argument may be the keyword
+\qtt{latest} (no backward compatibility required) or \qtt{1.6}
+(compatible with version 1.6 and below).  The \code{\switch{compat}
+1.6} setting only affects \switch{shuffle} and is provided for old
+documents.
+
+\switchdef{owner-only}
+Set read/write permissions when saving \ext{dbtex} files to owner only.
+(Has no effect on some operating systems.)
+
+\switchdef{noowner-only}
+Don't change read/write permissions when saving \ext{dbtex} files.
+
+\switchdef{map-tex-specials}
+Map \TeX\ special characters when importing data from 
+\gls{csv} or \gls{sql}.
+
+\switchdef{nomap-tex-specials}
+Don't map \TeX\ special characters when importing data from
+\gls{csv} or \gls{sql}. (Default.)
+
+\switchdef{auto-trim-labels}
+Automatically strip leading and trailing spaces from database 
+and column identifiers. (See also \sectionref{spaces}.)
+
+\switchdef{noauto-trim-labels}
+Don't automatically strip leading and trailing spaces from database 
+and column identifiers.
+
+\switchdef{seed}
+Set the random generator seed to \meta{number} or clear it
+if \meta{number} is the empty string \code{""}. (See \sectionref{shuffle}.)
+
+\switchdef{shuffle}
+Shuffle the database. (Shuffle is always performed after sort,
+regardless of the option order.)
+
+\switchdef{noshuffle}
+Don't shuffle the database. (Default.)
+
+\switchdef{sort}
+Sort the database according to the column whose label is
+\meta{field}. Optionally, \meta{prefix} may be the plus character
+\qtt{+} (ascending order) or the hyphen\slash minus character
+\qtt{-} (descending order).  If \meta{prefix} is omitted, ascending
+is assumed.  (See \sectionref{sort}.)
+
+\switchdef{sort-locale}
+If the \meta{value} is the keyword \qtt{none} use letter-sorting
+for strings. That is, compare the Unicode values of each character.
+Otherwise \meta{value} should be a valid \gls{ietf} 
+language tag that identifies a locale. Strings will then be sorted 
+according to that locale's alphabetical order. Note that \app{datatooltk} can't 
+interpret \LaTeX\ commands. (If you need that ability, you might want 
+to consider using \app{bib2gls} with \sty{glossaries-extra} 
+instead.) The default setting is to use a letter-sort for strings.
+
+This setting also governs the string comparison functions used by 
+the filter option \switch{filter}.
+
+\switchdef{sort-case-sensitive}
+(Ignored with locale-sensitive comparisons.)
+Use case-sensitive comparison when letter-sorting strings.
+This setting also governs the string comparison functions
+used by the filter option \switch{filter}.
+
+\switchdef{sort-case-insensitive}
+(Default.) Use case-insensitive comparison when letter-sorting strings.
+This compares the lower case versions of the strings using a
+character code comparison. This setting also governs the string
+comparison functions used by the filter option \switch{filter}.
+
+\switchdef{truncate}
+Truncate the database to the first \meta{n} rows.
+(Has no effect if \meta{n} is greater than or equal
+to the total number of rows.) Truncation is always performed
+after any sorting, shuffling and filtering, but before column 
+removal.
+
+\switchdef{remove-columns}
+Remove the columns identified by \meta{column list}, which
+may be a comma-separated list of column labels (for example, 
+\qtt{Details,Comments}) or a comma-separated list of column indexes
+or ranges (where the first column has the index 1). For example,
+\qtt{3,5-7,9} indicates columns 3, 5, 6, 7 and 9. You can't mix
+labels and indexes, so \qtt{Details,5,Comments} would mean the
+columns identified by the labels \qtt{Details} \qtt{5} (which
+might not correspond to the fifth column) and \qtt{Comments}.
+Ranges are only permitted with indexes and may be open ended. For 
+example, \code{-4} is equivalent to \code{1-4} and \code{3-} means
+the third column onwards. This option is not cumulative and
+may not be used with \switch{remove-except-columns}. Column removal
+is always performed last, so you can still use \app{datatooltk} to sort or merge 
+by a column that isn't required in the document.
+
+\switchdef{remove-except-columns}
+This option is similar to \switch{remove-columns} but the
+\meta{column list} indicates which columns to keep. All other
+columns are removed. The argument has the same syntax as for
+\switch{remove-columns}. This option is not cumulative and 
+may not be used with \switch{remove-columns}. Column removal
+is always performed last, so you can still use \app{datatooltk} to sort or merge 
+by a column that isn't required in the document.
+
+\switchdef{filter}
+Adds the given filter. This filter returns true if the value in
+the column whose label is given by \meta{key}
+matches the operation \meta{operator} \meta{value}
+where \meta{operator} may be one of:
+\begin{itemize}
+\item \code{eq} (equals \meta{value}),
+\item \code{ne} (does not equal \meta{value}),
+\item \code{le} (less than or equal to \meta{value}),
+\item \code{lt} (less than \meta{value}),
+\item \code{ge} (greater than or equal to \meta{value}),
+\item \code{gt} (greater than \meta{value}),
+\item \code{regex} (matches the regular expression \meta{value}).
+\end{itemize}
+Multiple filters may be used. The regular expression
+should be in the format used by
+\href{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}{java.util.regex.Pattern}.
+Filtering is always performed after sorting and shuffling.
+Numerical comparisons are used for columns that are identified 
+as either integer or real data types otherwise string
+comparisons are used, except in the case of 
+\code{regex} where the data type is disregarded
+and all values are assumed to be strings. (If the column type
+is identified as having an integer or real data type but
+\meta{value} is not a number, a string comparison will be used.)
+For example: \code{\switch{filter} Level eq 3}
+means that the filter should return true if the value in the column
+whose label is \qtt{Level} is equal to 3.
+If there isn't a column with the label \meta{key}, 
+a warning is printed on the standard error stream and the
+filter is ignored.
+
+\switchdef{filter-or}
+Use OR operator when filtering. (Default.)
+This has no effect if you only supply one filter.
+
+\switchdef{filter-and}
+Use AND operator when filtering. 
+This has no effect if you only supply one filter.
+
+\switchdef{filter-include}
+When filtering, discard rows that don't match the filter (and keep
+those that do match). This is the default action.
+
+\switchdef{filter-exclude}
+When filtering, discard rows that match the filter (and keep those that don't match).
+
+\switchdef{merge}
+Merges the input or imported database with the database stored
+in the given \meta{db file}. Each row
+in \meta{db file} is merged with the row that has a matching
+value in the column whose label is given by \meta{key}.
+Both databases must contain a column with that label. (Each entry
+in that column should ideally be unique.)
+If no matching row is found, a new row is added. If both databases
+share additional columns, the values in \meta{db file}
+override those in the original database. If \meta{db file}
+doesn't exist, a warning is issued and the option is ignored.
+This option is always implemented before any sorting, shuffling,
+filtering or truncating. Only one of the merge options is permitted.
+
+\switchdef{csv}
+Import data from the given \gls{csv} file.
+(See \sectionref{importcsv}.)
+
+\switchdef{merge-csv}
+As \switch{merge} but the data to be merged is imported from the given \gls{csv} file.
+
+\switchdef{csv-sep}
+Specify the character used to separate values in the 
+\gls{csv} file. (Defaults to a \gls{comma} character.)
+
+\switchdef{csv-delim}
+Specify the character used to delimit values in the 
+\gls{csv} file. (Defaults to a \gls{dbqt} character.)
+
+\switchdef{csv-skiplines}
+Skip the first \meta{n} rows of the \switch{csv} file. 
+(Useful if you have a comment block at the start of the file that
+needs to be skipped.)
+The value \meta{n} may be 0 (don't skip) or a positive integer 
+indicating the number of rows to skip. Blank rows are always included
+in this count, even if \switch{csv-skip-empty-rows} is set.
+The spreadsheet import functions also use this setting.
+
+\switchdef{csv-strictquotes}
+Ignore any undelimited information (where the delimiter is given 
+by \switch{csv-delim}).
+
+\switchdef{nocsv-strictquotes}
+Allow undelimited data.
+
+\switchdef{csv-encoding}
+Set the encoding for the \gls{csv} files to \meta{encoding}. The
+\meta{encoding} may be the keyword \qtt{default} or an empty
+string to indicate the default.
+The encoding of the \TeX\ (\ext{dbtex}) file is independent of the 
+\gls{csv} encoding and is set through \switch{tex-encoding}.
+
+\switchdef{csv-header}
+The \gls{csv} file has a header row. (Default.) The spreadsheet import functions
+also use this setting.
+
+\switchdef{nocsv-header}
+The \gls{csv} file doesn't have a header row. The spreadsheet import functions
+also use this setting.
+
+\switchdef{csv-skip-empty-rows}
+Skip empty lines found in the \gls{csv} file.
+(Spreadsheet import also uses this setting.)
+
+\switchdef{nocsv-skip-empty-rows}
+Don't skip empty lines found in the \gls{csv} file.
+(Spreadsheet import also uses this setting.)
+
+\switchdef{csv-escape}
+Set the \gls{csv} file escape character to 
+\meta{character}.  If your data includes the delimiter
+character, you need to escape that character to prevent it from being
+mistaken for the delimiter. For example, if the delimiter is 
+the \gls{dbqt} character and the escape character is the \gls{bksl}
+character, then a row of data may appear as:
+\begin{verbatim}
+12345,"A \"sample\" entry."
+\end{verbatim} 
+(This won't actually render properly in \LaTeX\ as won't produce the
+typographically correct double quotes.) By default the \gls{csv}
+escape character is the \gls{bksl} character (as in the above
+example) which means that you must double the backslash if you have
+any (La)TeX commands within the file.  To avoid this, you can set
+the escape character to something else that doesn't occur in your
+data.
+
+Note that delimiter character is often also the escape character, so
+the row of data would be:
+\begin{verbatim}
+12345,"A ""sample"" entry."
+\end{verbatim} 
+
+\switchdef{nocsv-escape}
+Don't have an escape character for your \gls{csv} file.
+
+\switchdef{xls}
+Import data from the given Excel \ext{xls} file. 
+(See \sectionref{importspread}.)
+
+\switchdef{merge-xls}
+As \switch{merge} but the data to be merged is imported from the
+given Excel \ext{xls} file.
+
+\switchdef{ods}
+Import data from the given Open Document Spreadsheet \ext{ods} file. 
+(See \sectionref{importspread}.)
+
+\switchdef{merge-ods}
+As \switch{merge} but the data to be merged is imported from the
+given Open Document Spreadsheet \ext{ods} file.
+
+\switchdef{sheet}
+The sheet to select from the Excel workbook or Open Document 
+Spreadsheet. This may either be an index (starting from 0) or 
+the name of the sheet. If this option is omitted, the first sheet is assumed.
+
+\switchdef{sql}
+Import data from an \gls{sql} database where 
+\meta{statement} is an \gls{sql} SELECT statement.
+(See \sectionref{importsql})
+
+\switchdef{merge-sql}
+As \switch{merge} but the data to be merged is imported using the
+given \gls{sql} SELECT statement.
+
+\switchdef{sqldb}
+The \gls{sql} database name.
+
+\switchdef{sqlprefix}
+The Java \gls{sql} prefix. (Default: \qtt{jdbc:mysql://}.)
+Currently, only \gls{mysql} is supported. Additional libraries will
+be required for other \gls{sql} databases.
+
+\switchdef{sqlport}
+The \gls{sql} port number. (Default: 3306.)
+
+\switchdef{sqlhost}
+The \gls{sql} host. (Default: \qtt{localhost}.)
+
+\switchdef{sqluser}
+The \gls{sql} user name.
+
+\switchdef{sqlpassword}
+The \gls{sql} password (insecure). If omitted, you will be prompted 
+for a password if you try to import data from an \gls{sql} 
+database.
+
+\switchdef{wipepassword}
+For extra security, wipe the password from memory as soon as it 
+has been used to connect to an \gls{sql} database. (Default.)
+
+\switchdef{nowipepassword}
+Don't wipe the password from memory as soon as it 
+has been used to connect to an \gls{sql} database.
+
+\switchdef{noconsole-action}
+If in batch mode and a SQL password is required
+and \switch{sqlpassword} hasn't been used, the
+default action is for \app{datatooltk} to request a password
+via the console. If there is no console available
+the action is determined by \meta{action}
+which may be one of:
+\begin{itemize}
+  \item \qtt{error} issue an error;
+  \item \qtt{stdin} request the password via the standard
+  input stream (less secure than using a console, and can produce 
+  an annoying flicker);
+  \item \qtt{gui} display a dialog box in which to enter the password (default).
+\end{itemize}
+
+\switchdef{probsoln}
+Import \sty{probsoln} data from \meta{filename}.
+(See \sectionref{importprobsoln}.)
+
+\switchdef{merge-probsoln}
+As \switch{merge} but the data to be merged is imported from the
+given \sty{probsoln} data set file.
+
+\section{What it isn't}
+\label{notaspreadsheet}
+
+The \app{datatooltk} application isn't intended to have the full functionality of
+a spreadsheet. Its purpose is to allow you to edit 
+\sty{datatool} databases with multilined entries. If your data 
+just consists of numbers or short single-lined text, then you'll probably 
+be better off just using a spreadsheet to input the data and 
+use \app{datatooltk} in batch mode to convert from \gls{csv} to 
+a \sty{datatool} file.
+
+\section{File Extensions}
+\label{fileext}
+
+The \sty{datatool} database files loaded and saved by \app{datatooltk}
+are just \LaTeX\ files, so they could simply have the standard
+\ext{tex} extension, but to help differentiate the database files
+from other files containing \TeX\slash \LaTeX\ code (such as picture-drawing
+code), \app{datatooltk} assumes a default extension of \ext{dbtex}.
+If you use this extension, remember to include it in the argument of
+\gls{input} or \gls{DTLloaddbtex}.
+\strong{To guard against accidentally overwriting a document file, \app{datatooltk}
+now forbids the \ext{tex} extension for output files.}
+
+Note that the database label (as used in commands like \gls{DTLnewdb})
+is independent of the file name (although when importing data, it defaults 
+to the file base name).  The database label can be changed using 
+\menu{edit.edit_dbname} in 
+\gls{gui} mode or via the command line option 
+\code{\switch{name} \meta{label}}.
+
+\FloatFig[htb]
+{setnamedialog}
+{\includeimg
+ [scale={0.75},alt={Image of dialog box}]
+ {images/setnamedialog.png}
+}
+{Setting the Database Name}
+
+\begin{example}{loadanddisplay}{Loading and Displaying Data in the
+Document}
+
+Suppose you have a database file called \filefmt{my-data.dbtex}
+and you have set the database label to just \qtt{data}
+(as shown in \autoref{setnamedialog}).
+Then you can load and display the data using:
+\begin{codebox}
+\cmd{documentclass}\marg{article}
+\cmd{usepackage}\marg{datatool}\comment{remember to load the datatool package}
+\codepar
+\gls{input}\marg{my-data.dbtex}\comment{load the database from file `my-data.dbtex'}
+\codepar
+\cbeg{document}
+\gls{DTLdisplaydb}\marg{data}\comment{Display the database identified by the name `data'}
+\cend{document}
+\end{codebox}
+
+If you can't remember the name you assigned to the database, you can 
+access it using \gls{dtllastloadeddb}.
+\begin{codebox}
+\cmd{documentclass}\marg{article}
+\cmd{usepackage}\marg{datatool}\comment{remember to load the datatool package}
+\codepar
+\gls{input}\marg{my-data.dbtex}\comment{load the database from file `my-data.dbtex'}
+\codepar
+\cbeg{document}
+\gls{DTLdisplaydb}\marg{\gls{dtllastloadeddb}}\comment{Display the last loaded database}
+\cend{document}
+\end{codebox}
+
+Alternatively, as from \sty{datatool} version 2.20, use 
+\gls{DTLloaddbtex} instead of \gls{input}:
+\begin{codebox}
+\cmd{documentclass}\marg{article}
+\cmd{usepackage}\marg{datatool}\comment{remember to load the datatool package}
+\codepar
+\gls{DTLloaddbtex}\marg{\cmd{mydata}}\marg{my-data.dbtex}\comment{load the database from file `my-data.dbtex'}
+\codepar
+\cbeg{document}
+\gls{DTLdisplaydb}\marg{\cmd{mydata}}\comment{Display the database}
+\cend{document}
+\end{codebox}
+If you have at least version 3.0 of \sty{datatool}, you can use
+\gls{DTLread} instead of \gls{input} or \gls{DTLloaddbtex} but remember to set the
+\opt{format} option to \code{dbtex}:
+\begin{codebox}
+\gls{DTLread}\oarg{\optval{format}{dbtex}}\marg{my-data}\comment{load the database from file `my-data.dbtex'}
+\end{codebox}
+With DBTEX v2.0, you can't change the database name in the document,
+but you can with DBTEX v3.0:
+\begin{codebox}
+\cmd{documentclass}\marg{article}
+\cmd{usepackage}\marg{datatool}\comment{v3.0+}
+\codepar
+\gls{DTLsetup}\marg{\optval{default-name}{mydata}}
+\gls{DTLread}\oarg{\optval{name}{mydata},\optval{format}{dbtex}}\marg{my-data}
+\codepar
+\cbeg{document}
+\gls{DTLaction}\marg{display}\comment{Display the database}
+\cend{document}
+\end{codebox}
+\end{example}
+
+\section{Verbatim}
+\label{verbatim}
+
+Since the contents of the database are stored in a \TeX\ token
+register, and assigned to control sequences via commands like
+\gls{DTLforeach}, verbatim text is not permitted. This is 
+a common problem when attempting to use verbatim text within
+a command and is covered in the UK List of \TeX\ Frequently
+Asked Questions (\href{https://texfaq.org/FAQ-verbwithin}{Why doesn't verbatim work within...?}).
+The \app{datatooltk} application checks for verbatim text\footnote{More
+specifically, it checks for any occurrences of \gls{verb}, 
+\gls{lstinline} or the beginning of the \env{verbatim},
+\env{lstlisting} or \env{alltt} environments.} when you load a database or import
+data (unless the \qt{map \TeX\ special characters} property is set for
+\gls{csv} or \gls{sql} imports). Also, \app{datatooltk} checks for
+verbatim text when you edit the contents of a cell. If it
+detects any, it will give a warning. If you ignore the warning, 
+\TeX\ will give an error if you then attempt to load the database into
+a document.
+
+If you just have a short fragment of inline verbatim text, consider
+one of the alternatives listed in \href{https://texfaq.org/FAQ-verbwithin}{the FAQ}.
+If on the other hand you have a block of verbatim text you'll have 
+to put the verbatim text in a separate file
+and load it using \gls{verbatiminput} (from the 
+\sty{verbatim} package) or \gls{lstinputlisting} (from the
+\sty{listings} package). For example, in \autoref{ex.verb} 
+I have used \gls{lstinputlisting}.
+
+\FloatFig[htb]
+{ex.verb}
+{%
+  \includeimg
+  [
+   scale=0.75,
+   alt={Image of main window showing cells with listing input}
+  ]
+  {images/verb.png}%
+}
+{Verbatim Blocks Need to be in Separate Files}
+
+That database requires two files: \filefmt{HelloWorld.java}
+\verbatiminput{../tests/HelloWorld.java}
+and \filefmt{HelloUser.java}:
+\verbatiminput{../tests/HelloUser.java}
+
+Assuming that I've saved my database in a file called
+\filefmt{prob-verb.dbtex} with database label \qtt{problems},
+here's a sample document:
+\verbatiminput{../tests/test-probsoln-doc.tex}
+
+\seealsorefs{shuffle,sortshuffle,importprobsoln}
+
+\section{Leading/Trailing Spaces}\label{spaces}
+
+Spaces characters at the start and end of cell contents and column titles 
+are removed when writing the \ext{dbtex} file (but they will still show
+in the \gls{gui} until the file is saved and reloaded).
+
+Leading space characters are naturally ignored in \sty{datatool}'s 
+internal format. For consistency, \app{datatooltk} now trims leading and trailing 
+spaces from each cell and column title when writing the \ext{dbtex} 
+file as they are usually unwanted and easy to miss. If you explicitly want
+a space you need to use \LaTeX\ markup, such as \gls{space}. 
+A trailing space can also be hidden by a final comment. For
+example, with the cell contents set to:
+\begin{codebox}
+\cmd{space} text \comment{comment}
+\end{codebox}
+then there will be a leading and trailing space if the value is used in the 
+document. Any space characters at the end of the comment line will be 
+stripped, but those would naturally be ignored by \LaTeX\ anyway.
+Remember that blank lines are converted to \gls{DTLpar}, 
+so paragraph breaks won't be recognised as spaces by the trimming code.
+Column and database <em>labels</em> will only have leading and
+trailing spaces stripped if the auto trim labels setting is on.
+Column titles are always trimmed when writing the \ext{dbtex} file.
+
+\section{Null Values}\label{null}
+
+Empty entries aren't the same as null entries. If you want 
+a null entry, set the entry to \gls{@dtlnovalue}. 
+A convenient way to do this is to select the cell and use
+\menu{edit.cell_to_null}. Alternatively, you can set all entries in 
+a selected column to null with \menu{edit.column.column_to_null}
+and similarly for a selected row with \menu{edit.row.row_to_null}.
+
+In your \LaTeX\ document, you can check for null values using 
+\sty{datatool}'s \gls{DTLifnull} command. To check for empty 
+values you can use one of \sty{etoolbox}'s commands, such as 
+\gls{ifdefempty}. As from \sty{datatool} version 2.20, you
+can also use \gls{DTLifnullorempty}.
+
+\chapter{Graphical Mode}\label{gui}
+
+To run \app{datatooltk} in graphical mode you must invoke it with either 
+\app{datatooltk-gui} or \code{\app{datatooltk} \switch{gui}}. The main window
+is shown in \figureref{mainwindow}. Each database is
+in a tabbed pane, with the name of the database in the
+tab. Note that the name corresponds to the database's identifying
+label, as used in commands like \gls{DTLnewdb}. This is 
+not necessarily the same as the filename (see \sectionref{fileext}). 
+Since this name is used as a label, it shouldn't contain any of 
+\TeX's special characters or any other active characters that could 
+cause problems.  An asterisk \code{*} following the label in the tab 
+indicates that the database has been modified. If you move the mouse
+over the tab, you will see the full pathname appear in a tooltip,
+if the database has been saved to a \sty{datatool} file,
+and the filename (without the path) will be shown in the title bar.
+
+\FloatFig[htb]
+ {mainwindow}
+ {%
+    \includeimg
+     [ scale=0.75, alt={Image of main window} ]
+     {images/mainwindow.pngs}
+ }
+ {Main Window}
+
+ You can use the \menu{file} menu to create a new 
+database, load an existing database or import data (see 
+\sectionref{import}). To load an existing database, use
+\menu{file.open}. These database files contain \LaTeX\ code
+in a specific format. The \app{datatooltk} application assumes 
+a \ext{dbtex} file extension (see \sectionref{fileext}).
+You can load these files into a \LaTeX\ document using 
+\gls{input} or \gls{DTLloaddbtex}, but remember to specify 
+the \ext{dbtex} extension. (Also remember to load the 
+\sty{datatool} package.)
+
+Each column has a corresponding data type: string, integer, real
+or currency. The type is automatically detected from the column data,
+but can be changed, as described in \sectionref{editheader}.
+
+Non-string entries can be edited by double-clicking on the relevant cell, 
+or you can select the relevant cell and use \menu{edit.edit_cell}.
+In the first case, a cursor will appear in the cell and you 
+can edit the numerical value and press <dq>Enter</dq> to finish 
+editing. In the second case, the cell editor dialog box will 
+open, see \sectionref{celleditor}.
+
+\strong{Only the first few lines of a string entry are visible in the main 
+window. If an entry has more than that number of lines, you will need to 
+use the cell editor dialog box to view the entire contents of that 
+cell.} The default row height can be changed in the
+\dialog{preferences} dialog box (see \autoref{preferences}).
+Columns set to integer or real data types have single-lined cells with no
+line wrap. Columns set to currency data type may wrap, but using 
+\keyref{enter} will finish editing the cell (unless you're using the cell
+editor dialog box). If you insert a newline character in the cell
+edit dialog box (for any data type), the type for that column will 
+be converted to \qt{string}.
+
+To edit or view an entry in a column
+with the \qt{string} data type, double-click on the relevant cell or 
+select the cell and use \menu{edit.edit_cell} to open the cell editor 
+dialog box (see \sectionref{celleditor}). You can now scroll through
+the cell contents.
+
+\section{Cell Editor}\label{celleditor}
+
+   To open the cell editor dialog box (see \autoref{fig.celleditor})
+   double-click on the required cell, which must be in a column with a 
+   string data type. Alternatively, select the cell (of any type) and use 
+   \menu{edit.edit_cell}.
+
+   <float type="figure" tag="fig.celleditor" caption="Cell Editor Dialog" pos="htbp">
+     <image scale="0.75" alt="Image of cell editor dialog" src="images/celleditor.png" />
+   </float>
+
+   Remember that the contents of the cell should be \LaTeX\ code, so be
+   careful if you use any of <TeX/>'s special characters. Also, see the
+   section on verbatim text (\autoref{verbatim}) if you haven't 
+   already read it.
+   Once you have made your edits, click on <button tag="button.okay" />
+   to update the database. To discard the edits, click 
+   <button tag="button.cancel" />.
+
+
+   If you've used \sty{datatool}, you will probably know that 
+   if you want a paragraph break in your cell entries you need to use 
+   \gls{DTLpar}, but with \app{datatooltk} you don't need to worry about it 
+   as blank lines in an entry will automatically be converted behind 
+   the scenes. Note that redundant blank lines will be removed. Leading
+   and trailing spaces are ignored when writing the \ext{dbtex} file,
+   but they will still be present in the cell editor until the file is
+   saved and reloaded (see \autoref{spaces}).
+
+
+   <b>Important:</b> if you use \sty{datatool}'s \gls{DTLsaverawdb} 
+   or \gls{DTLprotectedsaverawdb} commands to overwrite your file, you 
+   will lose any pretty-printing spaces or comments in your code.
+
+
+\section{Header Dialog}\label{editheader}
+
+     Each column has a title, a uniquely identifying label
+     and an associated type. The type can be one of:
+     <button tag="header.type.string"/>, 
+     <button tag="header.type.int"/>, 
+     <button tag="header.type.real"/> or 
+     <button tag="header.type.currency"/>.
+     The type is automatically detected from the column data,
+     but can be changed using the \menu{edit.column.edit_header}
+     menu item or by double-clicking on the column header which opens the 
+     header dialog box (see \autoref{headerdialog}). The label corresponds 
+     to the label used to identify the column in commands such
+     as \gls{DTLforeach} and will be trimmed if the 
+     <opt tag="auto-trim-labels"/> setting is on. The title is used in 
+     commands like \gls{DTLdisplaydb}. See \autoref{preferences} for 
+     currency mappings. If the title field is left blank, it will be assigned 
+     the same value as the label.
+
+     <float type="figure" tag="headerdialog" caption="Header Dialog" pos="htbp">
+      <image scale="0.75" alt="Image of header dialog box" src="images/headerdialog.png" />
+     </float>
+
+     In \gls{gui} mode, column headers show the
+     title. If you move the mouse over the column header, you will see the
+     label and type displayed in a tooltip (see 
+     \autoref{headerdetails}).
+
+     <float type="figure" tag="headerdetails" caption="Header Details Shown in Tooltip" pos="htbp">
+      <image scale="0.75" alt="Image of main window showing header tooltip"
+         src="images/headerdetails.png" />
+     </float>
+
+\chapter{Tools}\label{tools}
+
+   There are currently two tools available: sort (see \autoref{sort})
+   and shuffle (see \autoref{shuffle}). These both reorder the rows of the
+   database and can be invoked either from the \menu{tools} menu
+   or from the command line (as long as
+   you have also loaded a database using <opt tag="in"/> or one of the
+   import options). If you use both <opt tag="sort"/> and <opt tag="shuffle"/>
+   in the command line invocation, sort will always be performed first, 
+   regardless of the option order.
+
+
+\section{Sorting the Data}\label{sort}
+
+   Although you can sort data in \sty{datatool} using \gls{DTLsort}, 
+   it's far more efficient to sort it in \app{datatooltk}.<footnote>If the original 
+   data is in an \gls{sql} database, it's even more efficient to 
+   do the sorting in the SELECT statement when you import the data (see 
+   \autoref{importsql}).</footnote> So instead of doing, say,
+\begin{verbatim}
+\input{mydata.dbtex}% loads database <dict tag="manual.labelled"/> `data' from file `mydata.dbtex'
+\DTLsortdb{Surname}{data}% sort data on `Title' field
+% Later in the document:
+\DTLdisplaydb{data}% display data in tabular environment
+\end{verbatim}
+It's better to run, say,
+\begin{verbatim}
+<dict tag="appname"/> --in mydata.dbtex --sort Surname --output mydata-sorted.dbtex
+\end{verbatim}
+(Remember that this defaults to letter sorting for strings. Use
+<opt tag="sort-locale"/> to sort according to a locale.)
+Then in the document, just load <tt>mydata-sorted.dbtex</tt>:
+\begin{verbatim}
+\input{mydata-sorted.dbtex}
+% Later in the document:
+\DTLdisplaydb{data}% display data in tabular environment
+\end{verbatim}
+   or, if you have shell escape enabled you can used <TeX/>'s 
+\gls{write18} mechanism:
+
+\begin{verbatim}
+\immediate\write18{<dict tag="appname"/> --in mydata.dbtex --sort Surname 
+--output mydata-sorted.dbtex}
+
+\input{mydata-sorted.dbtex}
+% Later in the document:
+\DTLdisplaydb{data}% display data in tabular environment
+\end{verbatim}
+
+   If you have <tt>arara</tt> version 4.0, there's a rule for \app{datatooltk}:
+
+\begin{verbatim}
+% arara: datatooltk: {input: mydata.dbtex, sort: Surname,
+% arara: --> output: mydata-sorted.dbtex}
+% arara: pdflatex
+\end{verbatim}
+
+   A database can be sorted according to a particular column
+   in either ascending or descending order. In batch mode, this is done
+   with the <opt tag="sort"/> option, as shown above, where the sort column is identified
+   by the column's unique label. If the label is preceded by <tt>-</tt> then
+   descending order is used (for example, <opt tag="sort"/> <tt>-Surname</tt>). If the label is preceded by <tt>+</tt> (or has
+   no prefix) then ascending order is used. When comparing strings there are 
+   two modes: letter (compare character codes) or locale-sensitive
+   (use the alphabet for the given locale).
+   For letter comparisons you 
+   can also use <opt tag="sort-case-sensitive"/> for case-sensitive comparisons
+   and <opt tag="sort-case-insensitive"/> for case-insensitive comparisons.
+   The default is case-insensitive. The locale comparisons are
+   typically case-insensitive. The treatment of accented characters depends
+   on the locale's rule.
+
+In \gls{gui} mode, sorting is
+   done using the \menu{tools.sort} menu item which opens
+   the <button tag="sort.title"/> dialog box (see \autoref{sortdialog}).
+
+   <float type="figure" tag="sortdialog" caption="Sort Dialog" pos="htb">
+      <image scale="0.75" alt="Image of sort dialog box" src="images/sortdialog.png" />
+   </float>
+
+   Select the column you wish to sort by from the drop-down list of column
+   titles, and check the appropriate radio button for ascending or descending
+   sort. If the column has the string data type, you also need to specify
+   what type of comparison you want to use. For a letter (character code)
+   comparison, select the <button tag="sort.letter"/> box, which will enable
+   the <button tag="sort.case_sensitive"/> box. For a locale comparison,
+   select the <button tag="sort.locale"/> box, which will enable the
+   locale selector.
+
+
+   If the column type has a numerical type, the entries will be sorted via 
+   a numerical comparison (10 is greater than 2) and the string
+   options are ignored. If the column type is a string type,
+   any numerical entries will be sorted via a character comparison (<dq>10</dq>
+   comes before <dq>2</dq>).
+
+\begin{example}{label}{}
+
+   Consider the data shown in \autoref{sortex1} and reproduced in 
+   \autoref{tabsortex1}.
+   <float type="table" tag="tabsortex1" caption="Original Data" pos="htbp">
+    <tabular spec="ll" >
+     <tr>
+      <td><tt>Book</tt></td>
+      <td>\gls{pounds}<tt>5.99</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Video Game</tt></td>
+      <td>\gls{euro}<tt>20.00</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Pen</tt></td>
+      <td>\gls{pounds}<tt>3.00</tt></td>
+     </tr>
+    </tabular>
+   </float>
+   The first column has a string data type and the second has 
+   a currency data type. Sorting in ascending order on the second column,
+   will sort numerically on just the number. The currency symbol is ignored
+   (see \autoref{tabsortex2}).
+   If the type of the second column is changed from currency to string, and the
+   sort is redone, the order is now based on a string comparison that
+   includes the currency symbol (see \autoref{tabsortex3}).
+
+   <float type="figure" tag="sortex1" caption="Original Data" pos="htbp">
+      <image scale="0.75" alt="Image of example database" src="images/sortex1.png" />
+   </float>
+   <float type="table" tag="tabsortex2" caption="Data Sorted on Second Column (Currency Comparison)" pos="htbp">
+    <tabular spec="ll" >
+     <tr>
+      <td><tt>Pen</tt></td>
+      <td>\gls{pounds}<tt>3.00</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Book</tt></td>
+      <td>\gls{pounds}<tt>5.99</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Video Game</tt></td>
+      <td>\gls{euro}<tt>20.00</tt></td>
+     </tr>
+    </tabular>
+   </float>
+   <float type="table" tag="tabsortex3" caption="Data Sorted on Second Column (String Comparison)" pos="htbp">
+    <tabular spec="ll" >
+     <tr>
+      <td><tt>Video Game</tt></td>
+      <td>\gls{euro}<tt>20.00</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Pen</tt></td>
+      <td>\gls{pounds}<tt>3.00</tt></td>
+     </tr>
+     <tr>
+      <td><tt>Book</tt></td>
+      <td>\gls{pounds}<tt>5.99</tt></td>
+     </tr>
+    </tabular>
+   </float>
+Remember that \app{datatooltk} doesn't have any knowledge of currency conversions.
+   In this example it would be better to have a column of real numbers
+   containing the price in a single base currency. (In fact, it would
+   be better to store the original data in a spreadsheet or database
+   and just use \app{datatooltk} in batch mode.)
+\end{example}
+
+\section{Shuffling the Data}\label{shuffle}
+
+   Shuffling involves randomly changing the order of the rows. This can be
+   performed either by the <opt tag="shuffle"/> command line option or
+   the \menu{tools.shuffle} menu item. You can change
+   the seed used by the random number generator with
+   <opt tag="seed"/> or through the 
+   <dict tag="preferences.title"/> dialog box (see \autoref{preferences}).
+   The method used to shuffle data has changed since version 1.6.
+   If you need to use the old method (for example, if you
+   have set a seed with an existing document), then use
+   <opt tag="compat"/> 1.6 when invoking \app{datatooltk}. For example
+
+\begin{verbatim}
+datatooltk --compat 1.6 --seed 2000 --shuffle infile.dbtex -o outfile.dbtex
+\end{verbatim}
+   The newer version is more efficient.
+\begin{example}{label}{}
+
+   Consider the database shown in \autoref{shuffleex1}. This database
+   has three columns. The first is a question, the second is the 
+   corresponding answer (optional) and the third is a number indicating 
+   the question level.  For example, 1 could correspond to easy and 2 could 
+   correspond to medium difficulty.
+
+   <float type="figure" tag="shuffleex1" caption="Shuffle Example" pos="htbp">
+      <image scale="0.75" alt="Image of example database" src="images/shuffleex1.png" />
+   </float>
+
+   Now suppose I want to write an assignment sheet that has one randomly
+   selected question of level 1 and two randomly selected questions of
+   level 2. Let's suppose the file name is <tt>data.dbtex</tt>
+   and the database label is \qtt{problems}. Then I can run \app{datatooltk}
+   in batch mode using:
+\begin{verbatim}
+<dict tag="appname"/> --shuffle --in data.dbtex --output data-shuffled.dbtex
+\end{verbatim}
+   Remember to use <opt tag="seed"/> if you don't want a different
+   ordering every time you run that command. For example:
+\begin{verbatim}
+<dict tag="appname"/> --seed 2013 --shuffle --in data.dbtex --output data-shuffled.dbtex
+\end{verbatim}
+   This shuffled database can now be loaded in my document:
+
+\verbatiminput{../tests/test-shuffle.tex}
+
+   What if I want all the easy questions listed first? This requires 
+   some modifications to the code as shown below:
+
+\verbatiminput{../tests/test-shuffle-level.tex}
+
+   Now, the \gls{DTLforeach} loop just stores the row numbers of the
+   required questions in two lists, corresponding to the two different levels.
+   Then each list is iterated through and the corresponding row is fetched
+   using \gls{dtlgetrow}. Extending this example to accommodate an
+   arbitrary number of levels is left as an exercise for the reader.
+
+
+   Remember that if you have shell escape enabled when you run \LaTeX\ you
+   can invoke \app{datatooltk} in your document <em>before</em> you load the database:
+
+\begin{verbatim}
+\immediate\write18{datatooltk --in data.dbtex --seed 2013 --shuffle 
+--output data-shuffled.dbtex}
+
+\input{data-shuffled.dbtex}
+\end{verbatim}
+\end{example}
+
+\section{Sorting and Shuffling}\label{sortshuffle}
+
+   As mentioned earlier, if you specify both <opt tag="sort"/> and
+   <opt tag="shuffle"/>, the sorting will always be performed first, 
+   regardless of the option order, but why would you want to sort the data
+   if you're going to shuffle it? Consider the command invocation:
+<alltt>
+<dict tag="appname"/> <opt tag="shuffle"/> <opt tag="in"/> \meta{in-file} <opt tag="output"/> \meta{out-file}
+</alltt>
+   Every time you run this command, you will get a different ordering.
+If, however, you set a seed for the random generator, for example:
+<alltt>
+<dict tag="appname"/> <opt tag="seed"/> 2013 <opt tag="shuffle"/> <opt tag="in"/> \meta{in-file} <opt tag="output"/> \meta{out-file}
+</alltt>
+   You will always get the same random ordering <em>provided the original 
+   data in \meta{in-file} has remained unchanged</em>. If you want to 
+   modify the shuffled data in your document and save it to the original 
+   file \meta{in-file} using \gls{DTLsaverawdb}, the ordering in 
+   that file will change, so the next time you shuffle it, you'll get 
+   a different ordering, even if you use the same seed. If you sort
+   first on a unique label, that will ensure the shuffle has the same 
+   starting point (unless you add or remove rows).
+
+\begin{example}{label}{}
+
+   Suppose you have a database of exam questions and you want to keep
+   track of the year in which each question was last used. (To make life
+   easier, let's identify the academic year <dq>2012/13</dq> as 2013, the
+   academic year <dq>2013/14</dq> as 2014, etc.) Let's further suppose the
+   database of questions is in a file called <tt>mth-101.dbtex</tt>
+   and the database label is \qtt{problems} (see 
+   \autoref{sortshuffleex}). The database 
+   contains a column with the label \qtt{Label}, which
+   uniquely identifies an exam question, a column with the label
+   \qtt{Question} that contains the exam question, a column
+   with the label \qtt{Answer} that contains the answer and
+   an integer column with the label \qtt{Year} that contains the
+   exam year in which that question was last used. (A zero entry means the
+   question hasn't been used.)
+
+   <float type="figure" tag="sortshuffleex" caption="Sort and Shuffle Example" pos="htbp">
+      <image scale="0.75" alt="Image of example database" src="images/sortshuffleex1.png" />
+   </float>
+
+   Now suppose the exam requires five questions to be randomly selected from 
+   this database, but must not include any question used in the past three 
+   years. So the exam \LaTeX\ document needs to load in a shuffled
+   version of <tt>mth-101.dbtex</tt>, use the first five questions that don't
+   have a year set in the past three year range, set the year for the
+   selected questions to the current exam year, display the questions (and
+   optionally the answers for the solution sheet), and at the end of the
+   document, overwrite <tt>mth-101.dbtex</tt> so that it now has 
+   a record of this year's exam questions.
+
+
+   There are two problems. Firstly, if the process is to be automated
+   with a call to \app{datatooltk} <opt tag="shuffle"/> followed by 
+   a \LaTeX\ call, a different set of problems will be selected
+   on each run, even with the same seed. To overcome this, a sort on 
+   the <tt>Label</tt> column needs to be done before the shuffle:
+<alltt>
+<dict tag="appname"/> <opt tag="sort"/> Label <opt tag="seed"/> 2013 <opt tag="shuffle"/> <opt tag="in"/> mth-101.dbtex <cont/><opt tag="output"/> mth-101-shuffled.dbtex
+</alltt>
+   <contexplan/>
+   This way the shuffle always starts from the same ordering.
+
+
+   The second problem occurs if you edit the database such that you add or
+   remove rows. This will change the initial conditions, even with the sort.
+   If you add or remove rows, you need to accept that the document may well
+   end up with a different selection of questions, which is okay if
+   you haven't finalised the exam, but it means that some of the questions
+   will be identified as having been used in that exam year from 
+   a previous run but are now no longer selected. In order to make them
+   available for the next year, if they haven't been selected but have had the
+   year set to this year, the year needs to be cleared.
+
+
+   To solve this, once you have selected the maximum required number of
+   questions, don't break out of the loop, as was done earlier (see
+   \autoref{shuffle}). Instead, for the rest of the loop, if the exam
+   year is set to the current year, clear it.
+
+\verbatiminput{../tests/test-exam.tex}
+
+   <b>Note:</b> since this overwrites the \sty{datatool} file, you will
+   lose any pretty-printing spaces or comments you may have done in 
+   \app{datatooltk}'s cell editor dialog.
+
+\end{example}
+
+\section{Plugins}\label{plugins}
+
+   Plugins are usually associated with a particular template 
+   (see \autoref{templates}) and provide a convenient way of
+   adding a row of data to the currently selected database.
+   Typically when a plugin is run it will add a new row of data 
+   if no row is selected, otherwise it will allow you to edit the selected row.
+   <b>Note:</b> you must have Perl installed to use the plugins (see 
+   \autoref{preferences}). <b>Really Important Note:</b> the plugin is
+   sent the database information when you start each instance of the plugin, 
+   so if you change the database in \app{datatooltk} while a plugin is running 
+   there may be unexpected results. Wait until the plugin has finished 
+   (usually by clicking on <button tag="button.okay"/> or 
+   <button tag="button.cancel"/>) before you make any further edits to the 
+   database.
+
+
+\subsection{The people Plugin}\label{peopleplugin}
+
+   The <tt>people</tt> plugin is designed for use with databases created
+   using the <tt>people</tt> template.
+
+\begin{example}{label}{}
+
+   Suppose you create a new database using the <tt>people</tt>
+   template. This creates a database with the following fields:
+   ID, Title, Surname, Forename, Address, Telephone and Email, as
+   illustrated in \autoref{ex.people}.
+
+     <float type="figure" tag="ex.people" caption="Database Created From people Template">
+      <image scale="0.75" alt="Image of main window" src="images/peopletemplate.png" />
+     </float>
+
+   Having created this database, I can just use the 
+   \menu{edit.row} menu to insert rows and then edit each entry,
+   but suppose I want to automatically increment the associated ID
+   for each person. I can do this using the <tt>people</tt> plugin 
+   that corresponds to this template via the \menu{tools.plugins} menu.
+
+
+   If a row is currently selected, this plugin will allow you to edit
+   the data for that row. Otherwise, it will allow you to insert a new
+   row. For a new row of data, the <tt>people</tt> plugin will open
+   the dialog box shown in \autoref{ex.peopleplugin}.
+
+     <float type="figure" tag="ex.peopleplugin" caption="The people Plugin Dialog">
+      <image scale="0.75" alt="Image of people dialog" src="images/peopleplugin.png" />
+     </float>
+
+   After entering the data, I can click on <button tag="button.okay"/>
+   and a new row of data is added to the database (see 
+   \autoref{peoplepluginex1}). Note that the plugin has converted newline
+   characters in the address into <doublebackslash/>. The ID has automatically 
+   been inserted.
+
+     <float type="figure" tag="peoplepluginex1" caption="A New Row of Data">
+      <image scale="0.75" alt="Image of main window" src="images/peoplepluginex1.png" />
+     </float>
+   Since the <tt>people</tt> plugin only adds or modifies a single
+   row at a time, if you no longer require an entry, you can delete the
+   unwanted row using \menu{edit.row.remove_row}.
+\end{example}
+
+\subsection{The datagidx Plugin}\label{datagidxplugin}
+
+   The \sty{datagidx} package creates its own custom database 
+   to store terms, symbols and acronyms. The <tt>datagidx</tt> template
+   will create a database that contains \sty{datagidx}'s required 
+   fields. There are a lot of fields, some of which are reserved for
+   \sty{datagidx}'s private use. The <tt>datagidx</tt> plugin, 
+   available via the \menu{tools.plugins} menu, provides 
+   a convenient interface to add or edit entries. If no row is selected,
+   the plugin will create a new row. If a row is selected,
+   the plugin will allow you to edit or remove the row. Since the 
+   <tt>datagidx</tt> plugin can modify other rows at the same time
+   (for example, if you set a parent entry or cross-reference)
+   it's recommended that you use the <tt>datagidx</tt> plugin to remove an
+   entry (via the <button tag="plugin.remove_entry"/> button) rather than 
+   using \menu{edit.row.remove_row}.
+
+\begin{example}{label}{}
+
+   The new database (created via \menu{file.new_from_template}) is
+   shown in \autoref{datagidxplugin1}. The default name of the database
+   is <dq><dict tag="plugin.datagidx.default_name"/></dq>. You can change it 
+   as required, but don't call it <dq>datagidx</dq> as the \sty{datagidx} 
+   package creates a database with that name for its private use.
+   Once this database has been created, the <tt>datagidx</tt> plugin will 
+   open the dialog box shown in \autoref{datagidxplugin2}.
+
+     <float type="figure" tag="datagidxplugin1" caption="A Database Created From the datagidx Template" pos="htbp">
+      <image scale="0.75" alt="Image of main window" src="images/datagidxplugin1.png" />
+     </float>
+     <float type="figure" tag="datagidxplugin2" caption="The datagidx Plugin Dialog" pos="htbp">
+      <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin2.png" />
+     </float>
+
+   Since many of the fields are often duplicated (for example, the 
+   <tt>Name</tt> field is often the same as the <tt>Text</tt> field)
+   if you first enter the name in the <button tag="plugin.datagidx.Name"/>
+   field, when you move the focus to another field, default entries will 
+   be added to most of the empty fields. For example, in 
+   \autoref{datagidxplugin3} I typed <dq>bird</dq> in the
+   <button tag="plugin.datagidx.Name"/> field and then moved the cursor to
+   the <button tag="plugin.datagidx.Description"/> field. This automatically
+   filled in default values for the <button tag="plugin.datagidx.Label"/>,
+   <button tag="plugin.datagidx.Sort"/>,
+   <button tag="plugin.datagidx.Text"/>,
+   <button tag="plugin.datagidx.Short"/>,
+   <button tag="plugin.datagidx.Long"/>,
+   <button tag="plugin.datagidx.Plural"/>,
+   <button tag="plugin.datagidx.ShortPlural"/> and
+   <button tag="plugin.datagidx.LongPlural"/> fields.
+   Since this is the first entry, there are no options for the
+   <button tag="plugin.datagidx.Parent"/>,
+   <button tag="plugin.datagidx.See"/> and 
+   <button tag="plugin.datagidx.SeeAlso"/> fields. (The last two are hidden in
+   \autoref{datagidxplugin3} as the <button tag="plugin.datagidx.crossref"/>
+   button is unchecked.)
+
+     <float type="figure" tag="datagidxplugin3" caption="Most Fields Are Auto-Filled From the Name Field" pos="htbp">
+      <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin3.png" />
+     </float>
+
+   When I click on <button tag="button.okay"/>, a new row is
+   added to the database (see \autoref{datagidxplugin4}). Note that
+   I didn't specify a parent for this entry so the parent has
+   been given the value \gls{@dtlnovalue}, which ensures it will work
+   correctly when the \sty{datagidx} package tests if the parent entry
+   is null.
+
+     <float type="figure" tag="datagidxplugin4" caption="New Row Added to the Database" pos="htbp">
+      <image scale="0.75" alt="Image of main window" src="images/datagidxplugin4.png" />
+     </float>
+
+   If I use the <tt>datagidx</tt> plugin to create a new row,
+   there are now options available in the 
+   <button tag="plugin.datagidx.Parent"/>, 
+   <button tag="plugin.datagidx.See"/> and 
+   <button tag="plugin.datagidx.SeeAlso"/> fields 
+   (see \autoref{datagidxplugin5}).
+
+     <float type="figure" tag="datagidxplugin5" caption="Parent Field Lists Other Entry Labels">
+      <image scale="0.75" alt="Image of datagidx plugin dialog" src="images/datagidxplugin5.png" />
+     </float>
+
+   In \autoref{datagidxplugin5} I have set the parent to 
+   <tt>bird</tt>. When the new row is added, the plugin automatically adjusts
+   the <tt>bird</tt> entry to include the new <tt>duck</tt> label as one of its
+   children (see \autoref{datagidxplugin6}).
+
+     <float type="figure" tag="datagidxplugin6" caption="Child Entry Automatically Adjusted For Parent Entry">
+      <image scale="0.75" alt="Image of main window" src="images/datagidxplugin6.png" />
+     </float>
+
+   It's also possible to cross-reference another entry. There are two ways
+   of cross-referencing an entry: (1) using <button tag="plugin.datagidx.See"/>
+   which redirects the reader to a synonym that has the location list;
+   (2) using <button tag="plugin.datagidx.SeeAlso"/> which in addition to the
+   location list refers the reader to one or more related topics. (See the
+   \sty{datagidx} section of the \sty{datatool} user manual
+   for further details.) To enable
+   either form of cross-referencing, make sure the
+   <button tag="plugin.datagidx.crossref"/> button is selected. This will 
+   display extra options, shown in \autoref{datagidxplugin7}.
+
+     <float type="figure" tag="datagidxplugin7" caption="Cross-Referencing Entries">
+      <image scale="0.6" alt="Image of datagidx plugin dialog" src="images/datagidxplugin7.png" />
+     </float>
+
+   Either select the <button tag="plugin.datagidx.See"/> button and choose
+   the synonym from the drop-down box next to it, or select the 
+   <button tag="plugin.datagidx.SeeAlso"/> button and select the related 
+   cross-reference from the drop-down box to the right and either click on
+   <button tag="plugin.datagidx.add_seealso"/> to append it to the 
+   <button tag="plugin.datagidx.SeeAlso"/> list or click on 
+   <button tag="plugin.datagidx.remove_seealso"/> to remove it from the list.
+   For example, in \autoref{datagidxplugin7} I've added the <tt>chicken</tt>
+   and <tt>turkey</tt> entries to the <button tag="plugin.datagidx.SeeAlso"/>
+   list. (Assuming I've already added the <tt>chicken</tt> and <tt>turkey</tt>
+   entries before defining this new entry.)
+
+
+   Once I've enter all my terms, I can sort the data according to 
+   the <button tag="plugin.datagidx.Sort"/> column. (Recall \autoref{sort}.)
+   Now let's suppose I save this sorted database to a file
+   called <tt>datagidx-test.dbtex</tt>. I can now load it into 
+   a \LaTeX\ document as follows<footnote>Ensure you have at least
+   version 2.15 of the \sty{datatool} bundle.</footnote>:
+
+\verbatiminput{../tests/datagidx-doc.tex}
+\end{example}
+
+\subsection{Comparison of glossaries and datagidx}\label{comparison}
+
+   If you're interested in the comparitive efficiency between
+   using \sty{glossaries} and \sty{datagidx}, I performed
+   a test with 100 entries randomly selected from a dictionary.
+   The entries were listed in a file called <tt>entries</tt> in
+   the form:
+
+<alltt>
+\gls{newterm}<marg>minnow</marg>
+\gls{newterm}<marg>running board</marg>
+\gls{newterm}<marg>diamant\gls{'}e</marg>
+</alltt>
+
+   First, let's look at a document that uses \sty{datagidx} with \gls{newgidx}:
+
+\verbatiminput{../tests/datagidx/test-datagidx.tex}
+
+   In general you need three \LaTeX\ runs to compile a \sty{datagidx}
+   document. In this case, you actually only need to do it twice
+   since there are no location lists.
+
+
+   Now let's test a \sty{datagidx} document where \app{datatooltk} does the
+   sorting. First, we need to generate a \ext{dbtex}
+   file that corresponds the same set of entries. This can be done
+   with the following document:
+
+\verbatiminput{../tests/datagidx/test-savedbtex.tex}
+
+   This just converts the entries listed in <tt>entries.tex</tt>
+   into the appropriate database file, simulating having entered
+   the terms using \app{datatooltk}'s datagidx plugin. The file is saved
+   as <tt>index.dbtex</tt>. Remember that this data only needs
+   to be sorted when you add a term. This can either be done
+   in \app{datatooltk}'s \gls{gui} mode or it can be done in batch mode:
+
+\begin{verbatim}
+datatooltk --in index.dbtex --sort Sort --output index-sorted.dbtex
+\end{verbatim}
+
+   This creates a file called <tt>index-sorted.dbtex</tt>.
+   This file can be loaded into a document as follows (NB there's a bug in 
+   \gls{glsaddall}, which is patched using the \gls{setkeys} line. This will be fixed in the next version of \sty{datagidx}):
+
+\verbatiminput{../tests/datagidx/test-loaddb.tex}
+
+   Now let's look at the \sty{glossaries} package. Since the terms
+   have been defined using \gls{newterm}, I've defined a command
+   that will convert this into an equivalent \gls{newglossaryentry}.
+   Some of the entries have accents in their name, which
+   \sty{datagidx} automatically strips when generating the default 
+   label, so I've added a quick way of generating an
+   analogous accent-free label and sort key that can be used with \gls{newglossaryentry}. Here's the document:
+
+\verbatiminput{../tests/datagidx/test-glossaries.tex}
+
+   In order to compare them, I used <tt>arara</tt> with 
+   the Linux <tt>time</tt> command. In each case, the <tt>clean</tt>
+   directive is used at the start to ensure the tests start without
+   any auxiliary files. Since there are no location lists, only
+   two \LaTeX\ calls are used on each example. If there were
+   location lists, the \sty{datagidx} examples would both
+   need a third \LaTeX\ call.<footnote>The \sty{datagidx}
+   package doesn't generate a location with \gls{glsadd}
+   or \gls{glsaddall}, whereas \sty{glossaries} does.
+   I've suppressed the location list in the \sty{glossaries}
+   example to produce an equivalent document.</footnote>
+   Remember that with the example that uses <tt>index-sorted.dbtex</tt>,
+   \app{datatooltk} needs to sort the database whenever a new entry is 
+   added to the database. Assuming that all possible required
+   entries have been added to the database, we just need one
+   sort operation:
+
+\begin{verbatim}
+datatooltk --in index.dbtex --sort Sort --output index-sorted.dbtex
+\end{verbatim}
+   <p noindent="true">
+   Invoking this with the Linux <tt>time</tt> command gives:
+
+\begin{verbatim}
+real	0m0.296s
+user	0m0.466s
+sys	0m0.033s
+\end{verbatim}
+
+   Now <tt>arara</tt> can be run on each of the three test documents 
+   (via the <tt>time</tt> command). The result from the first test
+   that uses \sty{datagidx} and \gls{newgidx}. The results are:
+
+\begin{verbatim}
+real	0m13.801s
+user	0m13.925s
+sys	0m0.076s
+\end{verbatim}
+
+  <tt>arara</tt> records the total time taken as 13.39 seconds.
+
+
+  The next test uses \sty{datagidx} and \gls{loadgidx}. 
+  The result is:
+
+\begin{verbatim}
+real	0m2.643s
+user	0m2.775s
+sys	0m0.065s
+\end{verbatim}
+
+  <tt>arara</tt> records the total time taken as 2.23 seconds.
+
+
+  The third test uses \sty{glossaries}. The result is:
+
+\begin{verbatim}
+real	0m1.156s
+user	0m1.307s
+sys	0m0.069s
+\end{verbatim}
+
+  <tt>arara</tt> records the total time taken as 0.75 seconds.
+
+
+   Using \sty{glossaries} is clearly faster than using
+   \sty{datagidx}. In the case of \gls{loadgidx},
+   \sty{glossaries} is approximately three times faster. In the 
+   case of \gls{newgidx}, \sty{glossaries} is approximately 
+  18 times faster. If a third \LaTeX\ run was required
+  for the location lists with \gls{newgidx}, using \sty{glossaries} would be approximately 
+  27 times faster (with only two \LaTeX\ runs and one <tt>makeglossaries</tt> run).
+
+
+   If you're interested to know how this compares with \gls{makenoidxglossaries} instead of \gls{makeglossaries}, here's the revised 
+   \sty{glossaries} code:
+
+\verbatiminput{../tests/datagidx/test-glossaries-noidx.tex}
+
+   The result is:
+
+\begin{verbatim}
+real	0m2.463s
+user	0m2.596s
+sys	0m0.065s
+\end{verbatim}
+
+  <tt>arara</tt> records the total time taken as 2.06 seconds.
+  This is slightly quicker than the second \sty{datagidx} test.
+
+
+\chapter{Importing Data}\label{import}
+
+   Data can be imported from \gls{csv} files (see 
+   \autoref{importcsv}), \gls{sql} databases (see 
+   \autoref{importsql}) or from files that can be imported with 
+   the \sty{probsoln} package's \gls{loadallproblems} command
+   (see \autoref{importprobsoln}). In the case of the first
+   two, <app /> can automatically convert <TeX />'s special characters if the
+   <opt tag="map-tex-specials"/> command line option is used or the
+   <button tag="preferences.tex.map"/> option has been selected in the 
+   <dict tag="preferences.title"/> dialog box (see \autoref{preferences}).
+   Both the column title and label will be obtained from the appropriate data 
+   header.  The title will have any mappings applied (if set). The label will 
+   have forbidden content (control sequences and the standard set of special 
+   characters) removed. In the case of \gls{csv} files or spreadsheets
+   imported without headers, default values will be used.
+
+
+   Note that data can't be exported back to any of those formats.
+
+
+\section{Import CSV Data}\label{importcsv}
+
+   Data can be imported from a \gls{csv} file using
+   the <opt tag="csv"/> command line option or (in \gls{gui} mode)
+   using the \menu{file.import.importcsv} menu item. The default
+   separator is a comma and the default delimiter is the double-quote
+   character. These can be changed using the <opt tag="csv-sep"/> and 
+   <opt tag="csv-delim"/> command line options or in the 
+   <dict tag="preferences.title"/>
+   dialog box (see \autoref{preferences}).
+
+Unlike \sty{datatool}'s
+   \gls{DTLloaddb} command, \app{datatooltk} can import data with multilined
+   entries (via the Open CSV library 
+   \url{http://opencsv.sourceforge.net/}).
+   Multiple blank lines within entries are automatically converted to
+   \gls{DTLpar} (although you won't see this in \gls{gui}
+   mode).
+
+
+   If the \gls{csv} file has a header row, you must make sure 
+   the <opt tag="csvheader"/> option is used or the 
+   <button tag="preferences.csv.hasheader"/> option is checked in the
+   <dict tag="preferences.title"/> dialog box.
+   If the \gls{csv} file has no header row, you must make sure 
+   the <opt tag="nocsvheader"/> option is used or the 
+   <button tag="preferences.csv.hasheader"/> option is unchecked in the
+   <dict tag="preferences.title"/> dialog box.
+
+
+   Make sure that the \gls{csv} file encoding is correctly set
+   before importing. This can be done from the <opt tag="csv-encoding"/>
+   command line option or in the 
+   <dict tag="preferences.title"/> dialog box. The encoding
+   of the \TeX\ (\ext{dbtex}) file is independent of the \gls{csv}
+   encoding.
+
+\begin{example}{label}{}
+
+   Consider the \gls{csv} file shown below:
+
+\verbatiminput{../tests/test-para.csv}
+   This has a cell with multiple lines. When it's imported into
+   \app{datatooltk}, the paragraph break is converted to \gls{DTLpar}.
+   However, this isn't visible when you look at the file in 
+   \gls{gui} mode (see \autoref{ex.csvpara}).
+     <float type="figure" tag="ex.csvpara" caption="Paragraph Breaks Appear as a Single Blank Line">
+      <image scale="0.75" alt="Image of main window showing cell with paragraph break" src="images/csvpara.png" />
+     </float>
+   Note that the redundant second blank line in the \gls{csv} file
+   has gone as multiple blank lines are replaced by a single
+   \gls{DTLpar}.
+\end{example}
+
+\section{Import Spreadsheet Data}\label{importspread}
+
+   Data can be imported from an Excel \ext{xls} file (via the 
+   Apache POI library \url{http://poi.apache.org/})
+   or an Open Document Spreadsheet (via the jOpenDocument Library
+   \url{http://www.jopendocument.org/}) using the
+   <opt tag="xls"/> or <opt tag="ods"/> command line options, respectively.
+   Alternative, in \gls{gui} mode you can use the 
+   \menu{file.import.importspread} menu item.
+   Note that the \ext{xlsx} is currently unsupported.
+
+ When using the command line,
+   you additionally need to specify the sheet index (starting from 0) or the 
+   sheet name using the <opt tag="sheet"/> command line option. If you are 
+   using the \gls{gui}, after you've selected the spreadsheet file 
+   from the file selector dialog, you need to select the required sheet 
+   name.
+Importing data from a spreadsheet uses the same header row option and 
+   \TeX\ mapping settings as the import \gls{csv} function. 
+   So if the sheet doesn't have a header row, you need to use
+   <opt tag="nocsvheader"/> or uncheck the <button tag="preferences.csv.hasheader"/> button 
+   in the <dict tag="preferences.title"/> dialog box. Note that 
+   \ext{xlsx} files aren't supported.
+
+
+   <b>Note:</b> no formatting information is read when importing
+   data from an Excel spreadsheet. It's up to you to explicitly
+   add \LaTeX\ font commands when you include the data in your
+   document.
+
+
+\section{Import SQL Data}\label{importsql}
+
+   Data can be imported from an \gls{sql} database using
+   the <opt tag="sql"/> command line option or the 
+   \menu{file.import.importsql} menu item. You additionally need to
+   supply the database, port, prefix, host, user name and password. In batch 
+   mode, you can use the command line options <opt tag="sqldb"/>,
+   <opt tag="sqlport"/>, <opt tag="sqlprefix"/>, <opt tag="sqlhost"/> and
+   <opt tag="sqluser"/>. You can specify the password with 
+   <opt tag="sqlpassword"/>, but that isn't secure. If you don't use that, 
+   you will be prompted for the password, where the text you enter 
+   won't be visible. Note that in batch mode, the default action
+   is to use the console to request the password. If there's no console available, you need to use the <opt tag="noconsole-action"/>
+   to determine what action to perform. See \autoref{introduction} for more details
+   about command line options.
+
+
+   In \gls{gui} mode, when you use \menu{file.import.importsql}
+   the dialog box shown in \autoref{sqlimportdialog} will be displayed,
+   where you can enter the settings. In addition to the above named settings,
+   you must also specify the \gls{sql} SELECT statement that identifies 
+   the required data to import. (This manual assumes that if you have
+   data in an \gls{sql} database, then you have a basic
+   knowledge of \gls{sql} syntax.)
+
+     <float type="figure" tag="sqlimportdialog" caption="SQL Import Dialog Box">
+      <image scale="0.75" alt="Image of the SQL dialog box" src="images/sqlimportdialog.png" />
+     </float>
+
+   For example, in \autoref{sqlimportdialog} I want to import all
+   data from the table called <tt>customers</tt> in the <term tag="mysql"/>
+   database called <tt>myshop</tt>. (I've created a user called
+   <tt>shopadmin</tt> with SELECT privileges for this database.) Once I've 
+   entered this information,
+   I then click on <button tag="button.okay"/> and the password
+   dialog box will appear (see \autoref{sqlpassworddialog}).
+
+     <float type="figure" tag="sqlpassworddialog" caption="Password Dialog Box">
+      <image scale="0.75" alt="Image of the password dialog box" src="images/sqlpassworddialog.png" />
+     </float>
+
+   Alternatively, I can use batch mode to import and save the data 
+   from the command prompt:
+
+   <alltt>
+datatooltk --output customers.dbtex --sql "SELECT * FROM customers" <cont />--sqldb myshop --sqluser shopadmin
+Password:
+   </alltt>
+
+   <contexplan/> The password should be entered at the <button tag="password.prompt"/>
+   prompt. Remember that it's more efficient to get the \gls{sql}
+   database to do any sorting. For example (assuming the table has 
+   a column called <tt>Surname</tt>):
+   <alltt>
+datatooltk --output customers.dbtex --sql "SELECT * FROM customers ORDER BY <cont />Surname" --sqldb myshop --sqluser shopadmin
+Password:
+   </alltt>
+
+
+\section{Import probsoln Data}\label{importprobsoln}
+
+   The \sty{probsoln} package allows you to define problems (and 
+   optionally their solutions) using \gls{newproblem} or the
+   \env{defproblem} environment. \app{datatooltk} can load a file
+   containing these definitions and convert the \sty{probsoln} data
+   into a \sty{datatool} database containing three or four columns
+   with keys: <tt><dict tag="probsoln.label"/></tt>, 
+   <tt><dict tag="probsoln.question"/></tt> and
+   <tt><dict tag="probsoln.answer"/></tt>. If the imported data contains
+   multiple \sty{probsoln} data sets, the fourth column has the
+   key <tt><dict tag="probsoln.set"/></tt> and contains the dataset label. 
+   You can import one of these
+   files using the <opt tag="probsoln"/> command line option or (in
+   \gls{gui} mode) using the \menu{file.import.importprobsoln}
+   menu item. If you have a large number of problems, you can speed things
+   up by setting the initial capacity to that number. (If the initial
+   capacity is smaller than the total number of problems, the hash map
+   used to store the data will have to be enlarged whenever the current
+   capacity is exceeded.)
+
+
+   \TeX\ is a difficult language to parse, so \app{datatooltk} uses the
+   <url www="https://github.com/nlct/texparser"
+   text="texparserlib library"/> to help gather the data from the imported 
+   file. Earlier versions of \app{datatooltk} used \LaTeX\ but this is no longer 
+   required. This import function is governed by the \TeX\ file encoding
+   and the <button tag="preferences.tex.stripsolnenv"/> settings 
+   (see \autoref{preferences}).
+
+
+   <b>Note:</b> if any problems require arguments the default values 
+   will be used.
+
+\begin{example}{label}{}
+
+   Consider the file called <tt>prob-mixed.tex</tt> that contains the 
+   following:
+
+\verbatiminput{../tests/prob-mixed.tex}
+
+   This contains a mixture of \gls{newproblem} and
+   \env{defproblem}. It also has comments and spaces to make
+   the code more readable. As can be seen in \autoref{importps}
+   these are now still in the import (whereas in older versions they were lost).
+
+     <float type="figure" tag="importps" caption="Pretty Printing and Comments are No Longer Lost When Importing Data from probsoln" pos="hbt">
+      <image scale="0.75" alt="Image of the main window" src="images/importps.png" />
+     </float>
+\end{example}
+
+   The problem defined with the unstarred version of \gls{newproblem}
+   has a different result depending on whether or not the 
+   <button tag="preferences.tex.stripsolnenv"/> setting is on. The 
+   normal definition of this command (as provided by \sty{probsoln})
+   wraps the solution (given in the final argument) in the 
+   \env{solution} environment. This is stripped when the setting is
+   on, otherwise it's included in the \qtt{Answer} column.
+
+   <seealso tags="shuffle,sortshuffle"/>
+
+\chapter{Templates}\label{templates}
+
+   Templates that come with \app{datatooltk} are located in the <tt>resources/templates</tt>
+   subdirectory of the \app{datatooltk} installation directory. You can also write
+   your own templates and store them in the user templates directory 
+   (see \autoref{writingtemplates}). Each template defines a set
+   of column headers. To create a new database with a particular
+   set of column headers, use the \menu{file.new_from_template}
+   menu item, which opens the dialog box shown in \autoref{templatedialog}.
+
+   <float type="figure" tag="templatedialog" 
+      caption="New From Template Dialog">
+     <image scale="0.75" alt="Image of template dialog"
+        src="images/templatedialog.png"/>
+   </float>
+
+   The \app{datatooltk} application comes with the following templates: 
+   <tt>datagidx</tt> (creates a database with the same structure as
+   used by the \sty{datagidx} package) and <tt>people</tt> (creates
+   a database suitable for storing records about people, including
+   columns for forenames, a surname, title and address.) For example,
+   \autoref{peopletemplate} shows a database created from the 
+   <tt>people</tt> template.
+
+   <float type="figure" tag="peopletemplate" 
+      caption="New Database Created from people Template">
+     <image scale="0.75" alt="Image of main window"
+        src="images/peopletemplate.png"/>
+   </float>
+
+   Rows can now be added to this database using the \menu{edit.row}
+   menu or via corresponding plugins (see \autoref{plugins}).
+
+
+\section{Writing a Template File}\label{writingtemplates}
+
+   If you want to write your own template, you need to create an XML file
+   and store it in a subdirectory  of the \app{datatooltk} 
+   user properties directory (see \autoref{preferences}) called 
+   <tt>templates</tt>. You will need to create this directory, if it doesn't
+   already exist. For example, on a UNIX-like system, the user
+   template directory will be <tt><tilde/>/.datatooltk/templates/</tt>.
+   The template file must have the extension \ext{xml} for it to be
+   listed in the <dq><dict tag="template.title"/></dq> dialog box. (The base
+   name of the file is used in the list.)
+
+
+   The template file must have one <element>datatooltktemplate</element> element. This
+   element may contain one or more <element>header</element> elements. Each 
+   <element>header</element> element must contain one <element>label</element> element and 
+   optionally one <element>title</element> and/or one <element>type</element> element.
+
+
+   The <element>label</element> element contains the uniquely identifying header label.
+   The <element>title</element> element contains the header title. If omitted, the
+   title is set to the label, unless there is an entry in the resource
+   dictionary file that matches <tt>plugin.</tt>\meta{template name}<tt>.</tt>\meta{label}, 
+   in which case that property is used. The <element>type</element> element must be one of:
+   <tt>-1</tt> (unknown type), <tt>0</tt> (string type), <tt>1</tt> (integer 
+   type), <tt>2</tt> (real type) or <tt>3</tt> (currency type). If omitted the 
+   type is set to <tt>-1</tt>.
+
+\begin{example}{label}{}
+
+   Suppose I want to write a template to create a database
+   for a list of products. The database needs three columns: one for
+   the product name, one for the product code and one for the product price.
+   The name should be a string, the price column could either be set
+   to <dq>real</dq> if you don't need to worry about the currency unit
+   or <dq>currency</dq> if you need a currency unit for each product.
+   Let's suppose that the code must be an integer.
+   Here's a template file (the price column is set to <dq>real</dq>
+   rather than <dq>currency</dq>):
+
+<alltt>
+<element>datatooltktemplate</element>
+  <element>header</element>
+    <element>label</element>Name<element>/label</element>
+    <element>type</element>0<element>/type</element>
+  <element>/header</element>
+  <element>header</element>
+    <element>label</element>Code<element>/label</element>
+    <element>type</element>1<element>/type</element>
+  <element>/header</element>
+  <element>header</element>
+    <element>label</element>Price<element>/label</element>
+    <element>type</element>2<element>/type</element>
+  <element>/header</element>
+<element>/datatooltktemplate</element>
+</alltt>
+\end{example}
+
+\chapter{Application Properties}\label{preferences}
+
+   When \app{datatooltk} is run, either in batch or \gls{gui} mode, 
+   the application settings are read in from the user properties file, 
+   if it exists. Any command line options override those settings.
+   If \app{datatooltk} is run in \gls{gui} mode, the application properties are saved on exit. They are not saved in batch mode.
+
+
+   The user properties directory depends on the operating system.
+   On Windows, it is a folder called <tt>datatooltk-settings</tt>
+   in the folder given by the Java system property <tt>user.home</tt>.
+   This is usually the user's home folder but in some versions of
+   Java this can be <tt><percent/>userprofile<percent/></tt>.
+   On other operating systems, the user properties directory is
+   called \ext{datatooltk} and is in the user's home directory.
+
+
+   Alternatively, set the environment variable <tt>DATATOOLTK</tt>
+   to the directory of your choice.
+
+
+   In \gls{gui} mode, the settings can be changed using
+   \menu{edit.preferences}. This opens the 
+   <button tag="preferences.title"/> dialog box, which has the 
+   following tabs:
+
+   <dl>
+    <dt><button tag="preferences.general"/></dt>
+    <dd>
+     (\autoref{prefgeneral})
+     <float type="figure" tag="prefgeneral" caption="General Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the general tab of the preferences dialog box" src="images/pref-general.png" />
+     </float>
+
+     In this tab you can specify the start up directory. (The default 
+     directory when you first load, save or import data via the 
+     \menu{file} menu.) You can set this to your home directory,
+     the <term tag="cwd"/>, the directory you last used on the previous run
+     of \app{datatooltk} or you can specify a directory of your choice.
+
+
+     In this tab you can also specify the seed for the random number generator 
+     (equivalent to <opt tag="seed"/>) and whether or not to automatically
+     strip leading and trailing spaces from database and column labels
+     (equivalent to <opt tag="auto-trim-labels"/> and 
+     <opt tag="noauto-trim-labels"/>).
+
+
+     The initial capacity can be increased to speed up loading or importing.
+     Ideally it's best to keep it around the typical size of your databases.
+     If it's too big you can run out of memory. If it's too small, the storage
+     has to be enlarged every time the current capacity is exceeded. The
+     minimum allowed value is 10.
+
+    </dd>
+    <dt><button tag="preferences.csv"/></dt>
+    <dd>
+     (\autoref{prefcsv})
+     <float type="figure" tag="prefcsv" caption="CSV Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the csv tab of the preferences dialog box" src="images/pref-csv.png" />
+     </float>
+
+     In this tab you can specify the \gls{csv} settings. Some of
+     these settings are also used by the spreadsheet import functions.
+
+If the separator is a tab character, select the 
+     <button tag="preferences.csv.tabsep"/> radio button. Otherwise
+     select the (<button tag="preferences.csv.sep"/>) <button tag="preferences.csv.sepchar"/> radio button
+     and enter the character in the neighbouring text box. Set the delimiter
+     in the <button tag="preferences.csv.delim"/> field, and
+     check the <button tag="preferences.csv.strictquotes"/> button
+     if you want to ignore any data that hasn't been delimited.
+
+
+     You can also specify the escape character. This character can be used to 
+     escape the delimiter character if it occurs in any of the fields. Since the
+     escape character is a backslash <backslash/> by default, this means
+     that if the data contains any (La)TeX commands the backslash will need
+     to be doubled. This conflict can be avoided by changing the 
+     \gls{csv} escape character to something else (that doesn't occur 
+     in your data). To change it, select the (<button tag="preferences.csv.esc"/>) 
+     <button tag="preferences.csv.escchar"/> button and enter the
+     character in the neighbouring text box. Alternatively, you can suppress the \gls{csv}
+     escape character, in which case the delimiter character can't occur within 
+     the data. To do this, select the <button tag="preferences.csv.noesc"/>
+     button.  The character encoding can be changed through the 
+     <button tag="preferences.csv.encoding"/> drop-down box.
+
+Check the
+     <button tag="preferences.csv.hasheader"/> button if your 
+     \gls{csv} files have a header row otherwise uncheck it, and
+     check the  <button tag="preferences.csv.skipemptyrows"/> button
+     to skip empty rows. To skip a set number of rows, change the
+     <button tag="preferences.csv.skiplines"/> value to the required number 
+     of rows. (Use 0 to switch off this function.) Note that the skip lines
+     function is independent of the skip empty rows. If you have set the 
+     skip lines value to, say, 3 then the first 3 lines are automatically 
+     skipped regardless of whether or not they have any content. The check for 
+     empty rows won't start until the next row (row 4, in this case).
+     The header, skip empty rows and skip lines settings are also used by
+     the spreadsheet import functions.
+
+    </dd>
+    <dt><button tag="preferences.sql"/></dt>
+    <dd>
+     (\autoref{prefsql})
+     <float type="figure" tag="prefsql" caption="SQL Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the SQL tab of the preferences dialog box" src="images/pref-sql.png" />
+     </float>
+
+    In this tab, you can specify the \gls{sql} connection information.
+    Enter the host name and port number the \gls{sql} server is 
+    running on in the <button tag="preferences.sql.host"/> and 
+    <button tag="preferences.sql.port"/> fields. Currently, the only
+    available prefix is <dq>jdbc:mysql://</dq>, which is the JDBC driver for
+    <term tag="mysql"/>. If you are using another driver or \gls{sql} 
+    database, you'll have to add the relevant library to the <tt>lib</tt>
+    directory and add it to the class path used by <tt>datatooltk.jar</tt>.
+    Enter the name of the database you want to connect to in the 
+    <button tag="preferences.sql.database"/> field and the associated
+    user name in the <button tag="preferences.sql.user"/> field.
+    If you want the password wiped from memory as soon as a connection
+    has been made, make sure the <button tag="preferences.sql.wipe"/>
+    box has been selected.
+
+    </dd>
+    <dt><button tag="preferences.tex"/></dt>
+    <dd>
+     (\autoref{preftex})
+     <float type="figure" tag="preftex" caption="TeX Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the tex tab of the preferences dialog box" src="images/pref-tex.png" />
+     </float>
+
+    \LaTeX\ is no longer used to help \app{datatooltk} import data from 
+    a \sty{probsoln} dataset. Instead the <url 
+     www="https://github.com/nlct/texparser"
+     text="texparserlib library"/> is used to parse \ext{tex} files. The file encoding for <TeX/>
+    files (including \ext{dbtex} files read and saved by \app{datatooltk}) is set in this tab in the <button tag="preferences.tex.encoding"/> dropdown list.
+
+
+    When importing \sty{probsoln} data, you may find it more convenient
+    to strip any instances of the \env{solution} environment, 
+    particularly the implicit use of this environment by the
+    unstarred version of \gls{newproblem}. You can now choose whether or 
+    not to omit <verb>\begin{solution}</verb> and <verb>\end{solution}</verb>
+    by selecting the <button tag="preferences.tex.stripsolnenv"/> button.
+    If checked, any instances of \env{solution} contained within 
+    definitions (provided by \gls{newproblem} or \env{defproblem}) 
+    will be removed.
+
+In this tab you can also specify whether or not to map \TeX\ special 
+    characters when you import data from \gls{csv} or \gls{sql}.
+    If you want the mapping, make sure the <button tag="preferences.tex.map"/>
+    box is checked. The mapping table and buttons are hidden if 
+    <button tag="preferences.tex.map"/> is unchecked. If it is checked, 
+    the performed mappings are listed
+    in the table in the tab. To add another mapping, click on the
+    <button tag="preferences.tex.add_map"/> button, which opens the 
+    dialog box shown in \autoref{addmap}. 
+
+     <float type="figure" tag="addmap" caption="Add Mapping Dialog" pos="htbp">
+      <image scale="0.75" alt="Image of the add mapping dialog box" src="images/addmap.png" />
+     </float>
+
+    To remove a mapping, select the unwanted mapping and click on 
+    <button tag="preferences.tex.remove_map"/>. To edit a mapping,
+    select the mapping and click on <button tag="preferences.tex.edit_map"/>.
+
+    </dd>
+    <dt><button tag="preferences.currencies"/></dt>
+    <dd>
+     (\autoref{prefcurrencies})
+     <float type="figure" tag="prefcurrencies" caption="Currencies Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the currencies tab of the preferences dialog box" src="images/pref-currencies.png" />
+     </float>
+
+    If you want to identify a column as a currency type, you 
+    must make sure that \app{datatooltk} recognises the \LaTeX\ command to typeset
+    your currency. Known currency commands are listed in the 
+    <button tag="preferences.currencies"/> tab. If you add any currencies
+    to the list, remember to add them in your document as well with 
+    \gls{DTLnewcurrencysymbol}.
+
+    </dd>
+    <dt><button tag="preferences.display"/></dt>
+    <dd>
+     (\autoref{prefdisplay})
+     <float type="figure" tag="prefdisplay" caption="Display Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the display tab of the preferences dialog box" src="images/pref-display.png" />
+     </float>
+
+    The default font used in cell entries is a monospaced font. This can be
+    changed using the <button tag="preferences.display.font"/> drop-down menu.
+    You can also set the font size in the 
+    <button tag="preferences.display.fontsize"/> field. By default, each
+    string cell has a maximum of four lines visible in the main window.
+    (Real and integer columns only have a single line visible.) This
+    number can be changed in the <button tag="preferences.display.cellheight"/>
+    field. Each column has a default width that depends on the data type
+    for that column. The values are listed in the 
+    <button tag="preferences.display.cellwidths"/> area. These can be changed
+    as required.
+
+The <dq>Look And Feel</dq> refers to the way the graphical interface
+    is rendered. You can use the drop-down menu to
+    select a different look and feel, but you need to restart \app{datatooltk} 
+    for the change to take effect. For example, \autoref{prefdisplay}
+    shows the <dq>Metal</dq> look and feel whereas \autoref{prefdisplay}
+    shows the same window but with the <dq>Nimbus</dq> look and feel.
+    </dd>
+    <dt><button tag="preferences.language"/></dt>
+    <dd>
+     (\autoref{preflanguage})
+     <float type="figure" tag="preflanguage" caption="Language Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the language tab of the preferences dialog box" src="images/pref-language.png" />
+     </float>
+
+    The language used by the manual accessed via \menu{help.manual}
+    can be set from the <button tag="preferences.language.helpset"/> drop-down 
+    list. The language used in the messages, menu items, buttons and 
+    \gls{gui} labels can be set from the 
+    <button tag="preferences.language.dictionary"/> drop-down 
+    list. Note that you have to restart \app{datatooltk} for these changes to take 
+    effect.
+
+    </dd>
+    <dt><button tag="preferences.plugins"/></dt>
+    <dd>
+        (\autoref{prefplugins})
+     <float type="figure" tag="prefplugins" caption="Plugins Tab" pos="htbp">
+      <image scale="0.75" alt="Image of the plugins tab of the preferences dialog box" src="images/pref-plugins.png" />
+     </float>
+
+    In order to use \app{datatooltk} plugins, you must have Perl installed (and the
+    Perl Tk module). If the Perl executable is on your path, you can just
+    specify it as <tt>perl</tt> in the <button tag="preferences.plugins.perl"/>
+    field of the <dict tag="preferences.plugins"/> tab. If it's not on your
+    path, you will have to specify the full path name in this tab. You can
+    use the ellipsis button to browse your filing system.
+
+    </dd>
+   </dl>
+
+
+\chapter{Licence}
+\label{licence}
+   \app{datatooltk} is licensed under the terms of the GNU General Public License.
+   \app{datatooltk} depends on the following third party libraries whose jar files are
+   in the <tt>lib</tt> directory: the \TeX\ Parser Library 
+   (\url{https://github.com/nlct/texparser}),
+   TeX Java Help 
+   (\url{https://github.com/nlct/texjavahelp}),
+   Open CSV (\url{http://opencsv.sourceforge.net/}),
+   MySQL connector (\url{http://dev.mysql.com/downloads/connector/j/})
+   and the Java Look and Feel Graphics Repository
+   (\url{http://www.oracle.com/technetwork/java/index-138612.html}).
+
+
+\listentrydescendents
+ [title={Summary of \apptext{datatooltk} Switches}]
+ {app.datatooltk}
+
+\printmain
+\printindex
+\end{document}

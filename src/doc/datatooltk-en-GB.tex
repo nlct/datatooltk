@@ -1,0 +1,8 @@
+% arara: lualatex
+% arara: bib2gls: { group: on, options: [ --no-warn-unknown-entry-types ] }
+% arara: lualatex
+% arara: lualatex
+\documentclass[toc=listof]{scrreport}
+\newcommand{\langbibsrcs}{datatooltk-props-en-GB}
+\usepackage[en-GB]{tracklang}
+\input{datatooltk-main}

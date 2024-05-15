@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+<comment>English GB (load after datatool-en.xml to override specific keys)</comment>
+
+<entry key="preferences.display.highlightcomment">Comment Colour</entry>
+<entry key="preferences.display.highlightcs">Control Sequence Colour</entry>
+
+<entry key="menu.help.licence">Licence</entry>
+
+<entry key="message.cancelled">Cancelled</entry>
+
+</properties>

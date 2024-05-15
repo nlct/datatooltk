@@ -1,4 +1,5 @@
-*.tex
+datatooltk-props*.bib
+version.tex
 *.aux
 *.log
 *.out

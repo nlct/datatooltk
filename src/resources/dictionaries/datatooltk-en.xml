@@ -1,0 +1,1256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+<!-- File menu -->
+
+<entry key="menu.file">File</entry>
+<entry key="menu.file.mnemonic">F</entry>
+
+<entry key="menu.file.close_db">Close</entry>
+<entry key="menu.file.close_db.mnemonic">C</entry>
+<entry key="menu.file.close_db.tooltip">Close current database</entry>
+
+<entry key="menu.file.import">Import</entry>
+<entry key="menu.file.import.mnemonic">I</entry>
+
+<entry key="menu.file.import.importprobsoln.mnemonic">P</entry>
+<entry key="menu.file.import.importprobsoln.tooltip">Import data from a probsoln database</entry>
+
+<entry key="menu.file.import.importcsv">Import CSV...</entry>
+<entry key="menu.file.import.importcsv.mnemonic">V</entry>
+<entry key="menu.file.import.importcsv.tooltip">Import data from a CSV file</entry>
+
+<entry key="menu.file.import.importprobsoln">Import probsoln File...</entry>
+
+<entry key="menu.file.import.importspread">Import Spreadsheet...</entry>
+<entry key="menu.file.import.importspread.mnemonic">S</entry>
+<entry key="menu.file.import.importspread.tooltip">Import data from an Excel or OpenDocument spreadsheet</entry>
+
+<entry key="menu.file.import.importsql">Import SQL...</entry>
+<entry key="menu.file.import.importsql.mnemonic">L</entry>
+<entry key="menu.file.import.importsql.tooltip">Import data from a SQL database</entry>
+
+<entry key="menu.file.new">New</entry>
+<entry key="menu.file.new.mnemonic">N</entry>
+<entry key="menu.file.new.tooltip">Create a new empty database</entry>
+
+<entry key="menu.file.new_from_template">New From Template...</entry>
+<entry key="menu.file.new_from_template.mnemonic">T</entry>
+<entry key="menu.file.new_from_template.tooltip">Create a new database from a template</entry>
+
+<entry key="menu.file.open">Open...</entry>
+<entry key="menu.file.open.tooltip">Open a raw datatool database file</entry>
+<entry key="menu.file.open.mnemonic">O</entry>
+
+<entry key="menu.file.recent">Recent</entry>
+<entry key="menu.file.recent.mnemonic">T</entry>
+
+<entry key="menu.file.recent.clearrecent">Clear</entry>
+<entry key="menu.file.recent.clearrecent.tooltip">Clear recent files list</entry>
+<entry key="menu.file.recent.clearrecent.mnemonic">C</entry>
+
+<entry key="menu.file.save">Save</entry>
+<entry key="menu.file.save.mnemonic">S</entry>
+
+<entry key="menu.file.save_as">Save As...</entry>
+<entry key="menu.file.save_as.mnemonic">A</entry>
+
+<entry key="menu.file.quit">Quit</entry>
+<entry key="menu.file.quit.mnemonic">Q</entry>
+
+<!-- Edit Menu -->
+
+<entry key="menu.edit">Edit</entry>
+<entry key="menu.edit.mnemonic">E</entry>
+
+<entry key="menu.edit.cell_to_null">Set Cell to Null</entry>
+<entry key="menu.edit.cell_to_null.mnemonic">S</entry>
+<entry key="menu.edit.cell_to_null.tooltip">Replace cell contents with null value</entry>
+
+<entry key="menu.edit.column">Column</entry>
+<entry key="menu.edit.column.mnemonic">L</entry>
+
+<entry key="menu.edit.column.add_column_after">Insert Column After</entry>
+<entry key="menu.edit.column.add_column_after.mnemonic">A</entry>
+<entry key="menu.edit.column.add_column_after.tooltip">Insert a new column after the current column</entry>
+
+<entry key="menu.edit.column.add_column_before">Insert Column Before</entry>
+<entry key="menu.edit.column.add_column_before.mnemonic">B</entry>
+<entry key="menu.edit.column.add_column_before.tooltip">Insert a new column before the current column</entry>
+
+<entry key="menu.edit.column.column_to_null">Nullify Column</entry>
+<entry key="menu.edit.column.column_to_null.mnemonic">N</entry>
+<entry key="menu.edit.column.column_to_null.tooltip">Set all cells in current column to null</entry>
+
+<entry key="menu.edit.column.edit_header">Edit Header</entry>
+<entry key="menu.edit.column.edit_header.mnemonic">E</entry>
+<entry key="menu.edit.column.edit_header.tooltip">Edit header details for current column</entry>
+
+<entry key="menu.edit.column.move_column_left">Move Column Left</entry>
+<entry key="menu.edit.column.move_column_left.mnemonic">L</entry>
+<entry key="menu.edit.column.move_column_left.tooltip">Move current column to the left</entry>
+
+<entry key="menu.edit.column.move_column_right">Move Column Right</entry>
+<entry key="menu.edit.column.move_column_right.mnemonic">R</entry>
+<entry key="menu.edit.column.move_column_right.tooltip">Move current column to the right</entry>
+
+<entry key="menu.edit.column.remove_column">Delete Column</entry>
+<entry key="menu.edit.column.remove_column.mnemonic">D</entry>
+<entry key="menu.edit.column.remove_column.tooltip">Delete the current column</entry>
+
+<entry key="menu.edit.copy">Copy</entry>
+<entry key="menu.edit.copy.mnemonic">C</entry>
+
+<entry key="menu.edit.cut">Cut</entry>
+<entry key="menu.edit.cut.mnemonic">T</entry>
+
+<entry key="menu.edit.deselect">Deselect</entry>
+<entry key="menu.edit.deselect.mnemonic">D</entry>
+<entry key="menu.edit.deselect.tooltip">Deselect current row and/or column</entry>
+
+<entry key="menu.edit.edit_cell">Edit Cell...</entry>
+<entry key="menu.edit.edit_cell.mnemonic">T</entry>
+<entry key="menu.edit.edit_cell.tooltip">Edit selected cell</entry>
+
+<entry key="menu.edit.edit_dbname">Edit Database Name...</entry>
+<entry key="menu.edit.edit_dbname.mnemonic">N</entry>
+<entry key="menu.edit.edit_dbname.tooltip">Edit the name of the current database (not related to the file name)</entry>
+
+<entry key="menu.edit.paste">Paste</entry>
+<entry key="menu.edit.paste.mnemonic">P</entry>
+
+<entry key="menu.edit.preferences">Edit Preferences...</entry>
+<entry key="menu.edit.preferences.mnemonic">P</entry>
+<entry key="menu.edit.preferences.tooltip">Edit application settings</entry>
+
+<entry key="menu.edit.redo">Redo {0}</entry>
+<entry key="menu.edit.redo.mnemonic">R</entry>
+<entry key="menu.edit.redo.tooltip">Redo previous operation</entry>
+
+<entry key="menu.edit.row">Row</entry>
+<entry key="menu.edit.row.mnemonic">W</entry>
+
+<entry key="menu.edit.row.add_row_after">Insert Row After</entry>
+<entry key="menu.edit.row.add_row_after.mnemonic">A</entry>
+<entry key="menu.edit.row.add_row_after.tooltip">Insert a new row after the current row</entry>
+
+<entry key="menu.edit.row.add_row_before">Insert Row Before</entry>
+<entry key="menu.edit.row.add_row_before.mnemonic">B</entry>
+<entry key="menu.edit.row.add_row_before.tooltip">Insert a new row before the current row</entry>
+
+<entry key="menu.edit.row.move_row_down">Move Row Down</entry>
+<entry key="menu.edit.row.move_row_down.mnemonic">N</entry>
+<entry key="menu.edit.row.move_row_down.tooltip">Move current row down</entry>
+
+<entry key="menu.edit.row.move_row_up">Move Row Up</entry>
+<entry key="menu.edit.row.move_row_up.mnemonic">U</entry>
+<entry key="menu.edit.row.move_row_up.tooltip">Move current row up</entry>
+
+<entry key="menu.edit.row.remove_row">Delete Row</entry>
+<entry key="menu.edit.row.remove_row.mnemonic">D</entry>
+<entry key="menu.edit.row.remove_row.tooltip">Delete the current row</entry>
+
+<entry key="menu.edit.row.row_to_null">Nullify Row</entry>
+<entry key="menu.edit.row.row_to_null.mnemonic">N</entry>
+<entry key="menu.edit.row.row_to_null.tooltip">Set all cells in current row to null</entry>
+
+<entry key="menu.edit.select_all">Select All</entry>
+<entry key="menu.edit.select_all.mnemonic">A</entry>
+
+<entry key="menu.edit.undo">Undo {0}</entry>
+<entry key="menu.edit.undo.mnemonic">U</entry>
+<entry key="menu.edit.undo.tooltip">Undo previous operation</entry>
+
+<!-- Search Menu -->
+
+<entry key="menu.search">Search</entry>
+<entry key="menu.search.mnemonic">S</entry>
+
+<entry key="menu.search.find">Find...</entry>
+<entry key="menu.search.find.mnemonic">F</entry>
+
+<entry key="menu.search.find_again">Find Again</entry>
+<entry key="menu.search.find_again.mnemonic">N</entry>
+
+<entry key="menu.search.find_cell">Find Cell...</entry>
+<entry key="menu.search.find_cell.mnemonic">F</entry>
+
+<entry key="menu.search.replace">Replace...</entry>
+<entry key="menu.search.replace.mnemonic">R</entry>
+
+<!-- Tools Menu -->
+
+<entry key="menu.tools">Tools</entry>
+<entry key="menu.tools.mnemonic">T</entry>
+
+<entry key="menu.tools.plugins">Plugins</entry>
+<entry key="menu.tools.plugins.mnemonic">P</entry>
+
+<entry key="menu.tools.shuffle">Shuffle</entry>
+<entry key="menu.tools.shuffle.mnemonic">H</entry>
+
+<entry key="menu.tools.sort">Sort...</entry>
+<entry key="menu.tools.sort.mnemonic">S</entry>
+
+<!-- Help Menu -->
+
+<entry key="menu.help">Help</entry>
+<entry key="menu.help.mnemonic">H</entry>
+
+<entry key="menu.help.about">About</entry>
+<entry key="menu.help.about.mnemonic">A</entry>
+
+<entry key="menu.help.licence">License</entry>
+<entry key="menu.help.licence.mnemonic">L</entry>
+
+<entry key="menu.help.manual">Manual</entry>
+<entry key="menu.help.manual.mnemonic">M</entry>
+
+<!-- About Dialog -->
+
+<entry key="about.title">About {0}</entry>
+
+<entry key="about.acknowledgements"></entry>
+
+<entry key="about.legal">License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.</entry>
+
+<entry key="about.licence">Licence</entry>
+
+<entry key="about.translated_by">Translated by {0}</entry>
+<entry key="about.translator_info"></entry>
+
+<entry key="about.version">{0} {1} ({2})</entry>
+
+<!-- Preferences Dialog -->
+
+<entry key="preferences.title">Preferences</entry>
+
+<entry key="preferences.autotrim">Automatically trim labels</entry>
+<entry key="preferences.autotrim.mnemonic">A</entry>
+
+<entry key="preferences.csv">CSV</entry>
+<entry key="preferences.csv.mnemonic">V</entry>
+
+<entry key="preferences.csv.encoding">Encoding: </entry>
+<entry key="preferences.csv.encoding.mnemonic">G</entry>
+
+<entry key="preferences.csv.delim">Delimiter: </entry>
+<entry key="preferences.csv.delim.mnemonic">D</entry>
+
+<entry key="preferences.csv.esc">Escape: </entry>
+
+<entry key="preferences.csv.escchar">Character</entry>
+<entry key="preferences.csv.escchar.mnemonic">E</entry>
+
+<entry key="preferences.csv.hasheader">Has Header Row</entry>
+<entry key="preferences.csv.hasheader.mnemonic">R</entry>
+
+<entry key="preferences.csv.noesc">None</entry>
+<entry key="preferences.csv.noesc.mnemonic">N</entry>
+
+<entry key="preferences.csv.or">Or</entry>
+
+<entry key="preferences.csv.sep">Separator: </entry>
+
+<entry key="preferences.csv.sepchar">Character</entry>
+<entry key="preferences.csv.sepchar.mnemonic">A</entry>
+
+<entry key="preferences.csv.skipemptyrows">Skip empty rows</entry>
+<entry key="preferences.csv.skipemptyrows.mnemonic">K</entry>
+
+<entry key="preferences.csv.skiplines">Number of lines to skip at the start:</entry>
+<entry key="preferences.csv.skiplines.mnemonic">K</entry>
+
+<entry key="preferences.csv.strictquotes">Strict quotes</entry>
+<entry key="preferences.csv.strictquotes.mnemonic">R</entry>
+<entry key="preferences.csv.strictquotes.tooltip">If set, characters outside of quotes will be ignored</entry>
+
+
+<entry key="preferences.csv.tabsep">Tab</entry>
+<entry key="preferences.csv.tabsep.mnemonic">T</entry>
+
+<entry key="preferences.currencies">Currencies</entry>
+<entry key="preferences.currencies.mnemonic">U</entry>
+
+<entry key="preferences.currencies.add_currency">Add</entry>
+<entry key="preferences.currencies.add_currency.mnemonic">A</entry>
+
+<entry key="preferences.currencies.edit_currency">Edit</entry>
+<entry key="preferences.currencies.edit_currency.mnemonic">T</entry>
+
+<entry key="preferences.currencies.reminder">If you add new currencies here, remember to also add them in your document using |DTLnewcurrencysymbol|</entry>
+
+<entry key="preferences.currencies.remove_currency">Remove</entry>
+<entry key="preferences.currencies.remove_currency.mnemonic">R</entry>
+
+<entry key="preferences.display">Display</entry>
+<entry key="preferences.display.mnemonic">I</entry>
+
+<entry key="preferences.display.cellheight">Cell Height</entry>
+<entry key="preferences.display.cellheight.mnemonic">G</entry>
+
+<entry key="preferences.display.cellwidths">Cell Widths</entry>
+
+<entry key="preferences.display.editor">Cell Editor Settings</entry>
+
+<entry key="preferences.display.editor.info">Application needs a restart for a change in cell editor settings to take effect.</entry>
+
+<entry key="preferences.display.editorheight">Number of Lines</entry>
+<entry key="preferences.display.editorheight.mnemonic">B</entry>
+
+<entry key="preferences.display.editorsyntax">Syntax Highlighting</entry>
+<entry key="preferences.display.editorsyntax.mnemonic">Y</entry>
+
+<entry key="preferences.display.editorwidth">Maximum Characters per Line</entry>
+<entry key="preferences.display.editorwidth.mnemonic">X</entry>
+
+<entry key="preferences.display.font">Font</entry>
+<entry key="preferences.display.font.mnemonic">F</entry>
+
+<entry key="preferences.display.fontsize">Font Size</entry>
+<entry key="preferences.display.fontsize.mnemonic">Z</entry>
+
+<entry key="preferences.display.highlightcomment">Comment Color</entry>
+<entry key="preferences.display.highlightcomment.mnemonic">M</entry>
+
+<entry key="preferences.display.highlightcs">Control Sequence Color</entry>
+<entry key="preferences.display.highlightcs.mnemonic">R</entry>
+
+
+<entry key="preferences.display.lookandfeel.title">Graphical Interface</entry>
+
+<entry key="preferences.display.lookandfeel">Look and Feel:</entry>
+<entry key="preferences.display.lookandfeel.mnemonic">F</entry>
+
+<entry key="preferences.display.lookandfeel.restart">Application needs a restart for a change in look and feel to take effect.</entry>
+
+<entry key="preferences.general">General</entry>
+<entry key="preferences.general.mnemonic">G</entry>
+
+<entry key="preferences.initial.capacities">Memory vs Speed Optimization</entry>
+
+<entry key="preferences.initial.column.capacity">Initial Column Capacity</entry>
+<entry key="preferences.initial.column.capacity.mnemonic">U</entry>
+
+<entry key="preferences.initial.row.capacity">Initial Row Capacity</entry>
+<entry key="preferences.initial.row.capacity.mnemonic">W</entry>
+
+<entry key="preferences.language">Language</entry>
+<entry key="preferences.language.mnemonic">L</entry>
+
+<entry key="preferences.language.dictionary">GUI Language:</entry>
+<entry key="preferences.language.dictionary.mnemonic">A</entry>
+
+<entry key="preferences.language.helpset">Manual Language: </entry>
+<entry key="preferences.language.helpset.mnemonic">M </entry>
+
+<entry key="preferences.language.restart">Application needs to be restarted for language change to take effect.</entry>
+
+<entry key="preferences.plugins">Plugins</entry>
+<entry key="preferences.plugins.mnemonic">P</entry>
+
+<entry key="preferences.plugins.note">Perl and the Perl Tk module must be installed for plugins to work. If you have Perl installed but it's not on your path, you need to specify the full path to the Perl executable in the box below.</entry>
+
+<entry key="preferences.plugins.perl">Perl</entry>
+<entry key="preferences.plugins.perl.mnemonic">L</entry>
+
+<entry key="preferences.shuffle">Shuffle</entry>
+
+<entry key="preferences.shuffle.seed">Random Seed</entry>
+<entry key="preferences.shuffle.seed.mnemonic">R</entry>
+
+<entry key="preferences.startup">Start Up Directory</entry>
+
+<entry key="preferences.startup.custom">Custom</entry>
+<entry key="preferences.startup.custom.mnemonic">T</entry>
+
+<entry key="preferences.startup.cwd">Current Working Directory</entry>
+<entry key="preferences.startup.cwd.mnemonic">W</entry>
+
+<entry key="preferences.startup.home">Home</entry>
+<entry key="preferences.startup.home.mnemonic">M</entry>
+
+<entry key="preferences.startup.last">Last</entry>
+<entry key="preferences.startup.last.mnemonic">L</entry>
+
+<entry key="preferences.sql">SQL</entry>
+<entry key="preferences.sql.mnemonic">Q</entry>
+
+<entry key="preferences.sql.database">Database: </entry>
+<entry key="preferences.sql.database.mnemonic">D</entry>
+
+<entry key="preferences.sql.host">Host: </entry>
+<entry key="preferences.sql.host.mnemonic">S</entry>
+
+<entry key="preferences.sql.port">Port: </entry>
+<entry key="preferences.sql.port.mnemonic">T</entry>
+
+<entry key="preferences.sql.prefix">Prefix: </entry>
+<entry key="preferences.sql.prefix.mnemonic">X</entry>
+
+<entry key="preferences.sql.user">User Name: </entry>
+<entry key="preferences.sql.user.mnemonic">N</entry>
+
+<entry key="preferences.sql.wipe">Wipe Password After Use</entry>
+<entry key="preferences.sql.wipe.mnemonic">W</entry>
+
+<entry key="preferences.tex">TeX</entry>
+<entry key="preferences.tex.mnemonic">E</entry>
+
+<entry key="preferences.tex.add_map">Add</entry>
+<entry key="preferences.tex.add_map.mnemonic">A</entry>
+
+<entry key="preferences.tex.edit_map">Edit</entry>
+<entry key="preferences.tex.edit_map.mnemonic">T</entry>
+
+<entry key="preferences.tex.latexapp">LaTeX Executable: </entry>
+<entry key="preferences.tex.latexapp.mnemonic">L </entry>
+
+<entry key="preferences.tex.encoding">Encoding:</entry>
+<entry key="preferences.tex.encoding.mnemonic">N</entry>
+
+<entry key="preferences.tex.map">Map TeX characters when importing data from CSV or SQL</entry>
+<entry key="preferences.tex.map.mnemonic">M</entry>
+
+<entry key="preferences.tex.remove_map">Remove</entry>
+<entry key="preferences.tex.remove_map.mnemonic">R</entry>
+
+<entry key="preferences.tex.stripsolnenv">Strip solution environment from probsoln problems</entry>
+<entry key="preferences.tex.stripsolnenv.mnemonic">V</entry>
+
+<!-- TeX Mappings Table -->
+
+<entry key="texmap.add_mapping">Add Mapping</entry>
+
+<entry key="texmap.character">Character</entry>
+<entry key="texmap.character.mnemonic">T</entry>
+
+<entry key="texmap.edit_mapping">Edit Mapping</entry>
+
+<entry key="texmap.replacement">Replacement</entry>
+<entry key="texmap.replacement.mnemonic">R</entry>
+
+<!-- Sort Dialog -->
+
+<entry key="sort.title">Sort Database</entry>
+
+<entry key="sort.ascending">Ascending</entry>
+<entry key="sort.ascending.mnemonic">A</entry>
+
+<entry key="sort.case_sensitive">Case sensitive</entry>
+<entry key="sort.case_sensitive.mnemonic">S</entry>
+
+<entry key="sort.column">Sort on Column: </entry>
+<entry key="sort.column.mnemonic">L</entry>
+
+<entry key="sort.descending">Descending</entry>
+<entry key="sort.descending.mnemonic">D</entry>
+
+<entry key="sort.letter">Character Code</entry>
+<entry key="sort.letter.mnemonic">T</entry>
+
+<entry key="sort.locale">Locale</entry>
+<entry key="sort.locale.mnemonic">O</entry>
+
+<entry key="sort.string.message">When comparing strings use:</entry>
+
+<!-- Import SQL Dialog -->
+
+<entry key="importsql.title">Import SQL Data</entry>
+
+<entry key="importsql.database">Database: </entry>
+<entry key="importsql.database.mnemonic">D</entry>
+
+<entry key="importsql.host">Host: </entry>
+<entry key="importsql.host.mnemonic">S</entry>
+
+<entry key="importsql.prefix">Prefix: </entry>
+<entry key="importsql.prefix.mnemonic">X</entry>
+
+<entry key="importsql.port">Port: </entry>
+<entry key="importsql.port.mnemonic">P</entry>
+
+<entry key="importsql.select">SELECT </entry>
+<entry key="importsql.select.mnemonic">L</entry>
+
+<entry key="importsql.user">User Name: </entry>
+<entry key="importsql.user.mnemonic">U</entry>
+
+<!-- Password Dialog -->
+
+<entry key="password.title">SQL Password</entry>
+
+<entry key="password.prompt">Password: </entry>
+<entry key="password.prompt.mnemonic">P</entry>
+
+<!-- Import Spreadsheet Dialog -->
+
+<entry key="importspread.title">Import Sheet</entry>
+<entry key="importspread.sheet">Select sheet:</entry>
+
+<!-- Cell Editor Dialog -->
+
+<entry key="celledit.title">Cell Editor</entry>
+
+<!-- Find Dialog -->
+
+<entry key="find.title">Find</entry>
+
+<entry key="find.case">Case Sensitive</entry>
+<entry key="find.case.mnemonic">A</entry>
+
+<entry key="find.cell_containing">Find Cell Containing: </entry>
+<entry key="find.cell_containing.mnemonic">T </entry>
+
+<entry key="find.close">Close</entry>
+<entry key="find.close.mnemonic">C</entry>
+
+<entry key="find.colwise">Column Wise</entry>
+<entry key="find.colwise.mnemonic">U</entry>
+
+<entry key="find.find">Find</entry>
+<entry key="find.find.mnemonic">F</entry>
+
+<entry key="find.not_found">Not found</entry>
+
+<entry key="find.not_found_in_cell">Not found in this cell</entry>
+
+<entry key="find.regex">Regular Expression</entry>
+<entry key="find.regex.mnemonic">X</entry>
+
+<entry key="find.rowwise">Row Wise</entry>
+<entry key="find.rowwise.mnemonic">R</entry>
+
+<entry key="find.search_for">Search For: </entry>
+<entry key="find.search_for.mnemonic">S </entry>
+
+<entry key="find.wrap">Wrap round</entry>
+<entry key="find.wrap.mnemonic">W</entry>
+
+<!-- Extra Fields for Find and Replace Dialog -->
+
+<entry key="replace.title">Replace</entry>
+
+<entry key="replace.all_in">Replace all occurrences within:</entry>
+
+<entry key="replace.in_column">Selected Column</entry>
+<entry key="replace.in_column.mnemonic">L</entry>
+
+<entry key="replace.in_db">Selected Database</entry>
+<entry key="replace.in_db.mnemonic">D</entry>
+
+<entry key="replace.in_row">Selected Row</entry>
+<entry key="replace.in_row.mnemonic">W</entry>
+
+<entry key="replace.num_replaced">{0,number,integer} {0,choice,1#occurrence|1&lt;occurrences} replaced.</entry>
+
+<entry key="replace.replace">Replace</entry>
+<entry key="replace.replace.mnemonic">R</entry>
+
+<entry key="replace.replace_all">Replace All</entry>
+<entry key="replace.replace_all.mnemonic">A</entry>
+
+<entry key="replace.replace_text">Replacement Text: </entry>
+<entry key="replace.replace_text.mnemonic">T </entry>
+
+<!-- Column Header Dialog -->
+
+<entry key="header.title">Column ''{0}''</entry>
+
+<entry key="header.tooltip_format">Label: {0}. Type: {1}</entry>
+
+<entry key="header.column_title">Title</entry>
+<entry key="header.column_title.mnemonic">T</entry>
+
+<entry key="header.column_label">Label</entry>
+<entry key="header.column_label.mnemonic">L</entry>
+
+<entry key="header.column_label_note">(Avoid TeX active characters.)</entry>
+
+<entry key="header.column_type">Type</entry>
+<entry key="header.column_type.mnemonic">Y</entry>
+
+<entry key="header.type.currency">Currency</entry>
+<entry key="header.type.currency.mnemonic">N</entry>
+
+<entry key="header.type.int">Integer</entry>
+<entry key="header.type.int.mnemonic">T</entry>
+
+<entry key="header.type.real">Real</entry>
+<entry key="header.type.real.mnemonic">A</entry>
+
+<entry key="header.type.string">String</entry>
+<entry key="header.type.string.mnemonic">S</entry>
+
+<entry key="header.type.unset">Unset</entry>
+<entry key="header.type.unset.mnemonic">U</entry>
+
+<!-- New From Template Dialog -->
+
+<entry key="template.title">New From Template</entry>
+<entry key="template.message">Select Template: </entry>
+
+<!-- File Filter -->
+
+<entry key="filter.csv">CSV Files ({0})</entry>
+<entry key="filter.csvtxt">CSV and TXT Files ({0})</entry>
+<entry key="filter.dbtex">Datatool Files ({0})</entry>
+<entry key="filter.ods">Open Document Spreadsheet ({0})</entry>
+<entry key="filter.tex">TeX Files ({0})</entry>
+<entry key="filter.txt">Text Files ({0})</entry>
+<entry key="filter.xls">XLS Files ({0})</entry>
+<entry key="filter.xlsods">Spreadsheets ({0})</entry>
+
+<!-- Button Labels -->
+
+<entry key="button.cancel">Cancel</entry>
+<entry key="button.cancel.mnemonic">C</entry>
+
+<entry key="button.close_panel">Close</entry>
+<entry key="button.close_panel.mnemonic">C</entry>
+<entry key="button.close_panel.tooltip">Close this database</entry>
+
+<entry key="button.copy">Copy</entry>
+<entry key="button.copy.mnemonic">Y</entry>
+<entry key="button.copy.tooltip">Copy contents of text area to the clipboard</entry>
+
+<entry key="button.import">Import</entry>
+
+<entry key="button.help">Help</entry>
+<entry key="button.help.mnemonic">H</entry>
+
+<entry key="button.okay">Okay</entry>
+<entry key="button.okay.mnemonic">O</entry>
+
+<entry key="button.scrollback">Scroll Back</entry>
+
+<entry key="button.scrollforward">Scroll Forward</entry>
+
+<entry key="button.select">Select</entry>
+<entry key="button.select.mnemonic">S</entry>
+
+<!-- Default Labels -->
+
+<entry key="default.field">Field{0,number}</entry>
+<entry key="default.texheader">Created by {0} on {1,date}</entry>
+<entry key="default.untitled">Untitled</entry>
+
+<!-- Header Keys for probsoln Imports -->
+
+<entry key="probsoln.answer">Answer</entry>
+<entry key="probsoln.label">Label</entry>
+<entry key="probsoln.question">Question</entry>
+<entry key="probsoln.set">Data Set</entry>
+
+<!-- Undo/Redo -->
+
+<entry key="undo.add_column">Add Column</entry>
+<entry key="undo.add_row">Add Row</entry>
+<entry key="undo.cell_edit">Cell Edit</entry>
+<entry key="undo.edit_name">Edit Database Name</entry>
+<entry key="undo.header_edit">Header Edit</entry>
+<entry key="undo.header_type">Change Header Type</entry>
+<entry key="undo.merge">Merge Databases</entry>
+<entry key="undo.move_column">Move Column</entry>
+<entry key="undo.move_row">Move Row</entry>
+<entry key="undo.nullify_row">Nullify Row</entry>
+<entry key="undo.nullify_column">Nullify Column</entry>
+<entry key="undo.plugin_action">Plugin ''{0}'' action</entry>
+<entry key="undo.remove_column">Remove Column</entry>
+<entry key="undo.remove_row">Remove Row</entry>
+<entry key="undo.replace_row">Replace Row</entry>
+<entry key="undo.shuffle">Shuffle</entry>
+<entry key="undo.sort">Sort</entry>
+
+<!-- Messages -->
+
+<entry key="message.cancelled">Canceled</entry>
+<entry key="message.cells_updated">{0,number} {0,choice,1#cell|1&lt;cells} updated.</entry>
+<entry key="message.confirm_discard">Confirm Discard</entry>
+<entry key="message.confirm_overwrite">Confirm Overwrite</entry>
+<entry key="message.discard_edit_query">Discard the edits you have just made?</entry>
+<entry key="message.input_database_name">Database Name (as used in |DTLnewdb|):</entry>
+<entry key="message.overwrite_query">Overwrite {0}?</entry>
+<entry key="message.unsaved_data">Unsaved Data</entry>
+<entry key="message.unsaved_data_query">''{0}'' has been modified. Do you want to save it?</entry>
+
+<!-- Information Messages -->
+
+<entry key="info.edit">Double-click on the cell to edit it.</entry>
+<entry key="info.edit_header">Double-click on the column title to edit the header information or single-click and drag sideways to move the column.</entry>
+<entry key="info.edit_name">Double-click on the tab to edit the database name. Click on the tab close icon to close this database.</entry>
+<entry key="info.empty_db">Use {0} to add columns to the database.</entry>
+<entry key="info.move_row">Drag row button vertically to move it up or down.</entry>
+<entry key="info.no_rows">Use {0} to add rows to the database.</entry>
+<entry key="info.not_empty_db">Use {0} and {1} to add or remove columns and rows, or double-click on a cell to edit it.</entry>
+<entry key="info.view_or_edit">Double-click on the cell to view or edit its contents.</entry>
+
+<!-- Syntax -->
+
+<entry key="syntax.title">Syntax:</entry>
+
+<entry key="syntax.autotrimlabels">{0}	Automatically trim labels.{1}</entry>
+
+<entry key="syntax.batch">{0} (or {1})	No GUI interface. (Default.)</entry>
+
+<entry key="syntax.bugreport">Report bugs to: {0}</entry>
+
+<entry key="syntax.compat">{0} &lt;level&gt;		Set the compatibility level.</entry>
+
+<entry key="syntax.csv">{0} &lt;csv file&gt;	Import &lt;csv file&gt;.</entry>
+
+<entry key="syntax.csv_delim">{0} &lt;character&gt;	Delimiter used in CSV files. (Defaults to ''{1}''. Synonym: {2})</entry>
+
+<entry key="syntax.csv_encoding">{0} &lt;encoding&gt;		CSV file encoding. Synonym: {1}.</entry>
+
+<entry key="syntax.csv_escape">{0} &lt;number&gt;	Set the number of lines to skip at the start of CSV files.</entry>
+
+<entry key="syntax.csv_header">{0}		CSV files have a header row.{1} Synonym: {2}.</entry>
+
+<entry key="syntax.csv_noheader">{0}		CSV files don''t have a header row.{1} Synonym: {2}.</entry>
+<entry key="syntax.csv_nostrictquotes">{0}		Don''t ignore characters that haven''t been enclosed in the designated delimiters.</entry>
+
+<entry key="syntax.csv_opts">CSV Options:</entry>
+
+<entry key="syntax.csv_sep">{0} &lt;character&gt;	Separator used in CSV files. (Defaults to ''{1}''. Synonym: {2})</entry>
+
+<entry key="syntax.csv_skiplines">{0} &lt;number&gt;		Skip the specified &lt;number&gt; of lines at the start of CSV files.</entry>
+
+<entry key="syntax.csv_strictquotes">{0}		Ignore characters not enclosed in the designated delimiters.</entry>
+
+<entry key="syntax.debug">{0}			Switch on debug mode.</entry>
+<entry key="syntax.default">Default</entry>
+
+<entry key="syntax.filter">{0} &lt;key&gt; &lt;operator&gt; &lt;value&gt;
+		Add a filter (may be used multiple times).
+		&lt;key&gt; is the name of a column label and &lt;operator&gt; may be one
+		of: ''eq'' (equals), ''ne'' (does not equal), ''le'' (is less than or
+		equal to), ''lt'' (is less than), ''ge'' (is greater than or equal
+		to), ''gt'' (is greater than), ''regex'' (matches the regular
+		expression).</entry>
+
+<entry key="syntax.filter_and">{0}	Use ''AND'' operator when filtering.</entry>
+
+<entry key="syntax.filter_or">{0}	Use ''OR'' operator when filtering. (Default.)</entry>
+
+<entry key="syntax.filter_exclude">{0}
+		When filtering discard rows that match the filter
+		specifications (and keep those that don''t match).</entry>
+
+<entry key="syntax.filter_include">{0}
+		When filtering discard rows that don''t match the filter
+		specifications (and keep those that do match).
+		(Default.)</entry>
+
+<entry key="syntax.general">General Options:</entry>
+
+<entry key="syntax.gui">{0} (or {1})	GUI interface.</entry>
+
+<entry key="syntax.help">{0} (or {1})		Print this help message and exit.</entry>
+<entry key="syntax.homepage">{0} home page: {1}</entry>
+
+<entry key="syntax.in">{0} (or {1}) &lt;datatool file&gt;
+		Load &lt;datatool file&gt;. (Can''t be used with --csv or --sql or
+		--probsoln.) The {0} (or {1}) switch is optional so
+		{2} &lt;file&gt; is equivalent to {2} {0} &lt;file&gt;.</entry>
+
+<entry key="syntax.maptexspecials">{0}	Map TeX special characters.{1}</entry>
+
+<entry key="syntax.merge">{0} &lt;key&gt; &lt;file&gt;
+		Merge input or imported database with the database
+		stored in the given file on the column whose label is &lt;key&gt;.
+		(Only one of the merge options is permitted.)</entry>
+
+<entry key="syntax.merge_csv">{0} &lt;key&gt; &lt;file&gt;	Import CSV data from &lt;file&gt;
+				and merge with the loaded database
+				on the column whose label is &lt;key&gt;.
+			(Only one of the merge options is permitted.)</entry>
+
+<entry key="syntax.merge_ods">{0} &lt;key&gt; &lt;filename&gt;	Import ODS data from &lt;filename&gt;
+				and merge with the loaded database
+				on the column whose label is &lt;key&gt;.
+			(Only one of the merge options is permitted.)</entry>
+
+<entry key="syntax.merge_probsoln">{0} &lt;key&gt; &lt;file&gt;	Import probsoln data from &lt;file&gt;
+				and merge with the loaded database
+				on the column whose label is &lt;key&gt;.
+			(Only one of the merge options is permitted.)</entry>
+
+<entry key="syntax.merge_sql">{0} &lt;key&gt; &lt;statement&gt;	Import data from SQL database
+				and merge with the loaded database
+				on the column whose label is &lt;key&gt;.
+			(Only one of the merge options is permitted.)</entry>
+
+<entry key="syntax.merge_xls">{0} &lt;key&gt; &lt;filename&gt;	Import Excel data from &lt;filename&gt;
+				and merge with the loaded database
+				on the column whose label is &lt;key&gt;.
+			(Only one of the merge options is permitted.)</entry>
+
+<entry key="syntax.name">{0} &lt;name&gt;	Set the database label (as used in |DTLnewdb|) to &lt;name&gt;.</entry>
+
+<entry key="syntax.noautotrimlabels">{0}	Don''t trim labels.{1}</entry>
+<entry key="syntax.nodebug">{0}		Switch off debug mode. (Default.)</entry>
+<entry key="syntax.csv_noescape">{0}		No CSV escape character. Synonym: {1}.</entry>
+<entry key="syntax.nomaptexspecials">{0}	Don''t map TeX special characters.{1}</entry>
+
+<entry key="syntax.noowner_only">{0}	Don''t change file permissions for .dbtex files. {1}</entry>
+<entry key="syntax.noskipemptyrows">{0}	Don''t skip empty rows on import.{1}</entry>
+<entry key="syntax.no_shuffle">{0}	Don''t shuffle the database. (Default.)</entry>
+
+<entry key="syntax.ods">{0} &lt;filename&gt;	Import ODS data from &lt;filename&gt;</entry>
+<entry key="syntax.ods_opts">ODS Options:</entry>
+
+<entry key="syntax.opt_db">{0} [&lt;option&gt;]+ --in &lt;datatool file&gt;</entry>
+<entry key="syntax.opt_csv">{0} [&lt;option&gt;]+ --csv &lt;csv file&gt;</entry>
+<entry key="syntax.opt_sql">{0} [&lt;option&gt;]+ --sqldb &lt;name&gt; --sql &lt;sql statement&gt;</entry>
+
+<entry key="syntax.or">or</entry>
+
+<entry key="syntax.out">{0} (or {1}) &lt;filename&gt;	Save to &lt;filename&gt;.</entry>
+
+<entry key="syntax.owner_only">{0}	Set file permissions to owner read/write on .dbtex files. {1}</entry>
+
+<entry key="syntax.probsoln">{0} &lt;filename&gt;	Import probsoln data from &lt;filename&gt;</entry>
+<entry key="syntax.probsoln_opts">probsoln Options:</entry>
+
+<entry key="syntax.remove_except_cols">{0} &lt;col-1&gt;,...,&lt;col-n&gt;	Remove all columns except those identified (labels or indexes starting from 1).</entry>
+
+<entry key="syntax.remove_cols">{0} &lt;col-1&gt;,...,&lt;col-n&gt;	Remove given list of columns (labels or indexes starting from 1).</entry>
+
+<entry key="syntax.seed">{0} &lt;number&gt;	Set the random seed to &lt;number&gt; or clear it if &lt;number&gt; is "".</entry>
+
+<entry key="syntax.sheet">{0} &lt;ref&gt;		Fetch data from sheet &lt;ref&gt;,
+			where &lt;ref&gt; can be an index (starting from 0)
+			or the name of a sheet. (Default: {1})</entry>
+
+<entry key="syntax.shuffle">{0}	Shuffle the database. (Shuffle is always performed after sort,
+		regardless of the option order.)</entry>
+
+
+<entry key="syntax.skipemptyrows">{0}	Skip empty rows on import from CSV or pspreadsheet.{1}</entry>
+
+<entry key="syntax.sort">{0} [+|-]&lt;field&gt;
+		Sort the database on the column whose label is given by &lt;field&gt;.
+		If &lt;field&gt; is preceded by ''+'', use ascending order. If
+		&lt;field&gt; is preceded by ''-'', use descending order. If sign
+		prefix is omitted, ''+'' is assumed. (Sort is always performed
+		before shuffle, regardless of option order.)</entry>
+
+<entry key="syntax.sort_case_insensitive">{0}	Use case insensitive comparison when sorting strings.
+			(Default.)</entry>
+
+<entry key="syntax.sort_case_sensitive">{0}	Use case sensitive comparison when sorting strings.</entry>
+
+<entry key="syntax.sort_locale">{0} &lt;tag&gt;	Sort according to the alphabet identified
+			by &lt;tag&gt; (which should be a valid IETF
+			language tag) or, if &lt;tag&gt; is the keyword
+			''none'' use non-locale letter order.</entry>
+
+<entry key="syntax.sql">{0} &lt;statement&gt;	Import data from SQL database where &lt;statement&gt; is a SQL SELECT statement.</entry>
+
+<entry key="syntax.sql_db">{0} &lt;name&gt;		SQL database name.</entry>
+
+<entry key="syntax.sql_host">{0} &lt;hostname&gt;	SQL host. (Default: ''{1}''.)</entry>
+
+<entry key="syntax.sql_noconsole">{0} &lt;action&gt;
+	When requesting a SQL password in batch mode if there is no
+	console available do:
+	&lt;action&gt;: ''stdin'' - read from STDIN instead (least secure option)
+	&lt;action&gt;: ''gui'' - use a dialog box (default)
+	&lt;action&gt;: ''error'' - issue an error.</entry>
+
+<entry key="syntax.sql_nowipepassword">{0}	Don''t wipe the password from memory as soon as it has
+			been used to connect to a SQL database.{1}</entry>
+
+<entry key="syntax.sql_opts">SQL Options:</entry>
+
+<entry key="syntax.sql_password">{0}  &lt;password&gt;
+		SQL password (insecure). If omitted, you will be prompted for
+		the password if you try to import data from a SQL database.</entry>
+
+<entry key="syntax.sql_port">{0} &lt;number&gt;	SQL port. (Default: {1}.)</entry>
+
+<entry key="syntax.sql_prefix">{0} &lt;prefix&gt;	SQL prefix. (Default: ''{1}''.)</entry>
+
+<entry key="syntax.sql_user">{0} &lt;user name&gt;	SQL user name.</entry>
+
+<entry key="syntax.sql_wipepassword">{0}	For extra security, wipe the password from memory as
+		soon as it has been used to connect to a SQL database.{1}</entry>
+
+<entry key="syntax.tex_encoding">{0} &lt;encoding&gt;		TeX (.tex or .dbtex) file encoding.</entry>
+
+<entry key="syntax.truncate">{0} &lt;n&gt;	Truncate the database to the first &lt;n&gt; rows.
+		(Has no effect if &lt;n&gt; is greater than the total number of rows.)
+		This option is always performed last (after any sorting,
+		shuffling and filtering).</entry>
+
+<entry key="syntax.version">{0} (or {1})	Print version and exit.</entry>
+
+<entry key="syntax.xls">{0} &lt;filename&gt;	Import Excel data from &lt;filename&gt;</entry>
+<entry key="syntax.xlsods_opts">Excel and ODS Options:</entry>
+<entry key="syntax.xls_opts">Excel Options:</entry>
+
+<!-- Plugin Messages -->
+
+<entry key="plugin.error.missing_column">Can''t find column labelled ''{0}''</entry>
+<entry key="plugin.remove_entry">Remove Entry</entry>
+
+<entry key="plugin.datagidx.add_seealso">Add "See Also" Entry</entry>
+<entry key="plugin.datagidx.Child">Child</entry>
+<entry key="plugin.datagidx.crossref">Cross-Reference</entry>
+<entry key="plugin.datagidx.CurrentLocation">Current Location (Reserved)</entry>
+<entry key="plugin.datagidx.default_name">index</entry>
+<entry key="plugin.datagidx.Description">Description</entry>
+<entry key="plugin.datagidx.edit_entry">Edit Entry</entry>
+<entry key="plugin.datagidx.FirstId">First ID (Reserved)</entry>
+<entry key="plugin.datagidx.Label">Label</entry>
+<entry key="plugin.datagidx.Location">Location (Reserved)</entry>
+<entry key="plugin.datagidx.Long">Long</entry>
+<entry key="plugin.datagidx.LongPlural">Long Plural</entry>
+<entry key="plugin.datagidx.missing_field">Missing {0}</entry>
+<entry key="plugin.datagidx.Name">Name</entry>
+<entry key="plugin.datagidx.new_entry">New Entry</entry>
+<entry key="plugin.datagidx.Plural">Plural</entry>
+<entry key="plugin.datagidx.Parent">Parent</entry>
+<entry key="plugin.datagidx.remove_seealso">Remove "See Also" Entry</entry>
+<entry key="plugin.datagidx.See">See</entry>
+<entry key="plugin.datagidx.SeeAlso">See Also</entry>
+<entry key="plugin.datagidx.Short">Short</entry>
+<entry key="plugin.datagidx.ShortPlural">Short Plural</entry>
+<entry key="plugin.datagidx.Sort">Sort</entry>
+<entry key="plugin.datagidx.Symbol">Symbol</entry>
+<entry key="plugin.datagidx.Text">Text</entry>
+<entry key="plugin.datagidx.Used">Used (Reserved)</entry>
+
+<entry key="plugin.people.Address">Address</entry>
+<entry key="plugin.people.edit_entry">Edit Entry</entry>
+<entry key="plugin.people.Email">Email</entry>
+<entry key="plugin.people.Forename">Forename</entry>
+<entry key="plugin.people.ID">ID</entry>
+<entry key="plugin.people.new_entry">New Entry</entry>
+<entry key="plugin.people.Surname">Surname</entry>
+<entry key="plugin.people.Telephone">Telephone</entry>
+<entry key="plugin.people.Title">Title</entry>
+
+<!-- Warning Messages -->
+
+<entry key="warning.title">Warning</entry>
+
+<entry key="warning.ignoring_filter">Ignoring filter option ''{0}''. No such column label.</entry>
+
+<entry key="warning.texparser.used">This file was not in the expected .dbtex format, so the TeX Parser Library was used to interpret it. If you save to this file, the data will be saved in the .dbtex format not it its current format. Please check that you haven''t accidentally loaded your LaTeX document.</entry>
+
+<entry key="warning.verb_detected">Verbatim text has been detected. You must remove this before inputting the database into a LaTeX document. See https://texfaq.org/FAQ-verbwithin for more details.</entry>
+
+<entry key="warning.verb_detected_in_cell">Verbatim text has been detected in cell ({0,number},{1,number}). You must remove this before inputting the database into a LaTeX document. See https://texfaq.org/FAQ-verbwithin for more details.</entry>
+
+<!-- Progress Messages -->
+
+<entry key="progress.title">{0} Messages</entry>
+
+<entry key="progress.confirm.cancel">Cancel current operation?</entry>
+<entry key="progress.confirm.cancel.title">Confirm Abort</entry>
+
+<entry key="progress.filtering">Filtering</entry>
+
+<entry key="progress.importing">Importing {0}</entry>
+
+<entry key="progress.loading">Loading {0}</entry>
+
+<entry key="progress.merging">Merging {0}</entry>
+
+<entry key="progress.quick_load_failed">Quick load failed ({0}).
+Trying again with TeX Parser Library.</entry>
+
+<entry key="progress.removing_columns">Removing columns</entry>
+<entry key="progress.saving">Saving {0}</entry>
+<entry key="progress.shuffling">Shuffling</entry>
+<entry key="progress.sorting">Sorting</entry>
+<entry key="progress.truncating">Truncating</entry>
+
+<!-- Text for the manual  -->
+<entry key="manual.figure">Figure</entry>
+<entry key="manual.title">Manual</entry>
+<entry key="manual.home">Home</entry>
+<entry key="manual.search">Search</entry>
+<entry key="manual.table">Table</entry>
+<entry key="manual.example">Example</entry>
+<entry key="manual.prev">Previous</entry>
+<entry key="manual.labelled">labelled</entry>
+<entry key="manual.index">Index</entry>
+<entry key="manual.next">Next</entry>
+<entry key="manual.cont_explanation">(The symbol \continuesymbol\ above indicates a~line wrap. Don't insert a~line break at that point.)</entry>
+<entry key="manual.options">Options</entry>
+<entry key="manual.seealso">See also:</entry>
+<entry key="manual.abbreviations">Abbreviations</entry>
+<entry key="manual.idxenv">environment</entry>
+<entry key="manual.idxpackage">package</entry>
+<entry key="manual.toc">Table of Contents</entry>
+
+<!-- Errors -->
+
+<entry key="error.syntax">Syntax error: {0}</entry>
+
+<entry key="error.syntax.import_clash">{0} can''t be used with &lt;datatool file&gt;</entry>
+<entry key="error.syntax.input_clash">&lt;datatool file&gt; can''t be used with an import option</entry>
+<entry key="error.syntax.invalid_compat">Invalid compatibility setting {0}</entry>
+<entry key="error.syntax.invalid_delim">Delimiter must be a single character not a string</entry>
+<entry key="error.syntax.invalid_end_range">End index {0,number} must be less than starting index {1,number}</entry>
+<entry key="error.syntax.invalid_esc">CSV escape must be a single character not a string</entry>
+<entry key="error.syntax.invalid_filter_operator">Invalid filter operator ''{0}''</entry>
+<entry key="error.syntax.invalid_locale">Invalid or unknown IETF locale tag ''{0}''</entry>
+<entry key="error.syntax.invalid_noconsole_action">Invalid action ''{1}'' for ''{0}'' option</entry>
+<entry key="error.syntax.invalid_sep">Separator must be a single character not a string</entry>
+<entry key="error.syntax.invalid_skiplines">Invalid CSV skip lines value {0} (must be a non-negative number)</entry>
+
+<entry key="error.syntax.missing_arg">Missing argument after {0}</entry>
+<entry key="error.syntax.missing_char">Character expected after {0}</entry>
+<entry key="error.syntax.missing_dbname">Database name expected after {0}</entry>
+<entry key="error.syntax.missing_encoding">Missing encoding name after {0}</entry>
+<entry key="error.syntax.missing_filename">Filename expected after {0}</entry>
+<entry key="error.syntax.missing_filter_label">Missing column label after {0}</entry>
+<entry key="error.syntax.missing_filter_operator">Missing operator after {0} {1}</entry>
+<entry key="error.syntax.missing_filter_value">Missing operator after {0} {1} {2}</entry>
+<entry key="error.syntax.missing_host">Host name expected after {0}</entry>
+<entry key="error.syntax.missing_input">Filename expected after {0}</entry>
+<entry key="error.syntax.missing_number">Number expected after {0}</entry>
+<entry key="error.syntax.missing_password">Password expected after {0} (omit {0} to be prompted for a password)</entry>
+<entry key="error.syntax.missing_port">Port number expected after {0}</entry>
+<entry key="error.syntax.missing_prefix">Prefix expected after {0}</entry>
+<entry key="error.syntax.missing_sheet_ref">Reference expected after ''{0}''</entry>
+<entry key="error.syntax.missing_sort_field">Sort field (and optionally ''+'' or ''-'' prefix) expected after {0}</entry>
+<entry key="error.syntax.missing_sort_locale">IETF locale tag or ''none'' expected after {0}</entry>
+<entry key="error.syntax.missing_sql">SQL statement expected after {0}</entry>
+<entry key="error.syntax.missing_user">User name expected after {0}</entry>
+<entry key="error.syntax.missing_value">Missing value after {0}</entry>
+
+<entry key="error.syntax.not_a_number">Number expected after {0} (''{1}'' found)</entry>
+<entry key="error.syntax.only_one">Only one {0} permitted</entry>
+<entry key="error.syntax.only_one_import">Only one import option permitted</entry>
+<entry key="error.syntax.only_one_input">Only one &lt;datatool file&gt; permitted</entry>
+<entry key="error.syntax.only_one_merge">Only one merge option permitted</entry>
+<entry key="error.syntax.option_clash">Option conflict: can''t specify both {0} and {1}</entry>
+
+<entry key="error.syntax.syntax.missing_merge_file">Missing merge file after {0} {1}</entry>
+<entry key="error.syntax.syntax.missing_merge_key">Missing merge key after ''{0}''</entry>
+<entry key="error.syntax.syntax.missing_merge_statement">Missing merge SQL statement after {0} {1}</entry>
+
+<entry key="error.syntax.unknown_encoding">Unknown or invalid encoding name ''{0}''</entry>
+<entry key="error.syntax.unknown_field">Unknown sort field ''{0}''</entry>
+<entry key="error.syntax.unknown_option">Unknown option ''{0}''. (Use --help or -h for help.)</entry>
+
+
+<entry key="error.title">Error</entry>
+<entry key="error.message">Error Message</entry>
+<entry key="error.message.mnemonic">M</entry>
+<entry key="error.stacktrace">Stack Trace</entry>
+<entry key="error.stacktrace.mnemonic">T</entry>
+
+
+<entry key="error.char_delim_required">I''m sorry, the delimiter ''{0}'' is currently not supported by the CSV library. The character code must be less than {1}.</entry>
+<entry key="error.char_esc_required">I''m sorry, the escape character ''{0}'' is currently not supported by the CSV library. The character code must be less than {1}.</entry>
+<entry key="error.char_sep_required">I''m sorry, the separator ''{0}'' is currently not supported by the CSV library. The character code must be less than {1}.</entry>
+
+<entry key="error.cli.no_out">{0} &lt;file&gt; required for batch mode.
+(If you want the GUI interface, use the {1} option. See {2} for help.)</entry>
+
+<entry key="error.cli.no_data">A database must either be loaded or imported when using batch mode.
+(If you want the GUI interface, use the {0} option. See {1} for help.)</entry>
+
+<entry key="error.db.unknown_key">Unknown header key ''{0}'' in database ''{1}''</entry>
+<entry key="error.dbload.invalid_col_id">invalid column index ''{0}''</entry>
+<entry key="error.dbload.invalid_row_id">invalid row index ''{1}''</entry>
+<entry key="error.dbload.missing_data">No database information found in ''{0}''.</entry>
+<entry key="error.dbload.multiple_db_found">Multiple databases found in ''{0}''. (Only one permitted.)</entry>
+<entry key="error.dbload.not_found">Premature end of file. Failed to find ''{0}''</entry>
+<entry key="error.dbload.unknown_type">unknown data type ''{0}''</entry>
+<entry key="error.dbload.wrong_end_col_tag">column {0,number} ended with closing tag for column {1,number}</entry>
+<entry key="error.dbload.wrong_end_row_tag">row {0,number} ended with closing tag for row {1,number}</entry>
+
+<entry key="error.expected">expected ''{0}''</entry>
+<entry key="error.expected_found">expected ''{0}'', found ''{1}''</entry>
+<entry key="error.export.failed">Failed to export to ''{0}''.</entry>
+
+<entry key="error.import.failed">Failed to import ''{0}''.
+{1}</entry>
+
+<entry key="error.internal.import_probdata_failed">(Internal Error) Something's gone wrong. Failed to import data</entry>
+
+<entry key="error.invalid_data_type">Invalid data type {0,number}</entry>
+<entry key="error.invalid_header_choice">You can''t set the type to ''{0}'': row {1,number} is of type ''{2}''.</entry>
+<entry key="error.invalid_name">Invalid name ''{0}'' (can''t be empty or contain TeX special characters)</entry>
+
+<entry key="error.io.file_not_found">No such file ''{0}''</entry>
+
+<entry key="error.key_exists">Header key ''{0}'' already exists</entry>
+<entry key="error.line">Line {0,number}: {1}</entry>
+
+<entry key="error.load.failed">Failed to load ''{0}''.
+{1}</entry>
+
+<entry key="error.missing_custom_file">You have opted for a custom start up directory, but you haven't specified a directory</entry>
+<entry key="error.missing_dbname">Missing Database Name</entry>
+<entry key="error.missing_delim">No delimiter specified</entry>
+<entry key="error.missing_host">No SQL host specified</entry>
+<entry key="error.missing_key">Header key is missing</entry>
+<entry key="error.missing_port">No SQL port specified</entry>
+<entry key="error.missing_prefix">No SQL prefix specified</entry>
+<entry key="error.missing_select">Missing SELECT statement</entry>
+<entry key="error.missing_sep">No separator specified</entry>
+<entry key="error.missing_texmap_key">Missing mapping character</entry>
+<entry key="error.missing_user">Missing User Name</entry>
+
+<entry key="error.no_console">No console available.</entry>
+<entry key="error.nopanel">No current panel!</entry>
+<entry key="error.no_sort_column_selected">No sort column selected</entry>
+<entry key="error.no_templates">No templates found</entry>
+<entry key="error.not_currency">''{0}'' not in currency format</entry>
+
+<entry key="error.output.tex.not_permitted">.tex extension not permitted on output files</entry>
+
+<entry key="error.plugin.exit_code">Plugin terminated with exit code {0,number}
+<entry key="error.plugin.no_perl">You need to specify the path to the perl executable to run a plugin</entry>
+<entry key="error.plugin.unknown_command">Unknown plugin command ''{0}''</entry>
+<entry key="error.plugin.unknown_message">Unknown plugin message ''{0}''</entry>
+{1}</entry>
+<entry key="error.plugin.unknown_query">Unknown plugin query ''{0}''</entry>
+
+
+<entry key="error.process_failed">Process ''{0}'' (running in ''{1}'') failed with exit code {2,number}</entry>
+<entry key="error.resource.not_found">Can''t find resource file ''{0}''</entry>
+
+<entry key="error.save.failed">Failed to save ''{0}''.
+{1}</entry>
+
+<entry key="error.sql.connection_failed">Can't establish SQL connection</entry>
+<entry key="error.sql.query_failed">SQL query failed</entry>
+<entry key="error.template.misplaced_tag">''{0}'' tag must be inside ''{1}'' tag</entry>
+<entry key="error.template.missing_tag">Missing ''{0}'' tag</entry>
+<entry key="error.template.wrong_end_tag">Mismatched closing tag ''{0}'' found</entry>
+<entry key="error.unknown_key">Unknown header key ''{0}''</entry>
+
+<entry key="error.xlsx_not_supported">Sorry, .xlsx files not supported.</entry>
+
+<!--  TeX Error Messages -->
+
+<entry key="tex.error.bad_param">Parameter digit 1 to 9 expected. Found ''{0}''</entry>
+<entry key="tex.error.illegal_param">Illegal parameter number ''{0}'' in definition of {1}</entry>
+<entry key="tex.error.no_eg">Missing end group</entry>
+<entry key="tex.error.par_before_eg">Paragraph break found before end group</entry>
+<entry key="tex.error.unexpected_eg">Unexpected end group found</entry>
+<entry key="tex.error.missing_endmath">Missing end math</entry>
+<entry key="tex.error.dollar2_ended_with_dollar">$$ ended with $</entry>
+<entry key="tex.error.not_found">Expected ''{0}'' but not found</entry>
+<entry key="tex.error.missing_param">Argument expected for ''{0}'' but not found</entry>
+<entry key="tex.error.empty_stack">Argument expected but not found (empty stack)</entry>
+<entry key="tex.error.not_math_mode">{0} is only permitted in math mode</entry>
+<entry key="tex.error.invalid_accent">{0} is not a recognised accent </entry>
+<entry key="tex.error.ambiguous_midcs">Ambiguous use of {0}</entry>
+<entry key="tex.error.missing_closing">Missing closing {0}</entry>
+<entry key="tex.error.missing_closing.from_open">Missing closing {0} (from opening {1} on line {2})</entry>
+<entry key="tex.error.dimen_expected">Dimension expected</entry>
+<entry key="tex.error.missing_unit">Missing unit</entry>
+<entry key="tex.error.expected">Expected {0}</entry>
+<entry key="tex.error.expected_but_found">Expected {0} but found ''{1}''</entry>
+<entry key="tex.error.undefined">Undefined command ''{0}''</entry>
+<entry key="tex.error.undefined_char">Undefined active character ''{0}''</entry>
+<entry key="tex.error.cs_expected">Control sequence expected (found ''{0}'', class ''{1}'')</entry>
+<entry key="tex.error.number_expected">Number expected (found ''{0}'')</entry>
+<entry key="tex.error.register_undef">Unknown register ''{0}''</entry>
+<entry key="tex.error.syntax">Invalid syntax for {0}</entry>
+<entry key="tex.error.extra">Extra {0}</entry>
+<entry key="tex.error.extra_or_forgotten">Extra {0}, or forgotten {1}</entry>
+<entry key="tex.error.double_subscript">Double subscript _{0}_ (replaced with _{0}'{}'_)</entry>
+<entry key="tex.error.double_superscript">Double superscript ^{0}^ (replaced with ^{0}'{}'^)</entry>
+<entry key="tex.error.illegal_align">Illegal alignment {0}</entry>
+<entry key="tex.error.misplaced_omit">Misplaced \omit</entry>
+<entry key="tex.error.improper_alphabetic_constant">Improper alphabetic constant {0}</entry>
+<entry key="tex.error.register_expected">Register expected</entry>
+<entry key="tex.error.register_expected_but_found">Register expected (found ''{0}'')</entry>
+<entry key="tex.error.numeric_register_expected">Numeric register expected</entry>
+<entry key="tex.error.register_not_numeric">Register ''{0}'' not numeric</entry>
+<entry key="tex.error.register_not_token">Register ''{0}'' not a token register</entry>
+<entry key="tex.error.internal_quantity_expected">Internal_quantity expected</entry>
+<entry key="tex.error.internal_quantity_expected_but_found">Internal quantity expected (found ''{0}'')</entry>
+<entry key="tex.error.generic">{0}</entry>
+<entry key="tex.error.file.not.found">File ''{0}'' not found.</entry>
+<entry key="tex.error.unexpandable">Can''t expand ''{0}''</entry>
+<entry key="tex.error.cant_change_const">Can''t change constant {0}</entry>
+<entry key="tex.error.file.overwrite_forbidden">File ''{0}'' already exists (overwrite forbidden).</entry>
+<entry key="tex.error.file.mapper">An error occurred while parsing {0}:
+   {1}</entry>
+<entry key="tex.error.invalid.debug_mode">Invalid debug mode ''{0}''. Recognised mode names: {1}</entry>
+
+<!--  LaTeX Error Messages -->
+
+<entry key="latex.package.error">Package {0} Error: {1}</entry>
+<entry key="latex.class.error">Class {0} Error: {1}</entry>
+
+<entry key="latex.error.no_alignment">No alignment specifiers found</entry>
+<entry key="latex.error.undefined_counter">No counter ''{0}'' defined</entry>
+<entry key="latex.error.multi_begin_doc">Only one \begin'{'document'}' permitted</entry>
+<entry key="latex.error.no_begin_doc">No \begin'{'document'}' found</entry>
+<entry key="latex.error.missing_begin_doc">Missing \begin'{'document'}' (unexpected content ''{0}'')</entry>
+<entry key="latex.error.multi_cls">Only one \documentclass permitted</entry>
+<entry key="latex.error.missing_key">Missing ''{0}'' key</entry>
+<entry key="latex.error.missing_key_value">Missing value for ''{0}'' key</entry>
+<entry key="latex.error.missing_or">Missing ''{0}'' or ''{1}''</entry>
+<entry key="latex.error.extra_end">Extra \end'{'{0}'}' found</entry>
+<entry key="latex.error.unaccessible">Unaccessible ''{0}''</entry>
+<entry key="latex.error.defined">''{0}'' already defined</entry>
+<entry key="latex.error.illegal_array_arg_char">Illegal character ''{0}'' in array arg</entry>
+<entry key="latex.error.lonely_item">Lonely \item</entry>
+<entry key="latex.package.error">Package {0} Error: {1}</entry>
+<entry key="latex.class.error">Class {0} Error: {1}</entry>
+<entry key="latex.illegal.argtype">Illegal argument type {0}</entry>
+<entry key="latex.package.not.loaded">Package ''{0}'' has not been loaded</entry>
+<entry key="latex.error.counter.too.large">Counter too large</entry>
+<entry key="latex.error.counter.out.of.range">Counter value {0} out of valid range ({1})</entry>
+<entry key="latex.unsupported.xparse_type">Unsupported xparse type {0} in command {1}</entry>
+<entry key="latex.unknown.option">Unknown option ''{0}'' in {1}</entry>
+<entry key="latex.invalid.option.value">Invalid value ''{1}'' in {0}={1}</entry>
+<entry key="latex.not.sequence">Not a sequence command: {0}</entry>
+<entry key="latex.not.tokenlist">Not a token list command: {0}</entry>
+<entry key="latex.not.boolean">Not a boolean command: {0}</entry>
+<entry key="latex.trailing_content">Trailing content found while processing ''{0}'': {1}</entry>
+
+<!--  Package messages -->
+
+<entry key="probsoln.no_such_db">ProbSoln database ''{0}'' doesn''t exist.</entry>
+<entry key="probsoln.no_such_entry_in_db">Entry ''{0}'' doesn''t exist in ProbSoln database ''{1}''.</entry>
+<entry key="probsoln.db_exists">ProbSoln database ''{0}'' already exists.</entry>
+<entry key="probsoln.request_args">Problem ''{0}'' (in database ''{1}'') requires {2} arguments. Please specify</entry>
+<entry key="probsoln.request_arg">Problem ''{0}'' (in database ''{1}'') requires 1 argument. Please specify</entry>
+
+<!-- datatool messages -->
+
+<entry key="datatool.db_exists">Database ''{0}'' already exists.</entry>
+<entry key="datatool.db_doesnt_exist">Database ''{0}'' doesn''t exist.</entry>
+<entry key="datatool.mismatched">Unmatched ''{0}'' (ended with ''{1}'').</entry>
+<entry key="datatool.invalid.header">Invalid header specs ''{0}''.</entry>
+<entry key="datatool.invalid.contents">Invalid contents specs ''{0}''.</entry>
+<entry key="datatool.header.exists">Header ''{0}'' already exists.</entry>
+<entry key="datatool.header.doesnt_exist">Header ''{0}'' doesn''t exist.</entry>
+<entry key="datatool.row.not.found">Row index ''{0}'' doesn''t exist.</entry>
+<entry key="datatool.loaddb.message">Database ''{0}'' loaded from ''{1}'' (column count={2}, row count={3}).</entry>
+<entry key="datatool.index.outofrange">Index ''{0}'' out of range.</entry>
+<entry key="datatool.no.columns">No columns available for database ''{0}''</entry>
+<entry key="datatool.file_info">Identified file format {0} version {1} (encoding {2})</entry>
+<entry key="datatool.file_info_failed">Failed to parse file identifier on first line of file {0} (assuming {1})</entry>
+<entry key="datatool.unknown_file_format_version">Unknown version ''{0}'' of file format ''{1}''</entry>
+<entry key="datatool.write.comment">Created by {0} version {1} on {2, date, yyyy-MM-dd HH:mm:ss Z}</entry>
+<entry key="datatool.warn.dbtex3exp">Detected DBTEX v3.0 experimental format. Resave database file as DBTEX v3.0</entry>
+<entry key="datatool.unsupported.action">Unsupported action: ''{0}''</entry>
+
+<!--  ifthen messages -->
+
+<entry key="ifthen.invalid.condition">Invalid condition ''{0}''.</entry>
+
+<!--  inputenc messages -->
+
+<entry key="inputenc.unknown.encoding">Unknown encoding ''{0}''.</entry>
+
+</properties>

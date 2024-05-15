@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -264,10 +264,10 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
    {
       switch (cell.getCellType())
       {
-         case Cell.CELL_TYPE_NUMERIC:
-         case Cell.CELL_TYPE_FORMULA:
+         case CELL_TYPE_NUMERIC:
+         case CELL_TYPE_FORMULA:
            return ""+cell.getNumericCellValue();
-         case Cell.CELL_TYPE_BLANK:
+         case CELL_TYPE_BLANK:
            return "";
       }
 

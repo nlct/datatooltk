@@ -1,0 +1,608 @@
+% Encoding: UTF-8
+
+% ABBREVIATIONS
+
+@abbreviation{gui,
+  short={GUI},
+  long={graphical user interface}
+}
+
+@abbreviation{csv,
+  short={CSV},
+  long={comma-separated values}
+}
+
+@abbreviation{sql,
+  short={SQL},
+  long={structured query language}
+}
+
+@abbreviation{ietf,
+  short={IETF},
+  long={internet engineering task force}
+}
+
+% TERMS
+
+@entry{mysql,
+  name={MySQL},
+  description={An open source SQL database}
+}
+
+@entry{cwd,
+  name={current working directory},
+  description={The directory in which the application was started}
+}
+
+% APPLICATIONS
+
+@commonapplication{app.datatooltk,
+ name={\appfmt{data\-tool\-tk}},
+ syntax={\oargm{options}}
+}
+
+@application{app.datatooltk-gui,
+ name={\appfmt{data\-tool\-tk\dhyphen gui}},
+ syntax={\oargm{options}},
+ description={Invokes \code{\app{datatooltk} \switch{gui}
+\meta{options}} with a splash screen}
+}
+
+% SWITCHES
+
+@switch{switch.help,
+  parent={app.datatooltk},
+  shortswitch={h},
+  description={Prints help and exits}
+}
+
+@switch{switch.version,
+  parent={app.datatooltk},
+  shortswitch={v},
+  description={Prints version information and exits}
+}
+
+@switch{switch.gui,
+  parent={app.datatooltk},
+  shortswitch={g},
+  description={Invoke \app{datatooltk} in \glsxtrshort{gui} mode}
+}
+
+@switch{switch.batch,
+  parent={app.datatooltk},
+  shortswitch={b},
+  description={Invoke \app{datatooltk} in batch mode}
+}
+
+@switch{switch.output,
+  parent={app.datatooltk},
+  shortswitch={o},
+  syntax={\meta{filename}},
+  description={Save the database to \meta{filename} (batch mode only)}
+}
+
+@switch{switch.in,
+  parent={app.datatooltk},
+  shortswitch={i},
+  syntax={\meta{filename}},
+  description={Load the \sty{datatool} file \meta{filename}}
+}
+
+@switch{switch.tex-encoding,
+  parent={app.datatooltk},
+  syntax={\meta{encoding}},
+  description={Sets the encoding for the \TeX\ files},
+  seealso={switch.csv-encoding}
+}
+
+@switch{switch.csv-encoding,
+  parent={app.datatooltk},
+  syntax={\meta{encoding}},
+  description={Sets the encoding for the \gls{csv} files},
+  seealso={switch.tex-encoding}
+}
+
+@switch{switch.csvencoding,
+  parent={app.datatooltk},
+  syntax={\meta{encoding}},
+  description={synonym for \switch{csv-encoding}},
+  alias={switch.csv-encoding}
+}
+
+@switch{switch.name,
+  parent={app.datatooltk},
+  syntax={\meta{label}},
+  description={Sets the database name (that is, its identifying
+label) to \meta{label}}
+}
+
+@switch{switch.debug,
+  parent={app.datatooltk},
+  description={Enables debug mode}
+}
+
+@switch{switch.nodebug,
+  parent={app.datatooltk},
+  description={Disables debug mode (default)}
+}
+
+@switch{switch.compat,
+  parent={app.datatooltk},
+  syntax={\meta{level}},
+  description={Sets the compatibility level, where \meta{level}
+may be \qtt{latest} or \qtt{1.6}}
+}
+
+@switch{switch.owner-only,
+  parent={app.datatooltk},
+  description={Set the read\slash write permissions when saving 
+\ext{dbtex} files to owner only (operating system dependent)}
+}
+
+@switch{switch.noowner-only,
+  parent={app.datatooltk},
+  description={Don't change the read\slash write permissions when saving 
+\ext{dbtex} files}
+}
+
+@switch{switch.map-tex-specials,
+  parent={app.datatooltk},
+  description={Map \TeX\ special characters when importing data from
+  non-TeX sources (that is, from \gls{csv}, spreadsheets or databases)}
+}
+
+@switch{switch.nomap-tex-specials,
+  parent={app.datatooltk},
+  description={Don't map \TeX\ special characters when importing
+data (default)}
+}
+
+@switch{switch.auto-trim-labels,
+  parent={app.datatooltk},
+  description={Automatically strip leading and trailing spaces from
+database and column identifiers}
+}
+
+@switch{switch.noauto-trim-labels,
+  parent={app.datatooltk},
+  description={Don't automatically strip leading and trailing spaces from
+database and column identifiers}
+}
+
+@switch{switch.seed,
+  parent={app.datatooltk},
+  syntax={\meta{number}},
+  description={Set the random generator seed to \meta{number} or
+clear it if \meta{number} is \code{""} (that is, an empty string)}
+}
+
+@switch{switch.shuffle,
+  parent={app.datatooltk},
+  description={Shuffle the database (always performed after \switch{sort},
+   regardless of the option order, if both are present)}
+}
+
+@switch{switch.noshuffle,
+  parent={app.datatooltk},
+  description={Don't shuffle the database (default)}
+}
+
+@switch{switch.sort,
+  parent={app.datatooltk},
+  syntax={\oargm{prefix}\meta{field}},
+  description={Sort the database according to the column whose label
+is \meta{field}. Optionally, \meta{prefix} may be \code{+}
+(ascending order) or \code{-} (descending order). If \meta{prefix}
+  is omitted, ascending is assumed},
+  seealso={switch.shuffle}
+}
+
+@switch{switch.sort-locale,
+  parent={app.datatooltk},
+  syntax={\meta{value}},
+  description={If the \meta{value} is the keyword \qtt{none}, use
+letter-sorting for strings. Otherwise \meta{value} should be a valid
+\glsxtrshort{ietf} language tag that identifies a locale to sort
+according to that locale's alphabetical order}
+}
+
+@switch{switch.sort-case-sensitive,
+  parent={app.datatooltk},
+  description={Use case-sensitive comparisons when letter-sorting
+strings (\code{\switch{sort-locale} none}) or for the string comparison 
+functions used by \switch{filter}}
+}
+
+@switch{switch.sort-case-insensitive,
+  parent={app.datatooltk},
+  description={Use case-insensitive comparisons when letter-sorting
+strings (\code{\switch{sort-locale} none}) or for the string comparison 
+functions used by \switch{filter}}
+}
+
+@switch{switch.truncate,
+  parent={app.datatooltk},
+  syntax={\meta{n}},
+  description={Truncate the database to the first \meta{n} rows}
+}
+
+@switch{switch.remove-columns,
+  parent={app.datatooltk},
+  syntax={\meta{column list}},
+  description={Remove the columns identified by \meta{column list}}
+}
+
+@switch{switch.remove-except-columns,
+  parent={app.datatooltk},
+  syntax={\meta{column list}},
+  descriptions={Remove all columns except those identified by
+\meta{column list}}
+}
+
+@switch{switch.filter,
+  parent={app.datatooltk},
+  syntax={\meta{key} \meta{operator} \meta{value}},
+  description={Add the given filter, which returns true if the value
+in the column whose label is given by \meta{key} matches the
+operation \meta{operator} \meta{value} where \meta{operator} may be one of: 
+\qtt{eq} (equals \meta{value}),
+\qtt{ne} (does not equal \meta{value}),
+\qtt{le} (less than or equal \meta{value}),
+\qtt{lt} (less than \meta{value}),
+\qtt{ge} (greater than or equal \meta{value}),
+\qtt{gt} (greater than \meta{value}),
+\qtt{regex} (matches the regular expression \meta{value}).
+Multiple filters may be specified}
+}
+
+@switch{switch.filter-or,
+  parent={app.datatooltk},
+  description={Use logical OR operator when filtering (default)}
+}
+
+@switch{switch.filter-and,
+  parent={app.datatooltk},
+  description={Use logical AND operator when filtering}
+}
+
+@switch{switch.filter-include,
+  parent={app.datatooltk},
+  description={When filtering, discard rows that don't match the
+filter and keep those that do match (default)}
+}
+
+@switch{switch.filter-exclude,
+  parent={app.datatooltk},
+  description={When filtering, discard rows that match the
+filter and keep those that don't match (default)}
+}
+
+@switch{switch.merge,
+  parent={app.datatooltk},
+  syntax={\meta{key} \meta{db file}},
+  description={Merge the input or imported database with the
+database stored in the given \meta{db file}}
+}
+
+@switch{switch.csv,
+  parent={app.datatooltk},
+  syntax={\meta{csv file}},
+  description={Import data from the given \glsxtrshort{csv} file}
+}
+
+@switch{switch.merge-csv,
+  parent={app.datatooltk},
+  syntax={\meta{key} \meta{csv file}},
+  description={As \switch{merge} but the data to be merged is
+imported from the given \glsxtrshort{csv} file}
+}
+
+@switch{switch.csv-sep,
+  parent={app.datatooltk},
+  syntax={\meta{character}},
+  defaultvalue={\code{,}},
+  description={Specified the character used to separate values in
+\glsxtrshort{csv} files}
+}
+
+@switch{switch.sep,
+  parent={app.datatooltk},
+  syntax={\meta{character}},
+  description={synonym for \switch{csv-sep}},
+  alias={switch.csv-sep}
+}
+
+@switch{switch.csv-delim,
+  parent={app.datatooltk},
+  syntax={\meta{character}},
+  defaultvalue={\code{"}},
+  description={Specified the character used to delimit values in
+\glsxtrshort{csv} files}
+}
+
+@switch{switch.delim,
+  parent={app.datatooltk},
+  syntax={\meta{character}},
+  description={synonym for \switch{csv-delim}},
+  alias={switch.csv-delim}
+}
+
+@switch{switch.csv-escape,
+  parent={app.datatooltk},
+  syntax={\meta{character}},
+  description={Specified the character used to escape values in
+\glsxtrshort{csv} files}
+}
+
+@switch{switch.csvescape,
+  parent={app.datatooltk},
+  syntax={\meta{character}},
+  description={synonym for \switch{csv-escape}},
+  alias={switch.csv-escape}
+}
+
+@switch{switch.nocsv-escape,
+  parent={app.datatooltk},
+  syntax={\meta{character}},
+  description={Don't have a designated character used to escape values in
+\glsxtrshort{csv} files}
+}
+
+@switch{switch.nocsvescape,
+  parent={app.datatooltk},
+  syntax={\meta{character}},
+  description={synonym for \switch{nocsv-escape}},
+  alias={switch.nocsv-escape}
+}
+
+@switch{switch.csv-skiplines,
+  parent={app.datatooltk},
+  syntax={\meta{n}},
+  description={Skip the first \meta{n} rows in
+\glsxtrshort{csv} files. Blank rows are always included in this
+count, even if \switch{csv-skip-empty-rows} is set}
+}
+
+@switch{switch.csv-strictquotes,
+  parent={app.datatooltk},
+  description={Ignore any undelimited information in
+\glsxtrshort{csv} files},
+  seealso={switch.csv-delim}
+}
+
+@switch{switch.nocsv-strictquotes,
+  parent={app.datatooltk},
+  description={Allow undelimited data in
+\glsxtrshort{csv} files}
+}
+
+@switch{switch.csv-header,
+  parent={app.datatooltk},
+  description={The \glsxtrshort{csv} and spreadsheet files have a header row 
+(default)}
+}
+
+@switch{switch.csvheader,
+  parent={app.datatooltk},
+  description={synonym for \switch{csv-header}},
+  alias={switch.csv-header}
+}
+
+@switch{switch.nocsv-header,
+  parent={app.datatooltk},
+  description={The \glsxtrshort{csv} and spreadsheet files do not have a header row 
+(default)}
+}
+
+@switch{switch.nocsvheader,
+  parent={app.datatooltk},
+  description={synonym for \switch{nocsv-header}},
+  alias={switch.nocsv-header}
+}
+
+@switch{switch.csv-skip-empty-rows,
+  parent={app.datatooltk},
+  description={Skip empty lines found in \glsxtrshort{csv} and
+spreadsheet files}
+}
+
+@switch{switch.nocsv-skip-empty-rows,
+  parent={app.datatooltk},
+  description={Don't skip empty lines found in \glsxtrshort{csv} and
+spreadsheet files}
+}
+
+@switch{switch.xls,
+  parent={app.datatooltk},
+  syntax={\meta{xls file}},
+  description={Import data from the given Excel \ext{xls} file}
+}
+
+@switch{switch.merge-xls,
+  parent={app.datatooltk},
+  syntax={\meta{key} \meta{xls file}},
+  description={As \switch{merge} but the data to be merged is
+imported from the given Excel \ext{xls} file}
+}
+
+@switch{switch.ods,
+  parent={app.datatooltk},
+  syntax={\meta{ods file}},
+  description={Import data from the given Open Document spreadsheet
+\ext{ods} file}
+}
+
+@switch{switch.merge-ods,
+  parent={app.datatooltk},
+  syntax={\meta{key} \meta{ods file}},
+  description={As \switch{merge} but the data to be merged is
+imported from the given Open Document spreadsheet \ext{ods} file}
+}
+
+@switch{switch.sheet,
+  parent={app.datatooltk},
+  syntax={\meta{sheet id}},
+  defaultvalue={1},
+  description={The sheet to select when reading data from an Excel
+workbook or Open Document Spreadsheet, where \meta{sheet id} is
+either the sheet index (starting from 0) or the name of the sheet}
+}
+
+@switch{switch.sql,
+  parent={app.datatooltk},
+  syntax={\meta{query statement}},
+  description={Import data from an \glsxtrshort{sql} database
+   where \meta{query statement} is the SELECT query that identifies
+the required data}
+}
+
+@switch{switch.merge-sql,
+  parent={app.datatooltk},
+  syntax={\meta{key} \meta{query statement}},
+  description={As \switch{merge} but the data to be merged is
+imported using the given \glsxtrshort{sql} query}
+}
+
+@switch{switch.sqldb,
+  parent={app.datatooltk},
+  syntax={\meta{name}},
+  description={The \glsxtrshort{sql} database name}
+}
+
+@switch{switch.sqlprefix,
+  parent={app.datatooltk},
+  syntax={\meta{prefix}},
+  defaultvalue={jdbc:mysql://},
+  description={The \glsxtrshort{sql} prefix. Currently, only
+\gls{mysql} is supported}
+}
+
+@switch{switch.sqlport,
+  parent={app.datatooltk},
+  syntax={\meta{port}},
+  defaultvalue={3306},
+  description={The \glsxtrshort{sql} port number}
+}
+
+@switch{switch.sqlhost,
+  parent={app.datatooltk},
+  syntax={\meta{port}},
+  defaultvalue={localhost},
+  description={The \glsxtrshort{sql} host}
+}
+
+@switch{switch.sqluser,
+  parent={app.datatooltk},
+  syntax={\meta{username}},
+  description={The \glsxtrshort{sql} username}
+}
+
+@switch{switch.sqlpassword,
+  parent={app.datatooltk},
+  syntax={\meta{password}},
+  description={The \glsxtrshort{sql} password (insecure). If
+omitted, you will be prompted for a password if you try to import
+data from an \glsxtrshort{sql} database},
+  seealso={switch.noconsole-action}
+}
+
+@switch{switch.wipepassword,
+  parent={app.datatooltk},
+  description={Wipe the password from memory as soon as it has been
+used to connect to an \glsxtrshort{sql} database (default)}
+}
+
+@switch{switch.nowipepassword,
+  parent={app.datatooltk},
+  description={Don't wipe the password from memory as soon as it has been
+used to connect to an \glsxtrshort{sql} database (default)}
+}
+
+@switch{switch.noconsole-action,
+  parent={app.datatooltk},
+  syntax={\meta{action}},
+  defaultvalue={gui},
+  description={The action to perform if \app{datatooltk} is run in batch mode and a password is required, where
+   \meta{action} may be one of: \qtt{error},
+   \qtt{stdin}, or \qtt{gui}}
+}
+
+@switch{switch.probsoln,
+  parent={app.datatooltk},
+  syntax={\meta{filename}},
+  description={Import \sty{probsoln} data from \meta{filename}}
+}
+
+@switch{switch.merge-probsoln,
+  parent={app.datatooltk},
+  syntax={\meta{key} \meta{filename}},
+  description={As \switch{merge} but the data to be merged is
+imported from the given \sty{probsoln} file}
+}
+
+% FILE EXTENSIONS/FORMATS
+
+@fileext{ext.csv}
+@fileext{ext.tsv}
+@fileext{ext.xls}
+@fileext{ext.xlsx}
+@fileext{ext.ods}
+@fileext{ext.dbtex}
+@fileext{ext.dtltex}
+@fileext{ext.tex}
+
+% PACKAGES
+
+@package{pkg.datatool,
+  name={\styfmt{data\-tool}}
+}
+
+@package{pkg.probsoln,
+  name={\styfmt{prob\-soln}}
+}
+
+% COMMANDS
+
+@command{DTLread,
+  name={\csfmt{DTL\-read}},
+  syntax={\oargm{options}\margm{filename}}
+}
+
+@command{DTLwrite,
+  name={\csfmt{DTL\-write}},
+  syntax={\oargm{options}\margm{filename}}
+}
+
+@option{opt.format,
+  parent={DTLwrite},
+  syntax={\margm{format-type}}
+}
+
+@command{DTLsaverawdb,
+  name={\csfmt{DTL\-save\-raw\-db}}
+}
+
+@command{DTLprotectedsaverawdb,
+  name={\csfmt{DTL\-pro\-tected\-save\-raw\-db}}
+}
+
+% INDEX ONLY
+
+@index{database}
+
+@punctuation{bksl,
+ symbol={\code{\char`\\ }},
+ description={backslash}
+}
+@punctuation{dbqt,
+ description={double quote},
+ symbol={\code{"}}
+}
+@punctuation{comma,
+ description={comma},
+ symbol={\code{,}}
+}
+@punctuation{switchprefix,
+ symbol={\code{-}},
+ description={switches}
+}
