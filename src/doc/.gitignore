@@ -1,5 +1,6 @@
 datatooltk-props*.bib
 version.tex
+*.glstex
 *.aux
 *.log
 *.out
@@ -15,4 +16,5 @@ version.tex
 *.ind
 *.ilg
 *.toc
+*.lof
 *.1
