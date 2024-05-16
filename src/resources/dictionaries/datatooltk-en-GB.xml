@@ -4,6 +4,8 @@
 
 <comment>English GB (load after datatool-en.xml to override specific keys)</comment>
 
+<entry key="manual.labelled">labelled</entry>
+
 <entry key="preferences.display.highlightcomment">Comment Colour</entry>
 <entry key="preferences.display.highlightcs">Control Sequence Colour</entry>
 

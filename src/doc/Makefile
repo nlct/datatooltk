@@ -10,10 +10,10 @@ datatooltk.1	: datatooltk.pod
 		pod2man -c datatooltk datatooltk.pod datatooltk.1
 
 datatooltk-props-en.bib	: $(dictdir)/datatooltk-en.xml
-	xml2bib $(dictdir)/datatooltk-en.xml -o datatooltk-props-en.bib
+	xml2bib --copy-overwrite-xml $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml -o datatooltk-props-en.bib
 
 datatooltk-props-en-GB.bib	: $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml
-	xml2bib $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml -o datatooltk-props-en-GB.bib
+	xml2bib --copy-overwrite-xml  $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml -o datatooltk-props-en-GB.bib
 
 version.tex	: $(mainclass)
 	@echo "\\date{Version " > version.tex

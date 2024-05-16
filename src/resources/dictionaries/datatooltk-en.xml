@@ -972,23 +972,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="progress.truncating">Truncating</entry>
 
 <!-- Text for the manual  -->
-<entry key="manual.figure">Figure</entry>
-<entry key="manual.title">Manual</entry>
-<entry key="manual.home">Home</entry>
-<entry key="manual.search">Search</entry>
-<entry key="manual.table">Table</entry>
-<entry key="manual.example">Example</entry>
-<entry key="manual.prev">Previous</entry>
-<entry key="manual.labelled">labelled</entry>
-<entry key="manual.index">Index</entry>
-<entry key="manual.next">Next</entry>
-<entry key="manual.cont_explanation">(The symbol \continuesymbol\ above indicates a~line wrap. Don't insert a~line break at that point.)</entry>
-<entry key="manual.options">Options</entry>
-<entry key="manual.seealso">See also:</entry>
-<entry key="manual.abbreviations">Abbreviations</entry>
-<entry key="manual.idxenv">environment</entry>
-<entry key="manual.idxpackage">package</entry>
-<entry key="manual.toc">Table of Contents</entry>
+<entry key="manual.labelled">labeled</entry>
 
 <!-- Errors -->
 
