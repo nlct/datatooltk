@@ -3,6 +3,15 @@ dictdir=../resources/dictionaries
 targetbackref=../../doc
 mainclass=../java/DatatoolTk.java
 arara=arara --verbose
+texjavahelpmk=texjavahelpmk
+xml2bib=xml2bib --copy-overwrite-xml
+testfiles=../tests/test-para.csv \
+          ../tests/HelloWorld.java \
+          ../tests/HelloUser.java \
+          ../tests/test-probsoln-doc.tex \
+          ../tests/prob-mixed.tex \
+          ../tests/test-shuffle.tex \
+          ../tests/test-shuffle-level.tex
 
 all	: en-GB en-US datatooltk.1
 
@@ -10,10 +19,10 @@ datatooltk.1	: datatooltk.pod
 		pod2man -c datatooltk datatooltk.pod datatooltk.1
 
 datatooltk-props-en.bib	: $(dictdir)/datatooltk-en.xml
-	xml2bib --copy-overwrite-xml $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml -o datatooltk-props-en.bib
+	$(xml2bib) $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml -o datatooltk-props-en.bib
 
 datatooltk-props-en-GB.bib	: $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml
-	xml2bib --copy-overwrite-xml  $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml -o datatooltk-props-en-GB.bib
+	$(xml2bib)  $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml -o datatooltk-props-en-GB.bib
 
 version.tex	: $(mainclass)
 	@echo "\\date{Version " > version.tex
@@ -22,68 +31,30 @@ version.tex	: $(mainclass)
 	@echo "}" >> version.tex
 
 datatooltk-en-GB.pdf	: datatooltk.bib datatooltk-props-en-GB.bib \
-			 datatooltk-en-GB.tex datatooltk-main.tex version.tex
+			 datatooltk-en-GB.tex datatooltk-main.tex version.tex \
+			$(testfiles) images/*.png
 	$(arara) datatooltk-en-GB
 
 datatooltk-en-US.pdf	: datatooltk.bib datatooltk-props-en.bib \
-			  datatooltk-en-US.tex datatooltk-main.tex version.tex
+			  datatooltk-en-US.tex datatooltk-main.tex version.tex \
+			$(testfiles) images/*.png
 	$(arara) datatooltk-en-US
 
-en-GB	: $(targetdir)/datatooltk-en-GB/datatooltk.html \
-	  datatooltk-en-GB.pdf
+en-GB	: $(targetdir)/datatooltk-en-GB/index.xml
 
-en-US	: $(targetdir)/datatooltk-en-US/datatooltk.html \
-	  datatooltk-en-US.pdf
+en-US	: $(targetdir)/datatooltk-en-US/index.xml
 
-$(targetdir)/datatooltk-en-GB/datatooltk.html	: $(targetdir) \
-	  datatooltk-en-GB.pdf datatooltk.dtd \
-          ../tests/test-para.csv \
-          ../tests/HelloWorld.java \
-          ../tests/HelloUser.java \
-          ../tests/test-probsoln-doc.tex \
-          ../tests/prob-mixed.tex \
-          ../tests/test-shuffle.tex \
-          ../tests/test-shuffle-level.tex \
-	  images/*.png \
-	  $(mainclass) \
-	  $(dictdir)/datatooltk-en-GB.prop \
-	  $(targetdir)/datatooltk-en-GB/images/
-	createdatatooltkdocs en GB
-	cd $(targetdir)/datatooltk-en-GB; \
-	  \rm -r -f JavaHelpSearch ; \
-	  jh2indexer .
+$(targetdir)/datatooltk-en-GB/index.xml	: $(targetdir) \
+	  datatooltk-en-GB.pdf  
+	$(texjavahelpmk) datatooltk-en-GB.tex $(targetdir)/datatooltk-en-GB
 
-$(targetdir)/datatooltk-en-US/datatooltk.html	: $(targetdir) \
-	  datatooltk-en.pdf datatooltk.dtd \
-          ../tests/test-para.csv \
-          ../tests/HelloWorld.java \
-          ../tests/HelloUser.java \
-          ../tests/test-probsoln-doc.tex \
-          ../tests/prob-mixed.tex \
-          ../tests/test-shuffle.tex \
-          ../tests/test-shuffle-level.tex \
-	  images/*.png \
-	  $(mainclass) \
-	  $(dictdir)/datatooltk-en-US.prop \
-	  $(targetdir)/datatooltk-en-US/images/
-	createdatatooltkdocs en US
-	cd $(targetdir)/datatooltk-en-US; \
-	  \rm -r -f JavaHelpSearch ; \
-	  jh2indexer .
+$(targetdir)/datatooltk-en-US/index.xml	: $(targetdir) \
+	  datatooltk-en-US.pdf  
+	$(texjavahelpmk) datatooltk-en-US.tex $(targetdir)/datatooltk-en-US
+
 
 $(targetdir)	:
 	mkdir $(targetdir)
-
-
-$(targetdir)/datatooltk-en-GB/images/	: 
-	mkdir -p $(targetdir)/datatooltk-en-GB
-	cd $(targetdir)/datatooltk-en-GB/ ; \
-	ln -s ../$(targetbackref)/images
-
-$(targetdir)/datatooltk-en-US/images/	: 
-	mkdir -p $(targetdir)/datatooltk-en-US
-	cd $(targetdir)/datatooltk-en-US/ ; \
-	ln -s ../$(targetbackref)/images
 
 clean	:
 	\rm -f datatooltk-en*.{aux,log,pdf,glg,glstex,out,toc,lof}

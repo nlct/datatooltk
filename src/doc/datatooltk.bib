@@ -34,6 +34,23 @@
   description={The directory in which the application was started}
 }
 
+@entry{texparserlib,
+  name={\TeX\ Parser Library},
+  description={A Java library (\url{https://github.com/nlct/texparser}) 
+  designed for parsing \TeX\Slash\LaTeX\ source, which is used by 
+  \app{datatooltk}, \app{bib2gls} and the \gls{texjavahelp} system}
+}
+
+@entry{texjavahelp,
+ name={\TeX\ Java Help},
+ description={A set of Java command line applications and a Java
+library that's used to create the help system for \app{datatooltk}
+(that is, the HTML and XML files contained in the
+\filefmt{lib/resources/helpset} subdirectories).
+The PDF documentation is created as a by-product as it's an
+intermediate step in the process}
+}
+
 % APPLICATIONS
 
 @commonapplication{app.datatooltk,
@@ -47,6 +64,11 @@
  description={Invokes \code{\app{datatooltk} \switch{gui}
 \meta{options}} with a splash screen}
 }
+
+@application{app.arara}
+@application{app.time}
+@application{app.makeglossaries}
+@application{app.bib2gls}
 
 % SWITCHES
 
@@ -550,6 +572,25 @@ imported from the given \sty{probsoln} file}
 @fileext{ext.dbtex}
 @fileext{ext.dtltex}
 @fileext{ext.tex}
+@fileext{ext.xml}
+
+% FILES
+
+@file{file.datatooltk-settings,
+  name={data\-tool\-tk\dhyphen set\-tings}
+}
+
+@file{file.datatooltk.jar,
+  name={data\-tool\-tk\dfullstop jar}
+}
+
+@file{file..datatooltk,
+  name={\appfmt{.data\-tool\-tk}}
+}
+
+% ENVIRONMENT VARIABLES
+
+@variable{DATATOOLTK}
 
 % PACKAGES
 
@@ -557,8 +598,26 @@ imported from the given \sty{probsoln} file}
   name={\styfmt{data\-tool}}
 }
 
+@package{pkg.datagidx,
+  name={\styfmt{data\-gidx}}
+}
+
 @package{pkg.probsoln,
   name={\styfmt{prob\-soln}}
+}
+
+@package{pkg.person}
+@package{pkg.glossaries}
+
+@package{pkg.glossaries-extra,
+ name={\styfmt{glos\-saries\dhyphen extra}}
+}
+
+@package{pkg.verbatim}
+@package{pkg.listings}
+
+@package{pkg.etoolbox,
+  name={\styfmt{etool\-box}}
 }
 
 % COMMANDS
@@ -586,6 +645,163 @@ imported from the given \sty{probsoln} file}
   name={\csfmt{DTL\-pro\-tected\-save\-raw\-db}}
 }
 
+@command{DTLloaddb,
+  name={\csfmt{DTL\-load\-db}}
+}
+
+@command{DTLloaddbtex,
+  name={\csfmt{DTL\-load\-db\-tex}}
+}
+
+@command{dtllastloadeddb,
+  name={\csfmt{dtl\-last\-load\-ed\-db}}
+}
+
+@command{DTLaction,
+ name={\csfmt{DTL\-action}},
+ syntax={\oargm{options}\margm{action-name}}
+}
+
+@option{opt.name,
+ parent={DTLaction},
+ syntax={\margm{db-name}}
+}
+
+@command{DTLsetup,
+ name={\csfmt{DTL\-set\-up}},
+ syntax={\margm{options}}
+}
+
+@option{opt.default-name,
+ parent={DTLsetup},
+ name={\optfmt{default\dhyphen name}},
+ syntax={\margm{db-name}}
+}
+
+@command{DTLnewdb,
+ name={\csfmt{DTL\-new\-db}}
+}
+
+@command{DTLnewcurrencysymbol,
+ name={\csfmt{DTL\-new\-cur\-rency\-sym\-bol}}
+}
+
+@command{DTLpar,
+  name={\csfmt{DTL\-par}}
+}
+
+@command{DTLifnull,
+  name={\csfmt{DTL\-if\-null}}
+}
+
+@command{DTLifnullorempty,
+  name={\csfmt{DTL\-if\-null\-or\-empty}}
+}
+
+@command{makeglossaries,
+ name={\csfmt{make\-glos\-saries}}
+}
+
+@command{makenoidxglossaries,
+ name={\csfmt{make\-no\-idx\-glos\-saries}}
+}
+
+@cspunctuation{nlbksl,
+  symbol={\cspuncfmt{\char`\\ }},
+  description={new row}
+}
+
+@command{newproblem,
+  name={\csfmt{new\-prob\-lem}}
+}
+
+@command{loadallproblems,
+  name={\csfmt{load\-all\-prob\-lems}}
+}
+
+@command{loadgidx,
+ name={\csfmt{load\-gidx}}
+}
+
+@command{newgidx,
+ name={\csfmt{new\-gidx}}
+}
+
+@command{glsadd,
+ name={\csfmt{gls\-add}}
+}
+
+@command{glsaddall,
+ name={\csfmt{gls\-add\-all}}
+}
+
+@command{newglossaryentry,
+ name={\csfmt{new\-glos\-sary\-entry}}
+}
+
+@command{newterm,
+ name={\csfmt{new\-term}}
+}
+
+@command{@dtlnovalue,
+ name={\csfmt{@dtl\-no\-value}}
+}
+
+@command{dtlgetrow,
+ name={\csfmt{dtl\-get\-row}}
+}
+
+@command{DTLforeach,
+ name={\csfmt{DTL\-for\-each}}
+}
+
+@command{DTLdisplaydb,
+ name={\csfmt{DTL\-dis\-play\-db}}
+}
+
+@command{DTLsort,
+ name={\csfmt{DTL\-sort}}
+}
+
+@command{DTLsortdata,
+ name={\csfmt{DTL\-sort\-data}}
+}
+
+@command{ifdefempty,
+ name={\csfmt{if\-def\-empty}}
+}
+
+@command{input}
+@command{verbatiminput}
+
+@command{pounds}
+@command{euro}
+@command{write18}
+@command{verb}
+@command{space}
+
+@command{lstinline,
+ name={\csfmt{lst\-in\-line}}
+}
+
+@command{lstinputlisting,
+ name={\csfmt{lst\-in\-put\-list\-ing}}
+}
+
+@environment{env.defproblem,
+  name={\envfmt{def\-prob\-lem}}
+}
+
+@environment{env.solution}
+
+@environment{env.verbatim}
+@environment{env.alltt,
+  name={\envfmt{all\-tt}}
+}
+@environment{env.lstlisting,
+  name={\envfmt{lst\-list\-ing}}
+}
+
 % INDEX ONLY
 
 @index{database}
@@ -594,8 +810,9 @@ imported from the given \sty{probsoln} file}
  symbol={\code{\char`\\ }},
  description={backslash}
 }
+
 @punctuation{dbqt,
- description={double quote},
+ description={double-quote},
  symbol={\code{"}}
 }
 @punctuation{comma,
@@ -606,3 +823,11 @@ imported from the given \sty{probsoln} file}
  symbol={\code{-}},
  description={switches}
 }
+
+@indexplural{plugin}
+@index{plugin.people,parent="plugin",name={\optfmt{people}}}
+@index{plugin.datagidx,parent="plugin",name={\optfmt{data\-gidx}}}
+
+@indexplural{template}
+@index{template.people,parent="template",name={\optfmt{people}}}
+@index{template.datagidx,parent="template",name={\optfmt{datagidx}}}

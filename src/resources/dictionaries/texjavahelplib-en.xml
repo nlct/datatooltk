@@ -326,6 +326,7 @@ code should appear in the PDF</entry>
 <entry key="manual.idxpackage">package</entry>
 <entry key="manual.idxclass">class</entry>
 <entry key="manual.idxcounter">counter</entry>
+<entry key="manual.idxvariable">variable</entry>
 
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>
