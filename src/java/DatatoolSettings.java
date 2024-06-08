@@ -30,7 +30,10 @@ import java.awt.Dimension;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Locale;
-import java.net.URL;
+
+import org.xml.sax.SAXException;
+
+import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 import com.dickimawbooks.datatooltk.gui.DatatoolPlugin;
@@ -41,9 +44,35 @@ import com.dickimawbooks.datatooltk.gui.DatatoolPlugin;
 public class DatatoolSettings extends Properties
 {
    public DatatoolSettings(DatatoolTk datatooltk)
+    throws IOException
    {
       super();
+
       messageHandler = new MessageHandler(datatooltk);
+
+      helpLib = new TeXJavaHelpLib(messageHandler,
+       DatatoolTk.APP_NAME, RESOURCE_PREFIX, RESOURCES_PATH,
+       DICT_DIR,
+       getLocaleProperty("dictionary", Locale.getDefault()),
+       getLocaleProperty("helpset", Locale.getDefault()));
+
+      helpLib.setIconPath(ICON_DIR);
+
+      String helpset = getHelpSet();
+      String langTag = helpLib.getHelpSetLocale().toLanguageTag();
+
+      if (!langTag.equals(helpset))
+      {
+         setHelpSet(langTag);
+      }
+
+      String dict = getDictionary();
+      langTag = helpLib.getMessagesLocale().toLanguageTag();
+
+      if (!langTag.equals(dict))
+      {
+         setDictionary(langTag);
+      }
 
       recentFiles = new Vector<String>();
       currencies = new Vector<String>();
@@ -1433,43 +1462,28 @@ public class DatatoolSettings extends Properties
       setProperty("redefnewprob", ""+value);
    }
 
-   public String getDictionary()
+   public Locale getLocaleProperty(String propName, Locale defaultValue)
    {
-      String prop = getProperty("dictionary");
+      Object value = get(propName);
 
-      if (prop == null)
+      if (value == null)
       {
-         Locale locale = Locale.getDefault();
-
-         String language = locale.getLanguage();
-         String country = locale.getCountry();
-
-         URL url = getClass().getResource(DICT_DIR + RESOURCE
-          + "-" + language + "-" + country  + ".prop");
-
-         if (url == null)
-         {
-            url = getClass().getResource(DICT_DIR + RESOURCE
-              + "-" + language + ".prop");
-
-            if (url == null)
-            {
-               prop = "en-US";
-            }
-            else
-            {
-               prop = language;
-            }
-         }
-         else
-         {
-            prop = language+"-"+country;
-         }
-
-         setDictionary(prop);
+         return defaultValue;
       }
 
-      return prop;
+      if (value instanceof Locale)
+      {
+         return (Locale)value;
+      }
+      else
+      {
+         return Locale.forLanguageTag(value.toString());
+      }
+   }
+
+   public String getDictionary()
+   {
+      return getProperty("dictionary");
    }
 
    public void setDictionary(String dictionary)
@@ -1479,46 +1493,7 @@ public class DatatoolSettings extends Properties
 
    public String getHelpSet()
    {
-      String prop = getProperty("helpset");
-
-      if (prop == null)
-      {
-         Locale locale = Locale.getDefault();
-
-         String language = locale.getLanguage();
-         String country = locale.getCountry();
-
-         String helpsetLocation = HELPSET_DIR+RESOURCE;
-
-         URL hsURL = getClass().getResource(String.format("%s-%s-%s/%s.hs", 
-          helpsetLocation, language, country, RESOURCE));
-
-         if (hsURL == null)
-         {
-            hsURL = getClass().getResource(String.format("%s-%s/%s.hs",
-              helpsetLocation, language, RESOURCE));
-
-            if (hsURL == null)
-            {
-               messageHandler.debug(String.format(
-                "Can't find language file for %s-%s", language, country));
-
-               prop = "en-US";
-            }
-            else
-            {
-               prop = language;
-            }
-         }
-         else
-         {
-            prop = language+"-"+country;
-         }
-
-         setHelpSet(prop);
-      }
- 
-      return prop;
+      return getProperty("helpset");
    }
 
    public void setHelpSet(String helpset)
@@ -1526,14 +1501,9 @@ public class DatatoolSettings extends Properties
       setProperty("helpset", helpset);
    }
 
-   public static String getHelpSetLocation()
+   public TeXJavaHelpLib getHelpLib()
    {
-      return HELPSET_DIR + RESOURCE;
-   }
-
-   public static String getDictionaryLocation()
-   {
-      return DICT_DIR + RESOURCE;
+      return helpLib;
    }
 
    public void setPerl(String perlExe)
@@ -1742,6 +1712,8 @@ public class DatatoolSettings extends Properties
 
    private MessageHandler messageHandler;
 
+   private TeXJavaHelpLib helpLib;
+
    protected char[] sqlPassword = null;
 
    protected DatatoolPasswordReader passwordReader;
@@ -1777,20 +1749,23 @@ public class DatatoolSettings extends Properties
    public static final Pattern PATTERN_CURRENCY
       = Pattern.compile("(.+?) *(\\d*\\.?\\d+)");
 
-   public static final String HELPSET_DIR = "/resources/helpsets/";
-   public static final String DICT_DIR = "/resources/dictionaries/";
+   public static final String RESOURCES_PATH = "/resources";
+   public static final String ICON_DIR = RESOURCES_PATH+"/icons/";
+   public static final String HELPSETS = "helpsets";
+   public static final String HELPSET_DIR = RESOURCES_PATH+"/"+HELPSETS;
+   public static final String DICT_DIR = RESOURCES_PATH+"/dictionaries/";
 
-   public static final String TEMPLATE_DIR = "/resources/templates/";
+   public static final String TEMPLATE_DIR = RESOURCES_PATH+"/templates/";
 
-   public static final String PLUGIN_DIR = "/resources/plugins/";
+   public static final String PLUGIN_DIR = RESOURCES_PATH+"/plugins/";
 
-   public static final String RESOURCE = "datatooltk";
+   public static final String RESOURCE_PREFIX = "datatooltk-";
 
    public static final Pattern PATTERN_HELPSET 
      = Pattern.compile("datatooltk-([a-z]{2})(-[A-Z]{2})?");
 
    public static final Pattern PATTERN_DICT 
-     = Pattern.compile("datatooltk-([a-z]{2})(-[A-Z]{2})?\\.prop");
+     = Pattern.compile("datatooltk-([a-z]{2})(-[A-Z]{2})?(-[A-Z][a-z]{3})?\\.xml");
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;

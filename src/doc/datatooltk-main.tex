@@ -2346,18 +2346,32 @@ with Nimbus Look and Feel}
 
 \chapter{Licence}
 \label{sec:licence}
-% TODO update
+
    \app{datatooltk} is licensed under the terms of the GNU General Public License.
    \app{datatooltk} depends on the following third party libraries whose jar files are
-   in the <tt>lib</tt> directory: the \TeX\ Parser Library 
-   (\url{https://github.com/nlct/texparser}),
-   TeX Java Help 
-   (\url{https://github.com/nlct/texjavahelp}),
-   Open CSV (\url{http://opencsv.sourceforge.net/}),
-   MySQL connector (\url{http://dev.mysql.com/downloads/connector/j/})
-   and the Java Look and Feel Graphics Repository
-   (\url{http://www.oracle.com/technetwork/java/index-138612.html}).
+   in the \filefmt{lib} directory:
+   \begin{itemize}
+   \item \TeX\ Parser Library \filefmt{texparserlib.jar}
+   (GPL, \url{https://github.com/nlct/texparser});
+   \item TeX Java Help \filefmt{texjavahelplib.jar}
+   (GPL, \url{https://github.com/nlct/texjavahelp});
+   \item Open CSV \filefmt{opencsv.jar}
+     (\href{https://www.apache.org/licenses/LICENSE-2.0.html}{Apache 2},
+      \url{http://opencsv.sourceforge.net/});
+   \item JOpenDocument \filefmt{jOpenDocument-1.5.jar}
+     (GPL, \url{https://jopendocument.org/});
+   \item MySQL connector \filefmt{mysql-connector-java.jar}
+     (GPLv2, \url{http://dev.mysql.com/downloads/connector/j/});
+   \item Apache POI \filefmt{poi-5.2.5.jar}, \filefmt{poi-ooxml-5.2.5.jar}
+   and \filefmt{poi-ooxml-full-5.2.5.jar}
+    (\href{https://www.apache.org/licenses/LICENSE-2.0.html}{Apache 2}, \url{https://poi.apache.org/})
+   \item the Java Look and Feel Graphics Repository \filefmt{jlfgr-1\_0.jar}
+   (\href{https://www.oracle.com/a/tech/docs/software-icon-license-943-2012.html}{Oracle
+License Agreement}, 
+    \url{http://www.oracle.com/technetwork/java/index-138612.html}).
+   \end{itemize}
 
+\verbatiminput{LICENSE}
 
 \listentrydescendents
  [title={Summary of \apptext{datatooltk} Switches}]
@@ -2365,4 +2379,5 @@ with Nimbus Look and Feel}
 
 \printmain
 \printindex
+
 \end{document}

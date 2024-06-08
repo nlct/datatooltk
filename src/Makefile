@@ -1,5 +1,6 @@
 ifeq ($(shell javac -version 2>&1 | grep 1.8),)
-  target_version := --release 8
+# Java 8 extended support until December 2030
+  target_version := --release 8 -Xlint:-options
 else
   target_version =
 endif
@@ -44,11 +45,17 @@ resources/icons	:
 lib/datatooltk-splash.png	: lib
 		cd lib; ln -s -f ../images/datatooltk-splash.png
 
+lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en-GB.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
+	make -C doc en-GB
+
+lib/resources/helpsets/datatooltk-en-US/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en-US.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
+	make -C doc en-US
+
 lib/datatooltk.jar	: java/Manifest.txt \
 			resources/icons \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class \
-			doc/createdatatooltkdocs doc/datatooltk-*.xml doc/datatooltk.dtd
-	make -C doc
+			lib/resources/helpsets/datatooltk-en-US/index.xml \
+			lib/resources/helpsets/datatooltk-en-GB/index.xml 
 	cd classes; \
 	jar cmf ../java/Manifest.txt ../lib/datatooltk.jar \
 	com/dickimawbooks/datatooltk/*.class \

@@ -27,11 +27,16 @@ import java.util.Locale;
 import java.util.Locale.Builder;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.text.MessageFormat;
 import java.awt.Cursor;
+import javax.swing.JOptionPane;
 import java.net.URISyntaxException;
 import java.net.URL;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
+
+import com.dickimawbooks.texparserlib.TeXParser;
+import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.*;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
@@ -43,7 +48,7 @@ import com.dickimawbooks.datatooltk.gui.DatatoolDbPanel;
  */
 public class DatatoolTk
 {
-   public DatatoolTk()
+   public DatatoolTk() throws IOException
    {
       settings = new DatatoolSettings(this);
 
@@ -55,18 +60,8 @@ public class DatatoolTk
       }
       catch (IOException e)
       {
-         messageHandler.error("unable to load properties", e,
+         messageHandler.error(messageHandler.getLabel("error.load_props_failed"), e,
              MessageHandler.OPEN_FAILURE);
-      }
-
-      try
-      {
-         loadDictionary();
-      }
-      catch (Exception e)
-      {
-         messageHandler.error("unable to load dictionary file",
-           e, MessageHandler.OPEN_FAILURE);
       }
    }
 
@@ -407,30 +402,46 @@ public class DatatoolTk
 
    public String getAppInfo()
    {
+      StringBuilder builder = new StringBuilder();
+
 // Copyright line shouldn't get translated (according to
 // http://www.gnu.org/prep/standards/standards.html)
 
-      String info = String.format(
+      builder.append(String.format(
         "%s%nCopyright (C) %s Nicola L. C. Talbot (www.dickimaw-books.com)%n%s",
         getLabelWithValues("about.version", APP_NAME, APP_VERSION, APP_DATE),
         COPYRIGHT_YEAR,
-        getLabel("about.legal"));
+        getLabel("about.legal")));
 
-      String translator = messages.getMessageIfExists("about.translator_info");
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      String translator = helpLib.getMessageIfExists("about.translator_info");
 
       if (translator != null && !translator.isEmpty())
       {
-         info = String.format("%s%n%s", info, translator);
+         builder.append(String.format("%n%s", translator));
       }
 
-      String ack = messages.getMessageIfExists("about.acknowledgements");
+      String ack = helpLib.getMessageIfExists("about.acknowledgements");
 
       if (ack != null && !ack.isEmpty())
       {
-         info = String.format("%s%n%n%s", info, ack);
+         builder.append(String.format("%n%s", ack));
       }
 
-      return info;
+      builder.append(String.format("%n"));
+      builder.append(getMessageWithFallback("about.library.version",
+        "Bundled with {0} version {1} ({2})",
+        "texjavahelplib.jar", TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
+      builder.append("https://github.com/nlct/texjavahelplib");
+
+      builder.append(String.format("%n"));
+      builder.append(getMessageWithFallback("about.library.version",
+        "Bundled with {0} version {1} ({2})",
+        "texparserlib.jar", TeXParser.VERSION, TeXParser.VERSION_DATE));
+      builder.append("https://github.com/nlct/texparser");
+
+      return builder.toString();
    }
 
    public void version()
@@ -453,100 +464,65 @@ public class DatatoolTk
       settings.getMessageHandler().debug(e);
    }
 
-   public String getDictionary()
+   public TeXJavaHelpLib getHelpLib()
    {
-      return dict;
-   }
-
-   public URL getDictionaryUrl()
-   {
-      return DatatoolTk.class.getResource(dict);
-   }
-
-   public void loadDictionary()
-      throws IOException,URISyntaxException
-   {
-      String dictLanguage = settings.getDictionary();
-
-      InputStream in = null;
-      BufferedReader reader = null;
-
-      try
+      if (settings != null)
       {
-         dict = settings.getDictionaryLocation()+"-"
-             + settings.getDictionary()+".prop";
-
-         in = DatatoolTk.class.getResourceAsStream(dict);
-
-         if (in == null)
-         {
-            throw new FileNotFoundException
-            (
-               "Can't find dictionary resource file " +dict
-            );
-         }
-
-         reader = new BufferedReader(new InputStreamReader(in));
-
-         // read encoding line
-
-         String line = reader.readLine();
-
-         Pattern pattern = Pattern.compile("# Encoding: (.*)");
-         Matcher matcher = pattern.matcher(line);
-
-         if (matcher.matches())
-         {
-            String encoding = matcher.group(1);
-
-            reader.close();
-            in.close();
-            in = null;
-
-            reader = Files.newBufferedReader(
-              (new File(DatatoolTk.class.getResource(dict).toURI())).toPath(),
-               Charset.forName(encoding));
-         }
-         else
-         {
-            throw new InvalidSyntaxException(
-              "Missing encoding comment on line 1 of "+dict);
-         }
-
-         Properties dictionary = new Properties();
-         dictionary.load(reader);
-
-         messages = new DatatoolMessages(dictionary);
+         return settings.getHelpLib();
       }
-      finally
-      {
-         if (reader != null)
-         {
-            reader.close();
-         }
 
-         if (in != null)
-         {
-            in.close();
-         }
+      return null;
+   }
+
+   public String getMessageWithFallback(String label, String fallbackFormat,
+     Object... params)
+   {
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      if (helpLib == null)
+      {
+         MessageFormat fmt = new MessageFormat(fallbackFormat);
+         return fmt.format(params);
+      }
+      else
+      {
+         return helpLib.getMessageWithFallback(label, fallbackFormat, params);
+      }
+   }
+
+   public String getMessageIfExists(String label, Object... args)
+   {
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      if (helpLib == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helpLib.getMessageIfExists(label, args);
       }
    }
 
    public String getLabelWithAlt(String label, String alt)
    {
-      if (messages == null)
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      if (helpLib == null)
       {
          return alt;
       }
-
-      String msg = messages.getMessageIfExists(label);
-
-      return msg == null ? alt : msg;
+      else
+      {
+         return helpLib.getMessageWithFallback(label, alt);
+      }
    }
 
    public String getLabelRemoveArgs(String parent, String label)
    {
-      if (messages == null)
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      if (helpLib == null)
       {
          debug("Dictionary not loaded.");
          return null;
@@ -563,7 +539,7 @@ public class DatatoolTk
          propLabel = String.format("%s.%s", parent, label);
       }
 
-      return messages.getMessage(propLabel, "", "", "");
+      return helpLib.getMessage(propLabel, "", "", "");
    }
 
    public String getLabel(String label)
@@ -573,7 +549,9 @@ public class DatatoolTk
 
    public String getLabel(String parent, String label)
    {
-      if (messages == null)
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      if (helpLib == null)
       {
          debug("Dictionary not loaded.");
          return null;
@@ -590,7 +568,7 @@ public class DatatoolTk
          propLabel = String.format("%s.%s", parent, label);
       }
 
-      return messages.getMessage(propLabel);
+      return helpLib.getMessage(propLabel);
    }
 
    public String getToolTip(String label)
@@ -600,7 +578,9 @@ public class DatatoolTk
 
    public String getToolTip(String parent, String label)
    {
-      if (messages == null)
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      if (helpLib == null)
       {
          return null;
       }
@@ -616,7 +596,7 @@ public class DatatoolTk
          propLabel = String.format("%s.%s.tooltip", parent, label);
       }
 
-      return messages.getMessageIfExists(propLabel);
+      return helpLib.getMessageIfExists(propLabel);
    }
 
    public char getMnemonic(String label)
@@ -636,7 +616,9 @@ public class DatatoolTk
 
    public int getMnemonicInt(String parent, String label)
    {
-      if (messages == null)
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      if (helpLib == null)
       {
          return -1;
       }
@@ -652,7 +634,7 @@ public class DatatoolTk
          propLabel = String.format("%s.%s.mnemonic", parent, label);
       }
 
-      String msg = messages.getMessageIfExists(propLabel);
+      String msg = helpLib.getMessageIfExists(propLabel);
 
       if (msg == null || msg.isEmpty())
       {
@@ -662,14 +644,22 @@ public class DatatoolTk
       return msg.codePointAt(0);
    }
 
+   public URL getDictionaryUrl()
+   {// TODO
+      Vector<URL> dictionaries = settings.getMessageHandler().getLoadedDictionaries();
+      return dictionaries.firstElement();
+   }
+
    public String getLabelWithValues(String label, Object... values)
    {
-      if (messages == null)
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      if (helpLib == null)
       {
          return null;
       }
 
-      return messages.getMessage(label, values);
+      return helpLib.getMessage(label, values);
    }
 
    private void parseArgs(String[] args) throws InvalidSyntaxException
@@ -1700,6 +1690,14 @@ public class DatatoolTk
 
             loadSettings.setInputFile(args[i]);
          }
+         else if (args[i].equals("--verbose"))
+         {
+            getMessageHandler().setVerbosity(1);
+         }
+         else if (args[i].equals("--noverbose"))
+         {
+            getMessageHandler().setVerbosity(0);
+         }
          else if (args[i].charAt(0) == '-')
          {
             throw new InvalidSyntaxException(
@@ -1739,7 +1737,18 @@ public class DatatoolTk
           {
              public void run()
              {
-                new DatatoolGUI(settings, loadSettings);
+                try
+                {
+                   new DatatoolGUI(settings, loadSettings);
+                }
+                catch (IOException e)
+                {
+                   JOptionPane.showMessageDialog(null, 
+                    String.format("%s: Fatal I/O error: %s", APP_NAME, e.getMessage()),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                   e.printStackTrace();
+                   System.exit(EXIT_IO);
+                }
              }
           });
       } 
@@ -1747,20 +1756,33 @@ public class DatatoolTk
 
    public static void main(String[] args)
    {
-      DatatoolTk datatooltk = new DatatoolTk();
+      DatatoolTk datatooltk = null;
 
       try
       {
+         datatooltk = new DatatoolTk();
          datatooltk.parseArgs(args);
+         datatooltk.process();
       }
       catch (InvalidSyntaxException e)
       {
-         datatooltk.getMessageHandler().error(e, MessageHandler.FORMAT_FAILURE);
+         if (datatooltk == null)
+         {
+            System.err.format("%s: Fatal syntax error: %s", APP_NAME, e.getMessage());
+         }
+         else
+         {
+            datatooltk.getMessageHandler().error(e, MessageHandler.FORMAT_FAILURE);
+         }
 
-         System.exit(1);
+         System.exit(EXIT_SYNTAX);
       }
-
-      datatooltk.process();
+      catch (IOException e)
+      {
+         System.err.format("%s: Fatal I/O error: %s", APP_NAME, e.getMessage());
+         e.printStackTrace();
+         System.exit(EXIT_IO);
+      }
    }
 
    public static final String APP_VERSION = "1.9";
@@ -1768,14 +1790,13 @@ public class DatatoolTk
    public static final String APP_DATE = "2018-07-06";
    public static final String COPYRIGHT_YEAR = "2014-2018";
 
-   private DatatoolMessages messages;
-
    private LoadSettings loadSettings;
 
    private int noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
 
    private String dict = null;
 
-
    private DatatoolSettings settings;
+
+   public static final int EXIT_SYNTAX=1, EXIT_IO=2, EXIT_USER_FORCED=3;
 }

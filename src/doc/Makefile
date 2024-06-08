@@ -3,7 +3,7 @@ dictdir=../resources/dictionaries
 targetbackref=../../doc
 mainclass=../java/DatatoolTk.java
 arara=arara --verbose
-texjavahelpmk=texjavahelpmk
+texjavahelpmk=texjavahelpmk --debug-mode io
 xml2bib=xml2bib --copy-overwrite-xml
 testfiles=../tests/test-para.csv \
           ../tests/HelloWorld.java \

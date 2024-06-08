@@ -49,7 +49,7 @@ public class DatatoolGuiResources
           JOptionPane.ERROR_MESSAGE);
     }
 
-    public void error(Component parent, Exception e)
+    public void error(Component parent, Throwable e)
     {
        String message = messageHandler.getMessage(e);
 
@@ -69,7 +69,7 @@ public class DatatoolGuiResources
        error(parent, message, e);
     }
 
-    public void error(Component parent, String message, Exception e)
+    public void error(Component parent, String message, Throwable e)
     {
        errorPanel.updateMessage(message, e);
 
@@ -369,7 +369,7 @@ public class DatatoolGuiResources
 
        buttonPanel.add(okayButton);
        buttonPanel.add(createCancelButton(listener));
-       buttonPanel.add(gui.createHelpButton(helpId));
+       buttonPanel.add(gui.createHelpButton(helpId, rootPane));
 
        if (rootPane != null)
        {
@@ -411,7 +411,23 @@ public class DatatoolGuiResources
 
     public JMenu createJMenu(String parent, String label)
     {
-       JMenu menu = new JMenu(messageHandler.getLabel(parent, label));
+       String text = null;
+
+       if (parent == null)
+       {
+          text = messageHandler.getMessageIfExists("menu"+"."+label);
+       }
+       else
+       {
+          text = messageHandler.getMessageIfExists("menu."+parent+"."+label);
+       }
+
+       if (text == null)
+       {
+          text = messageHandler.getLabel(parent, label);
+       }
+
+       JMenu menu = new JMenu(text);
        menu.setMnemonic(messageHandler.getMnemonic(parent, label));
 
        String tooltip = messageHandler.getToolTip(parent, label);
@@ -450,6 +466,15 @@ public class DatatoolGuiResources
     public JMenuItem createJMenuItem(String parent, String label,
      ActionListener listener, KeyStroke keyStroke, ScrollToolBar toolBar)
     {
+       if (parent == null)
+       {
+          parent = "menu";
+       }
+       else
+       {
+          parent = "menu."+parent;
+       }
+
        return new ItemButton(messageHandler, parent, label, listener, keyStroke, toolBar);
     }
 

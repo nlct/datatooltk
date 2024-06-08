@@ -58,17 +58,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
              file.toString()));
       }
 
-      Workbook workBook = null;
-
-      try
-      {
-         workBook = WorkbookFactory.create(file);
-      }
-      catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException e)
-      {
-         throw new IOException(getMessageHandler().getLabelWithValues
-           ("error.unknown_file_format", file.getName()), e);
-      }
+      Workbook workBook = WorkbookFactory.create(file);
 
       int numSheets = workBook.getNumberOfSheets();
 
@@ -264,10 +254,10 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
    {
       switch (cell.getCellType())
       {
-         case CELL_TYPE_NUMERIC:
-         case CELL_TYPE_FORMULA:
+         case NUMERIC:
+         case FORMULA:
            return ""+cell.getNumericCellValue();
-         case CELL_TYPE_BLANK:
+         case BLANK:
            return "";
       }
 

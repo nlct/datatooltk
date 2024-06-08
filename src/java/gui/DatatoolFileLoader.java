@@ -31,11 +31,12 @@ import javax.swing.SwingWorker;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
+import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
+
 import com.dickimawbooks.datatooltk.DatatoolDb;
 import com.dickimawbooks.datatooltk.DataFilter;
 import com.dickimawbooks.datatooltk.FilterInfo;
 import com.dickimawbooks.datatooltk.LoadSettings;
-import com.dickimawbooks.datatooltk.io.InvalidSyntaxException;
 import com.dickimawbooks.datatooltk.io.DatatoolImport;
 import com.dickimawbooks.datatooltk.io.DatatoolImportException;
 

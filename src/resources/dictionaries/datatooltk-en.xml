@@ -617,6 +617,10 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="button.copy.mnemonic">Y</entry>
 <entry key="button.copy.tooltip">Copy contents of text area to the clipboard</entry>
 
+<entry key="button.exit">Exit</entry>
+<entry key="button.exit.mnemonic">X</entry>
+<entry key="button.exit.tooltip">Force exit without saving</entry>
+
 <entry key="button.import">Import</entry>
 
 <entry key="button.help">Help</entry>
@@ -1025,6 +1029,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.syntax.unknown_encoding">Unknown or invalid encoding name ''{0}''</entry>
 <entry key="error.syntax.unknown_field">Unknown sort field ''{0}''</entry>
 <entry key="error.syntax.unknown_option">Unknown option ''{0}''. (Use --help or -h for help.)</entry>
+<entry key="error.load_props_failed">Unable to load properties</entry>
 
 
 <entry key="error.title">Error</entry>

@@ -34,6 +34,8 @@ import java.util.Arrays;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
+import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
+
 import com.dickimawbooks.datatooltk.io.*;
 
 import com.dickimawbooks.texparserlib.*;

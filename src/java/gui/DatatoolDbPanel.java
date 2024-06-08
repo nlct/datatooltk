@@ -34,8 +34,9 @@ import javax.swing.text.Document;
 import javax.swing.text.BadLocationException;
 import javax.swing.border.Border;
 
+import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
+
 import com.dickimawbooks.datatooltk.*;
-import com.dickimawbooks.datatooltk.io.InvalidSyntaxException;
 
 /**
  * Panel used in the main GUI window tabs.

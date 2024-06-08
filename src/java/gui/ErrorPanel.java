@@ -69,7 +69,12 @@ public class ErrorPanel extends JPanel
 
       cardPanel.add(tabbedPane, "tabbedpane");
 
-      JPanel buttonPanel = new JPanel();
+      JComponent buttonPanel = Box.createVerticalBox();
+
+      buttonPanel.add(resources.createActionButton(
+         "button", "exit", this, null));
+
+      buttonPanel.add(Box.createVerticalStrut(50));
 
       buttonPanel.add(resources.createActionButton(
          "button", "copy", this, 
@@ -84,7 +89,7 @@ public class ErrorPanel extends JPanel
       updateMessage(message, null);
    }
 
-   public synchronized void updateMessage(String message, Exception exception)
+   public synchronized void updateMessage(String message, Throwable exception)
    {
       if (exception == null)
       {
@@ -115,6 +120,7 @@ public class ErrorPanel extends JPanel
       }
    }
 
+   @Override
    public void actionPerformed(ActionEvent evt)
    {
       String action = evt.getActionCommand();
@@ -152,6 +158,10 @@ public class ErrorPanel extends JPanel
 
          area.selectAll();
          area.copy();
+      }
+      else if (action.equals("exit"))
+      {
+         System.exit(DatatoolTk.EXIT_USER_FORCED);
       }
    }
 

@@ -33,7 +33,10 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
-import javax.help.*;
+
+import org.xml.sax.SAXException;
+
+import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.*;
@@ -50,6 +53,7 @@ public class DatatoolGUI extends JFrame
    }
 
    public DatatoolGUI(DatatoolSettings settings, LoadSettings loadSettings)
+    throws IOException
    {
       super(DatatoolTk.APP_NAME);
 
@@ -71,7 +75,7 @@ public class DatatoolGUI extends JFrame
       }
    }
 
-   private void initGui()
+   private void initGui() throws IOException
    {
       MessageHandler messageHandler = getMessageHandler();
 
@@ -125,33 +129,45 @@ public class DatatoolGUI extends JFrame
 
       DEFAULT_UNTITLED = messageHandler.getLabel("default.untitled");
 
-      String imgFile = "/resources/icons/datatooltk-logosmall.png";
+      Image img = getLogoImage();
 
-      URL imageURL = DatatoolTk.class.getResource(imgFile);
-
-      if (imageURL != null)
+      if (img != null)
       {
-         setIconImage(new ImageIcon(imageURL).getImage());
-      }
-      else
-      {
-         getMessageHandler().error(null, 
-           new FileNotFoundException(String.format("Can't find resource: '%s'",
-           imgFile)));
+         setIconImage(img);
       }
 
       try
       {
          initHelp();
       }
-      catch (HelpSetException e)
+      catch (Exception e)
       {
-         getMessageHandler().error(null, e);
+         getMessageHandler().error((Component)null, e);
       }
-      catch (FileNotFoundException e)
+
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      // main panel
+
+      tabbedPane = new JTabbedPane();
+
+      tabbedPane.addChangeListener(new ChangeListener()
       {
-         getMessageHandler().error(null, e);
-      }
+         public void stateChanged(ChangeEvent event)
+         {
+            Component tab = tabbedPane.getSelectedComponent();
+
+            if (tab != null && (tab instanceof DatatoolDbPanel))
+            {
+               DatatoolDbPanel panel = (DatatoolDbPanel)tab;
+
+               enableEditItems(panel.getModelSelectedRow() > -1, 
+                 panel.getModelSelectedColumn() > -1);
+
+               updateTitle(panel);
+            }
+         }
+      });
 
       JMenuBar mbar = new JMenuBar();
       setJMenuBar(mbar);
@@ -391,45 +407,15 @@ public class DatatoolGUI extends JFrame
       JMenu helpM = resources.createJMenu("help");
       mbar.add(helpM);
 
-      helpM.add(resources.createJMenuItem(
-         "help", "manual", csh,
-          KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0),
-          toolBar));
+      helpM.add(resources.createJMenuItem("help", "manual", this,
+       helpLib.getKeyStroke("menu.help.manual"), toolBar));
 
-      JMenuItem item = new JMenuItem(messageHandler.getLabel("help",
-        "licence"));
-      item.setMnemonic(getMessageHandler().getMnemonic("help", "licence"));
-
-      enableHelpOnButton(item, "licence");
-
-      helpM.add(item);
+      helpM.add(resources.createJMenuItem("help", "licence", this));
 
       helpM.add(resources.createJMenuItem(
          "help", "about", this, toolBar));
 
       settings.setPasswordReader(new GuiPasswordReader(messageHandler, this));
-
-      // main panel
-
-      tabbedPane = new JTabbedPane();
-
-      tabbedPane.addChangeListener(new ChangeListener()
-      {
-         public void stateChanged(ChangeEvent event)
-         {
-            Component tab = tabbedPane.getSelectedComponent();
-
-            if (tab != null && (tab instanceof DatatoolDbPanel))
-            {
-               DatatoolDbPanel panel = (DatatoolDbPanel)tab;
-
-               enableEditItems(panel.getModelSelectedRow() > -1, 
-                 panel.getModelSelectedColumn() > -1);
-
-               updateTitle(panel);
-            }
-         }
-      });
 
       getContentPane().add(tabbedPane, BorderLayout.CENTER);
       getContentPane().add(toolBar, BorderLayout.PAGE_START);
@@ -473,67 +459,64 @@ public class DatatoolGUI extends JFrame
    }
 
    private void initHelp()
-     throws HelpSetException,FileNotFoundException
+     throws IOException,SAXException
    {
-      if (mainHelpBroker == null)
+      TeXJavaHelpLib helpLib = settings.getHelpLib();
+      helpLib.setHelpsetSubDirPrefix(DatatoolSettings.RESOURCE_PREFIX);
+      helpLib.initHelpSet(DatatoolSettings.HELPSETS);
+      helpFrame = helpLib.getHelpFrame();
+
+      Image img = getLogoImage();
+
+      if (img != null)
       {
-         HelpSet mainHelpSet = null;
-
-         String helpset = String.format("%s-%s/%s.hs", 
-            settings.getHelpSetLocation(),
-            settings.getHelpSet(), settings.RESOURCE);
-
-         URL hsURL = getClass().getResource(helpset);
-
-         if (hsURL == null)
-         {
-            if (hsURL == null)
-            {
-               throw new FileNotFoundException(
-                  getMessageHandler().getLabelWithValues(
-                    "error.resource.not_found",
-                    helpset));
-            }
-         }
-
-         mainHelpSet = new HelpSet(null, hsURL);
-
-         mainHelpBroker = mainHelpSet.createHelpBroker();
-
-         csh = new CSH.DisplayHelpFromSource(mainHelpBroker);
+         helpFrame.setIconImage(img);
       }
+
+      helpFrame.setLocationRelativeTo(this);
    }
 
-   public void enableHelpOnButton(JComponent comp, String id)
+   public Image getLogoImage()
    {
-      if (mainHelpBroker != null)
+      Image img = getIconImage();
+
+      if (img != null)
       {
-         try
-         {
-            mainHelpBroker.enableHelpOnButton(comp, id, 
-               mainHelpBroker.getHelpSet());
-         }
-         catch (BadIDException e)
-         {
-            getMessageHandler().error(null, e);
-         }
+         return img;
+      }
+
+      String imgFile = "/resources/icons/datatooltk-logosmall.png";
+
+      URL imageURL = DatatoolTk.class.getResource(imgFile);
+
+      if (imageURL != null)
+      {
+         return new ImageIcon(imageURL).getImage();
       }
       else
       {
-         getMessageHandler().debug("Can't enable help on button (id="+id
-           +"): null help broker");
+         getMessageHandler().warning("Logo image not found", 
+           new FileNotFoundException(String.format("Can't find resource: '%s'",
+           imgFile)));
       }
+
+      return null;
    }
 
-   public JButton createHelpButton(String id)
+   public TeXJavaHelpLib getHelpLib()
    {
-      JButton button = resources.createActionButton(
-         "button", "help", null, 
-         KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+      return settings.getHelpLib();
+   }
 
-      enableHelpOnButton(button, id);
+   public KeyStroke getKeyStroke(String id)
+   {
+      return getHelpLib().getKeyStroke(id);
+   }
 
-      return button;
+   public JButton createHelpButton(String id, JComponent comp)
+   {
+      return new JButton(getHelpLib().createHelpAction(id,
+        getKeyStroke("menu.help.manual"), comp));
    }
 
    public String[] getDictionaries()
@@ -730,13 +713,14 @@ public class DatatoolGUI extends JFrame
                }
                catch (IOException e)
                {
-                  getMessageHandler().error(null, e);
+                  getMessageHandler().error((Component)null, e);
                }
             }
          });
       }
    }
 
+   @Override
    public void actionPerformed(ActionEvent evt)
    {
       String action = evt.getActionCommand();
@@ -943,6 +927,21 @@ public class DatatoolGUI extends JFrame
            getMessageHandler().getLabelWithValues("about.title", 
              DatatoolTk.APP_NAME),
            JOptionPane.PLAIN_MESSAGE);
+      }
+      else if (action.equals("manual"))
+      {
+         settings.getHelpLib().openHelp();
+      }
+      else if (action.equals("licence"))
+      {
+         try
+         {
+            settings.getHelpLib().openHelpForId("sec:licence");
+         }
+         catch (Exception e)
+         {
+            getMessageHandler().error(this, e);
+         }
       }
       else if (action.equals("undo"))
       {
@@ -1720,8 +1719,7 @@ public class DatatoolGUI extends JFrame
 
    private CellDialog cellEditor;
 
-   private HelpBroker mainHelpBroker;
-   private CSH.DisplayHelpFromSource csh;
+   private HelpFrame helpFrame;
 
    private ScrollToolBar toolBar;
 

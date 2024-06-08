@@ -18,7 +18,7 @@
 */
 package com.dickimawbooks.datatooltk;
 
-import com.dickimawbooks.datatooltk.io.InvalidSyntaxException;
+import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
 public class FilterInfo
 {

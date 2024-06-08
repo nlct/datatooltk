@@ -19,6 +19,7 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.io.File;
+import java.io.IOException;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -32,7 +33,7 @@ import com.dickimawbooks.datatooltk.io.*;
 public class ImportSqlDialog extends JDialog
   implements ActionListener
 {
-   public ImportSqlDialog(DatatoolGUI gui)
+   public ImportSqlDialog(DatatoolGUI gui) throws IOException
    {
       super(gui, gui.getMessageHandler().getLabel("importsql.title"), true);
 

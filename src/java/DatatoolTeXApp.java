@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2017 Nicola L.C. Talbot
+    Copyright (C) 2017-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -36,21 +36,37 @@ public class DatatoolTeXApp extends TeXAppAdapter
       this.messageHandler = messageHandler;
    }
 
+   @Override
+   public String getApplicationName()
+   {
+      return DatatoolTk.APP_NAME;
+   }
+
+   @Override
+   public String getApplicationVersion()
+   {
+      return DatatoolTk.APP_VERSION;
+   }
+
+   @Override
    public String getMessage(String label, Object... params)
    {
       return messageHandler.getLabelWithValues(label, params);
    }
 
+   @Override
    public void message(String text)
    {
       messageHandler.message(text);
    }
 
+   @Override
    public void warning(TeXParser parser, String message)
    {
       messageHandler.warning(parser, message);
    }
 
+   @Override
    public void error(Exception e)
    {
       if (e instanceof TeXSyntaxException)
@@ -63,6 +79,7 @@ public class DatatoolTeXApp extends TeXAppAdapter
       }
    }
 
+   @Override
    public void progress(int percentage)
    {
       messageHandler.progress(percentage);

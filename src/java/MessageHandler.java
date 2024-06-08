@@ -19,6 +19,8 @@
 package com.dickimawbooks.datatooltk;
 
 import java.io.File;
+import java.net.URL;
+import java.util.Vector;
 import java.util.logging.ErrorManager;
 import java.awt.Component;
 import javax.swing.JOptionPane;
@@ -27,13 +29,14 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texjavahelplib.*;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 
 /**
  * Handler for dealing with messages.
  */
 public class MessageHandler extends ErrorManager 
-  implements ErrorHandler
+  implements ErrorHandler,TeXJavaHelpLibApp
 {
    public MessageHandler(DatatoolTk datatooltk)
    {
@@ -57,6 +60,12 @@ public class MessageHandler extends ErrorManager
    public TeXApp getTeXApp()
    {
       return texApp;
+   }
+
+   @Override
+   public String getApplicationName()
+   {
+      return texApp.getApplicationName();
    }
 
    public static String codePointToString(int codePoint)
@@ -127,6 +136,11 @@ public class MessageHandler extends ErrorManager
    public void setDebugMode(boolean enabled)
    {
       debugMode = enabled;
+
+      if (debugMode && verbosity < 1)
+      {
+         verbosity = 1;
+      }
    }
 
    public boolean isDebugMode()
@@ -134,9 +148,25 @@ public class MessageHandler extends ErrorManager
       return debugMode;
    }
 
+   public void setVerbosity(int level)
+   {
+      verbosity = level;
+   }
+
+   public int getVerbosityLevel()
+   {
+      return verbosity;
+   }
+
+   @Override
    public void message(String msg)
    {
-      if (isBatchMode)
+      message(1, msg);
+   }
+
+   public void message(int level, String msg)
+   {
+      if (isBatchMode && level <= verbosity)
       {
          System.out.println(msg);
       }
@@ -154,6 +184,7 @@ public class MessageHandler extends ErrorManager
       }
    }
 
+   @Override
    public void warning(String message)
    {
       warning((Component)null, message);
@@ -212,14 +243,25 @@ public class MessageHandler extends ErrorManager
       }
    }
 
-   public void warning(Exception e)
+   @Override
+   public void warning(String msg, Throwable e)
    {
-      warning(null, e);
+      warning(null, msg, e);
    }
 
-   public void warning(Component parent, Exception e)
+   public void warning(Throwable e)
    {
-      warning(parent, getMessage(e));
+      warning(null, getMessage(e), e);
+   }
+
+   public void warning(Component parent, Throwable e)
+   {
+      warning(parent, getMessage(e), e);
+   }
+
+   public void warning(Component parent, String msg, Throwable e)
+   {
+      warning(parent, msg);
 
       if (debugMode)
       {
@@ -227,6 +269,7 @@ public class MessageHandler extends ErrorManager
       }
    }
 
+   @Override
    public void debug(String message)
    {
       if (debugMode)
@@ -236,7 +279,8 @@ public class MessageHandler extends ErrorManager
       }
    }
 
-   public void debug(String message, Exception e)
+   @Override
+   public void debug(String message, Throwable e)
    {
       if (debugMode)
       {
@@ -246,11 +290,13 @@ public class MessageHandler extends ErrorManager
       }
    }
 
-   public void debug(Exception e)
+   @Override
+   public void debug(Throwable e)
    {
       debug(getMessage(e), e);
    }
 
+   @Override
    public void error(Throwable throwable)
    {
       if (throwable instanceof Exception)
@@ -308,13 +354,20 @@ public class MessageHandler extends ErrorManager
       error(parent, null, e, code);
    }
 
+   @Override
    public void error(String msg, Exception exception, int code)
    {
       error(null, msg, exception, code);
    }
 
+   @Override
+   public void error(String msg, Throwable exception)
+   {
+      error(null, msg, exception, GENERIC_FAILURE);
+   }
+
    public void error(Component parent, String msg, 
-     Exception exception, int code)
+     Throwable exception, int code)
    {
       if (isBatchMode)
       {
@@ -431,6 +484,11 @@ public class MessageHandler extends ErrorManager
       exception.printStackTrace();
    }
 
+   public String getMessageIfExists(String label, Object... args)
+   {
+      return datatooltk.getMessageIfExists(label, args);
+   }
+
    public String getLabelWithAlt(String label, String alt)
    {
       return datatooltk.getLabelWithAlt(label, alt);
@@ -514,9 +572,28 @@ public class MessageHandler extends ErrorManager
       return datatooltk.getSettings();
    }
 
+   @Override
+   public void dictionaryLoaded(URL url)
+   {
+      if (dictionarySources == null)
+      {
+         dictionarySources = new Vector<URL>();
+      }
+
+      dictionarySources.add(url);
+   }
+
+   public Vector<URL> getLoadedDictionaries()
+   {
+      return dictionarySources;
+   }
+
+   private int verbosity = 0;
    private boolean isBatchMode, debugMode=false;
    private DatatoolTk datatooltk;
    private DatatoolGuiResources guiResources;
+
+   private Vector<URL> dictionarySources;
 
    private TeXApp texApp;
 
