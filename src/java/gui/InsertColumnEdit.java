@@ -46,8 +46,8 @@ public class InsertColumnEdit extends AbstractUndoableEdit
       if (panel.getColumnCount() == 0)
       {
          undoInfo = messageHandler.getLabelWithValues("info.empty_db",
-           messageHandler.getLabel("edit")+"->"
-            + messageHandler.getLabel("edit.column"));
+           messageHandler.getLabel("menu.edit")+"->"
+            + messageHandler.getLabel("menu.edit.column"));
       }
       else
       {
@@ -65,8 +65,8 @@ public class InsertColumnEdit extends AbstractUndoableEdit
       if (panel.getRowCount() == 0)
       {
          redoInfo = messageHandler.getLabelWithValues("info.no_rows",
-           messageHandler.getLabel("edit")+"->"
-            + messageHandler.getLabel("edit.row"));
+           messageHandler.getLabel("menu.edit")+"->"
+            + messageHandler.getLabel("menu.edit.row"));
       }
       else
       {

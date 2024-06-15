@@ -1,0 +1,42 @@
+# Encoding: UTF-8
+# English language file for datatooltk plugins
+
+plugin.error.missing_column=Can''t find column labelled ''{0}''
+plugin.remove_entry=Remove Entry
+
+plugin.datagidx.add_seealso=Add "See Also" Entry
+plugin.datagidx.Child=Child
+plugin.datagidx.crossref=Cross-Reference
+plugin.datagidx.CurrentLocation=Current Location (Reserved)
+plugin.datagidx.default_name=index
+plugin.datagidx.Description=Description
+plugin.datagidx.edit_entry=Edit Entry
+plugin.datagidx.FirstId=First ID (Reserved)
+plugin.datagidx.Label=Label
+plugin.datagidx.Location=Location (Reserved)
+plugin.datagidx.Long=Long
+plugin.datagidx.LongPlural=Long Plural
+plugin.datagidx.missing_field=Missing {0}
+plugin.datagidx.Name=Name
+plugin.datagidx.new_entry=New Entry
+plugin.datagidx.Plural=Plural
+plugin.datagidx.Parent=Parent
+plugin.datagidx.remove_seealso=Remove "See Also" Entry
+plugin.datagidx.See=See
+plugin.datagidx.SeeAlso=See Also
+plugin.datagidx.Short=Short
+plugin.datagidx.ShortPlural=Short Plural
+plugin.datagidx.Sort=Sort
+plugin.datagidx.Symbol=Symbol
+plugin.datagidx.Text=Text
+plugin.datagidx.Used=Used (Reserved)
+
+plugin.people.Address=Address
+plugin.people.edit_entry=Edit Entry
+plugin.people.Email=Email
+plugin.people.Forename=Forename
+plugin.people.ID=ID
+plugin.people.new_entry=New Entry
+plugin.people.Surname=Surname
+plugin.people.Telephone=Telephone
+plugin.people.Title=Title

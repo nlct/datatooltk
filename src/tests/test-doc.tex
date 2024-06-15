@@ -4,6 +4,9 @@
 % arara: --> sql: "SELECT * FROM testsqldata", sqldb: datatooltk,
 % arara: --> sqluser: datatool, options: [--debug]}
 % arara: pdflatex
+%
+% NB this test file assumes a MySQL database created from test.sql
+% The password will need to be input at the prompt.
 \documentclass{article}
 
 \usepackage{datatool}
@@ -39,7 +42,7 @@
 \DTLdisplaydb{\testcsvdata}
 
 \section{test-sql-data.dbtex}
-% load db create from sql query
+% load db created from sql query
 
 \DTLloaddbtex{\testsqldata}{test-sql-data.dbtex}
 

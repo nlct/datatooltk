@@ -62,17 +62,17 @@ public class DatatoolDbPanel extends JPanel
 
       add(infoField, BorderLayout.SOUTH);
 
-      String editLabel = messageHandler.getLabel("edit");
+      String editLabel = messageHandler.getLabel("menu.edit");
 
       setInfo(db.getColumnCount() == 0 ?
          messageHandler.getLabelWithValues("info.empty_db",
           String.format("%s->%s", editLabel, 
-           messageHandler.getLabel("edit.column"))) :
+           messageHandler.getLabel("menu.edit.column"))) :
          messageHandler.getLabelWithValues("info.not_empty_db",
           String.format("%s->%s", 
-            editLabel, messageHandler.getLabel("edit.column")),
+            editLabel, messageHandler.getLabel("menu.edit.column")),
           String.format("%s->%s", 
-            editLabel, messageHandler.getLabel("edit.row"))));
+            editLabel, messageHandler.getLabel("menu.edit.row"))));
    }
 
    public MessageHandler getMessageHandler()

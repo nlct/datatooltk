@@ -39,8 +39,8 @@ public class InsertRowEdit extends AbstractUndoableEdit
          MessageHandler messageHandler = panel.getMessageHandler();
 
          undoInfo = messageHandler.getLabelWithValues("info.no_rows",
-           messageHandler.getLabel("edit")+"->"
-             +messageHandler.getLabel("edit.row"));
+           messageHandler.getLabel("menu.edit")+"->"
+             +messageHandler.getLabel("menu.edit.row"));
       }
       else
       {
@@ -69,8 +69,8 @@ public class InsertRowEdit extends AbstractUndoableEdit
          MessageHandler messageHandler = panel.getMessageHandler();
 
          undoInfo = messageHandler.getLabelWithValues("info.no_rows",
-           messageHandler.getLabel("edit")+"->"
-             +messageHandler.getLabel("edit.row"));
+           messageHandler.getLabel("menu.edit")+"->"
+             +messageHandler.getLabel("menu.edit.row"));
       }
       else
       {
@@ -139,11 +139,11 @@ public class InsertRowEdit extends AbstractUndoableEdit
 
       if (panel.getRowCount() == 1)
       {
-         String editLabel = messageHandler.getLabel("edit");
+         String editLabel = messageHandler.getLabel("menu.edit");
 
          redoInfo = messageHandler.getLabelWithValues("info.not_empty_db",
-           editLabel+"->"+messageHandler.getLabel("edit.column"),
-           editLabel+"->"+messageHandler.getLabel("edit.row"));
+           editLabel+"->"+messageHandler.getLabel("menu.edit.column"),
+           editLabel+"->"+messageHandler.getLabel("menu.edit.row"));
       }
       else
       {

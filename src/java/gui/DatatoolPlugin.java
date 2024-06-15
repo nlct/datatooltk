@@ -151,7 +151,7 @@ public class DatatoolPlugin implements Runnable
       writer.format(" selectedcolumn=\"%d\"",
         dbPanel.getModelSelectedColumn());
       writer.format(" name=\"%s\"", encodeXml(dbPanel.getName()));
-      writer.format(" dict=\"%s\"", datatooltk.getDictionaryUrl());
+      writer.format(" dict=\"%s\"", dbPanel.getDatatoolGUI().getPluginDictionaryUrl());
       writer.format(" resources=\"%s\"", 
          DatatoolTk.class.getResource("/resources/"));
 

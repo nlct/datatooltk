@@ -18,11 +18,11 @@ all	: en-GB en-US datatooltk.1
 datatooltk.1	: datatooltk.pod
 		pod2man -c datatooltk datatooltk.pod datatooltk.1
 
-datatooltk-props-en.bib	: $(dictdir)/datatooltk-en.xml
-	$(xml2bib) $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml -o datatooltk-props-en.bib
+datatooltk-props-en.bib	: $(dictdir)/datatooltk-en.xml $(dictdir)/plugins-en.prop
+	$(xml2bib) $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml --prop $(dictdir)/plugins-en.prop -o datatooltk-props-en.bib
 
-datatooltk-props-en-GB.bib	: $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml
-	$(xml2bib)  $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml -o datatooltk-props-en-GB.bib
+datatooltk-props-en-GB.bib	: $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml $(dictdir)/plugins-en.prop
+	$(xml2bib)  $(dictdir)/texparserlib-en.xml $(dictdir)/texjavahelplib-en.xml $(dictdir)/datatooltk-en.xml $(dictdir)/datatooltk-en-GB.xml --prop $(dictdir)/plugins-en.prop -o datatooltk-props-en-GB.bib
 
 version.tex	: $(mainclass)
 	@echo "\\date{Version " > version.tex

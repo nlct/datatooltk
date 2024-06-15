@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Arrays;
+import java.util.Locale;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -474,6 +475,37 @@ public class DatatoolGUI extends JFrame
       }
 
       helpFrame.setLocationRelativeTo(this);
+
+      Locale dictLocale = helpLib.getMessagesLocale();
+
+      String tag = dictLocale.toLanguageTag();
+      String prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
+      pluginDictURL = getClass().getResource(prop);
+
+      if (pluginDictURL == null)
+      {
+         tag = dictLocale.getLanguage();
+         prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
+         pluginDictURL = getClass().getResource(prop);
+
+         if (pluginDictURL == null)
+         {
+            tag = "en";
+            prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
+            pluginDictURL = getClass().getResource(prop);
+
+            if (pluginDictURL == null)
+            {
+               getMessageHandler().error(this,
+                 helpLib.getMessage("error.no_plugin_dict", dictLocale, "en"));
+            }
+         }
+      }
+   }
+
+   public URL getPluginDictionaryUrl()
+   {
+      return pluginDictURL;
    }
 
    public Image getLogoImage()
@@ -660,13 +692,13 @@ public class DatatoolGUI extends JFrame
    {
       if (undoName != null)
       {
-        undoItem.setText(getMessageHandler().getLabelWithValues("edit.undo",
+        undoItem.setText(getMessageHandler().getLabelWithValues("menu.edit.undo",
            undoName));
       }
 
       if (redoName != null)
       {
-        redoItem.setText(getMessageHandler().getLabelWithValues("edit.redo",
+        redoItem.setText(getMessageHandler().getLabelWithValues("menu.edit.redo",
            redoName));
       }
 
@@ -1746,6 +1778,7 @@ public class DatatoolGUI extends JFrame
    private ReplaceAllDialog replaceAllDialog;
 
    private DatatoolPlugin[] plugins;
+   private URL pluginDictURL;
 
    private String DEFAULT_UNTITLED;
 

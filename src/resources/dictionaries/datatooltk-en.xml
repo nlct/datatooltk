@@ -281,7 +281,7 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.currencies.edit_currency">Edit</entry>
 <entry key="preferences.currencies.edit_currency.mnemonic">T</entry>
 
-<entry key="preferences.currencies.reminder">If you add new currencies here, remember to also add them in your document using |DTLnewcurrencysymbol|</entry>
+<entry key="preferences.currencies.reminder">If you add new currencies here, remember to also add them in your document using \DTLnewcurrencysymbol</entry>
 
 <entry key="preferences.currencies.remove_currency">Remove</entry>
 <entry key="preferences.currencies.remove_currency.mnemonic">R</entry>
@@ -676,7 +676,7 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="message.confirm_discard">Confirm Discard</entry>
 <entry key="message.confirm_overwrite">Confirm Overwrite</entry>
 <entry key="message.discard_edit_query">Discard the edits you have just made?</entry>
-<entry key="message.input_database_name">Database Name (as used in |DTLnewdb|):</entry>
+<entry key="message.input_database_name">Database Name (as used in \DTLnewdb):</entry>
 <entry key="message.overwrite_query">Overwrite {0}?</entry>
 <entry key="message.unsaved_data">Unsaved Data</entry>
 <entry key="message.unsaved_data_query">''{0}'' has been modified. Do you want to save it?</entry>
@@ -793,7 +793,7 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 				on the column whose label is &lt;key&gt;.
 			(Only one of the merge options is permitted.)</entry>
 
-<entry key="syntax.name">{0} &lt;name&gt;	Set the database label (as used in |DTLnewdb|) to &lt;name&gt;.</entry>
+<entry key="syntax.name">{0} &lt;name&gt;	Set the database label (as used in \DTLnewdb) to &lt;name&gt;.</entry>
 
 <entry key="syntax.noautotrimlabels">{0}	Don''t trim labels.{1}</entry>
 <entry key="syntax.nodebug">{0}		Switch off debug mode. (Default.)</entry>
@@ -897,48 +897,6 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="syntax.xlsods_opts">Excel and ODS Options:</entry>
 <entry key="syntax.xls_opts">Excel Options:</entry>
 
-<!-- Plugin Messages -->
-
-<entry key="plugin.error.missing_column">Can''t find column labelled ''{0}''</entry>
-<entry key="plugin.remove_entry">Remove Entry</entry>
-
-<entry key="plugin.datagidx.add_seealso">Add "See Also" Entry</entry>
-<entry key="plugin.datagidx.Child">Child</entry>
-<entry key="plugin.datagidx.crossref">Cross-Reference</entry>
-<entry key="plugin.datagidx.CurrentLocation">Current Location (Reserved)</entry>
-<entry key="plugin.datagidx.default_name">index</entry>
-<entry key="plugin.datagidx.Description">Description</entry>
-<entry key="plugin.datagidx.edit_entry">Edit Entry</entry>
-<entry key="plugin.datagidx.FirstId">First ID (Reserved)</entry>
-<entry key="plugin.datagidx.Label">Label</entry>
-<entry key="plugin.datagidx.Location">Location (Reserved)</entry>
-<entry key="plugin.datagidx.Long">Long</entry>
-<entry key="plugin.datagidx.LongPlural">Long Plural</entry>
-<entry key="plugin.datagidx.missing_field">Missing {0}</entry>
-<entry key="plugin.datagidx.Name">Name</entry>
-<entry key="plugin.datagidx.new_entry">New Entry</entry>
-<entry key="plugin.datagidx.Plural">Plural</entry>
-<entry key="plugin.datagidx.Parent">Parent</entry>
-<entry key="plugin.datagidx.remove_seealso">Remove "See Also" Entry</entry>
-<entry key="plugin.datagidx.See">See</entry>
-<entry key="plugin.datagidx.SeeAlso">See Also</entry>
-<entry key="plugin.datagidx.Short">Short</entry>
-<entry key="plugin.datagidx.ShortPlural">Short Plural</entry>
-<entry key="plugin.datagidx.Sort">Sort</entry>
-<entry key="plugin.datagidx.Symbol">Symbol</entry>
-<entry key="plugin.datagidx.Text">Text</entry>
-<entry key="plugin.datagidx.Used">Used (Reserved)</entry>
-
-<entry key="plugin.people.Address">Address</entry>
-<entry key="plugin.people.edit_entry">Edit Entry</entry>
-<entry key="plugin.people.Email">Email</entry>
-<entry key="plugin.people.Forename">Forename</entry>
-<entry key="plugin.people.ID">ID</entry>
-<entry key="plugin.people.new_entry">New Entry</entry>
-<entry key="plugin.people.Surname">Surname</entry>
-<entry key="plugin.people.Telephone">Telephone</entry>
-<entry key="plugin.people.Title">Title</entry>
-
 <!-- Warning Messages -->
 
 <entry key="warning.title">Warning</entry>
@@ -1030,6 +988,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.syntax.unknown_field">Unknown sort field ''{0}''</entry>
 <entry key="error.syntax.unknown_option">Unknown option ''{0}''. (Use --help or -h for help.)</entry>
 <entry key="error.load_props_failed">Unable to load properties</entry>
+<entry key="error.no_plugin_dict">Unable to find plugin dictionary for locale ''{0}'' or fallback ''{1}''</entry>
 
 
 <entry key="error.title">Error</entry>
