@@ -33,9 +33,14 @@
 <entry key="action.apply.defaultkeys">format=glsignore</entry>
 
 <entry key="action.close">Close</entry>
-<entry key="action.close.mnemonic">C</entry>
+<entry key="action.close.mnemonic">O</entry>
 <entry key="action.close.keystroke">ESCAPE</entry>
 <entry key="action.close.defaultkeys">format=glsignore</entry>
+
+<entry key="action.copy">Copy</entry>
+<entry key="action.copy.mnemonic">C</entry>
+<entry key="action.copy.keystroke">control C</entry>
+<entry key="action.copy.defaultkeys">format=glsignore</entry>
 
 <!-- Menus and Buttons for the Help System -->
 
@@ -172,6 +177,10 @@
 <entry key="help.settings.nav.label_limit.mnemonic">M</entry>
 <entry key="help.settings.nav.show_label">Include text</entry>
 <entry key="help.settings.nav.show_label.mnemonic">T</entry>
+
+<!-- Version information -->
+<entry key="about.version">{0} ({1})</entry>
+<entry key="about.library.version">Bundled with {0} version {1} ({2})</entry>
 
 <!-- Index Map -->
 <entry key="indexmap.name_description">{0}: {1}</entry>

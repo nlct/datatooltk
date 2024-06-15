@@ -36,6 +36,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.texparserlib.TeXParser;
+import com.dickimawbooks.texparserlib.html.HtmlTag;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.*;
@@ -402,16 +403,39 @@ public class DatatoolTk
 
    public String getAppInfo()
    {
+      return getAppInfo(false);
+   }
+
+   public String getAppInfo(boolean html)
+   {
+      String par = html ? "<p>" : String.format("%n%n");
+      String nl = html ? "<br>" : String.format("%n");
+
       StringBuilder builder = new StringBuilder();
+
+      builder.append(
+        getLabelWithValues("about.version", APP_NAME, APP_VERSION, APP_DATE)
+      );
+
+      builder.append(nl);
 
 // Copyright line shouldn't get translated (according to
 // http://www.gnu.org/prep/standards/standards.html)
 
       builder.append(String.format(
-        "%s%nCopyright (C) %s Nicola L. C. Talbot (www.dickimaw-books.com)%n%s",
-        getLabelWithValues("about.version", APP_NAME, APP_VERSION, APP_DATE),
-        COPYRIGHT_YEAR,
-        getLabel("about.legal")));
+        "Copyright (C) %s Nicola L. C. Talbot (%s)",
+        COPYRIGHT_YEAR, getInfoUrl(html, "www.dickimaw-books.com")));
+
+      builder.append(nl);
+
+      String legalText = getLabel("about.legal");
+
+      if (html)
+      {
+         legalText = TeXJavaHelpLib.encodeHTML(legalText, false).replaceAll("\n", nl);
+      }
+
+      builder.append(legalText);
 
       TeXJavaHelpLib helpLib = getHelpLib();
 
@@ -419,29 +443,67 @@ public class DatatoolTk
 
       if (translator != null && !translator.isEmpty())
       {
-         builder.append(String.format("%n%s", translator));
+         builder.append(par);
+
+         if (html)
+         {
+            translator = TeXJavaHelpLib.encodeHTML(translator, false);
+         }
+
+         builder.append(translator);
       }
 
       String ack = helpLib.getMessageIfExists("about.acknowledgements");
 
       if (ack != null && !ack.isEmpty())
       {
-         builder.append(String.format("%n%s", ack));
+         builder.append(par);
+
+         if (html)
+         {
+            ack = TeXJavaHelpLib.encodeHTML(ack, false);
+         }
+
+         builder.append(ack);
       }
 
-      builder.append(String.format("%n"));
+      builder.append(par);
       builder.append(getMessageWithFallback("about.library.version",
         "Bundled with {0} version {1} ({2})",
         "texjavahelplib.jar", TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
-      builder.append("https://github.com/nlct/texjavahelplib");
+      builder.append(nl);
 
-      builder.append(String.format("%n"));
+      builder.append(getInfoUrl(html, "https://github.com/nlct/texjavahelplib"));
+
+      builder.append(par);
       builder.append(getMessageWithFallback("about.library.version",
         "Bundled with {0} version {1} ({2})",
         "texparserlib.jar", TeXParser.VERSION, TeXParser.VERSION_DATE));
-      builder.append("https://github.com/nlct/texparser");
+      builder.append(nl);
+      builder.append(getInfoUrl(html, "https://github.com/nlct/texparser"));
 
       return builder.toString();
+   }
+
+   public String getInfoUrl(boolean html, String url)
+   {
+      if (html)
+      {
+         String href = url;
+
+         if (!url.startsWith("http"))
+         {
+            href = "https://"+url;
+         }
+
+         return String.format("<a href=\"%s\">%s</a>", 
+           HtmlTag.encodeAttributeValue(href, true), 
+           TeXJavaHelpLib.encodeHTML(url, false));
+      }
+      else
+      {
+         return url;
+      }
    }
 
    public void version()
@@ -1785,10 +1847,12 @@ public class DatatoolTk
       }
    }
 
-   public static final String APP_VERSION = "1.9";
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_DATE = "2018-07-06";
-   public static final String COPYRIGHT_YEAR = "2014-2018";
+   public static final String APP_VERSION = "1.9.20240615";
+   public static final String APP_DATE = "2024-06-15";
+   public static final String START_COPYRIGHT_YEAR = "2014";
+   public static final String COPYRIGHT_YEAR
+    = START_COPYRIGHT_YEAR+"-"+APP_DATE.substring(0,4);
 
    private LoadSettings loadSettings;
 

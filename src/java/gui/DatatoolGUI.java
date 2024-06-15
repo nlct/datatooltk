@@ -416,6 +416,10 @@ public class DatatoolGUI extends JFrame
       helpM.add(resources.createJMenuItem(
          "help", "about", this, toolBar));
 
+      aboutDialog = new MessageDialog(this,
+       getMessageHandler().getLabelWithValues("about.title", DatatoolTk.APP_NAME),
+       true, helpLib, getMessageHandler().getDatatoolTk().getAppInfo(true));
+
       settings.setPasswordReader(new GuiPasswordReader(messageHandler, this));
 
       getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -954,11 +958,7 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("about"))
       {
-         JOptionPane.showMessageDialog(this, 
-           getMessageHandler().getDatatoolTk().getAppInfo(),
-           getMessageHandler().getLabelWithValues("about.title", 
-             DatatoolTk.APP_NAME),
-           JOptionPane.PLAIN_MESSAGE);
+         aboutDialog.setVisible(true);
       }
       else if (action.equals("manual"))
       {
@@ -1776,6 +1776,8 @@ public class DatatoolGUI extends JFrame
    private FindCellDialog findCellDialog;
 
    private ReplaceAllDialog replaceAllDialog;
+
+   private MessageDialog aboutDialog;
 
    private DatatoolPlugin[] plugins;
    private URL pluginDictURL;
