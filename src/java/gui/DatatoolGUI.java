@@ -551,6 +551,23 @@ public class DatatoolGUI extends JFrame
 
    public JButton createHelpButton(String id, JComponent comp)
    {
+      TeXJavaHelpLib helpLib = getHelpLib();
+      NavigationNode node = helpLib.getNavigationNodeById(id);
+
+      if (node == null)
+      {
+         node = helpLib.getNavigationNodeById("sec:"+id);
+
+         if (node == null)
+         {
+            getMessageHandler().error(this, "No node for ID "+id);
+         }
+         else
+         {
+            id = node.getKey();
+         }
+      }
+
       return new JButton(getHelpLib().createHelpAction(id,
         getKeyStroke("menu.help.manual"), comp));
    }
