@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -18,21 +18,27 @@
 */
 package com.dickimawbooks.datatooltk;
 
-import java.util.Properties;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.Vector;
-import java.util.Random;
+
 import java.util.InvalidPropertiesFormatException;
-import java.awt.Font;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Vector;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import java.text.Collator;
+
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.Locale;
+import java.awt.Font;
 
 import org.xml.sax.SAXException;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
@@ -103,6 +109,17 @@ public class DatatoolSettings extends Properties
       };
    }
 
+   public String getTypeLabel(DatumType type)
+   {
+      if (TYPE_LABELS == null)
+      {
+         initLabels();
+      }
+
+      return TYPE_LABELS[type.getValue()+1];
+   }
+
+   @Deprecated
    public String getTypeLabel(int type)
    {
       if (TYPE_LABELS == null)
@@ -121,6 +138,16 @@ public class DatatoolSettings extends Properties
       }
 
       return TYPE_LABELS;
+   }
+
+   public int getTypeMnemonic(DatumType type)
+   {
+      if (TYPE_MNEMONICS == null)
+      {
+         initLabels();
+      }
+
+      return TYPE_MNEMONICS[type.getValue()+1];
    }
 
    public int[] getTypeMnemonics()
@@ -597,6 +624,40 @@ public class DatatoolSettings extends Properties
       }
    }
 
+   public Locale getNumericLocale()
+   {
+      String prop = getProperty("numeric-locale");
+
+      if (prop != null)
+      {
+         return Locale.forLanguageTag(prop.toString());
+      }
+
+      Locale locale = getLocaleProperty("sort-locale",
+         Locale.getDefault(Locale.Category.FORMAT));
+
+      setProperty("numeric-locale", locale.toString());
+
+      return locale;
+   }
+
+   public void setNumericLocale(Locale locale)
+   {
+      if (locale == null)
+      {
+         remove("numeric-locale");
+      }
+      else
+      {
+         setProperty("numeric-locale", locale.toString());
+      }
+   }
+
+   public Collator getSortCollator()
+   {
+      return sortCollator;
+   }
+
    public String getSortLocale()
    {
       return getProperty("sort-locale");
@@ -607,10 +668,12 @@ public class DatatoolSettings extends Properties
       if (locale == null)
       {
          remove("sort-locale");
+         sortCollator = null;
       }
       else
       {
          setProperty("sort-locale", locale.toLanguageTag());
+         sortCollator = Collator.getInstance(locale);
       }
    }
 
@@ -619,10 +682,12 @@ public class DatatoolSettings extends Properties
       if (locale == null || "".equals(locale))
       {
          remove("sort-locale");
+         sortCollator = null;
       }
       else
       {
          setProperty("sort-locale", locale);
+         sortCollator = Collator.getInstance(Locale.forLanguageTag(locale));
       }
    }
 
@@ -1191,6 +1256,35 @@ public class DatatoolSettings extends Properties
       return new Font(getFontName(), Font.PLAIN, getFontSize());
    }
 
+   public void setCellWidth(int cellWidth, DatumType type)
+   {
+      String tag="";
+
+      switch (type)
+      {
+         case STRING:
+            tag = "string";
+         break;
+         case UNKNOWN:
+            tag = "unset";
+         break;
+         case INTEGER:
+            tag = "int";
+         break;
+         case DECIMAL:
+            tag = "real";
+         break;
+         case CURRENCY:
+            tag = "currency";
+         break;
+         default:
+            assert false : "Invalid data type "+type;
+      }
+
+      setProperty("cellwidth."+tag, ""+cellWidth);
+   }
+
+   @Deprecated
    public void setCellWidth(int cellWidth, int type)
    {
       String tag;
@@ -1220,6 +1314,61 @@ public class DatatoolSettings extends Properties
       setProperty("cellwidth."+tag, ""+cellWidth);
    }
 
+   public int getCellWidth(DatumType type)
+   {
+      String tag;
+      int defValue;
+
+      switch (type)
+      {
+         case STRING:
+            tag = "string";
+            defValue = 300;
+         break;
+         case UNKNOWN:
+            tag = "unset";
+            defValue = 100;
+         break;
+         case INTEGER:
+            tag = "int";
+            defValue = 40;
+         break;
+         case DECIMAL:
+            tag = "real";
+            defValue = 60;
+         break;
+         case CURRENCY:
+            tag = "currency";
+            defValue = 150;
+         break;
+         default:
+            throw new IllegalArgumentException(
+              "getCellWidth(DatumType): Invalid data type "+type);
+      }
+
+      String prop = getProperty("cellwidth."+tag);
+
+      if (prop == null)
+      {
+         setCellWidth(defValue, type);
+         return defValue;
+      }
+
+      try
+      {
+         return Integer.parseInt(prop);
+      }
+      catch (NumberFormatException e)
+      {
+         setCellWidth(defValue, type);
+         messageHandler.debug("Property 'cellwidth."+tag
+           +"' should be an integer. Found: '"+prop+"'");
+      }
+
+      return defValue;
+   }
+
+   @Deprecated
    public int getCellWidth(int type)
    {
       String tag;
@@ -1308,6 +1457,24 @@ public class DatatoolSettings extends Properties
    public void setCellEditorWidth(int maxCharsPerLine)
    {
       setProperty("celleditorwidth", ""+maxCharsPerLine);
+   }
+
+   public void setStringCellEditable(boolean enable)
+   {
+      setProperty("stringcelleditable", ""+enable);
+   }
+
+   public boolean isStringCellEditable()
+   {
+      String prop = getProperty("stringcelleditable");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setStringCellEditable(false);
+         return false;
+      }
+
+      return Boolean.parseBoolean(prop);
    }
 
    public void setSyntaxHighlighting(boolean enable)
@@ -1464,21 +1631,14 @@ public class DatatoolSettings extends Properties
 
    public Locale getLocaleProperty(String propName, Locale defaultValue)
    {
-      Object value = get(propName);
+      String value = getProperty(propName);
 
       if (value == null)
       {
          return defaultValue;
       }
 
-      if (value instanceof Locale)
-      {
-         return (Locale)value;
-      }
-      else
-      {
-         return Locale.forLanguageTag(value.toString());
-      }
+      return Locale.forLanguageTag(value);
    }
 
    public String getDictionary()
@@ -1737,6 +1897,8 @@ public class DatatoolSettings extends Properties
    private int compatLevel = COMPAT_LATEST;
 
    private LoadSettings loadSettings;
+
+   private Collator sortCollator;
 
    public static final int COMPAT_LATEST=0;
    public static final int COMPAT_1_6=1;

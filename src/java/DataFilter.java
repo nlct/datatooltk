@@ -23,6 +23,8 @@ import java.util.Locale;
 import java.util.regex.*;
 import java.text.Collator;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+
 import com.dickimawbooks.datatooltk.io.*;
 
 public class DataFilter
@@ -169,7 +171,7 @@ class FieldFilter
          if (header.getKey().equals(label))
          {
             found = true;
-            this.type = header.getType();
+            this.type = header.getDatumType();
             break;
          }
 
@@ -187,18 +189,18 @@ class FieldFilter
       {
          pattern = Pattern.compile(value);
       }
-      else if (type == DatatoolSettings.TYPE_REAL)
+      else if (type == DatumType.DECIMAL)
       {
          try
          {
-            match = new Double(value);
+            match = Double.valueOf(value);
          }
          catch (NumberFormatException e)
          {
             match = value;
          }
       }
-      else if (type == DatatoolSettings.TYPE_INTEGER)
+      else if (type == DatumType.INTEGER)
       {
          try
          {
@@ -217,13 +219,15 @@ class FieldFilter
 
    public boolean matches(DatatoolRow row)
    {
+      Datum datum = row.get(colIdx);
+
+      String strVal = datum.toString();
+
       if (pattern != null)
       {
-         Matcher m = pattern.matcher(row.get(colIdx));
+         Matcher m = pattern.matcher(strVal);
          return m.matches();
       }
-
-      String strVal = row.get(colIdx);
 
       int result = 0;
 
@@ -248,17 +252,13 @@ class FieldFilter
                result = collator.compare(strVal, match);
             }
          }
-         else if (type == DatatoolSettings.TYPE_REAL)
+         else if (type == DatumType.DECIMAL)
          {
-            Double value = (strVal.isEmpty() ? new Double(0.0) : 
-              new Double(strVal));
-            result = value.compareTo((Double)match);
+            result = Double.compare(datum.doubleValue(), ((Number)match).doubleValue());
          }
-         else if (type == DatatoolSettings.TYPE_INTEGER)
+         else if (type == DatumType.INTEGER)
          {
-            Integer value = (strVal.isEmpty() ? Integer.valueOf(0) :
-              Integer.valueOf(strVal));
-            result = value.compareTo((Integer)match);
+            result = Integer.compare(datum.intValue(), ((Number)match).intValue());
          }
          else
          {
@@ -284,7 +284,7 @@ class FieldFilter
    }
 
    private int colIdx;
-   private int type;
+   private DatumType type;
    private int operator;
    private Object match = null;
    private Pattern pattern = null;

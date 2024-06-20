@@ -25,6 +25,7 @@ import java.util.*;
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.PreambleParser;
 import com.dickimawbooks.texparserlib.latex.probsoln.*;
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -86,8 +87,6 @@ public class DatatoolProbSoln implements DatatoolImport
 
       boolean hasVerbatim = false;
 
-      String encoding = settings.getTeXEncoding();
-
       PreambleParser preambleParser = new PreambleParser(texApp);
       TeXParser texParser = new TeXParser(preambleParser);
 
@@ -96,31 +95,24 @@ public class DatatoolProbSoln implements DatatoolImport
 
       preambleParser.usepackage(probSolnSty);
 
-      if (encoding == null)
-      {
-         texParser.parse(file);
-      }
-      else
-      {
-         texParser.parse(file, Charset.forName(encoding));
-      }
+      texParser.parse(file);
 
       int numDataSets = probSolnSty.getDatabaseCount();
 
       String key = messageHandler.getLabel("probsoln.label");
-      db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
+      db.addColumn(new DatatoolHeader(db, key, key, DatumType.STRING));
 
       if (numDataSets > 1)
       {
          key = messageHandler.getLabel("probsoln.set");
-         db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
+         db.addColumn(new DatatoolHeader(db, key, key, DatumType.STRING));
       }
 
       key = messageHandler.getLabel("probsoln.question");
-      db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
+      db.addColumn(new DatatoolHeader(db, key, key, DatumType.STRING));
 
       key = messageHandler.getLabel("probsoln.answer");
-      db.addColumn(new DatatoolHeader(db, key, key, settings.TYPE_STRING));
+      db.addColumn(new DatatoolHeader(db, key, key, DatumType.STRING));
 
       Iterator<ProbSolnData> allDataIt = probSolnSty.allEntriesIterator();
 

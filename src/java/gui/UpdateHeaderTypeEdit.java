@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk.gui;
 
 import javax.swing.undo.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -27,7 +28,8 @@ import com.dickimawbooks.datatooltk.*;
  */
 public class UpdateHeaderTypeEdit extends AbstractUndoableEdit
 {
-   public UpdateHeaderTypeEdit(DatatoolDbPanel panel, int col, DatatoolHeader header, int oldType, int newType)
+   public UpdateHeaderTypeEdit(DatatoolDbPanel panel, int col, DatatoolHeader header,
+     DatumType oldType, DatumType newType)
    {
       super();
       this.panel = panel;
@@ -68,7 +70,8 @@ public class UpdateHeaderTypeEdit extends AbstractUndoableEdit
    }
 
    private DatatoolDbPanel panel;
-   private int col, oldType, newType;
+   private int col;
+   private DatumType oldType, newType;
    private DatatoolHeader header;
 
    private static String NAME = null;

@@ -197,8 +197,9 @@ public class CellDialog extends JDialog
 
       try
       {
+         Datum datum = db.getRow(row).get(col);
          document.setText(
-            db.getRow(row).get(col).replaceAll("\\\\DTLpar *", "\n\n"));
+            datum.getText().replaceAll("\\\\DTLpar *", "\n\n"));
       }
       catch (BadLocationException e)
       {

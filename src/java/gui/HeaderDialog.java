@@ -22,6 +22,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -116,7 +118,8 @@ public class HeaderDialog extends JDialog
       return requestEdit(header, db, true);
    }
 
-   public DatatoolHeader requestEdit(DatatoolHeader aHeader, DatatoolDb db, boolean checkUnique)
+   public DatatoolHeader requestEdit(DatatoolHeader aHeader, DatatoolDb db,
+      boolean checkUnique)
    {
       this.db = db;
       this.header = aHeader;
@@ -127,7 +130,7 @@ public class HeaderDialog extends JDialog
 
       titleField.setText(header.getTitle());
       labelField.setText(header.getKey());
-      typeBox.setSelectedIndex(header.getType()+1);
+      typeBox.setSelectedIndex(header.getDatumType().getValue()+1);
 
       titleField.requestFocusInWindow();
 
@@ -155,14 +158,15 @@ public class HeaderDialog extends JDialog
 
    private void okay()
    {
-      int type = typeBox.getSelectedIndex()-1;
+      int typeId = typeBox.getSelectedIndex()-1;
+      DatumType type = DatumType.toDatumType(typeId);
 
       DatatoolSettings settings = getSettings();
 
       String[] typeLabels = settings.getTypeLabels();
 
-      if (colIdx > -1 && type != DatatoolSettings.TYPE_UNKNOWN
-           && type != DatatoolSettings.TYPE_STRING)
+      if (colIdx > -1 && type != DatumType.UNKNOWN
+           && type != DatumType.STRING)
       {
          // Is the requested data type valid for this column?
 
@@ -173,52 +177,52 @@ public class HeaderDialog extends JDialog
          {
             rowIdx++;
 
-            String element = en.nextElement();
+            Datum element = en.nextElement();
 
-            int thisType = db.getType(element);
+            DatumType thisType = element.getDatumType();
 
             switch (type)
             {
-               case DatatoolSettings.TYPE_INTEGER:
-                  if (thisType == DatatoolSettings.TYPE_REAL
-                     || thisType == DatatoolSettings.TYPE_CURRENCY
-                     || thisType == DatatoolSettings.TYPE_STRING)
+               case INTEGER:
+                  if (thisType == DatumType.DECIMAL
+                     || thisType == DatumType.CURRENCY
+                     || thisType == DatumType.STRING)
                   {
                      messageHandler.error(this, 
                         messageHandler.getLabelWithValues(
                             "error.invalid_header_choice",
-                            typeLabels[type+1],
+                            typeLabels[type.getValue()+1],
                             rowIdx,
-                            typeLabels[thisType+1]
+                            typeLabels[thisType.getValue()+1]
                           ));
 
                      return;
                   }
                break;
-               case DatatoolSettings.TYPE_REAL:
-                  if (thisType == DatatoolSettings.TYPE_CURRENCY
-                   || thisType == DatatoolSettings.TYPE_STRING)
+               case DECIMAL:
+                  if (thisType == DatumType.CURRENCY
+                   || thisType == DatumType.STRING)
                   {
                      messageHandler.error(this, 
                         messageHandler.getLabelWithValues(
                             "error.invalid_header_choice",
-                            typeLabels[type+1],
+                            typeLabels[type.getValue()+1],
                             rowIdx,
-                            typeLabels[thisType+1]
+                            typeLabels[thisType.getValue()+1]
                           ));
 
                      return;
                   }
                break;
-               case DatatoolSettings.TYPE_CURRENCY:
-                  if (thisType == DatatoolSettings.TYPE_STRING)
+               case CURRENCY:
+                  if (thisType == DatumType.STRING)
                   {
                      messageHandler.error(this, 
                         messageHandler.getLabelWithValues(
                           "error.invalid_header_choice",
-                          typeLabels[type+1],
+                          typeLabels[type.getValue()+1],
                           rowIdx,
-                          typeLabels[thisType+1]
+                          typeLabels[thisType.getValue()+1]
                          ));
 
                      return;

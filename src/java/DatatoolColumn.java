@@ -32,11 +32,11 @@ public class DatatoolColumn
       this.header = header;
       this.colIdx = colIdx;
 
-      elements = new String[numRows];
+      elements = new Datum[numRows];
 
       for (int i = 0; i < numRows; i++)
       {
-         elements[i] = "";
+         elements[i] = new Datum(header.getDb().getSettings());
       }
    }
 
@@ -54,7 +54,7 @@ public class DatatoolColumn
 
       int n = data.size();
 
-      elements = new String[n];
+      elements = new Datum[n];
 
       for (int i = 0; i < n; i++)
       {
@@ -94,7 +94,7 @@ public class DatatoolColumn
 
    private DatatoolHeader header;
 
-   private String[] elements;
+   private Datum[] elements;
 
    private int colIdx;
 }

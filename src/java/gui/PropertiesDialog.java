@@ -30,6 +30,8 @@ import javax.swing.table.*;
 import javax.swing.event.*;
 import javax.swing.border.Border;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -851,7 +853,8 @@ public class PropertiesDialog extends JDialog
 
       for (int i = 0; i < cellWidthFields.length; i++)
       {
-         cellWidthFields[i].setValue(settings.getCellWidth(i-1));
+         cellWidthFields[i].setValue(
+           settings.getCellWidth(DatumType.toDatumType(i-1)));
       }
 
       editorHeightField.setValue(settings.getCellEditorHeight());
@@ -1235,7 +1238,8 @@ public class PropertiesDialog extends JDialog
 
       for (int i = 0; i < cellWidthFields.length; i++)
       {
-         settings.setCellWidth(cellWidthFields[i].getValue(), i-1);
+         settings.setCellWidth(cellWidthFields[i].getValue(), 
+          DatumType.toDatumType(i-1));
       }
 
       settings.setCellEditorHeight(editorHeightField.getValue());

@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk.gui;
 
 import javax.swing.undo.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -42,23 +43,23 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
          NAME = panel.getMessageHandler().getLabel("undo.replace_row");
       }
 
-      oldTypes = new int[panel.getColumnCount()];
+      oldTypes = new DatumType[panel.getColumnCount()];
 
       for (int i = 0, n = oldTypes.length; i < n; i++)
       {
-         oldTypes[i] = panel.db.getHeader(i).getType();
+         oldTypes[i] = panel.db.getHeader(i).getDatumType();
       }
 
       panel.db.replaceRow(row, newRow);
       panel.dataUpdated(false);
 
-      newTypes = new int[panel.getColumnCount()];
+      newTypes = new DatumType[panel.getColumnCount()];
 
       typesChanged = false;
 
       for (int i = 0, n = newTypes.length; i < n; i++)
       {
-         newTypes[i] = panel.db.getHeader(i).getType();
+         newTypes[i] = panel.db.getHeader(i).getDatumType();
 
          if (!typesChanged && i < oldTypes.length)
          {
@@ -138,7 +139,7 @@ public class ReplaceRowEdit extends AbstractUndoableEdit
    }
 
    private int row;
-   private int[] oldTypes, newTypes;
+   private DatumType[] oldTypes, newTypes;
    private boolean typesChanged;
    private DatatoolRow newRow, oldRow;
    private DatatoolDbPanel panel;

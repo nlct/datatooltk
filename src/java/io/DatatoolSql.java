@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk.io;
 
 import java.sql.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -89,7 +90,7 @@ public class DatatoolSql implements DatatoolImport
                case Types.DOUBLE:
                case Types.FLOAT:
                case Types.REAL:
-                  header.setType(settings.TYPE_REAL);
+                  header.setType(DatumType.DECIMAL);
                break;
                case Types.INTEGER:
                case Types.BINARY:
@@ -98,15 +99,15 @@ public class DatatoolSql implements DatatoolImport
                case Types.BIGINT:
                case Types.SMALLINT:
                case Types.TINYINT:
-                  header.setType(settings.TYPE_INTEGER);
+                  header.setType(DatumType.INTEGER);
                break;
                default:
-                  header.setType(settings.TYPE_STRING);
+                  header.setType(DatumType.STRING);
             }
 
             if (data.isCurrency(i))
             {
-               header.setType(settings.TYPE_CURRENCY);
+               header.setType(DatumType.CURRENCY);
             }
 
             db.addColumn(header);
@@ -126,15 +127,17 @@ public class DatatoolSql implements DatatoolImport
             for (int i = 1; i <= colCount; i++)
             {
                Object obj = rs.getObject(i);
-               String value;
+               Datum value;
 
                if (obj == null)
                {
-                  value = "\\@dtlnovalue ";
+                  value = Datum.createNull(settings);
                }
                else
                {
-                  value = mapFieldIfRequired(obj.toString()).replaceAll("\n\n+", "\\\\DTLpar ");
+                  String strValue = mapFieldIfRequired(obj.toString());
+                  strValue = strValue.replaceAll("\n\n+", "\\\\DTLpar ");
+                  value = Datum.valueOf(strValue, settings);
                }
 
                row.addCell(i-1, value);

@@ -37,6 +37,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.xml.sax.SAXException;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.*;
@@ -1718,7 +1719,13 @@ public class DatatoolGUI extends JFrame
       return settings.getCellHeight();
    }
 
+   @Deprecated
    public int getCellWidth(int type)
+   {
+      return settings.getCellWidth(type);
+   }
+
+   public int getCellWidth(DatumType type)
    {
       return settings.getCellWidth(type);
    }

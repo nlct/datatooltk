@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk.gui;
 
 import javax.swing.undo.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -88,11 +89,11 @@ public class InsertRowEdit extends AbstractUndoableEdit
 
    private void initOldTypes()
    {
-      oldTypes = new int[panel.getColumnCount()];
+      oldTypes = new DatumType[panel.getColumnCount()];
 
       for (int i = 0, n = panel.getColumnCount(); i < n; i++)
       {
-         oldTypes[i] = panel.db.getHeader(i).getType();
+         oldTypes[i] = panel.db.getHeader(i).getDatumType();
       }
    }
 
@@ -107,13 +108,13 @@ public class InsertRowEdit extends AbstractUndoableEdit
 
       panel.addRowButton();
 
-      newTypes = new int[panel.getColumnCount()];
+      newTypes = new DatumType[panel.getColumnCount()];
 
       typesChanged = false;
 
       for (int i = 0, n = panel.getColumnCount(); i < n; i++)
       {
-         newTypes[i] = panel.db.getHeader(i).getType();
+         newTypes[i] = panel.db.getHeader(i).getDatumType();
 
          if (!typesChanged && i < oldTypes.length)
          {
@@ -214,7 +215,7 @@ public class InsertRowEdit extends AbstractUndoableEdit
    private DatatoolRow row;
 
    private DatatoolHeader[] newHeaders;
-   private int[] oldTypes, newTypes;
+   private DatumType[] oldTypes, newTypes;
    private boolean typesChanged;
 
    private String undoInfo, redoInfo;

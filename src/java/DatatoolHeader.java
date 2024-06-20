@@ -21,6 +21,8 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.util.regex.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+
 import com.dickimawbooks.datatooltk.io.*;
 import com.dickimawbooks.datatooltk.gui.*;
 
@@ -41,10 +43,10 @@ public class DatatoolHeader
 
    public DatatoolHeader(DatatoolDb db, String key, String title)
    {
-      this(db, key, title, DatatoolSettings.TYPE_UNKNOWN);
+      this(db, key, title, DatumType.UNKNOWN);
    }
 
-   public DatatoolHeader(DatatoolDb db, String key, String title, int type)
+   public DatatoolHeader(DatatoolDb db, String key, String title, DatumType type)
    {
       super();
       this.db = db;
@@ -76,9 +78,15 @@ public class DatatoolHeader
       setType(type);
    }
 
-   public int getType()
+   public DatumType getDatumType()
    {
       return type;
+   }
+
+   @Deprecated
+   public int getType()
+   {
+      return type.getValue();
    }
 
    public String getKey()
@@ -91,17 +99,23 @@ public class DatatoolHeader
       return title;
    }
 
-   public void setType(int type)
+   public void setType(DatumType type)
    {
-      if (type < DatatoolSettings.TYPE_UNKNOWN
-       || type > DatatoolSettings.TYPE_CURRENCY)
+      this.type = type;
+   }
+
+   @Deprecated
+   public void setType(int typeId)
+   {
+      if (typeId < DatatoolSettings.TYPE_UNKNOWN
+       || typeId > DatatoolSettings.TYPE_CURRENCY)
       {
          throw new IllegalArgumentException(
             messageHandler.getLabelWithValues(
-              "error.invalid_data_type", type));
+              "error.invalid_data_type", typeId));
       }
 
-      this.type = type;
+      this.type = DatumType.toDatumType(typeId);
    }
 
    public void setKey(String key)
@@ -156,5 +170,5 @@ public class DatatoolHeader
 
    private String key;
    private String title;
-   private int type = DatatoolSettings.TYPE_UNKNOWN;
+   private DatumType type = DatumType.UNKNOWN;
 }

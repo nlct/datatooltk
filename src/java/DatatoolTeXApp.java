@@ -19,8 +19,10 @@
 package com.dickimawbooks.datatooltk;
 
 import java.util.logging.ErrorManager;
-import java.awt.Component;
 import java.io.File;
+import java.nio.charset.Charset;
+
+import java.awt.Component;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
@@ -34,6 +36,28 @@ public class DatatoolTeXApp extends TeXAppAdapter
    {
       super();
       this.messageHandler = messageHandler;
+   }
+
+   @Override
+   public Charset getDefaultCharset()
+   {
+      Charset charset = Charset.defaultCharset();
+
+      String encoding = messageHandler.getSettings().getTeXEncoding();
+
+      if (encoding != null)
+      {
+         try
+         {
+            charset = Charset.forName(encoding);
+         }
+         catch (Exception e)
+         {
+            messageHandler.warning(e);
+         }
+      }
+
+      return charset;
    }
 
    @Override

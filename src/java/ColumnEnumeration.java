@@ -25,7 +25,7 @@ import java.util.Vector;
  * Enumeration over columns of a database.
  */
 
-public class ColumnEnumeration implements Enumeration<String>
+public class ColumnEnumeration implements Enumeration<Datum>
 {
    public ColumnEnumeration(Vector<DatatoolRow> data, int colIdx)
    {
@@ -39,9 +39,9 @@ public class ColumnEnumeration implements Enumeration<String>
       return rowIndex < data.size();
    }
 
-   public String nextElement()
+   public Datum nextElement()
    {
-      String element = data.get(rowIndex).get(columnIndex);
+      Datum element = data.get(rowIndex).get(columnIndex);
 
       rowIndex++;
 

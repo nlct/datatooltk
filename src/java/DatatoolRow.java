@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -18,14 +18,16 @@
 */
 package com.dickimawbooks.datatooltk;
 
-import java.util.Vector;
-import java.util.Locale;
 import java.text.Collator;
+import java.util.Locale;
+import java.util.Vector;
+
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 
 /**
  * Class representing a row of data.
  */
-public class DatatoolRow extends Vector<String>
+public class DatatoolRow extends Vector<Datum>
    implements Comparable<DatatoolRow>
 {
    private DatatoolRow()
@@ -47,6 +49,27 @@ public class DatatoolRow extends Vector<String>
 
    public void setCell(int colIdx, String value)
    {
+      Datum datum;
+
+      if (colIdx < size())
+      {
+         datum = get(colIdx);
+         DatumType headerType = db.getColumnDatumType(colIdx);
+
+         if (datum != null && datum.getDatumType() == headerType
+              && headerType == DatumType.STRING)
+         {
+            datum.setText(value);
+            return;
+         }
+      }
+
+      datum = Datum.valueOf(value, db.getSettings());
+      setCell(colIdx, datum);
+   }
+
+   public void setCell(int colIdx, Datum value)
+   {
       if (colIdx >= size())
       {
          addCell(colIdx, value);
@@ -59,6 +82,12 @@ public class DatatoolRow extends Vector<String>
 
    public void addCell(int colIdx, String value)
    {
+      Datum datum = Datum.valueOf(value, db.getSettings());
+      addCell(colIdx, datum);
+   }
+
+   public void addCell(int colIdx, Datum value)
+   {
       int n = size();
 
       if (colIdx == n)
@@ -69,7 +98,7 @@ public class DatatoolRow extends Vector<String>
       {
          for (int i = n; i < colIdx; i++)
          {
-            add(new String());
+            add(new Datum(db.getSettings()));
          }
 
          add(value);
@@ -80,64 +109,18 @@ public class DatatoolRow extends Vector<String>
       }
    }
 
+   @Override
    public int compareTo(DatatoolRow row)
    {
       int sortColumn = db.getSortColumn();
-      int columnType = db.getColumnType(sortColumn);
 
-      try
-      {
-         if (columnType == DatatoolSettings.TYPE_REAL)
-         {
-            Float x = Float.valueOf(get(sortColumn));
+      Datum x = get(sortColumn);
+      Datum y = row.get(sortColumn);
 
-            Float y = Float.valueOf(row.get(sortColumn));
+      int result = x.compareTo(y, db.getColumnDatumType(sortColumn), 
+        db.isSortCaseSensitive());
 
-            return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
-         }
-         else if (columnType == DatatoolSettings.TYPE_INTEGER)
-         {
-
-            Integer x = Integer.valueOf(get(sortColumn));
-
-            Integer y = Integer.valueOf(row.get(sortColumn));
-
-            return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
-         }
-         else if (columnType == DatatoolSettings.TYPE_CURRENCY)
-         {
-            Currency x = db.parseCurrency(get(sortColumn));
-
-            Currency y = db.parseCurrency(row.get(sortColumn));
-
-            return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
-         }
-      }
-      catch (NumberFormatException e)
-      {
-      }
-
-      String x = get(sortColumn);
-      String y = row.get(sortColumn);
-
-      Locale locale = db.getSortLocale();
-
-      if (locale != null)
-      {
-         Collator collator = Collator.getInstance(locale);
-
-         int result = collator.compare(x, y);
-
-         return db.isSortAscending() ? result : -result;
-      }
-
-      if (!db.isSortCaseSensitive())
-      {
-         x = x.toLowerCase();
-         y = y.toLowerCase();
-      }
-
-      return db.isSortAscending() ? x.compareTo(y) : y.compareTo(x);
+      return db.isSortAscending() ? result : -result;
    }
 
    public void setDatabase(DatatoolDb db)

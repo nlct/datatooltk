@@ -156,7 +156,6 @@ public class DatatoolDb
    {
       DatatoolDb db = null;
       boolean hasVerbatim = false;
-      String encoding = settings.getTeXEncoding();
 
       MessageHandler messageHandler = settings.getMessageHandler();
       TeXApp texApp = messageHandler.getTeXApp();
@@ -176,14 +175,16 @@ public class DatatoolDb
       {
          messageHandler.startBuffering();
 
-         if (encoding == null || encoding.isEmpty())
-         {
-            texParser.parse(dbFile);
-         }
-         else
-         {
-            texParser.parse(dbFile, Charset.forName(encoding));
-         }
+         texParser.putControlSequence(true,
+            new TextualContentCommand(DataToolSty.DEFAULT_EXT, "dbtex"));
+
+         IOSettings ioSettings
+            = IOSettings.fetchReadSettings(sty, texParser, texParser);
+
+         TeXPath texPath = new TeXPath(texParser, dbFile);
+         texParser.push(new EndRead());
+
+         DataBase.read(sty, texPath, ioSettings, texParser, texParser);
 
          ControlSequence cs = texParser.getControlSequence("dtllastloadeddb");
          String dbName = null;
@@ -191,14 +192,8 @@ public class DatatoolDb
          if (cs != null && cs instanceof Expandable)
          {
             // should be expandable since it's defined in the .dbtex
-            // file using \def\dtllastloadeddb{name}
    
-            TeXObjectList expanded = ((Expandable)cs).expandfully(texParser);
-   
-            if (expanded != null)
-            {
-               dbName = expanded.toString(texParser);
-            }
+            dbName = texParser.expandToString(cs, null);
          }
          else
          {
@@ -277,7 +272,7 @@ public class DatatoolDb
                key = headerTitle.toString(texParser);
             }
    
-            int type = header.getType();
+            DatumType type = header.getDataType();
    
             db.addColumn(new DatatoolHeader(db, key, title, type));
          }
@@ -293,7 +288,7 @@ public class DatatoolDb
 
             for (int j = 0; j < columnCount; j++)
             {
-               row.add(NULL_VALUE);
+               row.add(Datum.createNull(settings));
             }
 
             for (DataToolEntry entry : texRow)
@@ -315,20 +310,8 @@ public class DatatoolDb
                         entryContents);
                   }
 
-                  if (entryContents instanceof TeXObjectList
-                      && ((TeXObjectList)entryContents).size() > 0)
-                  {
-                     TeXObjectList list = (TeXObjectList)entryContents;
-                     TeXObject obj = list.lastElement();
-
-                     if (obj instanceof Comment 
-                         && ((Comment)obj).isEmpty())
-                     {
-                        list.remove(list.size()-1);
-                     }
-                  }
-   
-                  row.setCell(columnIndex, entryContents.toString(texParser));
+                  row.setCell(columnIndex,
+                     Datum.valueOf(entryContents, texParser, settings));
                }
             }
          }
@@ -368,6 +351,8 @@ public class DatatoolDb
          {
             in = new LineNumberReader(new InputStreamReader(fis, encoding));
          }
+
+// TODO check for DBTEX line
 
          db = new DatatoolDb(settings);
 
@@ -711,7 +696,7 @@ public class DatatoolDb
 
          for (int i = 0, n = row.size(); i < n; i++)
          {
-            row.set(i, NULL_VALUE);
+            row.set(i, Datum.createNull(settings));
          }
       }
       catch (NumberFormatException e)
@@ -840,7 +825,7 @@ public class DatatoolDb
 
       DatatoolRow row = data.get(currentRow-1);
 
-      row.set(currentColumn-1, contents);
+      row.set(currentColumn-1, Datum.valueOf(contents, getSettings()));
 
       readCommand(in, "\\db@col@id@w");
 
@@ -996,13 +981,13 @@ public class DatatoolDb
                "error.dbload.not_found", "\\db@type@id@end@"));
          }
 
-         int type = DatatoolSettings.TYPE_UNKNOWN;
+         int typeId = DatatoolSettings.TYPE_UNKNOWN;
 
          try
          {
             if (!content.isEmpty())
             {
-               type = Integer.parseInt(content);
+               typeId = Integer.parseInt(content);
             }
  
             // Get the header for the current column and set this title
@@ -1020,6 +1005,16 @@ public class DatatoolDb
             }
 
             DatatoolHeader header = headers.get(currentColumn-1);
+
+            DatumType type = DatumType.toDatumType(typeId);
+
+            if (type == null)
+            {
+               throw new InvalidSyntaxException(
+                  getMessageHandler().getLabelWithValues(
+                    in.getLineNumber(),
+                    "error.dbload_unknown_type", typeId));
+            }
 
             header.setType(type);
          }
@@ -1295,6 +1290,9 @@ public class DatatoolDb
            getMessageHandler().getLabel("error.output.tex.not_permitted"));
       }
 
+      // DBTEX v2.0
+      // TODO implement v3.0
+
       PrintWriter out = null;
 
       String encoding = settings.getTeXEncoding();
@@ -1342,7 +1340,7 @@ public class DatatoolDb
             int colIdx = (columnIndexes == null ? i : columnIndexes[i])
                        + 1;
 
-            int type = header.getType();
+            DatumType type = header.getDatumType();
 
             out.println("% header block for column "+colIdx);
             out.println("\\db@plist@elt@w %");
@@ -1351,7 +1349,7 @@ public class DatatoolDb
             out.println("\\db@key@id@w "+header.getKey()+"%");
             out.println("\\db@key@id@end@ %");
             out.println("\\db@type@id@w "
-               +(type==DatatoolSettings.TYPE_UNKNOWN?"":type)+"%");
+               +(type==DatumType.UNKNOWN?"":type.getValue())+"%");
             out.println("\\db@type@id@end@ %");
             out.println("\\db@header@id@w "+header.getTitle().trim()+"%");
             out.println("\\db@header@id@end@ %");
@@ -1383,9 +1381,9 @@ public class DatatoolDb
 
             for (int j = 0, m = row.size(); j < m; j++)
             {
-               String cell = row.get(j);
+               Datum cell = row.get(j);
 
-               if (!cell.equals(NULL_VALUE))
+               if (!cell.isNull())
                {
                   int colIdx = (columnIndexes == null ? j : columnIndexes[j])
                           + 1;
@@ -1401,7 +1399,8 @@ public class DatatoolDb
                   // leading/trailing spaces must be identified
                   // using a command (e.g. \space)
 
-                  out.println("\\db@col@elt@w "+cell.trim()+"%");
+                  String text = cell.getText();
+                  out.println("\\db@col@elt@w "+text.trim()+"%");
                   out.println("\\db@col@elt@end@ %");
 
                   out.println("\\db@col@id@w "+colIdx+"%");
@@ -1638,11 +1637,57 @@ public class DatatoolDb
       return headers.get(colIdx);
    }
 
+   public DatumType getColumnDatumType(int colIdx)
+   {
+      return headers.get(colIdx).getDatumType();
+   }
+
+   @Deprecated
    public int getColumnType(int colIdx)
    {
       return headers.get(colIdx).getType();
    }
 
+   public DatumType getDataType(int colIdx, Datum value)
+   {
+      DatatoolHeader header = headers.get(colIdx);
+
+      DatumType type = value.getDatumType();
+
+      if (type == DatumType.UNKNOWN)
+      {
+         return type;
+      }
+
+      switch (header.getDatumType())
+      {
+         case UNKNOWN:
+         case INTEGER:
+            // All other types override unknown and int
+            return type;
+         case CURRENCY:
+            // string overrides currency
+
+            if (type == DatumType.STRING)
+            {
+               return type;
+            }
+         break;
+         case DECIMAL:
+            // string and currency override real
+            if (type == DatumType.STRING
+             || type == DatumType.CURRENCY)
+            {
+               return type;
+            }
+         break;
+         // nothing overrides string
+      }
+
+      return header.getDatumType();
+   }
+
+   @Deprecated
    public int getType(String value)
    {
       if (value == null || value.isEmpty() || value.equals(NULL_VALUE))
@@ -1683,6 +1728,7 @@ public class DatatoolDb
       return DatatoolSettings.TYPE_STRING;
    }
 
+   @Deprecated
    public int getDataType(int colIdx, String value)
    {
       DatatoolHeader header = headers.get(colIdx);
@@ -1728,21 +1774,34 @@ public class DatatoolDb
 
    public void setValue(int rowIdx, int colIdx, String value)
    {
-      data.get(rowIdx).setCell(colIdx, value);
+      setValue(rowIdx, colIdx, Datum.valueOf(value, getSettings()));
+   }
 
-      int type = getDataType(colIdx, value);
+   public void setValue(int rowIdx, int colIdx, Datum datum)
+   {
+      data.get(rowIdx).setCell(colIdx, datum);
+      DatatoolHeader header = headers.get(colIdx);
 
-      if (type != DatatoolSettings.TYPE_UNKNOWN)
-      {
+      DatumType type = getDataType(colIdx, datum);
+
+      if (type != DatumType.UNKNOWN)
+      { 
          headers.get(colIdx).setType(type);
       }
    }
 
+   public Datum getDatum(int rowIdx, int colIdx)
+   {
+      DatatoolRow row = getRow(rowIdx);
+      return row.get(colIdx);
+   }
+
+   @Deprecated
    public Object getValue(int rowIdx, int colIdx)
    {
       DatatoolRow row = getRow(rowIdx);
 
-      String value = row.get(colIdx);
+      String value = row.get(colIdx).toString();
 
       // What's the data type of this column?
 
@@ -2104,7 +2163,7 @@ public class DatatoolDb
 
       for (int i = 0; i < headers.size(); i++)
       {
-         row.add(new String());
+         row.add(new Datum(getSettings()));
       }
 
       insertRow(rowIdx, row);
@@ -2125,7 +2184,7 @@ public class DatatoolDb
 
          for (int i = row.size(); i < numCols; i++)
          {
-            row.add(new String());
+            row.add(new Datum(getSettings()));
          }
       }
       else if (row.size() > numCols)
@@ -2163,9 +2222,9 @@ public class DatatoolDb
 
       for (int colIdx = 0, n = headers.size(); colIdx < n; colIdx++)
       {
-         int type = getDataType(colIdx, row.get(colIdx));
+         DatumType type = getDataType(colIdx, row.get(colIdx));
 
-         if (type != DatatoolSettings.TYPE_UNKNOWN)
+         if (type != DatumType.UNKNOWN)
          {
             headers.get(colIdx).setType(type);
          }
@@ -2201,9 +2260,9 @@ public class DatatoolDb
 
       for (int colIdx = 0; colIdx < n; colIdx++)
       {
-         int type = getDataType(colIdx, newRow.get(colIdx));
+         DatumType type = getDataType(colIdx, newRow.get(colIdx));
 
-         if (type != DatatoolSettings.TYPE_UNKNOWN)
+         if (type != DatumType.UNKNOWN)
          {
             headers.get(colIdx).setType(type);
          }
@@ -2238,7 +2297,7 @@ public class DatatoolDb
 
             for (DatatoolRow row : data)
             {
-               row.add(new String());
+               row.add(new Datum(getSettings()));
             }
          }
 
@@ -2250,7 +2309,7 @@ public class DatatoolDb
 
          for (DatatoolRow row : data)
          {
-            row.add(colIdx, new String());
+            row.add(colIdx, new Datum(getSettings()));
          }
       }
 
@@ -2263,7 +2322,7 @@ public class DatatoolDb
 
       for (DatatoolRow row : data)
       {
-         row.add(new String());
+         row.add(new Datum(getSettings()));
       }
    }
 
@@ -2285,7 +2344,7 @@ public class DatatoolDb
 
       for (DatatoolRow row : data)
       {
-         String value = row.remove(fromIndex);
+         Datum value = row.remove(fromIndex);
          row.add(toIndex, value);
       }
    }
@@ -2505,13 +2564,13 @@ public class DatatoolDb
 
       for (DatatoolRow dbRow : db.data)
       {
-         String dbValue = dbRow.get(dbColIdx);
+         Datum dbValue = dbRow.get(dbColIdx);
 
          DatatoolRow thisRow = null;
 
          for (DatatoolRow row : data)
          {
-            String value = row.get(colIdx);
+            Datum value = row.get(colIdx);
 
             if (value.equals(dbValue))
             {
@@ -2528,7 +2587,7 @@ public class DatatoolDb
 
             for (int i = 0; i < n; i++)
             {
-               thisRow.add(new String());
+               thisRow.add(new Datum(getSettings()));
             }
 
             data.add(thisRow);

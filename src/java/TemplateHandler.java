@@ -23,6 +23,8 @@ import java.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+
 /**
  * Handler for parsing XML data describing a database template.
  */
@@ -145,7 +147,16 @@ public class TemplateHandler extends DefaultHandler
 
          try
          {
-            header.setType(Integer.parseInt(insertion));
+            int id = Integer.parseInt(insertion);
+            DatumType type = DatumType.toDatumType(id);
+
+            if (type == null)
+            {
+               throw new NumberFormatException(messageHandler.getLabelWithValues(
+                 "error.invalid_data_type", id));
+            }
+
+            header.setType(type);
          }
          catch (NumberFormatException e)
          {

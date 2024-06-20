@@ -168,7 +168,7 @@ public class DatatoolPlugin implements Runnable
          writer.println("<header>");
          writer.println("<label>"+encodeXml(header.getKey())+"</label>");
          writer.println("<title>"+encodeXml(header.getTitle())+"</title>");
-         writer.println("<type>"+header.getType()+"</type>");
+         writer.println("<type>"+header.getDatumType().getValue()+"</type>");
          writer.println("</header>");
       }
 
@@ -185,7 +185,7 @@ public class DatatoolPlugin implements Runnable
          for (int j = 0; j < numCols; j++)
          {
             writer.println("<entry>"
-              +encodeXml(row.get(j))+"</entry>");
+              +encodeXml(row.get(j).toString())+"</entry>");
          }
 
          writer.println("</row>");
@@ -333,8 +333,10 @@ class PluginHandler extends DefaultHandler
       }
       else if (localName.equals("entry"))
       {
-         currentRow.add(currentBuffer.toString().replaceAll("(\\n\\s*\\n)+", 
-           "\\\\DTLpar "));
+         String text = currentBuffer.toString().replaceAll(
+           "(\\n\\s*\\n)+", "\\\\DTLpar ");
+
+         currentRow.add(Datum.valueOf(text, dbPanel.getSettings()));
          currentBuffer = null;
       }
       else if (localName.equals("datatooltk"))

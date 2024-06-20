@@ -34,6 +34,7 @@ import javax.swing.text.Document;
 import javax.swing.text.BadLocationException;
 import javax.swing.border.Border;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
 import com.dickimawbooks.datatooltk.*;
@@ -94,13 +95,7 @@ public class DatatoolDbPanel extends JPanel
    {
       undoManager = new UndoManager();
 
-      table = new JTable(new DatatoolDbTableModel(db, this))
-      {
-         public Object getValueAt(int row, int column)
-         {
-            return db.getRow(row).get(column);
-         }
-      };
+      table = new JTable(new DatatoolDbTableModel(db, this));
 
       table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
          this));
@@ -108,8 +103,13 @@ public class DatatoolDbPanel extends JPanel
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
       table.getTableHeader().setReorderingAllowed(false);
 
+/*
       table.setDefaultEditor(Object.class, new DbNumericalCellEditor());
+*/
       table.setDefaultRenderer(Object.class, new DatatoolCellRenderer(db));
+
+      table.setDefaultEditor(Datum.class, new DatumCellEditor());
+//      table.setDefaultRenderer(Datum.class, new DatumCellRenderer(db));
 
       table.setColumnSelectionAllowed(true);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -135,15 +135,15 @@ public class DatatoolDbPanel extends JPanel
              int modelRow = getModelSelectedRow();
              int modelCol = getModelSelectedColumn();
 
-             int type = db.getHeader(modelCol).getType();
+             DatumType type = db.getHeader(modelCol).getDatumType();
 
-             setInfo(type == DatatoolSettings.TYPE_STRING ?
+             setInfo(type == DatumType.STRING ?
                messageHandler.getLabel("info.view_or_edit") :
                messageHandler.getLabel("info.edit"));
 
              if (evt.getClickCount() == 2)
              {
-                if (type == DatatoolSettings.TYPE_STRING)
+                if (type == DatumType.STRING)
                 {
                    requestCellEditor(modelRow, modelCol);
                 }
@@ -469,6 +469,11 @@ public class DatatoolDbPanel extends JPanel
       addUndoEdit(new UpdateCellEdit(this, row, col, text));
    }
 
+   public void updateCell(Datum datum, int row, int col)
+   {
+      addUndoEdit(new UpdateCellEdit(this, datum, row, col));
+   }
+
    public synchronized void replaceRow(int index, DatatoolRow row)
    {
       addUndoEdit(new ReplaceRowEdit(this, index, row));
@@ -589,7 +594,7 @@ public class DatatoolDbPanel extends JPanel
      boolean isRegEx)
    {
       String newText = null;
-      String oldText = db.getRow(row).get(col);
+      String oldText = db.getRow(row).get(col).getText();
 
       if (isRegEx)
       {
@@ -671,7 +676,7 @@ public class DatatoolDbPanel extends JPanel
 
       for (DatatoolRow dbRow : otherDb.getData())
       {
-         String dbValue = dbRow.get(otherColIdx);
+         Datum dbValue = dbRow.get(otherColIdx);
 
          DatatoolRow thisRow = null;
 
@@ -681,7 +686,7 @@ public class DatatoolDbPanel extends JPanel
          for (rowIdx = 0; rowIdx < rowCount; rowIdx++)
          {
             DatatoolRow row = db.getRow(rowIdx);
-            String value = row.get(thisColIdx);
+            Datum value = row.get(thisColIdx);
 
             if (value.equals(dbValue))
             {
@@ -701,7 +706,7 @@ public class DatatoolDbPanel extends JPanel
 
             int idx = db.getColumnIndex(header.getKey());
 
-            updateCell(rowIdx, idx, dbRow.get(i));
+            updateCell(dbRow.get(i), rowIdx, idx);
          }
       }
 
@@ -1126,7 +1131,7 @@ public class DatatoolDbPanel extends JPanel
          if (adjustWidths)
          {
             column.setPreferredWidth(Math.max(column.getPreferredWidth(),
-                gui.getCellWidth(header.getType())));
+                gui.getCellWidth(header.getDatumType())));
          }
       }
 
@@ -1328,24 +1333,28 @@ class DatatoolDbTableModel extends AbstractTableModel
       this.panel = panel;
    }
 
+   @Override
    public String getColumnName(int col)
    {
       return db.getHeader(col).getTitle();
    }
 
+   @Override
    public int getRowCount()
    {
       return db.getRowCount();
    }
 
+   @Override
    public int getColumnCount()
    {
       return db.getColumnCount();
    }
 
-/*
+   @Override
    public Class<?> getColumnClass(int column)
    {
+/*
       switch (db.getHeader(column).getType())
       {
          case DatatoolDb.TYPE_INTEGER:
@@ -1358,8 +1367,9 @@ class DatatoolDbTableModel extends AbstractTableModel
 
 
       return String.class;
-   }
 */
+      return Datum.class;
+   }
 
    public int getRowIndex(int viewIndex)
    {
@@ -1371,21 +1381,38 @@ class DatatoolDbTableModel extends AbstractTableModel
       return panel.table.convertColumnIndexToModel(viewIndex);
    }
 
+   @Override
    public Object getValueAt(int row, int col)
    {
       return db.getRow(getRowIndex(row)).get(getColumnIndex(col));
    }
 
+   @Override
    public void setValueAt(Object value, int row, int col)
    {
-      panel.updateCell(row, col, value.toString());
+      if (value instanceof Datum)
+      {
+         panel.updateCell((Datum)value, row, col);
+      }
+      else
+      {
+         panel.updateCell(row, col, value.toString());
+      }
+
       fireTableCellUpdated(row, col);
    }
 
+   @Override
    public boolean isCellEditable(int row, int column)
    {
-      return (db.getHeader(column).getType() 
-        != DatatoolSettings.TYPE_STRING);
+      if (db.getHeader(column).getDatumType() == DatumType.STRING)
+      {
+         return panel.getSettings().isStringCellEditable();
+      }
+      else
+      {
+         return true;
+      }
    }
 
    private DatatoolDb db;
@@ -1580,7 +1607,7 @@ class DatatoolTableHeader extends JTableHeader
 
       return panel.getMessageHandler().getLabelWithValues(
         "header.tooltip_format",
-        header.getKey(), settings.getTypeLabel(header.getType()+1));
+        header.getKey(), settings.getTypeLabel(header.getDatumType()));
    }
 
    private DatatoolDbPanel panel;
@@ -1710,18 +1737,18 @@ class DatatoolCellRenderer implements TableCellRenderer
          return null;
       }
 
-      int type = db.getHeader(modelIndex).getType();
+      DatumType type = db.getHeader(modelIndex).getDatumType();
 
-      if (type == DatatoolSettings.TYPE_INTEGER
-       || type == DatatoolSettings.TYPE_REAL)
+      switch (type)
       {
-         return numericalCellRenderer.getTableCellRendererComponent(table,
-           value, isSelected, hasFocus, row, column);
-      }
-      else if (type == DatatoolSettings.TYPE_STRING)
-      {
-         return cellRenderer.getTableCellRendererComponent(table,
-           value, isSelected, hasFocus, row, column);
+         case INTEGER:
+         case DECIMAL:
+         case CURRENCY:
+            return numericalCellRenderer.getTableCellRendererComponent(table,
+              value, isSelected, hasFocus, row, column);
+         case STRING:
+            return cellRenderer.getTableCellRendererComponent(table,
+              value, isSelected, hasFocus, row, column);
       }
 
       return defRenderer.getTableCellRendererComponent(table,
