@@ -103,12 +103,9 @@ public class DatatoolDbPanel extends JPanel
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
       table.getTableHeader().setReorderingAllowed(false);
 
-/*
-      table.setDefaultEditor(Object.class, new DbNumericalCellEditor());
-*/
       table.setDefaultRenderer(Object.class, new DatatoolCellRenderer(db));
 
-      table.setDefaultEditor(Datum.class, new DatumCellEditor());
+      table.setDefaultEditor(Datum.class, new DatumCellEditor(gui));
 //      table.setDefaultRenderer(Datum.class, new DatumCellRenderer(db));
 
       table.setColumnSelectionAllowed(true);

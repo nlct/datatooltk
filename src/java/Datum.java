@@ -268,6 +268,11 @@ public class Datum implements Comparable<Datum>
         type.getValue());
    }
 
+   public Number getNumber()
+   {
+      return numValue;
+   }
+
    public int intValue()
    {
       return numValue == null ? 0 : numValue.intValue();

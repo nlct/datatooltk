@@ -79,7 +79,7 @@ public class HeaderDialog extends JDialog
       p = new JPanel(new FlowLayout(FlowLayout.LEFT));
       box.add(p);
 
-      typeBox = new JComboBox<String>(getSettings().getTypeLabels());
+      typeBox = new DatumTypeComboBox(getSettings());
 
       labels[idx] = resources.createJLabel("header.column_type",
          typeBox);
@@ -130,7 +130,7 @@ public class HeaderDialog extends JDialog
 
       titleField.setText(header.getTitle());
       labelField.setText(header.getKey());
-      typeBox.setSelectedIndex(header.getDatumType().getValue()+1);
+      typeBox.setSelectedType(header.getDatumType());
 
       titleField.requestFocusInWindow();
 
@@ -158,8 +158,7 @@ public class HeaderDialog extends JDialog
 
    private void okay()
    {
-      int typeId = typeBox.getSelectedIndex()-1;
-      DatumType type = DatumType.toDatumType(typeId);
+      DatumType type = typeBox.getSelectedType();
 
       DatatoolSettings settings = getSettings();
 
@@ -284,7 +283,7 @@ public class HeaderDialog extends JDialog
 
    private JTextField titleField, labelField;
 
-   private JComboBox<String> typeBox;
+   private DatumTypeComboBox typeBox;
 
    private DatatoolHeader header;
 

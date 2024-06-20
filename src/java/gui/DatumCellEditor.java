@@ -27,21 +27,68 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
-import com.dickimawbooks.datatooltk.Datum;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Cell editor for datum value.
  */
 
 public class DatumCellEditor extends DefaultCellEditor
+ implements ActionListener,ItemListener
 {
-   private JPanel panel;
-
-   public DatumCellEditor()
+   public DatumCellEditor(DatatoolGUI gui)
    {
       super(new JTextField());
+      this.gui = gui;
+      DatatoolGuiResources resources = gui.getResources();
 
       panel = new JPanel(new BorderLayout());
+      panel.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+
+      midComp = Box.createVerticalBox();
+      midComp.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+
+      JComponent rowComp;
+
+      rowComp = createRow();
+      midComp.add(rowComp);
+
+      typeBox = new DatumTypeComboBox(gui.getSettings());
+      typeBox.addItemListener(this);
+
+      rowComp.add(resources.createJLabel("celledit.type", typeBox));
+      rowComp.add(typeBox);
+
+      rowComp = createRow();
+      midComp.add(rowComp);
+
+      currencyField = new JTextField();
+
+      rowComp.add(resources.createJLabel("celledit.currency", currencyField));
+      rowComp.add(currencyField);
+
+      rowComp = createRow();
+      midComp.add(rowComp);
+
+      spinnerModel = new SpinnerNumberModel();
+      numField = new JSpinner(spinnerModel);
+
+      rowComp.add(resources.createJLabel("celledit.numeric", numField));
+      rowComp.add(numField);
+
+      midComp.add(Box.createVerticalGlue());
+
+      autoReparseBox = resources.createJCheckBox("celledit", "reparse", this);
+      autoReparseBox.setSelected(true);
+   }
+
+   protected JComponent createRow()
+   {
+      JComponent comp = new JPanel();
+
+      comp.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+
+      return comp;
    }
 
    public JTextField getTextField()
@@ -49,23 +96,113 @@ public class DatumCellEditor extends DefaultCellEditor
       return (JTextField)getComponent();
    }
 
+   @Override
+   public void actionPerformed(ActionEvent evt)
+   {
+      String action = evt.getActionCommand();
+
+      if ("reparse".equals(action))
+      {
+         updateMidComps();
+      }
+   }
+
+   @Override
+   public void itemStateChanged(ItemEvent evt)
+   {
+      if (evt.getStateChange() == ItemEvent.SELECTED)
+      {
+         updateMidComps();
+      }
+   }
+
+   protected void updateMidComps()
+   {
+      boolean autoOn = autoReparseBox.isSelected();
+
+      midComp.setVisible(!autoOn);
+      currencyField.setEnabled(false);
+      numField.setEnabled(false);
+
+      if (!autoOn)
+      {
+         switch (typeBox.getSelectedType())
+         {
+            case CURRENCY:
+              currencyField.setEnabled(true);
+            case INTEGER:
+            case DECIMAL:
+              numField.setEnabled(true);
+         }
+      }
+   }
+
+   @Override
+   public Object getCellEditorValue()
+   {
+      if (autoReparseBox.isSelected())
+      {
+         return Datum.valueOf(getTextField().getText(), gui.getSettings());
+      }
+
+      DatumType type = typeBox.getSelectedType();
+      String currencySym = null;
+      Number num = null;
+
+      switch (type)
+      {
+         case CURRENCY:
+           currencySym = currencyField.getText();
+         // fall through
+         case INTEGER:
+         case DECIMAL:
+           num = spinnerModel.getNumber();
+      }
+
+      return new Datum(type, getTextField().getText(), currencySym, num,
+        gui.getSettings());
+   }
+
+   @Override
    public Component getTableCellEditorComponent(JTable table,
      Object value, boolean isSelected, int row, int column)
    {
       panel.removeAll();
 
-      DatumType type = DatumType.UNKNOWN;
-      String text;
+      Datum datum;
 
       if (value instanceof Datum)
       {
-         Datum datum = (Datum)value;
-         type = datum.getDatumType();
-         text = datum.getText();
+         datum = (Datum)value;
       }
       else
       {
-         text = value.toString();
+         datum = Datum.valueOf(value.toString(), gui.getSettings());
+      }
+
+      DatumType type = datum.getDatumType();
+      String text = datum.getText();
+      String currencySym = datum.getCurrencySymbol();
+      Number num = datum.getNumber();
+
+      typeBox.setSelectedType(type);
+
+      if (currencySym == null)
+      {
+         currencyField.setText("");
+      }
+      else
+      {
+         currencyField.setText(currencySym);
+      }
+
+      if (num == null)
+      {
+         spinnerModel.setValue(Integer.valueOf(0));
+      }
+      else
+      {
+         spinnerModel.setValue(num);
       }
 
       JTextField textField = 
@@ -74,8 +211,24 @@ public class DatumCellEditor extends DefaultCellEditor
 
       textField.setHorizontalAlignment(JTextField.TRAILING);
 
+      boolean enable = !autoReparseBox.isSelected();
+
+      midComp.setVisible(enable);
+      numField.setEnabled(enable && num != null);
+      currencyField.setEnabled(enable && currencySym != null);
+
       panel.add(textField, BorderLayout.NORTH);
+      panel.add(midComp, BorderLayout.CENTER);
+      panel.add(autoReparseBox, BorderLayout.SOUTH);
 
       return panel;
    }
+
+   private JComponent panel, midComp;
+   private DatumTypeComboBox typeBox;
+   private DatatoolGUI gui;
+   private JTextField currencyField;
+   private JSpinner numField;
+   private SpinnerNumberModel spinnerModel;
+   private JCheckBox autoReparseBox;
 }
