@@ -1200,6 +1200,7 @@ public class DatatoolSettings extends Properties
       return false;
    }
 
+   @Deprecated
    public Currency parseCurrency(String text)
       throws NumberFormatException
    {

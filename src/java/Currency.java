@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 /**
  * Class representing currency as per datatool currency data type.
  */
+@Deprecated
 public class Currency extends Number
   implements Comparable<Number>
 {

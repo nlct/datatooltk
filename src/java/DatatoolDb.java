@@ -2354,6 +2354,7 @@ public class DatatoolDb
       return new ColumnEnumeration(data, colIdx);
    }
 
+   @Deprecated
    public Currency parseCurrency(String text)
      throws NumberFormatException
    {

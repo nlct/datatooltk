@@ -1354,20 +1354,6 @@ class DatatoolDbTableModel extends AbstractTableModel
    @Override
    public Class<?> getColumnClass(int column)
    {
-/*
-      switch (db.getHeader(column).getType())
-      {
-         case DatatoolDb.TYPE_INTEGER:
-            return Integer.class;
-         case DatatoolDb.TYPE_REAL:
-            return Float.class;
-         case DatatoolDb.TYPE_CURRENCY:
-            return com.dickimawbooks.datatooltk.Currency.class;
-      }
-
-
-      return String.class;
-*/
       return Datum.class;
    }
 
