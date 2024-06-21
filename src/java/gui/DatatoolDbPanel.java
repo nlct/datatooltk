@@ -1704,7 +1704,7 @@ class DatatoolCellRenderer implements TableCellRenderer
    {
       super();
       this.db = db;
-      numericalCellRenderer = new DbNumericalCellRenderer();
+      numericalCellRenderer = new DbNumericalCellRenderer(db.getSettings());
       cellRenderer = new DbCellRenderer();
       defRenderer = new DefaultTableCellRenderer();
    }

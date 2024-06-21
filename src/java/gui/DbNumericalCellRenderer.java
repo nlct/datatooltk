@@ -26,22 +26,75 @@ import javax.swing.table.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.datatooltk.Datum;
+import com.dickimawbooks.datatooltk.DatatoolSettings;
+
 /**
  * Cell renderer for data in numerical columns.
  */
 public class DbNumericalCellRenderer implements TableCellRenderer
 {
-   private JTextField textField;
+   private JTextField textField, typeField, currencyField, numField;
    private JPanel panel;
+   private DatatoolSettings settings;
+   private JComponent currencyRow;
 
-   public DbNumericalCellRenderer()
+   public DbNumericalCellRenderer(DatatoolSettings settings)
    {
+      this.settings = settings;
+      DatatoolGuiResources resources = settings.getDatatoolGuiResources();
+
       textField = new JTextField();
       textField.setEditable(false);
       textField.setHorizontalAlignment(JTextField.TRAILING);
       panel = new JPanel(new BorderLayout());
 
       panel.add(textField, BorderLayout.NORTH);
+
+      JComponent mainComp = Box.createVerticalBox();
+      panel.add(mainComp, BorderLayout.CENTER);
+
+      JComponent rowComp;
+
+      rowComp = createRow();
+      mainComp.add(rowComp);
+
+      rowComp.add(resources.createJLabel("celledit.type"));
+      typeField = createField();
+      rowComp.add(typeField);
+
+      currencyRow = createRow();
+      mainComp.add(currencyRow);
+
+      currencyRow.add(resources.createJLabel("celledit.currency"));
+      currencyField = createField();
+      currencyRow.add(currencyField);
+
+      rowComp = createRow();
+      mainComp.add(rowComp);
+
+      rowComp.add(resources.createJLabel("celledit.numeric"));
+      numField = createField();
+      rowComp.add(numField);
+
+      mainComp.add(Box.createVerticalGlue());
+   }
+
+   protected JComponent createRow()
+   {
+      JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEADING));
+
+      return comp;
+   }
+
+   protected JTextField createField()
+   {
+      JTextField field = new JTextField();
+      field.setEditable(false);
+      field.setBorder(BorderFactory.createEmptyBorder());
+
+      return field;
    }
 
    public Component getTableCellRendererComponent(JTable table,
@@ -51,6 +104,22 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       if (table == null)
       {
          return textField;
+      }
+
+      DatumType type = DatumType.UNKNOWN;
+      String currencySym = null;
+      Number num = null;
+
+      if (value instanceof Datum)
+      {
+         Datum datum = (Datum)value;
+         type = datum.getDatumType();
+
+         if (type.isNumeric())
+         {
+            currencySym = datum.getCurrencySymbol();
+            num = datum.getNumber();
+         }
       }
 
       textField.setText(value.toString());
@@ -67,6 +136,28 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       }
 
       textField.setFont(table.getFont());
+
+      typeField.setText(settings.getTypeLabel(type));
+
+      if (currencySym == null)
+      {
+         currencyField.setText("");
+         currencyRow.setVisible(false);
+      }
+      else
+      {
+         currencyField.setText(currencySym);
+         currencyRow.setVisible(true);
+      }
+
+      if (num == null)
+      {
+         numField.setText("");
+      }
+      else
+      {
+         numField.setText(num.toString());
+      }
 
       return panel;
    }

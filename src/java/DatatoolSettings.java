@@ -46,6 +46,7 @@ import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 import com.dickimawbooks.datatooltk.gui.DatatoolPlugin;
+import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 
 /**
  * Application settings for datatooltk.
@@ -1793,6 +1794,11 @@ public class DatatoolSettings extends Properties
    public DatatoolTk getDatatoolTk()
    {
       return messageHandler.getDatatoolTk();
+   }
+
+   public DatatoolGuiResources getDatatoolGuiResources()
+   {
+      return messageHandler.getDatatoolGuiResources();
    }
 
    public boolean isBatchMode()
