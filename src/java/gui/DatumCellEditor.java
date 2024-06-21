@@ -132,13 +132,9 @@ public class DatumCellEditor extends DefaultCellEditor
    {
       if (evt.getStateChange() == ItemEvent.SELECTED)
       {
-         intSpinnerModel.setValue(Integer.valueOf(oldValue.intValue()));
-         decimalField.setText(oldValue.toString());
+         intSpinnerModel.setValue(Integer.valueOf(orgValue.intValue()));
+         decimalField.setText(orgValue.toString());
          updateMidComps();
-      }
-      else if (evt.getStateChange() == ItemEvent.DESELECTED)
-      {
-         oldValue = getValue();
       }
    }
 
@@ -273,13 +269,13 @@ public class DatumCellEditor extends DefaultCellEditor
 
       if (num == null)
       {
-         oldValue = Integer.valueOf(0);
-         intSpinnerModel.setValue(oldValue);
+         orgValue = Integer.valueOf(0);
+         intSpinnerModel.setValue(orgValue);
          decimalField.setText("0.0");
       }
       else
       {
-         oldValue = num;
+         orgValue = num;
          intSpinnerModel.setValue(Integer.valueOf(num.intValue()));
          decimalField.setText(num.toString());
       }
@@ -296,6 +292,8 @@ public class DatumCellEditor extends DefaultCellEditor
       panel.add(midCompSp, BorderLayout.CENTER);
       panel.add(autoReparseBox, BorderLayout.SOUTH);
 
+      textField.requestFocusInWindow();
+
       return panel;
    }
 
@@ -304,7 +302,7 @@ public class DatumCellEditor extends DefaultCellEditor
    private DatumTypeComboBox typeBox;
    private DatatoolGUI gui;
    private JTextField currencyField;
-   private Number oldValue;
+   private Number orgValue;
 
    private JSpinner intSpinner;
    private SpinnerNumberModel intSpinnerModel;

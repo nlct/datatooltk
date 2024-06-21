@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -26,13 +26,14 @@ import javax.swing.event.*;
 import javax.swing.undo.*;
 import javax.swing.text.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.datatooltk.*;
 
 /**
  * Dialog box for editing cell contents.
  */
 public class CellDialog extends JDialog
-  implements ActionListener
+  implements ActionListener,ItemListener
 {
    public CellDialog(DatatoolGUI gui)
    {
@@ -40,6 +41,11 @@ public class CellDialog extends JDialog
 
       this.gui = gui;
 
+      initGui();
+   }
+
+   private void initGui()
+   {
       DatatoolGuiResources resources = gui.getResources();
 
       setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -59,10 +65,6 @@ public class CellDialog extends JDialog
        gui.getMessageHandler(), SwingConstants.HORIZONTAL);
 
       getContentPane().add(toolBar, BorderLayout.NORTH);
-
-      JPanel mainPanel = new JPanel(new BorderLayout());
-
-      getContentPane().add(mainPanel, BorderLayout.CENTER);
 
       undoManager = new UndoManager();
 
@@ -174,15 +176,107 @@ public class CellDialog extends JDialog
       findDialog = new FindDialog(gui.getMessageHandler(), this, textPane);
 
       textPane.setMinimumSize(new Dimension(0,0));
-      mainPanel.add(new JScrollPane(textPane), BorderLayout.CENTER);
 
-      mainPanel.add(
+      JComponent datumPanel = createDatumComponent();
+
+      JSplitPane splitPane = new JSplitPane(
+        JSplitPane.VERTICAL_SPLIT,
+        new JScrollPane(textPane),
+        new JScrollPane(datumPanel));
+      splitPane.setOneTouchExpandable(true);
+
+      splitPane.setResizeWeight(0.9f);
+
+      getContentPane().add(splitPane, BorderLayout.CENTER);
+
+      getContentPane().add(
          resources.createOkayCancelHelpPanel(this, gui, "celleditor"),
          BorderLayout.SOUTH);
 
       pack();
 
       setLocationRelativeTo(null);
+   }
+
+   protected JComponent createDatumComponent()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+
+      JComponent datumPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+
+      typeBox = new DatumTypeComboBox(gui.getSettings());
+      typeBox.addItemListener(this);
+      datumPanel.add(resources.createJLabel("celledit.type", typeBox));
+      datumPanel.add(typeBox);
+
+      currencyComp = new JPanel();
+      datumPanel.add(currencyComp);
+
+      currencyField = new JTextField(12);
+      currencyComp.add(resources.createJLabel("celledit.currency", currencyField));
+      currencyComp.add(currencyField);
+
+      valueCardLayout = new CardLayout();
+      numericComp = new JPanel(valueCardLayout);
+      datumPanel.add(numericComp);
+
+      JComponent intComp = new JPanel();
+   
+      intSpinnerModel = new SpinnerNumberModel(
+        0, - Datum.TEX_MAX_INT, Datum.TEX_MAX_INT, 1);
+      intSpinner = new JSpinner(intSpinnerModel);
+      JComponent editor = intSpinner.getEditor();
+      JFormattedTextField tf = ((JSpinner.DefaultEditor)editor).getTextField();
+      tf.setColumns(5);
+
+      intComp.add(resources.createJLabel("celledit.numeric", intSpinner));
+      intComp.add(intSpinner);
+      numericComp.add(intComp, "int");
+
+      JComponent decComp = new JPanel();
+
+      decimalField = new JTextField(6);
+      decComp.add(resources.createJLabel("celledit.numeric", decimalField));
+      decComp.add(decimalField);
+      numericComp.add(decComp, "dec");
+
+      return datumPanel;
+   }
+
+   @Override
+   public void itemStateChanged(ItemEvent evt)
+   {
+      if (evt.getStateChange() == ItemEvent.SELECTED)
+      {
+         intSpinnerModel.setValue(Integer.valueOf(orgValue.intValue()));
+         decimalField.setText(orgValue.toString());
+         updateDatumComp();
+      }
+   }
+
+   protected void updateDatumComp()
+   {
+      DatumType type = typeBox.getSelectedType();
+
+      if (type.isNumeric())
+      {
+         if (type == DatumType.INTEGER)
+         {
+            valueCardLayout.show(numericComp, "int");
+         }
+         else
+         {
+            valueCardLayout.show(numericComp, "dec");
+         }
+
+         currencyComp.setVisible(type==DatumType.CURRENCY);
+         numericComp.setVisible(true);
+      }
+      else
+      {
+         currencyComp.setVisible(false);
+         numericComp.setVisible(false);
+      }
    }
 
    public boolean requestEdit(int row, int col,
@@ -195,9 +289,33 @@ public class CellDialog extends JDialog
 
       textPane.setFont(gui.getCellFont());
 
+      Datum datum = db.getRow(row).get(col);
+      orgValue = datum.getNumber();
+
+      if (orgValue == null)
+      {
+         orgValue = Integer.valueOf(0);
+      }
+
+      DatumType type = datum.getDatumType();
+
+      if (datum.isNumeric())
+      {
+         String sym = datum.getCurrencySymbol();
+         currencyField.setText(sym == null ? "" : sym);
+         decimalField.setText(orgValue.toString());
+         intSpinnerModel.setValue(Integer.valueOf(orgValue.intValue()));
+      }
+      else
+      {
+         currencyField.setText("");
+         decimalField.setText("");
+      }
+
+      typeBox.setSelectedType(type);
+
       try
       {
-         Datum datum = db.getRow(row).get(col);
          document.setText(
             datum.getText().replaceAll("\\\\DTLpar *", "\n\n"));
       }
@@ -205,6 +323,8 @@ public class CellDialog extends JDialog
       {
          getMessageHandler().error(this, e);
       }
+
+      updateDatumComp();
 
       undoManager.discardAllEdits();
       undoItem.setEnabled(false);
@@ -371,6 +491,14 @@ public class CellDialog extends JDialog
 
    private JMenuItem undoItem, redoItem, copyItem, cutItem,
      findAgainItem;
+
+   private DatumTypeComboBox typeBox;
+   private JTextField currencyField, decimalField;
+   private JComponent currencyComp, numericComp;
+   private JSpinner intSpinner;
+   private SpinnerNumberModel intSpinnerModel;
+   private CardLayout valueCardLayout;
+   private Number orgValue;
 
    private DatatoolDbPanel panel;
 
