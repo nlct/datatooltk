@@ -43,10 +43,9 @@ public class DatumCellEditor extends DefaultCellEditor
       DatatoolGuiResources resources = gui.getResources();
 
       panel = new JPanel(new BorderLayout());
-      panel.setAlignmentX(JComponent.LEFT_ALIGNMENT);
 
-      midComp = Box.createVerticalBox();
-      midComp.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+      Box midComp = Box.createVerticalBox();
+      midCompSp = new JScrollPane(midComp);
 
       JComponent rowComp;
 
@@ -59,22 +58,45 @@ public class DatumCellEditor extends DefaultCellEditor
       rowComp.add(resources.createJLabel("celledit.type", typeBox));
       rowComp.add(typeBox);
 
-      rowComp = createRow();
-      midComp.add(rowComp);
+      currencyRow = createRow();
+      midComp.add(currencyRow);
 
       currencyField = new JTextField();
 
-      rowComp.add(resources.createJLabel("celledit.currency", currencyField));
-      rowComp.add(currencyField);
+      currencyRow.add(resources.createJLabel("celledit.currency", currencyField));
+      currencyRow.add(currencyField);
+
+      valueCardLayout = new CardLayout();
+      valueRow = new JPanel(valueCardLayout);
+      midComp.add(valueRow);
+
+      rowComp = createRow();
+      valueRow.add(rowComp, "int");
+
+      intSpinnerModel = new SpinnerNumberModel(
+        0, - Datum.TEX_MAX_INT, Datum.TEX_MAX_INT, 1);
+      intSpinner = new JSpinner(intSpinnerModel);
+      JComponent editor = intSpinner.getEditor();
+      JFormattedTextField tf = ((JSpinner.DefaultEditor)editor).getTextField();
+      tf.setColumns(5);
+
+      rowComp.add(resources.createJLabel("celledit.numeric", intSpinner));
+      rowComp.add(intSpinner);
+
+      rowComp = createRow();
+      valueRow.add(rowComp, "dec");
+
+      decimalField = new JTextField("0.00");
+      decimalField.setColumns(6);
+      rowComp.add(resources.createJLabel("celledit.numeric", decimalField));
+      rowComp.add(decimalField);
 
       rowComp = createRow();
       midComp.add(rowComp);
 
-      spinnerModel = new SpinnerNumberModel();
-      numField = new JSpinner(spinnerModel);
-
-      rowComp.add(resources.createJLabel("celledit.numeric", numField));
-      rowComp.add(numField);
+      autoReformatBox = resources.createJCheckBox("celledit", "reformat", this);
+      autoReformatBox.setSelected(true);
+      rowComp.add(autoReformatBox);
 
       midComp.add(Box.createVerticalGlue());
 
@@ -84,9 +106,7 @@ public class DatumCellEditor extends DefaultCellEditor
 
    protected JComponent createRow()
    {
-      JComponent comp = new JPanel();
-
-      comp.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+      JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEADING));
 
       return comp;
    }
@@ -112,7 +132,13 @@ public class DatumCellEditor extends DefaultCellEditor
    {
       if (evt.getStateChange() == ItemEvent.SELECTED)
       {
+         intSpinnerModel.setValue(Integer.valueOf(oldValue.intValue()));
+         decimalField.setText(oldValue.toString());
          updateMidComps();
+      }
+      else if (evt.getStateChange() == ItemEvent.DESELECTED)
+      {
+         oldValue = getValue();
       }
    }
 
@@ -120,21 +146,55 @@ public class DatumCellEditor extends DefaultCellEditor
    {
       boolean autoOn = autoReparseBox.isSelected();
 
-      midComp.setVisible(!autoOn);
-      currencyField.setEnabled(false);
-      numField.setEnabled(false);
+      midCompSp.setVisible(!autoOn);
+      currencyRow.setVisible(false);
+      valueRow.setVisible(false);
+      autoReformatBox.setVisible(false);
 
       if (!autoOn)
       {
-         switch (typeBox.getSelectedType())
+         DatumType type = typeBox.getSelectedType();
+
+         if (type.isNumeric())
          {
-            case CURRENCY:
-              currencyField.setEnabled(true);
-            case INTEGER:
-            case DECIMAL:
-              numField.setEnabled(true);
+            autoReformatBox.setVisible(true);
+            valueRow.setVisible(true);
+
+            switch (type)
+            {
+               case INTEGER:
+                 valueCardLayout.show(valueRow, "int");
+               break;
+               case CURRENCY:
+                 currencyRow.setVisible(true);
+                 // fall through
+               case DECIMAL:
+                 valueCardLayout.show(valueRow, "dec");
+            }
          }
       }
+   }
+
+   protected Number getValue()
+   {
+      DatumType type = typeBox.getSelectedType();
+
+      switch (type)
+      {
+         case INTEGER:
+           return intSpinnerModel.getNumber();
+         case CURRENCY:
+         case DECIMAL:
+           try
+           {
+              return Double.valueOf(decimalField.getText());
+           }
+           catch (NumberFormatException e)
+           {
+           }
+      }
+
+      return Integer.valueOf(0);
    }
 
    @Override
@@ -151,16 +211,31 @@ public class DatumCellEditor extends DefaultCellEditor
 
       switch (type)
       {
+         case INTEGER:
+           num = intSpinnerModel.getNumber();
+         break;
          case CURRENCY:
            currencySym = currencyField.getText();
          // fall through
-         case INTEGER:
          case DECIMAL:
-           num = spinnerModel.getNumber();
+           try
+           {
+              num = Double.valueOf(decimalField.getText());
+           }
+           catch (NumberFormatException e)
+           {
+              num = Double.valueOf(0);
+           }
       }
 
-      return new Datum(type, getTextField().getText(), currencySym, num,
-        gui.getSettings());
+      String text = getTextField().getText();
+
+      if (autoReformatBox.isSelected() && type.isNumeric())
+      {
+         return Datum.format(type, currencySym, num, gui.getSettings());
+      }
+
+      return new Datum(type, text, currencySym, num, gui.getSettings());
    }
 
    @Override
@@ -198,11 +273,15 @@ public class DatumCellEditor extends DefaultCellEditor
 
       if (num == null)
       {
-         spinnerModel.setValue(Integer.valueOf(0));
+         oldValue = Integer.valueOf(0);
+         intSpinnerModel.setValue(oldValue);
+         decimalField.setText("0.0");
       }
       else
       {
-         spinnerModel.setValue(num);
+         oldValue = num;
+         intSpinnerModel.setValue(Integer.valueOf(num.intValue()));
+         decimalField.setText(num.toString());
       }
 
       JTextField textField = 
@@ -211,24 +290,27 @@ public class DatumCellEditor extends DefaultCellEditor
 
       textField.setHorizontalAlignment(JTextField.TRAILING);
 
-      boolean enable = !autoReparseBox.isSelected();
-
-      midComp.setVisible(enable);
-      numField.setEnabled(enable && num != null);
-      currencyField.setEnabled(enable && currencySym != null);
+      updateMidComps();
 
       panel.add(textField, BorderLayout.NORTH);
-      panel.add(midComp, BorderLayout.CENTER);
+      panel.add(midCompSp, BorderLayout.CENTER);
       panel.add(autoReparseBox, BorderLayout.SOUTH);
 
       return panel;
    }
 
-   private JComponent panel, midComp;
+   private JComponent panel;
+   private JScrollPane midCompSp;
    private DatumTypeComboBox typeBox;
    private DatatoolGUI gui;
    private JTextField currencyField;
-   private JSpinner numField;
-   private SpinnerNumberModel spinnerModel;
-   private JCheckBox autoReparseBox;
+   private Number oldValue;
+
+   private JSpinner intSpinner;
+   private SpinnerNumberModel intSpinnerModel;
+   private JTextField decimalField;
+   private CardLayout valueCardLayout;
+   private JComponent currencyRow, valueRow;
+
+   private JCheckBox autoReparseBox, autoReformatBox;
 }

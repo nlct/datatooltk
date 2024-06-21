@@ -58,14 +58,14 @@ public class ErrorPanel extends JPanel
        new JScrollPane(messageArea));
 
       tabbedPane.setMnemonicAt(tabbedPane.getTabCount()-1,
-         messageHandler.getMnemonic("error.message"));
+         messageHandler.getMnemonicInt("error.message"));
 
       tabbedPane.addTab(messageHandler.getLabelWithAlt(
           "error.stacktrace", "Stack Trace"),
        new JScrollPane(stackTraceArea));
 
       tabbedPane.setMnemonicAt(tabbedPane.getTabCount()-1,
-         messageHandler.getMnemonic("error.stacktrace"));
+         messageHandler.getMnemonicInt("error.stacktrace"));
 
       cardPanel.add(tabbedPane, "tabbedpane");
 

@@ -496,13 +496,15 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="celledit.title">Cell Editor</entry>
 
 <entry key="celledit.type">Type:</entry>
-<entry key="celledit.type.mnemonic">T</entry>
+<entry key="celledit.type.mnemonic">Y</entry>
 <entry key="celledit.currency">Currency:</entry>
 <entry key="celledit.currency.mnemonic">C</entry>
-<entry key="celledit.numeric">Numeric Value:</entry>
-<entry key="celledit.numeric.mnemonic">N</entry>
+<entry key="celledit.numeric">Value:</entry>
+<entry key="celledit.numeric.mnemonic">V</entry>
+<entry key="celledit.reformat">Reformat on edit</entry>
+<entry key="celledit.reformat.mnemonic">F</entry>
 <entry key="celledit.reparse">Reparse on edit</entry>
-<entry key="celledit.reparse.mnemonic">R</entry>
+<entry key="celledit.reparse.mnemonic">P</entry>
 
 <!-- Find Dialog -->
 

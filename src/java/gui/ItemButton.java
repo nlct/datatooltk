@@ -39,7 +39,7 @@ public class ItemButton extends JMenuItem
      ScrollToolBar toolBar)
    {
       super(messageHandler.getLabelRemoveArgs(parentLabel, actionLabel));
-      setMnemonic(messageHandler.getMnemonic(parentLabel, actionLabel));
+      setMnemonic(messageHandler.getMnemonicInt(parentLabel, actionLabel));
       setActionCommand(actionLabel);
 
       button = null;

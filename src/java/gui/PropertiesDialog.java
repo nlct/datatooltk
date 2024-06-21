@@ -686,7 +686,7 @@ public class PropertiesDialog extends JDialog
       }
 
       tabbedPane.setMnemonicAt(index,
-         getMessageHandler().getMnemonic("preferences", label));
+         getMessageHandler().getMnemonicInt("preferences", label));
 
       return tab;
    }

@@ -121,7 +121,7 @@ public class FileField extends Box
          }
 
          fileChooser.setApproveButtonMnemonic(
-            messageHandler.getMnemonic("button.select"));
+            messageHandler.getMnemonicInt("button.select"));
 
          if (fileChooser.showDialog(parent,
             messageHandler.getLabel("button.select"))

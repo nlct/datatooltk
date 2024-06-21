@@ -200,7 +200,7 @@ public class Datum implements Comparable<Datum>
 
       ParsePosition pos = new ParsePosition(idx);
 
-      NumberFormat numfmt = NumberFormat.getInstance(settings.getNumericLocale());
+      NumberFormat numfmt = settings.getNumericParser();
 
       Number num = numfmt.parse(text, pos);
 
@@ -440,9 +440,45 @@ public class Datum implements Comparable<Datum>
       return numValue.equals(other.numValue);
    }
 
+   /**
+    * Create a new instance of a numeric type.
+    */ 
+   public static Datum format(DatumType type, String currencySym, Number num,
+      DatatoolSettings settings)
+   {
+      NumberFormat numfmt = settings.getNumericFormatter(type);
+
+      String text = "";
+
+      switch (type)
+      {
+         case INTEGER:
+           text = numfmt.format(num.intValue());
+         break;
+         case DECIMAL:
+           text = numfmt.format(num.doubleValue());
+         break;
+         case CURRENCY:
+           text = numfmt.format(num.doubleValue());
+           if (currencySym == null)
+           {
+              currencySym = numfmt.getCurrency().getSymbol();
+           }
+           else
+           {
+              text = text.replace(numfmt.getCurrency().getSymbol(), currencySym);
+           }
+         break;
+      }
+
+      return new Datum(text, currencySym, num, settings);
+   }
+
    private DatumType type;
    private String stringValue;
    private String currencySymbol;
    private Number numValue;
    DatatoolSettings settings;
+
+   public static int TEX_MAX_INT = 2147483647;
 }

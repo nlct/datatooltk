@@ -31,6 +31,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import java.text.Collator;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -622,6 +625,58 @@ public class DatatoolSettings extends Properties
       {
          setProperty("csv-encoding", encoding);
       }
+   }
+
+   public NumberFormat getNumericFormatter(DatumType type)
+   {
+      String prop = null;
+
+      switch (type)
+      {
+         case INTEGER:
+            prop = getProperty("integer-formatter");
+         break;
+         case CURRENCY:
+            prop = getProperty("currency-formatter");
+         break;
+         default:
+            prop = getProperty("numeric-formatter");
+      }
+
+      Locale locale = getNumericLocale();
+
+      if (prop != null)
+      {
+         NumberFormat numfmt
+            = new DecimalFormat(prop, DecimalFormatSymbols.getInstance(locale));
+
+         numfmt.setParseIntegerOnly(type==DatumType.INTEGER);
+
+         return numfmt;
+      }
+
+      switch (type)
+      {
+         case INTEGER:
+           return NumberFormat.getIntegerInstance(locale);
+         case CURRENCY:
+           return NumberFormat.getCurrencyInstance(locale);
+      }
+
+      return NumberFormat.getInstance(locale);
+   }
+
+   public NumberFormat getNumericParser()
+   {
+      Locale locale = getNumericLocale();
+      String prop = getProperty("numeric-parser");
+
+      if (prop != null)
+      {
+         return new DecimalFormat(prop, DecimalFormatSymbols.getInstance(locale));
+      }
+
+      return NumberFormat.getInstance(locale);
    }
 
    public Locale getNumericLocale()

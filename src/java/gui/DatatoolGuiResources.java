@@ -223,7 +223,7 @@ public class DatatoolGuiResources
        return createJLabel(label, null);
     }
 
-    public JLabel createJLabel(String label, int alignment)
+    public JLabel createJLabel(String label, float alignment)
     {
        return createJLabel(label, null, alignment);
     }
@@ -254,7 +254,7 @@ public class DatatoolGuiResources
        return jLabel;
    }
 
-    public JLabel createJLabel(String label, JComponent comp, int alignment)
+    public JLabel createJLabel(String label, JComponent comp, float alignment)
     {
        JLabel jlabel = createJLabel(label, comp);
        jlabel.setAlignmentX(alignment);
@@ -267,7 +267,7 @@ public class DatatoolGuiResources
       JRadioButton button = new JRadioButton(
         messageHandler.getLabel(parentLabel, label));
 
-      button.setMnemonic(messageHandler.getMnemonic(parentLabel, label));
+      button.setMnemonic(messageHandler.getMnemonicInt(parentLabel, label));
 
       String tooltip = messageHandler.getToolTip(parentLabel, label);
 
@@ -303,7 +303,7 @@ public class DatatoolGuiResources
     {
        JCheckBox checkBox = new JCheckBox(
           messageHandler.getLabel(parentLabel, label));
-       checkBox.setMnemonic(messageHandler.getMnemonic(parentLabel, label));
+       checkBox.setMnemonic(messageHandler.getMnemonicInt(parentLabel, label));
        checkBox.setActionCommand(label);
 
        if (listener != null)
@@ -411,26 +411,30 @@ public class DatatoolGuiResources
 
     public JMenu createJMenu(String parent, String label)
     {
-       String text = null;
+       String propName;
 
        if (parent == null)
        {
-          text = messageHandler.getMessageIfExists("menu"+"."+label);
+          propName = "menu."+label;
        }
        else
        {
-          text = messageHandler.getMessageIfExists("menu."+parent+"."+label);
+          propName = "menu."+parent+"."+label;
        }
+
+       String text = messageHandler.getMessageIfExists(propName);
 
        if (text == null)
        {
-          text = messageHandler.getLabel(parent, label);
+          propName = propName.substring(5);
        }
 
-       JMenu menu = new JMenu(text);
-       menu.setMnemonic(messageHandler.getMnemonic(parent, label));
+       text = messageHandler.getLabel(propName);
 
-       String tooltip = messageHandler.getToolTip(parent, label);
+       JMenu menu = new JMenu(text);
+       menu.setMnemonic(messageHandler.getMnemonicInt(propName));
+
+       String tooltip = messageHandler.getToolTip(propName);
 
        if (tooltip != null)
        {

@@ -661,11 +661,13 @@ public class DatatoolTk
       return helpLib.getMessageIfExists(propLabel);
    }
 
+   @Deprecated
    public char getMnemonic(String label)
    {
       return getMnemonic(null, label);
    }
 
+   @Deprecated
    public char getMnemonic(String parent, String label)
    {
       return (char)getMnemonicInt(parent, label);
