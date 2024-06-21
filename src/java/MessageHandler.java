@@ -24,6 +24,7 @@ import java.util.Vector;
 import java.util.logging.ErrorManager;
 import java.awt.Component;
 import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
@@ -552,6 +553,26 @@ public class MessageHandler extends ErrorManager
    public int getMnemonicInt(String parent, String label)
    {
       return datatooltk.getMnemonicInt(parent, label);
+   }
+
+   public ImageIcon getSmallIcon(String base, String... extensions)
+   {
+      return null;
+   }
+
+   public ImageIcon getLargeIcon(String base, String... extensions)
+   {
+      if (guiResources != null)
+      {
+         URL url = guiResources.getImageUrl(base);
+
+         if (url != null)
+         {
+            return new ImageIcon(url);
+         }
+      }
+
+      return null;
    }
 
    public DatatoolTk getDatatoolTk()
