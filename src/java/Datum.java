@@ -176,6 +176,24 @@ public class Datum implements Comparable<Datum>
          {
             currencySym = sym;
             idx = sym.length();
+
+            if (sym.matches(".*\\\\[a-zA-Z]+\\s*"))
+            {
+               while (idx < text.length())
+               {
+                  int cp = text.codePointAt(idx);
+
+                  if (Character.isWhitespace(cp))
+                  {
+                     idx += Character.charCount(cp);
+                  }
+                  else
+                  {
+                     break;
+                  }
+               }
+            }
+
             break;
          }
       }
@@ -268,6 +286,11 @@ public class Datum implements Comparable<Datum>
         type.getValue());
    }
 
+   public boolean isNumeric()
+   {
+      return numValue != null && type.isNumeric();
+   }
+
    public Number getNumber()
    {
       return numValue;
@@ -350,9 +373,23 @@ public class Datum implements Comparable<Datum>
    {
       int result = 0;
 
-      if ((type == DatumType.UNKNOWN || type == DatumType.STRING)
-        ||(other.type == DatumType.UNKNOWN || other.type == DatumType.STRING)
-         )
+      if (isNumeric() && other.isNumeric())
+      {
+         switch (type)
+         {
+            case INTEGER:
+              if (other.type == DatumType.INTEGER)
+              {
+                 result = Integer.compare(intValue(), other.intValue());
+                 break;
+              }
+            case DECIMAL:
+            case CURRENCY:
+              // currency symbol is ignored unless values are equal
+              result = Double.compare(doubleValue(), other.doubleValue());
+         }
+      }
+      else
       {
          Collator collator = settings.getSortCollator();
 
@@ -366,22 +403,17 @@ public class Datum implements Comparable<Datum>
          }
       }
 
-      switch (type)
-      {
-         case INTEGER:
-           if (other.type == DatumType.INTEGER)
-           {
-              result = Integer.compare(intValue(), other.intValue());
-              break;
-           }
-         case DECIMAL:
-         case CURRENCY:
-           result = Double.compare(doubleValue(), other.doubleValue());
-      }
-
       if (result == 0)
       {
-         result = stringValue.compareTo(other.stringValue);
+         if (type == DatumType.CURRENCY || other.type == DatumType.CURRENCY)
+         {
+            result = compareCurrencySymbols(other);
+         }
+
+         if (result == 0)
+         {
+            result = stringValue.compareTo(other.stringValue);
+         }
       }
 
       return result;
@@ -394,8 +426,7 @@ public class Datum implements Comparable<Datum>
 
       Datum other = (Datum)obj;
 
-      if (type == DatumType.STRING || type == DatumType.UNKNOWN
-        || other.type == DatumType.STRING || other.type == DatumType.UNKNOWN)
+      if (!isNumeric() || !other.isNumeric())
       {
          return stringValue.equals(other.stringValue);
       }
