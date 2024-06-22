@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -21,17 +21,24 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.Properties;
-import java.util.Vector;
-import java.util.Locale;
-import java.util.Locale.Builder;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.text.MessageFormat;
-import java.awt.Cursor;
-import javax.swing.JOptionPane;
+
 import java.net.URISyntaxException;
 import java.net.URL;
+
+import java.util.Locale;
+import java.util.Locale.Builder;
+import java.util.Properties;
+import java.util.Vector;
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+import java.text.MessageFormat;
+
+import java.awt.Cursor;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
@@ -708,10 +715,16 @@ public class DatatoolTk
       return msg.codePointAt(0);
    }
 
-   public URL getDictionaryUrl()
-   {// TODO
-      Vector<URL> dictionaries = settings.getMessageHandler().getLoadedDictionaries();
-      return dictionaries.firstElement();
+   public KeyStroke getKeyStroke(String property)
+   {
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      if (helpLib == null)
+      {
+         return null;
+      }
+
+      return helpLib.getKeyStroke(property);
    }
 
    public String getLabelWithValues(String label, Object... values)

@@ -68,71 +68,48 @@ public class CellDialog extends JDialog
 
       undoManager = new UndoManager();
 
-      JMenu editM = resources.createJMenu("edit");
+      JMenu editM = createJMenu("edit");
       mbar.add(editM);
 
-      undoItem = resources.createJMenuItem(
-        "edit", "undo", this,
-        KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK),
-        toolBar);
-
+      undoItem = createJMenuItem("edit", "undo", toolBar);
       editM.add(undoItem);
 
-      redoItem = resources.createJMenuItem(
-        "edit", "redo", this,
-        KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK),
-        toolBar);
-
+      redoItem = createJMenuItem("edit", "redo", toolBar);
       editM.add(redoItem);
 
       editM.addSeparator();
 
-      editM.add(resources.createJMenuItem(
-         "edit", "select_all", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK),
-         toolBar));
+      editM.add(createJMenuItem("edit", "select_all", toolBar));
 
-      cutItem = resources.createJMenuItem(
-         "edit", "cut", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK),
-         toolBar);
-
+      cutItem = createJMenuItem("edit", "cut", toolBar);
       editM.add(cutItem);
 
-      copyItem = resources.createJMenuItem(
-         "edit", "copy", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
-         toolBar);
-
+      copyItem = createJMenuItem("edit", "copy", toolBar);
       editM.add(copyItem);
 
-      editM.add(resources.createJMenuItem(
-         "edit", "paste", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
-         toolBar));
+      editM.add(createJMenuItem("edit", "paste", toolBar));
 
-      JMenu searchM = resources.createJMenu("search");
+      editM.addSeparator();
+      toolBar.addSeparator();
+
+      editM.add(createJMenuItem("edit", "parse", toolBar));
+      editM.add(createJMenuItem("edit", "reload", toolBar));
+      editM.add(createJMenuItem("edit", "cell_to_null", toolBar));
+
+      toolBar.addSeparator();
+
+      JMenu searchM = createJMenu("search");
       mbar.add(searchM);
 
-      searchM.add(resources.createJMenuItem(
-         "search", "find", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK),
-         toolBar));
+      searchM.add(createJMenuItem("search", "find", toolBar));
 
-      findAgainItem = resources.createJMenuItem(
-         "search", "find_again", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
-         toolBar);
+      findAgainItem = createJMenuItem("search", "find_again", toolBar);
       searchM.add(findAgainItem);
       findAgainItem.setEnabled(false);
 
-      searchM.add(resources.createJMenuItem(
-         "search", "replace", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK),
-         toolBar));
+      searchM.add(createJMenuItem("search", "replace", toolBar));
 
-      document = new CellDocument(this,
-         gui.getSettings());
+      document = new CellDocument(this, gui.getSettings());
       textPane = new JTextPane(document);
 
       textPane.setFont(gui.getCellFont());
@@ -198,21 +175,36 @@ public class CellDialog extends JDialog
       setLocationRelativeTo(null);
    }
 
+   protected JMenu createJMenu(String label)
+   {
+      return gui.getResources().createJMenu("editormenu", label);
+   }
+
+   protected JMenuItem createJMenuItem(String parentLabel, String action,
+     ScrollToolBar toolBar)
+   {
+      parentLabel = "editormenu."+parentLabel; 
+
+      return gui.getResources().createJMenuItem(parentLabel, action,
+        this, gui.getMessageHandler().getKeyStroke(parentLabel, action), toolBar);
+   }
+
    protected JComponent createDatumComponent()
    {
       DatatoolGuiResources resources = gui.getResources();
 
       JComponent datumPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 
+      typeBoxLabel = resources.createJLabel("celledit.type", typeBox);
       typeBox = new DatumTypeComboBox(gui.getSettings());
       typeBox.addItemListener(this);
-      datumPanel.add(resources.createJLabel("celledit.type", typeBox));
+      datumPanel.add(typeBoxLabel);
       datumPanel.add(typeBox);
 
       currencyComp = new JPanel();
       datumPanel.add(currencyComp);
 
-      currencyField = new JTextField(12);
+      currencyField = new JTextField(10);
       currencyComp.add(resources.createJLabel("celledit.currency", currencyField));
       currencyComp.add(currencyField);
 
@@ -220,7 +212,7 @@ public class CellDialog extends JDialog
       numericComp = new JPanel(valueCardLayout);
       datumPanel.add(numericComp);
 
-      JComponent intComp = new JPanel();
+      intComp = new JPanel();
    
       intSpinnerModel = new SpinnerNumberModel(
         0, - Datum.TEX_MAX_INT, Datum.TEX_MAX_INT, 1);
@@ -233,7 +225,7 @@ public class CellDialog extends JDialog
       intComp.add(intSpinner);
       numericComp.add(intComp, "int");
 
-      JComponent decComp = new JPanel();
+      decComp = new JPanel();
 
       decimalField = new JTextField(6);
       decComp.add(resources.createJLabel("celledit.numeric", decimalField));
@@ -248,9 +240,53 @@ public class CellDialog extends JDialog
    {
       if (evt.getStateChange() == ItemEvent.SELECTED)
       {
-         intSpinnerModel.setValue(Integer.valueOf(orgValue.intValue()));
-         decimalField.setText(orgValue.toString());
+         DatumType type = typeBox.getSelectedType();
+
+         switch (type)
+         {
+            case INTEGER:
+              if (!intComp.isVisible())
+              {
+                 intSpinnerModel.setValue(Integer.valueOf((int)getDecimalValue()));
+              }
+            break;
+            case CURRENCY:
+            case DECIMAL:
+              if (!decComp.isVisible())
+              {
+                 setDecimalValue(intSpinnerModel.getNumber().doubleValue());
+              }
+            break;
+         }
+
          updateDatumComp();
+      }
+   }
+
+   private String getCurrencySymbol()
+   {
+      return currencyField.getText();
+   }
+
+   private void setCurrencySymbol(String sym)
+   {
+      currencyField.setText(sym == null ? "" : sym);
+   }
+
+   private void setDecimalValue(double val)
+   {
+      decimalField.setText(String.format("%g", val));
+   }
+
+   private double getDecimalValue()
+   {
+      try
+      {
+         return Double.valueOf(decimalField.getText());
+      }
+      catch (NumberFormatException e)
+      {
+         return orgValue.doubleValue();
       }
    }
 
@@ -279,6 +315,54 @@ public class CellDialog extends JDialog
       }
    }
 
+   private void setDatum(Datum datum)
+   {
+      orgValue = datum.getNumber();
+
+      if (orgValue == null)
+      {
+         orgValue = Integer.valueOf(0);
+      }
+
+      DatumType type = datum.getDatumType();
+
+      if (datum.isNumeric())
+      {
+         String sym = datum.getCurrencySymbol();
+         setCurrencySymbol(sym);
+         setDecimalValue(orgValue.doubleValue());
+         intSpinnerModel.setValue(Integer.valueOf(orgValue.intValue()));
+      }
+      else
+      {
+         setCurrencySymbol(null);
+         decimalField.setText("");
+      }
+
+      typeBox.setSelectedType(type);
+   }
+
+   private void reload()
+   {
+      Datum datum = db.getRow(row).get(col);
+
+      setDatum(datum);
+
+      try
+      {
+         document.setText(
+            datum.getText().replaceAll("\\\\DTLpar *", "\n\n"));
+      }
+      catch (BadLocationException e)
+      {
+         getMessageHandler().error(this, e);
+      }
+
+      modified = false;
+      textPane.requestFocusInWindow();
+      textPane.setCaretPosition(0);
+   }
+
    public boolean requestEdit(int row, int col,
      DatatoolDbPanel panel)
    {
@@ -301,14 +385,13 @@ public class CellDialog extends JDialog
 
       if (datum.isNumeric())
       {
-         String sym = datum.getCurrencySymbol();
-         currencyField.setText(sym == null ? "" : sym);
-         decimalField.setText(orgValue.toString());
+         setCurrencySymbol(datum.getCurrencySymbol());
+         setDecimalValue(orgValue.doubleValue());
          intSpinnerModel.setValue(Integer.valueOf(orgValue.intValue()));
       }
       else
       {
-         currencyField.setText("");
+         setCurrencySymbol(null);
          decimalField.setText("");
       }
 
@@ -399,6 +482,55 @@ public class CellDialog extends JDialog
       {
          textPane.paste();
       }
+      else if (action.equals("reload"))
+      {
+         reload();
+      }
+      else if (action.equals("parse"))
+      {
+         Datum datum = Datum.valueOf(textPane.getText(), gui.getSettings());
+         setDatum(datum);
+
+         if (!datum.isNumeric())
+         {
+            JOptionPane.showMessageDialog(this,
+             gui.getMessageHandler().getLabel("message.celledit.not_numeric"));
+         }
+      }
+      else if (action.equals("cell_to_null"))
+      {
+         Datum datum = Datum.createNull(gui.getSettings());
+         textPane.setText(datum.getText());
+         setDatum(datum);
+      }
+      else if (action.equals("format"))
+      {
+         DatumType type = typeBox.getSelectedType();
+
+         if (type.isNumeric())
+         {
+            Number num;
+
+            if (type == DatumType.INTEGER)
+            {
+               num = intSpinnerModel.getNumber();
+            }
+            else
+            {
+               num = Double.valueOf(getDecimalValue());
+            }
+
+            Datum datum = Datum.format(type, getCurrencySymbol(),
+              num, gui.getSettings());
+            textPane.setText(datum.getText());
+         }
+         else
+         {
+            gui.getMessageHandler().error(this, 
+              gui.getMessageHandler().getLabelWithValues("error.not_decimal_type",
+               typeBox.getSelectedItem(), typeBoxLabel.getText()));
+         }
+      }
       else if (action.equals("find"))
       {
          String selectedText = textPane.getSelectedText();
@@ -429,8 +561,39 @@ public class CellDialog extends JDialog
 
    public void okay()
    {
-      panel.updateCell(row, col,  
-        textPane.getText().replaceAll("\n *\n+", "\\\\DTLpar "));
+      String text = textPane.getText().replaceAll("\n *\n+", "\\\\DTLpar ");
+
+      DatumType type = typeBox.getSelectedType();
+      String currencySym = null;
+      Number num = null;
+
+      switch (type)
+      {
+         case INTEGER:
+            num = intSpinnerModel.getNumber();
+         break;
+         case CURRENCY:
+            currencySym = getCurrencySymbol();
+         // fall through
+         case DECIMAL:
+            String decStr = decimalField.getText();
+
+            try
+            {
+               num = Double.valueOf(decStr);
+            }
+            catch (NumberFormatException e)
+            {
+               gui.getMessageHandler().error(this, 
+                gui.getMessageHandler().getLabelWithValues(
+                  "error.not_decimal", decStr));
+               return;
+            }
+      }
+
+      Datum datum = new Datum(type, text, currencySym, num, gui.getSettings());
+
+      panel.updateCell(datum, row, col);
       setVisible(false);
    }
 
@@ -493,8 +656,9 @@ public class CellDialog extends JDialog
      findAgainItem;
 
    private DatumTypeComboBox typeBox;
+   private JLabel typeBoxLabel;
    private JTextField currencyField, decimalField;
-   private JComponent currencyComp, numericComp;
+   private JComponent currencyComp, numericComp, intComp, decComp;
    private JSpinner intSpinner;
    private SpinnerNumberModel intSpinnerModel;
    private CardLayout valueCardLayout;

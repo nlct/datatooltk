@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -21,16 +21,23 @@ package com.dickimawbooks.datatooltk.gui;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.net.URISyntaxException;
+
 import java.util.*;
 import java.util.regex.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texjavahelplib.JLabelGroup;
 
 import com.dickimawbooks.datatooltk.*;
 
@@ -47,13 +54,55 @@ public class PropertiesDialog extends JDialog
 
       settings = gui.getSettings();
       DatatoolGuiResources resources = gui.getResources();
-      MessageHandler messageHandler = gui.getMessageHandler();
 
       tabbedPane = new JTabbedPane();
 
       getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
       // General tab
+
+      JComponent generalTab = createGeneralTab();
+
+      // CSV tab
+
+      JComponent csvTab = createCsvTab();
+
+      // SQL tab
+
+      JComponent sqlTab = createSqlTab();
+
+      // TeX Tab
+
+      JComponent texTab = createTeXTab();
+
+      // Currencies Tab
+
+      JComponent currencyTab = createCurrenciesTab();
+
+      // Display Tab
+
+      JComponent displayTab = createDisplayTab();
+
+      // Language Tab
+
+      JComponent languageTab = createLanguageTab();
+
+      // Plugins tab
+
+      JComponent pluginsTab = createPluginsTab();
+
+      getContentPane().add(
+        resources.createOkayCancelHelpPanel(this, gui, "preferences"),
+        BorderLayout.SOUTH);
+      pack();
+
+      setLocationRelativeTo(null);
+   }
+
+   private JComponent createGeneralTab()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent generalTab = addTab("general");
 
@@ -127,7 +176,9 @@ public class PropertiesDialog extends JDialog
       initialRowCapacitySpinner = new JSpinner(
          new SpinnerNumberModel(16, 10, Integer.MAX_VALUE, 1));
 
-      JLabel rowCapacityLabel = resources.createJLabel(
+      JLabelGroup labelGrp = new JLabelGroup();
+
+      JLabel rowCapacityLabel = resources.createJLabel(labelGrp,
         "preferences.initial.row.capacity", 
         initialRowCapacitySpinner);
 
@@ -141,39 +192,30 @@ public class PropertiesDialog extends JDialog
       initialColumnCapacitySpinner = new JSpinner(
          new SpinnerNumberModel(16, 10, Integer.MAX_VALUE, 1));
 
-      JLabel columnCapacityLabel = resources.createJLabel(
+      JLabel columnCapacityLabel = resources.createJLabel(labelGrp,
         "preferences.initial.column.capacity", 
         initialColumnCapacitySpinner);
 
       box.add(columnCapacityLabel);
       box.add(initialColumnCapacitySpinner);
 
-      Dimension rowDim = rowCapacityLabel.getPreferredSize();
+      return generalTab;
+   }
 
-      Dimension colDim = columnCapacityLabel.getPreferredSize();
-
-      if (colDim.width < rowDim.width)
-      {
-         colDim.width = rowDim.width;
-         columnCapacityLabel.setPreferredSize(colDim);
-      }
-      else
-      {
-         rowDim.width = colDim.width;
-         rowCapacityLabel.setPreferredSize(rowDim);
-      }
-
-      // CSV tab
+   private JComponent createCsvTab()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent csvTab = addTab("csv");
 
-      box = Box.createHorizontalBox();
+      JComponent box = Box.createHorizontalBox();
       box.setAlignmentX(0);
       csvTab.add(box);
 
       box.add(new JLabel(messageHandler.getLabel("preferences.csv.sep")));
 
-      bg = new ButtonGroup();
+      ButtonGroup bg = new ButtonGroup();
 
       sepTabButton = createRadioButton("preferences.csv", "tabsep", bg);
       box.add(sepTabButton);
@@ -253,33 +295,30 @@ public class PropertiesDialog extends JDialog
       box.add(createLabel("preferences.csv.encoding", csvEncodingBox));
       box.add(csvEncodingBox);
 
-      // SQL tab
+      return csvTab;
+   }
+
+   private JComponent createSqlTab()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent sqlTab = addTab("sql");
 
-      JLabel[] labels = new JLabel[5];
-      int idx = 0;
-      int maxWidth = 0;
-      Dimension dim;
+      JLabelGroup labelGrp = new JLabelGroup();
 
-      box = createNewRow(sqlTab);
+      JComponent box = createNewRow(sqlTab);
 
       hostField = new JTextField(16);
 
-      labels[idx] = createLabel("preferences.sql.host", hostField);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.sql.host", hostField));
       box.add(hostField);
 
       box = createNewRow(sqlTab);
 
       portField = new NonNegativeIntField(3306);
 
-      labels[idx] = createLabel("preferences.sql.port", portField);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.sql.port", portField));
 
       box.add(portField);
 
@@ -287,47 +326,37 @@ public class PropertiesDialog extends JDialog
 
       prefixField = new JTextField(16);
 
-      labels[idx] = createLabel("preferences.sql.prefix", prefixField);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.sql.prefix", prefixField));
       box.add(prefixField);
 
       box = createNewRow(sqlTab);
 
       databaseField = new JTextField(16);
 
-      labels[idx] = createLabel("preferences.sql.database", databaseField);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.sql.database", databaseField));
       box.add(databaseField);
 
       box = createNewRow(sqlTab);
 
       userField = new JTextField(16);
 
-      labels[idx] = createLabel("preferences.sql.user", userField);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.sql.user", userField));
       box.add(userField);
-
-      for (idx = 0; idx < labels.length; idx++)
-      {
-         dim = labels[idx].getPreferredSize();
-         dim.width = maxWidth;
-         labels[idx].setPreferredSize(dim);
-      }
 
       wipeBox = createCheckBox("preferences.sql", "wipe");
       sqlTab.add(wipeBox);
 
-      // TeX Tab
+      return sqlTab;
+   }
+
+   private JComponent createTeXTab()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent texTab = addTab("tex");
 
-      box = createNewRow(texTab);
+      JComponent box = createNewRow(texTab);
       texEncodingBox = new JComboBox<Charset>(
         Charset.availableCharsets().values().toArray(new Charset[0]));
       box.add(createLabel("preferences.tex.encoding", texEncodingBox));
@@ -375,7 +404,13 @@ public class PropertiesDialog extends JDialog
 
       texMapTable.getSelectionModel().addListSelectionListener(this);
 
-      // Currencies Tab
+      return texTab;
+   }
+
+   private JComponent createCurrenciesTab()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent currencyTab = 
          addTab(new JPanel(new BorderLayout()), "currencies");
@@ -386,7 +421,7 @@ public class PropertiesDialog extends JDialog
 
       currencyTab.add(new JScrollPane(currencyList), BorderLayout.CENTER);
 
-      buttonPanel = Box.createVerticalBox();
+      JComponent buttonPanel = Box.createVerticalBox();
       currencyTab.add(buttonPanel, BorderLayout.EAST);
 
       currencyTab.add(createTextArea("preferences.currencies.reminder"),
@@ -406,7 +441,13 @@ public class PropertiesDialog extends JDialog
       currencyList.addListSelectionListener(this);
       currencyList.addMouseListener(this);
 
-      // Display Tab
+      return currencyTab;
+   }
+
+   private JComponent createDisplayTab()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent displayTab =
          addTab(new JPanel(new FlowLayout(FlowLayout.LEFT)), "display");
@@ -416,47 +457,30 @@ public class PropertiesDialog extends JDialog
       leftPanel.setAlignmentY(0);
       displayTab.add(leftPanel);
 
-      labels = new JLabel[3];
-      idx = 0;
-      maxWidth = 0;
+      JLabelGroup labelGrp = new JLabelGroup();
 
-      box = createNewRow(leftPanel);
+      JComponent box = createNewRow(leftPanel);
 
       GraphicsEnvironment env =
          GraphicsEnvironment.getLocalGraphicsEnvironment();
 
       fontBox = new JComboBox<String>(env.getAvailableFontFamilyNames());
 
-      labels[idx] = createLabel("preferences.display.font", fontBox);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.display.font", fontBox));
       box.add(fontBox);
 
       box = createNewRow(leftPanel);
       sizeField = new NonNegativeIntField(10);
 
-      labels[idx] = createLabel("preferences.display.fontsize", sizeField);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.display.fontsize", sizeField));
       box.add(sizeField);
 
       box = createNewRow(leftPanel);
       cellHeightField = new NonNegativeIntField(4);
 
-      labels[idx] = createLabel("preferences.display.cellheight", cellHeightField);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp,
+         "preferences.display.cellheight", cellHeightField));
       box.add(cellHeightField);
-
-      for (idx = 0; idx < labels.length; idx++)
-      {
-         dim = labels[idx].getPreferredSize();
-         dim.width = maxWidth;
-         labels[idx].setPreferredSize(dim);
-      }
 
       box = createNewRow(leftPanel);
       box.add(Box.createVerticalStrut(20));
@@ -473,26 +497,18 @@ public class PropertiesDialog extends JDialog
 
       box = createNewRow(editorBox);
 
-      labels = new JLabel[4];
-      idx = 0;
-      maxWidth = 0;
+      labelGrp = new JLabelGroup();
 
       editorHeightField = new NonNegativeIntField(10);
-      labels[idx] = createLabel("preferences.display.editorheight",
-         editorHeightField);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.display.editorheight",
+         editorHeightField));
       box.add(editorHeightField);
 
       box = createNewRow(editorBox);
 
       editorWidthField = new NonNegativeIntField(8);
-      labels[idx] = createLabel("preferences.display.editorwidth",
-         editorWidthField);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.display.editorwidth",
+         editorWidthField));
       box.add(editorWidthField);
 
       box = createNewRow(editorBox);
@@ -500,10 +516,7 @@ public class PropertiesDialog extends JDialog
       JButton button = new JButton("...");
       button.setActionCommand("highlightcs");
       button.addActionListener(this);
-      labels[idx] = createLabel("preferences.display.highlightcs", button);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.display.highlightcs", button));
 
       highlightCsSwatch = new JPanel();
       highlightCsSwatch.setPreferredSize(new Dimension(38,20));
@@ -515,22 +528,12 @@ public class PropertiesDialog extends JDialog
       button = new JButton("...");
       button.setActionCommand("highlightcomment");
       button.addActionListener(this);
-      labels[idx] = createLabel("preferences.display.highlightcomment", button);
-      dim = labels[idx].getPreferredSize();
-      maxWidth = Math.max(maxWidth, dim.width);
-      box.add(labels[idx++]);
+      box.add(createLabel(labelGrp, "preferences.display.highlightcomment", button));
 
       highlightCommentSwatch = new JPanel();
       highlightCommentSwatch.setPreferredSize(new Dimension(38,20));
       box.add(highlightCommentSwatch);
       box.add(button);
-
-      for (idx = 0; idx < labels.length; idx++)
-      {
-         dim = labels[idx].getPreferredSize();
-         dim.width = maxWidth;
-         labels[idx].setPreferredSize(dim);
-      }
 
       syntaxHighlightingBox = resources.createJCheckBox
         ("preferences.display", "editorsyntax", null);
@@ -576,34 +579,31 @@ public class PropertiesDialog extends JDialog
       int[] typeMnemonics = settings.getTypeMnemonics();
 
       cellWidthFields = new NonNegativeIntField[typeLabels.length];
-      labels = new JLabel[typeLabels.length];
+      labelGrp = new JLabelGroup();
 
       for (int i = 0; i < cellWidthFields.length; i++)
       {
          box = createNewRow(cellWidthsPanel);
          cellWidthFields[i] = new NonNegativeIntField(0);
-         labels[i] = new JLabel(typeLabels[i]);
+         JLabel label = labelGrp.createJLabel(typeLabels[i]);
 
          if (typeMnemonics[i] != -1)
          {
-            labels[i].setDisplayedMnemonic(typeMnemonics[i]);
-            labels[i].setLabelFor(cellWidthFields[i]);
+            label.setDisplayedMnemonic(typeMnemonics[i]);
+            label.setLabelFor(cellWidthFields[i]);
          }
 
-         dim = labels[i].getPreferredSize();
-         maxWidth = Math.max(maxWidth, dim.width);
-         box.add(labels[i]);
+         box.add(label);
          box.add(cellWidthFields[i]);
       }
 
-      for (idx = 0; idx < labels.length; idx++)
-      {
-         dim = labels[idx].getPreferredSize();
-         dim.width = maxWidth;
-         labels[idx].setPreferredSize(dim);
-      }
+      return displayTab;
+   }
 
-      // Language Tab
+   private JComponent createLanguageTab()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent languageTab =
          addTab(new JPanel(new BorderLayout()), "language");
@@ -614,7 +614,7 @@ public class PropertiesDialog extends JDialog
       JComponent comp = Box.createVerticalBox();
       languageTab.add(comp);
 
-      box = new JPanel(new FlowLayout());
+      JComponent box = new JPanel(new FlowLayout());
       comp.add(box);
 
       helpsetLangBox = new JComboBox<String>(gui.getHelpSets());
@@ -624,9 +624,6 @@ public class PropertiesDialog extends JDialog
       box.add(helpsetLangLabel);
       box.add(helpsetLangBox);
 
-      box = new JPanel(new FlowLayout());
-      comp.add(box);
-
       dictLangBox = new JComboBox<String>(gui.getDictionaries());
 
       JLabel dictLangLabel 
@@ -634,18 +631,148 @@ public class PropertiesDialog extends JDialog
       box.add(dictLangLabel);
       box.add(dictLangBox);
 
-      dim = helpsetLangLabel.getPreferredSize();
-      dim.width = Math.max(dim.width,
-         (int)dictLangBox.getPreferredSize().getWidth());
+      // Numeric Parsing
 
-      helpsetLangLabel.setPreferredSize(dim);
-      dictLangLabel.setPreferredSize(dim);
+      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.add(box);
 
-      // Plugins tab
+      Locale[] allLocales = NumberFormat.getAvailableLocales();
+      Arrays.parallelSort(allLocales,
+        new Comparator<Locale>()
+        {
+           @Override
+           public int compare(Locale o1, Locale o2)
+           {
+              return o1.getDisplayName().compareTo(o2.getDisplayName());
+           }
+        });
+
+      numericLocaleBox = new JComboBox<Locale>(allLocales);
+      numericLocaleBox.setRenderer(new LocaleListRenderer());
+      numericLocaleBox.addItemListener(new ItemListener()
+       {
+          @Override
+          public void itemStateChanged(ItemEvent evt)
+          {
+             if (evt.getStateChange() == ItemEvent.SELECTED)
+             {
+                decimalSymbolsUpdated((Locale)numericLocaleBox.getSelectedItem());
+             }
+          }
+       });
+
+      box.add(createLabel("preferences.language.numeric_locale",
+        numericLocaleBox));
+      box.add(numericLocaleBox);
+
+      decimalSymbolsField = new JEditorPane("text/html", "");
+      decimalSymbolsField.setEditable(false);
+      decimalSymbolsField.setOpaque(false);
+      decimalSymbolsField.setBorder(BorderFactory.createEmptyBorder());
+      decimalSymbolsUpdated(DecimalFormatSymbols.getInstance());
+      comp.add(decimalSymbolsField);
+
+      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.add(box);
+
+      box.add(createLabel("preferences.language.numeric_parsing"));
+
+      ButtonGroup radioGrp = new ButtonGroup();
+
+      numParseMatchLocaleButton = createRadioButton(
+       "preferences.language", "numeric_parsing.match_locale", radioGrp);
+      box.add(numParseMatchLocaleButton);
+
+      numParsePatternButton = createRadioButton(
+       "preferences.language", "numeric_parsing.pattern", radioGrp);
+      box.add(numParsePatternButton);
+
+      numericParserField = new JTextField(10);
+      box.add(numericParserField);
+
+      // Numeric Formatting
+
+      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.add(box);
+
+      box.add(createLabel("preferences.language.numeric_formatting"));
+
+      JLabelGroup labelGrp = new JLabelGroup();
+
+      // Integer Formatting
+
+      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.add(box);
+
+      box.add(createLabel(labelGrp, "preferences.language.numeric_formatting.int"));
+
+      radioGrp = new ButtonGroup();
+      intFmtMatchLocaleButton = createRadioButton(
+       "preferences.language.numeric_formatting", "int.match_locale", radioGrp);
+      box.add(intFmtMatchLocaleButton);
+
+      intFmtPatternButton = createRadioButton(
+       "preferences.language.numeric_formatting", "int.pattern", radioGrp);
+      box.add(intFmtPatternButton);
+
+      intFormatterField = new JTextField(8);
+      box.add(intFormatterField);
+
+      // Currency Formatting
+
+      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.add(box);
+
+      box.add(createLabel(labelGrp,
+          "preferences.language.numeric_formatting.currency"));
+
+      radioGrp = new ButtonGroup();
+      currencyFmtMatchLocaleButton = createRadioButton(
+       "preferences.language.numeric_formatting", "currency.match_locale", radioGrp);
+      box.add(currencyFmtMatchLocaleButton);
+
+      currencyFmtPatternButton = createRadioButton(
+       "preferences.language.numeric_formatting", "currency.pattern", radioGrp);
+      box.add(currencyFmtPatternButton);
+
+      currencyFormatterField = new JTextField(8);
+      box.add(currencyFormatterField);
+
+      // Decimal Formatting
+
+      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.add(box);
+
+      box.add(createLabel(labelGrp,
+        "preferences.language.numeric_formatting.decimal"));
+
+      radioGrp = new ButtonGroup();
+      decimalFmtMatchLocaleButton = createRadioButton(
+       "preferences.language.numeric_formatting", "decimal.match_locale", radioGrp);
+      box.add(decimalFmtMatchLocaleButton);
+
+      decimalFmtPatternButton = createRadioButton(
+       "preferences.language.numeric_formatting", "decimal.pattern", radioGrp);
+      box.add(decimalFmtPatternButton);
+
+      decimalFormatterField = new JTextField(8);
+      box.add(decimalFormatterField);
+
+      decimalFmtSIButton = createRadioButton(
+       "preferences.language.numeric_formatting", "decimal.siunitx", radioGrp);
+      box.add(decimalFmtSIButton);
+
+      return languageTab;
+   }
+
+   private JComponent createPluginsTab()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent pluginsTab = addTab("plugins");
 
-      box = createNewRow(pluginsTab);
+      JComponent box = createNewRow(pluginsTab);
       box.add(resources.createMessageArea("preferences.plugins.note"));
 
       box = createNewRow(pluginsTab);
@@ -653,12 +780,7 @@ public class PropertiesDialog extends JDialog
       box.add(createLabel("preferences.plugins.perl", perlFileField));
       box.add(perlFileField);
 
-      getContentPane().add(
-        resources.createOkayCancelHelpPanel(this, gui, "preferences"),
-        BorderLayout.SOUTH);
-      pack();
-
-      setLocationRelativeTo(null);
+      return pluginsTab;
    }
 
    private JComponent addTab(String label)
@@ -718,9 +840,24 @@ public class PropertiesDialog extends JDialog
       return button;
    }
 
+   private JLabel createLabel(String label)
+   {
+      return getResources().createJLabel(label);
+   }
+
+   private JLabel createLabel(JLabelGroup grp, String label)
+   {
+      return getResources().createJLabel(grp, label, null);
+   }
+
    private JLabel createLabel(String label, JComponent comp)
    {
       return getResources().createJLabel(label, comp);
+   }
+
+   private JLabel createLabel(JLabelGroup grp, String label, JComponent comp)
+   {
+      return getResources().createJLabel(grp, label, comp);
    }
 
    private JTextArea createTextArea(String label)
@@ -903,11 +1040,100 @@ public class PropertiesDialog extends JDialog
       helpsetLangBox.setSelectedItem(settings.getHelpSet());
       dictLangBox.setSelectedItem(settings.getDictionary());
 
+      Locale numLocale = settings.getNumericLocale();
+      numericLocaleBox.setSelectedItem(numLocale);
+
+      if (settings.isNumericParserSet())
+      {
+         numParsePatternButton.setSelected(true);
+         numericParserField.setText(""+settings.getNumericParser());
+      }
+      else
+      {
+         numParseMatchLocaleButton.setSelected(true);
+         numericParserField.setText("");
+      }
+
+      if (settings.isIntegerFormatterSet())
+      {
+         intFmtPatternButton.setSelected(true);
+         
+         NumberFormat fmt = settings.getNumericFormatter(DatumType.INTEGER);
+
+         if (fmt instanceof DecimalFormat)
+         {
+            intFormatterField.setText(((DecimalFormat)fmt).toPattern());
+         }
+
+         intFormatterField.setEnabled(true);
+      }
+      else
+      {
+         intFmtMatchLocaleButton.setSelected(true);
+         intFormatterField.setText("");
+         intFormatterField.setEnabled(false);
+      }
+
+      if (settings.isCurrencyFormatterSet())
+      {
+         currencyFmtPatternButton.setSelected(true);
+         currencyFormatterField.setText(
+           settings.getNumericFormatter(DatumType.CURRENCY).toString());
+         currencyFormatterField.setEnabled(true);
+      }
+      else
+      {
+         currencyFmtMatchLocaleButton.setSelected(true);
+         currencyFormatterField.setText("");
+         currencyFormatterField.setEnabled(false);
+      }
+
+      if (settings.useSIforDecimals())
+      {
+         decimalFmtSIButton.setSelected(true);
+         decimalFormatterField.setText("");
+         decimalFormatterField.setEnabled(false);
+      }
+      else if (settings.isDecimalFormatterSet())
+      {
+         decimalFmtPatternButton.setSelected(true);
+         decimalFormatterField.setText(
+           settings.getNumericFormatter(DatumType.DECIMAL).toString());
+         decimalFormatterField.setEnabled(true);
+      }
+      else
+      {
+         decimalFmtMatchLocaleButton.setSelected(true);
+         decimalFormatterField.setText("");
+         decimalFormatterField.setEnabled(false);
+      }
+
       perlFileField.setFileName(settings.getPerl());
 
       updateButtons();
 
       setVisible(true);
+   }
+
+   private void decimalSymbolsUpdated(Locale locale)
+   {
+      if (locale == null)
+      {
+         decimalSymbolsField.setText("");
+      }
+      else
+      {
+         decimalSymbolsUpdated(DecimalFormatSymbols.getInstance(locale));
+      }
+   }
+
+   private void decimalSymbolsUpdated(DecimalFormatSymbols syms)
+   {
+      decimalSymbolsField.setText(String.format("<html>%s</html>", 
+        getMessageHandler().getLabelWithValues(
+       "preferences.language.decimal_symbols",
+        String.format("<code>%c</code>", syms.getDecimalSeparator()), 
+        String.format("<code>%c</code>", syms.getGroupingSeparator()))));
    }
 
    public void valueChanged(ListSelectionEvent evt)
@@ -1069,6 +1295,93 @@ public class PropertiesDialog extends JDialog
          {
             highlightCommentSwatch.setBackground(col);
          }
+      }
+      else if (action.equals("int.pattern"))
+      {
+         intFmtPatternButton.setSelected(true);
+
+         if (intFormatterField.getText().isEmpty())
+         {
+            Locale locale = (Locale)numericLocaleBox.getSelectedItem();
+
+            if (locale != null)
+            {
+               NumberFormat numFmt = NumberFormat.getIntegerInstance(locale);
+
+               if (numFmt instanceof DecimalFormat)
+               {
+                  intFormatterField.setText(((DecimalFormat)numFmt).toPattern());
+               }
+            }
+         }
+
+         intFormatterField.setEnabled(true);
+      }
+      else if (action.equals("int.match_locale"))
+      {
+         intFmtMatchLocaleButton.setSelected(true);
+         intFormatterField.setEnabled(false);
+      }
+      else if (action.equals("currency.pattern"))
+      {
+         currencyFmtPatternButton.setSelected(true);
+
+         if (currencyFormatterField.getText().isEmpty())
+         {
+            Locale locale = (Locale)numericLocaleBox.getSelectedItem();
+
+            if (locale != null)
+            {
+               NumberFormat numFmt = NumberFormat.getCurrencyInstance(locale);
+
+               if (numFmt instanceof DecimalFormat)
+               {
+                  currencyFormatterField.setText(((DecimalFormat)numFmt).toPattern());
+               }
+            }
+         }
+
+         currencyFormatterField.setEnabled(true);
+      }
+      else if (action.equals("currency.match_locale"))
+      {
+         currencyFmtMatchLocaleButton.setSelected(true);
+         currencyFormatterField.setEnabled(false);
+      }
+      else if (action.equals("decimal.pattern"))
+      {
+         decimalFmtPatternButton.setSelected(true);
+
+         if (decimalFormatterField.getText().isEmpty())
+         {
+            Locale locale = (Locale)numericLocaleBox.getSelectedItem();
+
+            if (locale != null)
+            {
+               NumberFormat numFmt = NumberFormat.getInstance(locale);
+
+               if (numFmt instanceof DecimalFormat)
+               {
+                  decimalFormatterField.setText(((DecimalFormat)numFmt).toPattern());
+               }
+            }
+         }
+
+         decimalFormatterField.setEnabled(true);
+      }
+      else if (action.equals("decimal.match_locale"))
+      {
+         decimalFmtMatchLocaleButton.setSelected(true);
+         decimalFormatterField.setEnabled(false);
+      }
+      else if (action.equals("decimal.siunitx"))
+      {
+         decimalFmtSIButton.setSelected(true);
+         decimalFormatterField.setEnabled(false);
+      }
+      else
+      {
+         System.err.println("Unknown action '"+action+"'");
       }
    }
 
@@ -1273,6 +1586,7 @@ public class PropertiesDialog extends JDialog
 
       settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
       settings.setDictionary(dictLangBox.getSelectedItem().toString());
+// TODO
 
       settings.setPerl(perlFileField.getFileName());
 
@@ -1333,6 +1647,15 @@ public class PropertiesDialog extends JDialog
    private CurrencyListModel currencyListModel;
 
    private JComboBox<String> helpsetLangBox, dictLangBox;
+   private JComboBox<Locale> numericLocaleBox;
+   private JTextField numericParserField, intFormatterField,
+    currencyFormatterField, decimalFormatterField;
+   private JEditorPane decimalSymbolsField;
+   private JRadioButton numParseMatchLocaleButton, numParsePatternButton,
+    intFmtMatchLocaleButton, intFmtPatternButton,
+    currencyFmtMatchLocaleButton, currencyFmtPatternButton,
+    decimalFmtMatchLocaleButton, decimalFmtPatternButton,
+    decimalFmtSIButton;
 
    private JComponent highlightCsSwatch, highlightCommentSwatch;
 

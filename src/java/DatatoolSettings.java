@@ -628,6 +628,41 @@ public class DatatoolSettings extends Properties
       }
    }
 
+   public boolean useSIforDecimals()
+   {
+      String prop = getProperty("si-decimals");
+
+      if (prop == null)
+      {
+         return false;
+      }
+
+      return Boolean.valueOf(prop);
+   }
+
+   public void setSIforDecimals(boolean enable)
+   {
+      setProperty("si-decimals", ""+enable);
+   }
+
+   public boolean isIntegerFormatterSet()
+   {
+      String prop = getProperty("integer-formatter");
+      return prop != null && !prop.isEmpty();
+   }
+
+   public boolean isCurrencyFormatterSet()
+   {
+      String prop = getProperty("currency-formatter");
+      return prop != null && !prop.isEmpty();
+   }
+
+   public boolean isDecimalFormatterSet()
+   {
+      String prop = getProperty("decimal-formatter");
+      return prop != null && !prop.isEmpty();
+   }
+
    public NumberFormat getNumericFormatter(DatumType type)
    {
       String prop = null;
@@ -639,14 +674,14 @@ public class DatatoolSettings extends Properties
          break;
          case CURRENCY:
             prop = getProperty("currency-formatter");
-         break;
+            break;
          default:
-            prop = getProperty("numeric-formatter");
+            prop = getProperty("decimal-formatter");
       }
 
       Locale locale = getNumericLocale();
 
-      if (prop != null)
+      if (prop != null && !prop.isEmpty())
       {
          NumberFormat numfmt
             = new DecimalFormat(prop, DecimalFormatSymbols.getInstance(locale));
@@ -667,12 +702,30 @@ public class DatatoolSettings extends Properties
       return NumberFormat.getInstance(locale);
    }
 
+   public void setNumericParser(DecimalFormat format)
+   {
+      if (format == null)
+      {
+         remove("numeric-parser");
+      }
+      else
+      {
+         setProperty("numeric-parser", format.toPattern());
+      }
+   }
+
+   public boolean isNumericParserSet()
+   {
+      String prop = getProperty("numeric-parser");
+      return prop != null && !prop.isEmpty();
+   }
+
    public NumberFormat getNumericParser()
    {
       Locale locale = getNumericLocale();
       String prop = getProperty("numeric-parser");
 
-      if (prop != null)
+      if (prop != null && !prop.isEmpty())
       {
          return new DecimalFormat(prop, DecimalFormatSymbols.getInstance(locale));
       }
@@ -684,15 +737,26 @@ public class DatatoolSettings extends Properties
    {
       String prop = getProperty("numeric-locale");
 
-      if (prop != null)
+      Locale locale;
+
+      if (prop != null && !prop.isEmpty())
       {
-         return Locale.forLanguageTag(prop.toString());
+         locale = Locale.forLanguageTag(prop.replaceAll("_", "-"));
+
+         if (locale.toLanguageTag().equals("und"))
+         {
+            System.err.println("Unknown language tag '"+prop+"'");
+         }
+         else
+         {
+            return locale;
+         }
       }
 
-      Locale locale = getLocaleProperty("sort-locale",
+      locale = getLocaleProperty("sort-locale",
          Locale.getDefault(Locale.Category.FORMAT));
 
-      setProperty("numeric-locale", locale.toString());
+      setProperty("numeric-locale", locale.toLanguageTag());
 
       return locale;
    }
@@ -1989,7 +2053,7 @@ public class DatatoolSettings extends Properties
      = Pattern.compile("datatooltk-([a-z]{2})(-[A-Z]{2})?");
 
    public static final Pattern PATTERN_DICT 
-     = Pattern.compile("datatooltk-([a-z]{2})(-[A-Z]{2})?(-[A-Z][a-z]{3})?\\.xml");
+     = Pattern.compile("datatooltk-([a-z]{2}(?:-[A-Z]{2})?(?:-[A-Z][a-z]{3})?)\\.xml");
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;

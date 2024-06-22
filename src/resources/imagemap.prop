@@ -46,3 +46,4 @@ add_currency=/toolbarButtonGraphics/table/RowInsertAfter24.gif
 remove_currency=/toolbarButtonGraphics/table/RowDelete24.gif
 edit_currency=/toolbarButtonGraphics/general/Edit24.gif
 sort=/resources/icons/sort.png
+parse=/resources/icons/parse.png

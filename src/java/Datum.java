@@ -163,6 +163,11 @@ public class Datum implements Comparable<Datum>
    {
       if (text.isEmpty()) return new Datum(settings);
 
+      if (text.equals(DatatoolDb.NULL_VALUE))
+      {
+         return createNull(settings);
+      }
+
       // Does text start with a known currency symbol?
 
       String currencySym = null;
@@ -277,7 +282,7 @@ public class Datum implements Comparable<Datum>
          break;
          case DECIMAL:
          case CURRENCY:
-            numStr = ""+doubleValue();
+            numStr = String.format("%g", doubleValue());
          break;
       }
 
@@ -446,29 +451,36 @@ public class Datum implements Comparable<Datum>
    public static Datum format(DatumType type, String currencySym, Number num,
       DatatoolSettings settings)
    {
-      NumberFormat numfmt = settings.getNumericFormatter(type);
-
       String text = "";
 
-      switch (type)
+      if (type == DatumType.DECIMAL && settings.useSIforDecimals())
       {
-         case INTEGER:
-           text = numfmt.format(num.intValue());
-         break;
-         case DECIMAL:
-           text = numfmt.format(num.doubleValue());
-         break;
-         case CURRENCY:
-           text = numfmt.format(num.doubleValue());
-           if (currencySym == null)
-           {
-              currencySym = numfmt.getCurrency().getSymbol();
-           }
-           else
-           {
-              text = text.replace(numfmt.getCurrency().getSymbol(), currencySym);
-           }
-         break;
+         text = String.format("\\num{%g}", num.doubleValue());
+      }
+      else
+      {
+         NumberFormat numfmt = settings.getNumericFormatter(type);
+
+         switch (type)
+         {
+            case INTEGER:
+              text = numfmt.format(num.intValue());
+            break;
+            case DECIMAL:
+              text = numfmt.format(num.doubleValue());
+            break;
+            case CURRENCY:
+              text = numfmt.format(num.doubleValue());
+              if (currencySym == null)
+              {
+                 currencySym = numfmt.getCurrency().getSymbol();
+              }
+              else
+              {
+                 text = text.replace(numfmt.getCurrency().getSymbol(), currencySym);
+              }
+            break;
+         }
       }
 
       return new Datum(text, currencySym, num, settings);

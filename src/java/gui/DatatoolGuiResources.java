@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@ import java.net.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.dickimawbooks.texjavahelplib.JLabelGroup;
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.MessageHandler;
 
@@ -254,6 +255,15 @@ public class DatatoolGuiResources
        return jLabel;
    }
 
+   public JLabel createJLabel(JLabelGroup grp, String label, JComponent comp)
+   {
+      return grp.createJLabel(messageHandler.getLabel(label),
+         messageHandler.getMnemonicInt(label),
+         messageHandler.getToolTip(label),
+         comp
+       );
+   }
+
     public JLabel createJLabel(String label, JComponent comp, float alignment)
     {
        JLabel jlabel = createJLabel(label, comp);
@@ -426,7 +436,7 @@ public class DatatoolGuiResources
 
        if (text == null)
        {
-          propName = propName.substring(5);
+          propName = (parent == null ? label : parent + "." + label);
        }
 
        text = messageHandler.getLabel(propName);
@@ -474,7 +484,7 @@ public class DatatoolGuiResources
        {
           parent = "menu";
        }
-       else
+       else if (!parent.contains("menu."))
        {
           parent = "menu."+parent;
        }

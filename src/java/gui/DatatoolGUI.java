@@ -604,7 +604,7 @@ public class DatatoolGUI extends JFrame
 
          if (m.matches())
          {
-            list[i] = (m.groupCount() == 1 ? m.group(1) : m.group(1)+m.group(2));
+            list[i] = m.group(1);
          }
       }
 

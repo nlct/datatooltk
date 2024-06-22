@@ -338,21 +338,60 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.initial.row.capacity">Initial Row Capacity</entry>
 <entry key="preferences.initial.row.capacity.mnemonic">W</entry>
 
-<entry key="preferences.language">Language</entry>
+<entry key="preferences.language">Localisation</entry>
 <entry key="preferences.language.mnemonic">L</entry>
+
+<entry key="preferences.language.sort">Sort:</entry>
+<entry key="preferences.language.sort.mnemonic">S</entry>
+<entry key="preferences.language.sort.tooltip">Locale for non-numeric sorting</entry>
+
+<entry key="preferences.language.numeric_locale">Numeric Locale:</entry>
+<entry key="preferences.language.numeric_locale.mnemonic">N</entry>
+<entry key="preferences.language.decimal_symbols">Decimal separator: {0} Grouping separator: {1}</entry>
+
+<entry key="preferences.language.numeric_parsing">Numeric Parsing:</entry>
+
+<entry key="preferences.language.numeric_parsing.match_locale">Match Numeric Locale</entry>
+
+<entry key="preferences.language.numeric_parsing.pattern">Numeric Pattern</entry>
+<entry key="preferences.language.numeric_parsing.pattern.mnemonic">T</entry>
+
+<entry key="preferences.language.numeric_formatting">Numeric Formatting:</entry>
+<entry key="preferences.language.numeric_formatting.int">Integers:</entry>
+<entry key="preferences.language.numeric_formatting.decimal">Decimal:</entry>
+<entry key="preferences.language.numeric_formatting.currency">Currency:</entry>
+
+<entry key="preferences.language.numeric_formatting.int.match_locale">Match Numeric Locale</entry>
+
+<entry key="preferences.language.numeric_formatting.int.pattern">Pattern</entry>
+
+<entry key="preferences.language.numeric_formatting.currency.match_locale">Match Numeric Locale</entry>
+
+<entry key="preferences.language.numeric_formatting.currency.pattern">Pattern</entry>
+
+<entry key="preferences.language.numeric_formatting.decimal.match_locale">Match Numeric Locale</entry>
+
+<entry key="preferences.language.numeric_formatting.decimal.pattern">Pattern</entry>
+
+
+<entry key="preferences.language.numeric_formatting.decimal.siunitx">Use \num (siunitx.sty)</entry>
+<entry key="preferences.language.numeric_formatting.decimal.siunitx.mnemonic">X</entry>
+
 
 <entry key="preferences.language.dictionary">GUI Language:</entry>
 <entry key="preferences.language.dictionary.mnemonic">A</entry>
+<entry key="preferences.language.dictionary.tooltip">Language for menus, buttons etc</entry>
 
 <entry key="preferences.language.helpset">Manual Language: </entry>
-<entry key="preferences.language.helpset.mnemonic">M </entry>
+<entry key="preferences.language.helpset.mnemonic">M</entry>
+<entry key="preferences.language.helpset.tooltip">Language for the application help pages</entry>
 
-<entry key="preferences.language.restart">Application needs to be restarted for language change to take effect.</entry>
+<entry key="preferences.language.restart">Application needs to be restarted for manual and GUI language change to take effect.</entry>
 
 <entry key="preferences.plugins">Plugins</entry>
 <entry key="preferences.plugins.mnemonic">P</entry>
 
-<entry key="preferences.plugins.note">Perl and the Perl Tk module must be installed for plugins to work. If you have Perl installed but it's not on your path, you need to specify the full path to the Perl executable in the box below.</entry>
+<entry key="preferences.plugins.note">Perl and the Perl Tk module must be installed for plugins to work. If you have Perl installed but it''s not on your path, you need to specify the full path to the Perl executable in the box below.</entry>
 
 <entry key="preferences.plugins.perl">Perl</entry>
 <entry key="preferences.plugins.perl.mnemonic">L</entry>
@@ -495,16 +534,84 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <entry key="celledit.title">Cell Editor</entry>
 
+<!-- Shared by inline editor and cell editor dialog -->
 <entry key="celledit.type">Type:</entry>
-<entry key="celledit.type.mnemonic">Y</entry>
+<entry key="celledit.type.mnemonic">P</entry>
 <entry key="celledit.currency">Currency:</entry>
-<entry key="celledit.currency.mnemonic">C</entry>
+<entry key="celledit.currency.mnemonic">Y</entry>
 <entry key="celledit.numeric">Value:</entry>
 <entry key="celledit.numeric.mnemonic">V</entry>
+
+<entry key="message.celledit.not_numeric">Text is not numeric.
+Check the parser settings if this is incorrect.</entry>
+
+<!-- Only for inline editing -->
 <entry key="celledit.reformat">Reformat on edit</entry>
 <entry key="celledit.reformat.mnemonic">F</entry>
 <entry key="celledit.reparse">Reparse on edit</entry>
 <entry key="celledit.reparse.mnemonic">P</entry>
+
+<!-- Cell Editor Dialog Menus -->
+
+<entry key="editormenu.title">Cell Editor Menu</entry>
+
+<entry key="editormenu.edit">Edit</entry>
+<entry key="editormenu.edit.mnemonic">E</entry>
+
+<entry key="editormenu.edit.undo">Undo</entry>
+<entry key="editormenu.edit.undo.mnemonic">U</entry>
+<entry key="editormenu.edit.undo.keystroke">control Z</entry>
+
+<entry key="editormenu.edit.redo">Redo</entry>
+<entry key="editormenu.edit.redo.mnemonic">R</entry>
+<entry key="editormenu.edit.redo.keystroke">control Y</entry>
+
+<entry key="editormenu.edit.select_all">Select All</entry>
+<entry key="editormenu.edit.select_all.mnemonic">A</entry>
+<entry key="editormenu.edit.select_all.keystroke">control A</entry>
+
+<entry key="editormenu.edit.cut">Cut</entry>
+<entry key="editormenu.edit.cut.mnemonic">T</entry>
+<entry key="editormenu.edit.cut.keystroke">control X</entry>
+
+<entry key="editormenu.edit.copy">Copy</entry>
+<entry key="editormenu.edit.copy.mnemonic">C</entry>
+<entry key="editormenu.edit.copy.keystroke">control C</entry>
+
+<entry key="editormenu.edit.paste">Paste</entry>
+<entry key="editormenu.edit.paste.mnemonic">P</entry>
+<entry key="editormenu.edit.paste.keystroke">control V</entry>
+
+<entry key="editormenu.edit.parse">Parse Numeric</entry>
+<entry key="editormenu.edit.parse.mnemonic">N</entry>
+<entry key="editormenu.edit.parse.tooltip">Parse numeric value</entry>
+<entry key="editormenu.edit.parse.description">Parse the text for a numeric value (integer, decimal or currency)</entry>
+
+<entry key="editormenu.edit.reload">Revert</entry>
+<entry key="editormenu.edit.reload.mnemonic">V</entry>
+<entry key="editormenu.edit.reload.keystroke">control R</entry>
+<entry key="editormenu.edit.reload.tooltip">Reload the cell content</entry>
+<entry key="editormenu.edit.reload.description">Reloads the cell content into the editor</entry>
+
+<entry key="editormenu.edit.cell_to_null">Set to Null</entry>
+<entry key="editormenu.edit.cell_to_null.mnemonic">N</entry>
+<entry key="editormenu.edit.cell_to_null.tooltip">Replace cell contents with null value</entry>
+
+<entry key="editormenu.search">Search</entry>
+<entry key="editormenu.search.mnemonic">S</entry>
+
+<entry key="editormenu.search.find">Find...</entry>
+<entry key="editormenu.search.find.mnemonic">F</entry>
+<entry key="editormenu.search.find.keystroke">control F</entry>
+
+<entry key="editormenu.search.find_again">Find Again</entry>
+<entry key="editormenu.search.find_again.mnemonic">N</entry>
+<entry key="editormenu.search.find_again.keystroke">control G</entry>
+
+<entry key="editormenu.search.replace">Replace...</entry>
+<entry key="editormenu.search.replace.mnemonic">R</entry>
+<entry key="editormenu.search.replace.keystroke">control H</entry>
+
 
 <!-- Find Dialog -->
 
@@ -1067,6 +1174,9 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.no_sort_column_selected">No sort column selected</entry>
 <entry key="error.no_templates">No templates found</entry>
 <entry key="error.not_currency">''{0}'' not in currency format</entry>
+<entry key="error.not_decimal">''{0}'' not a decimal number</entry>
+<entry key="error.not_decimal_type">''{0}'' is not a decimal type.
+(Change the ''{1}'' selector.)</entry>
 
 <entry key="error.output.tex.not_permitted">.tex extension not permitted on output files</entry>
 

@@ -20,11 +20,15 @@ package com.dickimawbooks.datatooltk;
 
 import java.io.File;
 import java.net.URL;
+
 import java.util.Vector;
 import java.util.logging.ErrorManager;
+
 import java.awt.Component;
-import javax.swing.JOptionPane;
+
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
@@ -573,6 +577,27 @@ public class MessageHandler extends ErrorManager
       }
 
       return null;
+   }
+
+   public KeyStroke getKeyStroke(String parentLabel, String actionLabel)
+   {
+      String property;
+
+      if (parentLabel == null)
+      {
+         property = actionLabel;
+      }
+      else
+      {
+         property = parentLabel + "." + actionLabel;
+      }
+
+      return datatooltk.getKeyStroke(property);
+   }
+
+   public KeyStroke getKeyStroke(String property)
+   {
+      return datatooltk.getKeyStroke(property);
    }
 
    public DatatoolTk getDatatoolTk()
