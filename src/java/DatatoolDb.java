@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Vector;
 import java.util.List;
 import java.util.Random;
@@ -42,6 +43,7 @@ import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.primitives.Undefined;
 import com.dickimawbooks.texparserlib.latex.PreambleParser;
 import com.dickimawbooks.texparserlib.latex.datatool.*;
+import com.dickimawbooks.texparserlib.latex.inputenc.InputEncSty;
 
 /**
  * Class representing a database.
@@ -75,8 +77,11 @@ public class DatatoolDb
       }
 
       this.settings = settings;
-      headers = new Vector<DatatoolHeader>(cols);
-      data = new Vector<DatatoolRow>(rows);
+
+      headers = new Vector<DatatoolHeader>(
+        cols > 0 ? cols : settings.getInitialColumnCapacity());
+      data = new Vector<DatatoolRow>(
+        rows > 0 ? rows : settings.getInitialRowCapacity());
    }
 
    public DatatoolDb(DatatoolSettings settings, int cols)
@@ -87,7 +92,8 @@ public class DatatoolDb
       }
 
       this.settings = settings;
-      headers = new Vector<DatatoolHeader>(cols);
+      headers = new Vector<DatatoolHeader>(
+        cols > 0 ? cols : settings.getInitialColumnCapacity());
       data = new Vector<DatatoolRow>(settings.getInitialRowCapacity());
    }
 
@@ -333,311 +339,109 @@ public class DatatoolDb
      File dbFile)
      throws IOException,InvalidSyntaxException
    {
-      DatatoolDb db = null;
-      boolean hasVerbatim = false;
-      LineNumberReader in = null;
-      String encoding = settings.getTeXEncoding();
       MessageHandler messageHandler = settings.getMessageHandler();
+      LineNumberReader in = null;
+      boolean hasVerbatim = false;
+      String encoding = settings.getTeXEncoding();
+      Charset charset;
+      DatatoolDb db;
+
+      if (encoding == null)
+      {
+         charset = Charset.defaultCharset();
+      }
+      else
+      {
+         try
+         {
+            charset = Charset.forName(encoding);
+         }
+         catch (Exception e)
+         {
+            settings.getMessageHandler().warning(e);
+            charset = Charset.defaultCharset();
+         }
+      }
 
       try
       {
-         FileInputStream fis = new FileInputStream(dbFile);
+         in = new LineNumberReader(Files.newBufferedReader(dbFile.toPath(), charset));
 
-         if (encoding == null)
+         in.mark(256);
+         String line = in.readLine();
+
+         Matcher m = FILE_TYPE_MARKER.matcher(line);
+         boolean isV3 = false;
+         boolean dtltex = false;
+
+         if (m.matches())
          {
-            in = new LineNumberReader(new InputStreamReader(fis));
+            if (m.group(1).equals("DTLTEX"))
+            {
+               dtltex = true;
+            }
+
+            isV3 = (m.group(2).equals("3"));
+
+            Charset fileCharset = null;
+
+            try
+            {
+               String enc = m.group(3);
+
+               if (InputEncSty.isKnownEncoding(enc))
+               {
+                  fileCharset = InputEncSty.getCharSet(enc);
+               }
+               else
+               {
+                  fileCharset = Charset.forName(enc);
+               }
+
+               if (!fileCharset.equals(charset))
+               {
+                  in.close();
+                  in = new LineNumberReader(
+                     Files.newBufferedReader(dbFile.toPath(), fileCharset));
+                  line = in.readLine();
+               }
+            }
+            catch (Exception e)
+            {
+               settings.getMessageHandler().warning(e);
+            }
+         }
+         else
+         {// assume DBTEX v1.0 or v2.0
+
+            if (!line.startsWith("%"))
+            {
+               in.reset();
+            }
+         }
+
+         if (dtltex)
+         {
+            if (isV3)
+            {
+               db = loadNoTeXParserDTLTEX3(settings, in);
+            }
+            else
+            {
+               db = loadNoTeXParserDTLTEX2(settings, in);
+            }
          }
          else
          {
-            in = new LineNumberReader(new InputStreamReader(fis, encoding));
-         }
-
-// TODO check for DBTEX line
-
-         db = new DatatoolDb(settings);
-
-         // Read until we find \newtoks\csname dtlkeys@<name>\endcsname
-
-         String controlSequence = null;
-
-         while ((controlSequence = db.readCommand(in)) != null)
-         {
-            if (controlSequence.equals("\\newtoks"))
+            if (isV3)
             {
-               controlSequence = db.readCommand(in);
-
-               if ("\\csname".equals(controlSequence))
-               {
-                  break;
-               }
-            }
-         }
-
-         if (controlSequence == null)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", "\\newtoks\\csname"));
-         }
-
-         String name = readUntil(in, "\\endcsname");
-
-         if (name == null)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", "\\endcsname"));
-         }
-
-         if (!name.startsWith("dtlkeys@"))
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues
-              (
-                 in.getLineNumber(),
-                 "error.expected",
-                 "\\newtoks\\csname dtlkeys@<name>\\endcsname"
-              ));
-         }
-
-         name = name.substring(8);
-
-         db.setName(name);
-
-         // db.name may have been trimmed, but local name
-         // shouldn't been to ensure regex match
-
-         // Now look for \csname dtlkeys@<name>\endcsname
-
-         controlSequence = null;
-
-         while ((controlSequence = db.readCommand(in)) != null)
-         {
-            if (controlSequence.equals("\\csname"))
-            {
-               if (readUntil(in, "dtlkeys@"+name+"\\endcsname") != null)
-               {
-                  break;
-               }
-            }
-         }
-
-         if (controlSequence == null)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", 
-                "\\csname dtlkeys@"+name+"\\endcsname"));
-         }
-
-         int c = readChar(in, true);
-
-         if (c == -1)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", 
-                "\\csname dtlkeys@"+name+"\\endcsname="));
-         }
-         else if (c != (int)'=')
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-               in.getLineNumber(),
-              "error.expected_found", 
-                  "\\csname dtlkeys@"+name+"\\endcsname=",
-                  "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
-               ));
-         }
-
-         c = readChar(in, true);
-
-         if (c == -1)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", 
-                "\\csname dtlkeys@"+name+"\\endcsname={"));
-         }
-         else if (c != (int)'{')
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              in.getLineNumber(),
-              "error.expected_found", 
-                  "\\csname dtlkeys@"+name+"\\endcsname={",
-                  "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
-               ));
-         }
-
-         int currentColumn = 0;
-
-         while (true)
-         {
-            db.readCommand(in, "\\db@plist@elt@w");
-
-            currentColumn = db.parseHeader(in, currentColumn);
-
-            in.mark(80);
-
-            c = readChar(in, true);
-
-            if (c == (int)'}')
-            {
-               // Finished
-               break;
-            }
-            else if (c == -1)
-            {
-               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
-                 (
-                  "error.dbload.not_found",
-                  in.getLineNumber(),
-                  "}"
-                 ));
+               db = loadNoTeXParserDBTEX3(settings, in);
             }
             else
             {
-               in.reset();
+               db = loadNoTeXParserDBTEX2(settings, in);
             }
          }
-
-         // Now read in the database contents
-
-         while ((controlSequence = db.readCommand(in)) != null)
-         {
-            if (controlSequence.equals("\\newtoks"))
-            {
-               controlSequence = db.readCommand(in);
-
-               if ("\\csname".equals(controlSequence))
-               {
-                  break;
-               }
-            }
-         }
-
-         if (controlSequence == null)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", "\\newtoks\\csname"));
-         }
-
-         String contents = readUntil(in, "\\endcsname");
-
-         if (contents == null)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", 
-             "\\newtoks\\csname dtldb@"+name+"\\endcsname"));
-         }
-         else if (!contents.equals("dtldb@"+name))
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              in.getLineNumber(),
-              "error.expected_found",
-                  "\\newtoks\\csname dtldb@"+name+"\\endcsname",
-                  "\\newtoks\\csname "+contents+"\\endcsname"
-              ));
-         }
-
-         contents = readUntil(in, "\\csname");
-
-         if (contents == null)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", 
-             "\\csname dtldb@"+name+"\\endcsname="));
-         }
-
-         // skip any whitespace
-
-         c = readChar(in, true);
-
-         contents = readUntil(in, "\\endcsname");
-
-         if (contents == null)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", 
-             "\\csname dtldb@"+name+"\\endcsname="));
-         }
-
-         contents = (""+(char)c)+contents;
-
-         if (!contents.equals("dtldb@"+name))
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              in.getLineNumber(),
-              "error.expected_found",
-                  "\\csname dtldb@"+name+"\\endcsname",
-                  "\\csname "+contents+"\\endcsname"
-              ));
-         }
-
-         // Look for ={ assignment
-
-         c = readChar(in, true);
-
-         if (c == -1)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", 
-                "\\csname dtldb@"+name+"\\endcsname="));
-         }
-         else if (c != (int)'=')
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              in.getLineNumber(),
-              "error.expected_found", 
-                  "\\csname dtldb@"+name+"\\endcsname=",
-                  "\\csname dtldb@"+name+"\\endcsname"+((char)c)
-               ));
-         }
-
-         c = readChar(in, true);
-
-         if (c == -1)
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              "error.dbload.not_found", 
-                "\\csname dtldb@"+name+"\\endcsname={"));
-         }
-         else if (c != (int)'{')
-         {
-            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
-              in.getLineNumber(),
-              "error.expected_found", 
-                  "\\csname dtldb@"+name+"\\endcsname={",
-                  "\\csname dtldb@"+name+"\\endcsname"+((char)c)
-               ));
-         }
-
-         // Read row data until we reach the closing }
-
-         int currentRow = 0;
-
-         while (true)
-         {
-            in.mark(80);
-
-            c = readChar(in, true);
-
-            if (c == (int)'}')
-            {
-               // Finished
-               break;
-            }
-            else if (c == -1)
-            {
-               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
-                 (
-                  "error.dbload.not_found",
-                  in.getLineNumber(),
-                  "}"
-                 ));
-            }
-            else
-            {
-               in.reset();
-            }
-
-            currentRow = db.parseRow(in, currentRow);
-         }
-
-         db.setFile(dbFile);
       }
       finally
       {
@@ -647,9 +451,1221 @@ public class DatatoolDb
          }
       }
 
+      db.setFile(dbFile);
+
       if (hasVerbatim)
       {
          messageHandler.warning(messageHandler.getLabel("warning.verb_detected"));
+      }
+
+      return db;
+   }
+
+   /**
+    * Loads dtltex v1.3 file.
+    */
+   protected static DatatoolDb loadNoTeXParserDTLTEX3(DatatoolSettings settings, 
+     LineNumberReader in)
+     throws IOException,InvalidSyntaxException
+   {
+      DatatoolDb db = null;
+      MessageHandler messageHandler = settings.getMessageHandler();
+
+      String line;
+      int lineNum;
+
+      while ((line = in.readLine()) != null && line.startsWith("%"))
+      {// discard comment lines
+      }
+
+      if (line == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+           (
+              in.getLineNumber(), "error.expected", "\\DTLdbProvideData"
+           ));
+      }
+
+      Matcher m = PROVIDE_DATA_PATTERN.matcher(line);
+
+      if (!m.matches())
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+           (
+              in.getLineNumber(), "error.expected", "\\DTLdbProvideData"
+           ));
+      }
+
+      db = new DatatoolDb(settings);
+      db.setName(m.group(1));
+
+      DatatoolRow row = null;
+
+      while ((line = in.readLine()) != null)
+      {
+         if (line.startsWith("%")) continue;
+
+         m = NEW_ROW3_PATTERN.matcher(line);
+
+         if (m.matches())
+         {
+            row = new DatatoolRow(db);
+            db.data.add(row);
+         }
+         else if (line.startsWith("\\DTLdbNewEntry"))
+         {
+            if (row == null)
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                 (
+                    in.getLineNumber(), "error.expected", "\\DTLdbNewRow"
+                 ));
+            }
+
+            m = NEW_ENTRY3_PATTERN.matcher(line);
+            lineNum = in.getLineNumber();
+
+            while (!m.matches())
+            {
+               String l = in.readLine();
+
+               if (l == null)
+               {
+                  throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+                    lineNum,
+                    "error.expected", 
+                    "\\DTLdbNewEntry{<key>}{<value>}"
+                  ));
+               }
+
+               line = String.format("%s%n%s", line, l);
+               m = NEW_ENTRY3_PATTERN.matcher(line);
+            }
+
+            String colKey = m.group(1);
+            String value = m.group(2);
+
+            int colIdx = db.getColumnIndex(colKey);
+
+            if (colIdx == -1)
+            {
+               DatatoolHeader header = new DatatoolHeader(db, colKey);
+               colIdx = db.headers.size();
+               db.headers.add(header);
+            }
+
+            row.addCell(colIdx, value);
+         }
+         else if (line.startsWith("\\DTLdbSetHeader"))
+         {
+            m = SET_HEADER3_PATTERN.matcher(line);
+            lineNum = in.getLineNumber();
+
+            while (!m.matches())
+            {
+               String l = in.readLine();
+
+               if (l == null)
+               {
+                  throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+                    lineNum,
+                    "error.expected", 
+                    "\\DTLdbSetHeader{<key>}{<value>}"
+                  ));
+               }
+
+               line = String.format("%s%n%s", line, l);
+               m = SET_HEADER3_PATTERN.matcher(line);
+            }
+
+            String colKey = m.group(1);
+            String value = m.group(2);
+
+            DatatoolHeader header = db.getHeader(colKey);
+
+            if (header == null)
+            {
+               header = new DatatoolHeader(db, colKey, value);
+               db.headers.add(header);
+            }
+            else
+            {
+               header.setTitle(value);
+            }
+
+         }
+         else if (row == null)
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+              in.getLineNumber(),
+              "error.expected", 
+              "\\DTLdbNewRow"
+            ));
+         }
+         else
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+              in.getLineNumber(),
+              "error.expected", 
+              "\\DTLdbNewEntry{<key>}{<value>}"
+            ));
+         }
+      }
+
+      return db;
+   }
+
+   /**
+    * Loads dtltex v1.2 file.
+    */
+   protected static DatatoolDb loadNoTeXParserDTLTEX2(DatatoolSettings settings, 
+     LineNumberReader in)
+     throws IOException,InvalidSyntaxException
+   {
+      DatatoolDb db = null;
+      MessageHandler messageHandler = settings.getMessageHandler();
+
+      String line;
+      int lineNum;
+
+      while ((line = in.readLine()) != null && line.startsWith("%"))
+      {// discard comment lines
+      }
+
+      if (line == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+           (
+              in.getLineNumber(), "error.expected", "\\DTLnewdb"
+           ));
+      }
+
+      Matcher m = NEW_DB_PATTERN.matcher(line);
+
+      if (!m.matches())
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+           (
+              in.getLineNumber(), "error.expected", "\\DTLnewdb"
+           ));
+      }
+
+      db = new DatatoolDb(settings);
+      db.setName(m.group(1));
+
+      DatatoolRow row = null;
+
+      while ((line = in.readLine()) != null)
+      {
+         if (line.startsWith("%")) continue;
+
+         m = NEW_ROW2_PATTERN.matcher(line);
+
+         if (m.matches())
+         {
+            if (!m.group(1).equals(db.getName()))
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                 (
+                    in.getLineNumber(), "error.expected_found",
+                     String.format("\\DTLnewrow{%s}", db.getName()),
+                     line
+                 ));
+            }
+
+            row = new DatatoolRow(db);
+            db.data.add(row);
+         }
+         else if (line.startsWith("\\DTLnewdbentry"))
+         {
+            if (row == null)
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                 (
+                    in.getLineNumber(), "error.expected", "\\DTLnewdbentry"
+                 ));
+            }
+
+            m = NEW_ENTRY2_PATTERN.matcher(line);
+            lineNum = in.getLineNumber();
+
+            while (!m.matches())
+            {
+               String l = in.readLine();
+
+               if (l == null)
+               {
+                  throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+                    lineNum,
+                    "error.expected", 
+                    "\\DTLnewdbentry{<label>}{<key>}{<value>}"
+                  ));
+               }
+
+               line = String.format("%s%n%s", line, l);
+               m = NEW_ENTRY2_PATTERN.matcher(line);
+            }
+
+            if (!m.group(1).equals(db.getName()))
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                 (
+                    in.getLineNumber(), "error.expected_found",
+                     String.format("\\DTLnewdbentry{%s}{<type>}{<value>}", db.getName()),
+                     line
+                 ));
+            }
+
+            String colKey = m.group(2);
+            String value = m.group(3);
+
+            int colIdx = db.getColumnIndex(colKey);
+
+            if (colIdx == -1)
+            {
+               DatatoolHeader header = new DatatoolHeader(db, colKey);
+               colIdx = db.headers.size();
+               db.headers.add(header);
+            }
+
+            row.addCell(colIdx, value);
+         }
+         else if (line.startsWith("\\DTLsetheader"))
+         {
+            m = SET_HEADER2_PATTERN.matcher(line);
+            lineNum = in.getLineNumber();
+
+            while (!m.matches())
+            {
+               String l = in.readLine();
+
+               if (l == null)
+               {
+                  throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+                    lineNum,
+                    "error.expected", 
+                    "\\DTLsetheader{<label>}{<key>}{<value>}"
+                  ));
+               }
+
+               line = String.format("%s%n%s", line, l);
+               m = SET_HEADER2_PATTERN.matcher(line);
+            }
+
+            if (!m.group(1).equals(db.getName()))
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                 (
+                    in.getLineNumber(), "error.expected_found",
+                     String.format("\\DTLsetheader{%s}{<type>}{<value>}", db.getName()),
+                     line
+                 ));
+            }
+
+            String colKey = m.group(2);
+            String value = m.group(3);
+
+            DatatoolHeader header = db.getHeader(colKey);
+
+            if (header == null)
+            {
+               header = new DatatoolHeader(db, colKey, value);
+               db.headers.add(header);
+            }
+            else
+            {
+               header.setTitle(value);
+            }
+
+         }
+         else if ((m = DEF_LAST_LOADED.matcher(line)).matches())
+         {
+            if (!m.group(1).equals(db.getName()))
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                 (
+                    in.getLineNumber(), "error.expected_found",
+                     String.format("\\def\\dtllastloadeddb{%s}", db.getName()),
+                     line
+                 ));
+            }
+         }
+         else if (row == null)
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+              in.getLineNumber(),
+              "error.expected", 
+              "\\DTLnewrow"
+            ));
+         }
+         else
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+              in.getLineNumber(),
+              "error.expected", 
+              "\\DTLnewdbentry{<label>}{<key>}{<value>}"
+            ));
+         }
+      }
+
+      return db;
+   }
+
+   /**
+    * Loads dbtex v1.3 file.
+    */
+   protected static DatatoolDb loadNoTeXParserDBTEX3(DatatoolSettings settings, 
+     LineNumberReader in)
+     throws IOException,InvalidSyntaxException
+   {
+      DatatoolDb db = null;
+      MessageHandler messageHandler = settings.getMessageHandler();
+
+      String line;
+      int lineNum;
+
+      while ((line = in.readLine()) != null && line.startsWith("%"))
+      {// discard comment lines
+      }
+
+      if (line == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+           (
+              in.getLineNumber(), "error.expected", "\\DTLdbProvideData"
+           ));
+      }
+
+      Matcher m = PROVIDE_DATA_PATTERN.matcher(line);
+
+      if (!m.matches())
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+           (
+              in.getLineNumber(), "error.expected", "\\DTLdbProvideData"
+           ));
+      }
+
+      String dbName = m.group(1);
+
+      while ((line = in.readLine()) != null && line.startsWith("%"))
+      {// discard comment lines
+      }
+
+      if (!line.startsWith("\\DTLreconstructdatabase"))
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+           (
+              in.getLineNumber(), "error.expected", "\\DTLreconstructdatabase"
+           ));
+      }
+
+      m = RECONSTRUCT_PATTERN.matcher(line);
+      lineNum = in.getLineNumber();
+
+      while (!m.matches())
+      {
+         String l = in.readLine();
+
+         if (l == null)
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+             (
+               lineNum, "error.expected",
+                "\\DTLreconstructdatabase{<n>}{<m>}"
+            ));
+         }
+
+         if (l.startsWith("%")) continue;
+
+         int i = line.indexOf("%");
+
+         if (i > -1)
+         {
+            line = line.substring(0, i);
+         }
+
+         line += l;
+         m = RECONSTRUCT_PATTERN.matcher(line);
+      }
+
+      int numRows = 0;
+      int numCols = 0;
+
+      try
+      {
+         numRows = Integer.parseInt(m.group(1));
+         numCols = Integer.parseInt(m.group(2));
+      }
+      catch (NumberFormatException e)
+      {// shouldn't happen
+         e.printStackTrace();
+      }
+
+      db = new DatatoolDb(settings, numRows, numCols);
+      db.setName(dbName);
+
+      for (int i = 0; i < numCols; i++)
+      {
+         db.headers.add(new DatatoolHeader(db));
+      }
+
+      for (int i = 0; i < numRows; i++)
+      {
+         DatatoolRow row = new DatatoolRow(db,
+          numCols > 0 ? numCols : settings.getInitialColumnCapacity());
+
+         db.data.add(row);
+
+         for (int j = 0; j < numCols; j++)
+         {
+            row.add(Datum.createNull(settings));
+         }
+      }
+
+      lineNum = in.getLineNumber();
+      line = readUntil(in, "{", true);
+
+      if (line == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+          (
+            lineNum, "error.expected_after",
+             "{",
+             String.format("\\DTLreconstructdatabase{%d}{%d}", numRows, numCols)
+         ));
+      }
+
+      for (int i = 0; i < numCols; i++)
+      {
+         line = in.readLine();
+         m = HEADER_RECONSTRUCT_PATTERN.matcher(line);
+         lineNum = in.getLineNumber();
+
+         while (!m.matches())
+         {
+            String l = in.readLine();
+
+            if (l == null)
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                (
+                  lineNum, "error.expected",
+                   String.format("\\dtldbheaderreconstruct{%d}{<key>}{<type>}{<title>}", i+1)
+               ));
+            }
+
+            if (l.startsWith("%")) continue;
+
+            int idx = line.indexOf("%");
+
+            if (idx > -1)
+            {
+               line = line.substring(0, idx);
+            }
+
+            line += l;
+            m = HEADER_RECONSTRUCT_PATTERN.matcher(line);
+         }
+
+         int colIdx = i;
+         int typeId = -1;
+         String key = m.group(2);
+         String title = m.group(4);
+
+         try
+         {
+            colIdx = Integer.parseInt(m.group(1));
+
+            if (colIdx > numCols || colIdx < 1)
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                (
+                  lineNum, "error.dbload.invalid_col_id", colIdx
+               ));
+            }
+
+            colIdx--;
+            String typeStr = m.group(3);
+
+            if (!typeStr.isEmpty())
+            {
+               typeId = Integer.parseInt(typeStr);
+            }
+         }
+         catch (NumberFormatException e)
+         {// shouldn't happen
+            e.printStackTrace();
+         }
+
+         DatatoolHeader header = db.headers.get(colIdx);
+         header.setType(DatumType.toDatumType(typeId));
+         header.setKey(key);
+         header.setTitle(title);
+      }
+
+      lineNum = in.getLineNumber();
+      line = readUntil(in, "{", true);
+
+      if (line == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+          (
+            lineNum, "error.expected_after",
+             "{",
+             String.format("\\DTLreconstructdatabase{%d}{%d}{<headers>}",
+               numRows, numCols)
+         ));
+      }
+
+      for (int i = 0; i < numRows; i++)
+      {
+         line = in.readLine();
+         m = ROW_RECONSTRUCT_PATTERN.matcher(line);
+         lineNum = in.getLineNumber();
+
+         while (!m.matches())
+         {
+            String l = in.readLine();
+
+            if (l == null)
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                (
+                  lineNum, "error.expected",
+                   String.format("\\dtldbrowreconstruct{%d}", i+1)
+               ));
+            }
+
+            if (l.startsWith("%")) continue;
+
+            int idx = line.indexOf("%");
+
+            if (idx > -1)
+            {
+               line = line.substring(0, idx);
+            }
+
+            line += l;
+            m = ROW_RECONSTRUCT_PATTERN.matcher(line);
+         }
+
+         int rowIdx = i;
+
+         try
+         {
+            rowIdx = Integer.parseInt(m.group(1));
+
+            if (rowIdx > numRows || rowIdx < 1)
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                (
+                  lineNum, "error.dbload.invalid_row_id", rowIdx
+               ));
+            }
+
+            rowIdx--;
+         }
+         catch (NumberFormatException e)
+         {// shouldn't happen
+            e.printStackTrace();
+         }
+
+         lineNum = in.getLineNumber();
+         line = readUntil(in, "{", true);
+
+         if (line == null)
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+             (
+               lineNum, "error.expected_after",
+                "{",
+                String.format("\\dtldbrowreconstruct{%d}", rowIdx+1)
+            ));
+         }
+
+         DatatoolRow row = db.data.get(rowIdx);
+
+         for (int j = 0; j < numCols; j++)
+         {
+            line = in.readLine();
+            m = COL_RECONSTRUCT_PATTERN.matcher(line);
+            lineNum = in.getLineNumber();
+
+            while (!m.matches())
+            {
+               String l = in.readLine();
+
+               if (l == null)
+               {
+                  throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                   (
+                     lineNum, "error.expected",
+                      String.format("\\dtldbcolreconstruct{%d}", j+1)
+                  ));
+               }
+
+               if (l.startsWith("%")) continue;
+
+               int idx = line.indexOf("%");
+
+               if (idx > -1)
+               {
+                  line = line.substring(0, idx);
+               }
+
+               line += l;
+               m = COL_RECONSTRUCT_PATTERN.matcher(line);
+            }
+
+            int colIdx = i;
+
+            try
+            {
+               colIdx = Integer.parseInt(m.group(1));
+
+               if (colIdx > numCols || colIdx < 1)
+               {
+                  throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                   (
+                     lineNum, "error.dbload.invalid_col_id", colIdx
+                  ));
+               }
+
+               colIdx--;
+            }
+            catch (NumberFormatException e)
+            {// shouldn't happen
+               e.printStackTrace();
+            }
+
+            lineNum = in.getLineNumber();
+            line = readUntil(in, "{", true);
+
+            if (line == null)
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                (
+                  lineNum, "error.expected_after",
+                   "{",
+                   String.format("\\dtldbcolreconstruct{%d}", colIdx+1)
+               ));
+            }
+
+            String cs = db.readCommand(in);
+
+            if (cs == null)
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                (
+                  lineNum, "error.expected_or",
+                   "\\dtldbvaluereconstruct",
+                   "\\dtldbdatumreconstruct"
+               ));
+            }
+            else if (cs.equals("\\dtldbvaluereconstruct"))
+            {
+               // \\dtldbvaluereconstruct{text}
+
+               String value = db.readValueReconstruct(in);
+               row.set(colIdx, Datum.valueOf(value, settings));
+            }
+            else if (cs.equals("\\dtldbdatumreconstruct"))
+            {
+               // \\dtldbdatumreconstruct{text}{num}{sym}{type}
+               Datum datum = db.readDatumReconstruct(in);
+               row.set(colIdx, datum);
+            }
+            else
+            {
+               throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+                (
+                  lineNum, "error.expected_or_found",
+                   "\\dtldbvaluereconstruct",
+                   "\\dtldbdatumreconstruct",
+                   cs
+               ));
+            }
+         }
+
+         lineNum = in.getLineNumber();
+         line = readUntil(in, "}", true);
+
+         if (line == null)
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+             (
+               lineNum, "error.expected_after",
+                "}",
+                String.format("\\dtldbrowreconstruct{%d}{<content>}",
+                  rowIdx+1)
+            ));
+         }
+      }
+
+      // Key to index argument can be ignored
+
+      return db;
+   }
+
+   private String readValueReconstruct(LineNumberReader in)
+    throws IOException
+   {
+      StringBuilder builder = new StringBuilder();
+      Matcher m = readValueReconstruct(in, builder);
+      return m.group(1);
+   }
+
+   private Matcher readValueReconstruct(LineNumberReader in, StringBuilder builder)
+    throws IOException
+   {
+      MessageHandler messageHandler = settings.getMessageHandler();
+      String line = in.readLine();
+
+      if (builder.length() > 0)
+      {
+         builder.append(String.format("%n"));
+      }
+
+      builder.append(line);
+
+      Matcher m = SINGLE_GROUP_PATTERN.matcher(builder.toString());
+      int lineNum = in.getLineNumber();
+
+      while (!m.matches())
+      {
+         String l = in.readLine();
+
+         if (l == null)
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+             (
+               lineNum, "error.expected",
+               "\\dtldbvaluereconstruct{<content>}"
+            ));
+         }
+
+         builder.append(String.format("%n"));
+         builder.append(l);
+         m = SINGLE_GROUP_PATTERN.matcher(builder.toString());
+      }
+
+      lineNum = in.getLineNumber();
+      in.mark(255);
+      String content = readUntil(in, "}", true);
+
+      if (content == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+          (
+            lineNum, "error.expected_after",
+             "}",
+             String.format("\\dtldbvaluereconstruct{%s}",
+               line)
+         ));
+      }
+
+      if (!content.trim().isEmpty())
+      {
+         in.reset();
+         m = readValueReconstruct(in, builder);
+      }
+
+      return m;
+   }
+
+   private Datum readDatumReconstruct(LineNumberReader in)
+    throws IOException
+   {
+      StringBuilder builder = new StringBuilder();
+      Matcher m = readDatumReconstruct(in, builder);
+      String text = m.group(1);
+      Number num = null;
+      String sym = null;
+      int typeId = -1;
+
+      try
+      {
+         typeId = Integer.parseInt(m.group(4));
+      }
+      catch (NumberFormatException e)
+      {// shouldn't happen
+         e.printStackTrace();
+      }
+
+      DatumType type = DatumType.toDatumType(typeId);
+
+      if (type.isNumeric())
+      {
+         String numStr = m.group(2);
+
+         if (type == DatumType.INTEGER)
+         {
+            num = Integer.valueOf(numStr);
+         }
+         else
+         {
+            num = Double.valueOf(numStr);
+         }
+
+         if (type == DatumType.CURRENCY)
+         {
+            sym = m.group(3);
+         }
+      }
+
+      return new Datum(type, text, sym, num, settings);
+   }
+
+   private Matcher readDatumReconstruct(LineNumberReader in, StringBuilder builder)
+    throws IOException
+   {
+      MessageHandler messageHandler = settings.getMessageHandler();
+      String line = in.readLine();
+
+      if (builder.length() > 0)
+      {
+         builder.append(String.format("%n"));
+      }
+
+      builder.append(line);
+
+      Matcher m = DATUM_ARGS_PATTERN.matcher(builder.toString());
+      int lineNum = in.getLineNumber();
+
+      while (!m.matches())
+      {
+         String l = in.readLine();
+
+         if (l == null)
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+             (
+               lineNum, "error.expected",
+               "\\dtldbdatumreconstruct{<content>}"
+            ));
+         }
+
+         builder.append(String.format("%n"));
+         builder.append(l);
+         m = DATUM_ARGS_PATTERN.matcher(builder.toString());
+      }
+
+      lineNum = in.getLineNumber();
+      in.mark(255);
+      String content = readUntil(in, "}", true);
+
+      if (content == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+          (
+            lineNum, "error.expected_after",
+             "}",
+             String.format("\\dtldbdatumreconstruct{%s}",
+               line)
+         ));
+      }
+
+      if (!content.trim().isEmpty())
+      {
+         in.reset();
+         m = readDatumReconstruct(in, builder);
+      }
+
+      return m;
+   }
+
+   /**
+    * Loads dbtex v1.2 file.
+    */
+   protected static DatatoolDb loadNoTeXParserDBTEX2(DatatoolSettings settings, 
+     LineNumberReader in)
+     throws IOException,InvalidSyntaxException
+   {
+      DatatoolDb db = null;
+      MessageHandler messageHandler = settings.getMessageHandler();
+
+      db = new DatatoolDb(settings);
+
+      // Read until we find \newtoks\csname dtlkeys@<name>\endcsname
+
+      String controlSequence = null;
+
+      while ((controlSequence = db.readCommand(in)) != null)
+      {
+         if (controlSequence.equals("\\newtoks"))
+         {
+            controlSequence = db.readCommand(in);
+
+            if ("\\csname".equals(controlSequence))
+            {
+               break;
+            }
+         }
+      }
+
+      if (controlSequence == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", "\\newtoks\\csname"));
+      }
+
+      String name = readUntil(in, "\\endcsname");
+
+      if (name == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", "\\endcsname"));
+      }
+
+      if (!name.startsWith("dtlkeys@"))
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+           (
+              in.getLineNumber(),
+              "error.expected",
+              "\\newtoks\\csname dtlkeys@<name>\\endcsname"
+           ));
+      }
+
+      name = name.substring(8);
+
+      db.setName(name);
+
+      // db.name may have been trimmed, but local name
+      // shouldn't been to ensure regex match
+
+      // Now look for \csname dtlkeys@<name>\endcsname
+
+      controlSequence = null;
+
+      while ((controlSequence = db.readCommand(in)) != null)
+      {
+         if (controlSequence.equals("\\csname"))
+         {
+            if (readUntil(in, "dtlkeys@"+name+"\\endcsname") != null)
+            {
+               break;
+            }
+         }
+      }
+
+      if (controlSequence == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", 
+             "\\csname dtlkeys@"+name+"\\endcsname"));
+      }
+
+      int c = readChar(in, true);
+
+      if (c == -1)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", 
+             "\\csname dtlkeys@"+name+"\\endcsname="));
+      }
+      else if (c != (int)'=')
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+            in.getLineNumber(),
+           "error.expected_found", 
+               "\\csname dtlkeys@"+name+"\\endcsname=",
+               "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
+            ));
+      }
+
+      c = readChar(in, true);
+
+      if (c == -1)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", 
+             "\\csname dtlkeys@"+name+"\\endcsname={"));
+      }
+      else if (c != (int)'{')
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           in.getLineNumber(),
+           "error.expected_found", 
+               "\\csname dtlkeys@"+name+"\\endcsname={",
+               "\\csname dtlkeys@"+name+"\\endcsname"+((char)c)
+            ));
+      }
+
+      int currentColumn = 0;
+
+      while (true)
+      {
+         db.readCommand(in, "\\db@plist@elt@w");
+
+         currentColumn = db.parseHeader(in, currentColumn);
+
+         in.mark(80);
+
+         c = readChar(in, true);
+
+         if (c == (int)'}')
+         {
+            // Finished
+            break;
+         }
+         else if (c == -1)
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+              (
+               "error.dbload.not_found",
+               in.getLineNumber(),
+               "}"
+              ));
+         }
+         else
+         {
+            in.reset();
+         }
+      }
+
+      // Now read in the database contents
+
+      while ((controlSequence = db.readCommand(in)) != null)
+      {
+         if (controlSequence.equals("\\newtoks"))
+         {
+            controlSequence = db.readCommand(in);
+
+            if ("\\csname".equals(controlSequence))
+            {
+               break;
+            }
+         }
+      }
+
+      if (controlSequence == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", "\\newtoks\\csname"));
+      }
+
+      String contents = readUntil(in, "\\endcsname");
+
+      if (contents == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", 
+          "\\newtoks\\csname dtldb@"+name+"\\endcsname"));
+      }
+      else if (!contents.equals("dtldb@"+name))
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           in.getLineNumber(),
+           "error.expected_found",
+               "\\newtoks\\csname dtldb@"+name+"\\endcsname",
+               "\\newtoks\\csname "+contents+"\\endcsname"
+           ));
+      }
+
+      contents = readUntil(in, "\\csname");
+
+      if (contents == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", 
+          "\\csname dtldb@"+name+"\\endcsname="));
+      }
+
+      // skip any whitespace
+
+      c = readChar(in, true);
+
+      contents = readUntil(in, "\\endcsname");
+
+      if (contents == null)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", 
+          "\\csname dtldb@"+name+"\\endcsname="));
+      }
+
+      contents = (""+(char)c)+contents;
+
+      if (!contents.equals("dtldb@"+name))
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           in.getLineNumber(),
+           "error.expected_found",
+               "\\csname dtldb@"+name+"\\endcsname",
+               "\\csname "+contents+"\\endcsname"
+           ));
+      }
+
+      // Look for ={ assignment
+
+      c = readChar(in, true);
+
+      if (c == -1)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", 
+             "\\csname dtldb@"+name+"\\endcsname="));
+      }
+      else if (c != (int)'=')
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           in.getLineNumber(),
+           "error.expected_found", 
+               "\\csname dtldb@"+name+"\\endcsname=",
+               "\\csname dtldb@"+name+"\\endcsname"+((char)c)
+            ));
+      }
+
+      c = readChar(in, true);
+
+      if (c == -1)
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           "error.dbload.not_found", 
+             "\\csname dtldb@"+name+"\\endcsname={"));
+      }
+      else if (c != (int)'{')
+      {
+         throw new InvalidSyntaxException(messageHandler.getLabelWithValues(
+           in.getLineNumber(),
+           "error.expected_found", 
+               "\\csname dtldb@"+name+"\\endcsname={",
+               "\\csname dtldb@"+name+"\\endcsname"+((char)c)
+            ));
+      }
+
+      // Read row data until we reach the closing }
+
+      int currentRow = 0;
+
+      while (true)
+      {
+         in.mark(80);
+
+         c = readChar(in, true);
+
+         if (c == (int)'}')
+         {
+            // Finished
+            break;
+         }
+         else if (c == -1)
+         {
+            throw new InvalidSyntaxException(messageHandler.getLabelWithValues
+              (
+               "error.dbload.not_found",
+               in.getLineNumber(),
+               "}"
+              ));
+         }
+         else
+         {
+            in.reset();
+         }
+
+         currentRow = db.parseRow(in, currentRow);
       }
 
       return db;
@@ -2646,4 +3662,45 @@ public class DatatoolDb
 
    public static final Pattern INVALID_LABEL_CONTENT =
      Pattern.compile("([#^_\\&%{}~]|\\\\(?:[a-zA-Z]+\\s*)|(?:\\\\[^a-zA-Z]))");
+
+   public static final Pattern FILE_TYPE_MARKER =
+     Pattern.compile("% (DBTEX|DTLTEX) ([2,3])\\.0 (.*)");
+
+   public static final Pattern PROVIDE_DATA_PATTERN =
+     Pattern.compile("\\\\DTLdbProvideData\\s*\\{(.*?)\\}(\\s*%.*)?");
+
+   public static final Pattern NEW_ROW3_PATTERN =
+     Pattern.compile("\\\\DTLdbNewRow\\s*(\\s%.*)?");
+   public static final Pattern NEW_ENTRY3_PATTERN =
+     Pattern.compile("\\\\DTLdbNewEntry\\s*\\{(.*?)\\}\\s*\\{(.*)\\}(\\s*%.*)?");
+   public static final Pattern SET_HEADER3_PATTERN =
+     Pattern.compile("\\\\DTLdbSetHeader\\s*\\{(.*?)\\}\\s*\\{(.*)\\}(\\s*%.*)?");
+
+   public static final Pattern NEW_DB_PATTERN =
+     Pattern.compile("\\\\DTLnewdb\\s*\\{(.*?)\\}(\\s*%.*)?");
+
+   public static final Pattern NEW_ROW2_PATTERN =
+     Pattern.compile("\\\\DTLnewrow\\s*\\{(.*?)\\}(\\s*%.*)?");
+   public static final Pattern NEW_ENTRY2_PATTERN =
+     Pattern.compile("\\\\DTLnewdbentry\\s*\\{(.*?)\\}\\s*\\{(.*?)\\}\\s*\\{(.*)\\}(\\s*%.*)?");
+   public static final Pattern SET_HEADER2_PATTERN =
+     Pattern.compile("\\\\DTLsetheader\\s*\\{(.*?)\\}\\s*\\{(.*?)\\}\\s*\\{(.*)\\}(\\s*%.*)?");
+
+   public static final Pattern DEF_LAST_LOADED =
+     Pattern.compile("\\\\def\\s*\\\\dtllastloadeddb\\s*\\{(.*)\\}(\\s*%.*)?");
+
+   public static final Pattern RECONSTRUCT_PATTERN =
+     Pattern.compile("\\\\DTLreconstructdatabase\\s*\\{(\\d+)\\}\\s*\\{(\\d+)\\}(\\s*%.*)?");
+
+   public static final Pattern HEADER_RECONSTRUCT_PATTERN =
+     Pattern.compile("\\s*\\\\dtldbheaderreconstruct\\s*\\{(\\d+)\\}\\s*\\{(.*?)\\}\\s*\\{(-1|[0-3]?)\\}\\{(.*)\\}(\\s*%.*)?");
+   public static final Pattern ROW_RECONSTRUCT_PATTERN =
+     Pattern.compile("\\s*\\\\dtldbrowreconstruct\\s*\\{(\\d+)\\}(\\s*%.*)?");
+   public static final Pattern COL_RECONSTRUCT_PATTERN =
+     Pattern.compile("\\s*\\\\dtldbcolreconstruct\\s*\\{(\\d+)\\}(\\s*%.*)?");
+
+   public static final Pattern SINGLE_GROUP_PATTERN =
+     Pattern.compile("\\s*\\{(.*)\\}(\\s*%.*)?");
+   public static final Pattern DATUM_ARGS_PATTERN =
+     Pattern.compile("\\s*\\{(.*)\\}\\s*\\{([+\\-]?\\d*(?:\\.\\d+)?(?:Ee[+\\-]?\\d+)?)\\}\\s*\\{(.*?)\\}\\s*\\{(-1|[0-3]?)\\}(\\s*%.*)?");
 }

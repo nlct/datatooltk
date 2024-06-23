@@ -1151,7 +1151,7 @@ Trying again with TeX Parser Library.</entry>
 
 <entry key="error.db.unknown_key">Unknown header key ''{0}'' in database ''{1}''</entry>
 <entry key="error.dbload.invalid_col_id">invalid column index ''{0}''</entry>
-<entry key="error.dbload.invalid_row_id">invalid row index ''{1}''</entry>
+<entry key="error.dbload.invalid_row_id">invalid row index ''{0}''</entry>
 <entry key="error.dbload.missing_data">No database information found in ''{0}''.</entry>
 <entry key="error.dbload.multiple_db_found">Multiple databases found in ''{0}''. (Only one permitted.)</entry>
 <entry key="error.dbload.not_found">Premature end of file. Failed to find ''{0}''</entry>
@@ -1161,6 +1161,9 @@ Trying again with TeX Parser Library.</entry>
 
 <entry key="error.expected">expected ''{0}''</entry>
 <entry key="error.expected_found">expected ''{0}'', found ''{1}''</entry>
+<entry key="error.expected_or">expected ''{0}'' or ''{1}''</entry>
+<entry key="error.expected_or_found">expected ''{0}'' or ''{1}'', found ''{2}''</entry>
+<entry key="error.expected_after">expected ''{0}'' after {1}</entry>
 <entry key="error.export.failed">Failed to export to ''{0}''.</entry>
 
 <entry key="error.import.failed">Failed to import ''{0}''.
