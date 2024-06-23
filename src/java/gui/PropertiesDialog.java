@@ -675,7 +675,8 @@ public class PropertiesDialog extends JDialog
       box = new JPanel(new FlowLayout(FlowLayout.LEADING));
       comp.add(box);
 
-      box.add(createLabel("preferences.language.numeric_parsing"));
+      numericParsingLabel = createLabel("preferences.language.numeric_parsing");
+      box.add(numericParsingLabel);
 
       ButtonGroup radioGrp = new ButtonGroup();
 
@@ -688,6 +689,7 @@ public class PropertiesDialog extends JDialog
       box.add(numParsePatternButton);
 
       numericParserField = new JTextField(10);
+      numericParserField.setEnabled(false);
       box.add(numericParserField);
 
       // Numeric Formatting
@@ -704,7 +706,9 @@ public class PropertiesDialog extends JDialog
       box = new JPanel(new FlowLayout(FlowLayout.LEADING));
       comp.add(box);
 
-      box.add(createLabel(labelGrp, "preferences.language.numeric_formatting.int"));
+      intFmtLabel = createLabel(labelGrp,
+         "preferences.language.numeric_formatting.int");
+      box.add(intFmtLabel);
 
       radioGrp = new ButtonGroup();
       intFmtMatchLocaleButton = createRadioButton(
@@ -723,8 +727,9 @@ public class PropertiesDialog extends JDialog
       box = new JPanel(new FlowLayout(FlowLayout.LEADING));
       comp.add(box);
 
-      box.add(createLabel(labelGrp,
-          "preferences.language.numeric_formatting.currency"));
+      currencyFmtLabel = createLabel(labelGrp,
+          "preferences.language.numeric_formatting.currency");
+      box.add(currencyFmtLabel);
 
       radioGrp = new ButtonGroup();
       currencyFmtMatchLocaleButton = createRadioButton(
@@ -743,8 +748,9 @@ public class PropertiesDialog extends JDialog
       box = new JPanel(new FlowLayout(FlowLayout.LEADING));
       comp.add(box);
 
-      box.add(createLabel(labelGrp,
-        "preferences.language.numeric_formatting.decimal"));
+      decimalFmtLabel = createLabel(labelGrp,
+        "preferences.language.numeric_formatting.decimal");
+      box.add(decimalFmtLabel);
 
       radioGrp = new ButtonGroup();
       decimalFmtMatchLocaleButton = createRadioButton(
@@ -1046,7 +1052,7 @@ public class PropertiesDialog extends JDialog
       if (settings.isNumericParserSet())
       {
          numParsePatternButton.setSelected(true);
-         numericParserField.setText(""+settings.getNumericParser());
+         numericParserField.setText(getDecimalPattern(settings.getNumericParser()));
       }
       else
       {
@@ -1060,11 +1066,7 @@ public class PropertiesDialog extends JDialog
          
          NumberFormat fmt = settings.getNumericFormatter(DatumType.INTEGER);
 
-         if (fmt instanceof DecimalFormat)
-         {
-            intFormatterField.setText(((DecimalFormat)fmt).toPattern());
-         }
-
+         intFormatterField.setText(getDecimalPattern(fmt));
          intFormatterField.setEnabled(true);
       }
       else
@@ -1077,8 +1079,8 @@ public class PropertiesDialog extends JDialog
       if (settings.isCurrencyFormatterSet())
       {
          currencyFmtPatternButton.setSelected(true);
-         currencyFormatterField.setText(
-           settings.getNumericFormatter(DatumType.CURRENCY).toString());
+         NumberFormat fmt = settings.getNumericFormatter(DatumType.CURRENCY);
+         currencyFormatterField.setText(getDecimalPattern(fmt));
          currencyFormatterField.setEnabled(true);
       }
       else
@@ -1097,8 +1099,8 @@ public class PropertiesDialog extends JDialog
       else if (settings.isDecimalFormatterSet())
       {
          decimalFmtPatternButton.setSelected(true);
-         decimalFormatterField.setText(
-           settings.getNumericFormatter(DatumType.DECIMAL).toString());
+         NumberFormat fmt = settings.getNumericFormatter(DatumType.DECIMAL);
+         decimalFormatterField.setText(getDecimalPattern(fmt));
          decimalFormatterField.setEnabled(true);
       }
       else
@@ -1132,15 +1134,17 @@ public class PropertiesDialog extends JDialog
       decimalSymbolsField.setText(String.format("<html>%s</html>", 
         getMessageHandler().getLabelWithValues(
        "preferences.language.decimal_symbols",
-        String.format("<code>%c</code>", syms.getDecimalSeparator()), 
-        String.format("<code>%c</code>", syms.getGroupingSeparator()))));
+        String.format("<b><code>%c</code></b>", syms.getDecimalSeparator()), 
+        String.format("<b><code>%c</code></b>", syms.getGroupingSeparator()))));
    }
 
+   @Override
    public void valueChanged(ListSelectionEvent evt)
    {
       updateButtons();
    }
 
+   @Override
    public void mouseClicked(MouseEvent evt)
    {
       Object source = evt.getSource();
@@ -1158,22 +1162,27 @@ public class PropertiesDialog extends JDialog
       }
    }
 
+   @Override
    public void mouseEntered(MouseEvent evt)
    {
    }
 
+   @Override
    public void mouseExited(MouseEvent evt)
    {
    }
 
+   @Override
    public void mousePressed(MouseEvent evt)
    {
    }
 
+   @Override
    public void mouseReleased(MouseEvent evt)
    {
    }
 
+   @Override
    public void actionPerformed(ActionEvent evt)
    {
       String action = evt.getActionCommand();
@@ -1182,7 +1191,14 @@ public class PropertiesDialog extends JDialog
 
       if (action.equals("okay"))
       {
-         okay();
+         try
+         {
+            okay();
+         }
+         catch (IllegalArgumentException e)
+         {
+            getMessageHandler().error(this, e.getMessage());
+         }
       }
       else if (action.equals("cancel"))
       {
@@ -1298,8 +1314,6 @@ public class PropertiesDialog extends JDialog
       }
       else if (action.equals("int.pattern"))
       {
-         intFmtPatternButton.setSelected(true);
-
          if (intFormatterField.getText().isEmpty())
          {
             Locale locale = (Locale)numericLocaleBox.getSelectedItem();
@@ -1316,16 +1330,14 @@ public class PropertiesDialog extends JDialog
          }
 
          intFormatterField.setEnabled(true);
+         intFormatterField.requestFocusInWindow();
       }
       else if (action.equals("int.match_locale"))
       {
-         intFmtMatchLocaleButton.setSelected(true);
          intFormatterField.setEnabled(false);
       }
       else if (action.equals("currency.pattern"))
       {
-         currencyFmtPatternButton.setSelected(true);
-
          if (currencyFormatterField.getText().isEmpty())
          {
             Locale locale = (Locale)numericLocaleBox.getSelectedItem();
@@ -1342,16 +1354,14 @@ public class PropertiesDialog extends JDialog
          }
 
          currencyFormatterField.setEnabled(true);
+         currencyFormatterField.requestFocusInWindow();
       }
       else if (action.equals("currency.match_locale"))
       {
-         currencyFmtMatchLocaleButton.setSelected(true);
          currencyFormatterField.setEnabled(false);
       }
       else if (action.equals("decimal.pattern"))
       {
-         decimalFmtPatternButton.setSelected(true);
-
          if (decimalFormatterField.getText().isEmpty())
          {
             Locale locale = (Locale)numericLocaleBox.getSelectedItem();
@@ -1368,16 +1378,39 @@ public class PropertiesDialog extends JDialog
          }
 
          decimalFormatterField.setEnabled(true);
+         decimalFormatterField.requestFocusInWindow();
       }
       else if (action.equals("decimal.match_locale"))
       {
-         decimalFmtMatchLocaleButton.setSelected(true);
          decimalFormatterField.setEnabled(false);
       }
       else if (action.equals("decimal.siunitx"))
       {
-         decimalFmtSIButton.setSelected(true);
          decimalFormatterField.setEnabled(false);
+      }
+      else if (action.equals("numeric_parsing.match_locale"))
+      {
+         numericParserField.setEnabled(false);
+      }
+      else if (action.equals("numeric_parsing.pattern"))
+      {
+         if (numericParserField.getText().isEmpty())
+         {
+            Locale locale = (Locale)numericLocaleBox.getSelectedItem();
+
+            if (locale != null)
+            {
+               NumberFormat numFmt = NumberFormat.getInstance(locale);
+
+               if (numFmt instanceof DecimalFormat)
+               {
+                  numericParserField.setText(((DecimalFormat)numFmt).toPattern());
+               }
+            }
+         }
+
+         numericParserField.setEnabled(true);
+         numericParserField.requestFocusInWindow();
       }
       else
       {
@@ -1396,7 +1429,7 @@ public class PropertiesDialog extends JDialog
       removeCurrencyButton.setEnabled(enabled);
    }
 
-   private void okay()
+   private void okay() throws IllegalArgumentException
    {
       if (homeButton.isSelected())
       {
@@ -1416,10 +1449,8 @@ public class PropertiesDialog extends JDialog
 
          if (file == null)
          {
-            getMessageHandler().error(this, 
+            throw new IllegalArgumentException( 
                getMessageHandler().getLabel("error.missing_custom_file"));
-
-            return;
          }
 
          settings.setCustomStartUp(file);
@@ -1429,7 +1460,6 @@ public class PropertiesDialog extends JDialog
         ((Number)initialRowCapacitySpinner.getValue()).intValue());
       settings.setInitialColumnCapacity(
         ((Number)initialColumnCapacitySpinner.getValue()).intValue());
-
 
       if (sepTabButton.isSelected())
       {
@@ -1441,17 +1471,15 @@ public class PropertiesDialog extends JDialog
 
          if (sep == 0)
          {
-            getMessageHandler().error(this, 
+            throw new IllegalArgumentException( 
                getMessageHandler().getLabel("error.missing_sep"));
-            return;
          }
          else if (sep >= 0xFFFF)
          {
-            getMessageHandler().error(this, 
+            throw new IllegalArgumentException( 
                getMessageHandler().getLabelWithValues("error.char_sep_required", 
                MessageHandler.codePointToString(sep), 
                "0xFFFF"));
-            return;
          }
 
          settings.setSeparator(sep);
@@ -1461,17 +1489,15 @@ public class PropertiesDialog extends JDialog
 
       if (delim == 0)
       {
-         getMessageHandler().error(this, 
+         throw new IllegalArgumentException( 
             getMessageHandler().getLabel("error.missing_delim"));
-         return;
       }
       else if (delim >= 0xFFFF)
       {
-         getMessageHandler().error(this, 
+         throw new IllegalArgumentException( 
             getMessageHandler().getLabelWithValues("error.char_delim_required", 
             MessageHandler.codePointToString(delim), 
             "0xFFFF"));
-         return;
       }
 
       settings.setDelimiter(delim);
@@ -1491,11 +1517,10 @@ public class PropertiesDialog extends JDialog
 
          if (escChar >= 0xFFFF)
          {
-            getMessageHandler().error(this, 
+            throw new IllegalArgumentException( 
                getMessageHandler().getLabelWithValues("error.char_esc_required", 
                MessageHandler.codePointToString(escChar), 
                "0xFFFF"));
-            return;
          }
 
          settings.setCSVescape(escChar);
@@ -1505,9 +1530,8 @@ public class PropertiesDialog extends JDialog
 
       if (host.isEmpty())
       {
-         getMessageHandler().error(this, 
+         throw new IllegalArgumentException( 
             getMessageHandler().getLabel("error.missing_host"));
-         return;
       }
 
       settings.setSqlHost(host);
@@ -1516,18 +1540,16 @@ public class PropertiesDialog extends JDialog
 
       if (prefix.isEmpty())
       {
-         getMessageHandler().error(this,
+         throw new IllegalArgumentException(
             getMessageHandler().getLabel("error.missing_prefix"));
-         return;
       }
 
       settings.setSqlPrefix(prefix);
 
       if (portField.getText().isEmpty())
       {
-         getMessageHandler().error(this,
+         throw new IllegalArgumentException(
             getMessageHandler().getLabel("error.missing_port"));
-         return;
       }
 
       settings.setSqlPort(portField.getValue());
@@ -1586,11 +1608,96 @@ public class PropertiesDialog extends JDialog
 
       settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
       settings.setDictionary(dictLangBox.getSelectedItem().toString());
-// TODO
+
+      settings.setNumericLocale((Locale)numericLocaleBox.getSelectedItem());
+
+      if (numParseMatchLocaleButton.isSelected())
+      {
+         settings.setNumericParser(null);
+      }
+      else
+      {
+         settings.setNumericParser(getDecimalFormat(numericParserField.getText(),
+           numericParsingLabel.getText()));
+      }
+
+      if (intFmtMatchLocaleButton.isSelected())
+      {
+         settings.setIntegerFormatter(null);
+      }
+      else
+      {
+         settings.setIntegerFormatter(
+           getDecimalFormat(intFormatterField.getText(),
+           intFmtLabel.getText()));
+      }
+
+      if (currencyFmtMatchLocaleButton.isSelected())
+      {
+         settings.setCurrencyFormatter(null);
+      }
+      else
+      {
+         settings.setCurrencyFormatter(
+           getDecimalFormat(currencyFormatterField.getText(),
+           currencyFmtLabel.getText()));
+      }
+
+      if (decimalFmtSIButton.isSelected())
+      {
+         settings.setSIforDecimals(true);
+         settings.setDecimalFormatter(null);
+      }
+      else if (decimalFmtMatchLocaleButton.isSelected())
+      {
+         settings.setSIforDecimals(false);
+         settings.setDecimalFormatter(null);
+      }
+      else
+      {
+         settings.setSIforDecimals(false);
+         settings.setDecimalFormatter(
+            getDecimalFormat(decimalFormatterField.getText(),
+              decimalFmtLabel.getText()));
+      }
 
       settings.setPerl(perlFileField.getFileName());
 
       setVisible(false);
+   }
+
+   private String getDecimalPattern(NumberFormat fmt)
+   {
+      if (fmt instanceof DecimalFormat && fmt != null)
+      {
+         return ((DecimalFormat)fmt).toPattern();
+      }
+      else
+      {
+         return "";
+      }
+   }
+
+   private DecimalFormat getDecimalFormat(String text, String field)
+   throws IllegalArgumentException
+   {
+      if (text.isEmpty())
+      {
+         throw new IllegalArgumentException(
+           getMessageHandler().getLabelWithValues(
+             "error.missing.numeric_pattern", field));
+      }
+
+      try
+      {
+         return new DecimalFormat(text);
+      }
+      catch (IllegalArgumentException e)
+      {
+         throw new IllegalArgumentException(
+           getMessageHandler().getLabelWithValues(
+             "error.invalid.numeric_pattern", field, text), e);
+      }
    }
 
    public MessageHandler getMessageHandler()
@@ -1648,6 +1755,8 @@ public class PropertiesDialog extends JDialog
 
    private JComboBox<String> helpsetLangBox, dictLangBox;
    private JComboBox<Locale> numericLocaleBox;
+   private JLabel numericParsingLabel, intFmtLabel,
+    currencyFmtLabel, decimalFmtLabel;
    private JTextField numericParserField, intFormatterField,
     currencyFormatterField, decimalFormatterField;
    private JEditorPane decimalSymbolsField;

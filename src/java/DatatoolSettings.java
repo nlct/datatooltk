@@ -651,16 +651,52 @@ public class DatatoolSettings extends Properties
       return prop != null && !prop.isEmpty();
    }
 
+   public void setIntegerFormatter(DecimalFormat format)
+   {
+      if (format == null)
+      {
+         remove("integer-formatter");
+      }
+      else
+      {
+         setProperty("integer-formatter", format.toPattern());
+      }
+   }
+
    public boolean isCurrencyFormatterSet()
    {
       String prop = getProperty("currency-formatter");
       return prop != null && !prop.isEmpty();
    }
 
+   public void setCurrencyFormatter(DecimalFormat format)
+   {
+      if (format == null)
+      {
+         remove("currency-formatter");
+      }
+      else
+      {
+         setProperty("currency-formatter", format.toPattern());
+      }
+   }
+
    public boolean isDecimalFormatterSet()
    {
       String prop = getProperty("decimal-formatter");
       return prop != null && !prop.isEmpty();
+   }
+
+   public void setDecimalFormatter(DecimalFormat format)
+   {
+      if (format == null)
+      {
+         remove("decimal-formatter");
+      }
+      else
+      {
+         setProperty("decimal-formatter", format.toPattern());
+      }
    }
 
    public NumberFormat getNumericFormatter(DatumType type)

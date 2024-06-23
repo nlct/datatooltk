@@ -169,6 +169,8 @@ public class DatumCellEditor extends DefaultCellEditor
             }
          }
       }
+
+      panel.revalidate();
    }
 
    protected Number getValue()
@@ -302,7 +304,7 @@ public class DatumCellEditor extends DefaultCellEditor
    private DatumTypeComboBox typeBox;
    private DatatoolGUI gui;
    private JTextField currencyField;
-   private Number orgValue;
+   private Number orgValue = Integer.valueOf(0);
 
    private JSpinner intSpinner;
    private SpinnerNumberModel intSpinnerModel;

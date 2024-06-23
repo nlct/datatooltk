@@ -1177,6 +1177,8 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.not_decimal">''{0}'' not a decimal number</entry>
 <entry key="error.not_decimal_type">''{0}'' is not a decimal type.
 (Change the ''{1}'' selector.)</entry>
+<entry key="error.missing.numeric_pattern">{0} missing numeric pattern</entry>
+<entry key="error.invalid.numeric_pattern">{0} invalid numeric pattern: {1}</entry>
 
 <entry key="error.output.tex.not_permitted">.tex extension not permitted on output files</entry>
 
