@@ -207,6 +207,26 @@
 <entry key="menu.help.manual">Manual</entry>
 <entry key="menu.help.manual.mnemonic">M</entry>
 
+<!-- Table Popup Menu -->
+
+<entry key="tablemenu.title">Table Popup Menu</entry>
+
+<entry key="tablemenu.edit_cell">Edit Cell...</entry>
+<entry key="tablemenu.edit_cell.mnemonic">E</entry>
+<entry key="tablemenu.edit_cell.tooltip">Edit selected cell</entry>
+
+<entry key="tablemenu.cell_to_null">Set Cell to Null</entry>
+<entry key="tablemenu.cell_to_null.mnemonic">S</entry>
+<entry key="tablemenu.cell_to_null.tooltip">Replace cell contents with null value</entry>
+
+<entry key="tablemenu.append_col">Append Column</entry>
+<entry key="tablemenu.append_col.mnemonic">C</entry>
+<entry key="tablemenu.append_col.tooltip">Add new column after the last column</entry>
+
+<entry key="tablemenu.append_row">Append Row</entry>
+<entry key="tablemenu.append_row.mnemonic">R</entry>
+<entry key="tablemenu.append_row.tooltip">Add new row after the last row</entry>
+
 <!-- About Dialog -->
 
 <entry key="about.title">About {0}</entry>

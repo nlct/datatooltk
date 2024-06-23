@@ -484,7 +484,7 @@ public class DatatoolGuiResources
        {
           parent = "menu";
        }
-       else if (!parent.contains("menu."))
+       else if (!parent.contains("menu.") && !parent.endsWith("menu"))
        {
           parent = "menu."+parent;
        }

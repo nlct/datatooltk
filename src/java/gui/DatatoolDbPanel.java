@@ -43,7 +43,7 @@ import com.dickimawbooks.datatooltk.*;
  * Panel used in the main GUI window tabs.
  */
 
-public class DatatoolDbPanel extends JPanel
+public class DatatoolDbPanel extends JPanel implements ActionListener
 {
    public DatatoolDbPanel(DatatoolGUI gui, DatatoolDb db)
    {
@@ -74,6 +74,7 @@ public class DatatoolDbPanel extends JPanel
             editLabel, messageHandler.getLabel("menu.edit.column")),
           String.format("%s->%s", 
             editLabel, messageHandler.getLabel("menu.edit.row"))));
+
    }
 
    public MessageHandler getMessageHandler()
@@ -106,13 +107,25 @@ public class DatatoolDbPanel extends JPanel
       table.setDefaultRenderer(Object.class, new DatatoolCellRenderer(db));
 
       table.setDefaultEditor(Datum.class, new DatumCellEditor(gui));
-//      table.setDefaultRenderer(Datum.class, new DatumCellRenderer(db));
 
       table.setColumnSelectionAllowed(true);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
       table.addMouseListener(new MouseAdapter()
        {
+          @Override
+          public void mousePressed(MouseEvent e)
+          {
+             checkForPopup(e);
+          }
+
+          @Override
+          public void mouseReleased(MouseEvent e)
+          {
+             checkForPopup(e);
+          }
+
+          @Override
           public void mouseClicked(MouseEvent evt)
           {
              int viewRow = table.getSelectedRow();
@@ -177,6 +190,116 @@ public class DatatoolDbPanel extends JPanel
       updateTableSettings();
 
       updateColumnHeaders();
+
+      initPopupMenu();
+
+      sp.addMouseListener(new MouseAdapter()
+       {
+          @Override
+         public void mousePressed(MouseEvent event)
+         {
+            checkForPopup(event);
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent event)
+         {
+            checkForPopup(event);
+         }
+       });
+   }
+
+   private void initPopupMenu()
+   {
+      popupMenu = new JPopupMenu();
+
+      editCellItem = createJMenuItem("edit_cell");
+      editCellItem.setEnabled(false);
+      popupMenu.add(editCellItem);
+
+      cellToNullItem = createJMenuItem("cell_to_null");
+      cellToNullItem.setEnabled(false);
+      popupMenu.add(cellToNullItem);
+
+      popupMenu.add(createJMenuItem("append_col"));
+
+      appendRowItem = createJMenuItem("append_row");
+      appendRowItem.setEnabled(false);
+      popupMenu.add(appendRowItem);
+   }
+
+   private JMenuItem createJMenuItem(String action)
+   {
+      return createJMenuItem(null, action);
+   }
+
+   private JMenuItem createJMenuItem(String parent, String action)
+   {
+      if (parent == null)
+      {
+         parent = "tablemenu";
+      }
+      else
+      {
+         parent = "tablemenu."+parent;
+      }
+
+      return gui.getResources().createJMenuItem(parent, action, this);
+   }
+
+   @Override
+   public void actionPerformed(ActionEvent evt)
+   {
+      String action = evt.getActionCommand();
+
+      if (action == null) return;
+
+      if (action.equals("edit_cell"))
+      {
+         requestSelectedCellEdit();
+      }
+      else if (action.equals("cell_to_null"))
+      {
+         updateCell(DatatoolDb.NULL_VALUE);
+      }
+      else if (action.equals("append_row"))
+      {
+         addUndoEdit(new InsertRowEdit(this, db.getRowCount()));
+         scrollToViewCell(getRowCount()-1, 0);
+      }
+      else if (action.equals("append_col"))
+      {
+         DatatoolHeader header = gui.requestNewHeader(this);
+
+         if (header != null)
+         {
+            addUndoEdit(new InsertColumnEdit(this, header));
+         }
+      }
+      else
+      {
+         System.err.println("Unknown action: '"+action+"'");
+      }
+   }
+
+   public boolean checkForPopup(MouseEvent evt)
+   {
+      if (evt.isPopupTrigger())
+      {
+         appendRowItem.setEnabled(getColumnCount() > 0);
+         popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+         return true;
+      }
+
+      return false;
+   }
+
+   public void enableEditItems(boolean hasSelectedRow, boolean hasSelectedColumn)
+   {
+      gui.enableEditItems(hasSelectedRow, hasSelectedColumn);
+      boolean hasBoth = hasSelectedRow && hasSelectedColumn;
+      editCellItem.setEnabled(hasBoth);
+      cellToNullItem.setEnabled(hasBoth);
    }
 
    protected void selectionUpdated()
@@ -184,7 +307,7 @@ public class DatatoolDbPanel extends JPanel
       rowHeaderComponent.updateRowSelection(getViewSelectedRow());
       table.getTableHeader().repaint();
 
-      gui.enableEditItems(getModelSelectedRow() > -1,
+      enableEditItems(getModelSelectedRow() > -1,
         getModelSelectedColumn() > -1);
    }
 
@@ -908,7 +1031,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (modelRow >= getRowCount() || modelRow < 0)
       {
-         gui.enableEditItems(modelRow > -1, modelCol > -1);
+         enableEditItems(modelRow > -1, modelCol > -1);
          return;
       }
 
@@ -926,7 +1049,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (viewRow >= getRowCount() || viewRow < 0)
       {
-         gui.enableEditItems(viewRow > -1, viewCol > -1);
+         enableEditItems(viewRow > -1, viewCol > -1);
          return;
       }
 
@@ -944,7 +1067,7 @@ public class DatatoolDbPanel extends JPanel
 
       if (col >= db.getColumnCount() || col < 0)
       {
-         gui.enableEditItems(row > -1, col > -1);
+         enableEditItems(row > -1, col > -1);
          return;
       }
 
@@ -971,7 +1094,7 @@ public class DatatoolDbPanel extends JPanel
          viewCol = getColumnCount()-1;
       }
 
-      gui.enableEditItems(viewRow > -1, viewCol > -1);
+      enableEditItems(viewRow > -1, viewCol > -1);
 
       if (oldRow == viewRow && oldCol == viewCol)
       {
@@ -1016,7 +1139,7 @@ public class DatatoolDbPanel extends JPanel
          col = getColumnCount()-1;
       }
 
-      gui.enableEditItems(row > -1, col > -1);
+      enableEditItems(row > -1, col > -1);
 
       if (oldRow == row && oldCol == col)
       {
@@ -1319,6 +1442,9 @@ public class DatatoolDbPanel extends JPanel
    private ButtonTabComponent buttonTabComponent;
 
    private JTextField infoField;
+
+   private JPopupMenu popupMenu;
+   private JMenuItem editCellItem, cellToNullItem, appendRowItem;
 }
 
 class DatatoolDbTableModel extends AbstractTableModel
@@ -1427,6 +1553,7 @@ class DatatoolTableHeader extends JTableHeader
 
       addMouseListener(new MouseAdapter()
       {
+         @Override
          public void mouseClicked(MouseEvent event)
          {
             int viewCol = ((JTableHeader)event.getSource())
@@ -1455,39 +1582,44 @@ class DatatoolTableHeader extends JTableHeader
 
          public void mousePressed(MouseEvent event)
          {
-            JTableHeader header = (JTableHeader)event.getSource();
-
-            fromIndex = header.columnAtPoint(event.getPoint());
-
-            if (fromIndex != -1)
+            if (!panel.checkForPopup(event))
             {
-               panel.selectViewColumn(fromIndex);
+               JTableHeader header = (JTableHeader)event.getSource();
 
-               header.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+               fromIndex = header.columnAtPoint(event.getPoint());
+
+               if (fromIndex != -1)
+               {
+                  panel.selectViewColumn(fromIndex);
+
+                  header.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+               }
             }
          }
 
          public void mouseReleased(MouseEvent event)
          {
-            JTableHeader header = (JTableHeader)event.getSource();
-
-            if (fromIndex != -1)
+            if (!panel.checkForPopup(event))
             {
-               int toIndex = header.columnAtPoint(event.getPoint());
+               JTableHeader header = (JTableHeader)event.getSource();
 
-               if (toIndex != -1)
+               if (fromIndex != -1)
                {
-                  panel.moveColumnEdit(fromIndex, toIndex);
+                  int toIndex = header.columnAtPoint(event.getPoint());
+
+                  if (toIndex != -1)
+                  {
+                     panel.moveColumnEdit(fromIndex, toIndex);
+                  }
+
+                  fromIndex = -1;
                }
 
-               fromIndex = -1;
+               mouseOverIndex = -1;
+
+               header.setCursor(Cursor.getDefaultCursor());
             }
-
-            mouseOverIndex = -1;
-
-            header.setCursor(Cursor.getDefaultCursor());
          }
-
       });
 
       addMouseMotionListener(new MouseMotionListener()
