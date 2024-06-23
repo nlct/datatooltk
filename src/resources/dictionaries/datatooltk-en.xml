@@ -347,7 +347,7 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <entry key="preferences.language.numeric_locale">Numeric Locale:</entry>
 <entry key="preferences.language.numeric_locale.mnemonic">N</entry>
-<entry key="preferences.language.decimal_symbols">Decimal separator: {0} Grouping separator: {1}</entry>
+<entry key="preferences.language.decimal_symbols"> Grouping separator: {0} Decimal separator: {1}</entry>
 
 <entry key="preferences.language.numeric_parsing">Numeric Parsing:</entry>
 

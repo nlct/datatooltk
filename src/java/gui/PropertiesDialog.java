@@ -1134,8 +1134,9 @@ public class PropertiesDialog extends JDialog
       decimalSymbolsField.setText(String.format("<html>%s</html>", 
         getMessageHandler().getLabelWithValues(
        "preferences.language.decimal_symbols",
-        String.format("<b><code>%c</code></b>", syms.getDecimalSeparator()), 
-        String.format("<b><code>%c</code></b>", syms.getGroupingSeparator()))));
+        String.format("<b><code>%c</code></b>", syms.getGroupingSeparator())),
+        String.format("<b><code>%c</code></b>", syms.getDecimalSeparator())) 
+       );
    }
 
    @Override
