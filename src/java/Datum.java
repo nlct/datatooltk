@@ -18,7 +18,9 @@
 */
 package com.dickimawbooks.datatooltk;
 
+import java.util.Locale;
 import java.text.Collator;
+import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.NumberFormat;
 
@@ -166,6 +168,29 @@ public class Datum implements Comparable<Datum>
       if (text.equals(DatatoolDb.NULL_VALUE))
       {
          return createNull(settings);
+      }
+
+      // First try if the text is formatted according to the
+      // numeric locale's currency.
+
+      Locale numLocale = settings.getNumericLocale();
+      NumberFormat currFmt = NumberFormat.getCurrencyInstance(numLocale);
+
+      try
+      {
+         Number num = currFmt.parse(text);
+         String sym = currFmt.getCurrency().getSymbol(numLocale);
+
+         if (sym.equals("$"))
+         {
+            sym = "\\$";
+            text.replace("\\$", "\\\\$");
+         }
+
+         return new Datum(text, sym, num, settings);
+      }
+      catch (ParseException e)
+      {// not in the locale's currency format
       }
 
       // Does text start with a known currency symbol?
