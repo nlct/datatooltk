@@ -172,21 +172,31 @@ public class Datum implements Comparable<Datum>
 
       String currencySym = null;
       int idx = 0;
+      int sign = 0;
+
+      int cp = text.codePointAt(0);
+      String str = text;
+
+      if (cp == '+' || cp == '-')
+      {
+         str = text.substring(1);
+         sign = cp;
+      }
 
       for (int i = 0, n = settings.getCurrencyCount(); i < n; i++)
       {
          String sym = settings.getCurrency(i);
 
-         if (text.startsWith(sym))
+         if (str.startsWith(sym))
          {
             currencySym = sym;
             idx = sym.length();
 
             if (sym.matches(".*\\\\[a-zA-Z]+\\s*"))
             {
-               while (idx < text.length())
+               while (idx < str.length())
                {
-                  int cp = text.codePointAt(idx);
+                  cp = str.codePointAt(idx);
 
                   if (Character.isWhitespace(cp))
                   {
@@ -203,11 +213,25 @@ public class Datum implements Comparable<Datum>
          }
       }
 
+      if (idx > 0)
+      {
+         if (sign != 0) idx++;
+      }
+      else
+      {
+         sign = 0;
+      }
+
       ParsePosition pos = new ParsePosition(idx);
 
       NumberFormat numfmt = settings.getNumericParser();
 
       Number num = numfmt.parse(text, pos);
+
+      if (sign == '-')
+      {
+         num = Double.valueOf(-num.doubleValue());
+      }
 
       if (pos.getErrorIndex() == -1 && pos.getIndex() == text.length())
       {
