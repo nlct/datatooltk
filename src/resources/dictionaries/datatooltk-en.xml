@@ -554,6 +554,9 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <entry key="celledit.title">Cell Editor</entry>
 
+<entry key="celledit.text">Text (LaTeX syntax with default category codes):</entry>
+<entry key="celledit.text.mnemonic">T</entry>
+
 <!-- Shared by inline editor and cell editor dialog -->
 <entry key="celledit.type">Type:</entry>
 <entry key="celledit.type.mnemonic">P</entry>

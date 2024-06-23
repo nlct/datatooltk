@@ -156,9 +156,14 @@ public class CellDialog extends JDialog
 
       JComponent datumPanel = createDatumComponent();
 
+      JComponent textPanel = new JPanel(new BorderLayout());
+      textPanel.add(new JScrollPane(textPane), BorderLayout.CENTER);
+      textPanel.add(resources.createJLabel("celledit.text", textPane),
+        BorderLayout.NORTH);
+
       JSplitPane splitPane = new JSplitPane(
         JSplitPane.VERTICAL_SPLIT,
-        new JScrollPane(textPane),
+        textPanel,
         new JScrollPane(datumPanel));
       splitPane.setOneTouchExpandable(true);
 
