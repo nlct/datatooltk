@@ -19,6 +19,8 @@
 package com.dickimawbooks.datatooltk;
 
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.text.Collator;
 import java.text.ParseException;
 import java.text.ParsePosition;
@@ -163,7 +165,19 @@ public class Datum implements Comparable<Datum>
 
    public static Datum valueOf(String text, DatatoolSettings settings)
    {
-      if (text.isEmpty()) return new Datum(settings);
+      // Is there a trailing empty comment?
+
+      Matcher m = TRAILING_EMPTY_COMMENT_PATTERN.matcher(text);
+
+      if (m.matches())
+      {
+         text = m.group(1);
+      }
+
+      if (text.isEmpty())
+      {
+         return new Datum(settings);
+      }
 
       if (text.equals(DatatoolDb.NULL_VALUE))
       {
@@ -542,4 +556,6 @@ public class Datum implements Comparable<Datum>
    DatatoolSettings settings;
 
    public static int TEX_MAX_INT = 2147483647;
+   public static final Pattern TRAILING_EMPTY_COMMENT_PATTERN = 
+     Pattern.compile("(^|.*[^\\\\])%\\s*");
 }
