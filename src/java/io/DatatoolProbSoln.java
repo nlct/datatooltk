@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -90,10 +90,11 @@ public class DatatoolProbSoln implements DatatoolImport
       PreambleParser preambleParser = new PreambleParser(texApp);
       TeXParser texParser = new TeXParser(preambleParser);
 
-      ProbSolnSty probSolnSty = new ProbSolnSty(settings.getInitialRowCapacity(), true, 
-       null, preambleParser, false);
+      ProbSolnSty probSolnSty = new ProbSolnSty(
+        settings.getInitialRowCapacity(), true, 
+        null, preambleParser, false);
 
-      preambleParser.usepackage(probSolnSty);
+      preambleParser.usepackage(probSolnSty, texParser);
 
       texParser.parse(file);
 
