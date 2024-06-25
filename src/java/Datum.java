@@ -33,6 +33,7 @@ import com.dickimawbooks.texparserlib.TeXObjectList;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texparserlib.latex.datatool.DataElement;
 import com.dickimawbooks.texparserlib.latex.datatool.DataNumericElement;
+import com.dickimawbooks.texparserlib.latex.datatool.DatumElement;
 
 public class Datum implements Comparable<Datum>
 {
@@ -110,30 +111,60 @@ public class Datum implements Comparable<Datum>
    public static Datum valueOf(TeXObject entryContents, TeXParser parser,
      DatatoolSettings settings)
    {
-      Datum datum;
+      DatumType elemType = DatumType.UNKNOWN;
+      Number elemValue = null;
+      String sym = null;
+      TeXObject content = entryContents;
 
-      if (parser.isStack(entryContents) && !entryContents.isEmpty())
+      if (entryContents instanceof DatumElement)
       {
-         TeXObjectList list = (TeXObjectList)entryContents;
-         TeXObject obj = list.lastElement();
+         DatumElement elem = (DatumElement)entryContents;
+         content = elem.getOriginal();
+         elemType = elem.getDatumType();
 
-         if (obj instanceof Comment
-             && ((Comment)obj).isEmpty())
+         if (elemType.isNumeric())
          {
-            list.remove(list.size()-1);
-         }
-      }
+            elemValue = elem.getNumber();
 
-      if (entryContents.isEmpty())
-      {
-         datum = new Datum(settings);
+            if (elemValue == null)
+            {
+               elemType = DatumType.STRING;
+            }
+         }
+
+         if (elemType == DatumType.CURRENCY)
+         {
+            TeXObject obj = elem.getCurrencySymbol();
+
+            if (obj == null)
+            {
+               elemType = DatumType.DECIMAL;
+            }
+            else
+            {
+               sym = obj.toString(parser);
+            }
+         }
       }
       else if (entryContents instanceof DataElement)
       {
          DataElement elem = (DataElement)entryContents;
-         DatumType elemType = elem.getDatumType();
-         TeXObject texSym = elem.getCurrencySymbol();
-         Number num = null;
+         content = elem.getContent(parser);
+         elemType = elem.getDatumType();
+
+         if (elemType == DatumType.CURRENCY)
+         {
+            TeXObject obj = elem.getCurrencySymbol();
+
+            if (obj == null)
+            {
+               elemType = DatumType.DECIMAL;
+            }
+            else
+            {
+               sym = obj.toString(parser);
+            }
+         }
 
          if (elem instanceof DataNumericElement)
          {
@@ -142,25 +173,38 @@ public class Datum implements Comparable<Datum>
             switch (elemType)
             {
                case INTEGER:
-                 num = Integer.valueOf(numElem.intValue());
+                 elemValue = Integer.valueOf(numElem.intValue());
                break;
-               case DECIMAL:
                case CURRENCY:
-                 num = Double.valueOf(numElem.doubleValue());
+               case DECIMAL:
+                 elemValue = Double.valueOf(numElem.doubleValue());
                break;
             }
          }
+      }
 
-         datum = new Datum(elemType, entryContents.toString(parser),
-           texSym == null ? null : texSym.toString(parser), 
-           num, settings);
+      if (parser.isStack(content) && !content.isEmpty())
+      {
+         TeXObjectList list = (TeXObjectList)content;
+         TeXObject obj = list.lastElement();
+
+         if (obj instanceof Comment
+             && ((Comment)obj).getText().trim().isEmpty())
+         {
+            list.remove(list.size()-1);
+         }
+      }
+
+      String text = content.toString(parser);
+
+      if (elemType == DatumType.UNKNOWN)
+      {
+         return Datum.valueOf(text, settings);
       }
       else
       {
-         datum = Datum.valueOf(entryContents.toString(parser), settings);
+         return new Datum(elemType, text, sym, elemValue, settings);
       }
-
-      return datum;
    }
 
    public static Datum valueOf(String text, DatatoolSettings settings)
@@ -357,6 +401,11 @@ public class Datum implements Comparable<Datum>
    public boolean isNumeric()
    {
       return numValue != null && type.isNumeric();
+   }
+
+   public boolean overrides(DatumType other)
+   {
+      return type.overrides(other);
    }
 
    public Number getNumber()

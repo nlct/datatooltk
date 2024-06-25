@@ -161,7 +161,7 @@ public class ErrorPanel extends JPanel
       }
       else if (action.equals("exit"))
       {
-         System.exit(DatatoolTk.EXIT_USER_FORCED);
+         messageHandler.getDatatoolTk().exit(DatatoolTk.EXIT_USER_FORCED);
       }
    }
 

@@ -43,6 +43,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.texparserlib.TeXParser;
+import com.dickimawbooks.texparserlib.TeXSyntaxException;
 import com.dickimawbooks.texparserlib.html.HtmlTag;
 import com.dickimawbooks.texjavahelplib.*;
 
@@ -264,6 +265,8 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
       System.out.println(getLabelWithValues("syntax.debug", "--debug"));
       System.out.println(getLabelWithValues("syntax.nodebug", "--nodebug"));
+      System.out.println(getLabelWithValues("syntax.debug-mode", "--debug-mode"));
+      System.out.println(getLabelWithValues("syntax.log", "--log"));
       System.out.println(getLabelWithValues("syntax.compat", "--compat"));
 
       System.out.println(getLabelWithValues("syntax.tex_encoding",
@@ -739,7 +742,8 @@ public class DatatoolTk
       return helpLib.getMessage(label, values);
    }
 
-   private void parseArgs(String[] args) throws InvalidSyntaxException
+   private void parseArgs(String[] args)
+      throws InvalidSyntaxException,IOException
    {
       loadSettings = new LoadSettings(settings);
 
@@ -1193,6 +1197,59 @@ public class DatatoolTk
          else if (args[i].equals("--nodebug"))
          {
             settings.getMessageHandler().setDebugMode(false);
+         }
+         else if (args[i].equals("--debug-mode"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_mode", args[i-1]));
+            }
+      
+            try
+            {
+               int val = Integer.parseInt(args[i]);
+      
+               if (val >= 0)
+               {
+                  settings.getMessageHandler().setTeXParserDebugLevel(val);
+               }
+            }
+            catch (NumberFormatException e)
+            {
+               try
+               {
+                  settings.getMessageHandler().setTeXParserDebugLevel(
+                    TeXParser.getDebugLevelFromModeList(args[i].split(",")));
+               }
+               catch (TeXSyntaxException e2)
+               {
+                  throw new InvalidSyntaxException(
+                    e2.getMessage(settings.getMessageHandler().getTeXApp()), e2);
+               }
+            }
+
+            settings.getMessageHandler().setDebugMode(
+             settings.getMessageHandler().getTeXParserDebugLevel() > 0);
+         }
+         else if (args[i].equals("--log"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_filename",
+                   args[i-1]));
+            }
+
+            settings.getMessageHandler().setLogFile(args[i]);
+         }
+         else if (args[i].equals("--nolog"))
+         {
+            settings.getMessageHandler().setLogFile((File)null);
          }
          else if (args[i].equals("--map-tex-specials"))
          {
@@ -1807,6 +1864,7 @@ public class DatatoolTk
       if (settings.isBatchMode())
       {
          doBatchProcess();
+         exit(0);
       }
       else
       {
@@ -1824,11 +1882,40 @@ public class DatatoolTk
                     String.format("%s: Fatal I/O error: %s", APP_NAME, e.getMessage()),
                     "Error", JOptionPane.ERROR_MESSAGE);
                    e.printStackTrace();
-                   System.exit(EXIT_IO);
+                   exit(EXIT_IO);
                 }
              }
           });
       } 
+   }
+
+   public static void exit(DatatoolTk datatooltk, int exitCode,
+     Throwable e, String noAppMessage, String appMessage, int msgCode,
+     boolean stackTrace)
+   {
+      if (datatooltk == null)
+      {
+         System.err.format("%s: %s: %s", APP_NAME, noAppMessage, e.getMessage());
+
+         if (stackTrace)
+         {
+            e.printStackTrace();
+         }
+
+         System.exit(exitCode);
+      }
+      else
+      {
+         datatooltk.getMessageHandler().error(null, appMessage, e, msgCode);
+
+         datatooltk.exit(exitCode);
+      }
+   }
+
+   public void exit(int exitCode)
+   {
+      getMessageHandler().closeLogFile();
+      System.exit(exitCode);
    }
 
    public static void main(String[] args)
@@ -1843,22 +1930,18 @@ public class DatatoolTk
       }
       catch (InvalidSyntaxException e)
       {
-         if (datatooltk == null)
-         {
-            System.err.format("%s: Fatal syntax error: %s", APP_NAME, e.getMessage());
-         }
-         else
-         {
-            datatooltk.getMessageHandler().error(e, MessageHandler.FORMAT_FAILURE);
-         }
-
-         System.exit(EXIT_SYNTAX);
+         exit(datatooltk, EXIT_SYNTAX, e, "Fatal syntax error", null, 
+          MessageHandler.FORMAT_FAILURE, false);
       }
       catch (IOException e)
       {
-         System.err.format("%s: Fatal I/O error: %s", APP_NAME, e.getMessage());
-         e.printStackTrace();
-         System.exit(EXIT_IO);
+         exit(datatooltk, EXIT_IO, e, "Fatal I/O error", null, 
+          MessageHandler.OPEN_FAILURE, true);
+      }
+      catch (Throwable e)
+      {
+         exit(datatooltk, EXIT_OTHER, e, "Fatal runtime error", null, 
+          MessageHandler.RUNTIME_FAILURE, true);
       }
    }
 
@@ -1877,5 +1960,6 @@ public class DatatoolTk
 
    private DatatoolSettings settings;
 
-   public static final int EXIT_SYNTAX=1, EXIT_IO=2, EXIT_USER_FORCED=3;
+   public static final int EXIT_SYNTAX=1, EXIT_IO=2, EXIT_USER_FORCED=3,
+    EXIT_OTHER=255;
 }

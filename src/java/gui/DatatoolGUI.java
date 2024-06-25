@@ -1133,7 +1133,7 @@ public class DatatoolGUI extends JFrame
          getMessageHandler().debug(e);
       }
 
-      System.exit(0);
+      getDatatoolTk().exit(0);
    }
 
    private void setTeXFileFilters(boolean includeTeXFilter)

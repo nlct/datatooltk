@@ -114,9 +114,13 @@ public class DatatoolDb
 
       boolean unsetFile = false;
 
+      IOSettings ioSettings = new IOSettings(null);
+      ioSettings.setFileFormat(FileFormatType.DBTEX);
+      ioSettings.setFileVersion("2.0");
+
       try
       {
-         return loadNoTeXParser(settings, dbFile);
+         return loadNoTeXParser(settings, dbFile, ioSettings);
       }
       catch (InvalidSyntaxException e)
       {
@@ -126,12 +130,6 @@ public class DatatoolDb
            "progress.quick_load_failed", e.getMessage()));
          messageHandler.debug(e);
 
-         if (!messageHandler.isBatchMode())
-         {
-            messageHandler.warning(messageHandler.getLabel(
-              "warning.texparser.used"));
-         }
-
          /*
           * It's possible that the user may have accidentally loaded
           * a document file containing \input or \DTLloaddbtex.
@@ -140,13 +138,31 @@ public class DatatoolDb
           * mean that if the user then tries to save the database,
           * their document will be overwritten. To guard against
           * this, null the file to force the user to "Save As" so
-          * they can select a new file name.
+          * they can select a new file name, unless the file
+          * extension is dbtex or dtltex.
           */  
 
-         unsetFile = true;
+         int idx = dbFile.getName().lastIndexOf(".");
+         String ext = "";
+
+         if (idx > -1)
+         {
+            ext = dbFile.getName().substring(idx+1).toLowerCase();
+         }
+
+         if (!ext.equals("dbtex") && !ext.equals("dtltex"))
+         {
+            unsetFile = true;
+
+            if (!messageHandler.isBatchMode())
+            {
+               messageHandler.warning(messageHandler.getLabel(
+                 "warning.texparser.used"));
+            }
+         }
       }
 
-      DatatoolDb db = loadTeXParser(settings, dbFile);
+      DatatoolDb db = loadTeXParser(settings, dbFile, ioSettings);
 
       if (unsetFile)
       {
@@ -157,7 +173,7 @@ public class DatatoolDb
    }
 
    public static DatatoolDb loadTeXParser(DatatoolSettings settings, 
-     File dbFile)
+     File dbFile, IOSettings ioSettings)
      throws IOException
    {
       DatatoolDb db = null;
@@ -169,9 +185,23 @@ public class DatatoolDb
       PreambleParser preambleParser = new PreambleParser(texApp,
         UndefAction.WARN);
       TeXParser texParser = new TeXParser(preambleParser);
+      messageHandler.setDebugModeForParser(texParser);
 
       DataToolSty sty = new DataToolSty(null, preambleParser, false);
-      preambleParser.usepackage(sty);
+      preambleParser.usepackage(sty, texParser);
+
+      ioSettings.setSty(sty);
+      FileFormatType format = ioSettings.getFormat();
+      String version = ioSettings.getFileVersion();
+
+      texParser.putControlSequence(true,
+        new TextualContentCommand(DataToolSty.DEFAULT_EXT,
+         format == FileFormatType.DBTEX ? "dbtex" : "dtltex"));
+
+      ioSettings.fetchSettings(true, texParser, texParser);
+      ioSettings.setFileFormat(format);
+      ioSettings.setFileVersion(version);
+
       preambleParser.addVerbEnv("lstlisting");
       preambleParser.addVerbEnv("alltt");
 
@@ -180,77 +210,84 @@ public class DatatoolDb
       try
       {
          messageHandler.startBuffering();
+         TeXObjectList stack = preambleParser.createStack();
 
-         texParser.putControlSequence(true,
-            new TextualContentCommand(DataToolSty.DEFAULT_EXT, "dbtex"));
-
-         IOSettings ioSettings
-            = IOSettings.fetchReadSettings(sty, texParser, texParser);
+         texParser.startGroup();
 
          TeXPath texPath = new TeXPath(texParser, dbFile);
          texParser.push(new EndRead());
 
          DataBase.read(sty, texPath, ioSettings, texParser, texParser);
+         texParser.processBuffered();
 
-         ControlSequence cs = texParser.getControlSequence("dtllastloadeddb");
          String dbName = null;
-   
-         if (cs != null && cs instanceof Expandable)
+         DataBase texDb = sty.getLatestDataBase();
+
+         if (texDb != null)
          {
-            // should be expandable since it's defined in the .dbtex
-   
-            dbName = texParser.expandToString(cs, null);
+            dbName = texDb.getName();
          }
          else
          {
-            Iterator<String> it = sty.getDataBaseKeySetIterator();
-   
-            if (it == null)
+            ControlSequence cs = texParser.getControlSequence("dtllastloadeddb");
+
+            if (cs != null && cs instanceof Expandable)
             {
-               // most likely an old .dbtex file that doesn't
-               // contain \dtllastloadeddb assignment. Find the
-               // first token register whose name matches
-               // \dtlkeys@<label>
-
-               Pattern p = Pattern.compile("dtlkeys@(.*)");
-
-               TokenRegister reg = texParser.getTokenRegister(p);
-
-               if (reg == null)
-               {
-                  throw new IOException(messageHandler.getLabelWithValues(
-                    "error.dbload.missing_data", dbFile));
-               }
-
-               Matcher m = p.matcher(reg.getName());
-
-               if (m.matches())
-               {
-                  dbName = m.group(1);
-               }
+               // should be expandable since it's defined in the .dbtex
+      
+               dbName = texParser.expandToString(cs, null);
             }
             else
-            { 
-               for (; it.hasNext(); )
+            {
+               Iterator<String> it = sty.getDataBaseKeySetIterator();
+      
+               if (it == null)
                {
-                  if (dbName != null)
+                  // most likely an old .dbtex file that doesn't
+                  // contain \dtllastloadeddb assignment. Find the
+                  // first token register whose name matches
+                  // \dtlkeys@<label>
+
+                  Pattern p = Pattern.compile("dtlkeys@(.*)");
+
+                  TokenRegister reg = texParser.getTokenRegister(p);
+
+                  if (reg == null)
                   {
                      throw new IOException(messageHandler.getLabelWithValues(
-                       "error.dbload.multiple_db_found", dbFile));
+                       "error.dbload.missing_data", dbFile));
                   }
-   
-                  dbName = it.next();
+
+                  Matcher m = p.matcher(reg.getName());
+
+                  if (m.matches())
+                  {
+                     dbName = m.group(1);
+                  }
+               }
+               else
+               { 
+                  for (; it.hasNext(); )
+                  {
+                     if (dbName != null)
+                     {
+                        throw new IOException(messageHandler.getLabelWithValues(
+                          "error.dbload.multiple_db_found", dbFile));
+                     }
+      
+                     dbName = it.next();
+                  }
                }
             }
-         }
-   
-         if (dbName == null)
-         {// shouldn't happen unless file has code missing
-            throw new IOException(messageHandler.getLabelWithValues(
-              "error.dbload.missing_data", dbFile));
-         }
+      
+            if (dbName == null)
+            {// shouldn't happen unless file has code missing
+               throw new IOException(messageHandler.getLabelWithValues(
+                 "error.dbload.missing_data", dbFile));
+            }
 
-         DataBase texDb = sty.getDataBase(dbName);
+            texDb = sty.getDataBase(dbName);
+         }
    
          int rowCount = texDb.getRowCount();
          int columnCount = texDb.getColumnCount();
@@ -310,7 +347,7 @@ public class DatatoolDb
    
                if (entryContents != null)
                {
-                  if (!hasVerbatim && entryContents instanceof TeXObjectList)
+                  if (!hasVerbatim && texParser.isStack(entryContents))
                   {
                      hasVerbatim = preambleParser.containsVerbatim(
                         entryContents);
@@ -336,7 +373,7 @@ public class DatatoolDb
    }
       
    public static DatatoolDb loadNoTeXParser(DatatoolSettings settings, 
-     File dbFile)
+     File dbFile, IOSettings ioSettings)
      throws IOException,InvalidSyntaxException
    {
       MessageHandler messageHandler = settings.getMessageHandler();
@@ -411,8 +448,15 @@ public class DatatoolDb
                settings.getMessageHandler().warning(e);
             }
          }
-         else
+         else if (line.startsWith("% Created by datatool"))
          {// assume DBTEX v1.0 or v2.0
+            ioSettings.setFileFormat(FileFormatType.DBTEX);
+            ioSettings.setFileVersion("2.0");
+         }
+         else
+         {// assume DTLTEX v2.0
+            ioSettings.setFileFormat(FileFormatType.DTLTEX);
+            ioSettings.setFileVersion("2.0");
 
             if (!line.startsWith("%"))
             {
@@ -420,8 +464,12 @@ public class DatatoolDb
             }
          }
 
+         ioSettings.setFileVersion(isV3 ? "3.0" : "2.0");
+
          if (dtltex)
          {
+            ioSettings.setFileFormat(FileFormatType.DTLTEX);
+
             if (isV3)
             {
                db = loadNoTeXParserDTLTEX3(settings, in);
@@ -433,6 +481,8 @@ public class DatatoolDb
          }
          else
          {
+            ioSettings.setFileFormat(FileFormatType.DBTEX);
+
             if (isV3)
             {
                db = loadNoTeXParserDBTEX3(settings, in);
@@ -546,15 +596,26 @@ public class DatatoolDb
             String value = m.group(2);
 
             int colIdx = db.getColumnIndex(colKey);
+            DatatoolHeader header;
 
             if (colIdx == -1)
             {
-               DatatoolHeader header = new DatatoolHeader(db, colKey);
+               header = new DatatoolHeader(db, colKey);
                colIdx = db.headers.size();
                db.headers.add(header);
             }
+            else
+            {
+               header = db.headers.get(colIdx);
+            }
 
-            row.addCell(colIdx, value);
+            Datum datum = Datum.valueOf(value, settings);
+            row.addCell(colIdx, datum);
+
+            if (datum.overrides(header.getDatumType()))
+            {
+               header.setType(datum.getDatumType());
+            }
          }
          else if (line.startsWith("\\DTLdbSetHeader"))
          {
@@ -720,15 +781,26 @@ public class DatatoolDb
             String value = m.group(3);
 
             int colIdx = db.getColumnIndex(colKey);
+            DatatoolHeader header;
 
             if (colIdx == -1)
             {
-               DatatoolHeader header = new DatatoolHeader(db, colKey);
+               header = new DatatoolHeader(db, colKey);
                colIdx = db.headers.size();
                db.headers.add(header);
             }
+            else
+            {
+               header = db.headers.get(colIdx);
+            }
 
-            row.addCell(colIdx, value);
+            Datum datum = Datum.valueOf(value, settings);
+            row.addCell(colIdx, datum);
+
+            if (datum.overrides(header.getDatumType()))
+            {
+               header.setType(datum.getDatumType());
+            }
          }
          else if (line.startsWith("\\DTLsetheader"))
          {
@@ -2300,11 +2372,7 @@ public class DatatoolDb
    public void save(int[] columnIndexes, int[] rowIndexes)
      throws IOException
    {
-      if (file.getName().toLowerCase().endsWith(".tex"))
-      {
-         throw new IOException(
-           getMessageHandler().getLabel("error.output.tex.not_permitted"));
-      }
+      getMessageHandler().checkOutputFileName(file, false);
 
       // DBTEX v2.0
       // TODO implement v3.0

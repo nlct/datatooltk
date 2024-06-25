@@ -98,7 +98,7 @@ public class DatatoolRow extends Vector<Datum>
       {
          for (int i = n; i < colIdx; i++)
          {
-            add(new Datum(db.getSettings()));
+            add(Datum.createNull(db.getSettings()));
          }
 
          add(value);

@@ -19,10 +19,15 @@
 package com.dickimawbooks.datatooltk;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.*;
 import java.net.URL;
 
 import java.util.Vector;
 import java.util.logging.ErrorManager;
+
+import java.util.regex.Pattern;
 
 import java.awt.Component;
 
@@ -153,6 +158,154 @@ public class MessageHandler extends ErrorManager
       return debugMode;
    }
 
+   public int getTeXParserDebugLevel()
+   {
+      return texParserDebugLevel;
+   }
+
+   public void setTeXParserDebugLevel(int level)
+   {
+      texParserDebugLevel = level;
+   }
+
+   public void setDebugModeForParser(TeXParser parser) throws IOException
+   {
+      checkLogWriterOpen();
+      parser.setDebugMode(texParserDebugLevel, logWriter);
+   }
+
+  /**
+      Checks the file extension for a requested output file.
+      Just in case user has accidentally muddled the command line
+      options, forbid potential input file extensions for output
+      files.
+      @param file the requested output file
+      @throws IOException if extension is forbidden
+   */
+   public void checkOutputFileName(File file, boolean isLogFile) throws IOException
+   {
+      String name = file.getName();
+      int idx = name.lastIndexOf(".");
+
+      if (idx > -1)
+      {
+         String ext = name.substring(idx+1).toLowerCase();
+
+         if (isLogFile && FORBIDDEN_LOG_EXTS_PATTERN.matcher(ext).matches())
+         {
+            throw new IOException(getHelpLib().getMessageWithFallback(
+              "error.output.forbidden_log_ext",
+              "File: {0}\nExtension ''{1}'' is forbidden for log files",
+              file, ext));
+         }
+
+         if (FORBIDDEN_OUTPUT_EXTS_PATTERN.matcher(ext).matches())
+         {
+            throw new IOException(getHelpLib().getMessageWithFallback(
+              "error.output.forbidden_ext",
+              "File: {0}\nExtension ''{1}'' is forbidden for output files",
+              file, ext));
+         }
+      }
+   }
+
+   public void setLogFile(String filename) throws IOException
+   {
+      if (filename == null || filename.isEmpty())
+      {
+         setLogFile((File)null);
+      }
+      else
+      {
+         setLogFile(new File(filename));
+      }
+   }
+
+   public void setLogFile(File file) throws IOException
+   {
+      if (file != null)
+      {
+         checkOutputFileName(file, true);
+      }
+
+      closeLogFile();
+      logFile = file;
+   }
+
+   public void closeLogFile()
+   {
+      if (logWriter != null)
+      {
+         logWriter.close();
+         logWriter = null;
+      }
+   }
+
+   protected void checkLogWriterOpen() throws IOException
+   {
+      if (logWriter == null && logFile != null)
+      {
+         logWriter = new PrintWriter(
+           Files.newBufferedWriter(logFile.toPath(),
+             StandardOpenOption.CREATE));
+      }
+   }
+
+   public void logMessage(String msg)
+   {
+      if (logFile != null && msg != null)
+      {
+         try
+         {
+            checkLogWriterOpen();
+
+            logWriter.println(msg);
+         }
+         catch (IOException e)
+         {
+            System.err.println(e);
+
+            if (debugMode)
+            {
+               e.printStackTrace();
+            }
+
+            logFile = null;
+            closeLogFile();
+         }
+      }
+   }
+
+   public void logMessage(Throwable t)
+   {
+      if (logFile != null && t != null)
+      {
+         try
+         {
+            if (logWriter == null)
+            {
+               logWriter = new PrintWriter(
+                 Files.newBufferedWriter(logFile.toPath(),
+                   StandardOpenOption.WRITE));
+            }
+
+            t.printStackTrace(logWriter);
+         }
+         catch (IOException e)
+         {
+            System.err.println(e);
+
+            if (debugMode)
+            {
+               e.printStackTrace();
+            }
+
+            logFile = null;
+            closeLogFile();
+         }
+      }
+   }
+
    public void setVerbosity(int level)
    {
       verbosity = level;
@@ -175,6 +328,8 @@ public class MessageHandler extends ErrorManager
       {
          System.out.println(msg);
       }
+
+      logMessage(msg);
    }
 
    public String getMessage(Throwable throwable)
@@ -229,6 +384,8 @@ public class MessageHandler extends ErrorManager
 
    public void warning(Component parent, String message)
    {
+      logMessage(message);
+
       if (isBatchMode)
       {
          System.err.println(String.format("%s: %s", 
@@ -271,6 +428,7 @@ public class MessageHandler extends ErrorManager
       if (debugMode)
       {
          e.printStackTrace();
+         logMessage(e);
       }
    }
 
@@ -281,6 +439,8 @@ public class MessageHandler extends ErrorManager
       {
          System.err.println(String.format("%s: %s", 
            DatatoolTk.APP_NAME, message));
+
+         logMessage(message);
       }
    }
 
@@ -292,6 +452,8 @@ public class MessageHandler extends ErrorManager
          System.err.println(String.format("%s: %s", 
            DatatoolTk.APP_NAME, message));
          e.printStackTrace();
+
+         logMessage(message);
       }
    }
 
@@ -315,6 +477,7 @@ public class MessageHandler extends ErrorManager
          if (debugMode)
          {
             throwable.printStackTrace();
+            logMessage(throwable);
          }
       }
    }
@@ -374,6 +537,9 @@ public class MessageHandler extends ErrorManager
    public void error(Component parent, String msg, 
      Throwable exception, int code)
    {
+      logMessage(msg);
+      logMessage(exception);
+
       if (isBatchMode)
       {
          if (msg == null)
@@ -487,6 +653,7 @@ public class MessageHandler extends ErrorManager
    {
       error(getMessage(exception), exception, GENERIC_FAILURE);
       exception.printStackTrace();
+      logMessage(exception);
    }
 
    public String getMessageIfExists(String label, Object... args)
@@ -620,6 +787,11 @@ public class MessageHandler extends ErrorManager
       return datatooltk.getSettings();
    }
 
+   public TeXJavaHelpLib getHelpLib()
+   {
+      return datatooltk.getHelpLib();
+   }
+
    @Override
    public void dictionaryLoaded(URL url)
    {
@@ -640,6 +812,9 @@ public class MessageHandler extends ErrorManager
    private boolean isBatchMode, debugMode=false;
    private DatatoolTk datatooltk;
    private DatatoolGuiResources guiResources;
+   private File logFile;
+   private PrintWriter logWriter;
+   private int texParserDebugLevel=0;
 
    private Vector<URL> dictionarySources;
 
@@ -651,4 +826,9 @@ public class MessageHandler extends ErrorManager
 
    public static final int SYNTAX_FAILURE=7;
    public static final int RUNTIME_FAILURE=8;
+
+   public static final Pattern FORBIDDEN_LOG_EXTS_PATTERN
+    = Pattern.compile("(dbtex|dtltex)");
+   public static final Pattern FORBIDDEN_OUTPUT_EXTS_PATTERN
+    = Pattern.compile("(tex|ltx|csv|tsv|xlsx?|ods|sty|cls|def|ldf|bib)");
 }

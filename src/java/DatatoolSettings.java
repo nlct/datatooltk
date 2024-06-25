@@ -61,10 +61,11 @@ public class DatatoolSettings extends Properties
       messageHandler = new MessageHandler(datatooltk);
 
       helpLib = new TeXJavaHelpLib(messageHandler,
-       DatatoolTk.APP_NAME, RESOURCE_PREFIX, RESOURCES_PATH,
+       DatatoolTk.APP_NAME, RESOURCES_PATH,
        DICT_DIR,
        getLocaleProperty("dictionary", Locale.getDefault()),
-       getLocaleProperty("helpset", Locale.getDefault()));
+       getLocaleProperty("helpset", Locale.getDefault()),
+       "texparserlib", RESOURCE_PREFIX);
 
       helpLib.setIconPath(ICON_DIR);
 
