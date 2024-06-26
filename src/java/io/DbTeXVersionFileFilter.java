@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -25,12 +25,21 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
- * File filter for dbtex files.
+ * File filter for dbtex 2.0 or 3.0 files.
  */
-public class DbTeXFileFilter extends DatatoolFileFilter
+public class DbTeXVersionFileFilter extends DatatoolFileFilter
 {
-   public DbTeXFileFilter(MessageHandler messageHandler)
+   public DbTeXVersionFileFilter(MessageHandler messageHandler, String version)
    {
-      super(messageHandler.getLabelWithValues("filter.dbtex", "*.dbtex"), "dbtex");
+      super(messageHandler.getLabelWithValues("filter.dbtex",
+        version, "*.dbtex"), "dbtex");
+      this.version = version;
    }
+
+   public String getVersion()
+   {
+      return version;
+   }
+
+   private String version;
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.border.Border;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
 import com.dickimawbooks.datatooltk.*;
@@ -441,12 +442,12 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
       }
    }
 
-   public void save(String filename)
+   public void save(String filename, FileFormatType fmtType, String version)
    {
-      save(new File(filename));
+      save(new File(filename), fmtType, version);
    }
 
-   public void save(File file)
+   public void save(File file, FileFormatType fmtType, String version)
    {
       if (file.exists())
       {
@@ -463,10 +464,15 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
 
       db.setFile(file);
 
-      save();
+      save(fmtType, version);
    }
 
    public void save()
+   {
+      save(db.getDefaultFormat(), db.getDefaultFileVersion());
+   }
+
+   public void save(FileFormatType fmtType, String version)
    {
       if (db.getFile() == null)
       {
@@ -488,7 +494,7 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
       }
 
       DatatoolFileWriter writer = new DatatoolFileWriter(this,
-        columnIndexes, rowIndexes);
+        columnIndexes, rowIndexes, fmtType, version);
       writer.execute();
    }
 

@@ -21,6 +21,7 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Vector;
 import java.util.List;
 import java.util.Random;
@@ -95,6 +96,16 @@ public class DatatoolDb
       headers = new Vector<DatatoolHeader>(
         cols > 0 ? cols : settings.getInitialColumnCapacity());
       data = new Vector<DatatoolRow>(settings.getInitialRowCapacity());
+   }
+
+   public FileFormatType getDefaultFormat()
+   {
+      return currentFileFormat;
+   }
+
+   public String getDefaultFileVersion()
+   {
+      return currentFileVersion;
    }
 
    public static DatatoolDb load(DatatoolSettings settings,
@@ -236,9 +247,13 @@ public class DatatoolDb
                // should be expandable since it's defined in the .dbtex
       
                dbName = texParser.expandToString(cs, null);
+               ioSettings.setFileFormat(FileFormatType.DBTEX);
+               ioSettings.setFileVersion("2.0");
             }
             else
             {
+               ioSettings.setFileFormat(FileFormatType.DTLTEX);
+
                Iterator<String> it = sty.getDataBaseKeySetIterator();
       
                if (it == null)
@@ -298,6 +313,9 @@ public class DatatoolDb
          db = new DatatoolDb(settings, rowCount, columnCount);
          db.setFile(dbFile);
          db.setName(dbName);
+
+         db.currentFileFormat = ioSettings.getFormat();
+         db.currentFileVersion = ioSettings.getFileVersion();
    
          DataToolHeaderRow headerRow = texDb.getHeaders();
    
@@ -502,6 +520,8 @@ public class DatatoolDb
       }
 
       db.setFile(dbFile);
+      db.currentFileFormat = ioSettings.getFormat();
+      db.currentFileVersion = ioSettings.getFileVersion();
 
       if (hasVerbatim)
       {
@@ -2132,9 +2152,9 @@ public class DatatoolDb
       return parseHeader(in, currentColumn);
    }
 
-   // Read in next character ignoring comments and optionally
-   // whitespace
-
+   /** Read in next character ignoring comments and optionally
+       whitespace.
+    */
    private static int readChar(BufferedReader in, boolean ignoreSpaces)
      throws IOException
    {
@@ -2231,8 +2251,10 @@ public class DatatoolDb
    }
 
 
-   // Returns the first command it encounters, skipping anything
-   // that comes before it.
+   /** Search for next control word.
+      Returns the first command it encounters, skipping anything
+      that comes before it.
+    */
    private void readCommand(LineNumberReader in, String requiredCommand)
      throws IOException,InvalidSyntaxException
    {
@@ -2329,6 +2351,9 @@ public class DatatoolDb
       return null;
    }
 
+   /**
+     Check if the given value contains known verbatim commands or environments.
+    */
    public static boolean checkForVerbatim(String value)
    {
       for (int i = 0; i < PATTERN_VERBATIM.length; i++)
@@ -2341,19 +2366,34 @@ public class DatatoolDb
       return false;
    }
 
-
    public void save(File file)
      throws IOException
    {
       setFile(file);
-      save(null, null);
+      save(null, null, currentFileFormat, currentFileVersion);
+   }
+
+   public void save(File file,
+     FileFormatType fileFormat, String fileVersion)
+     throws IOException
+   {
+      setFile(file);
+      save(null, null, fileFormat, fileVersion);
    }
 
    public void save(String filename)
      throws IOException
    {
       setFile(filename);
-      save(null, null);
+      save(null, null, currentFileFormat, currentFileVersion);
+   }
+
+   public void save(String filename,
+     FileFormatType fileFormat, String fileVersion)
+     throws IOException
+   {
+      setFile(filename);
+      save(null, null, fileFormat, fileVersion);
    }
 
    public void save(String filename, int[] columnIndexes, int[] rowIndexes)
@@ -2363,19 +2403,63 @@ public class DatatoolDb
       save(columnIndexes, rowIndexes);
    }
 
+   public void save(String filename, int[] columnIndexes, int[] rowIndexes,
+     FileFormatType fileFormat, String fileVersion)
+     throws IOException
+   {
+      setFile(filename);
+      save(columnIndexes, rowIndexes, fileFormat, fileVersion);
+   }
+
    public void save()
      throws IOException
    {
-      save(null, null);
+      save(null, null, currentFileFormat, currentFileVersion);
+   }
+
+   public void save(FileFormatType fileFormat, String fileVersion)
+     throws IOException
+   {
+      save(null, null, fileFormat, fileVersion);
    }
 
    public void save(int[] columnIndexes, int[] rowIndexes)
      throws IOException
    {
-      getMessageHandler().checkOutputFileName(file, false);
+      save(columnIndexes, rowIndexes, currentFileFormat, currentFileVersion);
+   }
 
+   public void save(int[] columnIndexes, int[] rowIndexes,
+        FileFormatType fileFormat, String fileVersion)
+     throws IOException
+   {
+      // in case name hasn't been set:
+      name = getName();
+
+      switch (fileFormat)
+      {
+         case DBTEX:
+           if ("3.0".equals(fileVersion))
+           {
+              saveDBTEX3(columnIndexes, rowIndexes);
+           }
+           else
+           {
+              saveDBTEX2(columnIndexes, rowIndexes);
+           }
+         break;
+         case DTLTEX:
+           saveDTLTEX(fileVersion, columnIndexes, rowIndexes);
+         break;
+         default:
+            throw new IllegalArgumentException("Use export for format "+fileFormat);
+      }
+   }
+
+   public void saveDBTEX2(int[] columnIndexes, int[] rowIndexes)
+     throws IOException
+   {
       // DBTEX v2.0
-      // TODO implement v3.0
 
       PrintWriter out = null;
 
@@ -2383,20 +2467,25 @@ public class DatatoolDb
 
       MessageHandler messageHandler = getMessageHandler();
 
+      messageHandler.checkOutputFileName(file, false);
+
       try
       {
+         Charset charset;
+
          if (encoding == null)
          {
-            out = new PrintWriter(file);
+            charset = Charset.defaultCharset();
          }
          else
          {
-            out = new PrintWriter(file, encoding);
+            charset = Charset.forName(encoding);
          }
 
-         // in case name hasn't be set:
-         name = getName();
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset,
+           StandardOpenOption.CREATE));
 
+         out.format("%% DBTEX 2.0 %s%n", charset.name());
          out.print("% ");
          out.println(messageHandler.getLabelWithValues("default.texheader",
            DatatoolTk.APP_NAME, new Date()));
@@ -2535,6 +2624,361 @@ public class DatatoolDb
          out.println("\\egroup");
 
          out.println("\\def\\dtllastloadeddb{"+name+"}");
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+
+         setPermissions();
+      }
+   }
+
+   public void saveDBTEX3(int[] columnIndexes, int[] rowIndexes)
+     throws IOException
+   {
+      // DBTEX v3.0
+
+      int numCols, numRows;
+
+      if (rowIndexes == null)
+      {
+         numRows = getRowCount();
+      }
+      else
+      {
+         numRows = rowIndexes.length;
+      }
+
+      if (columnIndexes == null)
+      {
+         numCols = getColumnCount();
+      }
+      else
+      {
+         numCols = columnIndexes.length;
+      }
+
+      PrintWriter out = null;
+
+      String encoding = settings.getTeXEncoding();
+
+      MessageHandler messageHandler = getMessageHandler();
+
+      messageHandler.checkOutputFileName(file, false);
+
+      messageHandler.progress(0);
+      int maxProgress = 2 * numCols + numRows;
+      int progress=0;
+
+      try
+      {
+         Charset charset;
+
+         if (encoding == null)
+         {
+            charset = Charset.defaultCharset();
+         }
+         else
+         {
+            charset = Charset.forName(encoding);
+         }
+
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset,
+           StandardOpenOption.CREATE));
+
+         out.print("% DBTEX 3.0 ");
+         out.println(charset.name());
+         out.print("% ");
+         out.println(messageHandler.getLabelWithValues("default.texheader",
+           DatatoolTk.APP_NAME, new Date()));
+
+         out.format("\\DTLdbProvideData{%s}%%%n", name);
+         out.println("\\DTLreconstructdatabase");
+         out.format((Locale)null, "{%d}{%d}%n", numRows, numCols);
+         out.println("{% Header");
+
+         for (int i = 0; i < numCols; i++)
+         {
+            int colNum = i+1;
+            DatatoolHeader header;
+
+            if (columnIndexes == null)
+            {
+               header = headers.get(i);
+            }
+            else
+            {
+               header = headers.get(columnIndexes[i]);
+            }
+
+            out.format((Locale)null,
+              "\\dtldbheaderreconstruct{%d}{%s}{%d}{%s}%%%n",
+              colNum, header.getKey(), header.getDatumType().getValue(),
+              header.getTitle());
+
+            messageHandler.progress((100*(++progress))/maxProgress);
+         }
+
+         out.println("}% End of Header");
+
+         out.println("{% Content");
+
+         for (int i = 0; i < numRows; i++)
+         {
+            int rowNum = i+1;
+            DatatoolRow row;
+
+            if (rowIndexes == null)
+            {
+               row = data.get(i);
+            }
+            else
+            {
+               row = data.get(rowIndexes[i]);
+            }
+
+            out.format("%% Row %d%n", rowNum);
+
+            out.format((Locale)null, "\\dtldbrowreconstruct{%d}%%%n", rowNum);
+
+            out.format("{%% Row %d Content%n", rowNum);
+
+            for (int j = 0; j < numCols; j++)
+            {
+               int colNum = j+1;
+               DatatoolHeader header;
+               Datum datum;
+
+               if (columnIndexes == null)
+               {
+                  header = headers.get(j);
+                  datum = row.get(j);
+               }
+               else
+               {
+                  header = headers.get(columnIndexes[j]);
+                  datum = row.get(columnIndexes[j]);
+               }
+
+               if (!datum.isNull())
+               {
+                  out.format((Locale)null,
+                   "  \\dtldbcolreconstruct{%d}%% Column %d%n", colNum, colNum);
+                  out.format(" {%% Column %d Content%n", colNum);
+
+                  out.print("   ");
+                  out.println(settings.getDbTeX3Cell(datum, header));
+
+                  out.format(" }%% End of column %d Content%n", colNum);
+               }
+            }
+
+            out.format("}%% End of row %d content%n", rowNum);
+            messageHandler.progress((100*(++progress))/maxProgress);
+         }
+
+         out.println("}% End of Content");
+
+         out.println("{% Key to index");
+
+         for (int i = 0; i < numCols; i++)
+         {
+            DatatoolHeader header;
+
+            if (columnIndexes == null)
+            {
+               header = headers.get(i);
+            }
+            else
+            {
+               header = headers.get(columnIndexes[i]);
+            }
+
+            out.format((Locale)null, "\\dtldbreconstructkeyindex{%s}{%d}%%%n",
+              header.getKey(), header.getDatumType().getValue());
+
+            messageHandler.progress((100*(++progress))/maxProgress);
+         }
+
+         out.println("}% End of key to index");
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+
+         setPermissions();
+      }
+   }
+
+   public void saveDTLTEX(String version, int[] columnIndexes, int[] rowIndexes)
+     throws IOException
+   {
+      boolean isV3 = "3.0".equals(version);
+
+      int numCols, numRows;
+
+      if (rowIndexes == null)
+      {
+         numRows = getRowCount();
+      }
+      else
+      {
+         numRows = rowIndexes.length;
+      }
+
+      if (columnIndexes == null)
+      {
+         numCols = getColumnCount();
+      }
+      else
+      {
+         numCols = columnIndexes.length;
+      }
+
+      PrintWriter out = null;
+
+      String encoding = settings.getTeXEncoding();
+
+      MessageHandler messageHandler = getMessageHandler();
+
+      messageHandler.checkOutputFileName(file, false);
+
+      messageHandler.progress(0);
+      int maxProgress = numCols + numRows;
+      int progress=0;
+
+      try
+      {
+         Charset charset;
+
+         if (encoding == null)
+         {
+            charset = Charset.defaultCharset();
+         }
+         else
+         {
+            charset = Charset.forName(encoding);
+         }
+
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset,
+           StandardOpenOption.CREATE));
+
+         out.format("%% DTLTEX %s %s%n", version, charset.name());
+         out.print("% ");
+         out.println(messageHandler.getLabelWithValues("default.texheader",
+           DatatoolTk.APP_NAME, new Date()));
+
+         name = getName();
+
+         if (isV3)
+         {
+            out.print("\\DTLdbProvideData");
+         }
+         else
+         {
+            out.print("\\DTLnewdb");
+         }
+
+         out.print(name);
+         out.println("%");
+
+         for (int i = 0; i < numRows; i++)
+         {
+            DatatoolRow row;
+
+            if (rowIndexes == null)
+            {
+               row = data.get(i);
+            }
+            else
+            {
+               row = data.get(rowIndexes[i]);
+            }
+
+            if (isV3)
+            {
+               out.println("\\DTLdbNewRow");
+            }
+            else
+            {
+               out.format("\\DTLnewrow{%s}%%%n", name);
+            }
+
+            for (int j = 0; j < numCols; j++)
+            {
+               DatatoolHeader header;
+               Datum datum;
+
+               if (columnIndexes == null)
+               {
+                  header = headers.get(j);
+                  datum = row.get(j);
+               }
+               else
+               {
+                  header = headers.get(columnIndexes[j]);
+                  datum = row.get(columnIndexes[j]);
+               }
+
+               if (!datum.isNull())
+               {
+                  if (isV3)
+                  {
+                     out.print("\\DTLdbNewEntry");
+                  }
+                  else
+                  {
+                     out.format("\\DTLnewrow{%s}", name);
+                  }
+
+                  out.format("{%s}{", header.getKey());
+                  out.print(datum.getText());
+                  out.println("}%");
+               }
+            }
+
+            messageHandler.progress((100*(++progress))/maxProgress);
+         }
+
+         for (int i = 0; i < numCols; i++)
+         {
+            DatatoolHeader header;
+
+            if (columnIndexes == null)
+            {
+               header = headers.get(i);
+            }
+            else
+            {
+               header = headers.get(columnIndexes[i]);
+            }
+
+            if (isV3)
+            {
+               out.print("\\DTLdbSetHeader");
+            }
+            else
+            {
+               out.format("\\DTLsetheader{%s}", name);
+            }
+
+            out.format("{%s}{", header.getKey());
+            out.print(header.getTitle());
+            out.println("}%");
+
+            messageHandler.progress((100*(++progress))/maxProgress);
+         }
+
+         if (!isV3)
+         {
+            out.format("\\def\\dtllastloadeddb{%s}%%%n", name);
+         }
       }
       finally
       {
@@ -3696,6 +4140,8 @@ public class DatatoolDb
    private Vector<DatatoolRow> data;
 
    private File file;
+   private FileFormatType currentFileFormat = FileFormatType.DBTEX;
+   private String currentFileVersion = "3.0";
 
    private String name;
 

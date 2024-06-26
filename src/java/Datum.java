@@ -385,15 +385,15 @@ public class Datum implements Comparable<Datum>
       switch (type)
       {
          case INTEGER:
-            numStr = ""+intValue();
+            numStr = String.format((Locale)null, "%d", intValue());
          break;
          case DECIMAL:
          case CURRENCY:
-            numStr = String.format("%g", doubleValue());
+            numStr = String.format((Locale)null, "%g", doubleValue());
          break;
       }
 
-      return String.format("{%s}{%s}{%s}{%d}",
+      return String.format((Locale)null, "{%s}{%s}{%s}{%d}",
         stringValue, numStr, currencySymbol == null ? "" : currencySymbol,
         type.getValue());
    }

@@ -738,7 +738,9 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="filter.csv">CSV Files ({0})</entry>
 <entry key="filter.csvtxt">CSV and TXT Files ({0})</entry>
-<entry key="filter.dbtex">Datatool Files ({0})</entry>
+<entry key="filter.dbtex">Datatool DBTEX v{0} Files ({1})</entry>
+<entry key="filter.dtltex">Datatool DTLTEX v{0} Files ({1})</entry>
+<entry key="filter.datatool">Datatool Files ({0})</entry>
 <entry key="filter.ods">Open Document Spreadsheet ({0})</entry>
 <entry key="filter.tex">TeX Files ({0})</entry>
 <entry key="filter.txt">Text Files ({0})</entry>
@@ -1158,7 +1160,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.dbload.invalid_row_id">invalid row index ''{0}''</entry>
 <entry key="error.dbload.missing_data">No database information found in ''{0}''.</entry>
 <entry key="error.dbload.multiple_db_found">Multiple databases found in ''{0}''. (Only one permitted.)</entry>
-<entry key="error.dbload.not_found">Premature end of file. Failed to find ''{0}''</entry>
+<entry key="error.dbload.not_found">Premature end of file. Not a DBTEX v2.0 file. Failed to find ''{0}''</entry>
 <entry key="error.dbload.unknown_type">unknown data type ''{0}''</entry>
 <entry key="error.dbload.wrong_end_col_tag">column {0,number} ended with closing tag for column {1,number}</entry>
 <entry key="error.dbload.wrong_end_row_tag">row {0,number} ended with closing tag for row {1,number}</entry>

@@ -629,6 +629,153 @@ public class DatatoolSettings extends Properties
       }
    }
 
+   /**
+    * Write value int DBTEX v3.0 format according to current
+    * settings. The applicable properties are:
+    * dbtex-3-datum = NONE/ALL/HEADER/CELL (don't use datum format,
+    * always use datum format, only use datum format according to
+    * header type, only use datum format according to cell type).
+    * The following only apply for the header and cell options:
+    * dbtex3-string = true/false
+    * dbtex3-integer = true/false
+    * dbtex3-decimal = true/false
+    * dbtex3-currency = true/false
+    */
+   public String getDbTeX3Cell(Datum datum, DatatoolHeader header) 
+      throws IOException
+   {
+      boolean saveDatum = false;
+
+      switch (getDbTeX3DatumValue())
+      {
+         case NONE:
+            saveDatum = false;
+         break;
+         case ALL:
+            saveDatum = true;
+         break;
+         case HEADER:
+            saveDatum = isDbTeX3DatumValue(header.getDatumType());
+         break;
+         case CELL:
+            saveDatum = isDbTeX3DatumValue(datum.getDatumType());
+         break;
+         default:
+            assert false : "Invalid DbTeX3DatumValue case";
+      }
+
+      if (saveDatum)
+      {
+         return String.format("\\dtldbdatumreconstruct%s", datum.getDatumArgs());
+      }
+      else
+      {
+         return String.format("\\dtldbvaluereconstruct{%s}", datum.getText());
+      }
+   }
+
+   public boolean isDbTeX3DatumValue(DatumType type)
+   {
+      switch (type)
+      {
+         case STRING: return isStringDbTeX3DatumValue();
+         case INTEGER: return isIntegerDbTeX3DatumValue();
+         case DECIMAL: return isDecimalDbTeX3DatumValue();
+         case CURRENCY: return isCurrencyDbTeX3DatumValue();
+      }
+
+      return false;
+   }
+
+   public boolean isStringDbTeX3DatumValue()
+   {
+      String prop = getProperty("dbtex3-string");
+
+      if (prop == null || prop.isEmpty()) return false;
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setStringDbTeX3DatumValue(boolean enable)
+   {
+      setProperty("dbtex3-string", ""+enable);
+   }
+
+   public boolean isIntegerDbTeX3DatumValue()
+   {
+      String prop = getProperty("dbtex3-integer");
+
+      if (prop == null || prop.isEmpty()) return false;
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setIntegerDbTeX3DatumValue(boolean enable)
+   {
+      setProperty("dbtex3-integer", ""+enable);
+   }
+
+   public boolean isDecimalDbTeX3DatumValue()
+   {
+      String prop = getProperty("dbtex3-decimal");
+
+      if (prop == null || prop.isEmpty()) return true;
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setDecimalDbTeX3DatumValue(boolean enable)
+   {
+      setProperty("dbtex3-decimal", ""+enable);
+   }
+
+   public boolean isCurrencyDbTeX3DatumValue()
+   {
+      String prop = getProperty("dbtex3-currency");
+
+      if (prop == null || prop.isEmpty()) return true;
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setCurrencyDbTeX3DatumValue(boolean enable)
+   {
+      setProperty("dbtex3-currency", ""+enable);
+   }
+
+   public DbTeX3DatumValue getDbTeX3DatumValue()
+   {
+      if (dbtex3DatumValue == null)
+      {
+         String prop = getProperty("dbtex-3-datum");
+
+         if (prop == null || prop.isEmpty())
+         {
+            dbtex3DatumValue = DbTeX3DatumValue.HEADER;
+         }
+         else
+         {
+            try
+            {
+               dbtex3DatumValue = DbTeX3DatumValue.valueOf(prop);
+            }
+            catch (IllegalArgumentException e)
+            {
+               dbtex3DatumValue = DbTeX3DatumValue.HEADER;
+               messageHandler.debug(e);
+            }
+         }
+      }
+
+      return dbtex3DatumValue;
+   }
+
+   public void setDbTeX3DatumValue(DbTeX3DatumValue value)
+   {
+      dbtex3DatumValue = value;
+      setProperty("dbtex-3-datum", value.toString());
+   }
+
    public boolean useSIforDecimals()
    {
       String prop = getProperty("si-decimals");
@@ -2062,6 +2209,8 @@ public class DatatoolSettings extends Properties
    private LoadSettings loadSettings;
 
    private Collator sortCollator;
+
+   private DbTeX3DatumValue dbtex3DatumValue;
 
    public static final int COMPAT_LATEST=0;
    public static final int COMPAT_1_6=1;

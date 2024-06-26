@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ import javax.swing.SwingWorker;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
+import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
 import com.dickimawbooks.datatooltk.DatatoolDb;
 
 public class DatatoolFileWriter extends SwingWorker<Void,String>
@@ -39,14 +40,19 @@ public class DatatoolFileWriter extends SwingWorker<Void,String>
    private DatatoolDbPanel dbPanel;
    private int[] columnIndexes;
    private int[] rowIndexes;
+   private FileFormatType fileFmtType;
+   private String fileVersion;
    private DatatoolGUI gui;
 
    public DatatoolFileWriter(DatatoolDbPanel dbPanel,
-     int[] columnIndexes, int[] rowIndexes)
+     int[] columnIndexes, int[] rowIndexes,
+     FileFormatType fileFmtType, String fileVersion)
    {
       this.dbPanel = dbPanel;
       this.columnIndexes = columnIndexes;
       this.rowIndexes = rowIndexes;
+      this.fileFmtType = fileFmtType;
+      this.fileVersion = fileVersion;
 
       gui = dbPanel.getDatatoolGUI();
 
@@ -61,7 +67,8 @@ public class DatatoolFileWriter extends SwingWorker<Void,String>
    @Override
    public Void doInBackground() throws IOException
    {
-      dbPanel.getDatabase().save(columnIndexes, rowIndexes);
+      dbPanel.getDatabase().save(columnIndexes, rowIndexes,
+       fileFmtType, fileVersion);
 
       return null;
    }

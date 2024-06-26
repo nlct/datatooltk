@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -25,53 +25,13 @@ import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
- * File filter.
+ * File filter for dbtex and dtltex files.
  */
-public class DatatoolFileFilter extends FileFilter
+public class DbDtlTeXFileFilter extends DatatoolFileFilter
 {
-   public DatatoolFileFilter(String description, String... extensions)
+   public DbDtlTeXFileFilter(MessageHandler messageHandler)
    {
-      super();
-      this.description = description;
-      this.extensions = extensions;
+      super(messageHandler.getLabelWithValues("filter.datatool",
+        "*.dbtex, *.dtltex"), "dbtex", "dtltex");
    }
-
-   public boolean accept(File file)
-   {
-      if (file.isDirectory())
-      {
-         return true;
-      }
-
-      String name = file.getName();
-
-      int idx = name.lastIndexOf(".");
-
-      if (idx == -1)
-      {
-         return false;
-      }
-
-      String suffix = name.substring(idx+1).toLowerCase();
-
-      for (String ext : extensions)
-      {
-         if (suffix.equals(ext)) return true;
-      }
-
-      return false;
-   }
-
-   public String getDescription()
-   {
-      return description;
-   }
-
-   public String getDefaultExtension()
-   {
-      return extensions[0];
-   }
-
-   private String description;
-   private String[] extensions;
 }

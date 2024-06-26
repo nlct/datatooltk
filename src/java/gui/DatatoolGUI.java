@@ -38,6 +38,7 @@ import javax.swing.filechooser.FileFilter;
 import org.xml.sax.SAXException;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.*;
@@ -429,7 +430,14 @@ public class DatatoolGUI extends JFrame
       // File filters
 
       texFilter = new TeXFileFilter(messageHandler);
-      dbtexFilter = new DbTeXFileFilter(messageHandler);
+
+      dbdtltexFilter = new DbDtlTeXFileFilter(messageHandler);
+      dbtex3Filter = new DbTeXVersionFileFilter(messageHandler, "3.0");
+      dbtex2Filter = new DbTeXVersionFileFilter(messageHandler, "2.0");
+      dtltex3Filter = new DtlTeXVersionFileFilter(messageHandler, "3.0");
+      dtltex2Filter = new DtlTeXVersionFileFilter(messageHandler, "2.0");
+
+      csvtxtFilter = new CsvTxtFileFilter(messageHandler);
       csvtxtFilter = new CsvTxtFileFilter(messageHandler);
       csvFilter = new CsvFileFilter(messageHandler);
       txtFilter = new TxtFileFilter(messageHandler);
@@ -1138,8 +1146,15 @@ public class DatatoolGUI extends JFrame
 
    private void setTeXFileFilters(boolean includeTeXFilter)
    {
+      setTeXFileFilters(includeTeXFilter, false, FileFormatType.DBTEX, "3.0");
+   }
+
+   private void setTeXFileFilters(boolean includeTeXFilter,
+      boolean separateVersions, FileFormatType defFmtType, String defVersion)
+   {
       File file = fileChooser.getSelectedFile();
       FileFilter current = fileChooser.getFileFilter();
+      DatatoolFileFilter defFilter=null;
 
       fileChooser.resetChoosableFileFilters();
 
@@ -1147,7 +1162,50 @@ public class DatatoolGUI extends JFrame
 
       fileChooser.removeChoosableFileFilter(all);
 
-      fileChooser.addChoosableFileFilter(dbtexFilter);
+      if (separateVersions)
+      {
+         fileChooser.addChoosableFileFilter(dbtex3Filter);
+         fileChooser.addChoosableFileFilter(dbtex2Filter);
+         fileChooser.addChoosableFileFilter(dtltex3Filter);
+         fileChooser.addChoosableFileFilter(dtltex2Filter);
+
+         if (current != dbtex3Filter && current != dbtex2Filter
+              && current != dtltex3Filter && current != dtltex2Filter)
+         {
+            switch (defFmtType)
+            {
+               case DBTEX:
+                 if ("3.0".equals(defVersion))
+                 {
+                    defFilter = dbtex3Filter;
+                 }
+                 else
+                 {
+                    defFilter = dbtex2Filter;
+                 }
+               break;
+               case DTLTEX:
+                 if ("3.0".equals(defVersion))
+                 {
+                    defFilter = dtltex3Filter;
+                 }
+                 else
+                 {
+                    defFilter = dtltex2Filter;
+                 }
+               break;
+            }
+         }
+      }
+      else
+      {
+         fileChooser.addChoosableFileFilter(dbdtltexFilter);
+
+         if (current != dbdtltexFilter)
+         {
+            defFilter = dbdtltexFilter;
+         }
+      }
 
       if (includeTeXFilter)
       {
@@ -1156,11 +1214,11 @@ public class DatatoolGUI extends JFrame
 
       fileChooser.addChoosableFileFilter(all);
 
-      if (current != dbtexFilter)
+      if (defFilter != null)
       {
-         fileChooser.setFileFilter(dbtexFilter);
+         fileChooser.setFileFilter(defFilter);
 
-         if (file != null && !dbtexFilter.accept(file))
+         if (file != null && !defFilter.accept(file))
          {
             String name = file.getName();
 
@@ -1170,7 +1228,7 @@ public class DatatoolGUI extends JFrame
             {
                file = new File(file.getParent(), 
                  String.format("%s.%s", name.substring(0, idx),
-                    dbtexFilter.getDefaultExtension()));
+                    defFilter.getDefaultExtension()));
 
                if (file.exists())
                {
@@ -1387,16 +1445,55 @@ public class DatatoolGUI extends JFrame
          return;
       }
 
-      setTeXFileFilters(false);
+      DatatoolDb db = panel.getDatabase();
+      FileFormatType fmtType = db.getDefaultFormat();
+      String ver = db.getDefaultFileVersion();
 
-      fileChooser.setSelectedFile(new File(panel.getName()+".dbtex"));
+      setTeXFileFilters(false, true, fmtType, ver);
+
+      String filename = panel.getName();
+
+      if (fmtType == FileFormatType.DBTEX)
+      {
+         filename += ".dbtex";
+      }
+      else
+      {
+         filename += ".dtltex";
+      }
+
+      fileChooser.setSelectedFile(new File(filename));
 
       if (fileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION)
       {
          return;
       }
 
-      panel.save(fileChooser.getSelectedFile());
+      File file = fileChooser.getSelectedFile();
+      FileFilter current = fileChooser.getFileFilter();
+
+      if (current == dbtex2Filter)
+      {
+         fmtType = FileFormatType.DBTEX;
+         ver = "2.0";
+      }
+      else if (current == dbtex3Filter)
+      {
+         fmtType = FileFormatType.DBTEX;
+         ver = "3.0";
+      }
+      else if (current == dtltex2Filter)
+      {
+         fmtType = FileFormatType.DTLTEX;
+         ver = "2.0";
+      }
+      else if (current == dtltex3Filter)
+      {
+         fmtType = FileFormatType.DTLTEX;
+         ver = "3.0";
+      }
+
+      panel.save(file, fmtType, ver);
    }
 
    public void addRecentFile(File file)
@@ -1768,7 +1865,8 @@ public class DatatoolGUI extends JFrame
 
    private JFileChooser fileChooser;
 
-   private DatatoolFileFilter texFilter, dbtexFilter, csvFilter, txtFilter,
+   private DatatoolFileFilter texFilter, dbdtltexFilter,
+     dbtex2Filter, dbtex3Filter, dtltex2Filter, dtltex3Filter, csvFilter, txtFilter,
      csvtxtFilter, xlsFilter, odsFilter, spreadFilter;
 
    private HeaderDialog headerDialog;
