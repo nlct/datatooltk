@@ -99,6 +99,7 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
          publish(gui.getMessageHandler().getLabelWithValues(
            "progress.importing", source));
          db = imp.importData(source);
+         db.updateDefaultFormat();
       }
 
       File mergeFile = loadSettings.getMergeFile();

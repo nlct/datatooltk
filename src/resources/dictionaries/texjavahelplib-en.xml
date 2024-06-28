@@ -4,6 +4,7 @@
 <comment>English language file for texjavahelplib</comment>
 
 <!-- Help Menu (for the main application) -->
+
 <entry key="menu.help">Help</entry>
 <entry key="menu.help.mnemonic">H</entry>
 
@@ -18,6 +19,7 @@
 <entry key="action.help.defaultkeys">format=glsignore</entry>
 
 <!-- Common Actions -->
+
 <entry key="action.okay">Okay</entry>
 <entry key="action.okay.mnemonic">O</entry>
 <entry key="action.okay.keystroke">shift ENTER</entry>
@@ -43,6 +45,8 @@
 <entry key="action.copy.defaultkeys">format=glsignore</entry>
 
 <!-- Menus and Buttons for the Help System -->
+
+<!-- Main Help Frame -->
 
 <entry key="index.menu.helpframe">Help Frame Menus</entry>
 
@@ -138,6 +142,7 @@
 <entry key="menu.helpframe.navigation.historyforward.description">Go forward</entry>
 
 <!-- Navigation -->
+
 <entry key="menu.helpframe.settings">Settings</entry>
 <entry key="menu.helpframe.settings.mnemonic">S</entry>
 <entry key="menu.helpframe.settings.description">Change the graphical interface</entry>
@@ -178,18 +183,62 @@
 <entry key="help.settings.nav.show_label">Include text</entry>
 <entry key="help.settings.nav.show_label.mnemonic">T</entry>
 
+<!-- Secondary Help Dialogs  -->
+
+<entry key="index.menu.helpdialog">Help Dialog Menu</entry>
+
+<!-- Navigation -->
+
+<entry key="menu.helpdialog.navigation">Navigation</entry>
+<entry key="menu.helpdialog.navigation.mnemonic">N</entry>
+<entry key="menu.helpdialog.navigation.tooltip">Navigate the document history</entry>
+<entry key="menu.helpdialog.navigation.description">Actions to switch the view to a previously visited page for this topic</entry>
+
+<entry key="menu.helpdialog.navigation.historyreset">Reset</entry>
+<entry key="menu.helpdialog.navigation.historyreset.mnemonic">R</entry>
+<entry key="menu.helpdialog.navigation.historyreset.keystroke">alt HOME</entry>
+<entry key="menu.helpdialog.navigation.historyreset.tooltip">Back to page {0}</entry>
+<entry key="menu.helpdialog.navigation.historyreset.description">Go back to the topic''s page</entry>
+
+<entry key="menu.helpdialog.navigation.historyback">Back</entry>
+<entry key="menu.helpdialog.navigation.historyback.mnemonic">B</entry>
+<entry key="menu.helpdialog.navigation.historyback.keystroke">alt shift LEFT</entry>
+<entry key="menu.helpdialog.navigation.historyback.tooltip">History Back</entry>
+<entry key="menu.helpdialog.navigation.historyback.description">Go back</entry>
+
+<entry key="menu.helpdialog.navigation.historyforward">Forward</entry>
+<entry key="menu.helpdialog.navigation.historyforward.mnemonic">F</entry>
+<entry key="menu.helpdialog.navigation.historyforward.keystroke">alt shift RIGHT</entry>
+<entry key="menu.helpdialog.navigation.historyforward.tooltip">History Forward</entry>
+<entry key="menu.helpdialog.navigation.historyforward.description">Go forward</entry>
+
+<entry key="menu.helpdialog.navigation.previous">Previous</entry>
+<entry key="menu.helpdialog.navigation.previous.mnemonic">P</entry>
+<entry key="menu.helpdialog.navigation.previous.tooltip">Previous Page</entry>
+<entry key="menu.helpdialog.navigation.previous.description">Go to the previous page</entry>
+<entry key="menu.helpdialog.navigation.previous.keystroke">alt LEFT</entry>
+
+<entry key="menu.helpdialog.navigation.next">Next</entry>
+<entry key="menu.helpdialog.navigation.next.mnemonic">N</entry>
+<entry key="menu.helpdialog.navigation.next.tooltip">Next Page</entry>
+<entry key="menu.helpdialog.navigation.next.description">Go to the next page</entry>
+<entry key="menu.helpdialog.navigation.next.keystroke">alt RIGHT</entry>
+
 <!-- Version information -->
+
 <entry key="about.version">{0} ({1})</entry>
 <entry key="about.library.version">Bundled with {0} version {1} ({2})</entry>
 
 <!-- Index Map -->
+
 <entry key="indexmap.name_description">{0}: {1}</entry>
 <entry key="indexmap.short_description">{0}: {1}</entry>
 <entry key="indexmap.long_short_description">{0} ({1}): {2}</entry>
 
 <!--
-  Language sensitive common text for the manual.
-  The key need to be in the form
+  Language sensitive common text for the manual. These should be prefixed with
+  "manual." (for non-indexed text) or "index." (for indexed text).
+  For keystrokes, the entry key need to be in the form
     manual.keystroke.label
   where label is obtained from the KeyStroke identifier that has been converted
   to lowercase and had any underscores stripped. 

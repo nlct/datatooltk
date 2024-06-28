@@ -93,9 +93,27 @@ public class DatatoolDb
       }
 
       this.settings = settings;
+
       headers = new Vector<DatatoolHeader>(
         cols > 0 ? cols : settings.getInitialColumnCapacity());
       data = new Vector<DatatoolRow>(settings.getInitialRowCapacity());
+   }
+
+   public void updateDefaultFormat()
+   {
+      String defFmt = settings.getDefaultOutputFormat();
+
+      if (defFmt != null)
+      {
+         Matcher m = FORMAT_PATTERN.matcher(defFmt);
+
+         if (m.matches())
+         {
+            currentFileFormat = FileFormatType.valueOf(m.group(1));
+
+            currentFileVersion = m.group(2)+".0";
+         }
+      }
    }
 
    public FileFormatType getDefaultFormat()
@@ -4142,6 +4160,9 @@ public class DatatoolDb
    private File file;
    private FileFormatType currentFileFormat = FileFormatType.DBTEX;
    private String currentFileVersion = "3.0";
+
+   public static final Pattern FORMAT_PATTERN =
+      Pattern.compile("(DBTEX|DTLTEX)[\\s\\-]*([23])(?:\\.0)?");
 
    private String name;
 

@@ -92,7 +92,7 @@ public class PropertiesDialog extends JDialog
       JComponent pluginsTab = createPluginsTab();
 
       getContentPane().add(
-        resources.createOkayCancelHelpPanel(this, gui, "preferences"),
+        resources.createDialogOkayCancelHelpPanel(this, this, gui, "preferences"),
         BorderLayout.SOUTH);
       pack();
 
@@ -362,15 +362,77 @@ public class PropertiesDialog extends JDialog
       box.add(createLabel("preferences.tex.encoding", texEncodingBox));
       box.add(texEncodingBox);
 
+      JComponent outputComp = Box.createVerticalBox();
+      texTab.add(outputComp);
+
+      outputComp.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(), 
+        messageHandler.getLabel("preferences.tex.output")));
+
+      box = createNewRow(outputComp);
+      outputFormatBox = new JComboBox<String>(
+       new String[] {"DBTEX 3.0", "DTLTEX 3.0", "DBTEX 2.0", "DTLTEX 2.0"});
+
+      box.add(createLabel("preferences.tex.format", outputFormatBox));
+      box.add(outputFormatBox);
+
+      overrideInputFormatBox = createCheckBox("preferences", "tex.override_format");
+      box.add(overrideInputFormatBox);
+
+      box = createNewRow(outputComp);
+      box.add(createLabel("preferences.tex.save_datum"));
+
+      box = createNewRow(outputComp);
+
+      ButtonGroup bg = new ButtonGroup();
+
+      saveDatumNoneBox = createRadioButton("preferences.tex", "save_datum.none", bg);
+      box.add(saveDatumNoneBox);
+
+      saveDatumAllBox = createRadioButton("preferences.tex", "save_datum.all", bg);
+      box.add(saveDatumAllBox);
+
+      saveDatumHeaderBox = createRadioButton("preferences.tex", "save_datum.header_type", bg); 
+      box.add(saveDatumHeaderBox);
+
+      saveDatumEntryBox = createRadioButton("preferences.tex", "save_datum.entry_type", bg);
+      box.add(saveDatumEntryBox);
+
+      datumTypeComp = createNewRow(outputComp);
+      datumTypeComp.add(createLabel("preferences.tex.save_datum.type"));
+
+      saveDatumIntegerBox =
+         createCheckBox("preferences.tex", "save_datum.type.int", null);
+      datumTypeComp.add(saveDatumIntegerBox);
+
+      saveDatumDecimalBox =
+         createCheckBox("preferences.tex", "save_datum.type.decimal", null);
+      datumTypeComp.add(saveDatumDecimalBox);
+
+      saveDatumCurrencyBox =
+         createCheckBox("preferences.tex", "save_datum.type.currency", null);
+      datumTypeComp.add(saveDatumCurrencyBox);
+
+      saveDatumStringBox =
+         createCheckBox("preferences.tex", "save_datum.type.string");
+      datumTypeComp.add(saveDatumStringBox);
+
+      JComponent importComp = Box.createVerticalBox();
+      texTab.add(importComp);
+
+      importComp.setBorder(BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(), 
+        messageHandler.getLabel("preferences.tex.import")));
+
       stripSolnEnvBox = createCheckBox("preferences.tex", "stripsolnenv");
-      texTab.add(stripSolnEnvBox);
+      importComp.add(stripSolnEnvBox);
 
       mapTeXBox = createCheckBox("preferences.tex", "map");
       mapTeXBox.addActionListener(this);
       mapTeXBox.setActionCommand("texmap");
-      texTab.add(mapTeXBox);
+      importComp.add(mapTeXBox);
 
-      texMappingsComp = createNewRow(texTab, new BorderLayout());
+      texMappingsComp = createNewRow(importComp, new BorderLayout());
       texMapTable = new JTable();
       texMapTable.addMouseListener(this);
       texMapTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -605,17 +667,28 @@ public class PropertiesDialog extends JDialog
       DatatoolGuiResources resources = gui.getResources();
       MessageHandler messageHandler = gui.getMessageHandler();
 
-      JComponent languageTab =
+      JComponent localisationTab =
          addTab(new JPanel(new BorderLayout()), "language");
 
-      languageTab.add(createTextArea("preferences.language.restart"),
+      JComponent numericComp = Box.createVerticalBox();
+      numericComp.setBorder(BorderFactory.createTitledBorder(
+         BorderFactory.createEtchedBorder(),
+         messageHandler.getLabel("preferences.language.numeric")));
+
+      localisationTab.add(numericComp, BorderLayout.CENTER);
+
+      JComponent languageComp = new JPanel(new BorderLayout());
+      languageComp.setBorder(BorderFactory.createTitledBorder(
+         BorderFactory.createEtchedBorder(),
+         messageHandler.getLabel("preferences.language.interface")));
+
+      localisationTab.add(languageComp, BorderLayout.SOUTH);
+
+      languageComp.add(createTextArea("preferences.language.restart"),
          BorderLayout.NORTH);
 
-      JComponent comp = Box.createVerticalBox();
-      languageTab.add(comp);
-
       JComponent box = new JPanel(new FlowLayout());
-      comp.add(box);
+      languageComp.add(box);
 
       helpsetLangBox = new JComboBox<String>(gui.getHelpSets());
 
@@ -633,8 +706,7 @@ public class PropertiesDialog extends JDialog
 
       // Numeric Parsing
 
-      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
-      comp.add(box);
+      box = createNewRow(numericComp);
 
       Locale[] allLocales = NumberFormat.getAvailableLocales();
       Arrays.parallelSort(allLocales,
@@ -665,15 +737,17 @@ public class PropertiesDialog extends JDialog
         numericLocaleBox));
       box.add(numericLocaleBox);
 
+      box = createNewRow(numericComp);
+
       decimalSymbolsField = new JEditorPane("text/html", "");
       decimalSymbolsField.setEditable(false);
       decimalSymbolsField.setOpaque(false);
       decimalSymbolsField.setBorder(BorderFactory.createEmptyBorder());
       decimalSymbolsUpdated(DecimalFormatSymbols.getInstance());
-      comp.add(decimalSymbolsField);
 
-      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
-      comp.add(box);
+      box.add(decimalSymbolsField);
+
+      box = createNewRow(numericComp);
 
       numericParsingLabel = createLabel("preferences.language.numeric_parsing");
       box.add(numericParsingLabel);
@@ -694,8 +768,7 @@ public class PropertiesDialog extends JDialog
 
       // Numeric Formatting
 
-      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
-      comp.add(box);
+      box = createNewRow(numericComp);
 
       box.add(createLabel("preferences.language.numeric_formatting"));
 
@@ -703,8 +776,7 @@ public class PropertiesDialog extends JDialog
 
       // Integer Formatting
 
-      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
-      comp.add(box);
+      box = createNewRow(numericComp);
 
       intFmtLabel = createLabel(labelGrp,
          "preferences.language.numeric_formatting.int");
@@ -724,8 +796,7 @@ public class PropertiesDialog extends JDialog
 
       // Currency Formatting
 
-      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
-      comp.add(box);
+      box = createNewRow(numericComp);
 
       currencyFmtLabel = createLabel(labelGrp,
           "preferences.language.numeric_formatting.currency");
@@ -745,8 +816,7 @@ public class PropertiesDialog extends JDialog
 
       // Decimal Formatting
 
-      box = new JPanel(new FlowLayout(FlowLayout.LEADING));
-      comp.add(box);
+      box = createNewRow(numericComp);
 
       decimalFmtLabel = createLabel(labelGrp,
         "preferences.language.numeric_formatting.decimal");
@@ -768,7 +838,7 @@ public class PropertiesDialog extends JDialog
        "preferences.language.numeric_formatting", "decimal.siunitx", radioGrp);
       box.add(decimalFmtSIButton);
 
-      return languageTab;
+      return localisationTab;
    }
 
    private JComponent createPluginsTab()
@@ -804,7 +874,7 @@ public class PropertiesDialog extends JDialog
       panel.add(tab);
 
       tabbedPane.addTab(getMessageHandler().getLabel("preferences", label), 
-         panel);
+         new JScrollPane(panel));
 
       String tooltip = getMessageHandler().getToolTip("preferences", label);
 
@@ -821,7 +891,7 @@ public class PropertiesDialog extends JDialog
 
    private JComponent createNewRow(JComponent tab)
    {
-      return createNewRow(tab, new FlowLayout(FlowLayout.LEFT, 4, 1));
+      return createNewRow(tab, new FlowLayout(FlowLayout.LEADING, 4, 1));
    }
 
    private JComponent createNewRow(JComponent tab, LayoutManager layout)
@@ -878,7 +948,14 @@ public class PropertiesDialog extends JDialog
 
    private JCheckBox createCheckBox(String parentLabel, String label)
    {
-      JCheckBox checkBox = getResources().createJCheckBox(parentLabel, label, this);
+      return createCheckBox(parentLabel, label, this);
+   }
+
+   private JCheckBox createCheckBox(String parentLabel, String label,
+     ActionListener listener)
+   {
+      JCheckBox checkBox =
+         getResources().createJCheckBox(parentLabel, label, listener);
 
       checkBox.setAlignmentX(0);
 
@@ -967,6 +1044,40 @@ public class PropertiesDialog extends JDialog
       mapTeXBox.setSelected(settings.isTeXMappingOn());
       texMappingsComp.setVisible(mapTeXBox.isSelected());
       stripSolnEnvBox.setSelected(settings.isSolutionEnvStripped());
+
+      String outFmt = settings.getDefaultOutputFormat();
+
+      if (outFmt != null)
+      {
+         outputFormatBox.setSelectedItem(outFmt);
+      }
+
+      overrideInputFormatBox.setSelected(settings.getOverrideInputFormat());
+
+      switch (settings.getDbTeX3DatumValue())
+      {
+         case ALL:
+            saveDatumAllBox.setSelected(true);
+            datumTypeComp.setVisible(false);
+         break;
+         case NONE:
+            saveDatumNoneBox.setSelected(true);
+            datumTypeComp.setVisible(false);
+         break;
+         case HEADER:
+            saveDatumHeaderBox.setSelected(true);
+            datumTypeComp.setVisible(true);
+         break;
+         case CELL:
+            saveDatumEntryBox.setSelected(true);
+            datumTypeComp.setVisible(true);
+         break;
+      }
+
+      saveDatumStringBox.setSelected(settings.isStringDbTeX3DatumValue());
+      saveDatumIntegerBox.setSelected(settings.isIntegerDbTeX3DatumValue());
+      saveDatumDecimalBox.setSelected(settings.isDecimalDbTeX3DatumValue());
+      saveDatumCurrencyBox.setSelected(settings.isCurrencyDbTeX3DatumValue());
 
       String encoding = settings.getTeXEncoding();
 
@@ -1131,11 +1242,16 @@ public class PropertiesDialog extends JDialog
 
    private void decimalSymbolsUpdated(DecimalFormatSymbols syms)
    {
+      char grpSep = syms.getGroupingSeparator();
+      char decSep = syms.getDecimalSeparator();
+
       decimalSymbolsField.setText(String.format("<html>%s</html>", 
         getMessageHandler().getLabelWithValues(
        "preferences.language.decimal_symbols",
-        String.format("<b><code>%c</code></b>", syms.getGroupingSeparator())),
-        String.format("<b><code>%c</code></b>", syms.getDecimalSeparator())) 
+        String.format("<b><code>%c</code></b>", grpSep),
+        String.format("%04X", (int)grpSep),
+        String.format("<b><code>%c</code></b>", decSep), 
+        String.format("%04X", (int)decSep)))
        );
    }
 
@@ -1413,9 +1529,18 @@ public class PropertiesDialog extends JDialog
          numericParserField.setEnabled(true);
          numericParserField.requestFocusInWindow();
       }
+      else if (action.equals("save_datum.none") || action.equals("save_datum.all"))
+      {
+         datumTypeComp.setVisible(false);
+      }
+      else if (action.equals("save_datum.header_type")
+            || action.equals("save_datum.entry_type"))
+      {
+         datumTypeComp.setVisible(true);
+      }
       else
       {
-         System.err.println("Unknown action '"+action+"'");
+         getMessageHandler().debug("Unknown action '"+action+"'");
       }
    }
 
@@ -1557,6 +1682,31 @@ public class PropertiesDialog extends JDialog
 
       settings.setSqlUser(userField.getText());
       settings.setSqlDbName(databaseField.getText());
+
+      settings.setDefaultOutputFormat(outputFormatBox.getSelectedItem().toString());
+      settings.setOverrideInputFormat(overrideInputFormatBox.isSelected());
+
+      if (saveDatumAllBox.isSelected())
+      {
+         settings.setDbTeX3DatumValue(DbTeX3DatumValue.ALL);
+      }
+      else if (saveDatumNoneBox.isSelected())
+      {
+         settings.setDbTeX3DatumValue(DbTeX3DatumValue.NONE);
+      }
+      else if (saveDatumHeaderBox.isSelected())
+      {
+         settings.setDbTeX3DatumValue(DbTeX3DatumValue.HEADER);
+      }
+      else if (saveDatumEntryBox.isSelected())
+      {
+         settings.setDbTeX3DatumValue(DbTeX3DatumValue.CELL);
+      }
+
+      settings.setStringDbTeX3DatumValue(saveDatumStringBox.isSelected());
+      settings.setIntegerDbTeX3DatumValue(saveDatumIntegerBox.isSelected());
+      settings.setDecimalDbTeX3DatumValue(saveDatumDecimalBox.isSelected());
+      settings.setCurrencyDbTeX3DatumValue(saveDatumCurrencyBox.isSelected());
 
       settings.setTeXMapping(mapTeXBox.isSelected());
       settings.setSolutionEnvStripped(stripSolnEnvBox.isSelected());
@@ -1751,6 +1901,14 @@ public class PropertiesDialog extends JDialog
    private JList<String> currencyList;
 
    private JComboBox<Charset> texEncodingBox, csvEncodingBox;
+
+   private JComboBox<String> outputFormatBox;
+   private JCheckBox overrideInputFormatBox,
+     saveDatumStringBox, saveDatumIntegerBox, saveDatumDecimalBox,
+     saveDatumCurrencyBox;
+   private JRadioButton saveDatumAllBox, saveDatumNoneBox,
+     saveDatumHeaderBox, saveDatumEntryBox;
+   private JComponent datumTypeComp;
 
    private CurrencyListModel currencyListModel;
 

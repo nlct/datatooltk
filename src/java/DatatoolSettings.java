@@ -42,6 +42,7 @@ import java.awt.Font;
 import org.xml.sax.SAXException;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
@@ -569,6 +570,65 @@ public class DatatoolSettings extends Properties
    public String getLookAndFeel()
    {
       return getProperty("lookandfeel");
+   }
+
+   public Font getManualFont()
+   {
+      String val = getProperty("manual.font");
+
+      return val == null ? null : Font.decode(val);
+   }
+
+   public void setManualFont(Font font)
+   {
+      if (font == null)
+      {
+         remove("manual.font");
+      }
+      else
+      {
+         setProperty("manual.font", String.format((Locale)null,
+             "%s-PLAIN-%d", font.getFamily(), font.getSize()));
+      }
+   }
+
+   public String getDefaultOutputFormat()
+   {
+      return getProperty("fileformat");
+   }
+
+   public void setDefaultOutputFormat(FileFormatType ft, String version)
+   {
+      setDefaultOutputFormat(String.format("%s %s", ft.toString(), version));
+   }
+
+   public void setDefaultOutputFormat(String fmt)
+   {
+      if (fmt == null)
+      {
+         remove("fileformat");
+      }
+      else
+      {
+         setProperty("fileformat", fmt);
+      }
+   }
+
+   public void setOverrideInputFormat(boolean on)
+   {
+      setProperty("fileformatoverride", ""+on);
+   }
+
+   public boolean getOverrideInputFormat()
+   {
+      String val = getProperty("fileformatoverride");
+
+      if (val == null)
+      {
+         return false;
+      }
+
+      return Boolean.parseBoolean(val);
    }
 
    public String getTeXEncoding()

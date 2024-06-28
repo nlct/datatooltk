@@ -379,12 +379,43 @@ public class DatatoolGuiResources
 
        buttonPanel.add(okayButton);
        buttonPanel.add(createCancelButton(listener));
-       buttonPanel.add(gui.createHelpButton(helpId, rootPane));
+
+       JButton helpButton = gui.createHelpButton(helpId, rootPane);
+
+       if (helpButton != null)
+       {
+          buttonPanel.add(helpButton);
+       }
 
        if (rootPane != null)
        {
           rootPane.setDefaultButton(okayButton);
        }
+
+       return buttonPanel;
+    }
+
+    /**
+     * Create okay/cancel/help panel for modal dialogs.
+     */
+    public JComponent createDialogOkayCancelHelpPanel(
+       JDialog dialog, ActionListener listener, DatatoolGUI gui, String helpId)
+    {
+       JPanel buttonPanel = new JPanel();
+
+       JButton okayButton = createOkayButton(listener);
+
+       buttonPanel.add(okayButton);
+       buttonPanel.add(createCancelButton(listener));
+
+       JButton helpButton = gui.createHelpButton(dialog, helpId);
+
+       if (helpButton != null)
+       {
+          buttonPanel.add(helpButton);
+       }
+
+       dialog.getRootPane().setDefaultButton(okayButton);
 
        return buttonPanel;
     }

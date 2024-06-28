@@ -116,6 +116,11 @@ public class DatatoolTk
          {
             debug("Loading '"+inFile+"'");
             db = DatatoolDb.load(settings, inFile);
+
+            if (settings.getOverrideInputFormat())
+            {
+               db.updateDefaultFormat();
+            }
          }
          else
          {
@@ -123,6 +128,7 @@ public class DatatoolTk
 
             debug("Importing data via '"+source+"'");
             db = imp.importData(source);
+            db.updateDefaultFormat();
          }
 
          String dbname = loadSettings.getDbName();
@@ -261,6 +267,7 @@ public class DatatoolTk
         "--in", "-i", APP_NAME));
       System.out.println(getLabelWithValues("syntax.name", "--name"));
       System.out.println(getLabelWithValues("syntax.out", "--output", "-o"));
+
       System.out.println(getLabelWithValues("syntax.version", "--version", "-v"));
       System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
       System.out.println(getLabelWithValues("syntax.debug", "--debug"));
@@ -271,6 +278,9 @@ public class DatatoolTk
 
       System.out.println(getLabelWithValues("syntax.tex_encoding",
          "--tex-encoding"));
+
+      System.out.println(getLabelWithValues("syntax.output_format",
+         "--output-format"));
 
       System.out.println(getLabelWithValues("syntax.maptexspecials",
           "--map-tex-specials",
@@ -1460,6 +1470,36 @@ public class DatatoolTk
                     getLabelWithValues("error.syntax.unknown.encoding",
                     args[i]), e);
                }
+            }
+         }
+         else if (args[i].equals("--output-format"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_arg",
+                  args[i-1]));
+            }
+
+            if (args[i].isEmpty() || args.equals("default"))
+            {
+               settings.setDefaultOutputFormat(null);
+            }
+            else
+            {
+               String fmt = args[i].toUpperCase();
+
+               Matcher m = DatatoolDb.FORMAT_PATTERN.matcher(fmt);
+
+               if (!m.matches())
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValues("error.syntax.invalid_output_format", args[i]));
+               }
+
+               settings.setDefaultOutputFormat(fmt);
             }
          }
          else if (args[i].equals("--filter-or"))

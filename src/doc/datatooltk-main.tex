@@ -13,6 +13,10 @@
 \glsxtrnewgls{plugin.}{\plugin}
 \glsxtrnewgls{template.}{\template}
 
+\glsxtrnewgls{opt.action.}{\actionopt}
+\newcommand{\actionoptval}[2]{\actionopt{#1}\dequals #2}
+\newcommand{\actionoptvalm}[2]{\actionopt{#1}\dequals \marg{#2}}
+
 \newcommand{\appname}{DatatoolTk}
 
 \title{User Manual for \appname}
@@ -40,7 +44,7 @@
 
 The \LaTeX\ \sty{datatool} package is able to save databases in its
 own internal format to allow for rapid loading (using
-\code{\gls+{DTLwrite}\oarg{\opt{format}=dbtex}\margm{file}} with
+\code{\gls+{DTLwrite}\oarg{\optval{format}{dbtex}}\margm{file}} with
 \sty{datatool} v3.0 or, for earlier versions,
 \code{\gls+{DTLsaverawdb}\margm{file}} or
 \code{\gls+{DTLprotectedsaverawdb}\margm{file}}).  Files in this
@@ -111,7 +115,25 @@ Invoke \app{datatooltk} in batch mode (default).
 \switchdef{output}
 Save the database to \meta{filename} (batch mode only).
 To guard against accidentally overwriting a document file, \app{datatooltk}
-now forbids the \ext{tex} extension for output files.
+now forbids the \ext{tex} extension for output files. See
+\sectionref{sec:fileext}.
+
+\switchdef{output-format}
+Sets the default file format for output files. The value may be one
+of (case-insensitive): \qtt{DBTEX 2.0}, \qtt{DBTEX 3.0}, 
+\qtt{DTLTEX 2.0}, \qtt{DTLTEX 3.0}. The value may also be an empty
+string or \qtt{default} to indicate the default format should be
+used. The default will either match the format of the input file or,
+if data was imported, \qtt{DBTEX 3.0}. Alternatively, this setting
+can be saved in the \widget{preferences.tex} tab of the \dialog{preferences}
+dialog box (see \sectionref{sec:preferences.tex}).
+
+\begin{information}
+If the \gls{DBTEX3} format is used, there are further settings to
+determine whether or not to store the entry value in
+\sty{datatool}['s] datum format. See
+\sectionref{sec:preferences.tex} for these settings.
+\end{information}
 
 \switchdef{in}
 Load \meta{datatool file}. The switch \switch{in}
@@ -123,40 +145,16 @@ is equivalent to
 \begin{terminal}
 \app{datatooltk} \switch{in} \meta{file}
 \end{terminal}
-
-When loading a \ext{dbtex} file, \app{datatooltk} assumes the
-\ext{dbtex} file is in the format created by \gls{DTLsaverawdb} or,
-with \sty{datatool} v3.0+, \gls{DTLwrite} with the \opt{format} option
-set to \code{dbtex}. The file format is described in the user
-manual for \sty{datatool} v3.0+ and now has a newer version, 
-DBTEX v3.0. Older versions of \app{datatooltk} only support the
-older DBTEX v2.0 format.
-
-\appname\ will first try parsing the file according to the \ext{dbtex} format. 
-If this fails, \app{datatooltk}
-will retry using the \TeX\ Parser Library, which has some limited
-understanding of \TeX\ syntax and \sty{datatool} commands.
-This is more sophisticated than a simple pattern match, but it's slower.
-For example, suppose the file contains:
-\verbatiminput{../tests/test-dtlnewdb.tex}
-This doesn't match the \ext{dbtex} format, so \app{datatooltk} will
-switch to using the \TeX\ Parser Library, which can interpret these
-commands, but note that if the file is subsequently saved
-\strong{it will be saved in the \ext{dbtex} format}. Since this is
-potentially dangerous (as there's a possibility that you might
-accidentally load your document \ext{tex} file) if the 
-\TeX\ Parser Library is used to load the file then, in \gls{gui}
-mode, the filename for that database will be unset, which will 
-trigger the \dgls{file.save_as} dialog if you try to save the database.
+See \sectionref{sec:fileext} for permitted file types.
 
 \switchdef{tex-encoding}
-Set the encoding for the \TeX\ (\ext{tex}, \ext{dtltex} and \ext{dbtex}) files to 
-\meta{encoding}. The \meta{encoding} may
-be the keyword \qtt{default} or an empty string to
-indicate the default file encoding. Make sure that your \LaTeX\
-document matches the given \meta{encoding}. The encoding of 
-\gls{csv} files is independent of the \TeX\ (\ext{dbtex}) 
-encoding and is set through \switch{csv-encoding}.
+Set the encoding for the \TeX\ (\ext{tex}, \ext{dtltex} and
+\ext{dbtex}) files to \meta{encoding}. The \meta{encoding} may be
+the keyword \qtt{default} or an empty string to indicate Java's
+default file encoding (see \sectionref{sec:fileext}). Make sure that
+your \LaTeX\ document matches the given \meta{encoding}. The
+encoding of \gls{csv} files is independent of the \TeX\
+(\ext{dbtex}) encoding and is set through \switch{csv-encoding}.
 
 \switchdef{name}
 If used with \switch{in}, \switch{csv}, \switch{sql}, \switch{xls}, \switch{ods}
@@ -516,8 +514,76 @@ be better off just using a spreadsheet to input the data and
 use \app{datatooltk} in batch mode to convert from \gls{csv} to 
 a \sty{datatool} file.
 
-\section{File Extensions}
+\section{DBTEX and DTLTEX Files}
 \label{sec:fileext}
+
+In batch mode, an input file can be specified with the \switch{in}
+switch, or by simply providing the file name without a preceding switch.
+In \gls{gui} mode, an input file can be opened with the
+\menu{file.open} menu item. Only \ext+{dbtex} and \ext+{dtltex} files can be
+input. For other file types, you will need to use the relevant
+import option.
+
+In batch mode, an output file must be specified with the
+\switch{output} (or \swch{output}) switch. In \gls{gui} mode, a file
+can be saved with the \menu{file.save} or \menu{file.save_as} menu
+items. The output format can be specified with the
+\switch{output-format} switch or by selecting the appropriate file
+filter in the \menu{file.save_as} file selector. If you use
+\menu{file.save}, the format will match the input file.
+
+The output file encoding will default to Java's default
+encoding, which usually matches the operating system's default, but
+can be changed with the Java \code{file.encoding} property (see the
+Java documentation for further details). Alternatively, you can use
+the \switch{tex-encoding} switch or the selector in the
+\widget{preferences.tex} tab of the \dialog{preferences}
+dialog box (see \sectionref{sec:preferences.tex}).
+
+Supported file formats for both input and output files are:
+\gls{DBTEX2}, \gls{DBTEX3}, \gls{DTLTEX2} and \gls{DTLTEX3}.
+These formats can be both input and saved in a document
+using \sty{datatool}['s] \gls{DTLread} and \gls{DTLwrite} commands.
+
+\begin{information}
+As from \sty{datatool} v3.0, \code{\gls{DTLsaverawdb}\margm{file}} has been deprecated
+in \gls{favour} of
+\code{\gls{DTLwrite}\oarg{\optvalm{format}{dbtex-2}}\margm{file}}.
+\end{information}
+
+Although the DBTEX and DTLTEX files are all \LaTeX\ files, the file 
+extensions are assumed to be \ext+{dbtex} and \ext+{dtltex} to
+reduce the chances of accidentally overwriting the main document
+file.
+
+\appname\ will parse the first line of the input file to see if it
+matches the format:
+\begin{compactcodebox}
+\% \meta{format} \meta{encoding}
+\end{compactcodebox}
+where \meta{format} is either \code{DBTEX} or \code{DTLTEX} and
+\meta{encoding} is either the canonical encoding name (such as
+UTF-8) or the \sty{inputenc} label (such as \optfmt{utf8}).
+If the first line doesn't match this format, \gls{DBTEX2} is
+assumed with \app{datatooltk}['s] default encoding (see
+\switch{tex-encoding} and \sectionref{sec:preferences.tex}).
+
+The \app{datatooltk} input function will first try parsing the file
+according to the detected format.  If this fails, \app{datatooltk}
+will retry using the \TeX\ Parser Library, which has some limited
+understanding of \TeX\ syntax and \sty{datatool} commands.
+This is more sophisticated than a simple pattern match, but it's slower.
+For example, suppose the file contains:
+\verbatiminput{../tests/test-dtlnewdb.tex}
+This doesn't match the \ext{dbtex} format, so \app{datatooltk} will
+switch to using the \TeX\ Parser Library, which can interpret these
+commands, but note that if the file is subsequently saved
+\strong{it will be saved in the \ext{dbtex} format}. Since this is
+potentially dangerous (as there's a possibility that you might
+accidentally load your document \ext{tex} file) if the 
+\TeX\ Parser Library is used to load the file then, in \gls{gui}
+mode, the filename for that database will be unset, which will 
+trigger the \dgls{file.save_as} dialog if you try to save the database.
 
 The \sty{datatool} database files loaded and saved by \app{datatooltk}
 are just \LaTeX\ files, so they could simply have the standard
@@ -2029,31 +2095,30 @@ Password:
 
 \chapter{Application Properties}\label{sec:preferences}
 
-   When \app{datatooltk} is run, either in batch or \gls{gui} mode, 
-   the application settings are read in from the user properties file, 
-   if it exists. Any command line options override those settings.
-   If \app{datatooltk} is run in \gls{gui} mode, the application properties are saved on exit. They are not saved in batch mode.
+When \app{datatooltk} is run, either in batch or \gls{gui} mode, 
+the application settings are read in from the user properties file, 
+if it exists. Any command line options override those settings.
+If \app{datatooltk} is run in \gls{gui} mode, the application
+properties are saved on exit. They are not saved in batch mode, so
+if you want to change the default settings for batch mode, without
+having to use the applicable command line option, you will need to run
+\app{datatooltk} in \gls{gui} mode to set them as required.
 
+The user properties directory depends on the operating system.
+On Windows, it is a folder called \file{datatooltk-settings}
+in the folder given by the Java system property \code{user.home}.
+This is usually the user's home folder but in some versions of
+Java this can be \code{\%userprofile\%}.
+On other operating systems, the user properties directory is
+called \file{.datatooltk} and is in the user's home directory.
+Alternatively, set the environment variable \gls{DATATOOLTK}
+to the directory of your choice.
 
-   The user properties directory depends on the operating system.
-   On Windows, it is a folder called \file{datatooltk-settings}
-   in the folder given by the Java system property \code{user.home}.
-   This is usually the user's home folder but in some versions of
-   Java this can be \code{\%userprofile\%}.
-   On other operating systems, the user properties directory is
-   called \file{.datatooltk} and is in the user's home directory.
+In \gls{gui} mode, the settings can be changed using
+\menu{edit.preferences}. This opens the \dialog{preferences} dialog
+box, which has the following tabs.
 
-
-   Alternatively, set the environment variable \gls{DATATOOLTK}
-   to the directory of your choice.
-
-
-   In \gls{gui} mode, the settings can be changed using
-   \menu{edit.preferences}. This opens the 
-   \dialog{preferences} dialog box, which has the 
-   following tabs.
-
-\widgetdef{preferences.general}[(\figureref{fig:prefgeneral})]
+\sectionentry{preferences.general}
 
 \FloatFig[htbp]
  {fig:prefgeneral}
@@ -2067,18 +2132,17 @@ Password:
  }
  {General Tab}
 
-     In the \widget{preferences.general} tab you can specify the start up directory. (The default 
-     directory when you first load, save or import data via the 
-     \menu{file} menu.) You can set this to your home directory,
-     the \gls{cwd}, the directory you last used on the previous run
-     of \app{datatooltk} or you can specify a directory of your choice.
+In the \widget{preferences.general} tab (\figureref{fig:prefgeneral}) you can specify the start up directory. (The default 
+directory when you first load, save or import data via the 
+\menu{file} menu.) You can set this to your home directory,
+the \gls{cwd}, the directory you last used on the previous run
+of \app{datatooltk} or you can specify a directory of your choice.
 
-
-     In this tab you can also specify the seed for the random number generator 
-     (equivalent to \switch{seed}) and whether or not to automatically
-     strip leading and trailing spaces from database and column labels
-     (equivalent to \switch{auto-trim-labels} and 
-     \switch{noauto-trim-labels}).
+In this tab you can also specify the seed for the random number generator 
+(equivalent to \switch{seed}) and whether or not to automatically
+strip leading and trailing spaces from database and column labels
+(equivalent to \switch{auto-trim-labels} and 
+\switch{noauto-trim-labels}).
 
 
      The initial capacity can be increased to speed up loading or importing.
@@ -2087,7 +2151,7 @@ Password:
      has to be enlarged every time the current capacity is exceeded. The
      minimum allowed value is 10.
 
-\widgetdef{preferences.csv}[(\figureref{fig:prefcsv})]
+\sectionentry{preferences.csv}
 
 \FloatFig[htbp]
  {fig:prefcsv}
@@ -2101,9 +2165,8 @@ Password:
  }
  {CSV Tab}
 
-
-     In the \widget{preferences.csv} tab you can specify the \gls{csv} settings. Some of
-     these settings are also used by the spreadsheet import functions.
+In the \widget{preferences.csv} tab (\figureref{fig:prefcsv}) you can specify the \gls{csv} settings. Some of
+these settings are also used by the spreadsheet import functions.
 
 If the separator is a tab character, select the 
 \widget{preferences.csv.tabsep} radio button. Otherwise
@@ -2142,7 +2205,7 @@ Check the \widget{preferences.csv.hasheader} button if your
      The header, skip empty rows and skip lines settings are also used by
      the spreadsheet import functions.
 
-\widgetdef{preferences.sql}[(\figureref{fig:prefsql})]
+\sectionentry{preferences.sql}
 
 \FloatFig[htbp]
  {fig:prefsql}
@@ -2156,22 +2219,22 @@ Check the \widget{preferences.csv.hasheader} button if your
  }
  {SQL Tab}
 
-    In the \widget{preferences.sql} tab, you can specify the \gls{sql} connection information.
-    Enter the host name and port number the \gls{sql} server is 
-    running on in the \widget{preferences.sql.host} and 
-    \widget{preferences.sql.port} fields. Currently, the only
-    available prefix is \qtt{jdbc:mysql://}, which is the JDBC driver for
-    \gls{mysql}. If you are using another driver or \gls{sql} 
-    database, you'll have to add the relevant library to the \filefmt{lib}
-    directory and add it to the class path used by \file{datatooltk.jar}.
-    Enter the name of the database you want to connect to in the 
-    \widget{preferences.sql.database} field and the associated
-    user name in the \widget{preferences.sql.user} field.
-    If you want the password wiped from memory as soon as a connection
-    has been made, make sure the \widget{preferences.sql.wipe}
-    box has been selected.
+In the \widget{preferences.sql} tab (\figureref{fig:prefsql}), you can specify the \gls{sql} connection information.
+Enter the host name and port number the \gls{sql} server is 
+running on in the \widget{preferences.sql.host} and 
+\widget{preferences.sql.port} fields. Currently, the only
+available prefix is \qtt{jdbc:mysql://}, which is the JDBC driver for
+\gls{mysql}. If you are using another driver or \gls{sql} 
+database, you'll have to add the relevant library to the \filefmt{lib}
+directory and add it to the class path used by \file{datatooltk.jar}.
+Enter the name of the database you want to connect to in the 
+\widget{preferences.sql.database} field and the associated
+user name in the \widget{preferences.sql.user} field.
+If you want the password wiped from memory as soon as a connection
+has been made, make sure the \widget{preferences.sql.wipe}
+box has been selected.
 
-\widgetdef{preferences.tex}[(\figureref{fig:preftex})]
+\sectionentry{preferences.tex}
 
 \FloatFig[htbp]
  {fig:preftex}
@@ -2186,32 +2249,124 @@ Check the \widget{preferences.csv.hasheader} button if your
  {TeX Tab}
 
 
+The \widget{preferences.tex} tab (\figureref{fig:preftex}) governs
+\TeX\ related settings.
 \LaTeX\ is no longer used to help \app{datatooltk} import data from 
 a \sty{probsoln} dataset. Instead the \gls{texparserlib} is used
-to parse \ext{tex} files. The file encoding for \TeX\ 
-files (including \ext{dbtex} files read and saved by
-\app{datatooltk}) is set in this tab in the
-\widget{preferences.tex.encoding} dropdown list.
+to parse \ext{tex} files.
 
-    When importing \sty{probsoln} data, you may find it more convenient
-    to strip any instances of the \env{solution} environment, 
-    particularly the implicit use of this environment by the
-    unstarred version of \gls{newproblem}. You can now choose whether or 
-    not to omit \code{\cbeg{solution}} and \code{\cend{solution}}
-    by selecting the \widget{preferences.tex.stripsolnenv} button.
-    If checked, any instances of \env{solution} contained within 
-    definitions (provided by \gls{newproblem} or \env{defproblem}) 
-    will be removed.
+The default file encoding for \TeX\ files (including \ext+{dbtex}
+and \ext+{dtltex} files opened and saved by \app{datatooltk}) is set
+in this tab in the \widget{preferences.tex.encoding} dropdown list.
+Note that the \ext{dbtex} and \ext{dtltex} file formats allow a
+special comment on the first line that identifies not only the file
+format but also the encoding. For example, a \gls{DBTEX3} file that's
+UTF-8 encoded should start with the line:
+\begin{codebox}
+\% DBTEX 3.0 UTF-8
+\end{codebox}
+The encoding identifier may also be an \sty{inputenc} option name,
+such as \code{utf8}.
 
-In the \widget{preferences.tex} tab you can also specify whether or not to map \TeX\ special 
-    characters when you import data from \gls{csv} or \gls{sql}.
-    If you want the mapping, make sure the \widget{preferences.tex.map}
-    box is checked. The mapping table and buttons are hidden if 
-    \widget{preferences.tex.map} is unchecked. If it is checked, 
-    the performed mappings are listed
-    in the table in the tab. To add another mapping, click on the
-    \widget{preferences.tex.add_map} button, which opens the 
-    dialog box shown in \figureref{fig:addmap}. 
+As from \sty{datatool} v3.0, data can be input into a document using
+\gls{DTLread}, which includes support for \ext+{dbtex} and
+\ext+{dtltex} file formats: \gls{DBTEX3}, \gls{DBTEX2}, \gls{DTLTEX3}
+and \gls{DTLTEX2}. Earlier versions of \sty{datatool} only
+support \gls{DBTEX2} and \gls{DTLTEX2}. These formats are described in
+the \sty{datatool} v3.0+ manual.
+
+The \gls{DBTEX3} format is the only one that supports the datum
+format, where the textual representation, numeric value, currency
+symbol and data type are stored separately, which means that the textual
+representation doesn't need to by parsed by \sty{datatool} in
+numeric contexts. This is therefore the default for new databases.
+
+The \ext{dtltex} formats can have their elements converted to datum
+format while the file is read by \gls{DTLread}, depending
+\sty{datatool}['s] \opt{store-datum} setting. However, this setting
+doesn't affect the \ext{dbtex} formats.
+
+\begin{important}
+No format allows verbatim or category code changes to occur in the
+data. The entries should only contain document commands, not
+internal \code{@}-commands or \LaTeX3 syntax. (The entries can, of
+course, contain commands which use internals in their definition,
+but any arguments must assume the default category codes.)
+\end{important}
+
+In general it's best to update \sty{datatool} at the same time as
+updating \app{datatooltk}, but if you have an older version of
+\sty{datatool} that doesn't support the newer file formats, then you
+can change the default format in the \widget{preferences.tex.format}
+selector to \gls{DBTEX2} to allow for backward compatibility.  This
+will be used for new databases or databases obtained by importing
+from other sources.  If you save a database that was loaded from a
+\ext{dbtex} or \ext{dtltex} file, then the original format will be
+the default unless the \widget{preferences.tex.override_format}
+checkbox is selected.
+
+If a database is saved in the \gls{DBTEX3} format, then you can
+specify whether or not to save the datum elements. In general, it's
+best to use the datum format for decimals and currency. It can also
+be useful for integers if their numeric values need to be used in a
+calculation in the document. However, if the integer values are
+unique identifies that need to be queried, it's better not to use
+the datum format as it can interfere with queries. There's usually
+no need to save strings in the datum format unless a column or row
+contains mixed types that need parsing. (For example, with column or row
+aggregate actions.) As with a column containing unique integer value
+identifiers, a column containing unique string identifiers that need
+to be queried are best saved without the datum format.
+
+To indicate whether or not to used the datum format when saving to a
+\gls{DBTEX3} file for entries, select the applicable radio button:
+\widget{preferences.tex.save_datum.none} (don't use the datum format
+for any entries), \widget{preferences.tex.save_datum.all} (use the
+datum format for all non-null entries), 
+\widget{preferences.tex.save_datum.header_type} (determine whether
+or not to use the datum format according to the column's data type),
+or \widget{preferences.tex.save_datum.entry_type} (determine whether
+or not to use the datum format according to the entry's data type,
+which may be different to the column type).
+
+For the last two options, the applicable type (column or entry)
+determines whether or not to use the datum format. If either of
+those options are set, the following checkboxes will become visible:
+
+\begin{itemize}
+\item \widget{preferences.tex.save_datum.type.int} use the datum
+format for integers, if this box is selected;
+\item \widget{preferences.tex.save_datum.type.decimal} use the datum
+format for decimals, if this box is selected;
+\item \widget{preferences.tex.save_datum.type.currency} use the datum
+format for currencies, if this box is selected;
+\item \widget{preferences.tex.save_datum.type.string} use the datum
+format for currencies, if this box is selected.
+\end{itemize}
+
+\begin{information}
+Null entries are omitted when saving the data.
+\end{information}
+
+When importing \sty{probsoln} data, you may find it more convenient
+to strip any instances of the \env{solution} environment, 
+particularly the implicit use of this environment by the
+unstarred version of \gls{newproblem}. You can now choose whether or 
+not to omit \code{\cbeg{solution}} and \code{\cend{solution}}
+by selecting the \widget{preferences.tex.stripsolnenv} button.
+If checked, any instances of \env{solution} contained within 
+definitions (provided by \gls{newproblem} or \env{defproblem}) 
+will be removed.
+
+In the \widget{preferences.tex} tab you can also specify whether or
+not to map \TeX\ special characters when you import data from
+non-\TeX\ sources.  If you want the mapping, make sure the
+\widget{preferences.tex.map} box is checked. The mapping table and
+buttons are hidden if \widget{preferences.tex.map} is unchecked. If
+it is checked, the performed mappings are listed in the table in the
+tab. To add another mapping, click on the
+\widget{preferences.tex.add_map} button, which opens the dialog box
+shown in \figureref{fig:addmap}. 
 
 \FloatFig[htbp]
  {fig:addmap}
@@ -2229,7 +2384,7 @@ In the \widget{preferences.tex} tab you can also specify whether or not to map \
     \widget{preferences.tex.remove_map}. To edit a mapping,
     select the mapping and click on \widget{preferences.tex.edit_map}.
 
-\widgetdef{preferences.currencies}[(\figureref{fig:prefcurrencies})]
+\sectionentry{preferences.currencies}
 
 \FloatFig[htbp]
  {fig:prefcurrencies}
@@ -2244,14 +2399,14 @@ In the \widget{preferences.tex} tab you can also specify whether or not to map \
  {Currencies Tab}
 
 
-    If you want to identify a column as a currency type, you 
-    must make sure that \app{datatooltk} recognises the \LaTeX\ command to typeset
-    your currency. Known currency commands are listed in the 
-    \widget{preferences.currencies} tab. If you add any currencies
-    to the list, remember to add them in your document as well with 
-    \gls{DTLnewcurrencysymbol}.
+If you want to identify a column as a currency type, you 
+must make sure that \app{datatooltk} recognises the \LaTeX\ command to typeset
+your currency. Known currency commands are listed in the 
+\widget{preferences.currencies} tab (\figureref{fig:prefcurrencies}). If you add any currencies
+to the list, remember to add them in your document as well with 
+\gls{DTLnewcurrencysymbol}.
 
-\widgetdef{preferences.display}[(\figureref{fig:prefdisplay})]
+\sectionentry{preferences.display}
 
 \FloatFig[htbp]
  {fig:prefdisplay}
@@ -2265,25 +2420,26 @@ In the \widget{preferences.tex} tab you can also specify whether or not to map \
  }
  {Display Tab}
 
-    The default font used in cell entries is a monospaced font. This can be
-    changed using the \widget{preferences.display.font} drop-down menu.
-    You can also set the font size in the 
-    \widget{preferences.display.fontsize} field. By default, each
-    string cell has a maximum of four lines visible in the main window.
-    (Real and integer columns only have a single line visible.) This
-    number can be changed in the \widget{preferences.display.cellheight}
-    field. Each column has a default width that depends on the data type
-    for that column. The values are listed in the 
-    \widget{preferences.display.cellwidths} area. These can be changed
-    as required.
+The \widget{preferences.display} (\figureref{fig:prefdisplay}) tab governs user interface settings.
+The default font used in cell entries is a monospaced font. This can be
+changed using the \widget{preferences.display.font} drop-down menu.
+You can also set the font size in the 
+\widget{preferences.display.fontsize} field. By default, each
+string cell has a maximum of four lines visible in the main window.
+(Real and integer columns only have a single line visible.) This
+number can be changed in the \widget{preferences.display.cellheight}
+field. Each column has a default width that depends on the data type
+for that column. The values are listed in the 
+\widget{preferences.display.cellwidths} area. These can be changed
+as required.
 
-The \qt{Look And Feel} refers to the way the graphical interface
-    is rendered. You can use the drop-down menu to
-    select a different look and feel, but you need to restart \app{datatooltk} 
-    for the change to take effect. For example, \figureref{fig:prefdisplay}
-    shows the \qt{Metal} look and feel whereas
+The \gls{LF} refers to the way the graphical interface
+is rendered. You can use the drop-down menu to
+select a different \gls{LF}, but you need to restart \app{datatooltk} 
+for the change to take effect. For example, \figureref{fig:prefdisplay}
+shows the \qt{Metal} \gls{LF} whereas
 \figureref{fig:prefdisplaynimbus}
-    shows the same window but with the \qt{Nimbus} look and feel.
+shows the same window but with the \qt{Nimbus} \gls{LF}.
 
 \FloatFig[htbp]
  {fig:prefdisplaynimbus}
@@ -2298,7 +2454,7 @@ with Nimbus Look and Feel}
  }
  {Display Tab (Nimbus Look and Feel)}
 
-\widgetdef{preferences.language}[(\figureref{fig:preflanguage})]
+\sectionentry{preferences.language}
 
 \FloatFig[htbp]
  {fig:preflanguage}
@@ -2313,15 +2469,18 @@ with Nimbus Look and Feel}
  {Language Tab}
 
 
-    The language used by the manual accessed via \menu{help.manual}
-    can be set from the \widget{preferences.language.helpset} drop-down 
-    list. The language used in the messages, menu items, buttons and 
-    \gls{gui} labels can be set from the 
-    \widget{preferences.language.dictionary} drop-down 
-    list. Note that you have to restart \app{datatooltk} for these changes to take 
-    effect.
+The \widget{preferences.language} tab (\figureref{fig:preflanguage}) controls the localisation settings.
+The language used by the manual accessed via \menu{help.manual}
+can be set from the \widget{preferences.language.helpset} drop-down 
+list. The language used in the messages, menu items, buttons and 
+\gls{gui} labels can be set from the 
+\widget{preferences.language.dictionary} drop-down 
+list. Note that you have to restart \app{datatooltk} for these changes to take 
+effect.
 
-\widgetdef{preferences.plugins}[(\figureref{fig:prefplugins})]
+% TODO add information about the numeric settings
+
+\sectionentry{preferences.plugins}
 
 \FloatFig[htbp]
  {fig:prefplugins}
@@ -2335,14 +2494,12 @@ with Nimbus Look and Feel}
  }
  {Plugins Tab}
 
-
-    In order to use \app{datatooltk} plugins, you must have Perl installed (and the
-    Perl Tk module). If the Perl executable is on your path, you can just
-    specify it as \qtt{perl} in the \widget{preferences.plugins.perl}
-    field of the \widget{preferences.plugins} tab. If it's not on your
-    path, you will have to specify the full path name in this tab. You can
-    use the ellipsis button to browse your filing system.
-
+In order to use \app{datatooltk} plugins, you must have Perl installed (and the
+Perl Tk module). If the Perl executable is on your path, you can just
+specify it as \qtt{perl} in the \widget{preferences.plugins.perl}
+field of the \widget{preferences.plugins} tab (\figureref{fig:prefplugins}). If it's not on your
+path, you will have to specify the full path name in this tab. You can
+use the ellipsis button to browse your filing system.
 
 \chapter{Licence}
 \label{sec:licence}

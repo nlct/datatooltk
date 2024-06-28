@@ -469,6 +469,11 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
 
    public void save()
    {
+      if (db.getSettings().getOverrideInputFormat())
+      {
+         db.updateDefaultFormat();
+      }
+
       save(db.getDefaultFormat(), db.getDefaultFileVersion());
    }
 

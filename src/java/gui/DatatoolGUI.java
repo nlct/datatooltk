@@ -479,6 +479,12 @@ public class DatatoolGUI extends JFrame
       helpLib.setHelpsetSubDirPrefix(DatatoolSettings.RESOURCE_PREFIX);
       helpLib.initHelpSet(DatatoolSettings.HELPSETS);
       helpFrame = helpLib.getHelpFrame();
+      Font helpFont = settings.getManualFont();
+
+      if (helpFont != null)
+      {
+         helpFrame.setHelpFont(helpFont.getFamily(), helpFont.getSize());
+      }
 
       Image img = getLogoImage();
 
@@ -558,6 +564,9 @@ public class DatatoolGUI extends JFrame
       return getHelpLib().getKeyStroke(id);
    }
 
+   /**
+    * Create help button for modeless (non-blocking) components. 
+    */
    public JButton createHelpButton(String id, JComponent comp)
    {
       TeXJavaHelpLib helpLib = getHelpLib();
@@ -569,16 +578,52 @@ public class DatatoolGUI extends JFrame
 
          if (node == null)
          {
-            getMessageHandler().error(this, "No node for ID "+id);
-         }
-         else
-         {
-            id = node.getKey();
+            getMessageHandler().error(this, 
+             helpLib.getMessageWithFallback(
+             "error.node_id_not_found", "Node with ID ''{0}'' not found", id));
+            return null;
          }
       }
 
-      return new JButton(getHelpLib().createHelpAction(id,
-        getKeyStroke("menu.help.manual"), comp));
+      return new JButton(getHelpLib().createHelpAction(node, comp));
+   }
+
+   /**
+    * Create help button for modal dialog. 
+    */
+   public JButton createHelpButton(JDialog dialog, String id)
+   {
+      HelpDialogAction action = createHelpDialogAction(dialog, id);
+
+      if (action == null)
+      {
+         return null;
+      }
+      else
+      {
+         return new JButton(action);
+      }
+   }
+
+   public HelpDialogAction createHelpDialogAction(JDialog dialog, String id)
+   {
+      TeXJavaHelpLib helpLib = getHelpLib();
+      NavigationNode node = helpLib.getNavigationNodeById(id);
+
+      if (node == null)
+      {
+         node = helpLib.getNavigationNodeById("sec:"+id);
+
+         if (node == null)
+         {
+            getMessageHandler().error(this, 
+             helpLib.getMessageWithFallback(
+             "error.node_id_not_found", "Node with ID ''{0}'' not found", id));
+            return null;
+         }
+      }
+
+      return new HelpDialogAction(dialog, node, helpLib);
    }
 
    public String[] getDictionaries()
@@ -1134,6 +1179,7 @@ public class DatatoolGUI extends JFrame
       try
       {
          settings.directoryOnExit(fileChooser.getCurrentDirectory());
+         settings.setManualFont(getHelpLib().getHelpFrame().getHelpFont());
          settings.saveProperties();
       }
       catch (IOException e)
@@ -1448,6 +1494,22 @@ public class DatatoolGUI extends JFrame
       DatatoolDb db = panel.getDatabase();
       FileFormatType fmtType = db.getDefaultFormat();
       String ver = db.getDefaultFileVersion();
+
+      if (settings.getOverrideInputFormat())
+      {
+         String fmt = settings.getDefaultOutputFormat();
+
+         if (fmt != null)
+         {
+            Matcher m = DatatoolDb.FORMAT_PATTERN.matcher(fmt);
+
+            if (m.matches())
+            { 
+               fmtType = FileFormatType.valueOf(m.group(1));
+               ver = m.group(1);
+            }
+         }
+      }
 
       setTeXFileFilters(false, true, fmtType, ver);
 

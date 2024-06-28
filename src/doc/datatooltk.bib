@@ -7,6 +7,11 @@
   long={graphical user interface}
 }
 
+@abbreviation{LF,
+  short={L\&F},
+  long={Look and Feel}
+}
+
 @abbreviation{csv,
   short={CSV},
   long={comma-separated values}
@@ -108,6 +113,12 @@ intermediate step in the process}
   shortswitch={i},
   syntax={\meta{filename}},
   description={Load the \sty{datatool} file \meta{filename}}
+}
+
+@switch{switch.output-format,
+  parent={app.datatooltk},
+  syntax={\meta{format}},
+  description={Sets the default file format for output files}
 }
 
 @switch{switch.tex-encoding,
@@ -574,6 +585,71 @@ imported from the given \sty{probsoln} file}
 @fileext{ext.tex}
 @fileext{ext.xml}
 
+@entry{DBTEX2,
+  name={DB\-TEX~2.0},
+  description={a file format that can be opened or saved by
+   \app{datatooltk} and can be recognised by \sty{datatool}['s]
+   \code{\gls{DTLread}\oarg{\optval{format}{tex}}\margm{file}} and
+   \code{\gls{DTLwrite}\oarg{\optval{format}{dbtex-2}}\margm{file}
+   commands. It's faster for \sty{datatool} to load than \gls{DTLTEX2}
+   but is hard to read and has the drawback of changing the category
+   code of \code{@} to \qt{letter} in the data. It also doesn't
+   allow leading space characters in data. The database name is
+   hard-coded in the internal commands and can't be changed with the
+   \opt{read.name} option in \gls{DTLread}}
+ }
+}
+
+@entry{DBTEX3,
+  name={DB\-TEX~3.0},
+  description={a file format that can be opened or saved by
+   \app{datatooltk} and can be recognised by \sty{datatool}['s]
+   \code{\gls{DTLread}\oarg{\optval{format}{tex}}\margm{file}} and
+   \code{\gls{DTLwrite}\oarg{\optval{format}{dbtex-3}}\margm{file}}
+   commands. It's not quite as faster for \sty{datatool} to load
+   than \gls{DBTEX2}, but doesn't perform any category code change
+   and allows entries to be stored in their datum format (that is,
+   the textual representation, numeric value, currency symbol and
+   data type are stored separately). This means that
+   \sty{datatool} doesn't need to repeatedly parse the elements for
+   numeric values. The other advantage in this format over
+   \gls{DBTEX2} is that the database name provided in the file can
+   be changed with the \opt{read.name} value in the optional argument
+   of \gls{DTLread} and there is no category code change. 
+   This file format was new to \sty{datatool} v3.0,
+   see the \sty{datatool} manual for further details}
+}
+
+@entry{DTLTEX2,
+  name={DTL\-TEX~2.0},
+  description={a file format that can be opened or saved by
+   \app{datatooltk} and can be recognised by \sty{datatool}['s]
+   \code{\gls{DTLread}\oarg{\optval{format}{tex}}\margm{file}} and
+   \code{\gls{DTLwrite}\oarg{\optval{format}{dtltex-2}}\margm{file}
+   commands. It's slower for \sty{datatool} to load than the
+   \ext{dbtex} formats but is easier to read as it only contains
+   document-level commands (such as \gls{DTLnewdb}). The database name is
+   hard-coded in the command arguments and can't be changed with the
+   \opt{name} option in \gls{DTLread}. The data may be parsed and
+   trimmed, depending on the \sty{datatool} package settings. There
+   is no category code change}
+ }
+}
+
+@entry{DTLTEX3,
+  name={DTL\-TEX~3.0},
+  description={a file format that can be opened or saved by
+   \app{datatooltk} and can be recognised by \sty{datatool}['s]
+   \code{\gls{DTLread}\oarg{\optval{format}{tex}}\margm{file}} and
+   \code{\gls{DTLwrite}\oarg{\optval{format}{dtltex-3}}\margm{file}
+   commands. It's similar to \gls{DTLTEX2} but only provides a
+   database name that may be overridden with the \opt{name} option
+   in \gls{DTLread}. This file format was new to \sty{datatool} v3.0,
+   see the \sty{datatool} manual for further details}
+ }
+}
+
+
 % FILES
 
 @file{file.datatooltk-settings,
@@ -620,11 +696,21 @@ imported from the given \sty{probsoln} file}
   name={\styfmt{etool\-box}}
 }
 
+@package{pkg.inputenc,
+  name={\styfmt{input\-enc}}
+}
+
 % COMMANDS
 
 @command{DTLread,
   name={\csfmt{DTL\-read}},
   syntax={\oargm{options}\margm{filename}}
+}
+
+@option{opt.name,
+  parent={DTLread},
+  name={\optfmt{name}},
+  syntax={\margm{db-name}}
 }
 
 @command{DTLwrite,
@@ -662,8 +748,9 @@ imported from the given \sty{probsoln} file}
  syntax={\oargm{options}\margm{action-name}}
 }
 
-@option{opt.name,
+@option{opt.action.name,
  parent={DTLaction},
+ name={\optfmt{name}},
  syntax={\margm{db-name}}
 }
 
@@ -676,6 +763,34 @@ imported from the given \sty{probsoln} file}
  parent={DTLsetup},
  name={\optfmt{default\dhyphen name}},
  syntax={\margm{db-name}}
+}
+
+@option{opt.store-datum,
+ parent={DTLsetup},
+ name={\optfmt{store\dhyphen datum}},
+ syntax={\margm{boolean}}
+}
+
+@option{opt.separator,
+ parent={DTLsetup},
+ syntax={\margm{char}}
+}
+
+@option{opt.delimiter,
+ parent={DTLsetup},
+ syntax={\margm{char}}
+}
+
+@option{opt.new-value-trim,
+ parent={DTLsetup},
+ name={\optfmt{new\dhyphen value\dhyphen trim}},
+ syntax={\margm{boolean}}
+}
+
+@option{opt.new-value-expand,
+ parent={DTLsetup},
+ name={\optfmt{new\dhyphen value\dhyphen expand}},
+ syntax={\margm{boolean}}
 }
 
 @command{DTLnewdb,
