@@ -26,6 +26,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
+
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.MessageHandler;
 
@@ -109,23 +111,16 @@ public class DatatoolGuiResources
     }
 
     public JButton createActionButton(String parent, String label, 
-      ActionListener listener, KeyStroke keyStroke, URL imageURL)
-    {
-       return createActionButton(parent, label, listener, keyStroke,
-         messageHandler.getToolTip(parent, label), imageURL);
-    }
-
-    public JButton createActionButton(String parent, String label, 
       ActionListener listener, KeyStroke keyStroke,
       String tooltipText)
     {
        return createActionButton(parent, label, listener, keyStroke,
-         tooltipText, getImageUrl(label));
+         tooltipText, getImageIcon(label));
     }
 
     public JButton createActionButton(String parent, String label, 
       ActionListener listener, KeyStroke keyStroke,
-      String tooltipText, URL imageURL)
+      String tooltipText, ImageIcon imageIcon)
     {
        String buttonLabel = messageHandler.getLabel(parent, label);
        int mnemonic = messageHandler.getMnemonicInt(parent, label);
@@ -135,17 +130,17 @@ public class DatatoolGuiResources
 
        // Is there an associated image?
 
-       if (imageURL == null)
+       if (imageIcon == null)
        {
           button = new JButton(buttonLabel);
        }
        else
        {
-          button = new JButton(buttonLabel, new ImageIcon(imageURL));
+          button = new JButton(buttonLabel, imageIcon);
 
           // Is there an associated rollover image?
 
-          imageURL = getImageUrl(label+"_rollover");
+          URL imageURL = getImageUrl(label+"_rollover");
 
           if (imageURL != null)
           {
@@ -588,9 +583,19 @@ public class DatatoolGuiResources
        return imageURL;
     }
 
+    public ImageIcon getImageIcon(String action)
+    {
+       return getHelpLib().getHelpIcon(action, false);
+    }
+
     public MessageHandler getMessageHandler()
     {
        return messageHandler;
+    }
+
+    public TeXJavaHelpLib getHelpLib()
+    {
+       return messageHandler.getHelpLib();
     }
 
     public void progress(int percentage)

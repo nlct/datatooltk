@@ -69,6 +69,7 @@ public class DatatoolSettings extends Properties
        "texparserlib", RESOURCE_PREFIX);
 
       helpLib.setIconPath(ICON_DIR);
+      helpLib.setLargeIconSuffix("-24x24");
 
       String helpset = getHelpSet();
       String langTag = helpLib.getHelpSetLocale().toLanguageTag();
@@ -572,23 +573,71 @@ public class DatatoolSettings extends Properties
       return getProperty("lookandfeel");
    }
 
-   public Font getManualFont()
+   public HelpFontSettings getManualFontSettings()
    {
-      String val = getProperty("manual.font");
+      HelpFontSettings fontSettings = new HelpFontSettings();
+      String val = getProperty("manual.body_font");
 
-      return val == null ? null : Font.decode(val);
+      if (val != null && !val.isEmpty())
+      {
+         fontSettings.setBodyFontCssName(val);
+      }
+
+      val = getProperty("manual.body_font_size");
+
+      if (val != null && !val.isEmpty())
+      {
+         try
+         {
+            fontSettings.setBodyFontSize(Integer.parseInt(val));
+         }
+         catch (NumberFormatException e)
+         {// ignore if invalid
+         }
+      }
+
+      val = getProperty("manual.icon_font");
+
+      if (val != null && !val.isEmpty())
+      {
+         fontSettings.setIconFontCssName(val);
+      }
+
+      val = getProperty("manual.keystroke_font");
+
+      if (val != null && !val.isEmpty())
+      {
+         fontSettings.setKeyStrokeFontCssName(val);
+      }
+
+      val = getProperty("manual.mono_font");
+
+      if (val != null && !val.isEmpty())
+      {
+         fontSettings.setMonoFontCssName(val);
+      }
+
+      return fontSettings;
    }
 
-   public void setManualFont(Font font)
+   public void setManualFont(HelpFontSettings fontSettings)
    {
-      if (font == null)
+      if (fontSettings == null)
       {
-         remove("manual.font");
+         remove("manual.body_font");
+         remove("manual.body_font_size");
+         remove("manual.icon_font");
+         remove("manual.keystroke_font");
+         remove("manual.mono_font");
       }
       else
       {
-         setProperty("manual.font", String.format((Locale)null,
-             "%s-PLAIN-%d", font.getFamily(), font.getSize()));
+         setProperty("manual.body_font", fontSettings.getBodyFontCssName());
+         setProperty("manual.body_font_size",
+           ""+fontSettings.getBodyFontSize());
+         setProperty("manual.icon_font", fontSettings.getIconFontCssName());
+         setProperty("manual.keystroke_font", fontSettings.getKeyStrokeFontCssName());
+         setProperty("manual.mono_font", fontSettings.getMonoFontCssName());
       }
    }
 

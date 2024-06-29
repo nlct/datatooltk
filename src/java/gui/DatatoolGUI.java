@@ -479,12 +479,8 @@ public class DatatoolGUI extends JFrame
       helpLib.setHelpsetSubDirPrefix(DatatoolSettings.RESOURCE_PREFIX);
       helpLib.initHelpSet(DatatoolSettings.HELPSETS);
       helpFrame = helpLib.getHelpFrame();
-      Font helpFont = settings.getManualFont();
 
-      if (helpFont != null)
-      {
-         helpFrame.setHelpFont(helpFont.getFamily(), helpFont.getSize());
-      }
+      helpFrame.setHelpFont(settings.getManualFontSettings());
 
       Image img = getLogoImage();
 
@@ -1179,7 +1175,7 @@ public class DatatoolGUI extends JFrame
       try
       {
          settings.directoryOnExit(fileChooser.getCurrentDirectory());
-         settings.setManualFont(getHelpLib().getHelpFrame().getHelpFont());
+         settings.setManualFont(getHelpLib().getHelpFrame().getHelpFontSettings());
          settings.saveProperties();
       }
       catch (IOException e)

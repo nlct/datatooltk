@@ -301,7 +301,7 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.currencies.edit_currency">Edit</entry>
 <entry key="preferences.currencies.edit_currency.mnemonic">T</entry>
 
-<entry key="preferences.currencies.reminder">If you add new currencies here, remember to also add them in your document using \DTLnewcurrencysymbol</entry>
+<entry key="preferences.currencies.reminder">If you add new currencies here, remember to also add them in your document using \DTLnewcurrencysymbol if you need datatool.sty to parse currency values in the document.</entry>
 
 <entry key="preferences.currencies.remove_currency">Remove</entry>
 <entry key="preferences.currencies.remove_currency.mnemonic">R</entry>

@@ -165,13 +165,22 @@
 <entry key="menu.helpframe.settings.font.mnemonic">F</entry>
 <entry key="menu.helpframe.settings.font.keystroke">ctrl F</entry>
 
-<entry key="text.help.settings.font_sample">“Waltz, bad nymph! For quick jigs vex sylph’s fiddle. D’ye ken?”</entry>
+<entry key="text.help.settings.font_sample">“Waltz, bad nymph! For quick jigs vex sylph’s fiddle. D’ye ken?”&lt;br&gt;(+/-)1234567890</entry>
 
 <entry key="help.settings.font.title">Font</entry>
-<entry key="help.settings.font.family">Font Family:</entry>
+<entry key="help.settings.font.family">Default Font Family:</entry>
 <entry key="help.settings.font.family.mnemonic">F</entry>
 <entry key="help.settings.font.size">Font Size:</entry>
 <entry key="help.settings.font.size.mnemonic">Z</entry>
+
+<entry key="help.settings.icon_font.family">Icon Font:</entry>
+<entry key="help.settings.icon_font.family.mnemonic">I</entry>
+
+<entry key="help.settings.keystroke_font.family">Keystroke Font:</entry>
+<entry key="help.settings.keystroke_font.family.mnemonic">K</entry>
+
+<entry key="help.settings.mono_font.family">Mono Font:</entry>
+<entry key="help.settings.mono_font.family.mnemonic">M</entry>
 
 <entry key="menu.helpframe.settings.nav">Lower Navigation...</entry>
 <entry key="menu.helpframe.settings.nav.mnemonic">L</entry>
@@ -194,11 +203,11 @@
 <entry key="menu.helpdialog.navigation.tooltip">Navigate the document history</entry>
 <entry key="menu.helpdialog.navigation.description">Actions to switch the view to a previously visited page for this topic</entry>
 
-<entry key="menu.helpdialog.navigation.historyreset">Reset</entry>
-<entry key="menu.helpdialog.navigation.historyreset.mnemonic">R</entry>
-<entry key="menu.helpdialog.navigation.historyreset.keystroke">alt HOME</entry>
-<entry key="menu.helpdialog.navigation.historyreset.tooltip">Back to page {0}</entry>
-<entry key="menu.helpdialog.navigation.historyreset.description">Go back to the topic''s page</entry>
+<entry key="menu.helpdialog.navigation.reset">Reset</entry>
+<entry key="menu.helpdialog.navigation.reset.mnemonic">R</entry>
+<entry key="menu.helpdialog.navigation.reset.keystroke">alt HOME</entry>
+<entry key="menu.helpdialog.navigation.reset.tooltip">Back to page {0}</entry>
+<entry key="menu.helpdialog.navigation.reset.description">Go back to the topic''s page</entry>
 
 <entry key="menu.helpdialog.navigation.historyback">Back</entry>
 <entry key="menu.helpdialog.navigation.historyback.mnemonic">B</entry>
@@ -295,6 +304,9 @@
 <entry key="manual.keystroke.capslock">Caps Lock</entry>
 <entry key="manual.keystroke.printscreen">PrtScn</entry>
 <entry key="manual.keystroke.printscreen.description">Print Screen</entry>
+
+<entry key="manual.location_prefix">&#x261B;</entry>
+<entry key="manual.menu_separator_title">menu separator</entry>
 
 <entry key="manual.warning">Warning</entry>
 <entry key="manual.warning.description">a warning</entry>
