@@ -476,11 +476,11 @@ public class DatatoolGUI extends JFrame
      throws IOException,SAXException
    {
       TeXJavaHelpLib helpLib = settings.getHelpLib();
+      helpLib.getHelpFontSettings().copyFrom(settings.getManualFontSettings());
+
       helpLib.setHelpsetSubDirPrefix(DatatoolSettings.RESOURCE_PREFIX);
       helpLib.initHelpSet(DatatoolSettings.HELPSETS);
       helpFrame = helpLib.getHelpFrame();
-
-      helpFrame.setHelpFont(settings.getManualFontSettings());
 
       Image img = getLogoImage();
 
@@ -1175,7 +1175,7 @@ public class DatatoolGUI extends JFrame
       try
       {
          settings.directoryOnExit(fileChooser.getCurrentDirectory());
-         settings.setManualFont(getHelpLib().getHelpFrame().getHelpFontSettings());
+         settings.setManualFont(getHelpLib().getHelpFontSettings());
          settings.saveProperties();
       }
       catch (IOException e)
