@@ -732,23 +732,15 @@ public class MessageHandler extends ErrorManager
       return datatooltk.getMnemonicInt(parent, label);
    }
 
+   @Override
    public ImageIcon getSmallIcon(String base, String... extensions)
    {
       return null;
    }
 
+   @Override
    public ImageIcon getLargeIcon(String base, String... extensions)
    {
-      if (guiResources != null)
-      {
-         URL url = guiResources.getImageUrl(base);
-
-         if (url != null)
-         {
-            return new ImageIcon(url);
-         }
-      }
-
       return null;
    }
 

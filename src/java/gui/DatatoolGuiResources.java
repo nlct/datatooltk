@@ -522,65 +522,7 @@ public class DatatoolGuiResources
 
     public URL getImageUrl(String action)
     {
-       if (imageMap == null)
-       {
-          // initialise
-
-          imageMap = new Properties();
-
-          InputStream in = null;
-          BufferedReader reader = null;
-
-          try
-          {
-             try
-             {
-                in = DatatoolTk.class.getResourceAsStream(
-                   "/resources/imagemap.prop");
-
-                if (in == null)
-                {
-                   throw new FileNotFoundException(
-                     "Can't find /resources/imagemap.prop");
-                }
-
-                reader = new BufferedReader(
-                   new InputStreamReader(in));
-
-                imageMap.load(reader);
-             }
-             finally
-             {
-                if (reader != null)
-                {
-                   reader.close();
-                }
-
-                if (in != null)
-                {
-                   in.close();
-                }
-             }
-          }
-          catch (IOException e)
-          {
-             messageHandler.debug(e);
-             return null;
-          }
-       }
-
-       String location = imageMap.getProperty(action);
-
-       if (location == null) return null;
-
-       URL imageURL = DatatoolTk.class.getResource(location);
-
-       if (imageURL == null)
-       {
-          messageHandler.debug("Can't find resource '"+location+"'");
-       }
-
-       return imageURL;
+       return getHelpLib().getMappedImageLocation(action);
     }
 
     public ImageIcon getImageIcon(String action)
@@ -627,8 +569,6 @@ public class DatatoolGuiResources
     }
 
     private ErrorPanel errorPanel;
-
-    private Properties imageMap = null;
 
     private MessageHandler messageHandler;
 
