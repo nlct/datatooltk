@@ -158,6 +158,12 @@ public class MessageHandler extends ErrorManager
       return debugMode;
    }
 
+   @Override
+   public boolean isDebuggingOn()
+   {
+      return debugMode;
+   }
+
    public int getTeXParserDebugLevel()
    {
       return texParserDebugLevel;
