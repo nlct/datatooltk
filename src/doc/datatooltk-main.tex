@@ -24,7 +24,7 @@
 
 \InputIfFileExists{version}{}{}
 
-\GlsXtrLoadResources[src={datatooltk},
+\GlsXtrLoadResources[src={datatooltk,\langbibsrcs},
  \TeXJavaHelpSymbolResourceOptions
 ]
 
@@ -2500,6 +2500,19 @@ specify it as \qtt{perl} in the \widget{preferences.plugins.perl}
 field of the \widget{preferences.plugins} tab (\figureref{fig:prefplugins}). If it's not on your
 path, you will have to specify the full path name in this tab. You can
 use the ellipsis button to browse your filing system.
+
+\chapter{Help Menu (GUI Mode)}
+\label{sec:helpwindows}
+
+\menudef{menu.help.about}
+
+The \menu{help.about} menu item shows the \InlineMsgDef[\appname]{about.title}
+dialog with version details. In batch mode this information can be
+obtained with the \switch{version} switch.
+
+% Copied from https://github.com/nlct/texjavahelp/blob/main/src/doc/helpinterface.tex
+\input{helpinterface}
+
 
 \chapter{Licence}
 \label{sec:licence}
