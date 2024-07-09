@@ -35,8 +35,8 @@
 <entry key="action.apply.defaultkeys">format=glsignore</entry>
 
 <entry key="action.close">Close</entry>
-<entry key="action.close.mnemonic">O</entry>
-<entry key="action.close.keystroke">ESCAPE</entry>
+<entry key="action.close.mnemonic">C</entry>
+<entry key="action.close.keystroke">alt F4</entry>
 <entry key="action.close.defaultkeys">format=glsignore</entry>
 
 <entry key="action.copy">Copy</entry>
@@ -86,51 +86,16 @@
 <entry key="menu.helpframe.navigation.search.tooltip">Search document</entry>
 <entry key="menu.helpframe.navigation.search.description">Open search dialogue</entry>
 
-<entry key="help.navigation.search.title">Search</entry>
-<entry key="help.navigation.search.keywords">Keywords:</entry>
-<entry key="help.navigation.search.keywords.mnemonic">K</entry>
-<entry key="help.navigation.search.keywords.description">Search terms</entry>
-<entry key="help.navigation.search.find">Find</entry>
-<entry key="help.navigation.search.find.mnemonic">F</entry>
-<entry key="help.navigation.search.find.tooltip">Find keywords in document</entry>
-<entry key="help.navigation.search.case">Case-sensitive</entry>
-<entry key="help.navigation.search.case.mnemonic">V</entry>
-<entry key="help.navigation.search.exact">Match whole word</entry>
-<entry key="help.navigation.search.exact.mnemonic">W</entry>
-
-<entry key="help.navigation.searching">Searching...</entry>
-<entry key="help.navigation.search.stop">Stop</entry>
-<entry key="help.navigation.search.stop.keystroke">shift ESC</entry>
-<entry key="help.navigation.search.found">Found {0} {0,choice,1#match|1&lt;matches}</entry>
-<entry key="help.navigation.search.not_found">Not found</entry>
-<entry key="help.navigation.search_link_title">Go to start of section</entry>
-<entry key="help.navigation.search_link_para">Go to paragraph</entry>
-<entry key="help.navigation.search.clear_results">Clear</entry>
-<entry key="help.navigation.search.clear_results.mnemnonic">C</entry>
-<entry key="help.navigation.search.clear_results.tooltip">Clear results and keywords</entry>
-
 <entry key="menu.helpframe.navigation.index">Index...</entry>
 <entry key="menu.helpframe.navigation.index.mnemonic">I</entry>
 <entry key="menu.helpframe.navigation.index.tooltip">Open index page</entry>
 <entry key="menu.helpframe.navigation.index.description">Open index page in separate window</entry>
-
-<entry key="help.navigation.index.title">Index</entry>
 
 <entry key="menu.helpframe.navigation.history">History...</entry>
 <entry key="menu.helpframe.navigation.history.mnemonic">H</entry>
 <entry key="menu.helpframe.navigation.history.keystroke">ctrl shift H</entry>
 <entry key="menu.helpframe.navigation.history.tooltip">View History</entry>
 <entry key="menu.helpframe.navigation.history.description">View recent page list</entry>
-
-<entry key="help.navigation.history.title">Page History</entry>
-
-<entry key="symbol.help.navigation.history.pointer">&#x261E;</entry>
-<entry key="symbol.help.navigation.history.pointer.description">current page</entry>
-
-<entry key="help.navigation.history.header">Recent List</entry>
-<entry key="help.navigation.history.go">Go</entry>
-<entry key="help.navigation.history.go.mnemonic">G</entry>
-<entry key="help.navigation.history.go.tooltip">Go to selected page</entry>
 
 <entry key="menu.helpframe.navigation.historyback">Back</entry>
 <entry key="menu.helpframe.navigation.historyback.mnemonic">B</entry>
@@ -168,42 +133,9 @@
 <entry key="menu.helpframe.settings.font.mnemonic">F</entry>
 <entry key="menu.helpframe.settings.font.keystroke">ctrl F</entry>
 
-<entry key="text.help_font_settings_sample">“Waltz, bad nymph! For quick jigs vex sylph’s fiddle. D’ye ken?”&lt;br&gt;(+/-)1234567890 &lt;a href="#sample"&gt;sample link&lt;/a&gt;&lt;br&gt;&lt;a name="sample"&gt;Link target&lt;/a&gt;</entry>
-
-<entry key="help_font_settings.title">Help Page Font</entry>
-<entry key="help_font_settings.family">Default Font Family:</entry>
-<entry key="help_font_settings.family.mnemonic">F</entry>
-<entry key="help_font_settings.size">Font Size:</entry>
-<entry key="help_font_settings.size.mnemonic">Z</entry>
-
-<entry key="help_font_settings.icon_font_family">Icon Font:</entry>
-<entry key="help_font_settings.icon_font_family.mnemonic">I</entry>
-
-<entry key="help_font_settings.keystroke_font_family">Keystroke Font:</entry>
-<entry key="help_font_settings.keystroke_font_family.mnemonic">K</entry>
-
-<entry key="help_font_settings.mono_font_family">Mono Font:</entry>
-<entry key="help_font_settings.mono_font_family.mnemonic">M</entry>
-
-<entry key="help_font_settings.hyperlinks">Hyperlinks:</entry>
-
-<entry key="help_font_settings.choose_colour">Choose...</entry>
-<entry key="help_font_settings.choose_colour.mnemonic">S</entry>
-
-<entry key="help_font_settings.colour_chooser.title">Choose</entry>
-
-<entry key="help_font_settings.underline">Underline</entry>
-<entry key="help_font_settings.underline.mnemonic">U</entry>
-
 <entry key="menu.helpframe.settings.nav">Lower Navigation...</entry>
 <entry key="menu.helpframe.settings.nav.mnemonic">L</entry>
 <entry key="menu.helpframe.settings.nav.description">Adjust the bottom navigation panel</entry>
-
-<entry key="help_settings_nav.title">Lower Navigation Settings</entry>
-<entry key="help_settings_nav.label_limit">Maximum number of characters:</entry>
-<entry key="help_settings_nav.label_limit.mnemonic">M</entry>
-<entry key="help_settings_nav.show_label">Include text</entry>
-<entry key="help_settings_nav.show_label.mnemonic">T</entry>
 
 <!-- Help Popup Menu  -->
 
@@ -301,6 +233,109 @@
 <entry key="menu.helpdialog.navigation.up.tooltip">Up</entry>
 <entry key="menu.helpdialog.navigation.up.description">Go up a section</entry>
 <entry key="menu.helpdialog.navigation.up.keystroke">alt UP</entry>
+
+<!-- Index Frame -->
+
+<entry key="help.navigation.index.title">Index</entry>
+
+<!-- History Frame -->
+
+<entry key="help.navigation.history.title">Page History</entry>
+
+<entry key="symbol.help.navigation.history.pointer">&#x261E;</entry>
+<entry key="symbol.help.navigation.history.pointer.description">current page</entry>
+
+<entry key="help.navigation.history.header">Recent List</entry>
+<entry key="help.navigation.history.go">Go</entry>
+<entry key="help.navigation.history.go.mnemonic">G</entry>
+<entry key="help.navigation.history.go.tooltip">Go to selected page</entry>
+
+<!-- Search Frame -->
+
+<entry key="help_page_search.title">Search</entry>
+
+<entry key="help_page_search.keywords">Keywords:</entry>
+<entry key="help_page_search.keywords.mnemonic">K</entry>
+<entry key="help_page_search.keywords.description">Search terms</entry>
+<entry key="help_page_search.keywords.tooltip">Enter search keywords</entry>
+
+<entry key="help_page_search.case">Case-sensitive</entry>
+<entry key="help_page_search.case.mnemonic">V</entry>
+<entry key="help_page_search.exact">Match whole word</entry>
+<entry key="help_page_search.exact.mnemonic">W</entry>
+
+<entry key="message.help_page_search.searching">Searching...</entry>
+<entry key="message.help_page_search.found">Found {0} {0,choice,1#match|1&lt;matches}</entry>
+<entry key="message.help_page_search.not_found">Not found</entry>
+<entry key="message.help_page_search_link_title">Go to start of section</entry>
+<entry key="message.help_page_search_link_para">Go to paragraph</entry>
+
+<!-- Search Frame Menu -->
+
+<entry key="index.menu.help_page_search">Documentation Search</entry>
+
+<entry key="menu.help_page_search.search_menu">Search</entry>
+<entry key="menu.help_page_search.search_menu.mnemonic">S</entry>
+
+<entry key="menu.help_page_search.search_menu.search">Find</entry>
+<entry key="menu.help_page_search.search_menu.search.mnemonic">F</entry>
+<entry key="menu.help_page_search.search_menu.search.tooltip">Find keywords in document</entry>
+
+<entry key="menu.help_page_search.search_menu.previous">Previous Result</entry>
+<entry key="menu.help_page_search.search_menu.previous.mnemnonic">P</entry>
+<entry key="menu.help_page_search.search_menu.previous.keystroke">control shift F</entry>
+<entry key="menu.help_page_search.search_menu.previous.tooltip">Scroll to previous result</entry>
+
+<entry key="menu.help_page_search.search_menu.next">Next Result</entry>
+<entry key="menu.help_page_search.search_menu.next.mnemnonic">N</entry>
+<entry key="menu.help_page_search.search_menu.next.keystroke">control F</entry>
+<entry key="menu.help_page_search.search_menu.next.tooltip">Scroll to next result</entry>
+
+<entry key="menu.help_page_search.search_menu.reset">Clear</entry>
+<entry key="menu.help_page_search.search_menu.reset.mnemnonic">C</entry>
+<entry key="menu.help_page_search.search_menu.reset.keystroke">shift ESCAPE</entry>
+<entry key="menu.help_page_search.search_menu.reset.tooltip">Clear results and keywords</entry>
+
+<entry key="menu.help_page_search.search_menu.stop">Stop</entry>
+<entry key="menu.help_page_search.search_menu.stop.mnemonic">T</entry>
+<entry key="menu.help_page_search.search_menu.stop.keystroke">ESCAPE</entry>
+
+<!-- Font Settings Frame -->
+
+<entry key="text.help_font_settings_sample">“Waltz, bad nymph! For quick jigs vex sylph’s fiddle. D’ye ken?”&lt;br&gt;(+/-)1234567890 &lt;a href="#sample"&gt;sample link&lt;/a&gt;&lt;br&gt;&lt;a name="sample"&gt;Link target&lt;/a&gt;</entry>
+
+<entry key="help_font_settings.title">Help Page Font</entry>
+<entry key="help_font_settings.family">Default Font Family:</entry>
+<entry key="help_font_settings.family.mnemonic">F</entry>
+<entry key="help_font_settings.size">Font Size:</entry>
+<entry key="help_font_settings.size.mnemonic">Z</entry>
+
+<entry key="help_font_settings.icon_font_family">Icon Font:</entry>
+<entry key="help_font_settings.icon_font_family.mnemonic">I</entry>
+
+<entry key="help_font_settings.keystroke_font_family">Keystroke Font:</entry>
+<entry key="help_font_settings.keystroke_font_family.mnemonic">K</entry>
+
+<entry key="help_font_settings.mono_font_family">Mono Font:</entry>
+<entry key="help_font_settings.mono_font_family.mnemonic">M</entry>
+
+<entry key="help_font_settings.hyperlinks">Hyperlinks:</entry>
+
+<entry key="help_font_settings.choose_colour">Choose...</entry>
+<entry key="help_font_settings.choose_colour.mnemonic">S</entry>
+
+<entry key="help_font_settings.colour_chooser.title">Choose</entry>
+
+<entry key="help_font_settings.underline">Underline</entry>
+<entry key="help_font_settings.underline.mnemonic">U</entry>
+
+<!-- Lower Navigation Window -->
+
+<entry key="help_settings_nav.title">Lower Navigation Settings</entry>
+<entry key="help_settings_nav.label_limit">Maximum number of characters:</entry>
+<entry key="help_settings_nav.label_limit.mnemonic">M</entry>
+<entry key="help_settings_nav.show_label">Include text</entry>
+<entry key="help_settings_nav.show_label.mnemonic">T</entry>
 
 <!-- Image Viewer  -->
 

@@ -388,6 +388,7 @@ public class MessageHandler extends ErrorManager
       warning((Component)null, message);
    }
 
+   @Override
    public void warning(Component parent, String message)
    {
       logMessage(message);
@@ -427,6 +428,7 @@ public class MessageHandler extends ErrorManager
       warning(parent, getMessage(e), e);
    }
 
+   @Override
    public void warning(Component parent, String msg, Throwable e)
    {
       warning(parent, msg);
@@ -464,6 +466,33 @@ public class MessageHandler extends ErrorManager
    }
 
    @Override
+   public void debug(Component parent, Throwable e)
+   {
+      if (debugMode)
+      {
+         error(parent, e, GENERIC_FAILURE);
+      }
+   }
+
+   @Override
+   public void debug(Component parent, String message)
+   {
+      if (debugMode)
+      {
+         error(parent, message, null, GENERIC_FAILURE);
+      }
+   }
+
+   @Override
+   public void debug(Component parent, String message, Throwable e)
+   {
+      if (debugMode)
+      {
+         error(parent, message, e, GENERIC_FAILURE);
+      }
+   }
+
+   @Override
    public void debug(Throwable e)
    {
       debug(getMessage(e), e);
@@ -488,11 +517,12 @@ public class MessageHandler extends ErrorManager
       }
    }
 
-   public void error(Exception exception, int code)
+   public void error(Throwable exception, int code)
    {
       error(null, null, exception, code);
    }
 
+   @Override
    public void error(String msg)
    {
       error(msg, null, GENERIC_FAILURE);
@@ -513,17 +543,19 @@ public class MessageHandler extends ErrorManager
       error(parent, msg, null, code);
    }
 
-   public void error(Component parent, Exception e)
+   @Override
+   public void error(Component parent, Throwable e)
    {
       error(parent, null, e, GENERIC_FAILURE);
    }
 
-   public void error(Component parent, String message, Exception e)
+   @Override
+   public void error(Component parent, String message, Throwable e)
    {
       error(parent, message, e, GENERIC_FAILURE);
    }
 
-   public void error(Component parent, Exception e, int code)
+   public void error(Component parent, Throwable e, int code)
    {
       error(parent, null, e, code);
    }
