@@ -7,7 +7,7 @@ endif
 
 APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION=//" | tr -d "\"\; ")
 IZPACKDIR=/usr/local/IzPack
-POIVER=5.2.5
+POIVER=5.3.0
 ODFVER=1.5
 
 test-gui	: app
