@@ -23,7 +23,7 @@ test-cli	: app
 test-sql	: app
 	bin/datatooltk --debug --output tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
 
-app	: lib lib/datatooltk.jar lib/resources lib/datatooltk-splash.png
+app	: lib lib/datatooltk.jar 
 
 dist	: ../dist/datatooltk-installer.jar
 	cp doc/datatooltk-en-GB.pdf ../dist
@@ -36,15 +36,6 @@ dist	: ../dist/datatooltk-installer.jar
 lib	:
 	mkdir -p lib
 
-lib/resources   :
-	cd lib; ln -s ../resources
-
-resources/icons	: 
-	cd resources; ln -s ../images/icons
-
-lib/datatooltk-splash.png	: lib
-		cd lib; ln -s -f ../images/datatooltk-splash.png
-
 lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en-GB.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
 	make -C doc en-GB
 
@@ -52,7 +43,6 @@ lib/resources/helpsets/datatooltk-en-US/index.xml	: lib/resources/dictionaries/*
 	make -C doc en-US
 
 lib/datatooltk.jar	: java/Manifest.txt \
-			resources/icons \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class \
 			lib/resources/helpsets/datatooltk-en-US/index.xml \
 			lib/resources/helpsets/datatooltk-en-GB/index.xml 
