@@ -41,6 +41,7 @@ import java.awt.Font;
 
 import org.xml.sax.SAXException;
 
+import com.dickimawbooks.texparserlib.TeXApp;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
 import com.dickimawbooks.texjavahelplib.*;
@@ -2148,6 +2149,22 @@ public class DatatoolSettings extends Properties
       return messageHandler;
    }
 
+   public TeXApp getTeXApp()
+   {
+      return messageHandler.getTeXApp();
+   }
+
+   public DataToolTeXParserListener getTeXParserListener()
+     throws IOException
+   {
+      if (parserListener == null)
+      {
+         parserListener = new DataToolTeXParserListener(this);
+      }
+
+      return parserListener;
+   }
+
    public DatatoolTk getDatatoolTk()
    {
       return messageHandler.getDatatoolTk();
@@ -2320,6 +2337,8 @@ public class DatatoolSettings extends Properties
    private Collator sortCollator;
 
    private DbTeX3DatumValue dbtex3DatumValue;
+
+   private DataToolTeXParserListener parserListener;
 
    public static final int COMPAT_LATEST=0;
    public static final int COMPAT_1_6=1;

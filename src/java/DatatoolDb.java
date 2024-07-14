@@ -42,7 +42,6 @@ import com.dickimawbooks.datatooltk.io.*;
 
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.primitives.Undefined;
-import com.dickimawbooks.texparserlib.latex.PreambleParser;
 import com.dickimawbooks.texparserlib.latex.datatool.*;
 import com.dickimawbooks.texparserlib.latex.inputenc.InputEncSty;
 
@@ -143,7 +142,9 @@ public class DatatoolDb
 
       boolean unsetFile = false;
 
-      IOSettings ioSettings = new IOSettings(null);
+      DataToolTeXParserListener listener = settings.getTeXParserListener();
+
+      IOSettings ioSettings = listener.getIOSettings();
       ioSettings.setFileFormat(FileFormatType.DBTEX);
       ioSettings.setFileVersion("2.0");
 
@@ -205,45 +206,43 @@ public class DatatoolDb
      File dbFile, IOSettings ioSettings)
      throws IOException
    {
-      DatatoolDb db = null;
-      boolean hasVerbatim = false;
+      DataToolTeXParserListener listener = settings.getTeXParserListener();
+      TeXParser texParser = listener.getParser();
 
-      MessageHandler messageHandler = settings.getMessageHandler();
-      TeXApp texApp = messageHandler.getTeXApp();
+      TeXPath texPath = new TeXPath(texParser, dbFile);
 
-      PreambleParser preambleParser = new PreambleParser(texApp,
-        UndefAction.WARN);
-      TeXParser texParser = new TeXParser(preambleParser);
-      messageHandler.setDebugModeForParser(texParser);
-
-      DataToolSty sty = new DataToolSty(null, preambleParser, false);
-      preambleParser.usepackage(sty, texParser);
-
+      DataToolSty sty = listener.getDataToolSty();
       ioSettings.setSty(sty);
       FileFormatType format = ioSettings.getFormat();
       String version = ioSettings.getFileVersion();
-
-      texParser.putControlSequence(true,
-        new TextualContentCommand(DataToolSty.DEFAULT_EXT,
-         format == FileFormatType.DBTEX ? "dbtex" : "dtltex"));
 
       ioSettings.fetchSettings(true, texParser, texParser);
       ioSettings.setFileFormat(format);
       ioSettings.setFileVersion(version);
 
-      preambleParser.addVerbEnv("lstlisting");
-      preambleParser.addVerbEnv("alltt");
+      return loadTeXParser(settings, texPath, ioSettings, true);
+   }
 
-      texParser.addVerbCommand("lstinline");
+   public static DatatoolDb loadTeXParser(DatatoolSettings settings, 
+     TeXPath texPath, IOSettings ioSettings, boolean checkForVerbatim)
+     throws IOException
+   {
+      DatatoolDb db = null;
+
+      MessageHandler messageHandler = settings.getMessageHandler();
+      DataToolTeXParserListener listener = settings.getTeXParserListener();
+      TeXParser texParser = listener.getParser();
+      FileFormatType format = ioSettings.getFormat();
+      DataToolSty sty = listener.getDataToolSty();
+      File dbFile = texPath.getFile();
 
       try
       {
          messageHandler.startBuffering();
-         TeXObjectList stack = preambleParser.createStack();
+         TeXObjectList stack = listener.createStack();
 
          texParser.startGroup();
 
-         TeXPath texPath = new TeXPath(texParser, dbFile);
          texParser.push(new EndRead());
 
          DataBase.read(sty, texPath, ioSettings, texParser, texParser);
@@ -256,7 +255,8 @@ public class DatatoolDb
          {
             dbName = texDb.getName();
          }
-         else
+         else if (format == FileFormatType.DTLTEX
+               || format == FileFormatType.DBTEX)
          {
             ControlSequence cs = texParser.getControlSequence("dtllastloadeddb");
 
@@ -321,6 +321,13 @@ public class DatatoolDb
 
             texDb = sty.getDataBase(dbName);
          }
+         else
+         {
+            dbName = TeXParserUtils.getControlSequenceValue(DataToolSty.IO_NAME,
+              null, texParser, texParser);
+
+            texDb = sty.getDataBase(dbName);
+         }
    
          int rowCount = texDb.getRowCount();
          int columnCount = texDb.getColumnCount();
@@ -329,7 +336,7 @@ public class DatatoolDb
           rowCount, columnCount));
    
          db = new DatatoolDb(settings, rowCount, columnCount);
-         db.setFile(dbFile);
+         db.setFile(texPath.getFile());
          db.setName(dbName);
 
          db.currentFileFormat = ioSettings.getFormat();
@@ -383,14 +390,22 @@ public class DatatoolDb
    
                if (entryContents != null)
                {
-                  if (!hasVerbatim && texParser.isStack(entryContents))
+                  TeXObjectList contentList;
+
+                  if (texParser.isStack(entryContents))
                   {
-                     hasVerbatim = preambleParser.containsVerbatim(
-                        entryContents);
+                     contentList = (TeXObjectList)entryContents;
+                  }
+                  else
+                  {
+                     contentList = listener.createStack();
+                     contentList.add(entryContents);
                   }
 
+                  db.processEntry(contentList, checkForVerbatim);
+
                   row.setCell(columnIndex,
-                     Datum.valueOf(entryContents, texParser, settings));
+                     Datum.valueOf(contentList, texParser, settings));
                }
             }
          }
@@ -400,12 +415,93 @@ public class DatatoolDb
          messageHandler.stopBuffering();
       }
 
-      if (hasVerbatim)
+      if (db.hasVerbatim)
       {
          messageHandler.warning(messageHandler.getLabel("warning.verb_detected"));
       }
 
+      sty.removeDataBase(db.getName());
+
       return db;
+   }
+
+   protected void processEntry(TeXObjectList list,
+      boolean checkForVerbatim)
+    throws IOException
+   {
+      DataToolTeXParserListener listener = settings.getTeXParserListener();
+      TeXParser parser = listener.getParser();
+
+      for (int i = list.size()-1; i >= 0; i--)
+      {
+         TeXObject obj = list.get(i);
+
+         if (obj instanceof TeXObjectList)
+         {
+            processEntry((TeXObjectList)obj, checkForVerbatim);
+         }
+         else if (obj instanceof ControlSequence)
+         {
+            String csname = ((ControlSequence)obj).getName();
+
+            if (csname.equals("DTLpar"))
+            {
+               list.set(i, listener.getPar());
+            }
+            else if (checkForVerbatim && !hasVerbatim)
+            {
+               if (parser.isVerbCommand(csname))
+               {
+                  hasVerbatim = true;
+               }
+               else if (csname.equals("begin"))
+               {
+                  TeXObject nextObj = null;
+
+                  int j = i + 1;
+
+                  for (; j < list.size(); j++)
+                  {
+                     nextObj = list.get(j);
+
+                     if (!(nextObj instanceof Ignoreable))
+                     {
+                        break;
+                     }
+                  }
+
+                  if (nextObj != null && !(nextObj instanceof Ignoreable))
+                  {
+                     if (nextObj instanceof Group)
+                     {
+                        nextObj = ((Group)nextObj).toList();
+                     }
+                     else if (nextObj instanceof BgChar)
+                     {
+                        nextObj = listener.createStack();
+
+                        for (j = j + 1; j < list.size(); j++)
+                        {
+                           TeXObject grpObj = list.get(j);
+
+                           if (grpObj instanceof EgChar)
+                           {
+                              break;
+                           }
+
+                           ((TeXObjectList)nextObj).add(grpObj);
+                        }
+                     }
+
+                     if (listener.isVerbEnv(nextObj.toString(parser)))
+                     {
+                        hasVerbatim = true;
+                     }
+                  }
+               }
+            }
+         }
+      }
    }
       
    public static DatatoolDb loadNoTeXParser(DatatoolSettings settings, 
@@ -3009,6 +3105,80 @@ public class DatatoolDb
       }
    }
 
+   /**
+    * Convert this datatooltk database to TeX Parser lib
+    * representation of a datatool.sty database.
+    */ 
+   public DataBase toDataBase() throws IOException
+   {
+      DataToolTeXParserListener listener = settings.getTeXParserListener();
+      TeXParser parser = listener.getParser();
+      DataToolSty sty = listener.getDataToolSty();
+
+      TeXObjectList list;
+
+      DataToolHeaderRow headerRow = new DataToolHeaderRow(sty, headers.capacity());
+      DataToolRows dataRows = new DataToolRows(sty, data.capacity());
+
+      for (int i = 0; i < headers.size(); i++)
+      {
+         DatatoolHeader header = headers.get(i);
+
+         list = new TeXObjectList();
+         parser.scan(header.getTitle(), list);
+
+         headerRow.add(new DataToolHeader(sty, i+1,
+           header.getKey(), header.getDatumType(), list));
+      }
+
+      for (int i = 0; i < data.size(); i++)
+      {
+         DatatoolRow row = data.get(i);
+
+         DataToolEntryRow texRow
+            = new DataToolEntryRow(i+1, sty, row.capacity());
+
+         for (int j = 0; j < row.size(); j++)
+         {
+            Datum datum = row.get(j);
+
+            if (!datum.isNull())
+            {
+               DatumType type = datum.getDatumType();
+
+               list = new TeXObjectList();
+               parser.scan(datum.getText(), list);
+
+               TeXObject content = list;
+               TeXNumber num = null;
+               TeXObject currencySym = null;
+
+               switch (type)
+               {
+                  case INTEGER:
+                   num = new UserNumber(datum.intValue());
+                  break;
+                  case CURRENCY:
+                   list = new TeXObjectList();
+                   parser.scan(datum.getCurrencySymbol(), list);
+                   currencySym = list;
+                  case DECIMAL:
+                   num = new TeXFloatingPoint(datum.doubleValue());
+                  break;
+               }
+
+               DatumElement element = new DatumElement(
+                 content, num, currencySym, type);
+
+               DataToolEntry entry = new DataToolEntry(sty, j+1,
+                 element);
+            }
+         }
+      }
+
+      return new DataBase(name, headerRow, dataRows);
+   }
+
    public void setFile(File file)
    {
       this.file = file;
@@ -4160,6 +4330,8 @@ public class DatatoolDb
    private File file;
    private FileFormatType currentFileFormat = FileFormatType.DBTEX;
    private String currentFileVersion = "3.0";
+
+   private boolean hasVerbatim = false;
 
    public static final Pattern FORMAT_PATTERN =
       Pattern.compile("(DBTEX|DTLTEX)[\\s\\-]*([23])(?:\\.0)?");
