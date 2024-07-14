@@ -1748,16 +1748,6 @@ sys	0m0.065s
    \switch{csv-delim} command line options or in the 
    \dialog{preferences} dialog box (see \sectionref{sec:preferences}).
 
-% TODO update this
-   Unlike \sty{datatool}['s]
-   \gls{DTLloaddb} command, \app{datatooltk} can import data with multi-lined
-   entries (via the Open CSV library 
-   \url{http://opencsv.sourceforge.net/}).
-   Multiple blank lines within entries are automatically converted to
-   \gls{DTLpar} (although you won't see this in \gls{gui}
-   mode).
-
-
    If the \gls{csv} file has a header row, you must make sure 
    the \switch{csvheader} option is used or the 
    \widget{preferences.csv.hasheader} option is checked in the
@@ -2525,9 +2515,6 @@ obtained with the \switch{version} switch.
    (GPL, \url{https://github.com/nlct/texparser});
    \item TeX Java Help \filefmt{texjavahelplib.jar}
    (GPL, \url{https://github.com/nlct/texjavahelp});
-   \item Open CSV \filefmt{opencsv.jar}
-     (\href{https://www.apache.org/licenses/LICENSE-2.0.html}{Apache 2},
-      \url{http://opencsv.sourceforge.net/});
    \item JOpenDocument \filefmt{jOpenDocument-1.5.jar}
      (GPL, \url{https://jopendocument.org/});
    \item MySQL connector \filefmt{mysql-connector-java.jar}

@@ -53,7 +53,7 @@ lib/datatooltk.jar	: java/Manifest.txt \
 
 classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
 	java/*.java java/*/*.java \
-	lib/texjavahelplib.jar lib/opencsv.jar lib/mysql-connector-java.jar\
+	lib/texjavahelplib.jar lib/mysql-connector-java.jar\
 	lib/poi-$(POIVER).jar lib/poi-ooxml-$(POIVER).jar \
 	lib/poi-ooxml-full-$(POIVER).jar \
 	lib/jOpenDocument-$(ODFVER).jar \
@@ -62,7 +62,7 @@ classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbook
 	cd java; \
 	javac $(target_version) -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../lib/texjavahelplib.jar:../lib/opencsv.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/jOpenDocument-$(ODFVER).jar:../lib/texparserlib.jar *.java */*.java
+	-cp ../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/jOpenDocument-$(ODFVER).jar:../lib/texparserlib.jar *.java */*.java
 
 classes/com/dickimawbooks/datatooltk	:
 	mkdir -p classes/com/dickimawbooks/datatooltk
