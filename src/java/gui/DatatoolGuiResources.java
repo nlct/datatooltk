@@ -514,6 +514,12 @@ public class DatatoolGuiResources
     public JMenuItem createJMenuItem(String parent, String label,
      ActionListener listener, KeyStroke keyStroke, ScrollToolBar toolBar)
     {
+       return createJMenuItem(parent, label, label, listener, keyStroke, toolBar);
+    }
+
+    public JMenuItem createJMenuItem(String parent, String label, String iconPrefix,
+     ActionListener listener, KeyStroke keyStroke, ScrollToolBar toolBar)
+    {
        if (parent == null)
        {
           parent = "menu";
@@ -523,7 +529,8 @@ public class DatatoolGuiResources
           parent = "menu."+parent;
        }
 
-       return new ItemButton(messageHandler, parent, label, listener, keyStroke, toolBar);
+       return new ItemButton(messageHandler, parent, label, iconPrefix,
+         listener, keyStroke, toolBar);
     }
 
     public ImageIcon getImageIcon(String action)

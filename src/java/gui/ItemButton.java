@@ -38,6 +38,14 @@ public class ItemButton extends JMenuItem
      String actionLabel, ActionListener listener, KeyStroke keyStroke,
      ScrollToolBar toolBar)
    {
+      this(messageHandler, parentLabel, actionLabel, actionLabel,
+       listener, keyStroke, toolBar);
+   }
+
+   public ItemButton(MessageHandler messageHandler, String parentLabel,
+     String actionLabel, String iconPrefix, ActionListener listener,
+     KeyStroke keyStroke, ScrollToolBar toolBar)
+   {
       super(messageHandler.getLabelRemoveArgs(parentLabel, actionLabel));
       setMnemonic(messageHandler.getMnemonicInt(parentLabel, actionLabel));
       setActionCommand(actionLabel);
@@ -47,7 +55,7 @@ public class ItemButton extends JMenuItem
       if (toolBar != null)
       {
          ImageIcon icon  
-            = messageHandler.getDatatoolGuiResources().getImageIcon(actionLabel);
+            = messageHandler.getDatatoolGuiResources().getImageIcon(iconPrefix);
 
          if (icon != null)
          {

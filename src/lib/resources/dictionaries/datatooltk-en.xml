@@ -176,8 +176,8 @@
 <entry key="menu.search.find_cell">Find Cell...</entry>
 <entry key="menu.search.find_cell.mnemonic">F</entry>
 
-<entry key="menu.search.replace">Replace...</entry>
-<entry key="menu.search.replace.mnemonic">R</entry>
+<entry key="menu.search.replace_text">Replace...</entry>
+<entry key="menu.search.replace_text.mnemonic">R</entry>
 
 <!-- Tools Menu -->
 

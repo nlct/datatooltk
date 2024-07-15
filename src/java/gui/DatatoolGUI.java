@@ -366,7 +366,7 @@ public class DatatoolGUI extends JFrame
       mbar.add(searchM);
 
       findCellItem = resources.createJMenuItem(
-         "search", "find_cell", this,
+         "search", "find_cell", "search", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK),
          toolBar);
 
@@ -375,13 +375,13 @@ public class DatatoolGUI extends JFrame
       findCellDialog = new FindCellDialog(this);
 
       findNextItem = resources.createJMenuItem(
-         "search", "find_again", this,
+         "search", "find_again", "search_next", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
          toolBar);
       searchM.add(findNextItem);
 
       replaceItem = resources.createJMenuItem(
-         "search", "replace", this,
+         "search", "replace_text", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
          toolBar);
 
@@ -1109,7 +1109,7 @@ public class DatatoolGUI extends JFrame
             findCellDialog.findNext(panel);
          }
       }
-      else if (action.equals("replace"))
+      else if (action.equals("replace_text"))
       {
          DatatoolDbPanel panel 
            = (DatatoolDbPanel)tabbedPane.getSelectedComponent();
