@@ -1,7 +1,3 @@
-add_column_after=/toolbarButtonGraphics/table/ColumnInsertAfter24.gif
-add_row_after=/toolbarButtonGraphics/table/RowInsertAfter24.gif
-add_column_before=/toolbarButtonGraphics/table/ColumnInsertBefore24.gif
-add_row_before=/toolbarButtonGraphics/table/RowInsertBefore24.gif
 close_panel=/resources/icons/close_panel.png
 close_panel_rollover=/resources/icons/close_panel_rollover.png
 copy=/toolbarButtonGraphics/general/Copy24.gif
@@ -13,8 +9,6 @@ replace=/toolbarButtonGraphics/general/Replace24.gif
 replace_all=/resources/icons/replaceAll.png
 edit_cell=/toolbarButtonGraphics/general/Edit24.gif
 importcsv=/toolbarButtonGraphics/general/Import24.gif
-help=/toolbarButtonGraphics/general/Information24.gif
-manual=/toolbarButtonGraphics/general/Help24.gif
 move_column_left=/toolbarButtonGraphics/navigation/Back24.gif
 move_column_right=/toolbarButtonGraphics/navigation/Forward24.gif
 move_row_up=/toolbarButtonGraphics/navigation/Up24.gif

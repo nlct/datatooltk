@@ -35,6 +35,7 @@ import javax.swing.JComponent;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
+import com.dickimawbooks.texjavahelplib.IconSet;
 import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
@@ -127,21 +128,11 @@ public class GuiPasswordReader extends JDialog
        DatatoolGuiResources resources
           = messageHandler.getDatatoolGuiResources();
 
-       URL imageUrl = null;
-       URL rollOverImageUrl = null;
-       URL pressedImageUrl = null;
-       URL selectedImageUrl = null;
+       IconSet iconSet = null;
 
        if (resources != null)
        {
-          imageUrl = resources.getImageUrl(label);
-
-          if (imageUrl != null)
-          {
-             rollOverImageUrl = resources.getImageUrl(label+"_rollover");
-             pressedImageUrl = resources.getImageUrl(label+"_pressed");
-             selectedImageUrl = resources.getImageUrl(label+"_selected");
-          }
+          iconSet = resources.getImageIconSet(label);
        }
 
        String buttonLabel = messageHandler.getLabel(parent, label);
@@ -150,28 +141,15 @@ public class GuiPasswordReader extends JDialog
 
        JButton button;
 
-       if (imageUrl == null)
+       if (iconSet == null)
        {
           button = new JButton(buttonLabel);
        }
        else
        {
-          button = new JButton(buttonLabel, new ImageIcon(imageUrl));
+          button = new JButton(buttonLabel, iconSet.getDefaultIcon());
 
-          if (rollOverImageUrl != null)
-          {
-             button.setRolloverIcon(new ImageIcon(rollOverImageUrl));
-          }
-
-          if (pressedImageUrl != null)
-          {
-             button.setPressedIcon(new ImageIcon(pressedImageUrl));
-          }
-
-          if (selectedImageUrl != null)
-          {
-             button.setSelectedIcon(new ImageIcon(selectedImageUrl));
-          }
+          iconSet.setButtonExtraIcons(button);
        }
 
        if (mnemonic != -1)

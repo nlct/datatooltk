@@ -25,6 +25,7 @@ import java.net.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.dickimawbooks.texjavahelplib.IconSet;
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
@@ -115,7 +116,59 @@ public class DatatoolGuiResources
       String tooltipText)
     {
        return createActionButton(parent, label, listener, keyStroke,
-         tooltipText, getImageIcon(label));
+         tooltipText, getImageIconSet(label));
+    }
+
+    public JButton createActionButton(String parent, String label, 
+      ActionListener listener, KeyStroke keyStroke,
+      String tooltipText, IconSet iconSet)
+    {
+       String buttonLabel = messageHandler.getLabel(parent, label);
+       int mnemonic = messageHandler.getMnemonicInt(parent, label);
+       String actionCommand = label;
+
+       JButton button;
+
+       // Is there an associated image?
+
+       if (iconSet == null)
+       {
+          button = new JButton(buttonLabel);
+       }
+       else
+       {
+          button = new JButton(buttonLabel, iconSet.getDefaultIcon());
+          iconSet.setButtonExtraIcons(button);
+       }
+
+       if (mnemonic != -1)
+       {
+          button.setMnemonic(mnemonic);
+       }
+
+       if (listener != null)
+       {
+          button.addActionListener(listener);
+
+          if (actionCommand != null)
+          {
+             button.setActionCommand(actionCommand);
+
+             if (keyStroke != null)
+             {
+                button.registerKeyboardAction(listener,
+                  actionCommand, keyStroke,
+                  JComponent.WHEN_IN_FOCUSED_WINDOW);
+             }
+          }
+       }
+
+       if (tooltipText != null)
+       {
+          button.setToolTipText(tooltipText);
+       }
+
+       return button;
     }
 
     public JButton createActionButton(String parent, String label, 
@@ -137,51 +190,6 @@ public class DatatoolGuiResources
        else
        {
           button = new JButton(buttonLabel, imageIcon);
-
-          // Is there an associated rollover image?
-
-          URL imageURL = getImageUrl(label+"_rollover");
-
-          if (imageURL != null)
-          {
-             button.setRolloverIcon(new ImageIcon(imageURL));
-          }
-
-          // Is there an associated pressed image?
-
-          imageURL = getImageUrl(label+"_pressed");
-
-          if (imageURL != null)
-          {
-             button.setPressedIcon(new ImageIcon(imageURL));
-          }
-
-          // Is there an associated selected image?
-
-          imageURL = getImageUrl(label+"_selected");
-
-          if (imageURL != null)
-          {
-             button.setSelectedIcon(new ImageIcon(imageURL));
-          }
-
-          // Is there an associated disabled image?
-
-          imageURL = getImageUrl(label+"_disabled");
-
-          if (imageURL != null)
-          {
-             button.setDisabledIcon(new ImageIcon(imageURL));
-          }
-
-          // Is there an associated "disabled selected" image?
-
-          imageURL = getImageUrl(label+"_disabled_selected");
-
-          if (imageURL != null)
-          {
-             button.setDisabledSelectedIcon(new ImageIcon(imageURL));
-          }
        }
 
        if (mnemonic != -1)
@@ -518,16 +526,24 @@ public class DatatoolGuiResources
        return new ItemButton(messageHandler, parent, label, listener, keyStroke, toolBar);
     }
 
-    // Get the image URL associated with action
-
-    public URL getImageUrl(String action)
-    {
-       return getHelpLib().getMappedImageLocation(action);
-    }
-
     public ImageIcon getImageIcon(String action)
     {
-       return getHelpLib().getHelpIcon(action, false);
+       return getImageIcon(action, false);
+    }
+
+    public ImageIcon getImageIcon(String action, boolean small)
+    {
+       return getHelpLib().getHelpIcon(action, small);
+    }
+
+    public IconSet getImageIconSet(String action)
+    {
+       return getImageIconSet(action, false);
+    }
+
+    public IconSet getImageIconSet(String action, boolean small)
+    {
+       return getHelpLib().getHelpIconSet(action, small);
     }
 
     public MessageHandler getMessageHandler()

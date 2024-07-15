@@ -1,9 +1,5 @@
-ifeq ($(shell javac -version 2>&1 | grep 1.8),)
 # Java 8 extended support until December 2030
-  target_version := --release 8 -Xlint:-options
-else
-  target_version =
-endif
+target_version := --release 8 -Xlint:-options
 
 APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION=//" | tr -d "\"\; ")
 IZPACKDIR=/usr/local/IzPack

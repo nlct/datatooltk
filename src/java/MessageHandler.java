@@ -771,7 +771,19 @@ public class MessageHandler extends ErrorManager
    }
 
    @Override
+   public IconSet getSmallIconSet(String base, String... extensions)
+   {
+      return null;
+   }
+
+   @Override
    public ImageIcon getLargeIcon(String base, String... extensions)
+   {
+      return null;
+   }
+
+   @Override
+   public IconSet getLargeIconSet(String base, String... extensions)
    {
       return null;
    }

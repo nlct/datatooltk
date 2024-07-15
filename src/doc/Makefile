@@ -1,6 +1,5 @@
-targetdir=../resources/helpsets
-dictdir=../resources/dictionaries
-targetbackref=../../doc
+targetdir=../lib/resources/helpsets
+dictdir=../lib/resources/dictionaries
 mainclass=../java/DatatoolTk.java
 arara=arara --verbose
 texjavahelpmk=texjavahelpmk --debug-mode io

@@ -46,12 +46,11 @@ public class ItemButton extends JMenuItem
 
       if (toolBar != null)
       {
-         URL imageURL 
-            = messageHandler.getDatatoolGuiResources().getImageUrl(actionLabel);
+         ImageIcon icon  
+            = messageHandler.getDatatoolGuiResources().getImageIcon(actionLabel);
 
-         if (imageURL != null)
+         if (icon != null)
          {
-            Icon icon = new ImageIcon(imageURL);
             button = new JButton(icon);
             button.setActionCommand(actionLabel);
             button.putClientProperty("hideActionText", Boolean.TRUE);
