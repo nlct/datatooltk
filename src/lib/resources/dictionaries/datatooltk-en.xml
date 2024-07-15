@@ -40,7 +40,7 @@
 <entry key="menu.file.new_from_template.tooltip">Create a new database from a template</entry>
 
 <entry key="menu.file.open">Open...</entry>
-<entry key="menu.file.open.tooltip">Open a raw datatool database file</entry>
+<entry key="menu.file.open.tooltip">Open a datatool.sty database file</entry>
 <entry key="menu.file.open.mnemonic">O</entry>
 
 <entry key="menu.file.recent">Recent</entry>
