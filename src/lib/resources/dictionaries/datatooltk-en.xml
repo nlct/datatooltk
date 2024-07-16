@@ -336,8 +336,14 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.display.highlightcomment">Comment Color</entry>
 <entry key="preferences.display.highlightcomment.mnemonic">M</entry>
 
+<entry key="preferences.display.choose.highlightcomment">Choose...</entry>
+<entry key="preferences.display.choose.highlightcomment.tooltip">Choose comment color</entry>
+
 <entry key="preferences.display.highlightcs">Control Sequence Color</entry>
 <entry key="preferences.display.highlightcs.mnemonic">R</entry>
+
+<entry key="preferences.display.choose.highlightcs">Choose...</entry>
+<entry key="preferences.display.choose.highlightcs.tooltip">Choose control sequence color</entry>
 
 
 <entry key="preferences.display.lookandfeel.title">Graphical Interface</entry>

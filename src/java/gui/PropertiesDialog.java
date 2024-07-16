@@ -575,9 +575,10 @@ public class PropertiesDialog extends JDialog
 
       box = createNewRow(editorBox);
 
-      JButton button = new JButton("...");
-      button.setActionCommand("highlightcs");
-      button.addActionListener(this);
+      JButton button = resources.createActionButton("preferences.display.choose",
+       "highlightcs", this, null,
+        resources.getImageIconSet("choose_colour", true), true);
+
       box.add(createLabel(labelGrp, "preferences.display.highlightcs", button));
 
       highlightCsSwatch = new JPanel();
@@ -587,9 +588,10 @@ public class PropertiesDialog extends JDialog
 
       box = createNewRow(editorBox);
 
-      button = new JButton("...");
-      button.setActionCommand("highlightcomment");
-      button.addActionListener(this);
+      button = resources.createActionButton("preferences.display.choose",
+       "highlightcomment", this, null,
+        resources.getImageIconSet("choose_colour", true), true);
+
       box.add(createLabel(labelGrp, "preferences.display.highlightcomment", button));
 
       highlightCommentSwatch = new JPanel();

@@ -10,6 +10,9 @@
 <entry key="preferences.display.highlightcomment">Comment Colour</entry>
 <entry key="preferences.display.highlightcs">Control Sequence Colour</entry>
 
+<entry key="preferences.display.choose.highlightcomment.tooltip">Choose comment colour</entry>
+<entry key="preferences.display.choose.highlightcs.tooltip">Choose control sequence colour</entry>
+
 <entry key="menu.help.licence">Licence</entry>
 
 <entry key="message.cancelled">Cancelled</entry>

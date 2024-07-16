@@ -136,56 +136,95 @@ public class DatatoolGuiResources
     }
 
     public JButton createActionButton(String parent, String label, 
+      ActionListener listener, KeyStroke keyStroke, IconSet iconSet,
+      boolean omitTextIfIcon)
+    {
+       return createActionButton(parent, label, listener, keyStroke,
+         messageHandler.getToolTip(parent, label), iconSet, omitTextIfIcon);
+    }
+
+    public JButton createActionButton(String parent, String label, 
       ActionListener listener, KeyStroke keyStroke,
       String tooltipText, IconSet iconSet)
     {
-       String buttonLabel = messageHandler.getLabel(parent, label);
-       int mnemonic = messageHandler.getMnemonicInt(parent, label);
-       String actionCommand = label;
-
-       JButton button;
-
-       // Is there an associated image?
-
-       if (iconSet == null)
-       {
-          button = new JButton(buttonLabel);
-       }
-       else
-       {
-          button = new JButton(buttonLabel, iconSet.getDefaultIcon());
-          iconSet.setButtonExtraIcons(button);
-       }
-
-       if (mnemonic != -1)
-       {
-          button.setMnemonic(mnemonic);
-       }
-
-       if (listener != null)
-       {
-          button.addActionListener(listener);
-
-          if (actionCommand != null)
-          {
-             button.setActionCommand(actionCommand);
-
-             if (keyStroke != null)
-             {
-                button.registerKeyboardAction(listener,
-                  actionCommand, keyStroke,
-                  JComponent.WHEN_IN_FOCUSED_WINDOW);
-             }
-          }
-       }
-
-       if (tooltipText != null)
-       {
-          button.setToolTipText(tooltipText);
-       }
-
-       return button;
+       return createActionButton(parent, label, 
+      listener, keyStroke, tooltipText, iconSet, false);
     }
+
+   public JButton createActionButton(String parent, String label, 
+     ActionListener listener, KeyStroke keyStroke,
+     String tooltipText, IconSet iconSet, boolean omitTextIfIcon)
+   {
+      String buttonLabel = messageHandler.getLabel(parent, label);
+      int mnemonic = messageHandler.getMnemonicInt(parent, label);
+      String tag = parent == null ? label : parent+"."+label;
+
+      String actionCommand = label;
+
+      JButton button;
+
+      // Is there an associated image?
+
+      if (iconSet == null)
+      {
+         button = new JButton(buttonLabel);
+      }
+      else
+      {
+         if (omitTextIfIcon)
+         {
+            button = new JButton(iconSet.getDefaultIcon());
+            button.setMargin(new Insets(0, 0, 0, 0));
+
+            if (tooltipText == null)
+            {
+               tooltipText = buttonLabel;
+            }
+         }
+         else
+         {
+            button = new JButton(buttonLabel, iconSet.getDefaultIcon());
+         }
+
+         iconSet.setButtonExtraIcons(button);
+      }
+
+      if (mnemonic != -1)
+      {
+         button.setMnemonic(mnemonic);
+      }
+
+      if (listener != null)
+      {
+         button.addActionListener(listener);
+
+         if (actionCommand != null)
+         {
+            button.setActionCommand(actionCommand);
+
+            if (keyStroke != null)
+            {
+               button.registerKeyboardAction(listener,
+                 actionCommand, keyStroke,
+                 JComponent.WHEN_IN_FOCUSED_WINDOW);
+            }
+         }
+      }
+
+      if (tooltipText != null)
+      {
+         button.setToolTipText(tooltipText);
+      }
+
+      String desc = messageHandler.getMessageIfExists(tag+".description");
+
+      if (desc != null)
+      {
+         button.getAccessibleContext().setAccessibleDescription(desc);
+      }
+
+      return button;
+   }
 
     public JButton createActionButton(String parent, String label, 
       ActionListener listener, KeyStroke keyStroke,
