@@ -566,7 +566,7 @@ public class DatatoolGUI extends JFrame
    /**
     * Create help button for modeless (non-blocking) components. 
     */
-   public JButton createHelpButton(String id, JComponent comp)
+   public JButton createHelpButton(String id, JFrame owner)
    {
       TeXJavaHelpLib helpLib = getHelpLib();
       NavigationNode node = helpLib.getNavigationNodeById(id);
@@ -584,27 +584,13 @@ public class DatatoolGUI extends JFrame
          }
       }
 
-      return new JButton(getHelpLib().createHelpAction(node, comp));
+      return helpLib.createHelpDialogButton(owner, node);
    }
 
    /**
     * Create help button for modal dialog. 
     */
-   public JButton createHelpButton(JDialog dialog, String id)
-   {
-      HelpDialogAction action = createHelpDialogAction(dialog, id);
-
-      if (action == null)
-      {
-         return null;
-      }
-      else
-      {
-         return new JButton(action);
-      }
-   }
-
-   public HelpDialogAction createHelpDialogAction(JDialog dialog, String id)
+   public JButton createHelpButton(JDialog owner, String id)
    {
       TeXJavaHelpLib helpLib = getHelpLib();
       NavigationNode node = helpLib.getNavigationNodeById(id);
@@ -622,7 +608,47 @@ public class DatatoolGUI extends JFrame
          }
       }
 
-      return new HelpDialogAction(dialog, node, helpLib);
+      return helpLib.createHelpDialogButton(owner, node);
+   }
+
+   /**
+    * Create help action to open primary help window at the given
+    * page.
+    */
+   public TJHAbstractAction createHelpAction(String id)
+   {
+      return createHelpAction(id, null, null);
+   }
+
+   public TJHAbstractAction createHelpAction(String id,
+     KeyStroke keyStroke, JComponent comp)
+   {
+      TeXJavaHelpLib helpLib = getHelpLib();
+      NavigationNode node = helpLib.getNavigationNodeById(id);
+
+      if (node == null)
+      {
+         node = helpLib.getNavigationNodeById("sec:"+id);
+
+         if (node == null)
+         {
+            getMessageHandler().error(this, 
+             helpLib.getMessageWithFallback(
+             "error.node_id_not_found", "Node with ID ''{0}'' not found", id));
+            return null;
+         }
+      }
+
+      if (keyStroke == null)
+      {
+         return helpLib.createHelpAction(node, "action", "help",
+          "help", "help", null, null, Action.ACCELERATOR_KEY);
+      }
+      else
+      {
+         return helpLib.createHelpAction(node, "action", "help",
+          "help", "help", keyStroke, comp);
+      }
    }
 
    public String[] getDictionaries()

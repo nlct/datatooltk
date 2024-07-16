@@ -28,6 +28,7 @@ import javax.swing.*;
 import com.dickimawbooks.texjavahelplib.IconSet;
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
+import com.dickimawbooks.texjavahelplib.TJHAbstractAction;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.MessageHandler;
@@ -114,8 +115,8 @@ public class DatatoolGuiResources
     public JButton createActionButton(String parent, String label, 
       String iconPrefix, ActionListener listener, KeyStroke keyStroke)
     {
-       return createActionButton(parent, label, iconPrefix, listener, keyStroke,
-         messageHandler.getToolTip(parent, label));
+       return createActionButton(parent, label, iconPrefix, true,
+         listener, keyStroke, messageHandler.getToolTip(parent, label));
     }
 
     public JButton createActionButton(String parent, String label, 
@@ -123,16 +124,41 @@ public class DatatoolGuiResources
       String tooltipText)
     {
        return createActionButton(parent, label, listener, keyStroke,
-         tooltipText, getImageIconSet(label));
+         tooltipText, getImageIconSet(label, true));
     }
 
     public JButton createActionButton(String parent, String label,
-      String iconPrefix,
+      String iconPrefix, boolean prefSmallIconSet,
+      ActionListener listener, KeyStroke keyStroke, boolean omitTextIfIcon)
+    {
+       return createActionButton(parent, label, iconPrefix, true,
+         listener, keyStroke, messageHandler.getToolTip(parent, label),
+         omitTextIfIcon);
+    }
+
+    public JButton createActionButton(String parent, String label,
+      String iconPrefix, boolean prefSmallIconSet,
       ActionListener listener, KeyStroke keyStroke,
       String tooltipText)
     {
+       return createActionButton(parent, label, iconPrefix, prefSmallIconSet,
+         listener, keyStroke, tooltipText, false);
+    }
+
+    public JButton createActionButton(String parent, String label,
+      String iconPrefix, boolean prefSmallIconSet,
+      ActionListener listener, KeyStroke keyStroke,
+      String tooltipText, boolean omitTextIfIcon)
+    {
+       IconSet iconSet = getImageIconSet(iconPrefix, prefSmallIconSet);
+
+       if (prefSmallIconSet && iconSet == null)
+       {
+          iconSet = getImageIconSet(iconPrefix, false);
+       }
+
        return createActionButton(parent, label, listener, keyStroke,
-         tooltipText, getImageIconSet(iconPrefix));
+         tooltipText, iconSet, omitTextIfIcon);
     }
 
     public JButton createActionButton(String parent, String label, 
@@ -425,11 +451,25 @@ public class DatatoolGuiResources
     public JComponent createOkayCancelHelpPanel(
        ActionListener listener, DatatoolGUI gui, String helpId)
     {
-      return createOkayCancelHelpPanel(null, listener, gui, helpId);
+       JPanel buttonPanel = new JPanel();
+
+       JButton okayButton = createOkayButton(listener);
+
+       buttonPanel.add(okayButton);
+       buttonPanel.add(createCancelButton(listener));
+
+       TJHAbstractAction helpAction = gui.createHelpAction(helpId);
+
+       if (helpAction != null)
+       {
+          buttonPanel.add(new JButton(helpAction));
+       }
+
+       return buttonPanel;
     }
 
     public JComponent createOkayCancelHelpPanel(
-       JRootPane rootPane, ActionListener listener, DatatoolGUI gui, String helpId)
+       JDialog owner, ActionListener listener, DatatoolGUI gui, String helpId)
     {
        JPanel buttonPanel = new JPanel();
 
@@ -438,17 +478,14 @@ public class DatatoolGuiResources
        buttonPanel.add(okayButton);
        buttonPanel.add(createCancelButton(listener));
 
-       JButton helpButton = gui.createHelpButton(helpId, rootPane);
+       JButton helpButton = gui.createHelpButton(owner, helpId);
 
        if (helpButton != null)
        {
           buttonPanel.add(helpButton);
        }
 
-       if (rootPane != null)
-       {
-          rootPane.setDefaultButton(okayButton);
-       }
+       owner.getRootPane().setDefaultButton(okayButton);
 
        return buttonPanel;
     }

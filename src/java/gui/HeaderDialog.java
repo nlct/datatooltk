@@ -98,7 +98,7 @@ public class HeaderDialog extends JDialog
       }
 
       getContentPane().add(
-       resources.createOkayCancelHelpPanel(this,
+       resources.createDialogOkayCancelHelpPanel(this, this,
         gui, "editheader"),
        BorderLayout.SOUTH);
 

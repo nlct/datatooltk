@@ -576,8 +576,7 @@ public class PropertiesDialog extends JDialog
       box = createNewRow(editorBox);
 
       JButton button = resources.createActionButton("preferences.display.choose",
-       "highlightcs", this, null,
-        resources.getImageIconSet("choose_colour", true), true);
+       "highlightcs", "choose_colour", true, this, null, true);
 
       box.add(createLabel(labelGrp, "preferences.display.highlightcs", button));
 
@@ -589,8 +588,7 @@ public class PropertiesDialog extends JDialog
       box = createNewRow(editorBox);
 
       button = resources.createActionButton("preferences.display.choose",
-       "highlightcomment", this, null,
-        resources.getImageIconSet("choose_colour", true), true);
+       "highlightcomment", "choose_colour", true, this, null, true);
 
       box.add(createLabel(labelGrp, "preferences.display.highlightcomment", button));
 

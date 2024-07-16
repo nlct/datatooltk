@@ -173,7 +173,7 @@ public class CellDialog extends JDialog
       getContentPane().add(splitPane, BorderLayout.CENTER);
 
       getContentPane().add(
-         resources.createOkayCancelHelpPanel(this, gui, "celleditor"),
+         resources.createDialogOkayCancelHelpPanel(this, this, gui, "celleditor"),
          BorderLayout.SOUTH);
 
       pack();

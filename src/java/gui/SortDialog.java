@@ -110,7 +110,7 @@ public class SortDialog extends JDialog
       localeBox.setSelectedItem(Locale.getDefault());
 
       getContentPane().add(
-        resources.createOkayCancelHelpPanel(this, gui, "sort"),
+        resources.createDialogOkayCancelHelpPanel(this, this, gui, "sort"),
         BorderLayout.SOUTH);
 
       pack();
