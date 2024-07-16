@@ -490,14 +490,14 @@ public class PropertiesDialog extends JDialog
         BorderLayout.NORTH);
 
       buttonPanel.add(resources.createActionButton(
-         "preferences.currencies", "add_currency", this, null));
+         "preferences.currencies", "add_currency", "increase", this, null));
 
       editCurrencyButton = resources.createActionButton(
          "preferences.currencies", "edit_currency", "edit", this, null);
       buttonPanel.add(editCurrencyButton);
 
       removeCurrencyButton = resources.createActionButton(
-         "preferences.currencies", "remove_currency", this, null);
+         "preferences.currencies", "remove_currency", "decrease", this, null);
       buttonPanel.add(removeCurrencyButton);
 
       currencyList.addListSelectionListener(this);
@@ -1964,7 +1964,7 @@ class CurrencyListModel extends AbstractListModel<String>
       list.setModel(this);
 
       int n = settings.getCurrencyCount();
-      currencies = new Vector<String>(n);
+      currencies = new Vector<String>();
 
       for (int i = 0; i < n; i++)
       {
@@ -1972,11 +1972,13 @@ class CurrencyListModel extends AbstractListModel<String>
       }
    }
 
+   @Override
    public int getSize()
    {
       return currencies.size();
    }
 
+   @Override
    public String getElementAt(int index)
    {
       return currencies.get(index);
@@ -1998,9 +2000,10 @@ class CurrencyListModel extends AbstractListModel<String>
 
       if (response != null)
       {
+         int n = currencies.size();
          currencies.add(response);
 
-         list.revalidate();
+         fireIntervalAdded(this, n, n);
       }
    }
 
@@ -2008,7 +2011,7 @@ class CurrencyListModel extends AbstractListModel<String>
    {
       currencies.remove(index);
 
-      list.revalidate();
+      fireIntervalRemoved(this, index, index);
    }
 
    public void editCurrency(int index)
@@ -2019,9 +2022,8 @@ class CurrencyListModel extends AbstractListModel<String>
       if (response != null)
       {
          currencies.set(index, response);
+         fireContentsChanged(this, index, index);
       }
-
-      list.revalidate();
    }
 
    private DatatoolSettings settings;
