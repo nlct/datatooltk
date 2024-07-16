@@ -457,7 +457,7 @@ public class PropertiesDialog extends JDialog
          "preferences.tex", "add_map", this, null));
 
       editMapButton = resources.createActionButton(
-         "preferences.tex", "edit_map", this, null);
+         "preferences.tex", "edit_map", "edit", this, null);
       buttonPanel.add(editMapButton);
 
       removeMapButton = resources.createActionButton(
@@ -493,7 +493,7 @@ public class PropertiesDialog extends JDialog
          "preferences.currencies", "add_currency", this, null));
 
       editCurrencyButton = resources.createActionButton(
-         "preferences.currencies", "edit_currency", this, null);
+         "preferences.currencies", "edit_currency", "edit", this, null);
       buttonPanel.add(editCurrencyButton);
 
       removeCurrencyButton = resources.createActionButton(

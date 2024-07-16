@@ -336,7 +336,13 @@ public class DatatoolDb
           rowCount, columnCount));
    
          db = new DatatoolDb(settings, rowCount, columnCount);
-         db.setFile(texPath.getFile());
+
+         if (format == FileFormatType.DTLTEX
+               || format == FileFormatType.DBTEX)
+         {
+            db.setFile(texPath.getFile());
+         }
+
          db.setName(dbName);
 
          db.currentFileFormat = ioSettings.getFormat();

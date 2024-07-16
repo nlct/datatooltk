@@ -295,7 +295,7 @@ public class DatatoolGUI extends JFrame
       editDbNameItem.setEnabled(false);
 
       editCellItem = resources.createJMenuItem(
-         "edit", "edit_cell", this,
+         "edit", "edit_cell", "edit", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK),
          toolBar);
       editM.add(editCellItem);

@@ -93,7 +93,7 @@ public class CellDialog extends JDialog
       toolBar.addSeparator();
 
       editM.add(createJMenuItem("edit", "parse", toolBar));
-      editM.add(createJMenuItem("edit", "reload", toolBar));
+      editM.add(createJMenuItem("edit", "reload", "reset", toolBar));
       editM.add(createJMenuItem("edit", "cell_to_null", toolBar));
 
       toolBar.addSeparator();
@@ -101,13 +101,14 @@ public class CellDialog extends JDialog
       JMenu searchM = createJMenu("search");
       mbar.add(searchM);
 
-      searchM.add(createJMenuItem("search", "find", toolBar));
+      searchM.add(createJMenuItem("search", "find", "search", toolBar));
 
-      findAgainItem = createJMenuItem("search", "find_again", toolBar);
+      findAgainItem = createJMenuItem("search", "find_again",
+        "search_again", toolBar);
       searchM.add(findAgainItem);
       findAgainItem.setEnabled(false);
 
-      searchM.add(createJMenuItem("search", "replace", toolBar));
+      searchM.add(createJMenuItem("search", "replace", "replace_text", toolBar));
 
       document = new CellDocument(this, gui.getSettings());
       textPane = new JTextPane(document);
@@ -188,9 +189,15 @@ public class CellDialog extends JDialog
    protected JMenuItem createJMenuItem(String parentLabel, String action,
      ScrollToolBar toolBar)
    {
+      return createJMenuItem(parentLabel, action, action, toolBar);
+   }
+
+   protected JMenuItem createJMenuItem(String parentLabel, String action,
+     String iconPrefix, ScrollToolBar toolBar)
+   {
       parentLabel = "editormenu."+parentLabel; 
 
-      return gui.getResources().createJMenuItem(parentLabel, action,
+      return gui.getResources().createJMenuItem(parentLabel, action, iconPrefix,
         this, gui.getMessageHandler().getKeyStroke(parentLabel, action), toolBar);
    }
 

@@ -29,9 +29,6 @@ dist	: ../dist/datatooltk-installer.jar
 	$(IZPACKDIR)/bin/compile installer/install.xml -b . \
 	-o ../dist/datatooltk-installer.jar -k standard
 
-lib	:
-	mkdir -p lib
-
 lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en-GB.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
 	make -C doc en-GB
 
