@@ -65,13 +65,13 @@ public class ScrollToolBar extends JPanel
    {
       JButton button
          = messageHandler.getDatatoolGuiResources().createActionButton("button",
-        action, this, null, messageHandler.getLabel("button", action));
+        action, action, false, this, null,
+        messageHandler.getLabel("button", action), true);
 
       Icon icon = button.getIcon();
 
       if (icon != null)
       {
-         button.setText(null);
          button.setContentAreaFilled(false);
          button.setPreferredSize(new Dimension(icon.getIconWidth()+2,
            icon.getIconHeight()+2));
