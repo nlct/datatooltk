@@ -112,11 +112,27 @@ public class DatatoolGuiResources
     }
 
     public JButton createActionButton(String parent, String label, 
+      String iconPrefix, ActionListener listener, KeyStroke keyStroke)
+    {
+       return createActionButton(parent, label, iconPrefix, listener, keyStroke,
+         messageHandler.getToolTip(parent, label));
+    }
+
+    public JButton createActionButton(String parent, String label, 
       ActionListener listener, KeyStroke keyStroke,
       String tooltipText)
     {
        return createActionButton(parent, label, listener, keyStroke,
          tooltipText, getImageIconSet(label));
+    }
+
+    public JButton createActionButton(String parent, String label,
+      String iconPrefix,
+      ActionListener listener, KeyStroke keyStroke,
+      String tooltipText)
+    {
+       return createActionButton(parent, label, listener, keyStroke,
+         tooltipText, getImageIconSet(iconPrefix));
     }
 
     public JButton createActionButton(String parent, String label, 
