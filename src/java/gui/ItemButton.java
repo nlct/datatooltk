@@ -24,12 +24,13 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import com.dickimawbooks.texjavahelplib.IconSet;
 import com.dickimawbooks.datatooltk.*;
 
 /**
  * Provides a JMenuItem that optionally has an associated button in
  * the toolbar. The button is only created if there is an associated
- * image file.
+ * image file. (Alternatively, use Actions.)
  */
 
 public class ItemButton extends JMenuItem
@@ -50,16 +51,26 @@ public class ItemButton extends JMenuItem
       setMnemonic(messageHandler.getMnemonicInt(parentLabel, actionLabel));
       setActionCommand(actionLabel);
 
+      IconSet iconSet
+         = messageHandler.getDatatoolGuiResources().getImageIconSet(iconPrefix, true);
+
+      if (iconSet != null)
+      {
+         iconSet.setButtonIcons(this);
+      }
+
       button = null;
 
       if (toolBar != null)
       {
-         ImageIcon icon  
-            = messageHandler.getDatatoolGuiResources().getImageIcon(iconPrefix);
+         iconSet
+            = messageHandler.getDatatoolGuiResources().getImageIconSet(iconPrefix);
 
-         if (icon != null)
+         if (iconSet != null)
          {
+            Icon icon = iconSet.getDefaultIcon();
             button = new JButton(icon);
+            iconSet.setButtonExtraIcons(button);
             button.setActionCommand(actionLabel);
             button.putClientProperty("hideActionText", Boolean.TRUE);
             button.setHorizontalTextPosition(JButton.CENTER);

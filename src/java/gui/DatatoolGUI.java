@@ -416,7 +416,7 @@ public class DatatoolGUI extends JFrame
       helpM.add(resources.createJMenuItem("help", "licence", this));
 
       helpM.add(resources.createJMenuItem(
-         "help", "about", this, toolBar));
+         "help", "about", "information", this, null, toolBar));
 
       aboutDialog = new MessageDialog(this,
        getMessageHandler().getLabelWithValues("about.title", DatatoolTk.APP_NAME),
