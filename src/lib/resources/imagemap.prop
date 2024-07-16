@@ -1,12 +1,6 @@
 close_panel=/resources/icons/close_panel.png
 close_panel_rollover=/resources/icons/close_panel_rollover.png
-move_column_left=/toolbarButtonGraphics/navigation/Back24.gif
-move_column_right=/toolbarButtonGraphics/navigation/Forward24.gif
-move_row_up=/toolbarButtonGraphics/navigation/Up24.gif
-move_row_down=/toolbarButtonGraphics/navigation/Down24.gif
 scrollback=/resources/icons/scrollback.png
 scrollback_rollover=/resources/icons/scrollback_rollover.png
 scrollforward=/resources/icons/scrollforward.png
 scrollforward_rollover=/resources/icons/scrollforward_rollover.png
-add_map=/toolbarButtonGraphics/table/RowInsertAfter24.gif
-remove_map=/toolbarButtonGraphics/table/RowDelete24.gif

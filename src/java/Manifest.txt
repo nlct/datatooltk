@@ -1,2 +1,2 @@
 Main-Class: com/dickimawbooks/datatooltk/DatatoolTk
-Class-Path: . mysql-connector-java.jar jlfgr-1_0.jar poi-5.3.0.jar poi-ooxml-5.3.0.jar poi-ooxml-full-5.3.0.jar jOpenDocument-1.5.jar texparserlib.jar texjavahelplib.jar
+Class-Path: . mysql-connector-java.jar poi-5.3.0.jar poi-ooxml-5.3.0.jar poi-ooxml-full-5.3.0.jar jOpenDocument-1.5.jar texparserlib.jar texjavahelplib.jar

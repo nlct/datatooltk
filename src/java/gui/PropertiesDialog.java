@@ -454,14 +454,14 @@ public class PropertiesDialog extends JDialog
       texMappingsComp.add(buttonPanel, BorderLayout.EAST);
 
       buttonPanel.add(resources.createActionButton(
-         "preferences.tex", "add_map", this, null));
+         "preferences.tex", "add_map", "increase", this, null));
 
       editMapButton = resources.createActionButton(
          "preferences.tex", "edit_map", "edit", this, null);
       buttonPanel.add(editMapButton);
 
       removeMapButton = resources.createActionButton(
-         "preferences.tex", "remove_map", this, null);
+         "preferences.tex", "remove_map", "decrease", this, null);
       buttonPanel.add(removeMapButton);
 
       texMapTable.getSelectionModel().addListSelectionListener(this);

@@ -22,9 +22,6 @@ Requires at least Java 8 and the following libraries:
    (GPL-2.0-only) 
    to pull data from MySQL databases: the file `mysql-connector-java.jar`
    should be placed in the `lib` directory;
- - [Java Look and Feel Graphics Repository 1.0](https://www.oracle.com/java/technologies/java-archive-downloads-java-client-downloads.html#7520-jlf-1.0-oth-JPR)
-   ([Oracle License Agreement](https://www.oracle.com/a/tech/docs/software-icon-license-943-2012.html))
-   provides images for buttons;
  - [TeX Parser Library](https://github.com/nlct/texparser)
    (GPL-3.0)
    to parse LaTeX files: the file `texparserlib.jar`
