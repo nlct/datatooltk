@@ -375,7 +375,7 @@ public class DatatoolGUI extends JFrame
       findCellDialog = new FindCellDialog(this);
 
       findNextItem = resources.createJMenuItem(
-         "search", "find_again", "search_next", this,
+         "search", "find_again", "search_again", this,
          KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
          toolBar);
       searchM.add(findNextItem);

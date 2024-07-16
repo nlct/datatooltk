@@ -10,5 +10,3 @@ scrollforward=/resources/icons/scrollforward.png
 scrollforward_rollover=/resources/icons/scrollforward_rollover.png
 add_map=/toolbarButtonGraphics/table/RowInsertAfter24.gif
 remove_map=/toolbarButtonGraphics/table/RowDelete24.gif
-add_currency=/toolbarButtonGraphics/table/RowInsertAfter24.gif
-remove_currency=/toolbarButtonGraphics/table/RowDelete24.gif

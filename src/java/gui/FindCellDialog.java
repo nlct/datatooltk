@@ -111,7 +111,7 @@ public class FindCellDialog extends JDialog
       getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
       findButton = resources.createActionButton(
-        "find", "find", this,
+        "find", "find", "search", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
 
       buttonPanel.add(findButton);
