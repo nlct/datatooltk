@@ -217,95 +217,6 @@ public class PropertiesDialog extends JDialog
 
       csvTab.add(csvSettingsPanel);
 
-      JComponent box;
-/*
-      box = Box.createHorizontalBox();
-      box.setAlignmentX(0);
-      csvTab.add(box);
-
-      box.add(new JLabel(messageHandler.getLabel("preferences.csv.sep")));
-
-      ButtonGroup bg = new ButtonGroup();
-
-      sepTabButton = createRadioButton("preferences.csv", "tabsep", bg);
-      box.add(sepTabButton);
-
-      box.add(Box.createHorizontalStrut(10));
-      box.add(new JLabel(messageHandler.getLabel("preferences.csv.or")));
-      box.add(Box.createHorizontalStrut(10));
-
-      sepCharButton = createRadioButton("preferences.csv", "sepchar", bg);
-      box.add(sepCharButton);
-
-      sepCharField = new CharField(',');
-      box.add(sepCharField);
-
-      box = Box.createHorizontalBox();
-      box.setAlignmentX(0);
-      csvTab.add(box);
-
-      delimCharField = new CharField('"');
-
-      box.add(createLabel("preferences.csv.delim", delimCharField));
-      box.add(delimCharField);
-
-      box.add(Box.createHorizontalStrut(10));
-
-      strictQuotesBox = createCheckBox("preferences.csv", "strictquotes");
-      box.add(strictQuotesBox);
-
-      box = Box.createHorizontalBox();
-      box.setAlignmentX(0);
-      csvTab.add(box);
-
-      hasHeaderBox = createCheckBox("preferences.csv", "hasheader");
-      box.add(hasHeaderBox);
-
-      box.add(Box.createHorizontalStrut(10));
-
-      skipEmptyRowsBox = resources.createJCheckBox("preferences.csv",
-        "skipemptyrows", null, 0);
-      box.add(skipEmptyRowsBox);
-
-      box = Box.createHorizontalBox();
-      box.setAlignmentX(0);
-      csvTab.add(box);
-
-      skipLinesBox = new JSpinner(new SpinnerNumberModel(0, 0, MAX_INT_SPINNER, 1));
-      box.add(resources.createJLabel("preferences.csv.skiplines", skipLinesBox));
-      box.add(skipLinesBox);
-
-      box = Box.createHorizontalBox();
-      box.setAlignmentX(0);
-      csvTab.add(box);
-
-      box.add(new JLabel(messageHandler.getLabel("preferences.csv.esc")));
-
-      bg = new ButtonGroup();
-
-      noEscCharButton = createRadioButton("preferences.csv", "noesc", bg);
-      box.add(noEscCharButton);
-
-      box.add(Box.createHorizontalStrut(10));
-      box.add(new JLabel(messageHandler.getLabel("preferences.csv.or")));
-      box.add(Box.createHorizontalStrut(10));
-
-      escCharButton = createRadioButton("preferences.csv", "escchar", bg);
-      box.add(escCharButton);
-
-      escCharField = new CharField('\\');
-      box.add(escCharField);
-
-      box = Box.createHorizontalBox();
-      box.setAlignmentX(0);
-      csvTab.add(box);
-
-      csvEncodingBox = new JComboBox<Charset>(
-        Charset.availableCharsets().values().toArray(new Charset[0]));
-      box.add(createLabel("preferences.csv.encoding", csvEncodingBox));
-      box.add(csvEncodingBox);
-*/
-
       return csvTab;
    }
 
@@ -446,47 +357,6 @@ public class PropertiesDialog extends JDialog
 
       importComp.add(msgArea);
 
-/*
-      mapTeXBox = createCheckBox("preferences.tex", "map");
-      mapTeXBox.addActionListener(this);
-      mapTeXBox.setActionCommand("texmap");
-      importComp.add(mapTeXBox);
-
-      texMappingsComp = createNewRow(importComp, new BorderLayout());
-      texMapTable = new JTable();
-      texMapTable.addMouseListener(this);
-      texMapTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-      texMapTable.setBorder(BorderFactory.createEtchedBorder());
-      texMapTable.setIntercellSpacing(new Dimension(6, 1));
-
-      FontMetrics fm = texMapTable.getFontMetrics(texMapTable.getFont());
-
-      int rowHeight = fm.getHeight()+6;
-      texMapTable.setRowHeight(rowHeight);
-
-      JScrollPane sp = new JScrollPane(texMapTable);
-      sp.setBorder(BorderFactory.createEmptyBorder());
-
-      sp.setPreferredSize(new Dimension(150, 11*rowHeight));
-      texMappingsComp.add(sp, BorderLayout.CENTER);
-
-      JComponent buttonPanel = Box.createVerticalBox();
-      texMappingsComp.add(buttonPanel, BorderLayout.EAST);
-
-      buttonPanel.add(resources.createActionButton(
-         "preferences.tex", "add_map", "increase", this, null));
-
-      editMapButton = resources.createActionButton(
-         "preferences.tex", "edit_map", "edit", this, null);
-      buttonPanel.add(editMapButton);
-
-      removeMapButton = resources.createActionButton(
-         "preferences.tex", "remove_map", "decrease", this, null);
-      buttonPanel.add(removeMapButton);
-
-      texMapTable.getSelectionModel().addListSelectionListener(this);
-*/
-
       return texTab;
    }
 
@@ -553,13 +423,15 @@ public class PropertiesDialog extends JDialog
       box.add(fontBox);
 
       box = createNewRow(leftPanel);
-      sizeField = new NonNegativeIntField(10);
+      fontSizeModel = new SpinnerNumberModel(10, 1, 1000, 1);
+      JSpinner sizeField = new JSpinner(fontSizeModel);
 
       box.add(createLabel(labelGrp, "preferences.display.fontsize", sizeField));
       box.add(sizeField);
 
       box = createNewRow(leftPanel);
-      cellHeightField = new NonNegativeIntField(4);
+      cellHeightModel = new SpinnerNumberModel(4, 1, 1000, 1);
+      JSpinner cellHeightField = new JSpinner(cellHeightModel);
 
       box.add(createLabel(labelGrp,
          "preferences.display.cellheight", cellHeightField));
@@ -582,14 +454,18 @@ public class PropertiesDialog extends JDialog
 
       labelGrp = new JLabelGroup();
 
-      editorHeightField = new NonNegativeIntField(10);
+      editorHeightModel = new SpinnerNumberModel(10, 1, 1000, 1);
+      JSpinner editorHeightField = new JSpinner(editorHeightModel);
+
       box.add(createLabel(labelGrp, "preferences.display.editorheight",
          editorHeightField));
       box.add(editorHeightField);
 
       box = createNewRow(editorBox);
 
-      editorWidthField = new NonNegativeIntField(8);
+      editorWidthModel = new SpinnerNumberModel(8, 1, 1000, 1);
+      JSpinner editorWidthField = new JSpinner(editorWidthModel);
+
       box.add(createLabel(labelGrp, "preferences.display.editorwidth",
          editorWidthField));
       box.add(editorWidthField);
@@ -661,23 +537,24 @@ public class PropertiesDialog extends JDialog
       String[] typeLabels = settings.getTypeLabels();
       int[] typeMnemonics = settings.getTypeMnemonics();
 
-      cellWidthFields = new NonNegativeIntField[typeLabels.length];
+      cellWidthModels = new SpinnerNumberModel[typeLabels.length];
       labelGrp = new JLabelGroup();
 
-      for (int i = 0; i < cellWidthFields.length; i++)
+      for (int i = 0; i < cellWidthModels.length; i++)
       {
          box = createNewRow(cellWidthsPanel);
-         cellWidthFields[i] = new NonNegativeIntField(0);
+         cellWidthModels[i] = new SpinnerNumberModel(0, 0, 1000, 1);
+         JSpinner spinner = new JSpinner(cellWidthModels[i]);
          JLabel label = labelGrp.createJLabel(typeLabels[i]);
 
          if (typeMnemonics[i] != -1)
          {
             label.setDisplayedMnemonic(typeMnemonics[i]);
-            label.setLabelFor(cellWidthFields[i]);
+            label.setLabelFor(spinner);
          }
 
          box.add(label);
-         box.add(cellWidthFields[i]);
+         box.add(spinner);
       }
 
       return displayTab;
@@ -1016,57 +893,6 @@ public class PropertiesDialog extends JDialog
 
       csvSettingsPanel.setCsvSettingsFrom(settings);
 
-/*
-      int sep = settings.getSeparator();
-
-      if (sep == '\t')
-      {
-         sepTabButton.setSelected(true);
-         sepCharField.setEnabled(false);
-      }
-      else
-      {
-         sepCharButton.setSelected(true);
-         sepCharField.setEnabled(true);
-         sepCharField.setValue(sep);
-      }
-
-      delimCharField.setValue(settings.getDelimiter());
-
-      hasHeaderBox.setSelected(settings.hasCSVHeader());
-      strictQuotesBox.setSelected(settings.hasCSVstrictquotes());
-
-      skipLinesBox.setValue(Integer.valueOf(settings.getCSVskiplines()));
-
-      int esc = settings.getCSVescape();
-
-      if (esc == 0)
-      {
-         noEscCharButton.setSelected(true);
-         escCharField.setEnabled(false);
-      }
-      else
-      {
-         escCharButton.setSelected(true);
-         escCharField.setEnabled(true);
-         escCharField.setValue(esc);
-      }
-
-      encoding = settings.getCsvEncoding();
-
-      if (encoding == null)
-      {
-         csvEncodingBox.setSelectedItem(Charset.defaultCharset());
-      }
-      else
-      {
-         csvEncodingBox.setSelectedItem(Charset.forName(encoding));
-      }
-
-      mapTeXBox.setSelected(settings.isTeXMappingOn());
-      texMappingsComp.setVisible(mapTeXBox.isSelected());
-*/
-
       hostField.setText(settings.getSqlHost());
       prefixField.setText(settings.getSqlPrefix());
       portField.setValue(settings.getSqlPort());
@@ -1127,18 +953,18 @@ public class PropertiesDialog extends JDialog
          texEncodingBox.setSelectedItem(Charset.forName(encoding));
       }
 
-      sizeField.setValue(settings.getFontSize());
+      fontSizeModel.setValue(Integer.valueOf(settings.getFontSize()));
       fontBox.setSelectedItem(settings.getFontName());
-      cellHeightField.setValue(settings.getCellHeight());
+      cellHeightModel.setValue(Integer.valueOf(settings.getCellHeight()));
 
-      for (int i = 0; i < cellWidthFields.length; i++)
+      for (int i = 0; i < cellWidthModels.length; i++)
       {
-         cellWidthFields[i].setValue(
-           settings.getCellWidth(DatumType.toDatumType(i-1)));
+         cellWidthModels[i].setValue(
+           Integer.valueOf(settings.getCellWidth(DatumType.toDatumType(i-1))));
       }
 
-      editorHeightField.setValue(settings.getCellEditorHeight());
-      editorWidthField.setValue(settings.getCellEditorWidth());
+      editorHeightModel.setValue(Integer.valueOf(settings.getCellEditorHeight()));
+      editorWidthModel.setValue(Integer.valueOf(settings.getCellEditorWidth()));
       syntaxHighlightingBox.setSelected(settings.isSyntaxHighlightingOn());
       highlightCsSwatch.setBackground(settings.getControlSequenceHighlight());
       highlightCommentSwatch.setBackground(settings.getCommentHighlight());
@@ -1158,11 +984,6 @@ public class PropertiesDialog extends JDialog
          }
       }
 
-/*
-      texMapModel = new TeXMapModel(this, texMapTable, settings);
-      texMapTable.setModel(texMapModel);
-*/
-
       currencyListModel = new CurrencyListModel(currencyList, settings);
 
       Long seed = settings.getRandomSeed();
@@ -1180,7 +1001,6 @@ public class PropertiesDialog extends JDialog
       }
 
       autoTrimBox.setSelected(settings.isAutoTrimLabelsOn());
-      //skipEmptyRowsBox.setSelected(settings.isSkipEmptyRowsOn());
 
       helpsetLangBox.setSelectedItem(settings.getHelpSet());
       dictLangBox.setSelectedItem(settings.getDictionary());
@@ -1300,12 +1120,6 @@ public class PropertiesDialog extends JDialog
          {
             currencyListModel.editCurrency(currencyList.getSelectedIndex());
          }
-/*
-         else if (source == texMapTable)
-         {
-            texMapModel.editRow(texMapTable.getSelectedRow());
-         }
-*/
       }
    }
 
@@ -1361,53 +1175,6 @@ public class PropertiesDialog extends JDialog
          customFileField.setEnabled(true);
          customFileField.requestFocusInWindow();
       }
-/*
-      else if (action.equals("tabsep"))
-      {
-         sepCharField.setEnabled(false);
-      }
-      else if (action.equals("sepchar"))
-      {
-         sepCharField.setEnabled(true);
-         sepCharField.requestFocusInWindow();
-      }
-      else if (action.equals("noesc"))
-      {
-         escCharField.setEnabled(false);
-         escCharField.requestFocusInWindow();
-      }
-      else if (action.equals("escchar"))
-      {
-         escCharField.setEnabled(true);
-         escCharField.requestFocusInWindow();
-      }
-      else if (action.equals("texmap"))
-      {
-         texMappingsComp.setVisible(mapTeXBox.isSelected());
-      }
-      else if (action.equals("add_map"))
-      {
-         texMapModel.addRow();
-      }
-      else if (action.equals("edit_map"))
-      {
-         int index = texMapTable.getSelectedRow();
-
-         if (index > -1)
-         {
-            texMapModel.editRow(index);
-         }
-      }
-      else if (action.equals("remove_map"))
-      {
-         int index = texMapTable.getSelectedRow();
-
-         if (index > -1)
-         {
-            texMapModel.removeRow(index);
-         }
-      }
-*/
       else if (action.equals("add_currency"))
       {
          currencyListModel.addCurrency();
@@ -1578,12 +1345,6 @@ public class PropertiesDialog extends JDialog
 
    private void updateButtons()
    {
-/*
-      boolean enabled = texMapTable.getSelectedRow() != -1;
-      editMapButton.setEnabled(enabled);
-      removeMapButton.setEnabled(enabled);
-*/
-
       boolean enabled = currencyList.getSelectedIndex() != -1;
       editCurrencyButton.setEnabled(enabled);
       removeCurrencyButton.setEnabled(enabled);
@@ -1622,78 +1383,6 @@ public class PropertiesDialog extends JDialog
         ((Number)initialColumnCapacitySpinner.getValue()).intValue());
 
       csvSettingsPanel.applyCsvSettingsTo(settings);
-
-/*
-      if (sepTabButton.isSelected())
-      {
-         settings.setSeparator('\t');
-      }
-      else
-      {
-         int sep = sepCharField.getValue();
-
-         if (sep == 0)
-         {
-            throw new IllegalArgumentException( 
-               getMessageHandler().getLabel("error.missing_sep"));
-         }
-         else if (sep >= 0xFFFF)
-         {
-            throw new IllegalArgumentException( 
-               getMessageHandler().getLabelWithValues("error.char_sep_required", 
-               MessageHandler.codePointToString(sep), 
-               "0xFFFF"));
-         }
-
-         settings.setSeparator(sep);
-      }
-
-      int delim = delimCharField.getValue();
-
-      if (delim == 0)
-      {
-         throw new IllegalArgumentException( 
-            getMessageHandler().getLabel("error.missing_delim"));
-      }
-      else if (delim >= 0xFFFF)
-      {
-         throw new IllegalArgumentException( 
-            getMessageHandler().getLabelWithValues("error.char_delim_required", 
-            MessageHandler.codePointToString(delim), 
-            "0xFFFF"));
-      }
-
-      settings.setDelimiter(delim);
-
-      settings.setHasCSVHeader(hasHeaderBox.isSelected());
-      settings.setCSVstrictquotes(strictQuotesBox.isSelected());
-
-      settings.setCSVskiplines((Integer)skipLinesBox.getValue());
-
-      if (noEscCharButton.isSelected())
-      {
-         settings.setCSVescape("");
-      }
-      else
-      {
-         int escChar = escCharField.getValue();
-
-         if (escChar >= 0xFFFF)
-         {
-            throw new IllegalArgumentException( 
-               getMessageHandler().getLabelWithValues("error.char_esc_required", 
-               MessageHandler.codePointToString(escChar), 
-               "0xFFFF"));
-         }
-
-         settings.setCSVescape(escChar);
-      }
-
-      settings.setCsvEncoding((Charset)csvEncodingBox.getSelectedItem());
-
-      settings.setTeXMapping(mapTeXBox.isSelected());
-      texMapModel.updateSettings();
-*/
 
       String host = hostField.getText();
 
@@ -1758,17 +1447,17 @@ public class PropertiesDialog extends JDialog
       currencyListModel.updateSettings();
 
       settings.setFontName(fontBox.getSelectedItem().toString());
-      settings.setFontSize(sizeField.getValue());
-      settings.setCellHeight(cellHeightField.getValue());
+      settings.setFontSize(fontSizeModel.getNumber().intValue());
+      settings.setCellHeight(cellHeightModel.getNumber().intValue());
 
-      for (int i = 0; i < cellWidthFields.length; i++)
+      for (int i = 0; i < cellWidthModels.length; i++)
       {
-         settings.setCellWidth(cellWidthFields[i].getValue(), 
+         settings.setCellWidth(cellWidthModels[i].getNumber().intValue(), 
           DatumType.toDatumType(i-1));
       }
 
-      settings.setCellEditorHeight(editorHeightField.getValue());
-      settings.setCellEditorWidth(editorWidthField.getValue());
+      settings.setCellEditorHeight(editorHeightModel.getNumber().intValue());
+      settings.setCellEditorWidth(editorWidthModel.getNumber().intValue());
       settings.setSyntaxHighlighting(syntaxHighlightingBox.isSelected());
 
       settings.setControlSequenceHighlight(highlightCsSwatch.getBackground());
@@ -1794,7 +1483,6 @@ public class PropertiesDialog extends JDialog
       }
 
       settings.setAutoTrimLabels(autoTrimBox.isSelected());
-      //settings.setSkipEmptyRows(skipEmptyRowsBox.isSelected());
 
       settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
       settings.setDictionary(dictLangBox.getSelectedItem().toString());
@@ -1906,24 +1594,6 @@ public class PropertiesDialog extends JDialog
 
    private IOSettingsPanel csvSettingsPanel;
 
-/*
-   private JRadioButton sepTabButton, sepCharButton, 
-     noEscCharButton, escCharButton;
-
-   private CharField sepCharField, delimCharField, escCharField;
-
-   private JCheckBox hasHeaderBox, strictQuotesBox,
-      skipEmptyRowsBox;
-
-   private JSpinner skipLinesBox;
-
-   private JComboBox<Charset> csvEncodingBox;
-
-   private JCheckBox mapTeXBox;
-
-   private JComponent texMappingsComp;
-*/
-
    private JCheckBox wipeBox, 
       hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox, autoTrimBox;
 
@@ -1931,22 +1601,18 @@ public class PropertiesDialog extends JDialog
 
    private JFileChooser fileChooser;
 
-   private NonNegativeIntField portField, sizeField, cellHeightField,
-      seedField, editorHeightField, editorWidthField;
+   private SpinnerNumberModel fontSizeModel, cellHeightModel,
+      editorHeightModel, editorWidthModel;
 
-   private NonNegativeIntField[] cellWidthFields;
+   private NonNegativeIntField portField, seedField;
+
+   private SpinnerNumberModel[] cellWidthModels;
 
    private JTextField hostField, prefixField, databaseField, userField;
 
    private JButton removeCurrencyButton, editCurrencyButton;
 
    private JComboBox<String> fontBox;
-
-/*
-   private TeXMapModel texMapModel;
-   private JButton removeMapButton, editMapButton;
-   private JTable texMapTable;
-*/
 
    private JList<String> currencyList;
 
