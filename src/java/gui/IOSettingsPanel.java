@@ -403,7 +403,10 @@ public class IOSettingsPanel extends JPanel
           @Override
           public void mouseClicked(MouseEvent evt)
           {
-            texMapModel.editRow(texMapTable.getSelectedRow());
+             if (evt.getClickCount() == 2 && evt.getModifiersEx() == 0)
+             {
+                texMapModel.editRow(texMapTable.getSelectedRow());
+             }
           }
        });
       texMapTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
