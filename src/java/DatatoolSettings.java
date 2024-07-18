@@ -275,6 +275,8 @@ public class DatatoolSettings extends Properties
                in.close();
             }
          }
+
+         helpLib.setLargeIconSuffix(getLargeIconSuffix());
       }
    }
 
@@ -745,6 +747,23 @@ public class DatatoolSettings extends Properties
    {
       setWindowWidth(dim.width);
       setWindowHeight(dim.height);
+   }
+
+   public String getLargeIconSuffix()
+   {
+      String val = getProperty("largeiconsuffix");
+
+      if (val == null)
+      {
+         return "-24x24";
+      }
+
+      return val;
+   }
+
+   public void setLargeIconSuffix(String suffix)
+   {
+      setProperty("largeiconsuffix", suffix);
    }
 
    public void setLookAndFeel(String lookAndFeel)

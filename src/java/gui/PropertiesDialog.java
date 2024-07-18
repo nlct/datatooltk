@@ -37,7 +37,10 @@ import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+
+import com.dickimawbooks.texjavahelplib.IconSet;
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
 import com.dickimawbooks.datatooltk.*;
 
@@ -524,6 +527,27 @@ public class PropertiesDialog extends JDialog
       box.add(createLabel("preferences.display.lookandfeel", lookAndFeelBox));
       box.add(lookAndFeelBox);
 
+      lookAndFeelPanel.add(createLabel("preferences.display.buttonsize"));
+
+      box = createNewRow(lookAndFeelPanel);
+
+      ButtonGroup grp = new ButtonGroup();
+
+      IconSet icSet = getHelpLib().getHelpIconSet("preferences", "-24x24");
+      toolBarIconSizeButton24 = icSet.createIconRadioButton();
+      box.add(toolBarIconSizeButton24);
+      grp.add(toolBarIconSizeButton24);
+
+      icSet = getHelpLib().getHelpIconSet("preferences", "-32x32");
+      toolBarIconSizeButton32 = icSet.createIconRadioButton();
+      box.add(toolBarIconSizeButton32);
+      grp.add(toolBarIconSizeButton32);
+
+      icSet = getHelpLib().getHelpIconSet("preferences", "-64x64");
+      toolBarIconSizeButton64 = icSet.createIconRadioButton();
+      box.add(toolBarIconSizeButton64);
+      grp.add(toolBarIconSizeButton64);
+
       box = createNewRow(lookAndFeelPanel);
       box.add(createTextArea(4, 16, "preferences.display.lookandfeel.restart"));
 
@@ -982,6 +1006,21 @@ public class PropertiesDialog extends JDialog
                break;
             }
          }
+      }
+
+      String iconSuffix = settings.getLargeIconSuffix();
+
+      if (iconSuffix.equals("-64x64"))
+      {
+         toolBarIconSizeButton64.setSelected(true);
+      }
+      else if (iconSuffix.equals("-32x32"))
+      {
+         toolBarIconSizeButton32.setSelected(true);
+      }
+      else
+      {
+         toolBarIconSizeButton24.setSelected(true);
       }
 
       currencyListModel = new CurrencyListModel(currencyList, settings);
@@ -1471,6 +1510,19 @@ public class PropertiesDialog extends JDialog
             availableLookAndFeels[lookAndFeelIdx].getClassName()); 
       }
 
+      if (toolBarIconSizeButton64.isSelected())
+      {
+         settings.setLargeIconSuffix("-64x64");
+      }
+      else if (toolBarIconSizeButton32.isSelected())
+      {
+         settings.setLargeIconSuffix("-32x32");
+      }
+      else
+      {
+         settings.setLargeIconSuffix("-24x24");
+      }
+
       gui.updateTableSettings();
 
       if (hasSeedBox.isSelected())
@@ -1588,6 +1640,11 @@ public class PropertiesDialog extends JDialog
       return settings.getMessageHandler().getDatatoolGuiResources();
    }
 
+   public TeXJavaHelpLib getHelpLib()
+   {
+      return settings.getHelpLib();
+   }
+
    private DatatoolSettings settings;
 
    private JRadioButton homeButton, cwdButton, lastButton, customButton;
@@ -1651,6 +1708,8 @@ public class PropertiesDialog extends JDialog
    private JSpinner initialColumnCapacitySpinner;
 
    private JComboBox<String> lookAndFeelBox;
+   private JRadioButton toolBarIconSizeButton24,
+     toolBarIconSizeButton32, toolBarIconSizeButton64;
 
    private UIManager.LookAndFeelInfo[] availableLookAndFeels;
 
