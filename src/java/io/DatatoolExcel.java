@@ -25,6 +25,7 @@ import java.util.Vector;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -128,13 +129,13 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          }
 
          Vector<String> fields = new Vector<String>();
-         boolean skipEmpty = settings.isSkipEmptyRowsOn();
+         CsvBlankOption blankOpt = settings.getCsvBlankOption();
 
          int skipLines = settings.getCSVskiplines();
 
          for (int i = 0; i < skipLines; i++)
          {
-            if (readRow(rowIter, fields, skipEmpty) == null)
+            if (readRow(rowIter, fields, CsvBlankOption.EMPTY_ROW) == null)
             {
                return db;
             }
@@ -144,7 +145,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          {
             // First row is header
 
-            if (readRow(rowIter, fields, skipEmpty) == null)
+            if (readRow(rowIter, fields, blankOpt) == null)
             {
                return db;
             }
@@ -166,7 +167,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          {
             // First row of data
    
-            if (readRow(rowIter, fields, skipEmpty) == null)
+            if (readRow(rowIter, fields, blankOpt) == null)
             {
                return db;
             }
@@ -184,7 +185,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
             rowIdx++;
          }
    
-         while (readRow(rowIter, fields, skipEmpty) != null)
+         while (readRow(rowIter, fields, blankOpt) != null)
          {
             for (int colIdx = 0, n = fields.size(); colIdx < n; colIdx++)
             {
@@ -205,13 +206,13 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
    }
 
    public Vector<String> readRow(Iterator<Row> rowIter, Vector<String> fields,
-     boolean skipEmpty)
+     CsvBlankOption blankOpt)
    {
       if (!rowIter.hasNext()) return null;
 
       Row row = rowIter.next();
 
-      if (skipEmpty)
+      if (blankOpt != CsvBlankOption.EMPTY_ROW)
       {
          boolean empty = true;
 
@@ -228,7 +229,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
 
             if (empty)
             {
-               if (!rowIter.hasNext())
+               if (!rowIter.hasNext() || blankOpt == CsvBlankOption.END)
                {
                   return null;
                }

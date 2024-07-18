@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@ import java.awt.Point;
 
 import org.jopendocument.dom.spreadsheet.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -130,18 +131,19 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
 
          for (int i = 0; i < skipLines && rowIdx < rowCount; i++)
          {
-            rowIdx = readRow(sheet, rowIdx, fields, false, rowCount);
+            rowIdx = readRow(sheet, rowIdx, fields,
+               CsvBlankOption.EMPTY_ROW, rowCount);
          }
 
          if (rowIdx >= rowCount) return db;
 
-         boolean skipEmptyRows = settings.isSkipEmptyRowsOn();
+         CsvBlankOption blankOpt = settings.getCsvBlankOption();
 
          if (settings.hasCSVHeader())
          {
             // First row is header
 
-            rowIdx = readRow(sheet, rowIdx, fields, skipEmptyRows, rowCount);
+            rowIdx = readRow(sheet, rowIdx, fields, blankOpt, rowCount);
          }
          else
          {
@@ -162,7 +164,12 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
 
          while (rowIdx < rowCount)
          {
-            rowIdx = readRow(sheet, rowIdx, fields, skipEmptyRows, rowCount);
+            rowIdx = readRow(sheet, rowIdx, fields, blankOpt, rowCount);
+
+            if (rowIdx == -1)
+            {
+               break;
+            }
 
             for (int colIdx = 0; colIdx < fields.length; colIdx++)
             {
@@ -183,9 +190,9 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
    }
 
    private int readRow(Sheet sheet, int rowIdx, String[] fields, 
-     boolean skipEmpty, int rowCount)
+     CsvBlankOption blankOpt, int rowCount)
    {
-      if (skipEmpty)
+      if (blankOpt != CsvBlankOption.EMPTY_ROW)
       {
          boolean isEmpty = true;
 
@@ -202,7 +209,17 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
                }
             }
 
+            if (isEmpty && blankOpt == CsvBlankOption.END)
+            {
+               return -1;
+            }
+
             rowIdx++;
+         }
+
+         if (isEmpty && rowIdx == rowCount)
+         {
+            return -1;
          }
       }
       else

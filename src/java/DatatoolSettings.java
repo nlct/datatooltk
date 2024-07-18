@@ -19,8 +19,11 @@
 package com.dickimawbooks.datatooltk;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.nio.charset.Charset;
 
+import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Locale;
 import java.util.Properties;
@@ -44,6 +47,9 @@ import org.xml.sax.SAXException;
 import com.dickimawbooks.texparserlib.TeXApp;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
+import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
+import com.dickimawbooks.texparserlib.latex.datatool.AddDelimiterOption;
+import com.dickimawbooks.texparserlib.latex.datatool.EscapeCharsOption;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
@@ -245,98 +251,331 @@ public class DatatoolSettings extends Properties
       }
    }
 
-   public void loadProperties()
-      throws IOException,InvalidPropertiesFormatException
+   protected void loadMainProperties()
+     throws IOException
    {
-      if (propertiesPath == null) return;
+      File file = new File(propertiesPath, PROPERTIES_NAME);
 
-      File file = new File(propertiesPath, propertiesName);
-
-      BufferedReader reader = null;
-      InputStream in = null;
-
-      try
+      if (file.exists())
       {
-         if (file.exists())
+         InputStream in = null;
+
+         try
          {
             in = new FileInputStream(file);
 
             loadFromXML(in);
+         }
+         finally
+         {
+            setDefaultTeXMaps();
 
-            in.close();
-            in = null;
-
-            if (getProperty("version") == null)
+            if (in != null)
             {
-               upgrade=true;
+               in.close();
+            }
+         }
+      }
+   }
 
-               if (getProperty("tex.&") == null)
+   protected void loadTeXMappings()
+     throws IOException
+   {
+      File file = new File(propertiesPath, TEX_MAP_NAME);
+
+      if (file.exists())
+      {
+         BufferedReader in = null;
+
+         try
+         {
+            in = Files.newBufferedReader(file.toPath());
+
+            String line;
+
+            while ((line = in.readLine()) != null)
+            {
+               if (line.startsWith("#") || line.isEmpty()) continue;
+
+               Matcher m = PATTERN_TEX_MAP.matcher(line);
+
+               if (m.matches())
                {
-                  setTeXMap((int)'&', "\\&");// missing from pre v1.7
+                  try
+                  {
+                     setTeXMap(Integer.parseInt(m.group(1), 16), m.group(2));
+                  }
+                  catch (NumberFormatException e)
+                  {
+                     messageHandler.debug(e);
+                  }
                }
             }
          }
-         else
+         finally
          {
-            setDefaultTeXMaps();
+            if (in != null)
+            {
+               in.close();
+            }
          }
-
-         setProperty("version", DatatoolTk.APP_VERSION);
-
-         file = new File(propertiesPath, recentName);
-
-         if (file.exists())
+      }
+      else
+      {
+         for (String key : stringPropertyNames())
          {
-            reader = new BufferedReader(new FileReader(file));
+            Matcher m = PATTERN_OLDER_TEX_MAP.matcher(key);
+
+            if (m.matches())
+            {
+               setTeXMap(m.group(1).codePointAt(0), getProperty(key));
+               remove(key);
+            }
+            else
+            {
+               m = PATTERN_OLD_TEX_MAP.matcher(key);
+
+               if (m.matches())
+               {
+                  try
+                  {
+                     setTeXMap(Integer.parseInt(m.group(1)), getProperty(key));
+                  }
+                  catch (NumberFormatException e)
+                  {
+                     // shouldn't happen
+                     messageHandler.debug(e);
+                  }
+
+                  remove(key);
+               }
+            }
+         }
+      }
+   }
+
+   protected void loadRecentFiles()
+     throws IOException
+   {
+      File file = new File(propertiesPath, RECENT_NAME);
+
+      if (file.exists())
+      {
+         BufferedReader in = null;
+
+         try
+         {
+            in = Files.newBufferedReader(file.toPath());
 
             recentFiles.clear();
 
             String line;
 
-            while ((line=reader.readLine()) != null)
+            while ((line = in.readLine()) != null)
             {
-               recentFiles.add(line);
+               if (!line.isEmpty())
+               {
+                  File f = new File(line);
+
+                  if (f.exists())
+                  {
+                     recentFiles.add(line);
+                  }
+               }
             }
-
-            reader.close();
-            reader = null;
          }
-
-         file = new File(propertiesPath, currencyFileName);
-
-         if (file.exists())
+         finally
          {
-            reader = new BufferedReader(new FileReader(file));
+            if (in != null)
+            {
+               in.close();
+            }
+         }
+      }
+   }
+
+   protected void loadCurrencies()
+     throws IOException
+   {
+      File file = new File(propertiesPath, CURRENCY_FILE_NAME);
+
+      if (file.exists())
+      {
+         BufferedReader in = null;
+
+         try
+         {
+            in = Files.newBufferedReader(file.toPath());
 
             currencies.clear();
 
             String line;
 
-            while ((line=reader.readLine()) != null)
+            while ((line = in.readLine()) != null)
             {
-               currencies.add(line);
+               if (!line.isEmpty())
+               {
+                  currencies.add(line);
+               }
             }
-
-            reader.close();
-            reader = null;
          }
-         else
+         finally
          {
-            setDefaultCurrency();
+            if (in != null)
+            {
+               in.close();
+            }
+         }
+      }
+      else
+      {
+         setDefaultCurrency();
+      }
+   }
+
+   public void loadProperties()
+      throws IOException,InvalidPropertiesFormatException
+   {
+      if (propertiesPath == null) return;
+
+      loadMainProperties();
+
+      String lastVersion = getProperty("version");
+
+      if (lastVersion == null
+            || lastVersion.compareTo(DatatoolTk.APP_VERSION) < 0)
+      {
+         upgrade=true;
+
+         if (lastVersion == null
+            || lastVersion.compareTo("2.0") < 0)
+         {
+            for (String key : stringPropertyNames())
+            {
+               if (key.equals("skip-empty-rows"))
+               {
+                  if (Boolean.parseBoolean(getProperty(key)))
+                  {
+                     setCsvBlankOption(CsvBlankOption.IGNORE);
+                  }
+                  else
+                  {
+                     setCsvBlankOption(CsvBlankOption.EMPTY_ROW);
+                  }
+
+                  remove(key);
+               }
+            }
+         }
+      }
+
+      loadTeXMappings();
+
+      if (texMap == null)
+      {
+         setDefaultTeXMaps();
+      }
+
+      loadRecentFiles();
+      loadCurrencies();
+   }
+
+   protected void saveMainProperties()
+    throws IOException
+   {
+      File file = new File(propertiesPath, PROPERTIES_NAME);
+
+      FileOutputStream out = null;
+
+      try
+      {
+         out = new FileOutputStream(file);
+
+         storeToXML(out, null);
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+      }
+   }
+
+   protected void saveTeXMappings()
+    throws IOException
+   {
+      File file = new File(propertiesPath, TEX_MAP_NAME);
+
+      PrintWriter out = null;
+
+      try
+      {
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath(),
+           StandardOpenOption.CREATE));
+
+         for (Integer key : texMap.keySet())
+         {
+            out.format("%04x=%s%n", key.intValue(), texMap.get(key));
          }
       }
       finally
       {
-         if (in != null)
+         if (out != null)
          {
-            in.close();
-            in = null;
+            out.close();
          }
+      }
+   }
 
-         if (reader != null)
+   protected void saveRecentFiles()
+    throws IOException
+   {
+      File file = new File(propertiesPath, RECENT_NAME);
+
+      PrintWriter out = null;
+
+      try
+      {
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath(),
+           StandardOpenOption.CREATE));
+
+         for (String filename : recentFiles)
          {
-            reader.close();
-            reader = null;
+            out.println(filename);
+         }
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+      }
+   }
+
+   protected void saveCurrencies()
+    throws IOException
+   {
+      File file = new File(propertiesPath, CURRENCY_FILE_NAME);
+
+      PrintWriter out = null;
+
+      try
+      {
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath(),
+           StandardOpenOption.CREATE));
+
+         for (String currency : currencies)
+         {
+            out.println(currency);
+         }
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
          }
       }
    }
@@ -346,59 +585,10 @@ public class DatatoolSettings extends Properties
    {
       if (propertiesPath == null) return;
 
-      File file = new File(propertiesPath, propertiesName);
-
-      FileOutputStream out = null;
-
-      PrintWriter writer = null;
-
-      try
-      {
-         out = new FileOutputStream(file);
-
-         storeToXML(out, null);
-
-         out.close();
-         out = null;
-
-         file = new File(propertiesPath, recentName);
-
-         writer = new PrintWriter(new FileWriter(file));
-
-         for (String name : recentFiles)
-         {
-            writer.println(name);
-         }
-
-         writer.close();
-         writer = null;
-
-         file = new File(propertiesPath, currencyFileName);
-
-         writer = new PrintWriter(new FileWriter(file));
-
-         for (String currency : currencies)
-         {
-            writer.println(currency);
-         }
-
-         writer.close();
-         writer = null;
-      }
-      finally
-      {
-         if (out != null)
-         {
-            out.close();
-            out = null;
-         }
-
-         if (writer != null)
-         {
-            writer.close();
-            writer = null;
-         }
-      }
+      saveMainProperties();
+      saveTeXMappings();
+      saveRecentFiles();
+      saveCurrencies();
    }
 
    public void clearRecentFiles()
@@ -1239,6 +1429,8 @@ public class DatatoolSettings extends Properties
       setProperty("csvstrictquotes", ""+strictquotes);
    }
 
+// TODO deprecate?
+// make equivalent to EscapeCharsOption.ESC_DELIM_BKSL/DOUBLE_DELIM
    public int getCSVescape()
    {
       String prop = getProperty("csvescape");
@@ -1267,17 +1459,61 @@ public class DatatoolSettings extends Properties
       setProperty("skip-empty-rows", ""+enable);
    }
 
+   @Deprecated
    public boolean isSkipEmptyRowsOn()
    {
-      String prop = getProperty("skip-empty-rows");
+      return getCsvBlankOption() == CsvBlankOption.IGNORE;
+   }
 
-      if (prop == null)
+   public void setCsvBlankOption(CsvBlankOption opt)
+   {
+      setProperty("csv-blank", opt.toString());
+   }
+
+   public CsvBlankOption getCsvBlankOption()
+   {
+      String val = getProperty("csv-blank");
+
+      if (val != null)
       {
-         setSkipEmptyRows(true);
-         return true;
+         return CsvBlankOption.valueOf(val);
       }
 
-      return Boolean.parseBoolean(prop);
+      return CsvBlankOption.IGNORE;
+   }
+
+   public void setEscapeCharsOption(EscapeCharsOption opt)
+   {
+      setProperty("csv-esc-chars", opt.toString());
+   }
+
+   public EscapeCharsOption getEscapeCharsOption()
+   {
+      String val = getProperty("csv-esc-chars");
+
+      if (val != null)
+      {
+         return EscapeCharsOption.valueOf(val);
+      }
+
+      return EscapeCharsOption.DOUBLE_DELIM;
+   }
+
+   public void setAddDelimiterOption(AddDelimiterOption opt)
+   {
+      setProperty("csv-add-delim", opt.toString());
+   }
+
+   public AddDelimiterOption getAddDelimiterOption()
+   {
+      String val = getProperty("csv-add-delim");
+
+      if (val != null)
+      {
+         return AddDelimiterOption.valueOf(val);
+      }
+
+      return AddDelimiterOption.DETECT;
    }
 
    public int getCSVskiplines()
@@ -1513,53 +1749,78 @@ public class DatatoolSettings extends Properties
       return Boolean.parseBoolean(prop);
    }
 
+   public boolean isLiteralContent()
+   {
+      String prop = getProperty("literalcontent");
+
+      if (prop == null || prop.isEmpty())
+      {
+         return isTeXMappingOn();
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setLiteralContent(boolean on)
+   {
+      setProperty("literalcontent", ""+on);
+   }
+
    public boolean isTeXMappingOn()
    {
       String prop = getProperty("subtexspecials");
 
       if (prop == null || prop.isEmpty())
       {
-         setTeXMapping(false);
-         return false;
+         return true;
       }
 
       return Boolean.parseBoolean(prop);
    }
 
+   public HashMap<Integer,String> getTeXMappings()
+   {
+      return texMap;
+   }
+
    public String getTeXMap(int codePoint)
    {
-      if (upgrade)
+      return getTeXMap(Integer.valueOf(codePoint));
+   }
+
+   public String getTeXMap(Integer codePoint)
+   {
+      if (texMap != null)
       {
-         // backward compatibility check first
-
-         String key = String.format("tex.%c", codePoint);
-
-         String prop = getProperty(key);
-
-         if (prop != null)
-         {
-            remove(key);
-            setProperty(getTeXMapKey(codePoint), prop);
-            return prop;
-         }
+         return texMap.get(codePoint);
       }
 
-      return getProperty(getTeXMapKey(codePoint));
+      return null;
    }
 
    public String removeTeXMap(int codePoint)
    {
-      return (String)remove(getTeXMapKey(codePoint));
+      return removeTeXMap(Integer.valueOf(codePoint));
+   }
+
+   public String removeTeXMap(Integer codePoint)
+   {
+      return texMap == null ? null : texMap.remove(codePoint);
    }
 
    public void setTeXMap(int codePoint, String value)
    {
-      setProperty(getTeXMapKey(codePoint), value);
+      setTeXMap(Integer.valueOf(codePoint), value);
    }
 
-   private String getTeXMapKey(int codePoint)
+   public void setTeXMap(Integer codePoint, String value)
    {
-      return String.format("tex.%04d", codePoint);
+      if (texMap == null)
+      {
+         texMap = new HashMap<Integer,String>();
+      }
+
+      texMap.put(codePoint, value);
    }
 
    public int getCurrencyCount()
@@ -2320,13 +2581,17 @@ public class DatatoolSettings extends Properties
 
    private Vector<String> recentFiles;
 
+   private HashMap<Integer,String> texMap;
+
    private File propertiesPath = null;
 
-   private final String propertiesName="datatooltk.prop";
+   private static final String PROPERTIES_NAME = "datatooltk.prop";
 
-   private final String recentName = "recentfiles";
+   private static final String TEX_MAP_NAME = "texmap.prop";
 
-   private final String currencyFileName = "currencies";
+   private static final String RECENT_NAME = "recentfiles";
+
+   private final String CURRENCY_FILE_NAME = "currencies";
 
    private boolean upgrade=false;
 
@@ -2368,6 +2633,19 @@ public class DatatoolSettings extends Properties
 
    public static final Pattern PATTERN_DICT 
      = Pattern.compile("datatooltk-([a-z]{2}(?:-[A-Z]{2})?(?:-[A-Z][a-z]{3})?)\\.xml");
+
+   // old TeX map property setting with key "tex.<c>" where <c> is
+   // the character to map
+   public static final Pattern PATTERN_OLDER_TEX_MAP
+    = Pattern.compile("tex\\.(.)");
+
+   // TeX map property setting with key "tex.<hex>" where <hex> is
+   // the character code point to map
+   public static final Pattern PATTERN_OLD_TEX_MAP
+    = Pattern.compile("tex\\.([0-9]{4})");
+
+   public static final Pattern PATTERN_TEX_MAP
+    = Pattern.compile("([0-9a-fA-F].+)=(.+)");
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;

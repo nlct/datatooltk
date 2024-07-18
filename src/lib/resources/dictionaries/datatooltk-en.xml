@@ -244,6 +244,107 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <entry key="about.version">{0} {1} ({2})</entry>
 
+<!-- I/O Settings Panel -->
+
+<entry key="iosettings.format">File Format:</entry>
+
+<entry key="iosettings.format.tex">LaTeX</entry>
+<entry key="iosettings.format.dtltex">dtltex</entry>
+<entry key="iosettings.format.dtltex-2">dtltex v2.0</entry>
+<entry key="iosettings.format.dtltex-3">dtltex v3.0</entry>
+<entry key="iosettings.format.dbtex">dbtex</entry>
+<entry key="iosettings.format.dbtex-2">dbtex v2.0</entry>
+<entry key="iosettings.format.dbtex-3">dbtex v3.0</entry>
+<entry key="iosettings.format.csv">CSV</entry>
+<entry key="iosettings.format.tsv">TSV</entry>
+
+<entry key="iosettings.element.trim">Trim elements</entry>
+
+<entry key="iosettings.csvtsv.optionsonly.note">These options are only applicable to CSV/TSV files, not to spreadsheets or SQL imports.</entry>
+<entry key="iosettings.imports_all.note">These options are applicable to all non-TeX imported sources (CSV/TSV, spreadsheets and SQL queries).</entry>
+<entry key="iosettings.csvspreadsheets.note">These options are applicable to CSV/TSV files and spreadsheets.</entry>
+
+<entry key="iosettings.csv.sep">Separator:</entry>
+
+<entry key="iosettings.csv.sepchar">Character</entry>
+<entry key="iosettings.csv.sepchar.mnemonic">A</entry>
+
+<entry key="iosettings.csv.or">Or</entry>
+
+<entry key="iosettings.csv.tabsep">Tab</entry>
+<entry key="iosettings.csv.tabsep.mnemonic">T</entry>
+
+<entry key="iosettings.csv.delim">Delimiter: </entry>
+<entry key="iosettings.csv.delim.mnemonic">D</entry>
+
+<entry key="iosettings.csv.strictquotes">Strict quotes</entry>
+<entry key="iosettings.csv.strictquotes.mnemonic">R</entry>
+<entry key="iosettings.csv.strictquotes.tooltip">If set, characters outside of quotes will be ignored</entry>
+
+<entry key="iosettings.csv.skiplines">Number of lines to skip at the start:</entry>
+<entry key="iosettings.csv.skiplines.mnemonic">K</entry>
+
+<entry key="iosettings.csv.blank">Blank rows:</entry>
+<entry key="iosettings.csv.blank.mnemonic">B</entry>
+
+<entry key="iosettings.csv.blank.ignore">Ignore</entry>
+<entry key="iosettings.csv.blank.empty-row">Create empty row</entry>
+<entry key="iosettings.csv.blank.end">End parsing</entry>
+
+<entry key="iosettings.csv.escchars">Problematic characters in cell content:</entry>
+<entry key="iosettings.csv.escchars.none">None</entry>
+<entry key="iosettings.csv.escchars.none.tooltip">No characters are escaped</entry>
+<entry key="iosettings.csv.escchars.double-delim">Double Delimiter</entry>
+<entry key="iosettings.csv.escchars.double-delim.tooltip">Delimiter doubled if occurring in cell content</entry>
+
+<entry key="iosettings.csv.escchars.delim">Escape Delimiter</entry>
+<entry key="iosettings.csv.escchars.delim.tooltip">Delimiter escaped with backslash</entry>
+
+<entry key="iosettings.csv.escchars.delim+bksl">Escape Delimiter and Backslash</entry>
+<entry key="iosettings.csv.escchars.delim+bksl.tooltip">Delimiter and backslash escaped with backslash</entry>
+
+<entry key="iosettings.csv.add_delim">Add Delimiter:</entry>
+
+<entry key="iosettings.csv.add_delim.always">Always</entry>
+
+<entry key="iosettings.csv.add_delim.detect">Detect</entry>
+
+<entry key="iosettings.csv.add_delim.never">Never</entry>
+
+<entry key="iosettings.csv.content">Content:</entry>
+<entry key="iosettings.csv.content.literal">Literal</entry>
+<entry key="iosettings.csv.content.tex">Contains LaTeX commands</entry>
+
+<entry key="iosettings.csv.hasheader">Has Header Row</entry>
+<entry key="iosettings.csv.hasheader.mnemonic">R</entry>
+
+<entry key="iosettings.write.hasheader">Include Headers</entry>
+<entry key="iosettings.write.hasheader.mnemonic">R</entry>
+
+<entry key="iosettings.writeonly.hasheader">Include Headers (Write Only)</entry>
+<entry key="iosettings.writeonly.hasheader.mnemonic">R</entry>
+
+<entry key="iosettings.tex.encoding">Default TeX Encoding:</entry>
+<entry key="iosettings.tex.encoding.mnemonic">N</entry>
+
+<entry key="iosettings.csv.encoding">CSV/TSV Encoding: </entry>
+<entry key="iosettings.csv.encoding.mnemonic">G</entry>
+
+<!-- character mappings -->
+
+<entry key="iosettings.tex.map">Map TeX characters</entry>
+<entry key="iosettings.tex.map.mnemonic">M</entry>
+
+<entry key="iosettings.tex.add_map">Add</entry>
+<entry key="iosettings.tex.add_map.mnemonic">A</entry>
+
+<entry key="iosettings.tex.edit_map">Edit</entry>
+<entry key="iosettings.tex.edit_map.mnemonic">T</entry>
+
+<entry key="iosettings.tex.remove_map">Remove</entry>
+<entry key="iosettings.tex.remove_map.mnemonic">R</entry>
+
+
 <!-- Preferences Dialog -->
 
 <entry key="preferences.title">Preferences</entry>
@@ -251,7 +352,7 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.autotrim">Automatically trim labels</entry>
 <entry key="preferences.autotrim.mnemonic">A</entry>
 
-<entry key="preferences.csv">CSV</entry>
+<entry key="preferences.csv">Non-TeX Imports (CSV etc)</entry>
 <entry key="preferences.csv.mnemonic">V</entry>
 
 <entry key="preferences.csv.encoding">Encoding: </entry>
@@ -445,7 +546,7 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.startup.last">Last</entry>
 <entry key="preferences.startup.last.mnemonic">L</entry>
 
-<entry key="preferences.sql">SQL</entry>
+<entry key="preferences.sql">SQL Connection</entry>
 <entry key="preferences.sql.mnemonic">Q</entry>
 
 <entry key="preferences.sql.database">Database: </entry>
@@ -492,26 +593,16 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <entry key="preferences.tex.import">Imported Data</entry>
 
-<entry key="preferences.tex.add_map">Add</entry>
-<entry key="preferences.tex.add_map.mnemonic">A</entry>
-
-<entry key="preferences.tex.edit_map">Edit</entry>
-<entry key="preferences.tex.edit_map.mnemonic">T</entry>
-
 <entry key="preferences.tex.latexapp">LaTeX Executable: </entry>
 <entry key="preferences.tex.latexapp.mnemonic">L </entry>
 
 <entry key="preferences.tex.encoding">Default Encoding:</entry>
 <entry key="preferences.tex.encoding.mnemonic">N</entry>
 
-<entry key="preferences.tex.map">Map TeX characters when importing data from non-TeX sources</entry>
-<entry key="preferences.tex.map.mnemonic">M</entry>
-
-<entry key="preferences.tex.remove_map">Remove</entry>
-<entry key="preferences.tex.remove_map.mnemonic">R</entry>
-
 <entry key="preferences.tex.stripsolnenv">Strip solution environment from probsoln problems</entry>
 <entry key="preferences.tex.stripsolnenv.mnemonic">B</entry>
+
+<entry key="preferences.tex.other_import">For other import settings, go to the {0} tab.</entry>
 
 <!-- TeX Mappings Table -->
 
@@ -886,7 +977,11 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.csv_encoding">{0} &lt;encoding&gt;		CSV file encoding. Synonym: {1}.</entry>
 
-<entry key="syntax.csv_escape">{0} &lt;number&gt;	Set the number of lines to skip at the start of CSV files.</entry>
+<entry key="syntax.csv_empty_rows">{0} &lt;setting&gt;	Set behaviour for empty rows on import from CSV or spreadsheet. (Default value: {1})</entry>
+
+<entry key="syntax.csv_escape">{0} &lt;char&gt;	Deprecated, use {1} instead.</entry>
+
+<entry key="syntax.csv_escape_chars">{0} &lt;setting&gt;	Set behaviour for parsing special characters within elements in CSV files. (Default value: {1})</entry>
 
 <entry key="syntax.csv_header">{0}		CSV files have a header row.{1} Synonym: {2}.</entry>
 
@@ -976,7 +1071,7 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.noautotrimlabels">{0}	Don''t trim labels.{1}</entry>
 <entry key="syntax.nodebug">{0}		Switch off debug mode. (Default.)</entry>
-<entry key="syntax.csv_noescape">{0}		No CSV escape character. Synonym: {1}.</entry>
+<entry key="syntax.csv_noescape">{0}		Synonym: {1}.</entry>
 <entry key="syntax.nomaptexspecials">{0}	Don''t map TeX special characters.{1}</entry>
 
 <entry key="syntax.noowner_only">{0}	Don''t change file permissions for .dbtex files. {1}</entry>
@@ -1012,8 +1107,7 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="syntax.shuffle">{0}	Shuffle the database. (Shuffle is always performed after sort,
 		regardless of the option order.)</entry>
 
-
-<entry key="syntax.skipemptyrows">{0}	Skip empty rows on import from CSV or pspreadsheet.{1}</entry>
+<entry key="syntax.skipemptyrows">{0}	Skip empty rows on import from CSV or spreadsheet.{1}</entry>
 
 <entry key="syntax.sort">{0} [+|-]&lt;field&gt;
 		Sort the database on the column whose label is given by &lt;field&gt;.
@@ -1122,6 +1216,8 @@ Trying again with TeX Parser Library.</entry>
 
 <entry key="error.syntax">Syntax error: {0}</entry>
 
+<entry key="error.syntax.deprecated">Option {0} is deprecated. Use {1} instead.</entry>
+
 <entry key="error.syntax.import_clash">{0} can''t be used with &lt;datatool file&gt;</entry>
 <entry key="error.syntax.input_clash">&lt;datatool file&gt; can''t be used with an import option</entry>
 <entry key="error.syntax.invalid_compat">Invalid compatibility setting {0}</entry>
@@ -1169,6 +1265,7 @@ Trying again with TeX Parser Library.</entry>
 
 <entry key="error.syntax.unknown_encoding">Unknown or invalid encoding name ''{0}''</entry>
 <entry key="error.syntax.unknown_field">Unknown sort field ''{0}''</entry>
+<entry key="error.syntax.invalid_set_value">Invalid value ''{0}'' for option {1} (allowed values: {2})</entry>
 <entry key="error.syntax.invalid_output_format">Invalid output format identifier ''{0}''</entry>
 <entry key="error.syntax.unknown_option">Unknown option ''{0}''. (Use --help or -h for help.)</entry>
 <entry key="error.load_props_failed">Unable to load properties</entry>
@@ -1180,7 +1277,6 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.message.mnemonic">M</entry>
 <entry key="error.stacktrace">Stack Trace</entry>
 <entry key="error.stacktrace.mnemonic">T</entry>
-
 
 <entry key="error.char_delim_required">I''m sorry, the delimiter ''{0}'' is currently not supported by the CSV library. The character code must be less than {1}.</entry>
 <entry key="error.char_esc_required">I''m sorry, the escape character ''{0}'' is currently not supported by the CSV library. The character code must be less than {1}.</entry>

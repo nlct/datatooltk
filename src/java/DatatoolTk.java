@@ -44,6 +44,8 @@ import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.texparserlib.TeXParser;
 import com.dickimawbooks.texparserlib.TeXSyntaxException;
+import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
+import com.dickimawbooks.texparserlib.latex.datatool.EscapeCharsOption;
 import com.dickimawbooks.texparserlib.html.HtmlTag;
 import com.dickimawbooks.texjavahelplib.*;
 
@@ -350,19 +352,30 @@ public class DatatoolTk
         "--nocsv-header",
         (settings.hasCSVHeader()? "" : " ("+getLabel("syntax.default")+".)"),
         "--nocsvheader"));
+
+      CsvBlankOption blankOpt = settings.getCsvBlankOption();
+
+      System.out.println(getLabelWithValues("syntax.csvemptyrows",
+        "--csv-empty-rows", blankOpt.getName()));
+
       System.out.println(getLabelWithValues("syntax.skipemptyrows",
           "--csv-skip-empty-rows",
-          (settings.isSkipEmptyRowsOn() ? 
+          (blankOpt == CsvBlankOption.IGNORE ? 
              " ("+getLabel("syntax.default")+".)":"")));
       System.out.println(getLabelWithValues("syntax.noskipemptyrows",
           "--nocsv-skip-empty-rows",
-          (settings.isSkipEmptyRowsOn() ? 
+          (blankOpt != CsvBlankOption.IGNORE ? 
              "":" ("+getLabel("syntax.default")+".)")));
 
+      System.out.println(getLabelWithValues("syntax.csv_escape_chars",
+        "--csv-escape-chars",
+        settings.getEscapeCharsOption()));
+
       System.out.println(getLabelWithValues("syntax.csv_escape", "--csv-escape",
-        "--csvescape"));
+        "--csv-escape-chars"));
       System.out.println(getLabelWithValues("syntax.csv_noescape", 
-        "--nocsv-escape", "--nocsvescape"));
+        "--nocsv-escape", "--csv-escape-chars none"));
+
       System.out.println(getLabelWithValues("syntax.csv_skiplines", "--csv-skiplines"));
       System.out.println(getLabelWithValues("syntax.csv_strictquotes", "--csv-strictquotes"));
       System.out.println(getLabelWithValues("syntax.csv_nostrictquotes", "--nocsv-strictquotes"));
@@ -815,6 +828,41 @@ public class DatatoolTk
          {
             settings.setHasCSVHeader(false);
          }
+         else if (args[i].equals("--csv-escape-chars"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_arg", args[i-1]));
+            }
+
+            EscapeCharsOption opt = EscapeCharsOption.fromOptionName(args[i]);
+
+            if (opt == null)
+            {
+               StringBuilder builder = new StringBuilder();
+
+               for (EscapeCharsOption o : EscapeCharsOption.values())
+               {
+                  if (builder.length() > 0)
+                  {
+                     builder.append(", ");
+                  }
+
+                  builder.append(o.getName());
+               }
+
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.invalid_set_value",
+                  args[i], args[i-1], builder.toString()));
+            }
+            else
+            {
+               settings.setEscapeCharsOption(opt);
+            }
+         }
          else if (args[i].equals("--csv-escape")
                    || args[i].equals("--csvescape"))
          {
@@ -832,12 +880,29 @@ public class DatatoolTk
                  getLabel("error.syntax.invalid_esc"));
             }
 
-            settings.setCSVescape(args[i]);
+            if (args[i].equals("\\"))
+            {
+               settings.setEscapeCharsOption(EscapeCharsOption.ESC_DELIM_BKSL);
+            }
+            else if (args[i].isEmpty())
+            {
+               settings.setEscapeCharsOption(EscapeCharsOption.NONE);
+            }
+            else if (args[i].codePointAt(0) == settings.getDelimiter())
+            {
+               settings.setEscapeCharsOption(EscapeCharsOption.DOUBLE_DELIM);
+            }
+            else
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.deprecated",
+                    args[i-1], "--csv-escape-chars"));
+            }
          }
          else if (args[i].equals("--nocsv-escape") 
                   || args[i].equals("--nocsvescape"))
          {
-            settings.setCSVescape("");
+            settings.setEscapeCharsOption(EscapeCharsOption.NONE);
          }
          else if (args[i].equals("--csv-skiplines"))
          {

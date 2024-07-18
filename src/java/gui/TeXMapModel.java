@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -29,11 +29,11 @@ import javax.swing.event.*;
 import com.dickimawbooks.datatooltk.*;
 
 /**
- * Table model for TeX mappings (used in properties dialog box).
+ * Table model for TeX mappings (used in import settings panel).
  */
 public class TeXMapModel extends AbstractTableModel
 {
-   public TeXMapModel(PropertiesDialog dialog,
+   public TeXMapModel(IOSettingsPanel ioSettingsPanel,
       JTable table, DatatoolSettings settings)
    {
       super();
@@ -53,12 +53,26 @@ public class TeXMapModel extends AbstractTableModel
       keyField = new CharField();
       valueField = new JTextField(20);
 
-      texMapDialog = new TeXMapDialog(messageHandler.getDatatoolGuiResources(),
-         dialog);
+      texMapDialog = new TeXMapDialog(ioSettingsPanel);
+      HashMap<Integer,String> texMaps = settings.getTeXMappings();
+
+      originalMappings = new HashMap<Integer,String>();
 
       keyList = new Vector<Integer>();
       valueList = new Vector<String>();
 
+      if (texMaps != null)
+      {
+         originalMappings.putAll(texMaps);
+
+         for (Integer key : texMaps.keySet())
+         {
+            keyList.add(key);
+            valueList.add(texMaps.get(key));
+         }
+      }
+
+/*
       for (Enumeration en=settings.keys(); en.hasMoreElements();)
       {
          String key = (String)en.nextElement();
@@ -104,6 +118,7 @@ public class TeXMapModel extends AbstractTableModel
       }
 
       originals = keyList.toArray();
+*/
 
       table.getColumn(COL_VAL).setPreferredWidth(
         (int)valueField.getPreferredSize().getWidth());
@@ -146,6 +161,25 @@ public class TeXMapModel extends AbstractTableModel
 
    public void updateSettings()
    {
+      for (Integer key : originalMappings.keySet())
+      {
+         int index = keyList.indexOf(key);
+
+         if (index == -1)
+         {
+            // User has removed this mapping.
+
+            settings.removeTeXMap(key);
+         }
+         else
+         {
+            keyList.remove(index);
+            String value = valueList.remove(index);
+
+            settings.setTeXMap(key, value);
+         }
+      }
+/*
       for (int i = 0; i < originals.length; i++)
       {
          Integer codePoint = (Integer)originals[i];
@@ -166,12 +200,13 @@ public class TeXMapModel extends AbstractTableModel
             settings.setTeXMap(key.intValue(), value);
          }
       }
+*/
 
       // Remaining entries are new mappings
 
       for (int i = 0, n = keyList.size(); i < n; i++)
       {
-         settings.setTeXMap(keyList.get(i).intValue(), valueList.get(i));
+         settings.setTeXMap(keyList.get(i), valueList.get(i));
       }
    }
 
@@ -233,13 +268,16 @@ public class TeXMapModel extends AbstractTableModel
    private Vector<Integer> keyList;
    private Vector<String> valueList;
 
-   private Object[] originals;
+   //private Object[] originals;
+   private HashMap<Integer,String> originalMappings;
 
+/*
    private static final Pattern PATTERN_KEY 
      = Pattern.compile("tex\\.(\\d{4,})");
 
    private static final Pattern OLD_PATTERN_KEY 
      = Pattern.compile("tex\\.(.)");
+*/
 
    public static String COL_KEY = null;
    public static String COL_VAL = null;
@@ -248,11 +286,11 @@ public class TeXMapModel extends AbstractTableModel
 
 class TeXMapDialog extends JDialog implements ActionListener
 {
-   public TeXMapDialog(DatatoolGuiResources resources, JDialog parent)
+   public TeXMapDialog(IOSettingsPanel ioSettingsPanel)
    {
-      super(parent, "", true);
+      super(ioSettingsPanel.getOwner(), "", ModalityType.APPLICATION_MODAL);
 
-      this.resources = resources;
+      this.resources = ioSettingsPanel.getDatatoolGuiResources();
 
       if (TITLE_ADD == null)
       {

@@ -55,7 +55,14 @@ public class CharField extends JTextField
 
    public void setValue(int val)
    {
-      super.setText(MessageHandler.codePointToString(val));
+      if (val > 0)
+      {
+         super.setText(MessageHandler.codePointToString(val));
+      }
+      else
+      {
+         super.setText("");
+      }
    }
 
    public int getValue()
@@ -64,7 +71,7 @@ public class CharField extends JTextField
 
       if (text.length() == 0)
       {
-         return (int)0;
+         return 0;
       }
 
       return text.codePointAt(0);

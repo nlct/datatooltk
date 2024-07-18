@@ -68,26 +68,51 @@ public class DataToolTeXParserListener extends PreambleParser
       ioSettings.setDefaultExtension("dbtex");
       ioSettings.setFileFormat(FileFormatType.DBTEX, "3.0");
       ioSettings.setFileOverwriteOption(FileOverwriteOption.ALLOW);
-
-      ioSettings.setSeparator(settings.getSeparator());
-      ioSettings.setDelimiter(settings.getDelimiter());
-      ioSettings.setHeaderIncluded(settings.hasCSVHeader());
-      ioSettings.setSkipLines(settings.getCSVskiplines());
-
-// TODO update settings
-// hasCSVstrictquotes()
-// getCSVescape()
-// isSkipEmptyRowsOn()
-      ioSettings.setEscapeCharsOption(EscapeCharsOption.DOUBLE_DELIM);
-      ioSettings.setAddDelimiterOption(AddDelimiterOption.DETECT);
-      ioSettings.setCsvBlankOption(CsvBlankOption.IGNORE);
+      ioSettings.setHeaderIncluded(true);
       ioSettings.setTrimElement(true);
       ioSettings.setAutoKeys(false);
       ioSettings.setAppendAllowed(false);
       ioSettings.setExpandOption(IOExpandOption.NONE);
-      ioSettings.setCsvLiteral(true);
+   }
 
-      datatoolSty.setCsvLiteralMappingOn(settings.isTeXMappingOn());
+   public void applyCurrentCsvSettings()
+     throws TeXSyntaxException
+   {
+      int sep = settings.getSeparator();
+
+      if (sep == '\t')
+      {
+         ioSettings.setDefaultExtension("tsv");
+         ioSettings.setFileFormat(FileFormatType.TSV);
+      }
+      else
+      {
+         ioSettings.setDefaultExtension("csv");
+         ioSettings.setFileFormat(FileFormatType.CSV);
+      }
+
+      ioSettings.setSeparator(sep);
+      ioSettings.setDelimiter(settings.getDelimiter());
+      ioSettings.setHeaderIncluded(settings.hasCSVHeader());
+      ioSettings.setSkipLines(settings.getCSVskiplines());
+      ioSettings.setCsvBlankOption(settings.getCsvBlankOption());
+
+      ioSettings.setEscapeCharsOption(settings.getEscapeCharsOption());
+      ioSettings.setAddDelimiterOption(settings.getAddDelimiterOption());
+      ioSettings.setCsvBlankOption(settings.getCsvBlankOption());
+
+      ioSettings.setCsvStrictQuotes(settings.hasCSVstrictquotes());
+
+      if (settings.isTeXMappingOn())
+      {
+         ioSettings.setCsvLiteral(true);
+         datatoolSty.setCsvLiteralMappingOn(true);
+      }
+      else
+      {
+         ioSettings.setCsvLiteral(false);
+         datatoolSty.setCsvLiteralMappingOn(false);
+      }
    }
 
    protected DataToolSty datatoolSty;

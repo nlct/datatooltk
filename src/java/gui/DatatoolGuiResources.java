@@ -358,6 +358,12 @@ public class DatatoolGuiResources
    public JRadioButton createJRadioButton(String parentLabel,
       String label, ButtonGroup bg, ActionListener listener)
    {
+      return createJRadioButton(parentLabel, label, label, bg, listener);
+   }
+
+   public JRadioButton createJRadioButton(String parentLabel,
+      String label, String action, ButtonGroup bg, ActionListener listener)
+   {
       JRadioButton button = new JRadioButton(
         messageHandler.getLabel(parentLabel, label));
 
@@ -370,7 +376,7 @@ public class DatatoolGuiResources
          button.setToolTipText(tooltip);
       }
 
-      button.setActionCommand(label);
+      button.setActionCommand(action);
 
       if (listener != null)
       {
@@ -392,13 +398,29 @@ public class DatatoolGuiResources
       return button;
    }
 
+   public JRadioButton createJRadioButton(String parentLabel,
+      String label, String action, ButtonGroup bg, ActionListener listener,
+      float alignment)
+   {
+      JRadioButton button = createJRadioButton(parentLabel,
+        label, action, bg, listener);
+      button.setAlignmentX(alignment);
+      return button;
+   }
+
     public JCheckBox createJCheckBox(String parentLabel, String label,
        ActionListener listener)
+    {
+       return createJCheckBox(parentLabel, label, label, listener);
+    }
+
+    public JCheckBox createJCheckBox(String parentLabel, String label,
+       String action, ActionListener listener)
     {
        JCheckBox checkBox = new JCheckBox(
           messageHandler.getLabel(parentLabel, label));
        checkBox.setMnemonic(messageHandler.getMnemonicInt(parentLabel, label));
-       checkBox.setActionCommand(label);
+       checkBox.setActionCommand(action);
 
        if (listener != null)
        {
@@ -409,7 +431,7 @@ public class DatatoolGuiResources
     }
 
     public JCheckBox createJCheckBox(String parentLabel, String label,
-       ActionListener listener, int alignment)
+       ActionListener listener, float alignment)
     {
        JCheckBox comp = createJCheckBox(parentLabel, label, 
          listener);

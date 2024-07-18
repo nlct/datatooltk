@@ -209,7 +209,17 @@ public class PropertiesDialog extends JDialog
 
       JComponent csvTab = addTab("csv");
 
-      JComponent box = Box.createHorizontalBox();
+      csvSettingsPanel = new IOSettingsPanel(this, resources, "preferences",
+        IOSettingsPanel.IO_IN, IOSettingsPanel.FILE_FORMAT_CSV_OR_TSV,
+        true, false);
+
+      csvSettingsPanel.setFileFormatComponentVisible(false);
+
+      csvTab.add(csvSettingsPanel);
+
+      JComponent box;
+/*
+      box = Box.createHorizontalBox();
       box.setAlignmentX(0);
       csvTab.add(box);
 
@@ -294,6 +304,7 @@ public class PropertiesDialog extends JDialog
         Charset.availableCharsets().values().toArray(new Charset[0]));
       box.add(createLabel("preferences.csv.encoding", csvEncodingBox));
       box.add(csvEncodingBox);
+*/
 
       return csvTab;
    }
@@ -427,6 +438,15 @@ public class PropertiesDialog extends JDialog
       stripSolnEnvBox = createCheckBox("preferences.tex", "stripsolnenv");
       importComp.add(stripSolnEnvBox);
 
+      JTextArea msgArea = resources.createMessageArea(0, 0);
+      msgArea.setText(messageHandler.getLabelWithValues(
+         "preferences.tex.other_import",
+         messageHandler.getLabel("preferences.csv")));
+      msgArea.setAlignmentX(0f);
+
+      importComp.add(msgArea);
+
+/*
       mapTeXBox = createCheckBox("preferences.tex", "map");
       mapTeXBox.addActionListener(this);
       mapTeXBox.setActionCommand("texmap");
@@ -465,6 +485,7 @@ public class PropertiesDialog extends JDialog
       buttonPanel.add(removeMapButton);
 
       texMapTable.getSelectionModel().addListSelectionListener(this);
+*/
 
       return texTab;
    }
@@ -993,6 +1014,9 @@ public class PropertiesDialog extends JDialog
       initialColumnCapacitySpinner.setValue(Integer.valueOf(
         settings.getInitialColumnCapacity()));
 
+      csvSettingsPanel.setCsvSettingsFrom(settings);
+
+/*
       int sep = settings.getSeparator();
 
       if (sep == '\t')
@@ -1028,6 +1052,21 @@ public class PropertiesDialog extends JDialog
          escCharField.setValue(esc);
       }
 
+      encoding = settings.getCsvEncoding();
+
+      if (encoding == null)
+      {
+         csvEncodingBox.setSelectedItem(Charset.defaultCharset());
+      }
+      else
+      {
+         csvEncodingBox.setSelectedItem(Charset.forName(encoding));
+      }
+
+      mapTeXBox.setSelected(settings.isTeXMappingOn());
+      texMappingsComp.setVisible(mapTeXBox.isSelected());
+*/
+
       hostField.setText(settings.getSqlHost());
       prefixField.setText(settings.getSqlPrefix());
       portField.setValue(settings.getSqlPort());
@@ -1041,8 +1080,6 @@ public class PropertiesDialog extends JDialog
 
       databaseField.setText(db == null ? "" : db);
 
-      mapTeXBox.setSelected(settings.isTeXMappingOn());
-      texMappingsComp.setVisible(mapTeXBox.isSelected());
       stripSolnEnvBox.setSelected(settings.isSolutionEnvStripped());
 
       String outFmt = settings.getDefaultOutputFormat();
@@ -1090,17 +1127,6 @@ public class PropertiesDialog extends JDialog
          texEncodingBox.setSelectedItem(Charset.forName(encoding));
       }
 
-      encoding = settings.getCsvEncoding();
-
-      if (encoding == null)
-      {
-         csvEncodingBox.setSelectedItem(Charset.defaultCharset());
-      }
-      else
-      {
-         csvEncodingBox.setSelectedItem(Charset.forName(encoding));
-      }
-
       sizeField.setValue(settings.getFontSize());
       fontBox.setSelectedItem(settings.getFontName());
       cellHeightField.setValue(settings.getCellHeight());
@@ -1132,8 +1158,10 @@ public class PropertiesDialog extends JDialog
          }
       }
 
+/*
       texMapModel = new TeXMapModel(this, texMapTable, settings);
       texMapTable.setModel(texMapModel);
+*/
 
       currencyListModel = new CurrencyListModel(currencyList, settings);
 
@@ -1152,7 +1180,7 @@ public class PropertiesDialog extends JDialog
       }
 
       autoTrimBox.setSelected(settings.isAutoTrimLabelsOn());
-      skipEmptyRowsBox.setSelected(settings.isSkipEmptyRowsOn());
+      //skipEmptyRowsBox.setSelected(settings.isSkipEmptyRowsOn());
 
       helpsetLangBox.setSelectedItem(settings.getHelpSet());
       dictLangBox.setSelectedItem(settings.getDictionary());
@@ -1272,10 +1300,12 @@ public class PropertiesDialog extends JDialog
          {
             currencyListModel.editCurrency(currencyList.getSelectedIndex());
          }
+/*
          else if (source == texMapTable)
          {
             texMapModel.editRow(texMapTable.getSelectedRow());
          }
+*/
       }
    }
 
@@ -1331,6 +1361,7 @@ public class PropertiesDialog extends JDialog
          customFileField.setEnabled(true);
          customFileField.requestFocusInWindow();
       }
+/*
       else if (action.equals("tabsep"))
       {
          sepCharField.setEnabled(false);
@@ -1376,6 +1407,7 @@ public class PropertiesDialog extends JDialog
             texMapModel.removeRow(index);
          }
       }
+*/
       else if (action.equals("add_currency"))
       {
          currencyListModel.addCurrency();
@@ -1546,11 +1578,13 @@ public class PropertiesDialog extends JDialog
 
    private void updateButtons()
    {
+/*
       boolean enabled = texMapTable.getSelectedRow() != -1;
       editMapButton.setEnabled(enabled);
       removeMapButton.setEnabled(enabled);
+*/
 
-      enabled = currencyList.getSelectedIndex() != -1;
+      boolean enabled = currencyList.getSelectedIndex() != -1;
       editCurrencyButton.setEnabled(enabled);
       removeCurrencyButton.setEnabled(enabled);
    }
@@ -1587,6 +1621,9 @@ public class PropertiesDialog extends JDialog
       settings.setInitialColumnCapacity(
         ((Number)initialColumnCapacitySpinner.getValue()).intValue());
 
+      csvSettingsPanel.applyCsvSettingsTo(settings);
+
+/*
       if (sepTabButton.isSelected())
       {
          settings.setSeparator('\t');
@@ -1652,6 +1689,12 @@ public class PropertiesDialog extends JDialog
          settings.setCSVescape(escChar);
       }
 
+      settings.setCsvEncoding((Charset)csvEncodingBox.getSelectedItem());
+
+      settings.setTeXMapping(mapTeXBox.isSelected());
+      texMapModel.updateSettings();
+*/
+
       String host = hostField.getText();
 
       if (host.isEmpty())
@@ -1708,13 +1751,9 @@ public class PropertiesDialog extends JDialog
       settings.setDecimalDbTeX3DatumValue(saveDatumDecimalBox.isSelected());
       settings.setCurrencyDbTeX3DatumValue(saveDatumCurrencyBox.isSelected());
 
-      settings.setTeXMapping(mapTeXBox.isSelected());
       settings.setSolutionEnvStripped(stripSolnEnvBox.isSelected());
 
       settings.setTeXEncoding((Charset)texEncodingBox.getSelectedItem());
-      settings.setCsvEncoding((Charset)csvEncodingBox.getSelectedItem());
-
-      texMapModel.updateSettings();
 
       currencyListModel.updateSettings();
 
@@ -1755,7 +1794,7 @@ public class PropertiesDialog extends JDialog
       }
 
       settings.setAutoTrimLabels(autoTrimBox.isSelected());
-      settings.setSkipEmptyRows(skipEmptyRowsBox.isSelected());
+      //settings.setSkipEmptyRows(skipEmptyRowsBox.isSelected());
 
       settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
       settings.setDictionary(dictLangBox.getSelectedItem().toString());
@@ -1865,18 +1904,28 @@ public class PropertiesDialog extends JDialog
 
    private JRadioButton homeButton, cwdButton, lastButton, customButton;
 
+   private IOSettingsPanel csvSettingsPanel;
+
+/*
    private JRadioButton sepTabButton, sepCharButton, 
      noEscCharButton, escCharButton;
 
    private CharField sepCharField, delimCharField, escCharField;
 
-   private JCheckBox hasHeaderBox, strictQuotesBox, wipeBox, mapTeXBox,
-      hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox, autoTrimBox,
+   private JCheckBox hasHeaderBox, strictQuotesBox,
       skipEmptyRowsBox;
 
    private JSpinner skipLinesBox;
 
+   private JComboBox<Charset> csvEncodingBox;
+
+   private JCheckBox mapTeXBox;
+
    private JComponent texMappingsComp;
+*/
+
+   private JCheckBox wipeBox, 
+      hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox, autoTrimBox;
 
    private FileField customFileField, perlFileField;
 
@@ -1889,18 +1938,19 @@ public class PropertiesDialog extends JDialog
 
    private JTextField hostField, prefixField, databaseField, userField;
 
-   private JButton removeMapButton, editMapButton,
-      removeCurrencyButton, editCurrencyButton;
+   private JButton removeCurrencyButton, editCurrencyButton;
 
    private JComboBox<String> fontBox;
 
+/*
    private TeXMapModel texMapModel;
-
+   private JButton removeMapButton, editMapButton;
    private JTable texMapTable;
+*/
 
    private JList<String> currencyList;
 
-   private JComboBox<Charset> texEncodingBox, csvEncodingBox;
+   private JComboBox<Charset> texEncodingBox;
 
    private JComboBox<String> outputFormatBox;
    private JCheckBox overrideInputFormatBox,
