@@ -540,7 +540,8 @@ public class DatatoolDb
 
       try
       {
-         in = new LineNumberReader(Files.newBufferedReader(dbFile.toPath(), charset));
+         in = new LineNumberReader(Files.newBufferedReader(dbFile.toPath(),
+           charset));
 
          in.mark(256);
          String line = in.readLine();
@@ -2602,8 +2603,7 @@ public class DatatoolDb
             charset = Charset.forName(encoding);
          }
 
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset,
-           StandardOpenOption.CREATE));
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset));
 
          out.format("%% DBTEX 2.0 %s%n", charset.name());
          out.print("% ");
@@ -2806,8 +2806,7 @@ public class DatatoolDb
             charset = Charset.forName(encoding);
          }
 
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset,
-           StandardOpenOption.CREATE));
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset));
 
          out.print("% DBTEX 3.0 ");
          out.println(charset.name());
@@ -2986,8 +2985,7 @@ public class DatatoolDb
             charset = Charset.forName(encoding);
          }
 
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset,
-           StandardOpenOption.CREATE));
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset));
 
          out.format("%% DTLTEX %s %s%n", version, charset.name());
          out.print("% ");

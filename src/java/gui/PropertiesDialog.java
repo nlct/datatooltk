@@ -38,6 +38,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 
+import com.dickimawbooks.texjavahelplib.HelpSetLocale;
 import com.dickimawbooks.texjavahelplib.IconSet;
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
@@ -633,14 +634,14 @@ public class PropertiesDialog extends JDialog
       JComponent box = new JPanel(new FlowLayout());
       languageComp.add(box);
 
-      helpsetLangBox = new JComboBox<String>(gui.getHelpSets());
+      helpsetLangBox = new JComboBox<HelpSetLocale>(gui.getAvailableHelpSets());
 
       JLabel helpsetLangLabel 
          = createLabel("preferences.language.helpset", helpsetLangBox);
       box.add(helpsetLangLabel);
       box.add(helpsetLangBox);
 
-      dictLangBox = new JComboBox<String>(gui.getDictionaries());
+      dictLangBox = new JComboBox<HelpSetLocale>(gui.getAvailableDictionaries());
 
       JLabel dictLangLabel 
          = createLabel("preferences.language.dictionary", dictLangBox);
@@ -1077,8 +1078,8 @@ public class PropertiesDialog extends JDialog
 
       autoTrimBox.setSelected(settings.isAutoTrimLabelsOn());
 
-      helpsetLangBox.setSelectedItem(settings.getHelpSet());
-      dictLangBox.setSelectedItem(settings.getDictionary());
+      helpsetLangBox.setSelectedItem(settings.getHelpSetLocale());
+      dictLangBox.setSelectedItem(settings.getDictionaryLocale());
 
       Locale numLocale = settings.getNumericLocale();
       numericLocaleBox.setSelectedItem(numLocale);
@@ -1585,8 +1586,8 @@ public class PropertiesDialog extends JDialog
 
       settings.setAutoTrimLabels(autoTrimBox.isSelected());
 
-      settings.setHelpSet(helpsetLangBox.getSelectedItem().toString());
-      settings.setDictionary(dictLangBox.getSelectedItem().toString());
+      settings.setHelpSet((HelpSetLocale)helpsetLangBox.getSelectedItem());
+      settings.setDictionary((HelpSetLocale)dictLangBox.getSelectedItem());
 
       settings.setNumericLocale((Locale)numericLocaleBox.getSelectedItem());
 
@@ -1734,7 +1735,7 @@ public class PropertiesDialog extends JDialog
 
    private CurrencyListModel currencyListModel;
 
-   private JComboBox<String> helpsetLangBox, dictLangBox;
+   private JComboBox<HelpSetLocale> helpsetLangBox, dictLangBox;
    private JComboBox<Locale> numericLocaleBox;
    private JLabel numericParsingLabel, intFmtLabel,
     currencyFmtLabel, decimalFmtLabel;

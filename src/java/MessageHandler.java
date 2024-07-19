@@ -252,8 +252,7 @@ public class MessageHandler extends ErrorManager
       if (logWriter == null && logFile != null)
       {
          logWriter = new PrintWriter(
-           Files.newBufferedWriter(logFile.toPath(),
-             StandardOpenOption.CREATE));
+           Files.newBufferedWriter(logFile.toPath()));
       }
    }
 
@@ -291,8 +290,7 @@ public class MessageHandler extends ErrorManager
             if (logWriter == null)
             {
                logWriter = new PrintWriter(
-                 Files.newBufferedWriter(logFile.toPath(),
-                   StandardOpenOption.WRITE));
+                 Files.newBufferedWriter(logFile.toPath()));
             }
 
             t.printStackTrace(logWriter);

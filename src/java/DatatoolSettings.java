@@ -58,49 +58,106 @@ import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 
 /**
  * Application settings for datatooltk.
+ * It's necessary to determine the preferred dictionary
+ * language before initiating the message system, so the
+ * localisation information is now stored in a separate simple file 
+ * which reduces the amount of non-localised error messages.
  */
 public class DatatoolSettings extends Properties
 {
    public DatatoolSettings(DatatoolTk datatooltk)
     throws IOException
    {
+      this(datatooltk, null, null);
+   }
+
+   public DatatoolSettings(DatatoolTk datatooltk,
+      String dictionaryTag, String helpsetTag)
+    throws IOException
+   {
       super();
 
       messageHandler = new MessageHandler(datatooltk);
 
+      setPropertiesPath();
+
+      if (dictionaryTag != null)
+      {
+         dictLocale = new HelpSetLocale(dictionaryTag);
+      }
+
+      if (helpsetTag != null)
+      {
+         helpSetLocale = new HelpSetLocale(helpsetTag);
+      }
+
+      if (dictLocale == null || helpSetLocale == null)
+      {
+         initLangTags();
+      }
+
       helpLib = new TeXJavaHelpLib(messageHandler,
        DatatoolTk.APP_NAME, RESOURCES_PATH,
-       DICT_DIR,
-       getLocaleProperty("dictionary", Locale.getDefault()),
-       getLocaleProperty("helpset", Locale.getDefault()),
+       DICT_DIR, dictLocale, helpSetLocale,
        "texparserlib", RESOURCE_PREFIX);
 
       helpLib.setIconPath(ICON_DIR);
       helpLib.setSmallIconSuffix(DEFAULT_SMALL_ICON_SUFFIX);
       helpLib.setLargeIconSuffix(DEFAULT_LARGE_ICON_SUFFIX);
 
-      String helpset = getHelpSet();
-      String langTag = helpLib.getHelpSetLocale().toLanguageTag();
-
-      if (!langTag.equals(helpset))
-      {
-         setHelpSet(langTag);
-      }
-
-      String dict = getDictionary();
-      langTag = helpLib.getMessagesLocale().toLanguageTag();
-
-      if (!langTag.equals(dict))
-      {
-         setDictionary(langTag);
-      }
-
       recentFiles = new Vector<String>();
       currencies = new Vector<String>();
 
       setDefaults();
+   }
 
-      setPropertiesPath();
+   private void initLangTags() throws IOException
+   {
+      File file = new File(propertiesPath, LANGTAG_FILE_NAME);
+
+      if (file.exists())
+      {
+         BufferedReader in = null;
+
+         try
+         {
+            in = Files.newBufferedReader(file.toPath());
+
+            String line = in.readLine();
+
+            if (line != null && dictLocale == null)
+            {
+               dictLocale = new HelpSetLocale(line.trim());
+            }
+
+            if (line != null && helpSetLocale == null)
+            {
+               line = in.readLine();
+
+               if (line != null)
+               {
+                  helpSetLocale = new HelpSetLocale(line.trim());
+               }
+            }
+         }
+         finally
+         {
+            if (in != null)
+            {
+               in.close();
+            }
+         }
+      }
+
+      if (dictLocale == null)
+      {
+         dictLocale = new HelpSetLocale(Locale.getDefault());
+      }
+
+      if (helpSetLocale == null)
+      {
+         helpSetLocale = dictLocale;
+      }
    }
 
    private void initLabels()
@@ -469,6 +526,10 @@ public class DatatoolSettings extends Properties
 
                   remove(key);
                }
+               else if (key.equals("helpset") || key.equals("dictionary"))
+               {
+                  remove(key);
+               }
             }
          }
       }
@@ -515,8 +576,7 @@ public class DatatoolSettings extends Properties
 
       try
       {
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath(),
-           StandardOpenOption.CREATE));
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath()));
 
          for (Integer key : texMap.keySet())
          {
@@ -541,8 +601,7 @@ public class DatatoolSettings extends Properties
 
       try
       {
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath(),
-           StandardOpenOption.CREATE));
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath()));
 
          for (String filename : recentFiles)
          {
@@ -567,13 +626,35 @@ public class DatatoolSettings extends Properties
 
       try
       {
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath(),
-           StandardOpenOption.CREATE));
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath()));
 
          for (String currency : currencies)
          {
             out.println(currency);
          }
+      }
+      finally
+      {
+         if (out != null)
+         {
+            out.close();
+         }
+      }
+   }
+
+   protected void saveLanguages()
+      throws IOException
+   {
+      File file = new File(propertiesPath, LANGTAG_FILE_NAME);
+
+      PrintWriter out = null;
+
+      try
+      {
+         out = new PrintWriter(Files.newBufferedWriter(file.toPath()));
+
+         out.println(dictLocale.getTag());
+         out.println(helpSetLocale.getTag());
       }
       finally
       {
@@ -593,6 +674,7 @@ public class DatatoolSettings extends Properties
       saveTeXMappings();
       saveRecentFiles();
       saveCurrencies();
+      saveLanguages();
    }
 
    public void clearRecentFiles()
@@ -2357,22 +2439,32 @@ public class DatatoolSettings extends Properties
 
    public String getDictionary()
    {
-      return getProperty("dictionary");
+      return dictLocale.getTag();
    }
 
-   public void setDictionary(String dictionary)
+   public HelpSetLocale getDictionaryLocale()
    {
-      setProperty("dictionary", dictionary);
+      return dictLocale;
+   }
+
+   public void setDictionary(HelpSetLocale hsLocale)
+   {
+      dictLocale = hsLocale;
    }
 
    public String getHelpSet()
    {
-      return getProperty("helpset");
+      return helpSetLocale.getTag();
    }
 
-   public void setHelpSet(String helpset)
+   public HelpSetLocale getHelpSetLocale()
    {
-      setProperty("helpset", helpset);
+      return helpSetLocale;
+   }
+
+   public void setHelpSet(HelpSetLocale hsLocale)
+   {
+      helpSetLocale = hsLocale;
    }
 
    public TeXJavaHelpLib getHelpLib()
@@ -2631,6 +2723,8 @@ public class DatatoolSettings extends Properties
 
    private final String CURRENCY_FILE_NAME = "currencies";
 
+   private final String LANGTAG_FILE_NAME = "languages";
+
    private boolean upgrade=false;
 
    private int compatLevel = COMPAT_LATEST;
@@ -2640,6 +2734,8 @@ public class DatatoolSettings extends Properties
    private Collator sortCollator;
 
    private DbTeX3DatumValue dbtex3DatumValue;
+
+   private HelpSetLocale helpSetLocale, dictLocale;
 
    private DataToolTeXParserListener parserListener;
 
@@ -2665,12 +2761,6 @@ public class DatatoolSettings extends Properties
    public static final String PLUGIN_DIR = RESOURCES_PATH+"/plugins/";
 
    public static final String RESOURCE_PREFIX = "datatooltk-";
-
-   public static final Pattern PATTERN_HELPSET 
-     = Pattern.compile("datatooltk-([a-z]{2})(-[A-Z]{2})?");
-
-   public static final Pattern PATTERN_DICT 
-     = Pattern.compile("datatooltk-([a-z]{2}(?:-[A-Z]{2})?(?:-[A-Z][a-z]{3})?)\\.xml");
 
    // old TeX map property setting with key "tex.<c>" where <c> is
    // the character to map

@@ -35,12 +35,12 @@ dist	: ../dist/datatooltk-installer.jar
 lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en-GB.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
 	make -C doc en-GB
 
-lib/resources/helpsets/datatooltk-en-US/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en-US.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
-	make -C doc en-US
+lib/resources/helpsets/datatooltk-en/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
+	make -C doc en
 
 lib/datatooltk.jar	: java/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class \
-			lib/resources/helpsets/datatooltk-en-US/index.xml \
+			lib/resources/helpsets/datatooltk-en/index.xml \
 			lib/resources/helpsets/datatooltk-en-GB/index.xml 
 	cd classes; \
 	jar cmf ../java/Manifest.txt ../lib/datatooltk.jar \

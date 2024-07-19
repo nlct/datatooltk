@@ -18,19 +18,23 @@
 */
 package com.dickimawbooks.datatooltk.gui;
 
-import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
+import java.io.IOException;
+
 import java.net.URL;
 import java.net.URISyntaxException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Vector;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
@@ -492,17 +496,29 @@ public class DatatoolGUI extends JFrame
 
       helpFrame.setLocationRelativeTo(this);
 
-      Locale dictLocale = helpLib.getMessagesLocale();
+      HelpSetLocale dictLocale = helpLib.getMessagesLocale();
 
-      String tag = dictLocale.toLanguageTag();
+      String tag = dictLocale.getTag();
       String prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
       pluginDictURL = getClass().getResource(prop);
 
       if (pluginDictURL == null)
       {
-         tag = dictLocale.getLanguage();
+         Locale locale = dictLocale.getLocale();
+         tag = locale.toLanguageTag();
          prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
          pluginDictURL = getClass().getResource(prop);
+
+         if (pluginDictURL == null)
+         {
+            tag = locale.getLanguage();
+
+            if (!tag.equals(dictLocale.getTag()))
+            {
+               prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
+               pluginDictURL = getClass().getResource(prop);
+            }
+         }
 
          if (pluginDictURL == null)
          {
@@ -649,82 +665,38 @@ public class DatatoolGUI extends JFrame
       }
    }
 
-   public String[] getDictionaries()
+   public Vector<HelpSetLocale> getAvailableDictionaries()
    {
-      File dir = null;
+      Vector<HelpSetLocale> list;
 
       try
       {
-         dir = new File(DatatoolTk.class.getResource(
-            settings.DICT_DIR).toURI());
+         list = getHelpLib().getMessageSystem().getDictionaries();
       }
-      catch (URISyntaxException e)
-      {
-         getMessageHandler().error(this, e);
-         return null;
+      catch (Exception e)
+      {// shouldn't happen unless there's a bug
+         list = new Vector<HelpSetLocale>();
+         list.add(new HelpSetLocale("en"));
+         getMessageHandler().debug(e);
       }
-
-      String[] list = dir.list(new FilenameFilter()
-      {
-         public boolean accept(File directory, String name)
-         {
-            Matcher m = DatatoolSettings.PATTERN_DICT.matcher(name);
-
-            return m.matches();
-         }
-      });
-
-      for (int i = 0; i < list.length; i++)
-      {
-         Matcher m = DatatoolSettings.PATTERN_DICT.matcher(list[i]);
-
-         if (m.matches())
-         {
-            list[i] = m.group(1);
-         }
-      }
-
-      Arrays.sort(list);
 
       return list;
    }
 
-   public String[] getHelpSets()
+   public Vector<HelpSetLocale> getAvailableHelpSets()
    {
-      File dir = null;
+      Vector<HelpSetLocale> list;
 
       try
       {
-         dir = new File(DatatoolTk.class.getResource(
-            settings.HELPSET_DIR).toURI());
+         list = getHelpLib().getHelpSets();
       }
-      catch (URISyntaxException e)
-      {
-         getMessageHandler().error(this, e);
-         return null;
+      catch (Exception e)
+      {// shouldn't happen unless there's a bug
+         list = new Vector<HelpSetLocale>();
+         list.add(new HelpSetLocale("en"));
+         getMessageHandler().debug(e);
       }
-
-      String[] list = dir.list(new FilenameFilter()
-      {
-         public boolean accept(File directory, String name)
-         {
-            Matcher m = DatatoolSettings.PATTERN_HELPSET.matcher(name);
-
-            return m.matches();
-         }
-      });
-
-      for (int i = 0; i < list.length; i++)
-      {
-         Matcher m = DatatoolSettings.PATTERN_HELPSET.matcher(list[i]);
-
-         if (m.matches())
-         {
-            list[i] = (m.groupCount() == 1 ? m.group(1) : m.group(1)+m.group(2));
-         }
-      }
-
-      Arrays.sort(list);
 
       return list;
    }

@@ -12,7 +12,7 @@ testfiles=../tests/test-para.csv \
           ../tests/test-shuffle.tex \
           ../tests/test-shuffle-level.tex
 
-all	: en-GB en-US datatooltk.1
+all	: en-GB en datatooltk.1
 
 datatooltk.1	: datatooltk.pod
 		pod2man -c datatooltk datatooltk.pod datatooltk.1
@@ -34,22 +34,22 @@ datatooltk-en-GB.pdf	: datatooltk.bib datatooltk-props-en-GB.bib \
 			$(testfiles) images/*.png
 	$(arara) datatooltk-en-GB
 
-datatooltk-en-US.pdf	: datatooltk.bib datatooltk-props-en.bib \
-			  datatooltk-en-US.tex datatooltk-main.tex version.tex \
+datatooltk-en.pdf	: datatooltk.bib datatooltk-props-en.bib \
+			  datatooltk-en.tex datatooltk-main.tex version.tex \
 			$(testfiles) images/*.png
-	$(arara) datatooltk-en-US
+	$(arara) datatooltk-en
 
 en-GB	: $(targetdir)/datatooltk-en-GB/index.xml
 
-en-US	: $(targetdir)/datatooltk-en-US/index.xml
+en	: $(targetdir)/datatooltk-en/index.xml
 
 $(targetdir)/datatooltk-en-GB/index.xml	: $(targetdir) \
 	  datatooltk-en-GB.pdf  
 	$(texjavahelpmk) datatooltk-en-GB.tex $(targetdir)/datatooltk-en-GB
 
-$(targetdir)/datatooltk-en-US/index.xml	: $(targetdir) \
-	  datatooltk-en-US.pdf  
-	$(texjavahelpmk) datatooltk-en-US.tex $(targetdir)/datatooltk-en-US
+$(targetdir)/datatooltk-en/index.xml	: $(targetdir) \
+	  datatooltk-en.pdf  
+	$(texjavahelpmk) datatooltk-en.tex $(targetdir)/datatooltk-en
 
 
 $(targetdir)	:
