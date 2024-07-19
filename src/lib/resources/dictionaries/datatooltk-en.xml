@@ -453,6 +453,7 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.display.lookandfeel.mnemonic">F</entry>
 
 <entry key="preferences.display.buttonsize">Toolbar Button Size:</entry>
+<entry key="preferences.display.smallbuttonsize">Small Icon Size:</entry>
 
 <entry key="preferences.display.lookandfeel.restart">Application needs a restart for a change in look and feel and button size to take effect.</entry>
 

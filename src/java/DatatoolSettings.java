@@ -76,6 +76,7 @@ public class DatatoolSettings extends Properties
        "texparserlib", RESOURCE_PREFIX);
 
       helpLib.setIconPath(ICON_DIR);
+      helpLib.setSmallIconSuffix(DEFAULT_SMALL_ICON_SUFFIX);
       helpLib.setLargeIconSuffix(DEFAULT_LARGE_ICON_SUFFIX);
 
       String helpset = getHelpSet();
@@ -277,6 +278,7 @@ public class DatatoolSettings extends Properties
          }
 
          helpLib.setLargeIconSuffix(getLargeIconSuffix());
+         helpLib.setSmallIconSuffix(getSmallIconSuffix());
       }
    }
 
@@ -764,6 +766,23 @@ public class DatatoolSettings extends Properties
    public void setLargeIconSuffix(String suffix)
    {
       setProperty("largeiconsuffix", suffix);
+   }
+
+   public String getSmallIconSuffix()
+   {
+      String val = getProperty("smalliconsuffix");
+
+      if (val == null)
+      {
+         return DEFAULT_SMALL_ICON_SUFFIX;
+      }
+
+      return val;
+   }
+
+   public void setSmallIconSuffix(String suffix)
+   {
+      setProperty("smalliconsuffix", suffix);
    }
 
    public void setLookAndFeel(String lookAndFeel)
@@ -2673,4 +2692,5 @@ public class DatatoolSettings extends Properties
    private static int[] TYPE_MNEMONICS = null;
 
    private static final String DEFAULT_LARGE_ICON_SUFFIX = "-24";
+   private static final String DEFAULT_SMALL_ICON_SUFFIX = "-16";
 }

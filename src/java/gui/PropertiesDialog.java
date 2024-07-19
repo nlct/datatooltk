@@ -548,6 +548,27 @@ public class PropertiesDialog extends JDialog
       box.add(toolBarIconSizeButton64);
       grp.add(toolBarIconSizeButton64);
 
+      lookAndFeelPanel.add(createLabel("preferences.display.smallbuttonsize"));
+
+      box = createNewRow(lookAndFeelPanel);
+
+      grp = new ButtonGroup();
+
+      icSet = getHelpLib().getHelpIconSet("preferences", "-16");
+      smallIconSizeButton16 = icSet.createIconRadioButton();
+      box.add(smallIconSizeButton16);
+      grp.add(smallIconSizeButton16);
+
+      icSet = getHelpLib().getHelpIconSet("preferences", "-20");
+      smallIconSizeButton20 = icSet.createIconRadioButton();
+      box.add(smallIconSizeButton20);
+      grp.add(smallIconSizeButton20);
+
+      icSet = getHelpLib().getHelpIconSet("preferences", "-24");
+      smallIconSizeButton24 = icSet.createIconRadioButton();
+      box.add(smallIconSizeButton24);
+      grp.add(smallIconSizeButton24);
+
       box = createNewRow(lookAndFeelPanel);
       box.add(createTextArea(4, 16, "preferences.display.lookandfeel.restart"));
 
@@ -1021,6 +1042,21 @@ public class PropertiesDialog extends JDialog
       else
       {
          toolBarIconSizeButton24.setSelected(true);
+      }
+
+      iconSuffix = settings.getSmallIconSuffix();
+
+      if (iconSuffix.equals("-24"))
+      {
+         smallIconSizeButton24.setSelected(true);
+      }
+      else if (iconSuffix.equals("-20"))
+      {
+         smallIconSizeButton20.setSelected(true);
+      }
+      else
+      {
+         smallIconSizeButton16.setSelected(true);
       }
 
       currencyListModel = new CurrencyListModel(currencyList, settings);
@@ -1523,6 +1559,19 @@ public class PropertiesDialog extends JDialog
          settings.setLargeIconSuffix("-24");
       }
 
+      if (smallIconSizeButton24.isSelected())
+      {
+         settings.setSmallIconSuffix("-24");
+      }
+      else if (smallIconSizeButton20.isSelected())
+      {
+         settings.setSmallIconSuffix("-20");
+      }
+      else
+      {
+         settings.setSmallIconSuffix("-16");
+      }
+
       gui.updateTableSettings();
 
       if (hasSeedBox.isSelected())
@@ -1709,7 +1758,9 @@ public class PropertiesDialog extends JDialog
 
    private JComboBox<String> lookAndFeelBox;
    private JRadioButton toolBarIconSizeButton24,
-     toolBarIconSizeButton32, toolBarIconSizeButton64;
+     toolBarIconSizeButton32, toolBarIconSizeButton64,
+     smallIconSizeButton16, smallIconSizeButton20,
+     smallIconSizeButton24;
 
    private UIManager.LookAndFeelInfo[] availableLookAndFeels;
 
