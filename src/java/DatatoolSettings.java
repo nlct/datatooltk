@@ -2751,7 +2751,7 @@ public class DatatoolSettings extends Properties
       = Pattern.compile("(.+?) *(\\d*\\.?\\d+)");
 
    public static final String RESOURCES_PATH = "/resources";
-   public static final String ICON_DIR = RESOURCES_PATH+"/icons/";
+   public static final String ICON_DIR = "/com/dickimawbooks/datatooltk/gui/icons/";
    public static final String HELPSETS = "helpsets";
    public static final String HELPSET_DIR = RESOURCES_PATH+"/"+HELPSETS;
    public static final String DICT_DIR = RESOURCES_PATH+"/dictionaries/";

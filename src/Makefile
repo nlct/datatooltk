@@ -42,10 +42,12 @@ lib/datatooltk.jar	: java/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/DatatoolTk.class \
 			lib/resources/helpsets/datatooltk-en/index.xml \
 			lib/resources/helpsets/datatooltk-en-GB/index.xml 
+	cp -u -r java/gui/icons classes/com/dickimawbooks/datatooltk/gui/
 	cd classes; \
 	jar cmf ../java/Manifest.txt ../lib/datatooltk.jar \
 	com/dickimawbooks/datatooltk/*.class \
-	com/dickimawbooks/datatooltk/*/*.class 
+	com/dickimawbooks/datatooltk/*/*.class \
+	com/dickimawbooks/datatooltk/gui/icons/*.png
 
 classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
 	java/*.java java/*/*.java \
