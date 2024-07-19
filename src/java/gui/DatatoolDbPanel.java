@@ -1757,11 +1757,9 @@ class ButtonTabComponent extends JPanel
       this.panel = panel;
       label = new JLabel(panel.getName());
       button = panel.getDatatoolGuiResources().createActionButton
-        ("button", "close_panel", this, null);
+        ("button", "close_panel", true, this, null, true);
       label.setToolTipText(panel.getToolTipText());
 
-      button.setText(null);
-      button.setRolloverEnabled(true);
       button.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
       button.setContentAreaFilled(false);
       button.setFocusable(false);

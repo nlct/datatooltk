@@ -128,6 +128,15 @@ public class DatatoolGuiResources
     }
 
     public JButton createActionButton(String parent, String label,
+      boolean prefSmallIconSet,
+      ActionListener listener, KeyStroke keyStroke,
+      boolean omitTextIfIcon)
+    {
+       return createActionButton(parent, label, label, prefSmallIconSet,
+        listener, keyStroke, omitTextIfIcon);
+    }
+
+    public JButton createActionButton(String parent, String label,
       String iconPrefix, boolean prefSmallIconSet,
       ActionListener listener, KeyStroke keyStroke, boolean omitTextIfIcon)
     {
