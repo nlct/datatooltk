@@ -76,7 +76,7 @@ public class DatatoolSettings extends Properties
        "texparserlib", RESOURCE_PREFIX);
 
       helpLib.setIconPath(ICON_DIR);
-      helpLib.setLargeIconSuffix("-24x24");
+      helpLib.setLargeIconSuffix(DEFAULT_LARGE_ICON_SUFFIX);
 
       String helpset = getHelpSet();
       String langTag = helpLib.getHelpSetLocale().toLanguageTag();
@@ -755,7 +755,7 @@ public class DatatoolSettings extends Properties
 
       if (val == null)
       {
-         return "-24x24";
+         return DEFAULT_LARGE_ICON_SUFFIX;
       }
 
       return val;
@@ -2671,4 +2671,6 @@ public class DatatoolSettings extends Properties
 
    private static String[] TYPE_LABELS = null;
    private static int[] TYPE_MNEMONICS = null;
+
+   private static final String DEFAULT_LARGE_ICON_SUFFIX = "-24";
 }

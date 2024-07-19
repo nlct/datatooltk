@@ -533,17 +533,17 @@ public class PropertiesDialog extends JDialog
 
       ButtonGroup grp = new ButtonGroup();
 
-      IconSet icSet = getHelpLib().getHelpIconSet("preferences", "-24x24");
+      IconSet icSet = getHelpLib().getHelpIconSet("preferences", "-24");
       toolBarIconSizeButton24 = icSet.createIconRadioButton();
       box.add(toolBarIconSizeButton24);
       grp.add(toolBarIconSizeButton24);
 
-      icSet = getHelpLib().getHelpIconSet("preferences", "-32x32");
+      icSet = getHelpLib().getHelpIconSet("preferences", "-32");
       toolBarIconSizeButton32 = icSet.createIconRadioButton();
       box.add(toolBarIconSizeButton32);
       grp.add(toolBarIconSizeButton32);
 
-      icSet = getHelpLib().getHelpIconSet("preferences", "-64x64");
+      icSet = getHelpLib().getHelpIconSet("preferences", "-64");
       toolBarIconSizeButton64 = icSet.createIconRadioButton();
       box.add(toolBarIconSizeButton64);
       grp.add(toolBarIconSizeButton64);
@@ -1010,11 +1010,11 @@ public class PropertiesDialog extends JDialog
 
       String iconSuffix = settings.getLargeIconSuffix();
 
-      if (iconSuffix.equals("-64x64"))
+      if (iconSuffix.equals("-64"))
       {
          toolBarIconSizeButton64.setSelected(true);
       }
-      else if (iconSuffix.equals("-32x32"))
+      else if (iconSuffix.equals("-32"))
       {
          toolBarIconSizeButton32.setSelected(true);
       }
@@ -1512,15 +1512,15 @@ public class PropertiesDialog extends JDialog
 
       if (toolBarIconSizeButton64.isSelected())
       {
-         settings.setLargeIconSuffix("-64x64");
+         settings.setLargeIconSuffix("-64");
       }
       else if (toolBarIconSizeButton32.isSelected())
       {
-         settings.setLargeIconSuffix("-32x32");
+         settings.setLargeIconSuffix("-32");
       }
       else
       {
-         settings.setLargeIconSuffix("-24x24");
+         settings.setLargeIconSuffix("-24");
       }
 
       gui.updateTableSettings();

@@ -64,8 +64,7 @@ classes/com/dickimawbooks/datatooltk	:
 	mkdir -p classes/com/dickimawbooks/datatooltk
 
 clean	:
-	\rm -f classes/com/dickimawbooks/datatooltk/*.class
-	\rm -f classes/com/dickimawbooks/datatooltk/*/*.class
+	\rm -rf classes/com
 
 squeaky	:
 	\rm -f lib/datatooltk.jar

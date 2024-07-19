@@ -57,4 +57,4 @@ $(targetdir)	:
 
 clean	:
 	\rm -f datatooltk-en*.{aux,log,pdf,glg,glstex,out,toc,lof}
-
+	\rm -rf $(targetdir)/datatooltk-en*
