@@ -477,8 +477,6 @@ public class DatatoolGUI extends JFrame
    {
       TeXJavaHelpLib helpLib = settings.getHelpLib();
 
-      //helpLib.loadImageMap("/resources/imagemap.prop");
-
       helpLib.getHelpFontSettings().copyFrom(settings.getManualFontSettings());
 
       helpLib.setHelpsetSubDirPrefix(DatatoolSettings.RESOURCE_PREFIX);
