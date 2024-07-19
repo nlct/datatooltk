@@ -2,7 +2,9 @@
 target_version := --release 8 -Xlint:-options
 
 APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION=//" | tr -d "\"\; ")
-IZPACKDIR=/usr/local/IzPack
+ifeq ($(IZPACKDIR),)
+IZPACKDIR:=/usr/local/IzPack
+endif
 POIVER=5.3.0
 ODFVER=1.5
 
@@ -26,7 +28,8 @@ dist	: ../dist/datatooltk-installer.jar
 	cp doc/datatooltk.1 ../dist
 
 ../dist/datatooltk-installer.jar	: app installer/install.xml
-	$(IZPACKDIR)/bin/compile installer/install.xml -b . \
+	"$(IZPACKDIR)/bin/compile" installer/install.xml -b . \
+	-h "$(IZPACKDIR)" \
 	-o ../dist/datatooltk-installer.jar -k standard
 
 lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en-GB.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
