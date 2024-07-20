@@ -9,6 +9,7 @@
  ]{texjavahelp}
 
 \hypersetup{colorlinks,linkcolor=blue}
+\DeclareGraphicsExtensions{.png,.pdf,.tex}
 
 \glsxtrnewgls{plugin.}{\plugin}
 \glsxtrnewgls{template.}{\template}
@@ -2504,10 +2505,13 @@ obtained with the \switch{version} switch.
 \input{helpinterface}
 
 
-\chapter{Licence}
+\chapter{\MFUsentencecase{\glsentrytext{index.licence}}}
 \label{sec:licence}
 
-   \app{datatooltk} is licensed under the terms of the GNU General Public License.
+   \glsadd{index.licence}%
+   \appname\ is licensed under the terms of the 
+   \href{https://www.gnu.org/licenses/gpl-3.0.html}{GNU General
+   Public License version 3 (GPLv3)}.
    \app{datatooltk} depends on the following third party libraries whose jar files are
    in the \filefmt{lib} directory:
    \begin{itemize}
@@ -2524,7 +2528,6 @@ obtained with the \switch{version} switch.
     (\href{https://www.apache.org/licenses/LICENSE-2.0.html}{Apache 2}, \url{https://poi.apache.org/}).
    \end{itemize}
 
-\verbatiminput{LICENSE}
 
 \listentrydescendents
  [title={Summary of \apptext{datatooltk} Switches}]

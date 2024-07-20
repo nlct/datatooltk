@@ -6,6 +6,7 @@
 
 <entry key="manual.labelled">labelled</entry>
 <entry key="manual.favour">favour</entry>
+<entry key="index.licence">licence</entry>
 
 <entry key="preferences.display.highlightcomment">Comment Colour</entry>
 <entry key="preferences.display.highlightcs">Control Sequence Colour</entry>
@@ -14,6 +15,10 @@
 <entry key="preferences.display.choose.highlightcs.tooltip">Choose control sequence colour</entry>
 
 <entry key="menu.help.licence">Licence</entry>
+
+<!-- Licence Dialog -->
+
+<entry key="licence.title">Licence</entry>
 
 <entry key="message.cancelled">Cancelled</entry>
 

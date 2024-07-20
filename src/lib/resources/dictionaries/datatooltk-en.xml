@@ -227,6 +227,10 @@
 <entry key="tablemenu.append_row.mnemonic">R</entry>
 <entry key="tablemenu.append_row.tooltip">Add new row after the last row</entry>
 
+<!-- Licence Dialog -->
+
+<entry key="licence.title">Licence</entry>
+
 <!-- About Dialog -->
 
 <entry key="about.title">About {0}</entry>
@@ -1214,6 +1218,7 @@ Trying again with TeX Parser Library.</entry>
 <!-- Text for the manual  -->
 <entry key="manual.labelled">labeled</entry>
 <entry key="manual.favour">favor</entry>
+<entry key="index.licence">license</entry>
 
 <!-- Errors -->
 

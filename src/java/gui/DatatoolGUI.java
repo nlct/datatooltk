@@ -417,14 +417,19 @@ public class DatatoolGUI extends JFrame
       helpM.add(resources.createJMenuItem("help", "manual", this,
        helpLib.getKeyStroke("menu.help.manual"), toolBar));
 
-      helpM.add(resources.createJMenuItem("help", "licence", this));
-
       helpM.add(resources.createJMenuItem(
          "help", "about", "information", this, null, toolBar));
 
       aboutDialog = new MessageDialog(this,
        getMessageHandler().getLabelWithValues("about.title", DatatoolTk.APP_NAME),
        true, helpLib, getMessageHandler().getDatatoolTk().getAppInfo(true));
+
+      createLicenceDialog();
+
+      if (licenceDialog != null)
+      {
+         helpM.add(resources.createJMenuItem("help", "licence", this));
+      }
 
       settings.setPasswordReader(new GuiPasswordReader(messageHandler, this));
 
@@ -532,6 +537,30 @@ public class DatatoolGUI extends JFrame
                  helpLib.getMessage("error.no_plugin_dict", dictLocale, "en"));
             }
          }
+      }
+   }
+
+   protected void createLicenceDialog()
+   {
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      try
+      {
+         URL url = getClass().getResource(LICENCE_PATH);
+   
+         if (url == null)
+         {
+            throw new FileNotFoundException(helpLib.getMessage(
+              "error.resource_not_found", LICENCE_PATH));
+         }
+
+         licenceDialog = new MessageDialog(this,
+           helpLib.getMessage("licence.title"), true,
+           helpLib, url);
+      }
+      catch (IOException e)
+      {
+         getMessageHandler().error(this, e);
       }
    }
 
@@ -1032,13 +1061,9 @@ public class DatatoolGUI extends JFrame
       }
       else if (action.equals("licence"))
       {
-         try
+         if (licenceDialog != null)
          {
-            settings.getHelpLib().openHelpForId("sec:licence");
-         }
-         catch (Exception e)
-         {
-            getMessageHandler().error(this, e);
+            licenceDialog.setVisible(true);
          }
       }
       else if (action.equals("undo"))
@@ -1956,7 +1981,9 @@ public class DatatoolGUI extends JFrame
 
    private ReplaceAllDialog replaceAllDialog;
 
-   private MessageDialog aboutDialog;
+   private MessageDialog aboutDialog, licenceDialog;
+
+   public static final String LICENCE_PATH = "/gpl-3.0-standalone.html";
 
    private DatatoolPlugin[] plugins;
    private URL pluginDictURL;
