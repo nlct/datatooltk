@@ -989,6 +989,43 @@ public class DatatoolTk
 
             loadSettings.setOutputFile(args[i]);
          }
+         else if (args[i].equals("--dtl-read"))
+         {
+            if (loadSettings.getImportSource() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.syntax.only_one_import"));
+            }
+
+            if (loadSettings.getInputFile() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.import_clash", args[i]));
+            }
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_optionlist",
+                     args[i-1]));
+            }
+
+            String optList = args[i];
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_filename",
+                     args[i-1]+" \""+optList+"\""));
+            }
+
+            loadSettings.setImportSource(args[i]);
+            loadSettings.setDataImport(new DatatoolTeX(optList, settings));
+         }
          else if (args[i].equals("--csv"))
          {
             if (loadSettings.getImportSource() != null)

@@ -1271,6 +1271,8 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.syntax.syntax.missing_merge_key">Missing merge key after ''{0}''</entry>
 <entry key="error.syntax.syntax.missing_merge_statement">Missing merge SQL statement after {0} {1}</entry>
 
+<entry key="error.syntax.missing_optionlist">Missing option list after {0}</entry>
+
 <entry key="error.syntax.unknown_encoding">Unknown or invalid encoding name ''{0}''</entry>
 <entry key="error.syntax.unknown_field">Unknown sort field ''{0}''</entry>
 <entry key="error.syntax.invalid_set_value">Invalid value ''{0}'' for option {1} (allowed values: {2})</entry>

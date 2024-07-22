@@ -31,6 +31,8 @@ public class DataToolTeXParserListener extends PreambleParser
    {
       super(settings.getTeXApp(), UndefAction.WARN);
 
+      this.settings = settings;
+
       setParser(new TeXParser(this));
 
       MessageHandler messageHandler = settings.getMessageHandler();

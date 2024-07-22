@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2024 Nicola L.C. Talbot
+    Copyright (C) 2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -23,20 +23,26 @@ import java.nio.file.Files;
 import java.nio.charset.Charset;
 
 import com.dickimawbooks.texparserlib.*;
+import com.dickimawbooks.texparserlib.latex.KeyValList;
 import com.dickimawbooks.texparserlib.latex.datatool.*;
 
 import com.dickimawbooks.datatooltk.*;
 
 /**
- * Class handling importing and exporting CSV data.
- * This is now using the TeX Parser Library instead of opencsv,
- * partly to be more consistent with datatool.sty's \DTLread and
- * \DTLwrite and partly to reduce the number of dependent libraries.
+ * Class handling importing and exporting via the TeX Parser Library's
+ * implementation of <code>\DTLread</code> and
+ * <code>\DTLwrite</code>.
  */
-public class DatatoolCsv implements DatatoolImport,DatatoolExport
+public class DatatoolTeX implements DatatoolImport,DatatoolExport
 {
-   public DatatoolCsv(DatatoolSettings settings)
+   public DatatoolTeX(DatatoolSettings settings)
    {
+      this(null, settings);
+   }
+
+   public DatatoolTeX(String optionList, DatatoolSettings settings)
+   {
+      this.optionList = optionList;
       this.settings = settings;
    }
 
@@ -47,6 +53,8 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       {
          File file = new File(target);
          DataToolTeXParserListener listener = settings.getTeXParserListener();
+// TODO
+/*
          TeXParser parser = listener.getParser();
          IOSettings ioSettings = listener.getIOSettings();
 
@@ -58,6 +66,7 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
          parser.push(listener.getControlSequence("endgroup"));
          styDb.write(parser, parser, texPath, ioSettings);
          listener.getDataToolSty().removeDataBase(db.getName());
+*/
       }
       catch (IOException e)
       {
@@ -70,78 +79,85 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {
-      return importData(new File(source));
+      return importData(source, true);
    }
 
-   public DatatoolDb importData(File file)
+   public DatatoolDb importData(String source, boolean checkForVerbatim)
       throws DatatoolImportException
    {
-      return importData(file, null);
-   }
-
-   public DatatoolDb importData(File file, String name)
-      throws DatatoolImportException
-   {
-      return importData(file, name, true);
-   }
-
-   public DatatoolDb importData(File file, String name, boolean checkForVerbatim)
-      throws DatatoolImportException
-   {
-      if (name == null)
-      {
-         name = file.getName();
-         int idx = name.lastIndexOf(".");
-
-         if (idx != -1)
-         {
-            name = name.substring(0, idx);
-         }
-      }
-
       try
       {
          DataToolTeXParserListener listener = settings.getTeXParserListener();
+
+         DataToolSty sty = listener.getDataToolSty();
          TeXParser parser = listener.getParser();
+
+         listener.applyCurrentCsvSettings();
+
          IOSettings ioSettings = listener.getIOSettings();
 
-         FileFormatType formatType = ioSettings.getFormat();
-
-         if (!(formatType == FileFormatType.CSV || formatType == FileFormatType.TSV))
+         if (optionList != null)
          {
-            if (ioSettings.getSeparator() == '\t')
-            {
-               ioSettings.setFileFormat(FileFormatType.TSV);
-            }
-            else
-            {
-               ioSettings.setFileFormat(FileFormatType.CSV);
-            }
+            TeXObjectList list = listener.createStack();
+            parser.scan(optionList, list);
+            ioSettings.apply(KeyValList.getList(parser, list), parser, parser);
          }
 
-         String charsetName = settings.getCsvEncoding();
-         Charset charset = null;
-
-         if (charsetName != null)
-         {
-            charset = Charset.forName(charsetName);
-         }
-
-         TeXPath texPath = new TeXPath(parser, file, charset);
-
-         ioSettings.setDefaultName(name);
-
-         return DatatoolDb.loadTeXParser(settings, 
-           texPath, ioSettings, checkForVerbatim);
+         return importData(ioSettings, source, checkForVerbatim);
       }
       catch (IOException e)
       {
          throw new DatatoolImportException(
-          getMessageHandler().getLabelWithValues("error.import.failed", 
-           file.toString(), e.getMessage()), e);
+           getMessageHandler().getLabelWithValues(
+             "error.import.failed", source), e);
       }
    }
 
+   public DatatoolDb importData(IOSettings ioSettings, String source,
+        boolean checkForVerbatim)
+      throws DatatoolImportException
+   {
+      try
+      {
+         DataToolTeXParserListener listener = settings.getTeXParserListener();
+
+         TeXParser parser = listener.getParser();
+
+         FileFormatType format = ioSettings.getFormat();
+
+         TeXPath texPath;
+         String charsetName = null;
+
+         if (format == FileFormatType.CSV || format == FileFormatType.TSV)
+         {
+            texPath = new TeXPath(parser, source, "csv", "tsv");
+
+            charsetName = settings.getCsvEncoding();
+         }
+         else
+         {
+            texPath = new TeXPath(parser, source,
+               "dbtex", "dtltex", "tex", "ltx");
+
+            charsetName = settings.getTeXEncoding();
+         }
+
+         if (charsetName != null)
+         {
+            Charset charset = Charset.forName(charsetName);
+            texPath.setEncoding(charset);
+         }
+
+         return DatatoolDb.loadTeXParser(settings,
+            texPath, ioSettings, checkForVerbatim);
+      }
+      catch (IOException e)
+      {
+         throw new DatatoolImportException(
+           getMessageHandler().getLabelWithValues(
+             "error.import.failed", source), e);
+      }
+   }
 
    public MessageHandler getMessageHandler()
    {
@@ -149,5 +165,5 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    }
 
    private DatatoolSettings settings;
-
+   private String optionList;
 }
