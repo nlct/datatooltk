@@ -120,7 +120,7 @@
 <entry key="menu.edit.paste">Paste</entry>
 <entry key="menu.edit.paste.mnemonic">P</entry>
 
-<entry key="menu.edit.preferences">Edit Preferences...</entry>
+<entry key="menu.edit.preferences">Preferences...</entry>
 <entry key="menu.edit.preferences.mnemonic">P</entry>
 <entry key="menu.edit.preferences.tooltip">Edit application settings</entry>
 
@@ -431,6 +431,13 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <entry key="preferences.display.editorwidth">Maximum Characters per Line</entry>
 <entry key="preferences.display.editorwidth.mnemonic">X</entry>
+
+<entry key="preferences.display.sampler">% This is a comment
+The \emph'{'quick'}' brown ``fox'''' jumped over 
+the \strong'{'lazy'}' dog.
+\$ £ € \# [ + - ] 0123456789
+@ / &lt; &gt; \&amp; ~ $x_0 y^2$
+‘quoted’ “double quoted” ! ?</entry>
 
 <entry key="preferences.display.font">Font</entry>
 <entry key="preferences.display.font.mnemonic">F</entry>
@@ -1168,6 +1175,10 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.output_format">{0} dbtex-2|dbtex-3|dtltex-2|dtltex-3		Output file format.</entry>
 
+<entry key="syntax.dtl_read">{0} &lt;options&gt; &lt;file&gt; Import option that simulates \DTLread[&lt;options&gt;]'{'&lt;file&gt;'}'.</entry>
+
+<entry key="syntax.dtl_write">{0} &lt;options&gt; &lt;file&gt; Export option that simulates \DTLwrite[&lt;options&gt;]'{'&lt;file&gt;'}'.</entry>
+
 <entry key="syntax.truncate">{0} &lt;n&gt;	Truncate the database to the first &lt;n&gt; rows.
 		(Has no effect if &lt;n&gt; is greater than the total number of rows.)
 		This option is always performed last (after any sorting,
@@ -1263,6 +1274,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.syntax.not_a_number">Number expected after {0} (''{1}'' found)</entry>
 <entry key="error.syntax.only_one">Only one {0} permitted</entry>
 <entry key="error.syntax.only_one_import">Only one import option permitted</entry>
+<entry key="error.syntax.only_one_export">Only one export option permitted</entry>
 <entry key="error.syntax.only_one_input">Only one &lt;datatool file&gt; permitted</entry>
 <entry key="error.syntax.only_one_merge">Only one merge option permitted</entry>
 <entry key="error.syntax.option_clash">Option conflict: can''t specify both {0} and {1}</entry>
@@ -1292,8 +1304,8 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.char_esc_required">I''m sorry, the escape character ''{0}'' is currently not supported by the CSV library. The character code must be less than {1}.</entry>
 <entry key="error.char_sep_required">I''m sorry, the separator ''{0}'' is currently not supported by the CSV library. The character code must be less than {1}.</entry>
 
-<entry key="error.cli.no_out">{0} &lt;file&gt; required for batch mode.
-(If you want the GUI interface, use the {1} option. See {2} for help.)</entry>
+<entry key="error.cli.no_out">{0} or {1} required for batch mode.
+(If you want the GUI interface, use the {2} option. See {3} for help.)</entry>
 
 <entry key="error.cli.no_data">A database must either be loaded or imported when using batch mode.
 (If you want the GUI interface, use the {0} option. See {1} for help.)</entry>

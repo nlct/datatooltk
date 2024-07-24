@@ -420,6 +420,7 @@ public class PropertiesDialog extends JDialog
       samplerDocument = new FontSampleDocument(this);
       samplerComp = new JTextPane(samplerDocument);
       samplerComp.setText(messageHandler.getLabel("preferences.display.sampler"));
+      sampleComp.setEditable(false);
 
       box.add(new JScrollPane(samplerComp));
 
