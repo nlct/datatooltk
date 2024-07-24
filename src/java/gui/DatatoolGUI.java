@@ -248,16 +248,27 @@ public class DatatoolGUI extends JFrame
       importM.add(resources.createJMenuItem(
         "file.import", "importspread", this, toolBar));
 
-      fileM.add(resources.createJMenuItem(
-        "file", "save", this, toolBar));
+      saveItem = resources.createJMenuItem(
+        "file", "save", this, toolBar);
+      saveItem.setEnabled(false);
 
-      fileM.add(resources.createJMenuItem(
-        "file", "save_as", this, toolBar));
+      fileM.add(saveItem);
 
-      fileM.add(resources.createJMenuItem(
+      saveAsItem = resources.createJMenuItem(
+        "file", "save_as", this, toolBar);
+      saveAsItem.setEnabled(false);
+
+      fileM.add(saveAsItem);
+
+      fileM.addSeparator();
+
+      closeItem = resources.createJMenuItem(
         "file", "close_db", this,
         KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK),
-         toolBar));
+         toolBar);
+
+      fileM.add(closeItem);
+      closeItem.setEnabled(false);
 
       fileM.add(resources.createJMenuItem(
         "file", "quit", this,
@@ -360,6 +371,8 @@ public class DatatoolGUI extends JFrame
          "edit.row", "row_to_null", this, null, toolBar);
       rowM.add(setRowToNullItem);
       setRowToNullItem.setEnabled(false);
+
+      editM.addSeparator();
 
       editM.add(resources.createJMenuItem(
          "edit", "preferences", this, toolBar));
@@ -486,7 +499,7 @@ public class DatatoolGUI extends JFrame
    {
       TeXJavaHelpLib helpLib = settings.getHelpLib();
 
-      helpLib.getHelpFontSettings().copyFrom(settings.getManualFontSettings());
+      settings.initHelpSetSettings();
 
       helpLib.setHelpsetSubDirPrefix(DatatoolSettings.RESOURCE_PREFIX);
       helpLib.initHelpSet(DatatoolSettings.HELPSETS);
@@ -1199,7 +1212,7 @@ public class DatatoolGUI extends JFrame
       try
       {
          settings.directoryOnExit(fileChooser.getCurrentDirectory());
-         settings.setManualFont(getHelpLib().getHelpFontSettings());
+         settings.updateHelpSetSettings();
          settings.saveProperties();
       }
       catch (IOException e)
@@ -1886,6 +1899,12 @@ public class DatatoolGUI extends JFrame
 
       pluginsM.setEnabled(enable && plugins.length > 0 
         && settings.getPerl() != null);
+
+      enable = (tabbedPane.getTabCount() > 0);
+
+      saveItem.setEnabled(enable);
+      saveAsItem.setEnabled(enable);
+      closeItem.setEnabled(enable);
    }
 
    public Font getCellFont()
@@ -1967,7 +1986,8 @@ public class DatatoolGUI extends JFrame
       removeColumnItem, editHeaderItem, editDbNameItem,
       removeRowItem, clearRecentItem, sortItem, shuffleItem,
       findCellItem, findNextItem, replaceItem,
-      setToNullItem, deselectItem, setColToNullItem, setRowToNullItem;
+      setToNullItem, deselectItem, setColToNullItem, setRowToNullItem,
+      saveItem, saveAsItem, closeItem;
 
    private ActionListener recentFilesListener;
 
