@@ -32,6 +32,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -414,14 +415,30 @@ public class PropertiesDialog extends JDialog
       leftPanel.setAlignmentY(0);
       displayTab.add(leftPanel);
 
+      JComponent box = createNewRow(leftPanel);
+
+      samplerDocument = new FontSampleDocument(this);
+      samplerComp = new JTextPane(samplerDocument);
+      samplerComp.setText(messageHandler.getLabel("preferences.display.sampler"));
+
+      box.add(new JScrollPane(samplerComp));
+
       JLabelGroup labelGrp = new JLabelGroup();
 
-      JComponent box = createNewRow(leftPanel);
+      box = createNewRow(leftPanel);
 
       GraphicsEnvironment env =
          GraphicsEnvironment.getLocalGraphicsEnvironment();
 
       fontBox = new JComboBox<String>(env.getAvailableFontFamilyNames());
+      fontBox.addItemListener(new ItemListener()
+       {
+          @Override
+          public void itemStateChanged(ItemEvent evt)
+          {
+             updateFontSampler();
+          }
+       });
 
       box.add(createLabel(labelGrp, "preferences.display.font", fontBox));
       box.add(fontBox);
@@ -429,6 +446,14 @@ public class PropertiesDialog extends JDialog
       box = createNewRow(leftPanel);
       fontSizeModel = new SpinnerNumberModel(10, 1, 1000, 1);
       JSpinner sizeField = new JSpinner(fontSizeModel);
+      sizeField.addChangeListener(new ChangeListener()
+       {
+          @Override
+          public void stateChanged(ChangeEvent evt)
+          {
+             updateFontSampler();
+          }
+       });
 
       box.add(createLabel(labelGrp, "preferences.display.fontsize", sizeField));
       box.add(sizeField);
@@ -501,6 +526,8 @@ public class PropertiesDialog extends JDialog
       syntaxHighlightingBox = resources.createJCheckBox
         ("preferences.display", "editorsyntax", null);
       editorBox.add(syntaxHighlightingBox);
+
+      updateFontSampler();
 
       JComponent rightPanel = Box.createVerticalBox();
       rightPanel.setAlignmentY(0);
@@ -1148,6 +1175,8 @@ public class PropertiesDialog extends JDialog
       perlFileField.setFileName(settings.getPerl());
 
       updateButtons();
+      
+      updateFontSampler();
 
       setVisible(true);
    }
@@ -1292,6 +1321,8 @@ public class PropertiesDialog extends JDialog
          {
             highlightCsSwatch.setBackground(col);
          }
+
+         updateFontSampler();
       }
       else if (action.equals("highlightcomment"))
       {
@@ -1303,6 +1334,8 @@ public class PropertiesDialog extends JDialog
          {
             highlightCommentSwatch.setBackground(col);
          }
+
+         updateFontSampler();
       }
       else if (action.equals("int.pattern"))
       {
@@ -1426,6 +1459,40 @@ public class PropertiesDialog extends JDialog
       removeCurrencyButton.setEnabled(enabled);
    }
 
+   protected Color getCommentHighlight()
+   {
+      return highlightCommentSwatch.getBackground();
+   }
+
+   protected Color getControlSequenceHighlight()
+   {
+      return highlightCsSwatch.getBackground();
+   }
+
+   protected boolean isSyntaxHighlightingOn()
+   {
+      return syntaxHighlightingBox.isSelected();
+   }
+
+   protected int getSelectedFontSize()
+   {
+      return fontSizeModel.getNumber().intValue();
+   }
+
+   protected String getSelectedFontName()
+   {
+      return fontBox.getSelectedItem().toString();
+   }
+
+   protected void updateFontSampler()
+   {
+      Font sampleFont = new Font(getSelectedFontName(), Font.PLAIN,
+        getSelectedFontSize());
+      samplerComp.setFont(sampleFont);
+
+      samplerDocument.update();
+   }
+
    private void okay() throws IllegalArgumentException
    {
       if (homeButton.isSelected())
@@ -1522,8 +1589,8 @@ public class PropertiesDialog extends JDialog
 
       currencyListModel.updateSettings();
 
-      settings.setFontName(fontBox.getSelectedItem().toString());
-      settings.setFontSize(fontSizeModel.getNumber().intValue());
+      settings.setFontName(getSelectedFontName());
+      settings.setFontSize(getSelectedFontSize());
       settings.setCellHeight(cellHeightModel.getNumber().intValue());
 
       for (int i = 0; i < cellWidthModels.length; i++)
@@ -1750,6 +1817,9 @@ public class PropertiesDialog extends JDialog
 
    private JComponent highlightCsSwatch, highlightCommentSwatch;
 
+   private JTextPane samplerComp;
+   private FontSampleDocument samplerDocument;
+
    private JTabbedPane tabbedPane;
 
    private DatatoolGUI gui;
@@ -1862,4 +1932,90 @@ class CurrencyListModel extends AbstractListModel<String>
    private static String LABEL_ADD=null;
 
    private static String LABEL_EDIT=null;
+}
+
+class FontSampleDocument extends DefaultStyledDocument
+{
+   public FontSampleDocument(PropertiesDialog dialog)
+   {
+      super();
+
+      this.dialog = dialog;
+
+      StyleContext context = StyleContext.getDefaultStyleContext();
+
+      attrPlain = new SimpleAttributeSet();
+      StyleConstants.setForeground(attrPlain, defaultForeground);
+
+      attrControlSequence = new SimpleAttributeSet();
+      StyleConstants.setForeground(attrControlSequence, defaultForeground);
+
+      attrComment = new SimpleAttributeSet();
+
+      StyleConstants.setItalic(attrComment, true);
+      StyleConstants.setForeground(attrComment, defaultForeground);
+   }
+
+   public void update()
+   {
+      if (dialog.isSyntaxHighlightingOn())
+      {
+         Color commentHighlight = dialog.getCommentHighlight();
+         Color csHighlight = dialog.getControlSequenceHighlight();
+
+         StyleConstants.setForeground(attrControlSequence, csHighlight);
+         StyleConstants.setForeground(attrComment, commentHighlight);
+         StyleConstants.setItalic(attrComment, true);
+      }
+      else
+      {
+         StyleConstants.setForeground(attrControlSequence, defaultForeground);
+         StyleConstants.setForeground(attrComment, defaultForeground);
+         StyleConstants.setItalic(attrComment, false);
+      }
+
+      try
+      {
+         updateHighlight();
+      }
+      catch (BadLocationException e)
+      {
+      }
+   }
+
+   private void updateHighlight()
+   throws BadLocationException
+   {
+      String text = getText(0, getLength());
+
+      setCharacterAttributes(0, getLength(),
+        attrPlain, true);
+
+      Matcher matcher = DatatoolGuiResources.PATTERN_CS.matcher(text);
+
+      while (matcher.find())
+      {
+         int newOffset = matcher.start();
+         int len = matcher.end() - newOffset;
+
+         String group = matcher.group();
+
+         if (group.startsWith("%"))
+         {
+            setCharacterAttributes(newOffset, len, attrComment, true);
+         }
+         else
+         {
+            setCharacterAttributes(newOffset, len, attrControlSequence, false);
+         }
+      }
+   }
+
+   PropertiesDialog dialog;
+
+   private SimpleAttributeSet attrPlain;
+   private SimpleAttributeSet attrControlSequence;
+   private SimpleAttributeSet attrComment;
+
+   private Color defaultForeground = Color.BLACK;
 }

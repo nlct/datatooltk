@@ -755,7 +755,7 @@ class CellDocument extends DefaultStyledDocument
       setCharacterAttributes(0, getLength(), 
         attrPlain, true);
 
-      Matcher matcher = PATTERN_CS.matcher(text);
+      Matcher matcher = DatatoolGuiResources.PATTERN_CS.matcher(text);
 
       while (matcher.find())
       {
@@ -815,7 +815,4 @@ class CellDocument extends DefaultStyledDocument
    private AttributeSet attrPlain;
    private AttributeSet attrControlSequence;
    private SimpleAttributeSet attrComment;
-
-   private static final Pattern PATTERN_CS = Pattern.compile(
-      "((?:\\\\[^a-zA-Z]{1})|(?:\\\\[a-zA-Z]+)|(?:[#~\\{\\}\\^\\$_])|(?:%.*))");
 }

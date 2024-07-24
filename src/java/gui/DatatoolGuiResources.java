@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk.gui;
 
 import java.awt.*;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.io.*;
 import java.net.*;
 import java.awt.event.*;
@@ -714,9 +715,13 @@ public class DatatoolGuiResources
        return progressMonitor;
     }
 
-    private ErrorPanel errorPanel;
+   private ErrorPanel errorPanel;
 
-    private MessageHandler messageHandler;
+   private MessageHandler messageHandler;
 
-    private ProgressMonitor progressMonitor=null;
+   private ProgressMonitor progressMonitor=null;
+
+   public static final Pattern PATTERN_CS = Pattern.compile(
+      "((?:\\\\[^a-zA-Z]{1})|(?:\\\\[a-zA-Z]+)|(?:[#~\\{\\}\\^\\$_])|(?:%.*))");
+
 }
