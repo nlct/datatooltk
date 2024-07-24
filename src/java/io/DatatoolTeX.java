@@ -51,22 +51,31 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
    {
       try
       {
-         File file = new File(target);
          DataToolTeXParserListener listener = settings.getTeXParserListener();
-// TODO
-/*
          TeXParser parser = listener.getParser();
+
+         DataToolSty sty = listener.getDataToolSty();
+
+         listener.applyCurrentSettings();
+
          IOSettings ioSettings = listener.getIOSettings();
+         ioSettings.setFileOverwriteOption(FileOverwriteOption.ERROR);
 
-         TeXPath texPath = new TeXPath(parser, file);
+         if (optionList != null)
+         {
+            TeXObjectList list = listener.createStack();
+            parser.scan(optionList, list);
+            ioSettings.apply(KeyValList.getList(parser, list), parser, parser);
+         }
 
-         DataBase styDb = db.toDataBase();
-
-         parser.startGroup();
-         parser.push(listener.getControlSequence("endgroup"));
-         styDb.write(parser, parser, texPath, ioSettings);
-         listener.getDataToolSty().removeDataBase(db.getName());
-*/
+         exportData(db, ioSettings, target);
+      }
+      catch (TeXSyntaxException e)
+      {
+         throw new DatatoolExportException(
+           String.format("%s%n%s",
+            getMessageHandler().getLabelWithValues(
+              "error.export.failed", target), e.getMessage(getTeXApp())), e);
       }
       catch (IOException e)
       {
@@ -76,13 +85,72 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
       }
    }
 
+   public void exportData(DatatoolDb db, IOSettings ioSettings, String target)
+      throws DatatoolExportException
+   {
+      exportData(db, ioSettings, new File(target));
+   }
+
+   public void exportData(DatatoolDb db, IOSettings ioSettings, File file)
+      throws DatatoolExportException
+   {
+      try
+      {
+         DataToolTeXParserListener listener = settings.getTeXParserListener();
+
+         TeXParser parser = listener.getParser();
+
+         String name = ioSettings.getDefaultName();
+
+         if (name != null)
+         {
+            db.setName(name);
+            ioSettings.setDefaultName(null);
+         }
+
+         TeXPath texPath = getTeXPath(ioSettings.getFormat(), file);
+
+         DataBase styDb = db.toDataBase();
+
+         parser.startGroup();
+         parser.push(listener.getControlSequence("endgroup"));
+         styDb.write(parser, parser, texPath, ioSettings);
+         listener.getDataToolSty().removeDataBase(db.getName());
+      }
+      catch (TeXSyntaxException e)
+      {
+         throw new DatatoolExportException(
+           String.format("%s%n%s",
+            getMessageHandler().getLabelWithValues(
+              "error.export.failed", file), e.getMessage(getTeXApp())), e);
+      }
+      catch (IOException e)
+      {
+         throw new DatatoolExportException(
+           getMessageHandler().getLabelWithValues(
+             "error.export.failed", file), e);
+      }
+   }
+
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {
       return importData(source, true);
    }
 
+   public DatatoolDb importData(File file)
+      throws DatatoolImportException
+   {
+      return importData(file, true);
+   }
+
    public DatatoolDb importData(String source, boolean checkForVerbatim)
+      throws DatatoolImportException
+   {
+      return importData(new File(source), checkForVerbatim);
+   }
+
+   public DatatoolDb importData(File file, boolean checkForVerbatim)
       throws DatatoolImportException
    {
       try
@@ -92,7 +160,7 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
          DataToolSty sty = listener.getDataToolSty();
          TeXParser parser = listener.getParser();
 
-         listener.applyCurrentCsvSettings();
+         listener.applyCurrentSettings();
 
          IOSettings ioSettings = listener.getIOSettings();
 
@@ -103,17 +171,24 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
             ioSettings.apply(KeyValList.getList(parser, list), parser, parser);
          }
 
-         return importData(ioSettings, source, checkForVerbatim);
+         return importData(ioSettings, file, checkForVerbatim);
+      }
+      catch (TeXSyntaxException e)
+      {
+         throw new DatatoolImportException(
+           String.format("%s%n%s",
+            getMessageHandler().getLabelWithValues(
+              "error.import.failed", file), e.getMessage(getTeXApp())), e);
       }
       catch (IOException e)
       {
          throw new DatatoolImportException(
            getMessageHandler().getLabelWithValues(
-             "error.import.failed", source), e);
+             "error.import.failed", file), e);
       }
    }
 
-   public DatatoolDb importData(IOSettings ioSettings, String source,
+   public DatatoolDb importData(IOSettings ioSettings, File file,
         boolean checkForVerbatim)
       throws DatatoolImportException
    {
@@ -123,40 +198,61 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
 
          TeXParser parser = listener.getParser();
 
-         FileFormatType format = ioSettings.getFormat();
+         TeXPath texPath = getTeXPath(ioSettings.getFormat(), file);
 
-         TeXPath texPath;
-         String charsetName = null;
+         String name = ioSettings.getDefaultName();
+         ioSettings.setDefaultName(null);
 
-         if (format == FileFormatType.CSV || format == FileFormatType.TSV)
-         {
-            texPath = new TeXPath(parser, source, "csv", "tsv");
-
-            charsetName = settings.getCsvEncoding();
-         }
-         else
-         {
-            texPath = new TeXPath(parser, source,
-               "dbtex", "dtltex", "tex", "ltx");
-
-            charsetName = settings.getTeXEncoding();
-         }
-
-         if (charsetName != null)
-         {
-            Charset charset = Charset.forName(charsetName);
-            texPath.setEncoding(charset);
-         }
-
-         return DatatoolDb.loadTeXParser(settings,
+         DatatoolDb db = DatatoolDb.loadTeXParser(settings,
             texPath, ioSettings, checkForVerbatim);
+
+         if (name != null)
+         {
+            db.setName(name);
+         }
+
+         return db;
+      }
+      catch (TeXSyntaxException e)
+      {
+         throw new DatatoolImportException(
+           String.format("%s%n%s",
+            getMessageHandler().getLabelWithValues(
+              "error.import.failed", file), e.getMessage(getTeXApp())), e);
       }
       catch (IOException e)
       {
          throw new DatatoolImportException(
            getMessageHandler().getLabelWithValues(
-             "error.import.failed", source), e);
+             "error.import.failed", file), e);
       }
+   }
+
+   protected TeXPath getTeXPath(FileFormatType format, File file)
+    throws IOException
+   {
+      DataToolTeXParserListener listener = settings.getTeXParserListener();
+      TeXParser parser = listener.getParser();
+
+      TeXPath texPath = new TeXPath(parser, file);
+      String charsetName = null;
+
+      if (format == FileFormatType.CSV || format == FileFormatType.TSV)
+      {
+         charsetName = settings.getCsvEncoding();
+      }
+      else
+      {
+         charsetName = settings.getTeXEncoding();
+      }
+
+      if (charsetName != null)
+      {
+         Charset charset = Charset.forName(charsetName);
+         texPath.setEncoding(charset);
+      }
+
+      return texPath;
    }
 
    public MessageHandler getMessageHandler()
@@ -164,6 +260,11 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
       return settings.getMessageHandler();
    }
 
-   private DatatoolSettings settings;
-   private String optionList;
+   public TeXApp getTeXApp()
+   {
+      return settings.getTeXApp();
+   }
+
+   protected DatatoolSettings settings;
+   protected String optionList;
 }

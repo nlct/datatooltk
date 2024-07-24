@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.Vector;
 
 import com.dickimawbooks.datatooltk.io.DatatoolImport;
+import com.dickimawbooks.datatooltk.io.DatatoolExport;
 
 public class LoadSettings
 {
@@ -33,7 +34,7 @@ public class LoadSettings
 
    public boolean hasOutputAction()
    {
-      return outFile != null;
+      return outFile != null || exp != null;
    }
 
    public boolean hasInputAction()
@@ -97,6 +98,33 @@ public class LoadSettings
    public File getMergeFile()
    {
       return mergeFile;
+   }
+
+   public void setDataExport(DatatoolExport dataExport,
+     String exportTarget)
+   {
+      setDataExport(dataExport);
+      setExportTarget(exportTarget);
+   }
+
+   public void setDataExport(DatatoolExport dataExport)
+   {
+      exp = dataExport;
+   }
+
+   public DatatoolExport getDataExport()
+   {
+      return exp;
+   }
+
+   public void setExportTarget(String exportTarget)
+   {
+      target = exportTarget;
+   }
+
+   public String getExportTarget()
+   {
+      return target;
    }
 
    public void setDataImport(DatatoolImport dataImport,
@@ -320,6 +348,9 @@ public class LoadSettings
    private int truncate = -1;
 
    private String removeColumnList = null, keepColumnList = null;
+
+   private DatatoolExport exp=null;
+   private String target = null;
 
    private DatatoolSettings settings;
 }

@@ -18,6 +18,7 @@
 */
 package com.dickimawbooks.datatooltk;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.dickimawbooks.texparserlib.*;
@@ -33,7 +34,10 @@ public class DataToolTeXParserListener extends PreambleParser
 
       this.settings = settings;
 
-      setParser(new TeXParser(this));
+      TeXParser parser = new TeXParser(this);
+      parser.setBaseDir(new File(System.getProperty("user.dir")));
+
+      setParser(parser);
 
       MessageHandler messageHandler = settings.getMessageHandler();
       messageHandler.setDebugModeForParser(parser);
@@ -77,21 +81,40 @@ public class DataToolTeXParserListener extends PreambleParser
       ioSettings.setExpandOption(IOExpandOption.NONE);
    }
 
+   public void applyCurrentSettings()
+     throws TeXSyntaxException
+   {
+      resetIOSettings();
+      settings.applyDefaultOutputFormat(ioSettings);
+      applyCurrentCsvSettings(false);
+   }
+
    public void applyCurrentCsvSettings()
+     throws TeXSyntaxException
+   {
+      applyCurrentCsvSettings(true);
+   }
+
+   public void applyCurrentCsvSettings(boolean changeDefaultFileSettings)
      throws TeXSyntaxException
    {
       int sep = settings.getSeparator();
 
-      if (sep == '\t')
+      if (changeDefaultFileSettings)
       {
-         ioSettings.setDefaultExtension("tsv");
-         ioSettings.setFileFormat(FileFormatType.TSV);
+         if (sep == '\t')
+         {
+            ioSettings.setDefaultExtension("tsv");
+            ioSettings.setFileFormat(FileFormatType.TSV);
+         }
+         else
+         {
+            ioSettings.setDefaultExtension("csv");
+            ioSettings.setFileFormat(FileFormatType.CSV);
+         }
       }
-      else
-      {
-         ioSettings.setDefaultExtension("csv");
-         ioSettings.setFileFormat(FileFormatType.CSV);
-      }
+
+      ioSettings.setDefaultName(null);
 
       ioSettings.setSeparator(sep);
       ioSettings.setDelimiter(settings.getDelimiter());
@@ -103,6 +126,7 @@ public class DataToolTeXParserListener extends PreambleParser
       ioSettings.setAddDelimiterOption(settings.getAddDelimiterOption());
       ioSettings.setCsvBlankOption(settings.getCsvBlankOption());
 
+      ioSettings.setTrimElement(settings.isAutoTrimLabelsOn());
       ioSettings.setCsvStrictQuotes(settings.hasCSVstrictquotes());
 
       if (settings.isTeXMappingOn())

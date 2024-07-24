@@ -45,11 +45,13 @@ import java.awt.Font;
 import org.xml.sax.SAXException;
 
 import com.dickimawbooks.texparserlib.TeXApp;
-import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
-import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
-import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
+import com.dickimawbooks.texparserlib.TeXSyntaxException;
 import com.dickimawbooks.texparserlib.latex.datatool.AddDelimiterOption;
+import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texparserlib.latex.datatool.EscapeCharsOption;
+import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
+import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
@@ -884,6 +886,63 @@ public class DatatoolSettings extends Properties
       return getProperty("lookandfeel");
    }
 
+   public int getHelpSetLowerNavLabelLimit()
+   {
+      String val = getProperty("manual.lower_nav.limit");
+
+      if (val == null || val.isEmpty())
+      {
+         return 20;
+      }
+
+      try
+      {
+         return Integer.parseInt(val);
+      }
+      catch (NumberFormatException e)
+      {
+         return 20;
+      }
+   }
+
+   public boolean isHelpSetLowerNavLabelTextOn()
+   {
+      String val = getProperty("manual.lower_nav.text");
+
+      if (val == null || val.isEmpty())
+      {
+         return true;
+      }
+
+      return Boolean.parseBoolean(val);
+   }
+
+   public void setHelpSetLowerNavLabelLimit(int limit)
+   {
+      setProperty("manual.lower_nav.limit", ""+limit);
+   }
+
+   public void setHelpSetLowerNavLabelText(boolean on)
+   {
+      setProperty("manual.lower_nav.text", ""+on);
+   }
+
+   public void initHelpSetSettings()
+   {
+      helpLib.setDefaultLowerNavSettings(
+        isHelpSetLowerNavLabelTextOn(),
+        getHelpSetLowerNavLabelLimit());
+
+      helpLib.getHelpFontSettings().copyFrom(getManualFontSettings());
+   }
+
+   public void updateHelpSetSettings()
+   {
+      setManualFont(helpLib.getHelpFontSettings());
+      setHelpSetLowerNavLabelLimit(helpLib.getDefaultLowerNavLabelLimit());
+      setHelpSetLowerNavLabelText(helpLib.isDefaultLowerNavLabelTextOn());
+   }
+
    public HelpFontSettings getManualFontSettings()
    {
       HelpFontSettings fontSettings = new HelpFontSettings();
@@ -955,6 +1014,37 @@ public class DatatoolSettings extends Properties
    public String getDefaultOutputFormat()
    {
       return getProperty("fileformat");
+   }
+
+   public void applyDefaultOutputFormat(IOSettings ioSettings)
+   {
+      String val = getProperty("fileformat");
+
+      if (val != null && !val.isEmpty())
+      {
+         String[] split = val.split(" ", 2);
+         String version = "3.0";
+
+         if (split.length == 2 && "2.0".equals(split[1]) || "3.0".equals(split[1]))
+         {
+            version = split[1];
+         }
+
+         try
+         {
+            if ("dtltex".equals(split[0]))
+            {
+               ioSettings.setFileFormat(FileFormatType.DTLTEX, version);
+            }
+            else
+            {
+               ioSettings.setFileFormat(FileFormatType.DBTEX, version);
+            }
+         }
+         catch (TeXSyntaxException e)
+         {// shouldn't happen
+         }
+      }
    }
 
    public void setDefaultOutputFormat(FileFormatType ft, String version)

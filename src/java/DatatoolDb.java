@@ -241,14 +241,30 @@ public class DatatoolDb
          messageHandler.startBuffering();
          TeXObjectList stack = listener.createStack();
 
+         texParser.setBaseDir(dbFile.getParentFile());
+
          texParser.startGroup();
+
+         String dbName = dbFile.getName();
+
+         int idx = dbName.lastIndexOf(".");
+
+         if (idx != -1)
+         {
+            dbName = dbName.substring(0, idx);
+         }
+
+         texParser.putControlSequence(true,
+          new TextualContentCommand(DataToolSty.DEFAULT_NAME, dbName));
+
+         texParser.putControlSequence(true,
+          new TextualContentCommand(DataToolSty.LAST_LOADED_NAME, ""));
 
          texParser.push(new EndRead());
 
          DataBase.read(sty, texPath, ioSettings, texParser, texParser);
          texParser.processBuffered();
 
-         String dbName = null;
          DataBase texDb = sty.getLatestDataBase();
 
          if (texDb != null)
@@ -258,7 +274,7 @@ public class DatatoolDb
          else if (format == FileFormatType.DTLTEX
                || format == FileFormatType.DBTEX)
          {
-            ControlSequence cs = texParser.getControlSequence("dtllastloadeddb");
+            ControlSequence cs = texParser.getControlSequence(DataToolSty.LAST_LOADED_NAME);
 
             if (cs != null && cs instanceof Expandable)
             {
@@ -998,7 +1014,8 @@ public class DatatoolDb
                throw new InvalidSyntaxException(messageHandler.getLabelWithValues
                  (
                     in.getLineNumber(), "error.expected_found",
-                     String.format("\\def\\dtllastloadeddb{%s}", db.getName()),
+                     String.format("\\def\\%s{%s}",
+                        DataToolSty.LAST_LOADED_NAME, db.getName()),
                      line
                  ));
             }
@@ -2743,7 +2760,7 @@ public class DatatoolDb
 
          out.println("\\egroup");
 
-         out.println("\\def\\dtllastloadeddb{"+name+"}");
+         out.format("\\def\\%s{%s}%n", DataToolSty.LAST_LOADED_NAME, name);
       }
       finally
       {
@@ -3095,7 +3112,7 @@ public class DatatoolDb
 
          if (!isV3)
          {
-            out.format("\\def\\dtllastloadeddb{%s}%%%n", name);
+            out.format("\\def\\%s{%s}%%%n", DataToolSty.LAST_LOADED_NAME, name);
          }
       }
       finally

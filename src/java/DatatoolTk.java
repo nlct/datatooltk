@@ -101,12 +101,11 @@ public class DatatoolTk
          System.exit(1);
       }
 
-      File outFile = loadSettings.getOutputFile();
-
-      if (outFile == null)
+      if (!loadSettings.hasOutputAction())
       {
          getMessageHandler().error(getLabelWithValues("error.cli.no_out",
-           "--output", "--gui", "--help"), MessageHandler.SYNTAX_FAILURE);
+           "--output", "--dtl-write", "--gui", "--help"),
+           MessageHandler.SYNTAX_FAILURE);
          System.exit(1);
       }
 
@@ -229,18 +228,41 @@ public class DatatoolTk
             }
          }
 
-         debug("Saving '"+outFile+"'");
-         db.save(outFile);
+         File outFile = loadSettings.getOutputFile();
+
+         if (outFile != null)
+         {
+            debug("Saving '"+outFile+"'");
+            db.save(outFile);
+         }
+
+         DatatoolExport dataExport = loadSettings.getDataExport();
+
+         if (dataExport != null)
+         {
+            String target = loadSettings.getExportTarget();
+            dataExport.exportData(db, target);
+         }
       }
       catch (InvalidSyntaxException e)
       {
          getMessageHandler().error(e, MessageHandler.SYNTAX_FAILURE);
-         System.exit(1);
+         System.exit(EXIT_SYNTAX);
+      }
+      catch (DatatoolImportException e)
+      {
+         getMessageHandler().error(e, MessageHandler.OPEN_FAILURE);
+         System.exit(EXIT_IO);
+      }
+      catch (DatatoolExportException e)
+      {
+         getMessageHandler().error(e, MessageHandler.WRITE_FAILURE);
+         System.exit(EXIT_IO);
       }
       catch (Throwable e)
       {
          getMessageHandler().error(e);
-         System.exit(1);
+         System.exit(EXIT_OTHER);
       }
 
       debug("Completed");
@@ -283,6 +305,9 @@ public class DatatoolTk
 
       System.out.println(getLabelWithValues("syntax.output_format",
          "--output-format"));
+
+      System.out.println(getLabelWithValues("syntax.dtl_read", "--dtl-read"));
+      System.out.println(getLabelWithValues("syntax.dtl_write", "--dtl-write"));
 
       System.out.println(getLabelWithValues("syntax.maptexspecials",
           "--map-tex-specials",
@@ -1025,6 +1050,37 @@ public class DatatoolTk
 
             loadSettings.setImportSource(args[i]);
             loadSettings.setDataImport(new DatatoolTeX(optList, settings));
+         }
+         else if (args[i].equals("--dtl-write"))
+         {
+            if (loadSettings.getDataExport() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.syntax.only_one_export"));
+            }
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_optionlist",
+                     args[i-1]));
+            }
+
+            String optList = args[i];
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_filename",
+                     args[i-1]+" \""+optList+"\""));
+            }
+
+            loadSettings.setExportTarget(args[i]);
+            loadSettings.setDataExport(new DatatoolTeX(optList, settings));
          }
          else if (args[i].equals("--csv"))
          {

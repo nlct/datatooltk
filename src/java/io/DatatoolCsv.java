@@ -19,8 +19,6 @@
 package com.dickimawbooks.datatooltk.io;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.charset.Charset;
 
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.datatool.*;
@@ -33,11 +31,11 @@ import com.dickimawbooks.datatooltk.*;
  * partly to be more consistent with datatool.sty's \DTLread and
  * \DTLwrite and partly to reduce the number of dependent libraries.
  */
-public class DatatoolCsv implements DatatoolImport,DatatoolExport
+public class DatatoolCsv extends DatatoolTeX
 {
    public DatatoolCsv(DatatoolSettings settings)
    {
-      this.settings = settings;
+      super(settings);
    }
 
    public void exportData(DatatoolDb db, String target)
@@ -45,19 +43,12 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
    {
       try
       {
-         File file = new File(target);
          DataToolTeXParserListener listener = settings.getTeXParserListener();
-         TeXParser parser = listener.getParser();
+         listener.applyCurrentCsvSettings();
          IOSettings ioSettings = listener.getIOSettings();
+         ioSettings.setFileOverwriteOption(FileOverwriteOption.ALLOW);
 
-         TeXPath texPath = new TeXPath(parser, file);
-
-         DataBase styDb = db.toDataBase();
-
-         parser.startGroup();
-         parser.push(listener.getControlSequence("endgroup"));
-         styDb.write(parser, parser, texPath, ioSettings);
-         listener.getDataToolSty().removeDataBase(db.getName());
+         exportData(db, ioSettings, target);
       }
       catch (IOException e)
       {
@@ -67,22 +58,17 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       }
    }
 
-   public DatatoolDb importData(String source)
-      throws DatatoolImportException
-   {
-      return importData(new File(source));
-   }
-
-   public DatatoolDb importData(File file)
-      throws DatatoolImportException
-   {
-      return importData(file, null);
-   }
-
    public DatatoolDb importData(File file, String name)
       throws DatatoolImportException
    {
       return importData(file, name, true);
+   }
+
+   @Override
+   public DatatoolDb importData(File file, boolean checkForVerbatim)
+      throws DatatoolImportException
+   {
+      return importData(file, null, checkForVerbatim);
    }
 
    public DatatoolDb importData(File file, String name, boolean checkForVerbatim)
@@ -103,36 +89,12 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
       {
          DataToolTeXParserListener listener = settings.getTeXParserListener();
          TeXParser parser = listener.getParser();
+         listener.applyCurrentCsvSettings();
          IOSettings ioSettings = listener.getIOSettings();
-
-         FileFormatType formatType = ioSettings.getFormat();
-
-         if (!(formatType == FileFormatType.CSV || formatType == FileFormatType.TSV))
-         {
-            if (ioSettings.getSeparator() == '\t')
-            {
-               ioSettings.setFileFormat(FileFormatType.TSV);
-            }
-            else
-            {
-               ioSettings.setFileFormat(FileFormatType.CSV);
-            }
-         }
-
-         String charsetName = settings.getCsvEncoding();
-         Charset charset = null;
-
-         if (charsetName != null)
-         {
-            charset = Charset.forName(charsetName);
-         }
-
-         TeXPath texPath = new TeXPath(parser, file, charset);
 
          ioSettings.setDefaultName(name);
 
-         return DatatoolDb.loadTeXParser(settings, 
-           texPath, ioSettings, checkForVerbatim);
+         return importData(ioSettings, file, checkForVerbatim);
       }
       catch (IOException e)
       {
@@ -141,13 +103,5 @@ public class DatatoolCsv implements DatatoolImport,DatatoolExport
            file.toString(), e.getMessage()), e);
       }
    }
-
-
-   public MessageHandler getMessageHandler()
-   {
-      return settings.getMessageHandler();
-   }
-
-   private DatatoolSettings settings;
 
 }
