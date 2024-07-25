@@ -88,6 +88,10 @@ public class PropertiesDialog extends JDialog
 
       JComponent displayTab = createDisplayTab();
 
+      // Cell Editor Tab
+
+      JComponent editorTab = createEditorTab();
+
       // Language Tab
 
       JComponent languageTab = createLanguageTab();
@@ -402,6 +406,18 @@ public class PropertiesDialog extends JDialog
       return currencyTab;
    }
 
+   private JComponent createEditorTab()
+   {
+      JComponent tab =
+         addTab(new JPanel(new FlowLayout(FlowLayout.LEFT)), "editor");
+
+      editorPropComp = new EditorPropertiesComponent(gui);
+      editorPropComp.setAlignmentY(0);
+      tab.add(editorPropComp);
+
+      return tab;
+   }
+
    private JComponent createDisplayTab()
    {
       DatatoolGuiResources resources = gui.getResources();
@@ -410,176 +426,17 @@ public class PropertiesDialog extends JDialog
       JComponent displayTab =
          addTab(new JPanel(new FlowLayout(FlowLayout.LEFT)), "display");
 
-      displayTab.setAlignmentY(0);
       JComponent leftPanel = Box.createVerticalBox();
       leftPanel.setAlignmentY(0);
       displayTab.add(leftPanel);
-
-      JComponent box = createNewRow(leftPanel);
-
-      samplerDocument = new FontSampleDocument(this);
-      samplerComp = new JTextPane(samplerDocument);
-      samplerComp.setText(messageHandler.getLabel("preferences.display.sampler"));
-      samplerComp.setEditable(false);
-
-      box.add(new JScrollPane(samplerComp));
-
-      JLabelGroup labelGrp = new JLabelGroup();
-
-      box = createNewRow(leftPanel);
-
-      GraphicsEnvironment env =
-         GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-      fontBox = new JComboBox<String>(env.getAvailableFontFamilyNames());
-      fontBox.addItemListener(new ItemListener()
-       {
-          @Override
-          public void itemStateChanged(ItemEvent evt)
-          {
-             updateFontSampler();
-          }
-       });
-
-      box.add(createLabel(labelGrp, "preferences.display.font", fontBox));
-      box.add(fontBox);
-
-      box = createNewRow(leftPanel);
-      fontSizeModel = new SpinnerNumberModel(10, 1, 1000, 1);
-      JSpinner sizeField = new JSpinner(fontSizeModel);
-      sizeField.addChangeListener(new ChangeListener()
-       {
-          @Override
-          public void stateChanged(ChangeEvent evt)
-          {
-             updateFontSampler();
-          }
-       });
-
-      box.add(createLabel(labelGrp, "preferences.display.fontsize", sizeField));
-      box.add(sizeField);
-
-      box = createNewRow(leftPanel);
-      cellHeightModel = new SpinnerNumberModel(4, 1, 1000, 1);
-      JSpinner cellHeightField = new JSpinner(cellHeightModel);
-
-      box.add(createLabel(labelGrp,
-         "preferences.display.cellheight", cellHeightField));
-      box.add(cellHeightField);
-
-      box = createNewRow(leftPanel);
-      box.add(Box.createVerticalStrut(20));
-
-      JComponent editorBox = createNewRow(leftPanel);
-      editorBox.setLayout(new BoxLayout(editorBox, BoxLayout.Y_AXIS));
-      editorBox.setBorder(BorderFactory.createTitledBorder(
-        BorderFactory.createEtchedBorder(), 
-        messageHandler.getLabel("preferences.display.editor")));
-
-      box = createNewRow(editorBox);
-      box.add(resources.createMessageArea(0, 22,
-         "preferences.display.editor.info"));
-
-      box = createNewRow(editorBox);
-
-      labelGrp = new JLabelGroup();
-
-      editorHeightModel = new SpinnerNumberModel(10, 1, 1000, 1);
-      JSpinner editorHeightField = new JSpinner(editorHeightModel);
-
-      box.add(createLabel(labelGrp, "preferences.display.editorheight",
-         editorHeightField));
-      box.add(editorHeightField);
-
-      box = createNewRow(editorBox);
-
-      editorWidthModel = new SpinnerNumberModel(8, 1, 1000, 1);
-      JSpinner editorWidthField = new JSpinner(editorWidthModel);
-
-      box.add(createLabel(labelGrp, "preferences.display.editorwidth",
-         editorWidthField));
-      box.add(editorWidthField);
-
-      JComponent fgbgComp = createNewRow(editorBox);
-
-      JComponent fgbgSwatchesComp = Box.createVerticalBox();
-      fgbgSwatchesComp.setAlignmentX(0);
-      fgbgComp.add(fgbgSwatchesComp);
-
-      box = createNewRow(fgbgSwatchesComp,
-         new FlowLayout(FlowLayout.LEADING, 0, 0));
-
-      JButton button = resources.createActionButton("preferences.display.choose",
-       "cellforeground", "choose_colour", true, this, null, true);
-
-      box.add(createLabel(labelGrp, "preferences.display.cellforeground", button));
-
-      editorForegroundSwatch = new JPanel();
-      editorForegroundSwatch.setPreferredSize(SWATCH_SIZE);
-      editorForegroundSwatch.setBackground(Color.BLACK);
-      box.add(editorForegroundSwatch);
-      box.add(button);
-
-      box = createNewRow(fgbgSwatchesComp,
-         new FlowLayout(FlowLayout.LEADING, 0, 0));
-
-      button = resources.createActionButton("preferences.display.choose",
-       "cellbackground", "choose_colour", true, this, null, true);
-
-      box.add(createLabel(labelGrp, "preferences.display.cellbackground", button));
-
-      editorBackgroundSwatch = new JPanel();
-      editorBackgroundSwatch.setPreferredSize(SWATCH_SIZE);
-      editorBackgroundSwatch.setBackground(Color.WHITE);
-      box.add(editorBackgroundSwatch);
-      box.add(button);
-
-      fgbgComp.add(resources.createActionButton("preferences.display",
-       "cellfgbgswap", "swap", true, this, null, true));
-
-      syntaxHighlightingBox = resources.createJCheckBox
-        ("preferences.display", "editorsyntax", this);
-      editorBox.add(syntaxHighlightingBox);
-
-      highlightCsComp = createNewRow(editorBox);
-
-      button = resources.createActionButton("preferences.display.choose",
-       "highlightcs", "choose_colour", true, this, null, true);
-
-      highlightCsComp.add(createLabel(labelGrp, "preferences.display.highlightcs", button));
-
-      highlightCsSwatch = new JPanel();
-      highlightCsSwatch.setPreferredSize(SWATCH_SIZE);
-      highlightCsSwatch.setBackground(Color.BLACK);
-      highlightCsComp.add(highlightCsSwatch);
-      highlightCsComp.add(button);
-
-      highlightCommentComp = createNewRow(editorBox);
-
-      button = resources.createActionButton("preferences.display.choose",
-       "highlightcomment", "choose_colour", true, this, null, true);
-
-      highlightCommentComp.add(createLabel(labelGrp, "preferences.display.highlightcomment", button));
-
-      highlightCommentSwatch = new JPanel();
-      highlightCommentSwatch.setPreferredSize(SWATCH_SIZE);
-      highlightCommentSwatch.setBackground(Color.BLACK);
-      highlightCommentComp.add(highlightCommentSwatch);
-      highlightCommentComp.add(button);
-
-      updateFontSampler();
-
-      JComponent rightPanel = Box.createVerticalBox();
-      rightPanel.setAlignmentY(0);
-      displayTab.add(rightPanel);
 
       JComponent lookAndFeelPanel = Box.createVerticalBox();
       lookAndFeelPanel.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(), 
         messageHandler.getLabel("preferences.display.lookandfeel.title")));
-      rightPanel.add(lookAndFeelPanel);
+      leftPanel.add(lookAndFeelPanel);
 
-      box = createNewRow(lookAndFeelPanel);
+      JComponent box = createNewRow(lookAndFeelPanel);
 
       availableLookAndFeels = UIManager.getInstalledLookAndFeels();
 
@@ -640,22 +497,37 @@ public class PropertiesDialog extends JDialog
       box = createNewRow(lookAndFeelPanel);
       box.add(createTextArea(4, 16, "preferences.display.lookandfeel.restart"));
 
-      JComponent cellWidthsPanel = Box.createVerticalBox();
-      cellWidthsPanel.setBorder(BorderFactory.createTitledBorder(
+      JComponent rightPanel = Box.createVerticalBox();
+      rightPanel.setAlignmentY(0);
+      displayTab.add(rightPanel);
+
+      JComponent cellDimsPanel = Box.createVerticalBox();
+      cellDimsPanel.setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createEtchedBorder(), 
-        messageHandler.getLabel("preferences.display.cellwidths")));
-      cellWidthsPanel.setAlignmentY(0);
-      rightPanel.add(cellWidthsPanel);
+        messageHandler.getLabel("preferences.display.celldims")));
+      cellDimsPanel.setAlignmentY(0);
+      rightPanel.add(cellDimsPanel);
+
+      box = createNewRow(cellDimsPanel);
+      cellHeightModel = new SpinnerNumberModel(4, 1, 1000, 1);
+      JSpinner cellHeightField = new JSpinner(cellHeightModel);
+
+      JLabelGroup labelGrp = new JLabelGroup();
+
+      box.add(createLabel(labelGrp,
+         "preferences.display.cellheight", cellHeightField));
+      box.add(cellHeightField);
+
+      cellDimsPanel.add(resources.createJLabel("preferences.display.cellwidths"));
 
       String[] typeLabels = settings.getTypeLabels();
       int[] typeMnemonics = settings.getTypeMnemonics();
 
       cellWidthModels = new SpinnerNumberModel[typeLabels.length];
-      labelGrp = new JLabelGroup();
 
       for (int i = 0; i < cellWidthModels.length; i++)
       {
-         box = createNewRow(cellWidthsPanel);
+         box = createNewRow(cellDimsPanel);
          cellWidthModels[i] = new SpinnerNumberModel(0, 0, 1000, 1);
          JSpinner spinner = new JSpinner(cellWidthModels[i]);
          JLabel label = labelGrp.createJLabel(typeLabels[i]);
@@ -1082,8 +954,6 @@ public class PropertiesDialog extends JDialog
          texEncodingBox.setSelectedItem(Charset.forName(encoding));
       }
 
-      fontSizeModel.setValue(Integer.valueOf(settings.getFontSize()));
-      fontBox.setSelectedItem(settings.getFontName());
       cellHeightModel.setValue(Integer.valueOf(settings.getCellHeight()));
 
       for (int i = 0; i < cellWidthModels.length; i++)
@@ -1091,16 +961,6 @@ public class PropertiesDialog extends JDialog
          cellWidthModels[i].setValue(
            Integer.valueOf(settings.getCellWidth(DatumType.toDatumType(i-1))));
       }
-
-      editorHeightModel.setValue(Integer.valueOf(settings.getCellEditorPreferredHeight()));
-      editorWidthModel.setValue(Integer.valueOf(settings.getCellEditorPreferredWidth()));
-      syntaxHighlightingBox.setSelected(settings.isSyntaxHighlightingOn());
-      highlightCsSwatch.setBackground(settings.getControlSequenceHighlight());
-      highlightCommentSwatch.setBackground(settings.getCommentHighlight());
-      updateSwatchVisiblity();
-
-      editorForegroundSwatch.setBackground(settings.getCellForeground());
-      editorBackgroundSwatch.setBackground(settings.getCellBackground());
 
       String lookAndFeelClassName = settings.getLookAndFeel();
 
@@ -1236,9 +1096,7 @@ public class PropertiesDialog extends JDialog
 
       updateButtons();
       
-      updateFontSampler();
-
-      updateCellEditor = false;
+      editorPropComp.resetFrom(settings);
 
       setVisible(true);
    }
@@ -1373,71 +1231,6 @@ public class PropertiesDialog extends JDialog
             seedField.requestFocusInWindow();
          }
       }
-      else if (action.equals("highlightcs"))
-      {
-         Color col = JColorChooser.showDialog(this, 
-            getMessageHandler().getLabel("preferences.display.highlightcs"),
-            highlightCsSwatch.getBackground());
-
-         if (col != null)
-         {
-            highlightCsSwatch.setBackground(col);
-         }
-
-         updateFontSampler();
-      }
-      else if (action.equals("highlightcomment"))
-      {
-         Color col = JColorChooser.showDialog(this, 
-            getMessageHandler().getLabel("preferences.display.highlightcomment"),
-            highlightCommentSwatch.getBackground());
-
-         if (col != null)
-         {
-            highlightCommentSwatch.setBackground(col);
-         }
-
-         updateFontSampler();
-      }
-      else if (action.equals("cellforeground"))
-      {
-         Color col = JColorChooser.showDialog(this, 
-            getMessageHandler().getLabel("preferences.display.cellforeground"),
-            editorForegroundSwatch.getBackground());
-
-         if (col != null)
-         {
-            editorForegroundSwatch.setBackground(col);
-         }
-
-         updateFontSampler();
-      }
-      else if (action.equals("cellbackground"))
-      {
-         Color col = JColorChooser.showDialog(this, 
-            getMessageHandler().getLabel("preferences.display.cellbackground"),
-            editorBackgroundSwatch.getBackground());
-
-         if (col != null)
-         {
-            editorBackgroundSwatch.setBackground(col);
-         }
-
-         updateFontSampler();
-      }
-      else if (action.equals("editorsyntax"))
-      {
-         updateFontSampler();
-         updateSwatchVisiblity();
-      }
-      else if (action.equals("cellfgbgswap"))
-      {
-         Color bg = getSelectedCellBackground();
-         editorBackgroundSwatch.setBackground(
-            editorForegroundSwatch.getBackground());
-         editorForegroundSwatch.setBackground(bg);
-         updateFontSampler();
-      }
       else if (action.equals("int.pattern"))
       {
          if (intFormatterField.getText().isEmpty())
@@ -1560,61 +1353,6 @@ public class PropertiesDialog extends JDialog
       removeCurrencyButton.setEnabled(enabled);
    }
 
-   protected Color getCommentHighlight()
-   {
-      return highlightCommentSwatch.getBackground();
-   }
-
-   protected Color getControlSequenceHighlight()
-   {
-      return highlightCsSwatch.getBackground();
-   }
-
-   protected Color getSelectedCellForeground()
-   {
-      return editorForegroundSwatch.getBackground();
-   }
-
-   protected Color getSelectedCellBackground()
-   {
-      return editorBackgroundSwatch.getBackground();
-   }
-
-   protected boolean isSyntaxHighlightingOn()
-   {
-      return syntaxHighlightingBox.isSelected();
-   }
-
-   protected int getSelectedFontSize()
-   {
-      return fontSizeModel.getNumber().intValue();
-   }
-
-   protected String getSelectedFontName()
-   {
-      return fontBox.getSelectedItem().toString();
-   }
-
-   protected void updateSwatchVisiblity()
-   {
-      boolean selected = syntaxHighlightingBox.isSelected();
-      highlightCsComp.setVisible(selected);
-      highlightCommentComp.setVisible(selected);
-   }
-
-   protected void updateFontSampler()
-   {
-      Font sampleFont = new Font(getSelectedFontName(), Font.PLAIN,
-        getSelectedFontSize());
-      samplerComp.setFont(sampleFont);
-      samplerComp.setBackground(getSelectedCellBackground());
-      samplerComp.setForeground(getSelectedCellForeground());
-
-      samplerDocument.update();
-
-      updateCellEditor = true;
-   }
-
    private void okay() throws IllegalArgumentException
    {
       if (homeButton.isSelected())
@@ -1711,8 +1449,8 @@ public class PropertiesDialog extends JDialog
 
       currencyListModel.updateSettings();
 
-      settings.setFontName(getSelectedFontName());
-      settings.setFontSize(getSelectedFontSize());
+      editorPropComp.applySelected(settings);
+
       settings.setCellHeight(cellHeightModel.getNumber().intValue());
 
       for (int i = 0; i < cellWidthModels.length; i++)
@@ -1720,19 +1458,6 @@ public class PropertiesDialog extends JDialog
          settings.setCellWidth(cellWidthModels[i].getNumber().intValue(), 
           DatumType.toDatumType(i-1));
       }
-
-      settings.setCellEditorPreferredHeight(editorHeightModel.getNumber().intValue());
-      settings.setCellEditorPreferredWidth(editorWidthModel.getNumber().intValue());
-      settings.setSyntaxHighlighting(syntaxHighlightingBox.isSelected());
-
-      if (syntaxHighlightingBox.isSelected())
-      {
-         settings.setControlSequenceHighlight(highlightCsSwatch.getBackground());
-         settings.setCommentHighlight(highlightCommentSwatch.getBackground());
-      }
-
-      settings.setCellForeground(getSelectedCellForeground());
-      settings.setCellBackground(getSelectedCellBackground());
 
       int lookAndFeelIdx = lookAndFeelBox.getSelectedIndex();
 
@@ -1838,11 +1563,6 @@ public class PropertiesDialog extends JDialog
 
       settings.setPerl(perlFileField.getFileName());
 
-      if (updateCellEditor)
-      {
-         gui.updatedCellEditorSettings();
-      }
-
       setVisible(false);
    }
 
@@ -1902,24 +1622,23 @@ public class PropertiesDialog extends JDialog
    private IOSettingsPanel csvSettingsPanel;
 
    private JCheckBox wipeBox, 
-      hasSeedBox, syntaxHighlightingBox, stripSolnEnvBox, autoTrimBox;
+      hasSeedBox, stripSolnEnvBox, autoTrimBox;
 
    private FileField customFileField, perlFileField;
 
    private JFileChooser fileChooser;
 
-   private SpinnerNumberModel fontSizeModel, cellHeightModel,
-      editorHeightModel, editorWidthModel;
-
    private NonNegativeIntField portField, seedField;
+
+   private EditorPropertiesComponent editorPropComp;
+
+   private SpinnerNumberModel cellHeightModel;
 
    private SpinnerNumberModel[] cellWidthModels;
 
    private JTextField hostField, prefixField, databaseField, userField;
 
    private JButton removeCurrencyButton, editCurrencyButton;
-
-   private JComboBox<String> fontBox;
 
    private JList<String> currencyList;
 
@@ -1948,16 +1667,6 @@ public class PropertiesDialog extends JDialog
     decimalFmtMatchLocaleButton, decimalFmtPatternButton,
     decimalFmtSIButton;
 
-   private JComponent highlightCsSwatch, highlightCommentSwatch,
-    editorForegroundSwatch, editorBackgroundSwatch;
-
-   private JComponent highlightCsComp, highlightCommentComp;
-
-   private static final Dimension SWATCH_SIZE = new Dimension(38,20);
-
-   private JTextPane samplerComp;
-   private FontSampleDocument samplerDocument;
-
    private JTabbedPane tabbedPane;
 
    private DatatoolGUI gui;
@@ -1970,8 +1679,6 @@ public class PropertiesDialog extends JDialog
      toolBarIconSizeButton32, toolBarIconSizeButton64,
      smallIconSizeButton16, smallIconSizeButton20,
      smallIconSizeButton24;
-
-   boolean updateCellEditor = false;
 
    private UIManager.LookAndFeelInfo[] availableLookAndFeels;
 
@@ -2074,82 +1781,3 @@ class CurrencyListModel extends AbstractListModel<String>
    private static String LABEL_EDIT=null;
 }
 
-class FontSampleDocument extends DefaultStyledDocument
-{
-   public FontSampleDocument(PropertiesDialog dialog)
-   {
-      super();
-
-      this.dialog = dialog;
-
-      attrPlain = new SimpleAttributeSet();
-      attrControlSequence = new SimpleAttributeSet();
-
-      attrComment = new SimpleAttributeSet();
-      StyleConstants.setItalic(attrComment, true);
-   }
-
-   public void update()
-   {
-      Color defaultForeground = dialog.getSelectedCellForeground();
-
-      if (dialog.isSyntaxHighlightingOn())
-      {
-         Color commentHighlight = dialog.getCommentHighlight();
-         Color csHighlight = dialog.getControlSequenceHighlight();
-
-         StyleConstants.setForeground(attrControlSequence, csHighlight);
-         StyleConstants.setForeground(attrComment, commentHighlight);
-         StyleConstants.setItalic(attrComment, true);
-      }
-      else
-      {
-         StyleConstants.setForeground(attrControlSequence, defaultForeground);
-         StyleConstants.setForeground(attrComment, defaultForeground);
-         StyleConstants.setItalic(attrComment, false);
-      }
-
-      try
-      {
-         updateHighlight();
-      }
-      catch (BadLocationException e)
-      {
-      }
-   }
-
-   private void updateHighlight()
-   throws BadLocationException
-   {
-      String text = getText(0, getLength());
-
-      setCharacterAttributes(0, getLength(),
-        attrPlain, true);
-
-      Matcher matcher = DatatoolGuiResources.PATTERN_CS.matcher(text);
-
-      while (matcher.find())
-      {
-         int newOffset = matcher.start();
-         int len = matcher.end() - newOffset;
-
-         String group = matcher.group();
-
-         if (group.startsWith("%"))
-         {
-            setCharacterAttributes(newOffset, len, attrComment, true);
-         }
-         else
-         {
-            setCharacterAttributes(newOffset, len, attrControlSequence, false);
-         }
-      }
-   }
-
-   PropertiesDialog dialog;
-
-   private SimpleAttributeSet attrPlain;
-   private SimpleAttributeSet attrControlSequence;
-   private SimpleAttributeSet attrComment;
-
-}

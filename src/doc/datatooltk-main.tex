@@ -1727,7 +1727,7 @@ sys	0m0.065s
    (see \sectionref{sec:importprobsoln}). In the case of the first
    two, \appname\ can automatically convert \TeX's special characters if the
    \switch{map-tex-specials} command line option is used or the
-   \widget{preferences.tex.map} option has been selected in the 
+   \widget{iosettings.tex.map} option has been selected in the 
    \dialog{preferences} dialog box (see \sectionref{sec:preferences}).
    Both the column title and label will be obtained from the appropriate data 
    header.  The title will have any mappings applied (if set). The label will 
@@ -2352,11 +2352,11 @@ will be removed.
 In the \widget{preferences.tex} tab you can also specify whether or
 not to map \TeX\ special characters when you import data from
 non-\TeX\ sources.  If you want the mapping, make sure the
-\widget{preferences.tex.map} box is checked. The mapping table and
-buttons are hidden if \widget{preferences.tex.map} is unchecked. If
+\widget{iosettings.tex.map} box is checked. The mapping table and
+buttons are hidden if \widget{iosettings.tex.map} is unchecked. If
 it is checked, the performed mappings are listed in the table in the
 tab. To add another mapping, click on the
-\widget{preferences.tex.add_map} button, which opens the dialog box
+\widget{iosettings.tex.add_map} button, which opens the dialog box
 shown in \figureref{fig:addmap}. 
 
 \FloatFig[htbp]
@@ -2372,8 +2372,8 @@ shown in \figureref{fig:addmap}.
  {Add Mapping Dialog}
 
     To remove a mapping, select the unwanted mapping and click on 
-    \widget{preferences.tex.remove_map}. To edit a mapping,
-    select the mapping and click on \widget{preferences.tex.edit_map}.
+    \widget{iosettings.tex.remove_map}. To edit a mapping,
+    select the mapping and click on \widget{iosettings.tex.edit_map}.
 
 \sectionentry{preferences.currencies}
 
@@ -2397,6 +2397,36 @@ your currency. Known currency commands are listed in the
 to the list, remember to add them in your document as well with 
 \gls{DTLnewcurrencysymbol}.
 
+\sectionentry{preferences.editor}
+
+The \widget{preferences.editor} tab governs the font and style for
+the cell editor window (see \sectionref{sec:celleditor}).
+
+The default font used in cell entries is a monospaced font. This can be
+changed using the \widget{preferences.editor.font} drop-down menu.
+You can also set the font size in the 
+\widget{preferences.editor.fontsize} field.
+The text \manualtext{colour} and background \manualtext{colour} can be changed 
+using the \widget{preferences.editor.cellforeground}
+and \widget{preferences.editor.cellbackground} selectors.
+
+Simple syntax highlighting can be enabled or disable by selecting
+or deselecting the \widget{preferences.editor.syntax} checkbox.
+Enabling this option will show the 
+\widget{preferences.editor.highlightcomment} and
+\widget{preferences.editor.highlightcs} selectors for comment
+lines and control sequences.
+
+The sample area at the top of the panel shows the style according to
+the current selection.
+
+The preferred dimensions of the editor pane on startup can also be
+set with the \widget{preferences.editor.height} and
+\widget{preferences.editor.width} widgets. Note that this is a
+preference but it may not be possible to set the given dimensions.
+For example, the window may be wider in order to accommodate the
+toolbar.
+
 \sectionentry{preferences.display}
 
 \FloatFig[htbp]
@@ -2412,16 +2442,15 @@ to the list, remember to add them in your document as well with
  {Display Tab}
 
 The \widget{preferences.display} (\figureref{fig:prefdisplay}) tab governs user interface settings.
-The default font used in cell entries is a monospaced font. This can be
-changed using the \widget{preferences.display.font} drop-down menu.
-You can also set the font size in the 
-\widget{preferences.display.fontsize} field. By default, each
+(Use the \widget{preferences.editor} tab for the cell editor display
+settings.)
+By default, each
 string cell has a maximum of four lines visible in the main window.
 (Real and integer columns only have a single line visible.) This
 number can be changed in the \widget{preferences.display.cellheight}
 field. Each column has a default width that depends on the data type
 for that column. The values are listed in the 
-\widget{preferences.display.cellwidths} area. These can be changed
+\widget{preferences.display.celldims} area. These can be changed
 as required.
 
 The \gls{LF} refers to the way the graphical interface

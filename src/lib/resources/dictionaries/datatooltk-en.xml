@@ -411,63 +411,66 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.currencies.remove_currency">Remove</entry>
 <entry key="preferences.currencies.remove_currency.mnemonic">R</entry>
 
-<entry key="preferences.display">Display</entry>
-<entry key="preferences.display.mnemonic">I</entry>
+<entry key="preferences.editor">Cell Editor Settings</entry>
+<entry key="preferences.editor.mnemonic">N</entry>
 
-<entry key="preferences.display.cellheight">Cell Height</entry>
+<entry key="preferences.editor.info">Preferred dimension on startup. The cell editor may be wider than the preferred width in order to fit the toolbar.</entry>
 
-<entry key="preferences.display.cellwidths">Cell Widths</entry>
+<entry key="preferences.editor.height">Preferred Height</entry>
 
-<entry key="preferences.display.editor">Cell Editor Settings</entry>
+<entry key="preferences.editor.width">Preferred Width</entry>
 
-<entry key="preferences.display.editor.info">The cell editor may be wider than the preferred width in order to fit the toolbar.</entry>
+<entry key="preferences.editor.syntax">Syntax Highlighting</entry>
+<entry key="preferences.editor.syntax.mnemonic">Y</entry>
 
-<entry key="preferences.display.editorheight">Preferred Height</entry>
-
-<entry key="preferences.display.editorwidth">Preferred Width</entry>
-
-<entry key="preferences.display.editorsyntax">Syntax Highlighting</entry>
-<entry key="preferences.display.editorsyntax.mnemonic">Y</entry>
-
-<entry key="preferences.display.sampler">% This is a comment
+<entry key="preferences.editor.sampler">% This is a comment
 The \emph'{'quick'}' brown ``fox'''' jumped over 
 the \strong'{'lazy'}' dog.
 \$ £ € \# [ + - ] 0123456789
 @ / &lt; &gt; \&amp; ~ $x_0 y^2$
 ‘quoted’ “double quoted” ! ?</entry>
 
-<entry key="preferences.display.font">Font</entry>
-<entry key="preferences.display.font.mnemonic">F</entry>
+<entry key="preferences.editor.font">Font</entry>
+<entry key="preferences.editor.font.mnemonic">F</entry>
 
-<entry key="preferences.display.fontsize">Font Size</entry>
-<entry key="preferences.display.fontsize.mnemonic">Z</entry>
+<entry key="preferences.editor.fontsize">Font Size</entry>
+<entry key="preferences.editor.fontsize.mnemonic">Z</entry>
 
-<entry key="preferences.display.highlightcomment">Comment Color</entry>
-<entry key="preferences.display.highlightcomment.mnemonic">M</entry>
+<entry key="preferences.editor.highlightcomment">Comment Color</entry>
+<entry key="preferences.editor.highlightcomment.mnemonic">M</entry>
 
-<entry key="preferences.display.choose.highlightcomment">Choose...</entry>
-<entry key="preferences.display.choose.highlightcomment.tooltip">Choose comment color</entry>
+<entry key="preferences.editor.choose.highlightcomment">Choose...</entry>
+<entry key="preferences.editor.choose.highlightcomment.tooltip">Choose comment color</entry>
 
-<entry key="preferences.display.highlightcs">Control Sequence Color</entry>
-<entry key="preferences.display.highlightcs.mnemonic">R</entry>
+<entry key="preferences.editor.highlightcs">Control Sequence Color</entry>
+<entry key="preferences.editor.highlightcs.mnemonic">R</entry>
 
-<entry key="preferences.display.choose.highlightcs">Choose...</entry>
-<entry key="preferences.display.choose.highlightcs.tooltip">Choose control sequence color</entry>
+<entry key="preferences.editor.choose.highlightcs">Choose...</entry>
+<entry key="preferences.editor.choose.highlightcs.tooltip">Choose control sequence color</entry>
 
-<entry key="preferences.display.cellforeground">Text Color</entry>
-<entry key="preferences.display.cellforeground.mnemonic">X</entry>
+<entry key="preferences.editor.cellforeground">Text Color</entry>
+<entry key="preferences.editor.cellforeground.mnemonic">X</entry>
 
-<entry key="preferences.display.choose.cellforeground">Choose...</entry>
-<entry key="preferences.display.choose.cellforeground.tooltip">Choose text color</entry>
+<entry key="preferences.editor.choose.cellforeground">Choose...</entry>
+<entry key="preferences.editor.choose.cellforeground.tooltip">Choose text color</entry>
 
-<entry key="preferences.display.cellbackground">Background</entry>
-<entry key="preferences.display.cellbackground.mnemonic">B</entry>
+<entry key="preferences.editor.cellbackground">Background</entry>
+<entry key="preferences.editor.cellbackground.mnemonic">B</entry>
 
-<entry key="preferences.display.choose.cellbackground">Choose...</entry>
-<entry key="preferences.display.choose.cellbackground.tooltip">Choose background color</entry>
+<entry key="preferences.editor.choose.cellbackground">Choose...</entry>
+<entry key="preferences.editor.choose.cellbackground.tooltip">Choose background color</entry>
 
-<entry key="preferences.display.cellfgbgswap">Swap</entry>
-<entry key="preferences.display.cellfgbgswap.tooltip">Swap foreground and background colors</entry>
+<entry key="preferences.editor.cellfgbgswap">Swap</entry>
+<entry key="preferences.editor.cellfgbgswap.tooltip">Swap foreground and background colors</entry>
+
+<entry key="preferences.display">Display</entry>
+<entry key="preferences.display.mnemonic">I</entry>
+
+<entry key="preferences.display.celldims">Table Cell Dimensions</entry>
+
+<entry key="preferences.display.cellheight">Cell Height</entry>
+
+<entry key="preferences.display.cellwidths">Cell Widths</entry>
 
 <entry key="preferences.display.lookandfeel.title">Graphical Interface</entry>
 
@@ -587,7 +590,7 @@ the \strong'{'lazy'}' dog.
 <entry key="preferences.sql.prefix.mnemonic">X</entry>
 
 <entry key="preferences.sql.user">User Name: </entry>
-<entry key="preferences.sql.user.mnemonic">N</entry>
+<entry key="preferences.sql.user.mnemonic">M</entry>
 
 <entry key="preferences.sql.wipe">Wipe Password After Use</entry>
 <entry key="preferences.sql.wipe.mnemonic">W</entry>
@@ -861,22 +864,22 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="header.column_label_note">(Avoid TeX active characters.)</entry>
 
 <entry key="header.column_type">Type</entry>
-<entry key="header.column_type.mnemonic">Y</entry>
+<entry key="header.column_type.mnemonic">P</entry>
 
 <entry key="header.type.currency">Currency</entry>
-<entry key="header.type.currency.mnemonic">N</entry>
+<entry key="header.type.currency.mnemonic">Y</entry>
 
 <entry key="header.type.int">Integer</entry>
-<entry key="header.type.int.mnemonic">T</entry>
+<entry key="header.type.int.mnemonic">R</entry>
 
 <entry key="header.type.real">Real</entry>
 <entry key="header.type.real.mnemonic">A</entry>
 
 <entry key="header.type.string">String</entry>
-<entry key="header.type.string.mnemonic">S</entry>
+<entry key="header.type.string.mnemonic">G</entry>
 
 <entry key="header.type.unset">Unset</entry>
-<entry key="header.type.unset.mnemonic">U</entry>
+<entry key="header.type.unset.mnemonic">T</entry>
 
 <!-- New From Template Dialog -->
 
@@ -1240,6 +1243,7 @@ Trying again with TeX Parser Library.</entry>
 <!-- Text for the manual  -->
 <entry key="manual.labelled">labeled</entry>
 <entry key="manual.favour">favor</entry>
+<entry key="manual.colour">color</entry>
 <entry key="index.licence">license</entry>
 
 <!-- Errors -->
