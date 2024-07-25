@@ -14,6 +14,14 @@
 <entry key="preferences.display.choose.highlightcomment.tooltip">Choose comment colour</entry>
 <entry key="preferences.display.choose.highlightcs.tooltip">Choose control sequence colour</entry>
 
+<entry key="preferences.display.cellforeground">Text Colour</entry>
+
+<entry key="preferences.display.choose.cellforeground.tooltip">Choose text colour</entry>
+
+<entry key="preferences.display.choose.cellbackground.tooltip">Choose background colour</entry>
+
+<entry key="preferences.display.cellfgbgswap.tooltip">Swap foreground and background colours</entry>
+
 <entry key="menu.help.licence">Licence</entry>
 
 <!-- Licence Dialog -->

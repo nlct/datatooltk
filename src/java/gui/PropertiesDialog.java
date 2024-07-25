@@ -420,7 +420,7 @@ public class PropertiesDialog extends JDialog
       samplerDocument = new FontSampleDocument(this);
       samplerComp = new JTextPane(samplerDocument);
       samplerComp.setText(messageHandler.getLabel("preferences.display.sampler"));
-      sampleComp.setEditable(false);
+      samplerComp.setEditable(false);
 
       box.add(new JScrollPane(samplerComp));
 
@@ -477,7 +477,7 @@ public class PropertiesDialog extends JDialog
         messageHandler.getLabel("preferences.display.editor")));
 
       box = createNewRow(editorBox);
-      box.add(resources.createMessageArea(2, 22,
+      box.add(resources.createMessageArea(0, 22,
          "preferences.display.editor.info"));
 
       box = createNewRow(editorBox);
@@ -500,33 +500,72 @@ public class PropertiesDialog extends JDialog
          editorWidthField));
       box.add(editorWidthField);
 
-      box = createNewRow(editorBox);
+      JComponent fgbgComp = createNewRow(editorBox);
+
+      JComponent fgbgSwatchesComp = Box.createVerticalBox();
+      fgbgSwatchesComp.setAlignmentX(0);
+      fgbgComp.add(fgbgSwatchesComp);
+
+      box = createNewRow(fgbgSwatchesComp,
+         new FlowLayout(FlowLayout.LEADING, 0, 0));
 
       JButton button = resources.createActionButton("preferences.display.choose",
-       "highlightcs", "choose_colour", true, this, null, true);
+       "cellforeground", "choose_colour", true, this, null, true);
 
-      box.add(createLabel(labelGrp, "preferences.display.highlightcs", button));
+      box.add(createLabel(labelGrp, "preferences.display.cellforeground", button));
 
-      highlightCsSwatch = new JPanel();
-      highlightCsSwatch.setPreferredSize(new Dimension(38,20));
-      box.add(highlightCsSwatch);
+      editorForegroundSwatch = new JPanel();
+      editorForegroundSwatch.setPreferredSize(SWATCH_SIZE);
+      editorForegroundSwatch.setBackground(Color.BLACK);
+      box.add(editorForegroundSwatch);
       box.add(button);
 
-      box = createNewRow(editorBox);
+      box = createNewRow(fgbgSwatchesComp,
+         new FlowLayout(FlowLayout.LEADING, 0, 0));
+
+      button = resources.createActionButton("preferences.display.choose",
+       "cellbackground", "choose_colour", true, this, null, true);
+
+      box.add(createLabel(labelGrp, "preferences.display.cellbackground", button));
+
+      editorBackgroundSwatch = new JPanel();
+      editorBackgroundSwatch.setPreferredSize(SWATCH_SIZE);
+      editorBackgroundSwatch.setBackground(Color.WHITE);
+      box.add(editorBackgroundSwatch);
+      box.add(button);
+
+      fgbgComp.add(resources.createActionButton("preferences.display",
+       "cellfgbgswap", "swap", true, this, null, true));
+
+      syntaxHighlightingBox = resources.createJCheckBox
+        ("preferences.display", "editorsyntax", this);
+      editorBox.add(syntaxHighlightingBox);
+
+      highlightCsComp = createNewRow(editorBox);
+
+      button = resources.createActionButton("preferences.display.choose",
+       "highlightcs", "choose_colour", true, this, null, true);
+
+      highlightCsComp.add(createLabel(labelGrp, "preferences.display.highlightcs", button));
+
+      highlightCsSwatch = new JPanel();
+      highlightCsSwatch.setPreferredSize(SWATCH_SIZE);
+      highlightCsSwatch.setBackground(Color.BLACK);
+      highlightCsComp.add(highlightCsSwatch);
+      highlightCsComp.add(button);
+
+      highlightCommentComp = createNewRow(editorBox);
 
       button = resources.createActionButton("preferences.display.choose",
        "highlightcomment", "choose_colour", true, this, null, true);
 
-      box.add(createLabel(labelGrp, "preferences.display.highlightcomment", button));
+      highlightCommentComp.add(createLabel(labelGrp, "preferences.display.highlightcomment", button));
 
       highlightCommentSwatch = new JPanel();
-      highlightCommentSwatch.setPreferredSize(new Dimension(38,20));
-      box.add(highlightCommentSwatch);
-      box.add(button);
-
-      syntaxHighlightingBox = resources.createJCheckBox
-        ("preferences.display", "editorsyntax", null);
-      editorBox.add(syntaxHighlightingBox);
+      highlightCommentSwatch.setPreferredSize(SWATCH_SIZE);
+      highlightCommentSwatch.setBackground(Color.BLACK);
+      highlightCommentComp.add(highlightCommentSwatch);
+      highlightCommentComp.add(button);
 
       updateFontSampler();
 
@@ -875,6 +914,22 @@ public class PropertiesDialog extends JDialog
       return comp;
    }
 
+   private JComponent createNewRow(JComponent tab, String constraint)
+   {
+      return createNewRow(tab, new FlowLayout(FlowLayout.LEADING, 4, 1),
+        constraint);
+   }
+
+   private JComponent createNewRow(JComponent tab, LayoutManager layout,
+     Object constraints)
+   {
+      JComponent comp = new JPanel(layout);
+      comp.setAlignmentX(0);
+      tab.add(comp, constraints);
+
+      return comp;
+   }
+
    private JRadioButton createRadioButton(String parentLabel,
       String label, ButtonGroup bg)
    {
@@ -1037,11 +1092,15 @@ public class PropertiesDialog extends JDialog
            Integer.valueOf(settings.getCellWidth(DatumType.toDatumType(i-1))));
       }
 
-      editorHeightModel.setValue(Integer.valueOf(settings.getCellEditorHeight()));
-      editorWidthModel.setValue(Integer.valueOf(settings.getCellEditorWidth()));
+      editorHeightModel.setValue(Integer.valueOf(settings.getCellEditorPreferredHeight()));
+      editorWidthModel.setValue(Integer.valueOf(settings.getCellEditorPreferredWidth()));
       syntaxHighlightingBox.setSelected(settings.isSyntaxHighlightingOn());
       highlightCsSwatch.setBackground(settings.getControlSequenceHighlight());
       highlightCommentSwatch.setBackground(settings.getCommentHighlight());
+      updateSwatchVisiblity();
+
+      editorForegroundSwatch.setBackground(settings.getCellForeground());
+      editorBackgroundSwatch.setBackground(settings.getCellBackground());
 
       String lookAndFeelClassName = settings.getLookAndFeel();
 
@@ -1178,6 +1237,8 @@ public class PropertiesDialog extends JDialog
       updateButtons();
       
       updateFontSampler();
+
+      updateCellEditor = false;
 
       setVisible(true);
    }
@@ -1338,6 +1399,45 @@ public class PropertiesDialog extends JDialog
 
          updateFontSampler();
       }
+      else if (action.equals("cellforeground"))
+      {
+         Color col = JColorChooser.showDialog(this, 
+            getMessageHandler().getLabel("preferences.display.cellforeground"),
+            editorForegroundSwatch.getBackground());
+
+         if (col != null)
+         {
+            editorForegroundSwatch.setBackground(col);
+         }
+
+         updateFontSampler();
+      }
+      else if (action.equals("cellbackground"))
+      {
+         Color col = JColorChooser.showDialog(this, 
+            getMessageHandler().getLabel("preferences.display.cellbackground"),
+            editorBackgroundSwatch.getBackground());
+
+         if (col != null)
+         {
+            editorBackgroundSwatch.setBackground(col);
+         }
+
+         updateFontSampler();
+      }
+      else if (action.equals("editorsyntax"))
+      {
+         updateFontSampler();
+         updateSwatchVisiblity();
+      }
+      else if (action.equals("cellfgbgswap"))
+      {
+         Color bg = getSelectedCellBackground();
+         editorBackgroundSwatch.setBackground(
+            editorForegroundSwatch.getBackground());
+         editorForegroundSwatch.setBackground(bg);
+         updateFontSampler();
+      }
       else if (action.equals("int.pattern"))
       {
          if (intFormatterField.getText().isEmpty())
@@ -1470,6 +1570,16 @@ public class PropertiesDialog extends JDialog
       return highlightCsSwatch.getBackground();
    }
 
+   protected Color getSelectedCellForeground()
+   {
+      return editorForegroundSwatch.getBackground();
+   }
+
+   protected Color getSelectedCellBackground()
+   {
+      return editorBackgroundSwatch.getBackground();
+   }
+
    protected boolean isSyntaxHighlightingOn()
    {
       return syntaxHighlightingBox.isSelected();
@@ -1485,13 +1595,24 @@ public class PropertiesDialog extends JDialog
       return fontBox.getSelectedItem().toString();
    }
 
+   protected void updateSwatchVisiblity()
+   {
+      boolean selected = syntaxHighlightingBox.isSelected();
+      highlightCsComp.setVisible(selected);
+      highlightCommentComp.setVisible(selected);
+   }
+
    protected void updateFontSampler()
    {
       Font sampleFont = new Font(getSelectedFontName(), Font.PLAIN,
         getSelectedFontSize());
       samplerComp.setFont(sampleFont);
+      samplerComp.setBackground(getSelectedCellBackground());
+      samplerComp.setForeground(getSelectedCellForeground());
 
       samplerDocument.update();
+
+      updateCellEditor = true;
    }
 
    private void okay() throws IllegalArgumentException
@@ -1600,12 +1721,18 @@ public class PropertiesDialog extends JDialog
           DatumType.toDatumType(i-1));
       }
 
-      settings.setCellEditorHeight(editorHeightModel.getNumber().intValue());
-      settings.setCellEditorWidth(editorWidthModel.getNumber().intValue());
+      settings.setCellEditorPreferredHeight(editorHeightModel.getNumber().intValue());
+      settings.setCellEditorPreferredWidth(editorWidthModel.getNumber().intValue());
       settings.setSyntaxHighlighting(syntaxHighlightingBox.isSelected());
 
-      settings.setControlSequenceHighlight(highlightCsSwatch.getBackground());
-      settings.setCommentHighlight(highlightCommentSwatch.getBackground());
+      if (syntaxHighlightingBox.isSelected())
+      {
+         settings.setControlSequenceHighlight(highlightCsSwatch.getBackground());
+         settings.setCommentHighlight(highlightCommentSwatch.getBackground());
+      }
+
+      settings.setCellForeground(getSelectedCellForeground());
+      settings.setCellBackground(getSelectedCellBackground());
 
       int lookAndFeelIdx = lookAndFeelBox.getSelectedIndex();
 
@@ -1710,6 +1837,11 @@ public class PropertiesDialog extends JDialog
       }
 
       settings.setPerl(perlFileField.getFileName());
+
+      if (updateCellEditor)
+      {
+         gui.updatedCellEditorSettings();
+      }
 
       setVisible(false);
    }
@@ -1816,7 +1948,12 @@ public class PropertiesDialog extends JDialog
     decimalFmtMatchLocaleButton, decimalFmtPatternButton,
     decimalFmtSIButton;
 
-   private JComponent highlightCsSwatch, highlightCommentSwatch;
+   private JComponent highlightCsSwatch, highlightCommentSwatch,
+    editorForegroundSwatch, editorBackgroundSwatch;
+
+   private JComponent highlightCsComp, highlightCommentComp;
+
+   private static final Dimension SWATCH_SIZE = new Dimension(38,20);
 
    private JTextPane samplerComp;
    private FontSampleDocument samplerDocument;
@@ -1833,6 +1970,8 @@ public class PropertiesDialog extends JDialog
      toolBarIconSizeButton32, toolBarIconSizeButton64,
      smallIconSizeButton16, smallIconSizeButton20,
      smallIconSizeButton24;
+
+   boolean updateCellEditor = false;
 
    private UIManager.LookAndFeelInfo[] availableLookAndFeels;
 
@@ -1943,22 +2082,17 @@ class FontSampleDocument extends DefaultStyledDocument
 
       this.dialog = dialog;
 
-      StyleContext context = StyleContext.getDefaultStyleContext();
-
       attrPlain = new SimpleAttributeSet();
-      StyleConstants.setForeground(attrPlain, defaultForeground);
-
       attrControlSequence = new SimpleAttributeSet();
-      StyleConstants.setForeground(attrControlSequence, defaultForeground);
 
       attrComment = new SimpleAttributeSet();
-
       StyleConstants.setItalic(attrComment, true);
-      StyleConstants.setForeground(attrComment, defaultForeground);
    }
 
    public void update()
    {
+      Color defaultForeground = dialog.getSelectedCellForeground();
+
       if (dialog.isSyntaxHighlightingOn())
       {
          Color commentHighlight = dialog.getCommentHighlight();
@@ -2018,5 +2152,4 @@ class FontSampleDocument extends DefaultStyledDocument
    private SimpleAttributeSet attrControlSequence;
    private SimpleAttributeSet attrComment;
 
-   private Color defaultForeground = Color.BLACK;
 }

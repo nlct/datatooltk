@@ -110,16 +110,14 @@ public class CellDialog extends JDialog
 
       searchM.add(createJMenuItem("search", "replace", "replace_text", toolBar));
 
-      document = new CellDocument(this, gui.getSettings());
+      document = new CellDocument(this);
       textPane = new JTextPane(document);
 
       textPane.setFont(gui.getCellFont());
 
-      FontMetrics fm = getFontMetrics(textPane.getFont());
-
       textPane.setPreferredSize(new Dimension
-         (gui.getSettings().getCellEditorWidth()*fm.getMaxAdvance(),
-          gui.getSettings().getCellEditorHeight()*fm.getHeight()));
+         (gui.getSettings().getCellEditorPreferredWidth(),
+          gui.getSettings().getCellEditorPreferredHeight()));
 
       textPane.setEditable(true);
 
@@ -373,6 +371,20 @@ public class CellDialog extends JDialog
       modified = false;
       textPane.requestFocusInWindow();
       textPane.setCaretPosition(0);
+   }
+
+
+   public void settingsUpdated()
+   {
+      textPane.setPreferredSize(new Dimension
+         (gui.getSettings().getCellEditorPreferredWidth(),
+          gui.getSettings().getCellEditorPreferredHeight()));
+
+      textPane.setFont(gui.getCellFont());
+      textPane.setBackground(gui.getSettings().getCellBackground());
+      textPane.setForeground(gui.getSettings().getCellForeground());
+
+      document.settingsUpdated();
    }
 
    public boolean requestEdit(int row, int col,
@@ -660,6 +672,11 @@ public class CellDialog extends JDialog
       return gui.getMessageHandler();
    }
 
+   public DatatoolSettings getSettings()
+   {
+      return gui.getSettings();
+   }
+
    private JTextPane textPane;
 
    private CellDocument document;
@@ -693,18 +710,24 @@ public class CellDialog extends JDialog
 
 class CellDocument extends DefaultStyledDocument
 {
-   public CellDocument(CellDialog dialog, DatatoolSettings settings)
+   public CellDocument(CellDialog dialog)
    {
       super();
 
       this.cellDialog = dialog;
-      this.highlightOn = settings.isSyntaxHighlightingOn();
 
-      StyleContext context = StyleContext.getDefaultStyleContext();
-      attrPlain = context.addAttribute(context.getEmptySet(),
-         StyleConstants.Foreground, Color.BLACK);
-      attrControlSequence = context.addAttribute(context.getEmptySet(),
-         StyleConstants.Foreground, settings.getControlSequenceHighlight());
+      DatatoolSettings settings = cellDialog.getSettings();
+
+      highlightOn = settings.isSyntaxHighlightingOn();
+
+      Color defaultForeground = settings.getCellForeground();
+
+      attrPlain = new SimpleAttributeSet();
+      StyleConstants.setForeground(attrPlain, defaultForeground);
+
+      attrControlSequence = new SimpleAttributeSet();
+      StyleConstants.setForeground(attrControlSequence,
+        settings.getControlSequenceHighlight());
 
       attrComment = new SimpleAttributeSet();
       StyleConstants.setItalic(attrComment, true);
@@ -727,6 +750,40 @@ class CellDocument extends DefaultStyledDocument
           }
        });
 
+   }
+
+   public void settingsUpdated()
+   {
+      DatatoolSettings settings = cellDialog.getSettings();
+
+      Color defaultForeground = settings.getCellForeground();
+      highlightOn = settings.isSyntaxHighlightingOn();
+
+      StyleConstants.setForeground(attrPlain, defaultForeground);
+
+      if (highlightOn)
+      {
+         Color commentHighlight = settings.getCommentHighlight();
+         Color csHighlight = settings.getControlSequenceHighlight();
+
+         StyleConstants.setForeground(attrControlSequence, csHighlight);
+         StyleConstants.setForeground(attrComment, commentHighlight);
+         StyleConstants.setItalic(attrComment, true);
+      }
+      else
+      {
+         StyleConstants.setForeground(attrControlSequence, defaultForeground);
+         StyleConstants.setForeground(attrComment, defaultForeground);
+         StyleConstants.setItalic(attrComment, false);
+      }
+
+      try
+      {
+         updateHighlight();
+      }
+      catch (BadLocationException e)
+      {
+      }
    }
 
    public void remove(int offset, int length)
@@ -812,7 +869,7 @@ class CellDocument extends DefaultStyledDocument
 
    private CompoundEdit compoundEdit;
 
-   private AttributeSet attrPlain;
-   private AttributeSet attrControlSequence;
+   private SimpleAttributeSet attrPlain;
+   private SimpleAttributeSet attrControlSequence;
    private SimpleAttributeSet attrComment;
 }

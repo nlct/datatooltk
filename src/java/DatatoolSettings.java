@@ -2309,6 +2309,79 @@ public class DatatoolSettings extends Properties
       return defValue;
    }
 
+   public int getCellEditorPreferredHeight()
+   {
+      try
+      {
+         String val = getProperty("celleditorprefheight");
+
+         if (val == null)
+         {
+            val = getProperty("celleditorheight");
+
+            if (val != null)
+            {
+               int h = Integer.parseInt(val)*10;
+               setProperty("celleditorprefheight", ""+h);
+               remove("celleditorheight");
+               return h;
+            }
+         }
+         else
+         {
+            return Integer.parseInt(val);
+         }
+      }
+      catch (NumberFormatException e)
+      {
+      }
+
+      setProperty("celleditorprefheight", "170");
+      return 170;
+   }
+
+   public void setCellEditorPreferredHeight(int height)
+   {
+      setProperty("celleditorprefheight", ""+height);
+   }
+
+   public int getCellEditorPreferredWidth()
+   {
+      try
+      {
+         String val = getProperty("celleditorprefwidth");
+
+         if (val == null)
+         {
+            val = getProperty("celleditorwidth");
+
+            if (val != null)
+            {
+               int w = Integer.parseInt(val)*22;
+               setProperty("celleditorprefwidth", ""+w);
+               remove("celleditorwidth");
+               return w;
+            }
+         }
+         else
+         {
+            return Integer.parseInt(val);
+         }
+      }
+      catch (NumberFormatException e)
+      {
+      }
+
+      setProperty("celleditorprefwidth", "220");
+      return 220;
+   }
+
+   public void setCellEditorPreferredWidth(int width)
+   {
+      setProperty("celleditorprefwidth", ""+width);
+   }
+
+   @Deprecated
    public int getCellEditorHeight()
    {
       try
@@ -2317,16 +2390,17 @@ public class DatatoolSettings extends Properties
       }
       catch (NumberFormatException e)
       {
-         setCellHeight(10);
          return 10;
       }
    }
 
+   @Deprecated
    public void setCellEditorHeight(int numLines)
    {
       setProperty("celleditorheight", ""+numLines);
    }
 
+   @Deprecated
    public int getCellEditorWidth()
    {
       try
@@ -2335,11 +2409,11 @@ public class DatatoolSettings extends Properties
       }
       catch (NumberFormatException e)
       {
-         setCellHeight(8);
          return 8;
       }
    }
 
+   @Deprecated
    public void setCellEditorWidth(int maxCharsPerLine)
    {
       setProperty("celleditorwidth", ""+maxCharsPerLine);
@@ -2379,6 +2453,54 @@ public class DatatoolSettings extends Properties
       }
 
       return Boolean.parseBoolean(prop);
+   }
+
+   public Color getCellBackground()
+   {
+      String prop = getProperty("cellbackground");
+
+      if (prop == null)
+      {
+         return Color.WHITE;
+      }
+
+      try
+      {
+         return new Color(Integer.parseInt(prop));
+      }
+      catch (NumberFormatException e)
+      {
+         return Color.WHITE;
+      }
+   }
+
+   public void setCellBackground(Color background)
+   {
+      setProperty("cellbackground", ""+background.getRGB());
+   }
+
+   public Color getCellForeground()
+   {
+      String prop = getProperty("cellforeground");
+
+      if (prop == null)
+      {
+         return Color.BLACK;
+      }
+
+      try
+      {
+         return new Color(Integer.parseInt(prop));
+      }
+      catch (NumberFormatException e)
+      {
+         return Color.BLACK;
+      }
+   }
+
+   public void setCellForeground(Color foreground)
+   {
+      setProperty("cellforeground", ""+foreground.getRGB());
    }
 
    public Color getControlSequenceHighlight()

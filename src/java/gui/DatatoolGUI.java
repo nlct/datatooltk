@@ -1933,6 +1933,11 @@ public class DatatoolGUI extends JFrame
       return settings;
    }
 
+   public void updatedCellEditorSettings()
+   {
+       cellEditor.settingsUpdated();
+   }
+
    public DatatoolTk getDatatoolTk()
    {
       return settings.getDatatoolTk();

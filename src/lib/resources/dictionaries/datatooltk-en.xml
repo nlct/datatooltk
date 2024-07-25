@@ -415,22 +415,19 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.display.mnemonic">I</entry>
 
 <entry key="preferences.display.cellheight">Cell Height</entry>
-<entry key="preferences.display.cellheight.mnemonic">G</entry>
 
 <entry key="preferences.display.cellwidths">Cell Widths</entry>
 
 <entry key="preferences.display.editor">Cell Editor Settings</entry>
 
-<entry key="preferences.display.editor.info">Application needs a restart for a change in cell editor settings to take effect.</entry>
+<entry key="preferences.display.editor.info">The cell editor may be wider than the preferred width in order to fit the toolbar.</entry>
 
-<entry key="preferences.display.editorheight">Number of Lines</entry>
-<entry key="preferences.display.editorheight.mnemonic">B</entry>
+<entry key="preferences.display.editorheight">Preferred Height</entry>
+
+<entry key="preferences.display.editorwidth">Preferred Width</entry>
 
 <entry key="preferences.display.editorsyntax">Syntax Highlighting</entry>
 <entry key="preferences.display.editorsyntax.mnemonic">Y</entry>
-
-<entry key="preferences.display.editorwidth">Maximum Characters per Line</entry>
-<entry key="preferences.display.editorwidth.mnemonic">X</entry>
 
 <entry key="preferences.display.sampler">% This is a comment
 The \emph'{'quick'}' brown ``fox'''' jumped over 
@@ -457,11 +454,25 @@ the \strong'{'lazy'}' dog.
 <entry key="preferences.display.choose.highlightcs">Choose...</entry>
 <entry key="preferences.display.choose.highlightcs.tooltip">Choose control sequence color</entry>
 
+<entry key="preferences.display.cellforeground">Text Color</entry>
+<entry key="preferences.display.cellforeground.mnemonic">X</entry>
+
+<entry key="preferences.display.choose.cellforeground">Choose...</entry>
+<entry key="preferences.display.choose.cellforeground.tooltip">Choose text color</entry>
+
+<entry key="preferences.display.cellbackground">Background</entry>
+<entry key="preferences.display.cellbackground.mnemonic">B</entry>
+
+<entry key="preferences.display.choose.cellbackground">Choose...</entry>
+<entry key="preferences.display.choose.cellbackground.tooltip">Choose background color</entry>
+
+<entry key="preferences.display.cellfgbgswap">Swap</entry>
+<entry key="preferences.display.cellfgbgswap.tooltip">Swap foreground and background colors</entry>
 
 <entry key="preferences.display.lookandfeel.title">Graphical Interface</entry>
 
 <entry key="preferences.display.lookandfeel">Look and Feel:</entry>
-<entry key="preferences.display.lookandfeel.mnemonic">F</entry>
+<entry key="preferences.display.lookandfeel.mnemonic">K</entry>
 
 <entry key="preferences.display.buttonsize">Toolbar Button Size:</entry>
 <entry key="preferences.display.smallbuttonsize">Small Icon Size:</entry>
