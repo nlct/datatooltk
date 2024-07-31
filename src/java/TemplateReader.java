@@ -27,9 +27,9 @@ import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texjavahelplib.MessageSystem;
 
 /**
- * Handler for parsing XML data describing a database template.
+ * Reader for parsing XML data describing a database template.
  * Template structure:
- * <pre>
+<pre>
 &lt;datatooltktemplate&gt;
   &lt;header&gt;
     &lt;label&gt;<em>column-label</em>&lt;/label&gt;
@@ -43,7 +43,7 @@ import com.dickimawbooks.texjavahelplib.MessageSystem;
   &lt;/header&gt;
 ...
 &lt;/datatooltktemplate&gt;
- * </pre>
+</pre>
  * The title and type are optional.
  */
 public class TemplateReader extends XMLReaderAdapter
