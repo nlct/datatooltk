@@ -692,6 +692,12 @@ public class MessageHandler extends ErrorManager
       logMessage(exception);
    }
 
+   public String getMessageWithFallback(String label, String fallbackFormat,
+     Object... params)
+   {
+      return datatooltk.getMessageWithFallback(label, fallbackFormat, params);
+   }
+
    public String getMessageIfExists(String label, Object... args)
    {
       return datatooltk.getMessageIfExists(label, args);

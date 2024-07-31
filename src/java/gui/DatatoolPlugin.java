@@ -107,6 +107,8 @@ public class DatatoolPlugin implements Runnable
             xml.append(line);
          }
 
+         messageHandler.debug("Plugin returned: "+xml);
+
          reader.close();
 
          reader = new BufferedReader(
@@ -127,7 +129,7 @@ public class DatatoolPlugin implements Runnable
          {
             throw new IOException(
                messageHandler.getLabelWithValues("error.plugin.exit_code", 
-                 ""+exitCode, errMess));
+                 exitCode, errMess));
          }
 
          if (xml.length() > 0)
@@ -213,21 +215,18 @@ public class DatatoolPlugin implements Runnable
    private void parseResult(CharSequence xml)
      throws SAXException,IOException
    {
-      XMLReader xr = XMLReaderFactory.createXMLReader();
-
-      PluginHandler handler = new PluginHandler(dbPanel, name);
-      xr.setContentHandler(handler);
-      xr.setErrorHandler(messageHandler);
-
-      StringReader reader = new StringReader(xml.toString());
+      DatatoolDb db = null;
 
       try
       {
-         xr.parse(new InputSource(reader));
+         StringReader in = new StringReader(xml.toString());
+
+         PluginReader reader = new PluginReader(dbPanel, name);
+
+         reader.parse(new InputSource(in));
       }
       finally
       {
-         reader.close();
          dbPanel.cancelCompoundEdit();
       }
    }
@@ -240,9 +239,27 @@ public class DatatoolPlugin implements Runnable
    private MessageHandler messageHandler;
 }
 
-class PluginHandler extends DefaultHandler
+/**
+ * Reader for parsing XML data representing a database row.
+ * Structure:
+<pre>
+&lt;datatooltk &gt;
+  &lt;row action="<em>action</em>" value="<em>row index</em>" &gt;
+    &lt;entry &gt;<em>entry</em>&lt;/entry &gt;
+    &lt;entry &gt;<em>entry</em>&lt;/entry &gt;
+    &lt;entry &gt;<em>entry</em>&lt;/entry &gt;
+...
+  &lt;/row &gt;
+&lt;/datatooltk&gt;
+</pre>
+The row action may be: "insert", "append", "replace" or "remove".
+All but the "append" action require the value attribute set to the row index.
+The "entry" tags should be in the same order as the columns.
+ */
+class PluginReader extends XMLReaderAdapter
 {
-   public PluginHandler(DatatoolDbPanel panel, String name)
+   public PluginReader(DatatoolDbPanel panel, String name)
+   throws SAXException
    {
       super();
       this.dbPanel = panel;
@@ -250,32 +267,40 @@ class PluginHandler extends DefaultHandler
       stack = new ArrayDeque<String>();
    }
 
+   @Override
    public void startElement(String uri, String localName, String qName,
      Attributes attrs)
      throws SAXException
    {
-      stack.push(localName);
+      super.startElement(uri, localName, qName, attrs);
 
-      if (localName.equals("row"))
+      stack.push(qName);
+
+      if (qName.equals("row"))
       {
          currentRow = new DatatoolRow(dbPanel.db);
 
          currentAction = attrs.getValue("action");
          currentValue = attrs.getValue("value");
       }
-      else if (localName.equals("entry"))
+      else if (qName.equals("entry"))
       {
          currentBuffer = new StringBuffer();
       }
-      else if (localName.equals("br") && currentBuffer != null)
+      else if (qName.equals("br") && currentBuffer != null)
       {
          currentBuffer.append(String.format("%n"));
       }
-      else if (localName.equals("datatooltk"))
+      else if (qName.equals("datatooltk"))
       {
          dbPanel.startCompoundEdit(
             getMessageHandler().getLabelWithValues(
                "undo.plugin_action", pluginName));
+      }
+      else
+      {
+         throw new SAXException(getMessageHandler().getMessageWithFallback(
+          "error.xml.unknown_tag", "Unknown tag <{0}>", qName));
       }
    }
 
@@ -296,9 +321,12 @@ class PluginHandler extends DefaultHandler
       return index;
    }
 
+   @Override
    public void endElement(String uri, String localName, String qName)
      throws SAXException
    {
+      super.endElement(uri, localName, qName);
+
       try
       {
          stack.pop();
@@ -308,7 +336,7 @@ class PluginHandler extends DefaultHandler
          throw new SAXException(e);
       }
 
-      if (localName.equals("row"))
+      if (qName.equals("row"))
       {
          if (currentAction.equals("insert"))
          {
@@ -331,7 +359,7 @@ class PluginHandler extends DefaultHandler
          currentValue = null;
          currentAction = null;
       }
-      else if (localName.equals("entry"))
+      else if (qName.equals("entry"))
       {
          String text = currentBuffer.toString().replaceAll(
            "(\\n\\s*\\n)+", "\\\\DTLpar ");
@@ -339,15 +367,24 @@ class PluginHandler extends DefaultHandler
          currentRow.add(Datum.valueOf(text, dbPanel.getSettings()));
          currentBuffer = null;
       }
-      else if (localName.equals("datatooltk"))
+      else if (qName.equals("datatooltk"))
       {
          dbPanel.commitCompoundEdit();
       }
+      else
+      {
+         throw new SAXException(getMessageHandler().getMessageWithFallback(
+          "error.xml.unknown_end_tag",
+          "Unknown end tag </{0}> found", qName));
+      }
    }
 
+   @Override
    public void characters(char[] ch, int start, int length)
       throws SAXException
    {
+      super.characters(ch, start, length);
+
       String current = stack.peek();
 
       if (current == null) return;
