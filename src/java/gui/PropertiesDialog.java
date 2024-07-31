@@ -1497,7 +1497,7 @@ public class PropertiesDialog extends JDialog
 
       if (hasSeedBox.isSelected())
       {
-         settings.setRandomSeed(new Long(seedField.getValue()));
+         settings.setRandomSeed(Long.valueOf(seedField.getValue()));
       }
       else
       {

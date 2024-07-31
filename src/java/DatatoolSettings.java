@@ -2586,7 +2586,7 @@ public class DatatoolSettings extends Properties
 
       try
       {
-         return new Long(prop);
+         return Long.valueOf(prop);
       }
       catch (NumberFormatException e)
       {

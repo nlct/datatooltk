@@ -4231,14 +4231,12 @@ public class DatatoolDb
     DatatoolSettings settings, Template templateFile)
     throws SAXException,IOException
    {
-      XMLReader xr = XMLReaderFactory.createXMLReader();
-
-      FileReader reader = null;
+      BufferedReader in = null;
       DatatoolDb db = null;
 
       try
       {
-         reader = new FileReader(templateFile.getFile());
+         in = Files.newBufferedReader(templateFile.getFile().toPath());
 
          db = new DatatoolDb(settings);
 
@@ -4247,19 +4245,15 @@ public class DatatoolDb
          db.setName(settings.getMessageHandler().getLabelWithAlt(
             String.format("plugin.%s.default_name", theName), theName));
 
-         TemplateHandler handler = new TemplateHandler(db, 
-            templateFile.toString());
-         xr.setContentHandler(handler);
-         xr.setErrorHandler(settings.getMessageHandler());
+         TemplateReader reader = new TemplateReader(db);
 
-         xr.parse(new InputSource(reader));
-
+         reader.parse(new InputSource(in));
       }
       finally
       {
-         if (reader != null)
+         if (in != null)
          {
-            reader.close();
+            in.close();
          }
       }
 

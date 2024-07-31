@@ -186,7 +186,7 @@ public class DatatoolGUI extends JFrame
 
       fileM.add(resources.createJMenuItem(
         "file", "new", this,
-        KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK),
+        KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK),
         toolBar));
 
       fileM.add(resources.createJMenuItem(
@@ -228,7 +228,7 @@ public class DatatoolGUI extends JFrame
 
       fileM.add(resources.createJMenuItem(
         "file", "open", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK),
+         KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK),
         toolBar));
 
       JMenu importM = resources.createJMenu("file.import");
@@ -264,7 +264,7 @@ public class DatatoolGUI extends JFrame
 
       closeItem = resources.createJMenuItem(
         "file", "close_db", this,
-        KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK),
+        KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK),
          toolBar);
 
       fileM.add(closeItem);
@@ -272,7 +272,7 @@ public class DatatoolGUI extends JFrame
 
       fileM.add(resources.createJMenuItem(
         "file", "quit", this,
-        KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK),
+        KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK),
         toolBar));
 
       JMenu editM = resources.createJMenu("edit");
@@ -280,7 +280,7 @@ public class DatatoolGUI extends JFrame
 
       undoItem = resources.createJMenuItem(
          "edit", "undo", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK),
+         KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK),
          toolBar);
       editM.add(undoItem);
 
@@ -288,7 +288,7 @@ public class DatatoolGUI extends JFrame
 
       redoItem = resources.createJMenuItem(
          "edit", "redo", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK),
+         KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK),
          toolBar);
       editM.add(redoItem);
 
@@ -311,7 +311,7 @@ public class DatatoolGUI extends JFrame
 
       editCellItem = resources.createJMenuItem(
          "edit", "edit_cell", "edit", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK),
+         KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK),
          toolBar);
       editM.add(editCellItem);
       editCellItem.setEnabled(false);
@@ -384,7 +384,7 @@ public class DatatoolGUI extends JFrame
 
       findCellItem = resources.createJMenuItem(
          "search", "find_cell", "search", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK),
+         KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK),
          toolBar);
 
       searchM.add(findCellItem);
@@ -393,13 +393,13 @@ public class DatatoolGUI extends JFrame
 
       findNextItem = resources.createJMenuItem(
          "search", "find_again", "search_again", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
+         KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK),
          toolBar);
       searchM.add(findNextItem);
 
       replaceItem = resources.createJMenuItem(
          "search", "replace_text", this,
-         KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK),
+         KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK),
          toolBar);
 
       replaceAllDialog = new ReplaceAllDialog(this);

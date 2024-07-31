@@ -22,7 +22,6 @@ import java.util.Vector;
 import java.awt.geom.AffineTransform;
 import java.awt.dnd.*;
 import java.awt.datatransfer.*;
-import javax.activation.DataHandler;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

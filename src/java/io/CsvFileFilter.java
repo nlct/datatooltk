@@ -31,7 +31,8 @@ public class CsvFileFilter extends DatatoolFileFilter
 {
    public CsvFileFilter(MessageHandler messageHandler)
    {
-      super(messageHandler.getLabelWithValues("filter.csv", "*.csv"), "csv");
+      super(messageHandler.getLabelWithValues("filter.csv", "*.csv, *.tsv"),
+         "csv", "tsv");
    }
 
 }

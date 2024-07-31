@@ -1470,7 +1470,7 @@ public class DatatoolTk
             {
                try
                {
-                  settings.setRandomSeed(new Long(args[i]));
+                  settings.setRandomSeed(Long.valueOf(args[i]));
                }
                catch (NumberFormatException e)
                {

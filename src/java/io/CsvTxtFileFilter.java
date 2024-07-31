@@ -32,7 +32,7 @@ public class CsvTxtFileFilter extends DatatoolFileFilter
    public CsvTxtFileFilter(MessageHandler messageHandler)
    {
       super(messageHandler.getLabelWithValues(
-        "filter.csvtxt", "*.csv, *.txt"), "csv", "txt");
+        "filter.csvtxt", "*.csv, *.tsv, *.txt"), "csv", "tsv", "txt");
    }
 
 }

@@ -1405,8 +1405,10 @@ Extension ''{1}'' is forbidden for log files</entry>
 <entry key="error.sql.connection_failed">Can't establish SQL connection</entry>
 <entry key="error.sql.query_failed">SQL query failed</entry>
 <entry key="error.template.misplaced_tag">''{0}'' tag must be inside ''{1}'' tag</entry>
+<entry key="error.template.tag_not_child">''{0}'' tag must be a child of ''{1}'' tag (child nesting not permitted)</entry>
+<entry key="error.template.nested_tag">''{0}'' tag can''t be nested</entry>
 <entry key="error.template.missing_tag">Missing ''{0}'' tag</entry>
-<entry key="error.template.wrong_end_tag">Mismatched closing tag ''{0}'' found</entry>
+<entry key="error.template.invalid_type">Invalid type ''{0}''</entry>
 <entry key="error.unknown_key">Unknown header key ''{0}''</entry>
 
 <entry key="error.xlsx_not_supported">Sorry, .xlsx files not supported.</entry>
