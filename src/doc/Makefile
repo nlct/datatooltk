@@ -11,7 +11,10 @@ testfiles=../tests/test-para.csv \
           ../tests/test-probsoln-doc.tex \
           ../tests/prob-mixed.tex \
           ../tests/test-shuffle.tex \
-          ../tests/test-shuffle-level.tex
+          ../tests/test-shuffle-level.tex \
+	  ../tests/test-dtlnewdb.tex \
+	  ../tests/test-exam.tex \
+	  ../tests/datagidx-doc.tex
 
 all	: en-GB en datatooltk.1
 
