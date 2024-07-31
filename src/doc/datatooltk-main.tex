@@ -1306,8 +1306,14 @@ lose any pretty-printing spaces or comments you may have done in
 
    \begin{important}
    You must have Perl installed to use the plugins (see 
-   \sectionref{sec:preferences}). 
+   \sectionref{sec:preferences}). You will also need to ensure that
+   the Tk module is installed.
    \end{important}
+
+   For example, on Fedora:
+\begin{terminal}
+sudo dnf install perl-Tk
+\end{terminal}
 
    \begin{warning}
    The plugin is sent the database information when you start each instance of 
