@@ -135,14 +135,14 @@ if ($imgFile and -e $imgFile)
        -command  => sub { exit },
        -image    => $shot,
        -compound => 'left'
-   )->pack(-side=>'left', -expand=>1);
+   )->pack(-side=>'left', -expand=>1, -padx =>20);
 }
 else
 {
    $buttonFrame->Button(
        -text    => $db->getDictWord('button.cancel'),
        -command => sub { exit },
-   )->pack(-side=>'left', -expand=>1);
+   )->pack(-side=>'left', -expand=>1, -padx =>20);
 }
 
 $imgFile = $db->getImageFile('okay.png');
@@ -156,14 +156,14 @@ if ($imgFile and -e $imgFile)
       -command => \&doDbUpdate,
       -image    => $shot,
       -compound => 'left'
-   )->pack(-side=>'left', -expand=>1);
+   )->pack(-side=>'left', -expand=>1, -padx =>20);
 }
 else
 {
    $buttonFrame->Button(
       -text    => $db->getDictWord('button.okay'),
       -command => \&doDbUpdate,
-   )->pack(-side=>'left', -expand=>1);
+   )->pack(-side=>'left', -expand=>1, -padx =>20);
 }
 
 $mw->iconify;
