@@ -2,7 +2,8 @@ targetdir=../lib/resources/helpsets
 dictdir=../lib/resources/dictionaries
 mainclass=../java/DatatoolTk.java
 arara=arara --verbose
-texjavahelpmk=texjavahelpmk --debug-mode io
+#texjavahelpmk=texjavahelpmk --debug-mode all --log texjavahelpmk.log
+texjavahelpmk=texjavahelpmk
 xml2bib=xml2bib --copy-overwrite-xml
 testfiles=../tests/test-para.csv \
           ../tests/HelloWorld.java \
@@ -31,11 +32,13 @@ version.tex	: $(mainclass)
 
 datatooltk-en-GB.pdf	: datatooltk.bib datatooltk-props-en-GB.bib \
 			 datatooltk-en-GB.tex datatooltk-main.tex version.tex \
+			 helpinterface.tex \
 			$(testfiles) images/*.png
 	$(arara) datatooltk-en-GB
 
 datatooltk-en.pdf	: datatooltk.bib datatooltk-props-en.bib \
 			  datatooltk-en.tex datatooltk-main.tex version.tex \
+			 helpinterface.tex \
 			$(testfiles) images/*.png
 	$(arara) datatooltk-en
 

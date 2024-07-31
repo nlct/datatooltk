@@ -1,0 +1,30 @@
+% arara: datatooltk: {
+% arara: --> output: booklist-ods-saved.dbtex,
+% arara: --> name: booklist,
+% arara: --> ods:  booklist.ods }
+% arara: pdflatex
+\documentclass[landscape]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{datatool}% v3.0 required
+
+\DTLsetup{default-name=booklist}
+
+\DTLread[
+ format=dbtex
+ ]
+{booklist-ods-saved}
+
+\begin{document}
+\DTLaction
+ [
+   options =
+    {
+       init = {\renewcommand{\arraystretch}{1.5}},
+       after-head = \midrule
+    }
+ ]
+ {display}
+\end{document}

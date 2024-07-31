@@ -234,6 +234,7 @@
 <!-- About Dialog -->
 
 <entry key="about.title">About {0}</entry>
+<entry key="about.defaultparams">\appname</entry>
 
 <entry key="about.acknowledgements"></entry>
 

@@ -246,21 +246,8 @@ which may be used to lookup relevant pages.
 The \menu{helpframe.navigation.search} item, which is also available
 as a button on the toolbar, will open the
 \dialog{help_page_search} window (see
-\figureref{fig:searchframe}), from which you can search the document
-for a keyword. If any matches are found, the title of the relevant
-page is shown as a hyperlink, which links to the start of the page.
-The title is followed by a block of text where the search term was
-found (which will be highlighted). Clicking on the block of text
-should scroll to a nearby location in the relevant page.
-
-\FloatFig
-{fig:searchframe}
-{\includeimg
- [alt=
-   {image of search window showing search term highlighted in a paragraph}
- ]{images/searchframe}%
-}
-{Search Window}
+\sectionref{sec:helpsearch}), from which you can search the document
+for a keyword.
 
 \menudef{menu.helpframe.navigation.index}
 
@@ -518,6 +505,74 @@ The document hyperlink style can also be changed with the
 The styles are applied to the primary help window, all secondary
 help windows and related windows, such as the \dialog{help.navigation.history} 
 or index windows.
+
+\section{Searching the Documentation}
+\label{sec:helpsearch}
+
+The \dialog{help_page_search} window (which can be opened from the
+primary help window with \menu{helpframe.navigation.search}) provides 
+a way to search the documentation. Enter the desired search term or terms into the
+\widget{help_page_search.keywords} box. Select the \widget{help_page_search.case}
+checkbox for a case-sensitive search and the \widget{help_page_search.exact}
+checkbox for an exact match. If the \widget{help_page_search.exact}
+checkbox is not selected, the search will be slower and will match
+any instances of the keyword appearing as a sub-string of other
+words as well as whole-word matches.
+
+\begin{information}
+The search is performed by looking up a pre-compiled set of words with
+associated locations that was created when the documentation was
+built. It's not possible to search for exact phrases. The results are
+ordered according to the number of matches found in each block or
+paragraph.
+\end{information}
+
+Click on the \widget{menu.help_page_search.search_menu.search} button to the
+right of the \widget{help_page_search.keywords} box or use the \menu{help_page_search.search_menu.search}
+menu item to start searching. Note that small common words, such as \qt{and}, will be
+ignored.
+
+\FloatFig
+{fig:searchframe}
+{\includeimg
+ [alt=
+   {image of search window showing search term highlighted in a paragraph}
+ ]{images/searchframe}%
+}
+{Search Window}
+
+If any matches are found, the title of the relevant
+page is shown as a hyperlink, which links to the start of the page.
+The title is followed by a block of text where the search term (or
+terms) was found (which will be highlighted, as shown in 
+\figureref{fig:searchframe}). Clicking on the block of text
+should scroll to a nearby location in the relevant page.
+
+\menudef*{menu.help_page_search.search_menu}
+The \menu{help_page_search.search_menu} menu has the following
+menu items.
+
+\menudef{menu.help_page_search.search_menu.search}
+The \menu{help_page_search.search_menu.search} menu item starts
+searching for the given keywords. An error box will be displayed if
+no keywords have been supplied.
+
+\menudef{menu.help_page_search.search_menu.previous}
+The \menu{help_page_search.search_menu.previous} menu item
+will scroll the result list to the previous result.
+
+\menudef{menu.help_page_search.search_menu.next}
+The \menu{help_page_search.search_menu.next} menu item will 
+scroll to the result list to the next result.
+
+\menudef{menu.help_page_search.search_menu.reset}
+The \menu{help_page_search.search_menu.reset} menu item will
+clear the current result list and the keyword search box so that you
+can perform a new search.
+
+\menudef{menu.help_page_search.search_menu.stop}
+The \menu{help_page_search.search_menu.stop} menu item can be
+used to stop a search if it's taking too long to complete.
 
 \section{Image Viewer}
 \label{sec:helpimageviewer}

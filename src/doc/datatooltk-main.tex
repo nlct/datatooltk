@@ -49,25 +49,311 @@ own internal format to allow for rapid loading (using
 \sty{datatool} v3.0 or, for earlier versions,
 \code{\gls+{DTLsaverawdb}\margm{file}} or
 \code{\gls+{DTLprotectedsaverawdb}\margm{file}}).  Files in this
-\ext{dbtex} format are difficult to edit and only a \TeX pert should
-attempt it, but they are by far the fastest way of loading a
-\sty{datatool} \gls{database} in \LaTeX. The \app{datatooltk}
-application provides a \gls{gui} making it easier to edit these
-files. 
+\ext{dbtex} format are difficult to edit, but they are by far the
+fastest way of loading a \sty{datatool} \gls{database} in \LaTeX.
+The \app{datatooltk} application provides a \gls{gui} to make it
+easier to edit these files. 
 
-\appname\ can also import data from \ext{csv} files, from
-Excel \ext{xls} (but not \ext{xlsx})
-or Open Document \ext{ods} spreadsheets, from 
-\gls{sql} databases and from \sty{probsoln} databases.
-This manual assumes the user has some knowledge of the
-\sty{datatool} package. Please ensure you have at least version
-2.15 of \sty{datatool} installed in your \TeX\ distribution.
-(Although the latest version is recommended.)
+\appname\ can also import data from \ext{csv} files, from Excel
+\ext{xls} (but not \ext{xlsx}) or Open Document \ext{ods}
+spreadsheets, from \gls{sql} databases (only MySQL is currently
+supported) and from \sty{probsoln} databases.  This manual assumes
+the user has some knowledge of the \sty{datatool} package. Please
+ensure you have at least version 2.15 of \sty{datatool} installed in
+your \TeX\ distribution.  (Although the latest version is
+recommended.) Note that \sty{datatool} v3.0+ is required to support 
+\gls{DBTEX3} or \gls{DTLTEX3} file formats.
 
 The \app{datatooltk} application can be run in either 
-batch mode (default) or \gls{gui} (see \sectionref{sec:gui}).
+batch mode (default, see \sectionref{sec:commandoptions}) 
+or \gls{gui} (see \sectionref{sec:gui}).
 
-\section{Command Line Options}
+\begin{information}
+The \LaTeX\ document compilation tool \app{arara} (available on
+\CTANpkg{arara}) comes with a \app{datatooltk} directive 
+if \appname\ is required as part of the document build.
+\end{information}
+
+\section{What it isn't}
+\label{sec:notaspreadsheet}
+
+The \app{datatooltk} application isn't intended to have the full functionality of
+a spreadsheet or the flexibility of \gls{sql}. If you have a large
+source of data and only require a subset of that data in your
+\LaTeX\ document, then the most efficient method is to store the
+data in a \gls{sql} database and import it with a SELECT statement
+that performs the filtering. This may be done in batch mode as part
+of the document build. It's also possible to filter data imported
+from a spreadsheet or \gls{csv} file, but the entire file still
+needs to be read.
+
+\section{DBTEX and DTLTEX Files}
+\label{sec:fileext}
+
+Supported file formats for both input and output files are:
+\gls{DBTEX2}, \gls{DBTEX3}, \gls{DTLTEX2} and \gls{DTLTEX3}.
+These formats can be both input and saved in a \LaTeX\ document
+using \sty{datatool}['s] \gls{DTLread} and \gls{DTLwrite} commands.
+(The formats are documented in the user manual for \sty{datatool}
+v3.0+ but they are essentially \LaTeX\ files designed for use with
+\sty{datatool}.) Note the \sty{datatool} v3.0+ is required with 
+\gls{DBTEX3} and \gls{DTLTEX3}. Older versions of \sty{datatool}
+only support \gls{DBTEX2} and \gls{DTLTEX2}.
+
+\begin{information}
+As from \sty{datatool} v3.0, \code{\gls{DTLsaverawdb}\margm{file}} has been deprecated
+in \manmsg{favour} of
+\code{\gls{DTLwrite}\oarg{\optvalm{format}{dbtex-2}}\margm{file}}.
+\end{information}
+
+Although the DBTEX and DTLTEX files are all \LaTeX\ files, the file 
+extensions are assumed to be \ext+{dbtex} and \ext+{dtltex} to
+reduce the chances of accidentally overwriting the main document
+file.
+
+In batch mode, an input file can be specified with the \switch{in}
+switch, or by simply providing the file name without a preceding switch.
+In \gls{gui} mode, an input file can be opened with the
+\menu{file.open} menu item. Only \ext+{dbtex} and \ext+{dtltex} files can be
+input. For other file types, you will need to use the relevant
+import option.
+
+In batch mode, an output file must be specified with the
+\switch{output} (or \swch{output}) switch. In \gls{gui} mode, a file
+can be saved with the \menu{file.save} or \menu{file.save_as} menu
+items. The output format can be specified with the
+\switch{output-format} switch or by selecting the appropriate file
+filter in the \menu{file.save_as} file selector. If you use
+\menu{file.save}, the format will match the input file.
+
+The output file encoding will default to Java's default
+encoding, which usually matches the operating system's default, but
+can be changed with the Java \code{file.encoding} property (see the
+Java documentation for further details). Alternatively, you can use
+the \switch{tex-encoding} switch or the selector in the
+\widget{preferences.tex} tab of the \dialog{preferences}
+dialog box (see \sectionref{sec:preferences.tex}).
+
+\appname\ will parse the first line of the input file to see if it
+matches the format:
+\begin{compactcodebox}
+\% \meta{format} \meta{encoding}
+\end{compactcodebox}
+where \meta{format} is either \code{DBTEX} or \code{DTLTEX} and
+\meta{encoding} is either the canonical encoding name (such as
+UTF-8) or the \sty{inputenc} label (such as \optfmt{utf8}).
+If the first line doesn't match this format, \gls{DBTEX2} is
+assumed with \app{datatooltk}['s] default encoding (see
+\switch{tex-encoding} and \sectionref{sec:preferences.tex}).
+
+The \app{datatooltk} input function will first try parsing the file
+according to the detected format.  If this fails, \app{datatooltk}
+will retry using the \TeX\ Parser Library, which has some limited
+understanding of \TeX\ syntax and \sty{datatool} commands.
+This is more sophisticated than a simple pattern match, but it's slower.
+For example, suppose the file contains:
+\verbatiminput{../tests/test-dtlnewdb.tex}
+This doesn't match the \ext{dbtex} format, so \app{datatooltk} will
+switch to using the \TeX\ Parser Library, which can interpret these
+commands, but note that if the file is subsequently saved
+\strong{it will be saved in the \ext{dbtex} format}. Since this is
+potentially dangerous (as there's a possibility that you might
+accidentally load your document \ext{tex} file) if the 
+\TeX\ Parser Library is used to load the file then, in \gls{gui}
+mode, the filename for that database will be unset, which will 
+trigger the \dgls{file.save_as} dialog if you try to save the database.
+
+The \sty{datatool} database files loaded and saved by \app{datatooltk}
+are just \LaTeX\ files, so they could simply have the standard
+\ext{tex} extension, but to help differentiate the database files
+from other files containing \TeX\slash \LaTeX\ code (such as picture-drawing
+code), \app{datatooltk} assumes a default extension of \ext{dbtex}.
+If you use this extension, remember to include it in the argument of
+\gls{input} or \gls{DTLloaddbtex}.
+
+\begin{information}
+To guard against accidentally overwriting a document file, \app{datatooltk}
+now forbids the \ext{tex} extension for output files.
+\end{information}
+
+Note that the database label (as used in commands like \gls{DTLnewdb})
+is independent of the file name (although when importing data, it defaults 
+to the file base name).  The database label can be changed using 
+\menu{edit.edit_dbname} in 
+\gls{gui} mode or via the command line option 
+\code{\switch{name} \meta{label}}.
+
+\FloatFig[htb]
+{fig:setnamedialog}
+{\includeimg
+ [scale={0.75},alt={Image of dialog box}]
+ {images/setnamedialog.png}
+}
+{Setting the Database Name}
+
+\begin{example}
+ {Loading and Displaying Data in the Document}
+ {ex:loadanddisplay}
+
+Suppose you have a database file called \filefmt{my-data.dbtex}
+and you have set the database label to just \qtt{data}
+(as shown in \figureref{fig:setnamedialog}).
+Then you can load and display the data using:
+\begin{codebox}
+\cmd{documentclass}\marg{article}
+\cmd{usepackage}\marg{datatool}\comment{remember to load the datatool package}
+\codepar
+\gls{input}\marg{my-data.dbtex}\comment{load the database from file `my-data.dbtex'}
+\codepar
+\cbeg{document}
+\gls{DTLdisplaydb}\marg{data}\comment{Display the database identified by the name `data'}
+\cend{document}
+\end{codebox}
+
+If you can't remember the name you assigned to the database, you can 
+access it using \gls{dtllastloadeddb}.
+\begin{codebox}
+\cmd{documentclass}\marg{article}
+\cmd{usepackage}\marg{datatool}\comment{remember to load the datatool package}
+\codepar
+\gls{input}\marg{my-data.dbtex}\comment{load the database from file `my-data.dbtex'}
+\codepar
+\cbeg{document}
+\gls{DTLdisplaydb}\marg{\gls{dtllastloadeddb}}\comment{Display the last loaded database}
+\cend{document}
+\end{codebox}
+
+Alternatively, as from \sty{datatool} version 2.20, use 
+\gls{DTLloaddbtex} instead of \gls{input}:
+\begin{codebox}
+\cmd{documentclass}\marg{article}
+\cmd{usepackage}\marg{datatool}\comment{remember to load the datatool package}
+\codepar
+\gls{DTLloaddbtex}\marg{\cmd{mydata}}\marg{my-data.dbtex}\comment{load the database from file `my-data.dbtex'}
+\codepar
+\cbeg{document}
+\gls{DTLdisplaydb}\marg{\cmd{mydata}}\comment{Display the database}
+\cend{document}
+\end{codebox}
+If you have at least version 3.0 of \sty{datatool}, you can use
+\gls{DTLread} instead of \gls{input} or \gls{DTLloaddbtex} but remember to set the
+\opt{format} option to \code{dbtex}:
+\begin{codebox}
+\gls{DTLread}\oarg{\optval{format}{dbtex}}\marg{my-data}\comment{load the database from file `my-data.dbtex'}
+\end{codebox}
+With DBTEX v2.0, you can't change the database name in the document,
+but you can with DBTEX v3.0:
+\begin{codebox}
+\cmd{documentclass}\marg{article}
+\cmd{usepackage}\marg{datatool}\comment{v3.0+}
+\codepar
+\gls{DTLsetup}\marg{\optval{default-name}{mydata}}
+\gls{DTLread}\oarg{\optval{name}{mydata},\optval{format}{dbtex}}\marg{my-data}
+\codepar
+\cbeg{document}
+\gls{DTLaction}\marg{display}\comment{Display the database}
+\cend{document}
+\end{codebox}
+\end{example}
+
+\section{Verbatim}
+\label{sec:verbatim}
+
+Since the contents of the database are stored in a \TeX\ token
+register, and assigned to control sequences via commands like
+\gls{DTLforeach}, verbatim text is not permitted. This is 
+a common problem when attempting to use verbatim text within
+a command and is covered in the UK List of \TeX\ Frequently
+Asked Questions (\href{https://texfaq.org/FAQ-verbwithin}{Why doesn't verbatim work within...?}).
+The \app{datatooltk} application checks for verbatim text when you load a database or import
+data (unless the \qt{map \TeX\ special characters} property is set for
+\gls{csv} or \gls{sql} imports). Also, \app{datatooltk} checks for
+verbatim text when you edit the contents of a cell. If it
+detects any, it will give a warning. If you ignore the warning, 
+\TeX\ will give an error if you then attempt to load the database into
+a document.
+
+\begin{information}
+The verbatim check consists of checking for any occurrences of
+\gls{verb}, \gls{lstinline} or the beginning of the \env{verbatim},
+\env{lstlisting} or \env{alltt} environments. Other verbatim-like
+commands or environments are not recognised.
+\end{information}
+
+If you just have a short fragment of inline verbatim text, consider
+one of the alternatives listed in \href{https://texfaq.org/FAQ-verbwithin}{the FAQ}.
+If on the other hand you have a block of verbatim text you'll have 
+to put the verbatim text in a separate file
+and load it using \gls{verbatiminput} (from the 
+\sty{verbatim} package) or \gls{lstinputlisting} (from the
+\sty{listings} package). For example, in \figureref{fig:exverb} 
+I have used \gls{lstinputlisting}.
+
+\FloatFig[htb]
+{fig:exverb}
+{%
+  \includeimg
+  [
+   scale=0.75,
+   alt={Image of main window showing cells with listing input}
+  ]
+  {images/verb.png}%
+}
+{Verbatim Blocks Need to be in Separate Files}
+
+That database requires two files: \filefmt{HelloWorld.java}
+\verbatiminput{../tests/HelloWorld.java}
+and \filefmt{HelloUser.java}:
+\verbatiminput{../tests/HelloUser.java}
+
+Assuming that I've saved my database in a file called
+\filefmt{prob-verb.dbtex} with database label \qtt{problems},
+here's a sample document:
+\verbatiminput{../tests/test-probsoln-doc.tex}
+
+\seealsorefs{sec:shuffle,sec:sortshuffle,sec:importprobsoln}
+
+\section{Leading/Trailing Spaces}\label{sec:spaces}
+
+Spaces characters at the start and end of cell contents and column titles 
+are removed when writing the \ext{dbtex} file (but they will still show
+in the \gls{gui} until the file is saved and reloaded).
+
+Leading space characters are naturally ignored in \sty{datatool}'s 
+internal format. For consistency, \app{datatooltk} now trims leading and trailing 
+spaces from each cell and column title when writing the \ext{dbtex} 
+file as they are usually unwanted and easy to miss. If you explicitly want
+a space you need to use \LaTeX\ markup, such as \gls{space}. 
+A trailing space can also be hidden by a final comment. For
+example, with the cell contents set to:
+\begin{codebox}
+\cmd{space} text \comment{comment}
+\end{codebox}
+then there will be a leading and trailing space if the value is used in the 
+document. Any space characters at the end of the comment line will be 
+stripped, but those would naturally be ignored by \LaTeX\ anyway.
+Remember that blank lines are converted to \gls{DTLpar}, 
+so paragraph breaks won't be recognised as spaces by the trimming code.
+Column and database \meta{labels} will only have leading and
+trailing spaces stripped if the auto trim labels setting is on.
+Column titles are always trimmed when writing the \ext{dbtex} file.
+
+\section{Null Values}\label{sec:null}
+
+Empty entries aren't the same as null entries. If you want 
+a null entry, set the entry to \gls{@dtlnovalue}. 
+A convenient way to do this is to select the cell and use
+\menu{edit.cell_to_null}. Alternatively, you can set all entries in 
+a selected column to null with \menu{edit.column.column_to_null}
+and similarly for a selected row with \menu{edit.row.row_to_null}.
+
+In your \LaTeX\ document, you can check for null values using 
+\sty{datatool}'s \gls{DTLifnull} command. To check for empty 
+values you can use one of \sty{etoolbox}'s commands, such as 
+\gls{ifdefempty}. As from \sty{datatool} version 2.20, you
+can also use \gls{DTLifnullorempty}.
+
+\chapter{Command Line Options}
 \label{sec:commandoptions}
 
 The \appname\ application may be run from the command line in batch
@@ -503,278 +789,6 @@ Import \sty{probsoln} data from \meta{filename}.
 \switchdef{merge-probsoln}
 As \switch{merge} but the data to be merged is imported from the
 given \sty{probsoln} data set file.
-
-\section{What it isn't}
-\label{sec:notaspreadsheet}
-
-The \app{datatooltk} application isn't intended to have the full functionality of
-a spreadsheet. Its purpose is to allow you to edit 
-\sty{datatool} databases with multilined entries. If your data 
-just consists of numbers or short single-lined text, then you'll probably 
-be better off just using a spreadsheet to input the data and 
-use \app{datatooltk} in batch mode to convert from \gls{csv} to 
-a \sty{datatool} file.
-
-\section{DBTEX and DTLTEX Files}
-\label{sec:fileext}
-
-In batch mode, an input file can be specified with the \switch{in}
-switch, or by simply providing the file name without a preceding switch.
-In \gls{gui} mode, an input file can be opened with the
-\menu{file.open} menu item. Only \ext+{dbtex} and \ext+{dtltex} files can be
-input. For other file types, you will need to use the relevant
-import option.
-
-In batch mode, an output file must be specified with the
-\switch{output} (or \swch{output}) switch. In \gls{gui} mode, a file
-can be saved with the \menu{file.save} or \menu{file.save_as} menu
-items. The output format can be specified with the
-\switch{output-format} switch or by selecting the appropriate file
-filter in the \menu{file.save_as} file selector. If you use
-\menu{file.save}, the format will match the input file.
-
-The output file encoding will default to Java's default
-encoding, which usually matches the operating system's default, but
-can be changed with the Java \code{file.encoding} property (see the
-Java documentation for further details). Alternatively, you can use
-the \switch{tex-encoding} switch or the selector in the
-\widget{preferences.tex} tab of the \dialog{preferences}
-dialog box (see \sectionref{sec:preferences.tex}).
-
-Supported file formats for both input and output files are:
-\gls{DBTEX2}, \gls{DBTEX3}, \gls{DTLTEX2} and \gls{DTLTEX3}.
-These formats can be both input and saved in a document
-using \sty{datatool}['s] \gls{DTLread} and \gls{DTLwrite} commands.
-
-\begin{information}
-As from \sty{datatool} v3.0, \code{\gls{DTLsaverawdb}\margm{file}} has been deprecated
-in \manmsg{favour} of
-\code{\gls{DTLwrite}\oarg{\optvalm{format}{dbtex-2}}\margm{file}}.
-\end{information}
-
-Although the DBTEX and DTLTEX files are all \LaTeX\ files, the file 
-extensions are assumed to be \ext+{dbtex} and \ext+{dtltex} to
-reduce the chances of accidentally overwriting the main document
-file.
-
-\appname\ will parse the first line of the input file to see if it
-matches the format:
-\begin{compactcodebox}
-\% \meta{format} \meta{encoding}
-\end{compactcodebox}
-where \meta{format} is either \code{DBTEX} or \code{DTLTEX} and
-\meta{encoding} is either the canonical encoding name (such as
-UTF-8) or the \sty{inputenc} label (such as \optfmt{utf8}).
-If the first line doesn't match this format, \gls{DBTEX2} is
-assumed with \app{datatooltk}['s] default encoding (see
-\switch{tex-encoding} and \sectionref{sec:preferences.tex}).
-
-The \app{datatooltk} input function will first try parsing the file
-according to the detected format.  If this fails, \app{datatooltk}
-will retry using the \TeX\ Parser Library, which has some limited
-understanding of \TeX\ syntax and \sty{datatool} commands.
-This is more sophisticated than a simple pattern match, but it's slower.
-For example, suppose the file contains:
-\verbatiminput{../tests/test-dtlnewdb.tex}
-This doesn't match the \ext{dbtex} format, so \app{datatooltk} will
-switch to using the \TeX\ Parser Library, which can interpret these
-commands, but note that if the file is subsequently saved
-\strong{it will be saved in the \ext{dbtex} format}. Since this is
-potentially dangerous (as there's a possibility that you might
-accidentally load your document \ext{tex} file) if the 
-\TeX\ Parser Library is used to load the file then, in \gls{gui}
-mode, the filename for that database will be unset, which will 
-trigger the \dgls{file.save_as} dialog if you try to save the database.
-
-The \sty{datatool} database files loaded and saved by \app{datatooltk}
-are just \LaTeX\ files, so they could simply have the standard
-\ext{tex} extension, but to help differentiate the database files
-from other files containing \TeX\slash \LaTeX\ code (such as picture-drawing
-code), \app{datatooltk} assumes a default extension of \ext{dbtex}.
-If you use this extension, remember to include it in the argument of
-\gls{input} or \gls{DTLloaddbtex}.
-
-\begin{information}
-To guard against accidentally overwriting a document file, \app{datatooltk}
-now forbids the \ext{tex} extension for output files.
-\end{information}
-
-Note that the database label (as used in commands like \gls{DTLnewdb})
-is independent of the file name (although when importing data, it defaults 
-to the file base name).  The database label can be changed using 
-\menu{edit.edit_dbname} in 
-\gls{gui} mode or via the command line option 
-\code{\switch{name} \meta{label}}.
-
-\FloatFig[htb]
-{fig:setnamedialog}
-{\includeimg
- [scale={0.75},alt={Image of dialog box}]
- {images/setnamedialog.png}
-}
-{Setting the Database Name}
-
-\begin{example}
- {Loading and Displaying Data in the Document}
- {ex:loadanddisplay}
-
-Suppose you have a database file called \filefmt{my-data.dbtex}
-and you have set the database label to just \qtt{data}
-(as shown in \figureref{fig:setnamedialog}).
-Then you can load and display the data using:
-\begin{codebox}
-\cmd{documentclass}\marg{article}
-\cmd{usepackage}\marg{datatool}\comment{remember to load the datatool package}
-\codepar
-\gls{input}\marg{my-data.dbtex}\comment{load the database from file `my-data.dbtex'}
-\codepar
-\cbeg{document}
-\gls{DTLdisplaydb}\marg{data}\comment{Display the database identified by the name `data'}
-\cend{document}
-\end{codebox}
-
-If you can't remember the name you assigned to the database, you can 
-access it using \gls{dtllastloadeddb}.
-\begin{codebox}
-\cmd{documentclass}\marg{article}
-\cmd{usepackage}\marg{datatool}\comment{remember to load the datatool package}
-\codepar
-\gls{input}\marg{my-data.dbtex}\comment{load the database from file `my-data.dbtex'}
-\codepar
-\cbeg{document}
-\gls{DTLdisplaydb}\marg{\gls{dtllastloadeddb}}\comment{Display the last loaded database}
-\cend{document}
-\end{codebox}
-
-Alternatively, as from \sty{datatool} version 2.20, use 
-\gls{DTLloaddbtex} instead of \gls{input}:
-\begin{codebox}
-\cmd{documentclass}\marg{article}
-\cmd{usepackage}\marg{datatool}\comment{remember to load the datatool package}
-\codepar
-\gls{DTLloaddbtex}\marg{\cmd{mydata}}\marg{my-data.dbtex}\comment{load the database from file `my-data.dbtex'}
-\codepar
-\cbeg{document}
-\gls{DTLdisplaydb}\marg{\cmd{mydata}}\comment{Display the database}
-\cend{document}
-\end{codebox}
-If you have at least version 3.0 of \sty{datatool}, you can use
-\gls{DTLread} instead of \gls{input} or \gls{DTLloaddbtex} but remember to set the
-\opt{format} option to \code{dbtex}:
-\begin{codebox}
-\gls{DTLread}\oarg{\optval{format}{dbtex}}\marg{my-data}\comment{load the database from file `my-data.dbtex'}
-\end{codebox}
-With DBTEX v2.0, you can't change the database name in the document,
-but you can with DBTEX v3.0:
-\begin{codebox}
-\cmd{documentclass}\marg{article}
-\cmd{usepackage}\marg{datatool}\comment{v3.0+}
-\codepar
-\gls{DTLsetup}\marg{\optval{default-name}{mydata}}
-\gls{DTLread}\oarg{\optval{name}{mydata},\optval{format}{dbtex}}\marg{my-data}
-\codepar
-\cbeg{document}
-\gls{DTLaction}\marg{display}\comment{Display the database}
-\cend{document}
-\end{codebox}
-\end{example}
-
-\section{Verbatim}
-\label{sec:verbatim}
-
-Since the contents of the database are stored in a \TeX\ token
-register, and assigned to control sequences via commands like
-\gls{DTLforeach}, verbatim text is not permitted. This is 
-a common problem when attempting to use verbatim text within
-a command and is covered in the UK List of \TeX\ Frequently
-Asked Questions (\href{https://texfaq.org/FAQ-verbwithin}{Why doesn't verbatim work within...?}).
-The \app{datatooltk} application checks for verbatim text when you load a database or import
-data (unless the \qt{map \TeX\ special characters} property is set for
-\gls{csv} or \gls{sql} imports). Also, \app{datatooltk} checks for
-verbatim text when you edit the contents of a cell. If it
-detects any, it will give a warning. If you ignore the warning, 
-\TeX\ will give an error if you then attempt to load the database into
-a document.
-
-\begin{information}
-The verbatim check consists of checking for any occurrences of
-\gls{verb}, \gls{lstinline} or the beginning of the \env{verbatim},
-\env{lstlisting} or \env{alltt} environments. Other verbatim-like
-commands or environments are not recognised.
-\end{information}
-
-If you just have a short fragment of inline verbatim text, consider
-one of the alternatives listed in \href{https://texfaq.org/FAQ-verbwithin}{the FAQ}.
-If on the other hand you have a block of verbatim text you'll have 
-to put the verbatim text in a separate file
-and load it using \gls{verbatiminput} (from the 
-\sty{verbatim} package) or \gls{lstinputlisting} (from the
-\sty{listings} package). For example, in \figureref{fig:exverb} 
-I have used \gls{lstinputlisting}.
-
-\FloatFig[htb]
-{fig:exverb}
-{%
-  \includeimg
-  [
-   scale=0.75,
-   alt={Image of main window showing cells with listing input}
-  ]
-  {images/verb.png}%
-}
-{Verbatim Blocks Need to be in Separate Files}
-
-That database requires two files: \filefmt{HelloWorld.java}
-\verbatiminput{../tests/HelloWorld.java}
-and \filefmt{HelloUser.java}:
-\verbatiminput{../tests/HelloUser.java}
-
-Assuming that I've saved my database in a file called
-\filefmt{prob-verb.dbtex} with database label \qtt{problems},
-here's a sample document:
-\verbatiminput{../tests/test-probsoln-doc.tex}
-
-\seealsorefs{sec:shuffle,sec:sortshuffle,sec:importprobsoln}
-
-\section{Leading/Trailing Spaces}\label{sec:spaces}
-
-Spaces characters at the start and end of cell contents and column titles 
-are removed when writing the \ext{dbtex} file (but they will still show
-in the \gls{gui} until the file is saved and reloaded).
-
-Leading space characters are naturally ignored in \sty{datatool}'s 
-internal format. For consistency, \app{datatooltk} now trims leading and trailing 
-spaces from each cell and column title when writing the \ext{dbtex} 
-file as they are usually unwanted and easy to miss. If you explicitly want
-a space you need to use \LaTeX\ markup, such as \gls{space}. 
-A trailing space can also be hidden by a final comment. For
-example, with the cell contents set to:
-\begin{codebox}
-\cmd{space} text \comment{comment}
-\end{codebox}
-then there will be a leading and trailing space if the value is used in the 
-document. Any space characters at the end of the comment line will be 
-stripped, but those would naturally be ignored by \LaTeX\ anyway.
-Remember that blank lines are converted to \gls{DTLpar}, 
-so paragraph breaks won't be recognised as spaces by the trimming code.
-Column and database \meta{labels} will only have leading and
-trailing spaces stripped if the auto trim labels setting is on.
-Column titles are always trimmed when writing the \ext{dbtex} file.
-
-\section{Null Values}\label{sec:null}
-
-Empty entries aren't the same as null entries. If you want 
-a null entry, set the entry to \gls{@dtlnovalue}. 
-A convenient way to do this is to select the cell and use
-\menu{edit.cell_to_null}. Alternatively, you can set all entries in 
-a selected column to null with \menu{edit.column.column_to_null}
-and similarly for a selected row with \menu{edit.row.row_to_null}.
-
-In your \LaTeX\ document, you can check for null values using 
-\sty{datatool}'s \gls{DTLifnull} command. To check for empty 
-values you can use one of \sty{etoolbox}'s commands, such as 
-\gls{ifdefempty}. As from \sty{datatool} version 2.20, you
-can also use \gls{DTLifnullorempty}.
 
 \chapter{Graphical Mode}\label{sec:gui}
 

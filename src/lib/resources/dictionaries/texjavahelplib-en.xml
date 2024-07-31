@@ -282,17 +282,17 @@
 <entry key="menu.help_page_search.search_menu.search.tooltip">Find keywords in document</entry>
 
 <entry key="menu.help_page_search.search_menu.previous">Previous Result</entry>
-<entry key="menu.help_page_search.search_menu.previous.mnemnonic">P</entry>
+<entry key="menu.help_page_search.search_menu.previous.mnemonic">P</entry>
 <entry key="menu.help_page_search.search_menu.previous.keystroke">control shift F</entry>
 <entry key="menu.help_page_search.search_menu.previous.tooltip">Scroll to previous result</entry>
 
 <entry key="menu.help_page_search.search_menu.next">Next Result</entry>
-<entry key="menu.help_page_search.search_menu.next.mnemnonic">N</entry>
+<entry key="menu.help_page_search.search_menu.next.mnemonic">N</entry>
 <entry key="menu.help_page_search.search_menu.next.keystroke">control F</entry>
 <entry key="menu.help_page_search.search_menu.next.tooltip">Scroll to next result</entry>
 
 <entry key="menu.help_page_search.search_menu.reset">Clear</entry>
-<entry key="menu.help_page_search.search_menu.reset.mnemnonic">C</entry>
+<entry key="menu.help_page_search.search_menu.reset.mnemonic">C</entry>
 <entry key="menu.help_page_search.search_menu.reset.keystroke">shift ESCAPE</entry>
 <entry key="menu.help_page_search.search_menu.reset.tooltip">Clear results and keywords</entry>
 

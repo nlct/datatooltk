@@ -1,8 +1,7 @@
 test-sql-data.dbtex
-mth-101-shuffled.dbtex
-data-shuffled.dbtex
+*-shuffled.dbtex
 test-*out.dbtex
-test-merged.dbtex
+*-merged.dbtex
 *saved.dbtex
 *.aux
 *.log
@@ -10,3 +9,4 @@ test-merged.dbtex
 *.out
 *.dvi
 *.toc
+.~lock.*
