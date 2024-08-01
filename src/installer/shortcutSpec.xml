@@ -11,7 +11,7 @@
     commandLine="-splash:&quot;$INSTALL_PATH\lib\datatooltk-splash.png&quot; -Djava.locale.providers=CLDR,JRE -jar &quot;$INSTALL_PATH\lib\datatooltk.jar&quot; --gui"
     workingDirectory="$INSTALL_PATH"
     description="GUI to accompany datatool.sty"
-    iconFile="$INSTALL_PATH\lib\datatooltk.ico"
+    iconFile="$INSTALL_PATH\lib\resources\icons\datatooltk.ico"
     iconIndex="0"
     initialState="normal"
     programGroup="yes"

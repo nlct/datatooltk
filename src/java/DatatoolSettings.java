@@ -234,6 +234,11 @@ public class DatatoolSettings extends Properties
       return TYPE_MNEMONICS;
    }
 
+   public static String getApplicationIconPath()
+   {
+      return RESOURCES_PATH + "/icons/datatooltk-logosmall.png";
+   }
+
    private void setPropertiesPath()
    {
       String dirname = System.getenv("DATATOOLTK");

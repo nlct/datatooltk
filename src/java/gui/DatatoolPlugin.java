@@ -129,7 +129,7 @@ public class DatatoolPlugin implements Runnable
          {
             throw new IOException(
                messageHandler.getLabelWithValues("error.plugin.exit_code", 
-                 exitCode, errMess));
+                 name, exitCode, errMess));
          }
 
          if (xml.length() > 0)

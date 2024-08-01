@@ -591,7 +591,7 @@ public class DatatoolGUI extends JFrame
          return img;
       }
 
-      String imgFile = "/datatooltk-logosmall.png";
+      String imgFile = settings.getApplicationIconPath();
 
       URL imageURL = DatatoolTk.class.getResource(imgFile);
 

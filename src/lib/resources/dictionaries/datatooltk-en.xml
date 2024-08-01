@@ -1388,8 +1388,8 @@ Extension ''{1}'' is forbidden for output files</entry>
 <entry key="error.output.forbidden_log_ext">File: {0}
 Extension ''{1}'' is forbidden for log files</entry>
 
-<entry key="error.plugin.exit_code">Plugin terminated with exit code {0,number}
-{1}</entry>
+<entry key="error.plugin.exit_code">Plugin {0} terminated with exit code {1,number}
+{2}</entry>
 <entry key="error.plugin.no_perl">You need to specify the path to the perl executable to run a plugin</entry>
 <entry key="error.plugin.unknown_command">Unknown plugin command ''{0}''</entry>
 <entry key="error.plugin.unknown_message">Unknown plugin message ''{0}''</entry>

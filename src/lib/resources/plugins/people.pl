@@ -66,7 +66,7 @@ $nameFrame->Label
 
 my $titleEntry = $nameFrame->Entry
   (
-    -width=>4,
+    -width=>4
   )->pack(-side=>'left', -expand=>1);
 
 $titleEntry->insert(0, $row[$colIndexes{Title}]);
@@ -122,49 +122,9 @@ $addressText->Contents($row[$colIndexes{Address}]);
 
 my $buttonFrame = $mw->Frame()->pack;
 
-my $shot;
+$db->createCancelButton($buttonFrame, $mw);
 
-my $imgFile = $db->getImageFile('cancel.png');
-
-if ($imgFile and -e $imgFile)
-{
-   $shot = $mw->Photo(-file=>$imgFile);
-
-   $buttonFrame->Button(
-       -text     => $db->getDictWord('button.cancel'),
-       -command  => sub { exit },
-       -image    => $shot,
-       -compound => 'left'
-   )->pack(-side=>'left', -expand=>1, -padx =>20);
-}
-else
-{
-   $buttonFrame->Button(
-       -text    => $db->getDictWord('button.cancel'),
-       -command => sub { exit },
-   )->pack(-side=>'left', -expand=>1, -padx =>20);
-}
-
-$imgFile = $db->getImageFile('okay.png');
-
-if ($imgFile and -e $imgFile)
-{
-   $shot = $mw->Photo(-file=>$imgFile);
-
-   $buttonFrame->Button(
-      -text    => $db->getDictWord('button.okay'),
-      -command => \&doDbUpdate,
-      -image    => $shot,
-      -compound => 'left'
-   )->pack(-side=>'left', -expand=>1, -padx =>20);
-}
-else
-{
-   $buttonFrame->Button(
-      -text    => $db->getDictWord('button.okay'),
-      -command => \&doDbUpdate,
-   )->pack(-side=>'left', -expand=>1, -padx =>20);
-}
+$db->createOkayButton($buttonFrame, $mw, \&doDbUpdate);
 
 $mw->iconify;
 $mw->update;
@@ -178,6 +138,9 @@ my $ypos = int(($mw->screenheight-$mw->height)/2);
 $mw->geometry("+$xpos+$ypos");
 
 $mw->state('normal');
+
+#$mw->idletasks;
+#$db->setIconImage($mw);
 
 MainLoop;
 

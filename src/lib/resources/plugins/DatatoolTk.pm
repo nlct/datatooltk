@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-#    Copyright (C) 2013 Nicola L.C. Talbot
+#    Copyright (C) 2013-2024 Nicola L.C. Talbot
 #    www.dickimaw-books.com
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -234,14 +234,45 @@ sub getDictWord{
    my $self = shift;
    my $key = shift;
 
-   my $word = $self->{$key};
+   my $word;
+
+   if (exists $self->{$key})
+   {
+      $word = $self->{$key};
+   }
+   elsif (exists $self->{"plugin.$key"})
+   {
+      $word = $self->{"plugin.$key"};
+   }
+   else
+   {
+      $word = $key;
+   }
 
    if ($#_ > -1)
    {
-      $word=~s/\$(\d)/$_[$1-1]/g;
+      $word=~s/\{(\d)\}/$_[$1-1]/g;
+      $word=~s/''/'/g;
    }
 
    $word;
+}
+
+sub getDictMnemonicIndex{
+   my $self = shift;
+   my $key = shift;
+   my $index = -1;
+
+   if (exists $self->{"$key.mnemonicidx"})
+   {
+      $index = $self->{"$key.mnemonicidx"};
+   }
+   elsif (exists $self->{"plugin.$key.mnemonicidx"})
+   {
+      $index = $self->{"plugin.$key.mnemonicidx"};
+   }
+
+   $index;
 }
 
 # Get the location of datatooltk's resources directory (as a URI).
@@ -260,6 +291,97 @@ sub getImageFile{
    $uri = URI->new($dbattrs->{resources}.'/icons/'.$filename);
 
    $uri->path;
+}
+
+# Set the iconimage for the main window if the image file is
+# available
+sub setIconImage{
+   my $self = shift;
+   my $mw = shift; # main window
+
+   my $imgFile = $self->getImageFile('datatooltk-logosmall.png');
+
+   if ($imgFile and -e $imgFile)
+   {
+      my $icon = $mw->Photo(-file=>$imgFile, -format=>'png');
+
+      if ($icon)
+      {
+         $mw->iconimage($icon);
+      }
+   }
+}
+
+# Create cancel button
+sub createCancelButton{
+   my $self = shift;
+   my $buttonFrame = shift;
+   my $mw = shift; # main window
+
+   my $widget = $self->createButton($buttonFrame, $mw,
+    sub { exit }, "button.cancel", $self->getImageFile('cancel.png'));
+
+   $widget;
+}
+
+# Create okay button
+sub createOkayButton{
+   my $self = shift;
+   my $buttonFrame = shift;
+   my $mw = shift;
+   my $cmd = shift;
+
+   my $widget = $self->createButton($buttonFrame, $mw,
+    $cmd, "button.okay", $self->getImageFile('okay.png'));
+
+   $mw->bind("<Shift-Return>", $cmd);
+
+   $widget;
+}
+
+sub createButton{
+   my $self = shift;
+   my $buttonFrame = shift;
+   my $mw = shift;
+   my $cmd = shift;
+   my $dictKey = shift;
+   my $imgFile = shift;
+
+   my $shot;
+
+   my $widget;
+
+   my $text = $self->getDictWord($dictKey);
+   my $idx = $self->getDictMnemonicIndex($dictKey);
+
+   if ($imgFile and -e $imgFile)
+   {
+      $shot = $mw->Photo(-file=>$imgFile);
+
+      $widget = $buttonFrame->Button(
+          -text     => $text,
+          -command  => $cmd,
+          -image    => $shot,
+          -underline => $idx,
+          -compound => 'left'
+      )->pack(-side=>'left', -expand=>1, -padx =>20);
+   }
+   else
+   {
+      $widget = $buttonFrame->Button(
+          -text    => $text,
+          -command => $cmd,
+          -underline => $idx
+      )->pack(-side=>'left', -expand=>1, -padx =>20);
+   }
+
+   if ($idx > -1 and $idx < length($text))
+   {
+      $chr = lc(substr($text, $idx, 1));
+      $mw->bind("<Alt-Key-$chr>", $cmd );
+   }
+
+   $widget;
 }
 
 # Return the index of the row that was currently selected in

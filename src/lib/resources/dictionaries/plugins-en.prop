@@ -2,7 +2,14 @@
 # English language file for datatooltk plugins
 
 plugin.error.missing_column=Can''t find column labelled ''{0}''
+
 plugin.remove_entry=Remove Entry
+plugin.remove_entry.mnemonicidx=0
+
+plugin.button.okay=Okay
+plugin.button.okay.mnemonicidx=0
+plugin.button.cancel=Cancel
+plugin.button.cancel.mnemonicidx=0
 
 plugin.datagidx.add_seealso=Add "See Also" Entry
 plugin.datagidx.Child=Child

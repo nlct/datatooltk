@@ -14,7 +14,7 @@
      commandLine=""
      workingDirectory=""
      description="GUI to accompany datatool.sty"
-     iconFile="$INSTALL_PATH/lib/datatooltk-logosmall.png"
+     iconFile="$INSTALL_PATH/lib/resources/icons/datatooltk-logosmall.png"
      iconIndex="0"
      type="Application"
      encoding="UTF-8"

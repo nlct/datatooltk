@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-#    Copyright (C) 2013 Nicola L.C. Talbot
+#    Copyright (C) 2013-2024 Nicola L.C. Talbot
 #    www.dickimaw-books.com
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -351,71 +351,14 @@ else
 
 my $buttonFrame = $mw->Frame()->pack(-ipadx=>40);
 
-$imgFile = $db->getImageFile('cancel.png');
+$db->createCancelButton($buttonFrame, $mw);
 
-if ($imgFile and -e $imgFile)
-{
-   $shot = $mw->Photo(-file=>$imgFile);
-
-   $buttonFrame->Button(
-       -text     => $db->getDictWord('button.cancel'),
-       -command  => sub { $mw->destroy },
-       -image    => $shot,
-       -compound => 'left'
-   )->pack(-side=>'left', -expand=>1);
-}
-else
-{
-   $buttonFrame->Button(
-       -text    => $db->getDictWord('button.cancel'),
-       -command => sub { $mw->destroy }
-   )->pack(-side=>'left', -expand=>1);
-}
-
-$imgFile = $db->getImageFile('okay.png');
-
-if ($imgFile and -e $imgFile)
-{
-   $shot = $mw->Photo(-file=>$imgFile);
-
-   $buttonFrame->Button(
-       -text     => $db->getDictWord('button.okay'),
-       -command  => \&doDbUpdate,
-       -image    => $shot,
-       -compound => 'left'
-   )->pack(-side=>'left', -expand=>1);
-}
-else
-{
-   $buttonFrame->Button(
-       -text    => $db->getDictWord('button.okay'),
-       -command => \&doDbUpdate
-   )->pack(-side=>'left', -expand=>1);
-}
-
+$db->createOkayButton($buttonFrame, $mw, \&doDbUpdate);
 
 if ($selectedRow > -1)
 {
-   $imgFile = $db->getImageFile('recycle.png');
-
-   if ($imgFile and -e $imgFile)
-   {
-      $shot = $mw->Photo(-file=>$imgFile);
-
-      $buttonFrame->Button(
-          -text    => $db->getDictWord('plugin.remove_entry'),
-          -command => \&doRemoveRow,
-          -image    => $shot,
-          -compound => 'left'
-      )->pack(-side=>'left', -expand=>1);
-   }
-   else
-   {
-      $buttonFrame->Button(
-          -text    => $db->getDictWord('plugin.remove_entry'),
-          -command => \&doRemoveRow
-      )->pack(-side=>'left', -expand=>1);
-   }
+   $db->createButton($buttonFrame, $mw, \&doRemoveRow,
+    'plugin.remove_entry', $db->getImageFile('recycle.png'));
 }
 
 $mw->update;
