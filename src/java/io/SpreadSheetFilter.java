@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@ public class SpreadSheetFilter extends DatatoolFileFilter
    public SpreadSheetFilter(MessageHandler messageHandler)
    {
       super(messageHandler.getLabelWithValues("filter.xlsods", 
-       "*.xls, *.ods"), "xls", "ods");
+       "*.xls, *.xlsx, *.ods, *.fods"), "xls", "xlsx", "ods", "fods");
    }
 
 }

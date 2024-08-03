@@ -21,6 +21,8 @@ package com.dickimawbooks.datatooltk;
 import java.io.File;
 import java.util.Vector;
 
+import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
+
 import com.dickimawbooks.datatooltk.io.DatatoolImport;
 import com.dickimawbooks.datatooltk.io.DatatoolExport;
 
@@ -142,6 +144,21 @@ public class LoadSettings
    public DatatoolImport getDataImport()
    {
       return imp;
+   }
+
+   public void setIOSettings(IOSettings ioSettings)
+   {
+      this.ioSettings = ioSettings;
+   }
+
+   public IOSettings getIOSettings()
+   {
+      return ioSettings;
+   }
+
+   public boolean hasIOSettings()
+   {
+      return ioSettings != null;
    }
 
    public void setMergeImport(DatatoolImport dataImport)
@@ -351,6 +368,8 @@ public class LoadSettings
 
    private DatatoolExport exp=null;
    private String target = null;
+
+   private IOSettings ioSettings = null;
 
    private DatatoolSettings settings;
 }

@@ -188,6 +188,13 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
       }
    }
 
+   @Override
+   public DatatoolDb importData(IOSettings ioSettings, String source)
+      throws DatatoolImportException
+   {
+      return importData(ioSettings, new File(source), true);
+   }
+
    public DatatoolDb importData(IOSettings ioSettings, File file,
         boolean checkForVerbatim)
       throws DatatoolImportException

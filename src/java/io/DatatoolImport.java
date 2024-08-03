@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,8 @@ package com.dickimawbooks.datatooltk.io;
 import java.io.File;
 import java.io.IOException;
 
+import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
+
 import com.dickimawbooks.datatooltk.DatatoolDb;
 
 /**
@@ -29,5 +31,8 @@ import com.dickimawbooks.datatooltk.DatatoolDb;
 public interface DatatoolImport
 {
    public DatatoolDb importData(String source)
+    throws DatatoolImportException;
+
+   public DatatoolDb importData(IOSettings ioSettings, String source)
     throws DatatoolImportException;
 }

@@ -3894,6 +3894,11 @@ public class DatatoolDb
       return indexList;
    }
 
+   public void appendRow(DatatoolRow row)
+   {
+      insertRow(getRowCount(), row);
+   }
+
    public DatatoolRow insertRow(int rowIdx)
    {
       DatatoolRow row = new DatatoolRow(this, headers.size());
@@ -4380,7 +4385,7 @@ public class DatatoolDb
      Pattern.compile("(?<start>\\d*)-(?<end>\\d*)");
 
    public static final Pattern PATTERN_PARAGRAPH =
-     Pattern.compile("(^[ \t]*[\n\r])+", Pattern.MULTILINE);
+     Pattern.compile("(^[ \\t]*\\R){2,}", Pattern.MULTILINE);
 
    public static final Pattern INVALID_LABEL_CONTENT =
      Pattern.compile("([#^_\\&%{}~]|\\\\(?:[a-zA-Z]+\\s*)|(?:\\\\[^a-zA-Z]))");

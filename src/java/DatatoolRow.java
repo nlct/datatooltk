@@ -43,7 +43,7 @@ public class DatatoolRow extends Vector<Datum>
 
    public DatatoolRow(DatatoolDb db, int capacity)
    {
-      super(capacity);
+      super(capacity > 0 ? capacity : db.getSettings().getInitialColumnCapacity());
       this.db = db;
    }
 

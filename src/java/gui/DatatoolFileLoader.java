@@ -98,7 +98,16 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
 
          publish(gui.getMessageHandler().getLabelWithValues(
            "progress.importing", source));
-         db = imp.importData(source);
+
+         if (loadSettings.hasIOSettings())
+         {
+            db = imp.importData(loadSettings.getIOSettings(), source);
+         }
+         else
+         {
+            db = imp.importData(source);
+         }
+
          db.updateDefaultFormat();
       }
 
@@ -122,7 +131,17 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
          {
             publish(gui.getMessageHandler().getLabelWithValues(
               "progress.merging", mergeImportSource));
-            db = mergeImport.importData(mergeImportSource);
+
+            if (loadSettings.hasIOSettings())
+            {
+               db = mergeImport.importData(loadSettings.getIOSettings(),
+                      mergeImportSource);
+            }
+            else
+            {
+               db = mergeImport.importData(mergeImportSource);
+            }
+
             mergeImportSource = null;
             mergeKey = null;
          }
@@ -150,7 +169,16 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
       {
          publish(gui.getMessageHandler().getLabelWithValues(
            "progress.merging", mergeImportSource));
-         mergeDb = mergeImport.importData(mergeImportSource);
+
+         if (loadSettings.hasIOSettings())
+         {
+            db = mergeImport.importData(loadSettings.getIOSettings(),
+                   mergeImportSource);
+         }
+         else
+         {
+            mergeDb = mergeImport.importData(mergeImportSource);
+         }
       }
 
       if (mergeDb != null)

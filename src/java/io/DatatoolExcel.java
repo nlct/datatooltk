@@ -26,6 +26,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
+import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -43,6 +44,14 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       return settings.getMessageHandler();
    }
 
+   @Override
+   public DatatoolDb importData(IOSettings ioSettings, String source)
+      throws DatatoolImportException
+   {
+      return importData(source);
+   }
+
+   @Override
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {

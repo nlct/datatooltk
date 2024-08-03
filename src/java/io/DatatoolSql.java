@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,7 @@ package com.dickimawbooks.datatooltk.io;
 import java.sql.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -38,6 +39,14 @@ public class DatatoolSql implements DatatoolImport
       return settings.getMessageHandler();
    }
 
+   @Override
+   public DatatoolDb importData(IOSettings ioSettings, String selectQuery)
+      throws DatatoolImportException
+   {
+      return importData(selectQuery);
+   }
+
+   @Override
    public DatatoolDb importData(String selectQuery)
      throws DatatoolImportException
    {

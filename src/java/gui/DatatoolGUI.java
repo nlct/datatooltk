@@ -469,6 +469,8 @@ public class DatatoolGUI extends JFrame
 
       fileChooser = new JFileChooser(settings.getStartUpDirectory());
 
+      importDialog = new ImportDialog(this, fileChooser);
+
       headerDialog = new HeaderDialog(this);
       cellEditor = new CellDialog(this);
 
@@ -1441,6 +1443,24 @@ public class DatatoolGUI extends JFrame
       }
    }
 
+   private void setImportFileFilters()
+   {
+      FileFilter current = fileChooser.getFileFilter();
+
+      File file = fileChooser.getSelectedFile();
+      fileChooser.resetChoosableFileFilters();
+
+      FileFilter all = fileChooser.getAcceptAllFileFilter();
+
+      fileChooser.removeChoosableFileFilter(all);
+
+      fileChooser.addChoosableFileFilter(csvtxtFilter);
+      fileChooser.addChoosableFileFilter(spreadFilter);
+      fileChooser.addChoosableFileFilter(dbdtltexFilter);
+      fileChooser.addChoosableFileFilter(texFilter);
+      fileChooser.addChoosableFileFilter(all);
+   }
+
    public DatatoolDbPanel getPanel(DatatoolDb db)
    {
       for (int i = 0, n = tabbedPane.getTabCount(); i < n; i++)
@@ -1725,9 +1745,13 @@ public class DatatoolGUI extends JFrame
        fileChooser.getSelectedFile().getAbsolutePath());
    }
 
+// TODO: remove separate import options and replace with single
+// method
    public void importCsv()
    {
-      setCsvFileFilters();
+      setImportFileFilters();
+      importDialog.display();
+/*
 
       if (fileChooser.showDialog(this, 
              getMessageHandler().getLabel("button.import"))
@@ -1738,6 +1762,7 @@ public class DatatoolGUI extends JFrame
 
       importData(new DatatoolCsv(settings),
        fileChooser.getSelectedFile().getAbsolutePath());
+*/
    }
 
    public void importProbSoln()
@@ -1978,6 +2003,8 @@ public class DatatoolGUI extends JFrame
    private HeaderDialog headerDialog;
 
    private CellDialog cellEditor;
+
+   private ImportDialog importDialog;
 
    private HelpFrame helpFrame;
 

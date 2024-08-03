@@ -41,6 +41,7 @@ public class DatatoolGuiResources
 {
     public DatatoolGuiResources(DatatoolGUI gui, MessageHandler messageHandler)
     {
+       this.gui = gui;
        this.messageHandler = messageHandler;
        messageHandler.setDatatoolGuiResources(this);
        errorPanel = new ErrorPanel(messageHandler);
@@ -715,9 +716,16 @@ public class DatatoolGuiResources
        return progressMonitor;
     }
 
+   public DatatoolGUI getGUI()
+   {
+      return gui;
+   }
+
    private ErrorPanel errorPanel;
 
    private MessageHandler messageHandler;
+
+   private DatatoolGUI gui;
 
    private ProgressMonitor progressMonitor=null;
 

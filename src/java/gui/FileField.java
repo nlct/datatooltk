@@ -19,9 +19,12 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.io.*;
+import java.util.Vector;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.MessageHandler;
@@ -53,12 +56,21 @@ public class FileField extends Box
    public FileField(MessageHandler messageHandler, Container parent, 
       String fileName, JFileChooser fileChooser, int mode)
    {
+      this(messageHandler, parent, fileName, fileChooser, mode, null);
+   }
+
+   public FileField(MessageHandler messageHandler, Container parent, 
+      String fileName, JFileChooser fileChooser, int mode,
+      String labelTag)
+   {
       super(BoxLayout.Y_AXIS);
 
       this.fileChooser = fileChooser;
       this.parent = parent;
       this.mode = mode;
       this.messageHandler = messageHandler;
+
+      TeXJavaHelpLib helpLib = messageHandler.getHelpLib();
 
       add(Box.createVerticalGlue());
 
@@ -67,6 +79,11 @@ public class FileField extends Box
 
       textField = new JTextField(fileName == null ? "" : fileName, 20);
 
+      if (labelTag != null && !labelTag.isEmpty())
+      {
+         box.add(helpLib.createJLabel(labelTag, textField));
+      }
+
       Dimension dim = textField.getPreferredSize();
       dim.width = (int)textField.getMaximumSize().getWidth();
 
@@ -74,10 +91,24 @@ public class FileField extends Box
 
       box.add(textField);
 
-      button = new JButton("...");
+      textField.addFocusListener(new FocusAdapter()
+       {
+          public void focusLost(FocusEvent evt)
+          {
+             String newFile = textField.getText();
 
-      button.setActionCommand("choose");
-      button.addActionListener(this);
+             if (!oldFile.equals(newFile))
+             {
+                fireFileChangeUpdate(new FileSelectionChangeEvent(this,
+                 oldFile, newFile));
+             }
+
+             oldFile = newFile;
+          }
+       });
+
+      button = helpLib.createJButton("button", "choose_file", this,
+        "open", true, true);
 
       box.add(button);
 
@@ -107,7 +138,7 @@ public class FileField extends Box
 
       if (action == null) return;
 
-      if (action.equals("choose"))
+      if (action.equals("choose_file"))
       {
          fileChooser.setFileSelectionMode(mode);
 
@@ -127,7 +158,18 @@ public class FileField extends Box
             messageHandler.getLabel("button.select"))
             == JFileChooser.APPROVE_OPTION)
          {
-            textField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+            oldFile = textField.getText();
+            String newFile = fileChooser.getSelectedFile().getAbsolutePath();
+
+            textField.setText(newFile);
+
+            if (!oldFile.equals(newFile))
+            {
+               fireFileChangeUpdate(new FileSelectionChangeEvent(this,
+                oldFile, newFile));
+            }
+
+            oldFile = newFile;
          }
       }
    }
@@ -187,6 +229,33 @@ public class FileField extends Box
       button.setEnabled(flag);
    }
 
+   protected void fireFileChangeUpdate(FileSelectionChangeEvent evt)
+   {
+      if (fileChangeListeners != null)
+      {
+         for (FileSelectionChangeListener listener : fileChangeListeners)
+         {
+            listener.fileSelectionChanged(evt);
+
+            if (evt.isConsumed())
+            {
+               break;
+            }
+         }
+      }
+   }
+
+   public void addFileSelectionChangeListener(
+      FileSelectionChangeListener listener)
+   {
+      if (fileChangeListeners == null)
+      {
+         fileChangeListeners = new Vector<FileSelectionChangeListener>();
+      }
+
+      fileChangeListeners.add(listener);
+   }
+
    private JTextField textField;
 
    private JButton button;
@@ -198,4 +267,7 @@ public class FileField extends Box
    private int mode;
 
    private MessageHandler messageHandler;
+
+   private Vector<FileSelectionChangeListener> fileChangeListeners;
+   private String oldFile="";
 }

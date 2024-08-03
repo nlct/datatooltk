@@ -26,6 +26,7 @@ import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.PreambleParser;
 import com.dickimawbooks.texparserlib.latex.probsoln.*;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -43,6 +44,14 @@ public class DatatoolProbSoln implements DatatoolImport
       return settings.getMessageHandler();
    }
 
+   @Override
+   public DatatoolDb importData(IOSettings ioSettings, String source)
+      throws DatatoolImportException
+   {
+      return importData(source);
+   }
+
+   @Override
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {

@@ -112,7 +112,8 @@ public class ImportSqlDialog extends JDialog
       box = Box.createHorizontalBox();
       getContentPane().add(box, BorderLayout.NORTH);
 
-      selectField = new JTextField("* FROM tablename");
+      selectField = new JTextField(gui.getMessageHandler().getLabel(
+           "message.importsql.select_placeholder"));
       box.add(createLabel("importsql.select", selectField));
       box.add(selectField);
 

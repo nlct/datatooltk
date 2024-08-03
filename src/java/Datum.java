@@ -326,6 +326,14 @@ public class Datum implements Comparable<Datum>
       }
    }
 
+   /**
+    * Update type without altering text, currency or number.
+    */ 
+   public void setDatumType(DatumType type)
+   {
+      this.type = type;
+   }
+
    public DatumType getDatumType()
    {
       return type;

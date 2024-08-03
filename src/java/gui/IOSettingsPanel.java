@@ -19,11 +19,13 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.nio.charset.Charset;
+import java.util.Vector;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.border.Border;
 
 import com.dickimawbooks.texparserlib.TeXSyntaxException;
 import com.dickimawbooks.texparserlib.latex.datatool.*;
@@ -57,51 +59,15 @@ public class IOSettingsPanel extends JPanel
       this.resources = resources;
       this.ioModifiers = ioModifiers;
       this.formatModifiers = formatModifiers;
+      this.formatSingleSelection = formatSingleSelection;
       this.tagParentLabel = tagParentLabel;
 
-      init(formatModifiers, formatSingleSelection, addTrim);
+      init(addTrim);
    }
 
-   protected void init(int formatModifiers, boolean formatSingleSelection,
-     boolean addTrim)
+   protected void init(boolean addTrim)
    {
-      initFormatButtons(formatModifiers, formatSingleSelection);
-
-      if (
-           ((formatModifiers & FILE_FORMAT_FLAG_CSV) == FILE_FORMAT_FLAG_CSV)
-       ||  ((formatModifiers & FILE_FORMAT_FLAG_TSV) == FILE_FORMAT_FLAG_TSV)
-         )
-      {
-         initCsvComp();
-      }
-      else if (isWrite()
-        && (
-             formatDTLTEXToggleButton != null
-             || formatDTLTEX2ToggleButton != null
-             || formatDTLTEX3ToggleButton != null
-           )
-       )
-      {
-         JComponent row = createRow();
-         add(row);
-
-         texEncodingBox = new JComboBox<Charset>(
-            Charset.availableCharsets().values().toArray(new Charset[0]));
-         row.add(createJLabel("tex.encoding", texEncodingBox));
-         row.add(texEncodingBox);
-
-         if (isRead())
-         {
-            // Include note that this setting only applicable for output files
-            incHeaderBox = createJCheckBox("writeonly", "hasheader");
-         }
-         else
-         {
-            incHeaderBox = createJCheckBox("write", "hasheader");
-         }
-
-         add(incHeaderBox);
-      }
+      initFormatButtons();
 
       if (addTrim)
       {
@@ -109,10 +75,51 @@ public class IOSettingsPanel extends JPanel
 
          add(trimElementBox);
       }
+
+      if (
+           ((formatModifiers | FILE_FORMAT_ANY_TEX)
+               & FILE_FORMAT_ANY_TEX) == FILE_FORMAT_ANY_TEX
+         )
+      {
+         initTeXCardComp();
+      }
+
+      if (
+           ((formatModifiers | FILE_FORMAT_ANY_NON_TEX)
+               & FILE_FORMAT_ANY_NON_TEX) == FILE_FORMAT_ANY_NON_TEX
+         )
+      {
+         initNonTeXComp();
+      }
+
+      if (texCardComp != null && nonTeXCardComp != null)
+      {
+         cardLayout = new CardLayout();
+         cardComp = new JPanel(cardLayout);
+         cardComp.setAlignmentX(defaultAlignmentX);
+
+         add(cardComp);
+
+         cardComp.add(texCardComp, "tex");
+         cardComp.add(nonTeXCardComp, "nontex");
+      }
+      else if (texCardComp != null)
+      {
+         add(texCardComp);
+      }
+      else if (nonTeXCardComp != null)
+      {
+         add(nonTeXCardComp);
+      }
+      else
+      {
+         getMessageHandler().debug("No main components!");
+      }
+
+      formatChanged();
    }
 
-   protected void initFormatButtons(
-     int formatModifiers, boolean formatSingleSelection)
+   protected void initFormatButtons()
    {
       ButtonGroup formatBtnGrp = null;
 
@@ -201,6 +208,46 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
+      if ((formatModifiers & FILE_FORMAT_FLAG_ODS) == FILE_FORMAT_FLAG_ODS)
+      {
+         formatODSToggleButton = createFormatButton(
+           fileFormatComp, "ods", formatBtnGrp);
+         lastButton = formatODSToggleButton;
+         numFormats++;
+      }
+
+      if ((formatModifiers & FILE_FORMAT_FLAG_FODS) == FILE_FORMAT_FLAG_FODS)
+      {
+         formatFODSToggleButton = createFormatButton(
+           fileFormatComp, "fods", formatBtnGrp);
+         lastButton = formatFODSToggleButton;
+         numFormats++;
+      }
+
+      if ((formatModifiers & FILE_FORMAT_FLAG_XLSX) == FILE_FORMAT_FLAG_XLSX)
+      {
+         formatXLSXToggleButton = createFormatButton(
+           fileFormatComp, "xlsx", formatBtnGrp);
+         lastButton = formatXLSXToggleButton;
+         numFormats++;
+      }
+
+      if ((formatModifiers & FILE_FORMAT_FLAG_XLS) == FILE_FORMAT_FLAG_XLS)
+      {
+         formatXLSToggleButton = createFormatButton(
+           fileFormatComp, "xls", formatBtnGrp);
+         lastButton = formatXLSToggleButton;
+         numFormats++;
+      }
+
+      if ((formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL)
+      {
+         formatSQLToggleButton = createFormatButton(
+           fileFormatComp, "sql", formatBtnGrp);
+         lastButton = formatSQLToggleButton;
+         numFormats++;
+      }
+
       if (numFormats == 1)
       {
          lastButton.setSelected(true);
@@ -227,14 +274,193 @@ public class IOSettingsPanel extends JPanel
       return btn;
    }
 
-   protected void initCsvComp()
+   protected void initTeXCardComp()
    {
-      csvComp = createVerticalBox();
-      add(csvComp);
+      texCardComp = createVerticalBox();
 
-      JComponent csvTsvOnlyComp = createVerticalBox();
-      csvComp.add(csvTsvOnlyComp);
-      csvTsvOnlyComp.setBorder(BorderFactory.createEtchedBorder());
+      JComponent row = createRow();
+      texCardComp.add(row);
+
+      texEncodingBox = new JComboBox<Charset>(
+         Charset.availableCharsets().values().toArray(new Charset[0]));
+      row.add(createJLabel("tex.encoding", texEncodingBox));
+      row.add(texEncodingBox);
+
+      if (isWrite())
+      {
+         if (isRead())
+         {
+            // Include note that this setting only applicable for output files
+            texIncHeaderBox = createJCheckBox("writeonly", "hasheader");
+         }
+         else
+         {
+            texIncHeaderBox = createJCheckBox("write", "hasheader");
+         }
+
+         texCardComp.add(texIncHeaderBox);
+      }
+   }
+
+   protected void initNonTeXComp()
+   {
+      nonTeXCardComp = createVerticalBox();
+
+      boolean isCsvTsv = (((formatModifiers | FILE_FORMAT_CSV_OR_TSV)
+               & FILE_FORMAT_CSV_OR_TSV) == FILE_FORMAT_CSV_OR_TSV);
+
+      boolean isSpread = (((formatModifiers | FILE_FORMAT_ANY_SPREADSHEET)
+               & FILE_FORMAT_ANY_SPREADSHEET) == FILE_FORMAT_ANY_SPREADSHEET);
+
+      boolean isSql =
+         ((formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL);
+
+      if (isSql)
+      {
+         sqlPanel = new SqlPanel(resources.getGUI(), getMessageParentTag("sql"));
+         nonTeXCardComp.add(sqlPanel);
+
+         String title = getMessageIfExists("sql");
+
+         if (title != null)
+         {
+            sqlPanel.setBorder(BorderFactory.createTitledBorder(
+             BorderFactory.createEtchedBorder(), title));
+         }
+      }
+
+      if (isCsvTsv)
+      {
+         initCsvTsvOnlyComp();
+      }
+
+      if (isCsvTsv || isSpread)
+      {
+         initCsvSpreadsheetComp();
+      }
+
+      initAllNonTeXComp();
+   }
+
+   protected void initCsvSpreadsheetComp()
+   {
+      csvSpreadComp = createVerticalBox();
+
+      Border border = BorderFactory.createEtchedBorder();
+
+      String title = getMessageIfExists("csvtsvspread");
+
+      if (title != null)
+      {
+         border = BorderFactory.createTitledBorder(border, title);
+      }
+
+      csvSpreadComp.setBorder(border);
+
+      nonTeXCardComp.add(csvSpreadComp);
+
+      csvSpreadComp.add(createMessageArea("csvspreadsheets.note"));
+ 
+      csvIncHeaderBox = createJCheckBox("csv", "hasheader");
+      csvSpreadComp.add(csvIncHeaderBox);
+
+      if (isRead())
+      {
+         JComponent row = createRow();
+         csvSpreadComp.add(row);
+
+         skipLinesModel = new SpinnerNumberModel(0, 0, 1000, 1);
+         JSpinner skipLinesSpinner = new JSpinner(skipLinesModel);
+
+         JLabel skipLinesLabel =
+           createJLabel("csv.skiplines", skipLinesSpinner);
+
+         row.add(skipLinesLabel);
+         row.add(skipLinesSpinner);
+
+         row = createRow();
+         csvSpreadComp.add(row);
+         ButtonGroup btnGrp = new ButtonGroup();
+
+         row.add(createJLabel("csv.blank"));
+
+         csvBlankIgnoreButton = createJRadioButton(
+           "csv.blank", "ignore", btnGrp);
+         row.add(csvBlankIgnoreButton);
+
+         csvBlankEmptyButton = createJRadioButton(
+           "csv.blank", "empty-row", btnGrp);
+         row.add(csvBlankEmptyButton);
+
+         csvBlankEndButton = createJRadioButton(
+           "csv.blank", "end", btnGrp);
+         row.add(csvBlankEndButton);
+
+      }
+   }
+
+   protected void initAllNonTeXComp()
+   {
+      if (isRead())
+      {
+         allNonTeXComp = createVerticalBox();
+
+         Border border = BorderFactory.createEtchedBorder();
+
+         String title = getMessageIfExists("nontex");
+
+         if (title != null)
+         {
+            border = BorderFactory.createTitledBorder(border, title);
+         }
+
+         allNonTeXComp.setBorder(border);
+
+         nonTeXCardComp.add(allNonTeXComp);
+
+         allNonTeXComp.add(createMessageArea("imports_all.note"));
+ 
+         JComponent row = createRow();
+         allNonTeXComp.add(row);
+         ButtonGroup btnGrp = new ButtonGroup();
+
+         row.add(createJLabel("csv.content"));
+
+         csvLiteralButton = createJRadioButton(
+           "csv", "content.literal", "content", btnGrp);
+         row.add(csvLiteralButton);
+
+         csvTeXButton = createJRadioButton(
+           "csv", "content.tex", "content", btnGrp);
+         row.add(csvTeXButton);
+
+         literalSourceComp = createVerticalBox();
+         allNonTeXComp.add(literalSourceComp);
+
+         mapTeXBox = createJCheckBox("tex", "map", "texmap");
+         literalSourceComp.add(mapTeXBox);
+
+         createTeXMapTable();
+         literalSourceComp.add(texMappingsComp);
+         setTeXMapping(false);
+      }
+   }
+
+   protected void initCsvTsvOnlyComp()
+   {
+      csvTsvOnlyComp = createVerticalBox();
+      nonTeXCardComp.add(csvTsvOnlyComp);
+
+      Border border = BorderFactory.createEtchedBorder();
+
+      String title = getMessageIfExists("csvtsv");
+
+      if (title != null)
+      {
+         border = BorderFactory.createTitledBorder(border, title);
+      }
+
+      csvTsvOnlyComp.setBorder(border);
 
       csvTsvOnlyComp.add(createMessageArea("csvtsv.optionsonly.note"));
 
@@ -303,74 +529,6 @@ public class IOSettingsPanel extends JPanel
         Charset.availableCharsets().values().toArray(new Charset[0]));
       row.add(createJLabel("csv.encoding", csvEncodingBox));
       row.add(csvEncodingBox);
-
-      JComponent csvSpreadComp = createVerticalBox();
-      csvSpreadComp.setBorder(BorderFactory.createEtchedBorder());
-      csvComp.add(csvSpreadComp);
-
-      csvSpreadComp.add(createMessageArea("csvspreadsheets.note"));
- 
-      incHeaderBox = createJCheckBox("csv", "hasheader");
-      csvSpreadComp.add(incHeaderBox);
-
-      if (isRead())
-      {
-         row = createRow();
-         csvSpreadComp.add(row);
-
-         skipLinesModel = new SpinnerNumberModel(0, 0, 1000, 1);
-         JSpinner skipLinesSpinner = new JSpinner(skipLinesModel);
-
-         JLabel skipLinesLabel =
-           createJLabel("csv.skiplines", skipLinesSpinner);
-
-         row.add(skipLinesLabel);
-         row.add(skipLinesSpinner);
-
-         row = createRow();
-         csvSpreadComp.add(row);
-         btnGrp = new ButtonGroup();
-
-         row.add(createJLabel(labelGrp, "csv.blank"));
-
-         csvBlankIgnoreButton = createJRadioButton(
-           "csv.blank", "ignore", btnGrp);
-         row.add(csvBlankIgnoreButton);
-
-         csvBlankEmptyButton = createJRadioButton(
-           "csv.blank", "empty-row", btnGrp);
-         row.add(csvBlankEmptyButton);
-
-         csvBlankEndButton = createJRadioButton(
-           "csv.blank", "end", btnGrp);
-         row.add(csvBlankEndButton);
-
-         csvComp.add(createMessageArea("imports_all.note"));
- 
-         row = createRow();
-         csvComp.add(row);
-         btnGrp = new ButtonGroup();
-
-         row.add(createJLabel(labelGrp, "csv.content"));
-
-         csvLiteralButton = createJRadioButton(
-           "csv", "content.literal", "content", btnGrp);
-         row.add(csvLiteralButton);
-
-         csvTeXButton = createJRadioButton(
-           "csv", "content.tex", "content", btnGrp);
-         row.add(csvTeXButton);
-
-         literalSourceComp = createVerticalBox();
-         csvComp.add(literalSourceComp);
-
-         mapTeXBox = createJCheckBox("tex", "map", "texmap");
-         literalSourceComp.add(mapTeXBox);
-
-         createTeXMapTable();
-         literalSourceComp.add(texMappingsComp);
-         setTeXMapping(false);
-      }
 
       if (isWrite())
       {
@@ -681,6 +839,239 @@ public class IOSettingsPanel extends JPanel
       return subTag;
    }
 
+   protected void formatChanged()
+   {
+      if (isFileFormatSelected(FILE_FORMAT_ANY_TEX))
+      {
+         if (cardLayout != null)
+         {
+            cardLayout.show(cardComp, "tex");
+         }
+      }
+      else
+      {
+         if (cardLayout != null)
+         {
+            cardLayout.show(cardComp, "nontex");
+         }
+
+         if (isFileFormatSelected(FILE_FORMAT_CSV_OR_TSV))
+         {
+            csvTsvOnlyComp.setVisible(true);
+
+            if (formatCSVToggleButton instanceof JRadioButton)
+            {
+               if (formatCSVToggleButton.isSelected())
+               {
+                  if (!csvSeparatorButton.isSelected())
+                  {
+                     csvSeparatorButton.setSelected(true);
+                     csvSepField.setEnabled(true);
+                  }
+               }
+               else if (formatTSVToggleButton.isSelected()
+                       && !tabSeparatorButton.isSelected())
+               {
+                  tabSeparatorButton.setSelected(true);
+                  csvSepField.setEnabled(false);
+               }
+            }
+         }
+         else if (csvTsvOnlyComp != null)
+         {
+            csvTsvOnlyComp.setVisible(false);
+         }
+
+         if (isFileFormatSelected(FILE_FORMAT_CSV_OR_TSV
+              | FILE_FORMAT_ANY_SPREADSHEET))
+         {
+            csvSpreadComp.setVisible(true);
+         }
+         else if (csvSpreadComp != null)
+         {
+            csvSpreadComp.setVisible(false);
+         }
+
+         if (sqlPanel != null)
+         {
+            sqlPanel.setVisible(isFileFormatSelected(FILE_FORMAT_FLAG_SQL));
+         }
+      }
+   }
+
+   protected void updateFormatModifiers()
+   {
+      formatModifiers = 0;
+
+      if (formatSingleSelection)
+      {
+         if (formatTeXToggleButton != null
+               && formatTeXToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_ANY_TEX;
+         }
+         else if (formatDTLTEXToggleButton != null
+               && formatDTLTEXToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_DTLTEX
+                            | FILE_FORMAT_FLAG_DTLTEX2
+                            | FILE_FORMAT_FLAG_DTLTEX3;
+         }
+         else if (formatDTLTEX2ToggleButton != null
+               && formatDTLTEX2ToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_DTLTEX2;
+         }
+         else if (formatDTLTEX3ToggleButton != null
+               && formatDTLTEX3ToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_DTLTEX3;
+         }
+         else if (formatDBTEXToggleButton != null
+               && formatDBTEXToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_DBTEX
+                            | FILE_FORMAT_FLAG_DBTEX2
+                            | FILE_FORMAT_FLAG_DBTEX3;
+         }
+         else if (formatDBTEX2ToggleButton != null
+               && formatDBTEX2ToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_DBTEX2;
+         }
+         else if (formatDBTEX3ToggleButton != null
+               && formatDBTEX3ToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_DBTEX3;
+         }
+         else if (formatCSVToggleButton != null
+               && formatCSVToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_CSV;
+         }
+         else if (formatTSVToggleButton != null
+               && formatTSVToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_TSV;
+         }
+         else if (formatODSToggleButton != null
+               && formatODSToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_ODS;
+         }
+         else if (formatFODSToggleButton != null
+               && formatFODSToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_FODS;
+         }
+         else if (formatXLSToggleButton != null
+               && formatXLSToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_XLS;
+         }
+         else if (formatXLSXToggleButton != null
+               && formatXLSXToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_XLSX;
+         }
+         else if (formatSQLToggleButton != null
+               && formatSQLToggleButton.isSelected())
+         {
+            formatModifiers = FILE_FORMAT_FLAG_SQL;
+         }
+      }
+      else
+      {
+         if (formatTeXToggleButton != null
+               && formatTeXToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_ANY_TEX;
+         }
+
+         if (formatDTLTEXToggleButton != null
+               && formatDTLTEXToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_DTLTEX
+                            | FILE_FORMAT_FLAG_DTLTEX2
+                            | FILE_FORMAT_FLAG_DTLTEX3;
+         }
+
+         if (formatDTLTEX2ToggleButton != null
+               && formatDTLTEX2ToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_DTLTEX2;
+         }
+
+         if (formatDTLTEX3ToggleButton != null
+               && formatDTLTEX3ToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_DTLTEX3;
+         }
+
+         if (formatDBTEXToggleButton != null
+               && formatDBTEXToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_DBTEX
+                            | FILE_FORMAT_FLAG_DBTEX2
+                            | FILE_FORMAT_FLAG_DBTEX3;
+         }
+
+         if (formatDBTEX2ToggleButton != null
+               && formatDBTEX2ToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_DBTEX2;
+         }
+
+         if (formatDBTEX3ToggleButton != null
+               && formatDBTEX3ToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_DBTEX3;
+         }
+
+         if (formatCSVToggleButton != null
+               && formatCSVToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_CSV;
+         }
+
+         if (formatTSVToggleButton != null
+               && formatTSVToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_TSV;
+         }
+
+         if (formatODSToggleButton != null
+               && formatODSToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_ODS;
+         }
+
+         if (formatFODSToggleButton != null
+               && formatFODSToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_FODS;
+         }
+
+         if (formatXLSToggleButton != null
+               && formatXLSToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_XLS;
+         }
+
+         if (formatXLSXToggleButton != null
+               && formatXLSXToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_XLSX;
+         }
+
+         if (formatSQLToggleButton != null
+               && formatSQLToggleButton.isSelected())
+         {
+            formatModifiers |= FILE_FORMAT_FLAG_SQL;
+         }
+      }
+   }
+
    @Override
    public void actionPerformed(ActionEvent evt)
    {
@@ -688,34 +1079,16 @@ public class IOSettingsPanel extends JPanel
 
       if ("format".equals(action))
       {
-         if (csvComp != null)
-         {
-            if (isFileFormatSelected(FILE_FORMAT_CSV_OR_TSV))
-            {
-               csvComp.setVisible(true);
+         int oldModifiers = formatModifiers;
+         updateFormatModifiers();
 
-               if (formatCSVToggleButton instanceof JRadioButton)
-               {
-                  if (formatCSVToggleButton.isSelected())
-                  {
-                     if (!csvSeparatorButton.isSelected())
-                     {
-                        csvSeparatorButton.setSelected(true);
-                        csvSepField.setEnabled(true);
-                     }
-                  }
-                  else if (formatTSVToggleButton.isSelected()
-                          && !tabSeparatorButton.isSelected())
-                  {
-                     tabSeparatorButton.setSelected(true);
-                     csvSepField.setEnabled(false);
-                  }
-               }
-            }
-            else
-            {
-               csvComp.setVisible(false);
-            }
+         formatChanged();
+
+         if (oldModifiers != formatModifiers)
+         {
+            fireFileFormatChange(
+              new FileFormatSelectionChangeEvent(this,
+                     oldModifiers, formatModifiers));
          }
       }
       else if ("sepchar".equals(action))
@@ -849,7 +1222,7 @@ public class IOSettingsPanel extends JPanel
 
    public void setSeparator(int sep)
    {
-      if (csvComp != null && sep > 0)
+      if (csvTsvOnlyComp != null && sep > 0)
       {
          if (sep == '\t')
          {
@@ -1091,14 +1464,26 @@ public class IOSettingsPanel extends JPanel
 
    public boolean isHeaderIncluded()
    {
-      return (incHeaderBox == null || incHeaderBox.isSelected());
+      if (isFileFormatSelected(FILE_FORMAT_ANY_TEX))
+      {
+         return texIncHeaderBox != null && texIncHeaderBox.isSelected();
+      }
+      else
+      {
+         return csvIncHeaderBox != null && csvIncHeaderBox.isSelected();
+      }
    }
 
    public void setHeaderIncluded(boolean headerIncluded)
    {
-      if (incHeaderBox != null)
+      if (csvIncHeaderBox != null)
       {
-         incHeaderBox.setSelected(headerIncluded);
+         csvIncHeaderBox.setSelected(headerIncluded);
+      }
+
+      if (texIncHeaderBox != null)
+      {
+         texIncHeaderBox.setSelected(headerIncluded);
       }
    }
 
@@ -1185,118 +1570,178 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
+      if ((formatModifiers & FILE_FORMAT_FLAG_ODS) == FILE_FORMAT_FLAG_ODS)
+      {
+         if (formatODSToggleButton != null
+          && formatODSToggleButton.isSelected())
+         {
+            return true;
+         }
+      }
+
+      if ((formatModifiers & FILE_FORMAT_FLAG_FODS) == FILE_FORMAT_FLAG_FODS)
+      {
+         if (formatFODSToggleButton != null
+          && formatFODSToggleButton.isSelected())
+         {
+            return true;
+         }
+      }
+
+      if ((formatModifiers & FILE_FORMAT_FLAG_XLS) == FILE_FORMAT_FLAG_XLS)
+      {
+         if (formatXLSToggleButton != null
+          && formatXLSToggleButton.isSelected())
+         {
+            return true;
+         }
+      }
+
+      if ((formatModifiers & FILE_FORMAT_FLAG_XLSX) == FILE_FORMAT_FLAG_XLSX)
+      {
+         if (formatXLSXToggleButton != null
+          && formatXLSXToggleButton.isSelected())
+         {
+            return true;
+         }
+      }
+
+      if ((formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL)
+      {
+         if (formatSQLToggleButton != null
+          && formatSQLToggleButton.isSelected())
+         {
+            return true;
+         }
+      }
+
       return false;
    }
 
    public void setSelectedFileFormat(int formatModifiers)
    {
-      boolean csvCompVisible = false;
+      int oldModifiers = this.formatModifiers;
+      this.formatModifiers = formatModifiers;
 
       if (formatTeXToggleButton != null)
       {
          formatTeXToggleButton.setSelected(
           (formatModifiers & FILE_FORMAT_FLAG_TEX) == FILE_FORMAT_FLAG_TEX);
-
-         if (formatTeXToggleButton.isSelected())
-         {
-            csvCompVisible = false;
-         }
       }
 
       if (formatDBTEXToggleButton != null)
       {
          formatDBTEXToggleButton.setSelected(
           (formatModifiers & FILE_FORMAT_FLAG_DBTEX) == FILE_FORMAT_FLAG_DBTEX);
-
-         if (formatDBTEXToggleButton.isSelected())
-         {
-            csvCompVisible = false;
-         }
       }
 
       if (formatDBTEX2ToggleButton != null)
       {
          formatDBTEX2ToggleButton.setSelected(
           (formatModifiers & FILE_FORMAT_FLAG_DBTEX2) == FILE_FORMAT_FLAG_DBTEX2);
-
-         if (formatDBTEX2ToggleButton.isSelected())
-         {
-            csvCompVisible = false;
-         }
       }
 
       if (formatDBTEX3ToggleButton != null)
       {
          formatDBTEX3ToggleButton.setSelected(
           (formatModifiers & FILE_FORMAT_FLAG_DBTEX3) == FILE_FORMAT_FLAG_DBTEX3);
-
-         if (formatDBTEX3ToggleButton.isSelected())
-         {
-            csvCompVisible = false;
-         }
       }
 
       if (formatDTLTEXToggleButton != null)
       {
          formatDTLTEXToggleButton.setSelected(
           (formatModifiers & FILE_FORMAT_FLAG_DTLTEX) == FILE_FORMAT_FLAG_DTLTEX);
-
-         if (formatDTLTEXToggleButton.isSelected())
-         {
-            csvCompVisible = false;
-         }
       }
 
       if (formatDTLTEX2ToggleButton != null)
       {
          formatDTLTEX2ToggleButton.setSelected(
           (formatModifiers & FILE_FORMAT_FLAG_DTLTEX2) == FILE_FORMAT_FLAG_DTLTEX2);
-
-         if (formatDTLTEX2ToggleButton.isSelected())
-         {
-            csvCompVisible = false;
-         }
       }
 
       if (formatDTLTEX3ToggleButton != null)
       {
          formatDTLTEX3ToggleButton.setSelected(
           (formatModifiers & FILE_FORMAT_FLAG_DTLTEX3) == FILE_FORMAT_FLAG_DTLTEX3);
-
-         if (formatDTLTEX3ToggleButton.isSelected())
-         {
-            csvCompVisible = false;
-         }
       }
 
       if (formatCSVToggleButton != null)
       {
          formatCSVToggleButton.setSelected(
           (formatModifiers & FILE_FORMAT_FLAG_CSV) == FILE_FORMAT_FLAG_CSV);
-
-         if (formatCSVToggleButton.isSelected())
-         {
-            csvCompVisible = true;
-            csvSeparatorButton.setSelected(true);
-         }
       }
 
       if (formatTSVToggleButton != null)
       {
          formatTSVToggleButton.setSelected(
           (formatModifiers & FILE_FORMAT_FLAG_TSV) == FILE_FORMAT_FLAG_TSV);
-
-         if (formatTSVToggleButton.isSelected())
-         {
-            csvCompVisible = true;
-            tabSeparatorButton.setSelected(true);
-         }
       }
 
-      if (csvComp != null && csvComp.isVisible() != csvCompVisible)
+      if (formatODSToggleButton != null)
       {
-         csvComp.setVisible(csvCompVisible);
+         formatODSToggleButton.setSelected(
+          (formatModifiers & FILE_FORMAT_FLAG_ODS) == FILE_FORMAT_FLAG_ODS);
       }
+
+      if (formatFODSToggleButton != null)
+      {
+         formatFODSToggleButton.setSelected(
+          (formatModifiers & FILE_FORMAT_FLAG_FODS) == FILE_FORMAT_FLAG_FODS);
+      }
+
+      if (formatXLSToggleButton != null)
+      {
+         formatXLSToggleButton.setSelected(
+          (formatModifiers & FILE_FORMAT_FLAG_XLS) == FILE_FORMAT_FLAG_XLS);
+      }
+
+      if (formatXLSXToggleButton != null)
+      {
+         formatXLSXToggleButton.setSelected(
+          (formatModifiers & FILE_FORMAT_FLAG_XLSX) == FILE_FORMAT_FLAG_XLSX);
+      }
+
+      if (formatSQLToggleButton != null)
+      {
+         formatSQLToggleButton.setSelected(
+          (formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL);
+      }
+
+      formatChanged();
+
+      if (oldModifiers != formatModifiers)
+      {
+         fireFileFormatChange(
+          new FileFormatSelectionChangeEvent(this, oldModifiers, formatModifiers));
+      }
+   }
+
+   protected void fireFileFormatChange(FileFormatSelectionChangeEvent evt)
+   {
+      if (fileFormatChangeListeners != null)
+      {
+         for (FileFormatSelectionChangeListener listener : fileFormatChangeListeners)
+         {
+            listener.fileFormatSelectionChanged(evt);
+
+            if (evt.isConsumed())
+            {
+               break;
+            }
+         } 
+      }
+   }
+
+   public void addFileFormatSelectionChangeListener(
+      FileFormatSelectionChangeListener listener)
+   {
+      if (fileFormatChangeListeners == null)
+      {
+         fileFormatChangeListeners
+           = new Vector<FileFormatSelectionChangeListener>();
+      }
+
+      fileFormatChangeListeners.add(listener);
    }
 
    public void setFileFormatComponentVisible(boolean visible)
@@ -1307,6 +1752,22 @@ public class IOSettingsPanel extends JPanel
    public boolean isFileFormatComponentVisible()
    {
       return fileFormatComp.isVisible();
+   }
+
+   public void setCsvEncoding(Charset charset)
+   {
+      if (csvEncodingBox != null)
+      {
+         csvEncodingBox.setSelectedItem(charset);
+      }
+   }
+
+   public void setTeXEncoding(Charset charset)
+   {
+      if (texEncodingBox != null)
+      {
+         texEncodingBox.setSelectedItem(charset);
+      }
    }
 
    public boolean isRead()
@@ -1798,12 +2259,22 @@ public class IOSettingsPanel extends JPanel
    JToggleButton formatDBTEX3ToggleButton;
    JToggleButton formatCSVToggleButton;
    JToggleButton formatTSVToggleButton;
+   JToggleButton formatODSToggleButton;
+   JToggleButton formatFODSToggleButton;
+   JToggleButton formatXLSXToggleButton;
+   JToggleButton formatXLSToggleButton;
+   JToggleButton formatSQLToggleButton;
 
    int formatModifiers, ioModifiers;
+   boolean formatSingleSelection;
 
-   JCheckBox incHeaderBox, trimElementBox;
+   JCheckBox csvIncHeaderBox, texIncHeaderBox, trimElementBox;
 
-   JComponent fileFormatComp, csvComp;
+   JComponent fileFormatComp, csvSpreadComp, csvTsvOnlyComp, allNonTeXComp,
+     texCardComp, nonTeXCardComp, cardComp;
+
+   CardLayout cardLayout;
+
    JRadioButton csvSeparatorButton, tabSeparatorButton;
    CharField csvSepField;
 
@@ -1830,6 +2301,10 @@ public class IOSettingsPanel extends JPanel
    TeXMapModel texMapModel;
    JButton removeMapButton, editMapButton;
    JTable texMapTable;
+
+   SqlPanel sqlPanel;
+
+   Vector<FileFormatSelectionChangeListener> fileFormatChangeListeners;
 
    /**
     * Input file contains LaTeX code. Not applicable for output
@@ -1890,13 +2365,38 @@ public class IOSettingsPanel extends JPanel
    public static final int FILE_FORMAT_FLAG_TSV = 1 << 8;
 
    /**
+    * ODS (zip) file format.
+    */
+   public static final int FILE_FORMAT_FLAG_ODS = 1 << 9;
+
+   /**
+    * FODS (flat xml) file format.
+    */
+   public static final int FILE_FORMAT_FLAG_FODS = 1 << 10;
+
+   /**
+    * XLSX (Excel xml) file format.
+    */
+   public static final int FILE_FORMAT_FLAG_XLSX = 1 << 11;
+
+   /**
+    * XLS (Excel) file format.
+    */
+   public static final int FILE_FORMAT_FLAG_XLS = 1 << 12;
+
+   /**
+    * SQL format.
+    */
+   public static final int FILE_FORMAT_FLAG_SQL = 1 << 13;
+
+   /**
     * Either CSV or TSV.
     */
    public static final int FILE_FORMAT_CSV_OR_TSV =
      FILE_FORMAT_FLAG_CSV | FILE_FORMAT_FLAG_TSV;
 
    /**
-    * Any TeX format. That is, not CSV or TSV.
+    * Any TeX format.
     */
    public static final int FILE_FORMAT_ANY_TEX =
      FILE_FORMAT_FLAG_TEX
@@ -1906,6 +2406,23 @@ public class IOSettingsPanel extends JPanel
    | FILE_FORMAT_FLAG_DBTEX
    | FILE_FORMAT_FLAG_DBTEX2
    | FILE_FORMAT_FLAG_DBTEX3;
+
+   /**
+    * Any spreadsheet format.
+    */
+   public static final int FILE_FORMAT_ANY_SPREADSHEET =
+     FILE_FORMAT_FLAG_ODS
+   | FILE_FORMAT_FLAG_FODS
+   | FILE_FORMAT_FLAG_XLSX
+   | FILE_FORMAT_FLAG_XLS;
+
+   /**
+    * Any non-TeX format.
+    */
+   public static final int FILE_FORMAT_ANY_NON_TEX =
+     FILE_FORMAT_CSV_OR_TSV
+   | FILE_FORMAT_ANY_SPREADSHEET
+   | FILE_FORMAT_FLAG_SQL;
 
    /**
     * Read settings.

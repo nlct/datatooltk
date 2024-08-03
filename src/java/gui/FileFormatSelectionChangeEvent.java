@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2024 Nicola L.C. Talbot
+    Copyright (C) 2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -16,26 +16,39 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.dickimawbooks.datatooltk.io;
+package com.dickimawbooks.datatooltk.gui;
 
-/**
- * Exception thrown when an error occurs while trying to import a
- * database.
- */
-public class DatatoolImportException extends Exception
+public class FileFormatSelectionChangeEvent
 {
-   public DatatoolImportException(String message)
+   public FileFormatSelectionChangeEvent(Object source,
+     int oldModifiers, int newModifiers)
    {
-      super(message);
+      this.source = source;
+      this.oldModifiers = oldModifiers;
+      this.newModifiers = newModifiers;
    }
 
-   public DatatoolImportException(String message, Throwable cause)
+   public boolean isConsumed()
    {
-      super(message, cause);
+      return consumed;
    }
 
-   public DatatoolImportException(Throwable cause)
+   public Object getSource()
    {
-      super(cause);
+      return source;
    }
+
+   public int getOldModifiers()
+   {
+      return oldModifiers;
+   }
+
+   public int getNewModifiers()
+   {
+      return newModifiers;
+   }
+
+   Object source;
+   int oldModifiers, newModifiers;
+   boolean consumed = false;
 }

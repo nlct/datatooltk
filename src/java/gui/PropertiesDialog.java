@@ -214,14 +214,16 @@ public class PropertiesDialog extends JDialog
    private JComponent createCsvTab()
    {
       DatatoolGuiResources resources = gui.getResources();
-      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent csvTab = addTab("csv");
 
       csvSettingsPanel = new IOSettingsPanel(this, resources, "preferences",
-        IOSettingsPanel.IO_IN, IOSettingsPanel.FILE_FORMAT_CSV_OR_TSV,
+        IOSettingsPanel.IO_IN, 
+        IOSettingsPanel.FILE_FORMAT_CSV_OR_TSV
+      | IOSettingsPanel.FILE_FORMAT_ANY_SPREADSHEET,
         true, false);
 
+      csvSettingsPanel.setSelectedFileFormat(IOSettingsPanel.FILE_FORMAT_FLAG_CSV);
       csvSettingsPanel.setFileFormatComponentVisible(false);
 
       csvTab.add(csvSettingsPanel);
@@ -231,51 +233,10 @@ public class PropertiesDialog extends JDialog
 
    private JComponent createSqlTab()
    {
-      DatatoolGuiResources resources = gui.getResources();
-      MessageHandler messageHandler = gui.getMessageHandler();
-
       JComponent sqlTab = addTab("sql");
 
-      JLabelGroup labelGrp = new JLabelGroup();
-
-      JComponent box = createNewRow(sqlTab);
-
-      hostField = new JTextField(16);
-
-      box.add(createLabel(labelGrp, "preferences.sql.host", hostField));
-      box.add(hostField);
-
-      box = createNewRow(sqlTab);
-
-      portField = new NonNegativeIntField(3306);
-
-      box.add(createLabel(labelGrp, "preferences.sql.port", portField));
-
-      box.add(portField);
-
-      box = createNewRow(sqlTab);
-
-      prefixField = new JTextField(16);
-
-      box.add(createLabel(labelGrp, "preferences.sql.prefix", prefixField));
-      box.add(prefixField);
-
-      box = createNewRow(sqlTab);
-
-      databaseField = new JTextField(16);
-
-      box.add(createLabel(labelGrp, "preferences.sql.database", databaseField));
-      box.add(databaseField);
-
-      box = createNewRow(sqlTab);
-
-      userField = new JTextField(16);
-
-      box.add(createLabel(labelGrp, "preferences.sql.user", userField));
-      box.add(userField);
-
-      wipeBox = createCheckBox("preferences.sql", "wipe");
-      sqlTab.add(wipeBox);
+      sqlSettingsPanel = new SqlPanel(gui, "preferences");
+      sqlTab.add(sqlSettingsPanel);
 
       return sqlTab;
    }
@@ -894,18 +855,7 @@ public class PropertiesDialog extends JDialog
 
       csvSettingsPanel.setCsvSettingsFrom(settings);
 
-      hostField.setText(settings.getSqlHost());
-      prefixField.setText(settings.getSqlPrefix());
-      portField.setValue(settings.getSqlPort());
-      wipeBox.setSelected(settings.isWipePasswordEnabled());
-
-      String user = settings.getSqlUser();
-
-      userField.setText(user == null ? "" : user);
-
-      String db = settings.getSqlDbName();
-
-      databaseField.setText(db == null ? "" : db);
+      sqlSettingsPanel.resetFrom(settings);
 
       stripSolnEnvBox.setSelected(settings.isSolutionEnvStripped());
 
@@ -1387,36 +1337,7 @@ public class PropertiesDialog extends JDialog
 
       csvSettingsPanel.applyCsvSettingsTo(settings);
 
-      String host = hostField.getText();
-
-      if (host.isEmpty())
-      {
-         throw new IllegalArgumentException( 
-            getMessageHandler().getLabel("error.missing_host"));
-      }
-
-      settings.setSqlHost(host);
-
-      String prefix = prefixField.getText();
-
-      if (prefix.isEmpty())
-      {
-         throw new IllegalArgumentException(
-            getMessageHandler().getLabel("error.missing_prefix"));
-      }
-
-      settings.setSqlPrefix(prefix);
-
-      if (portField.getText().isEmpty())
-      {
-         throw new IllegalArgumentException(
-            getMessageHandler().getLabel("error.missing_port"));
-      }
-
-      settings.setSqlPort(portField.getValue());
-
-      settings.setSqlUser(userField.getText());
-      settings.setSqlDbName(databaseField.getText());
+      sqlSettingsPanel.applyTo(settings);
 
       settings.setDefaultOutputFormat(outputFormatBox.getSelectedItem().toString());
       settings.setOverrideInputFormat(overrideInputFormatBox.isSelected());
@@ -1621,14 +1542,13 @@ public class PropertiesDialog extends JDialog
 
    private IOSettingsPanel csvSettingsPanel;
 
-   private JCheckBox wipeBox, 
-      hasSeedBox, stripSolnEnvBox, autoTrimBox;
+   private JCheckBox hasSeedBox, stripSolnEnvBox, autoTrimBox;
 
    private FileField customFileField, perlFileField;
 
    private JFileChooser fileChooser;
 
-   private NonNegativeIntField portField, seedField;
+   private NonNegativeIntField seedField;
 
    private EditorPropertiesComponent editorPropComp;
 
@@ -1636,7 +1556,7 @@ public class PropertiesDialog extends JDialog
 
    private SpinnerNumberModel[] cellWidthModels;
 
-   private JTextField hostField, prefixField, databaseField, userField;
+   private SqlPanel sqlSettingsPanel;
 
    private JButton removeCurrencyButton, editCurrencyButton;
 

@@ -249,6 +249,45 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <entry key="about.version">{0} {1} ({2})</entry>
 
+<!-- Import Dialog -->
+
+<entry key="import.title">Import Data</entry>
+
+<entry key="import.file">File:</entry>
+<entry key="import.file.mnemonic">F</entry>
+
+<entry key="import.select">SELECT </entry>
+<entry key="import.select.mnemonic">L</entry>
+
+<entry key="import.csvtsv">CSV/TSV Settings</entry>
+<entry key="import.csvtsvspread">CSV/TSV and Spreadsheets</entry>
+<entry key="import.sql">SQL Settings</entry>
+<entry key="import.nontex">Non-TeX Settings</entry>
+
+<entry key="message.importsql.select_placeholder">* FROM tablename</entry>
+
+<entry key="import.sql.select">SELECT </entry>
+<entry key="import.sql.select.mnemonic">L</entry>
+
+<entry key="import.sql.database">Database: </entry>
+<entry key="import.sql.database.mnemonic">D</entry>
+
+<entry key="import.sql.host">Host: </entry>
+<entry key="import.sql.host.mnemonic">S</entry>
+
+<entry key="import.sql.prefix">Prefix: </entry>
+<entry key="import.sql.prefix.mnemonic">X</entry>
+
+<entry key="import.sql.port">Port: </entry>
+<entry key="import.sql.port.mnemonic">P</entry>
+
+<entry key="import.sql.user">User Name: </entry>
+<entry key="import.sql.user.mnemonic">U</entry>
+
+<entry key="import.sql.wipe">Wipe Password After Use</entry>
+<entry key="import.sql.wipe.mnemonic">W</entry>
+
+
 <!-- I/O Settings Panel -->
 
 <entry key="iosettings.format">File Format:</entry>
@@ -262,6 +301,11 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="iosettings.format.dbtex-3">dbtex v3.0</entry>
 <entry key="iosettings.format.csv">CSV</entry>
 <entry key="iosettings.format.tsv">TSV</entry>
+<entry key="iosettings.format.ods">ODS</entry>
+<entry key="iosettings.format.fods">FODS</entry>
+<entry key="iosettings.format.xls">XLS</entry>
+<entry key="iosettings.format.xlsx">XLSX</entry>
+<entry key="iosettings.format.sql">SQL</entry>
 
 <entry key="iosettings.element.trim">Trim elements</entry>
 
@@ -283,14 +327,12 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="iosettings.csv.delim.mnemonic">D</entry>
 
 <entry key="iosettings.csv.strictquotes">Strict quotes</entry>
-<entry key="iosettings.csv.strictquotes.mnemonic">R</entry>
 <entry key="iosettings.csv.strictquotes.tooltip">If set, characters outside of quotes will be ignored</entry>
 
 <entry key="iosettings.csv.skiplines">Number of lines to skip at the start:</entry>
 <entry key="iosettings.csv.skiplines.mnemonic">K</entry>
 
 <entry key="iosettings.csv.blank">Blank rows:</entry>
-<entry key="iosettings.csv.blank.mnemonic">B</entry>
 
 <entry key="iosettings.csv.blank.ignore">Ignore</entry>
 <entry key="iosettings.csv.blank.empty-row">Create empty row</entry>
@@ -391,7 +433,6 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="preferences.csv.skiplines.mnemonic">K</entry>
 
 <entry key="preferences.csv.strictquotes">Strict quotes</entry>
-<entry key="preferences.csv.strictquotes.mnemonic">R</entry>
 <entry key="preferences.csv.strictquotes.tooltip">If set, characters outside of quotes will be ignored</entry>
 
 
@@ -673,6 +714,9 @@ the \strong'{'lazy'}' dog.
 
 <entry key="importsql.title">Import SQL Data</entry>
 
+<entry key="importsql.select">SELECT </entry>
+<entry key="importsql.select.mnemonic">L</entry>
+
 <entry key="importsql.database">Database: </entry>
 <entry key="importsql.database.mnemonic">D</entry>
 
@@ -684,9 +728,6 @@ the \strong'{'lazy'}' dog.
 
 <entry key="importsql.port">Port: </entry>
 <entry key="importsql.port.mnemonic">P</entry>
-
-<entry key="importsql.select">SELECT </entry>
-<entry key="importsql.select.mnemonic">L</entry>
 
 <entry key="importsql.user">User Name: </entry>
 <entry key="importsql.user.mnemonic">U</entry>
@@ -918,6 +959,9 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="button.exit.tooltip">Force exit without saving</entry>
 
 <entry key="button.import">Import</entry>
+
+<entry key="button.choose_file">Choose</entry>
+<entry key="button.choose_file.tooltip">Open file chooser</entry>
 
 <entry key="button.help">Help</entry>
 <entry key="button.help.mnemonic">H</entry>
@@ -1363,6 +1407,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.missing_custom_file">You have opted for a custom start up directory, but you haven't specified a directory</entry>
 <entry key="error.missing_dbname">Missing Database Name</entry>
 <entry key="error.missing_delim">No delimiter specified</entry>
+<entry key="error.missing_filename">Missing filename</entry>
 <entry key="error.missing_host">No SQL host specified</entry>
 <entry key="error.missing_key">Header key is missing</entry>
 <entry key="error.missing_port">No SQL port specified</entry>
@@ -1412,5 +1457,11 @@ Extension ''{1}'' is forbidden for log files</entry>
 <entry key="error.unknown_key">Unknown header key ''{0}''</entry>
 
 <entry key="error.xlsx_not_supported">Sorry, .xlsx files not supported.</entry>
+
+<entry key="error.unsupported_mimetype">Unsupported mimetype.</entry>
+<entry key="error.unsupported_xml">Unsupported XML format.</entry>
+<entry key="error.empty_file">File appears to be empty.</entry>
+
+<entry key="error.expected_mimetype_but_found">Expected mimetype ''{0}'' but found ''{1}''</entry>
 
 </properties>
