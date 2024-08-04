@@ -33,6 +33,11 @@ public class FileSelectionChangeEvent
       return consumed;
    }
 
+   public void consume()
+   {
+      consumed = true;
+   }
+
    public Object getSource()
    {
       return source;
