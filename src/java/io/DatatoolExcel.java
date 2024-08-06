@@ -37,6 +37,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
    public DatatoolExcel(DatatoolSettings settings)
    {
       this.settings = settings;
+      this.importSettings = settings.getImportSettings();
    }
 
    public MessageHandler getMessageHandler()
@@ -45,17 +46,18 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
    }
 
    @Override
-   public DatatoolDb importData(IOSettings ioSettings, String source)
+   public DatatoolDb importData(ImportSettings importSettings, String source)
       throws DatatoolImportException
    {
-      return importData(source);
+      this.importSettings = importSettings;
+      return importData(new File(source));
    }
 
    @Override
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {
-      return importData(new File(source));
+      return importData(settings.getImportSettings(), source);
    }
 
    public String[] getSheetNames(File file)
@@ -104,27 +106,16 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          Workbook workBook = WorkbookFactory.create(file);
          Sheet sheet;
 
-         String sheetRef = settings.getSheetRef();
+         Object sheetRef = importSettings.getSheetRef();
 
-         int sheetIdx = 0;
-         String sheetName = null;
-
-         try
+         if (sheetRef instanceof Number)
          {
-            sheetIdx = Integer.parseInt(sheetRef);
-         }
-         catch (NumberFormatException e)
-         {
-            sheetName = sheetRef;
-         }
-
-         if (sheetName == null)
-         {
-            sheet = workBook.getSheetAt(sheetIdx);
+            sheet = workBook.getSheetAt(((Number)sheetRef).intValue());
             db.setName(sheet.getSheetName());
          }
          else
          {
+            String sheetName = sheetRef.toString();
             sheet = workBook.getSheet(sheetName);
             db.setName(sheetName);
          }
@@ -138,9 +129,9 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          }
 
          Vector<String> fields = new Vector<String>();
-         CsvBlankOption blankOpt = settings.getCsvBlankOption();
+         CsvBlankOption blankOpt = importSettings.getBlankRowAction();
 
-         int skipLines = settings.getCSVskiplines();
+         int skipLines = importSettings.getSkipLines();
 
          for (int i = 0; i < skipLines; i++)
          {
@@ -150,7 +141,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
             }
          }
 
-         if (settings.hasCSVHeader())
+         if (importSettings.hasHeaderRow())
          {
             // First row is header
 
@@ -288,7 +279,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          return field;
       }
 
-      if (!settings.isTeXMappingOn())
+      if (!importSettings.isMapCharsOn())
       {
          return DatatoolDb.PATTERN_PARAGRAPH.matcher(field)
             .replaceAll("\\\\DTLpar ");
@@ -305,7 +296,7 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
          int c = value.codePointAt(j);
          j += Character.charCount(c);
 
-         String map = settings.getTeXMap(c);
+         String map = importSettings.getTeXMap(c);
 
          if (map == null)
          {
@@ -322,4 +313,5 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
    }
 
    private DatatoolSettings settings;
+   private ImportSettings importSettings;
 }

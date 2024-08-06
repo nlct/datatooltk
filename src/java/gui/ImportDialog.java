@@ -410,24 +410,25 @@ public class ImportDialog extends JDialog
          source = filename;
       }
 
-      DataToolTeXParserListener listener = settings.getTeXParserListener();
-      IOSettings ioSettings = listener.getIOSettings();
-
-      settingsPanel.applySelectedTo(ioSettings);
+      ImportSettings importSettings;
 
       boolean saveSelected = true;// TODO??
 
       if (saveSelected)
       {
-         if (settingsPanel.isFileFormatSelected(
-               IOSettingsPanel.FILE_FORMAT_CSV_OR_TSV))
-         {
-            settingsPanel.applyCsvSettingsTo(settings);
-         }
+         importSettings = settings.getImportSettings();
+      }
+      else
+      {
+         // TODO?? (map and wipe password would need to be moved)
+         importSettings = new ImportSettings(settings);
       }
 
+      settingsPanel.applyTo(importSettings);
+
       LoadSettings loadSettings = new LoadSettings(settings);
-      loadSettings.setIOSettings(ioSettings);
+      loadSettings.setImportSettings(importSettings);
+
       DatatoolImport imp;
 
       if (settingsPanel.isFileFormatSelected(
@@ -442,12 +443,12 @@ public class ImportDialog extends JDialog
       else if (settingsPanel.isFileFormatSelected(
            IOSettingsPanel.FILE_FORMAT_FLAG_ODS))
       {
-         imp = new DatatoolOpenDoc(settings);
+         imp = new DatatoolOpenDoc(settings, false);
       }
       else if (settingsPanel.isFileFormatSelected(
            IOSettingsPanel.FILE_FORMAT_FLAG_FODS))
       {
-         imp = new DatatoolFlatOpenDoc(settings);
+         imp = new DatatoolOpenDoc(settings, true);
       }
       else if (settingsPanel.isFileFormatSelected(
            IOSettingsPanel.FILE_FORMAT_FLAG_XLS))
@@ -482,7 +483,7 @@ public class ImportDialog extends JDialog
             return;
          }
 
-         settings.setSheetRef(ref.toString());
+         importSettings.setSheetName(ref.toString());
       }
 
       setVisible(false);

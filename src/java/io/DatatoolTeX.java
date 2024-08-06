@@ -188,7 +188,6 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
       }
    }
 
-   @Override
    public DatatoolDb importData(IOSettings ioSettings, String source)
       throws DatatoolImportException
    {
@@ -235,6 +234,32 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
       }
    }
 
+   @Override
+   public DatatoolDb importData(ImportSettings importSettings, String source)
+      throws DatatoolImportException
+   {
+      File file = new File(source);
+
+      try
+      {
+         DataToolTeXParserListener listener = settings.getTeXParserListener();
+         TeXParser parser = listener.getParser();
+         listener.applyCurrentCsvSettings();
+         IOSettings ioSettings = listener.getIOSettings();
+
+         importSettings.applyTo(ioSettings, parser);
+
+         return importData(ioSettings, file,
+           importSettings.isCheckForVerbatimOn());
+      }
+      catch (IOException e)
+      {
+         throw new DatatoolImportException(
+          getMessageHandler().getLabelWithValues("error.import.failed", 
+           file.toString(), e.getMessage()), e);
+      }
+   }
+
    protected TeXPath getTeXPath(FileFormatType format, File file)
     throws IOException
    {
@@ -242,20 +267,19 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
       TeXParser parser = listener.getParser();
 
       TeXPath texPath = new TeXPath(parser, file);
-      String charsetName = null;
+      Charset charset = null;
 
       if (format == FileFormatType.CSV || format == FileFormatType.TSV)
       {
-         charsetName = settings.getCsvEncoding();
+         charset = settings.getCsvEncoding();
       }
       else
       {
-         charsetName = settings.getTeXEncoding();
+         charset = settings.getTeXEncoding();
       }
 
-      if (charsetName != null)
+      if (charset != null)
       {
-         Charset charset = Charset.forName(charsetName);
          texPath.setEncoding(charset);
       }
 

@@ -37,6 +37,7 @@ public class DatatoolProbSoln implements DatatoolImport
    public DatatoolProbSoln(DatatoolSettings settings)
    {
       this.settings = settings;
+      this.importSettings = settings.getImportSettings();
    }
 
    public MessageHandler getMessageHandler()
@@ -45,16 +46,18 @@ public class DatatoolProbSoln implements DatatoolImport
    }
 
    @Override
-   public DatatoolDb importData(IOSettings ioSettings, String source)
-      throws DatatoolImportException
-   {
-      return importData(source);
-   }
-
-   @Override
    public DatatoolDb importData(String source)
       throws DatatoolImportException
    {
+      return importData(settings.getImportSettings(), source);
+   }
+
+   @Override
+   public DatatoolDb importData(ImportSettings importSettings, String source)
+      throws DatatoolImportException
+   {
+       this.importSettings = importSettings;
+
        File file = new File(source);
 
        if (!file.exists())
@@ -149,7 +152,7 @@ public class DatatoolProbSoln implements DatatoolImport
 
          TeXObject question = data.getQuestion(texParser);
          TeXObject answer = data.getAnswer(texParser,
-            settings.isSolutionEnvStripped());
+           importSettings.isStripSolutionEnvOn());
 
          boolean hasVerb = checkElement(question);
 
@@ -271,36 +274,39 @@ public class DatatoolProbSoln implements DatatoolImport
                   list.set(i, prev);
                }
             }
-            else if (name.equals("verb") || name.equals("lstinline"))
+            else if (importSettings.isCheckForVerbatimOn())
             {
-               prev = null;
-               hasVerbatim = true;
-            }
-            else if (name.equals("begin"))
-            {
-               prev = null;
-               TeXObject nextObj = list.get(++i);
-
-               while (nextObj instanceof Ignoreable)
+               if (name.equals("verb") || name.equals("lstinline"))
                {
-                  nextObj = list.get(++i);
-               }
-
-               if (nextObj instanceof Group)
-               {
-                  nextObj = ((Group)nextObj).toList();
-               }
-
-               name = nextObj.format().toLowerCase();
-
-               if (name.endsWith("*"))
-               {
-                  name = name.substring(0, name.length()-1);
-               }
-
-               if (name.equals("verbatim") || name.equals("lstlisting"))
-               {
+                  prev = null;
                   hasVerbatim = true;
+               }
+               else if (name.equals("begin"))
+               {
+                  prev = null;
+                  TeXObject nextObj = list.get(++i);
+
+                  while (nextObj instanceof Ignoreable)
+                  {
+                     nextObj = list.get(++i);
+                  }
+
+                  if (nextObj instanceof Group)
+                  {
+                     nextObj = ((Group)nextObj).toList();
+                  }
+
+                  name = nextObj.format().toLowerCase();
+
+                  if (name.endsWith("*"))
+                  {
+                     name = name.substring(0, name.length()-1);
+                  }
+
+                  if (name.equals("verbatim") || name.equals("lstlisting"))
+                  {
+                     hasVerbatim = true;
+                  }
                }
             }
          }
@@ -338,4 +344,5 @@ public class DatatoolProbSoln implements DatatoolImport
    }
 
    private DatatoolSettings settings;
+   private ImportSettings importSettings;
 }

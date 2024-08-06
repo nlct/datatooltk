@@ -32,6 +32,7 @@ public class DatatoolSql implements DatatoolImport
    public DatatoolSql(DatatoolSettings settings)
    {
       this.settings = settings;
+      this.importSettings = importSettings;
    }
 
    public MessageHandler getMessageHandler()
@@ -40,16 +41,18 @@ public class DatatoolSql implements DatatoolImport
    }
 
    @Override
-   public DatatoolDb importData(IOSettings ioSettings, String selectQuery)
-      throws DatatoolImportException
-   {
-      return importData(selectQuery);
-   }
-
-   @Override
    public DatatoolDb importData(String selectQuery)
      throws DatatoolImportException
    {
+      return importData(settings.getImportSettings(), selectQuery);
+   }
+
+   @Override
+   public DatatoolDb importData(ImportSettings importSettings, String selectQuery)
+      throws DatatoolImportException
+   {
+      this.importSettings = importSettings;
+
       try
       {
          establishConnection();
@@ -179,9 +182,9 @@ public class DatatoolSql implements DatatoolImport
 
    public String mapFieldIfRequired(String value)
    {
-      if (!settings.isTeXMappingOn())
+      if (!importSettings.isMapCharsOn())
       {
-         if (!hasVerbatim)
+         if (!hasVerbatim && importSettings.isCheckForVerbatimOn())
          {
             hasVerbatim = DatatoolDb.checkForVerbatim(value);
          }
@@ -205,7 +208,7 @@ public class DatatoolSql implements DatatoolImport
          int c = value.codePointAt(j);
          j += Character.charCount(c);
 
-         String map = settings.getTeXMap(c);
+         String map = importSettings.getTeXMap(c);
 
          if (map == null)
          {
@@ -229,11 +232,17 @@ public class DatatoolSql implements DatatoolImport
       }
 
       connection = DriverManager.getConnection(
-       settings.getSqlPrefix()+settings.getSqlHost()+":"
-       + settings.getSqlPort()+"/"+settings.getSqlDbName(),
-       settings.getSqlUser(), new String(settings.getSqlPassword()));
+        String.format("%s%s:%d/%s",
+           importSettings.getSqlPrefix(),
+           importSettings.getSqlHost(),
+           importSettings.getSqlPort(),
+           importSettings.getSqlDbName()
+        ),
+        importSettings.getSqlUser(),
+        new String(importSettings.getSqlPassword())
+      );
 
-      settings.wipePasswordIfRequired();
+      importSettings.wipePasswordIfRequired();
    }
 
    public synchronized void close()
@@ -246,6 +255,7 @@ public class DatatoolSql implements DatatoolImport
    }
 
    private DatatoolSettings settings;
+   private ImportSettings importSettings;
 
    private Connection connection = null;
 

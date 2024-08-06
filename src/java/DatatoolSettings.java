@@ -80,6 +80,7 @@ public class DatatoolSettings extends Properties
       super();
 
       messageHandler = new MessageHandler(datatooltk);
+      importSettings = new ImportSettings(this);
 
       setPropertiesPath();
 
@@ -550,6 +551,8 @@ public class DatatoolSettings extends Properties
 
       loadRecentFiles();
       loadCurrencies();
+
+      importSettings.setFrom(this);
    }
 
    protected void saveMainProperties()
@@ -675,7 +678,18 @@ public class DatatoolSettings extends Properties
    public void saveProperties()
       throws IOException
    {
+      saveProperties(true);
+   }
+
+   public void saveProperties(boolean updateImportSettings)
+      throws IOException
+   {
       if (propertiesPath == null) return;
+
+      if (updateImportSettings)
+      {
+         importSettings.applyTo(this);
+      }
 
       saveMainProperties();
       saveTeXMappings();
@@ -1086,12 +1100,22 @@ public class DatatoolSettings extends Properties
       return Boolean.parseBoolean(val);
    }
 
-   public String getTeXEncoding()
+   public Charset getTeXEncoding()
+   {
+      return importSettings.getTeXEncoding();
+   }
+
+   public String getTeXEncodingProperty()
    {
       return getProperty("tex-encoding");
    }
 
    public void setTeXEncoding(Charset encoding)
+   {
+      importSettings.setTeXEncoding(encoding);
+   }
+
+   public void setTeXEncodingProperty(Charset encoding)
    {
       if (encoding == null)
       {
@@ -1103,7 +1127,7 @@ public class DatatoolSettings extends Properties
       }
    }
 
-   public void setTeXEncoding(String encoding)
+   public void setTeXEncodingProperty(String encoding)
    {
       if (encoding == null)
       {
@@ -1115,12 +1139,22 @@ public class DatatoolSettings extends Properties
       }
    }
 
-   public String getCsvEncoding()
+   public Charset getCsvEncoding()
+   {
+      return importSettings.getCsvEncoding();
+   }
+
+   public String getCsvEncodingProperty()
    {
       return getProperty("csv-encoding");
    }
 
    public void setCsvEncoding(Charset encoding)
+   {
+      importSettings.setCsvEncoding(encoding);
+   }
+
+   public void setCsvEncodingProperty(Charset encoding)
    {
       if (encoding == null)
       {
@@ -1132,7 +1166,7 @@ public class DatatoolSettings extends Properties
       }
    }
 
-   public void setCsvEncoding(String encoding)
+   public void setCsvEncodingProperty(String encoding)
    {
       if (encoding == null)
       {
@@ -1512,62 +1546,80 @@ public class DatatoolSettings extends Properties
 
    public void setSeparator(int separator)
    {
+      importSettings.setSeparator(separator);
+   }
+
+   public void setSeparatorProperty(int separator)
+   {
       setProperty("sep", MessageHandler.codePointToString(separator));
    }
 
    public int getSeparator()
+   {
+      return importSettings.getSeparator();
+   }
+
+   public int getSeparatorProperty()
    {
       return getProperty("sep").codePointAt(0);
    }
 
    public void setDelimiter(int delimiter)
    {
+      importSettings.setDelimiter(delimiter);
+   }
+
+   public void setDelimiterProperty(int delimiter)
+   {
       setProperty("delim", MessageHandler.codePointToString(delimiter));
    }
 
    public int getDelimiter()
    {
+      return importSettings.getDelimiter();
+   }
+
+   public int getDelimiterProperty()
+   {
       return getProperty("delim").codePointAt(0);
-   }
-
-   public String getSheetRef()
-   {
-      return sheetref;
-   }
-
-   public void setSheetRef(String ref)
-   {
-      if (ref == null || ref.isEmpty())
-      {
-         sheetref = "0";
-      }
-      else
-      {
-         sheetref = ref;
-      }
    }
 
    public String getSqlUrl()
    {
-      return getSqlPrefix() + getSqlHost() + ":" + getSqlPort() + "/";
+      return importSettings.getSqlUrl();
    }
 
    public String getSqlUrl(String sqlDb)
    {
-      return getSqlUrl()+sqlDb;
+      return importSettings.getSqlUrl(sqlDb);
    }
 
    public String getSqlHost()
+   {
+      return importSettings.getSqlHost();
+   }
+
+   public String getSqlHostProperty()
    {
       return getProperty("sqlHost");
    }
 
    public String getSqlPrefix()
    {
+      return importSettings.getSqlPrefix();
+   }
+
+   public String getSqlPrefixProperty()
+   {
       return getProperty("sqlPrefix");
    }
 
    public int getSqlPort()
+   {
+      return importSettings.getSqlPort();
+   }
+
+   public int getSqlPortProperty()
    {
       String prop = getProperty("sqlPort");
 
@@ -1595,20 +1647,40 @@ public class DatatoolSettings extends Properties
 
    public void setSqlHost(String host)
    {
+      importSettings.setSqlHost(host);
+   }
+
+   public void setSqlHostProperty(String host)
+   {
       setProperty("sqlHost", host);
    }
 
    public void setSqlPrefix(String prefix)
+   {
+      importSettings.setSqlPrefix(prefix);
+   }
+
+   public void setSqlPrefixProperty(String prefix)
    {
       setProperty("sqlPrefix", prefix);
    }
 
    public void setSqlPort(int port)
    {
+      importSettings.setSqlPort(port);
+   }
+
+   public void setSqlPortProperty(int port)
+   {
       setProperty("sqlPort", ""+port);
    }
 
    public boolean hasCSVHeader()
+   {
+      return importSettings.hasHeaderRow();
+   }
+
+   public boolean hasCSVHeaderProperty()
    {
       String prop = getProperty("csvHasHeader");
 
@@ -1623,10 +1695,20 @@ public class DatatoolSettings extends Properties
 
    public void setHasCSVHeader(boolean hasHeader)
    {
+      importSettings.setHasHeaderRow(hasHeader);
+   }
+
+   public void setHasCSVHeaderProperty(boolean hasHeader)
+   {
       setProperty("csvHasHeader", ""+hasHeader);
    }
 
    public boolean hasCSVstrictquotes()
+   {
+      return importSettings.isStrictQuotesOn();
+   }
+
+   public boolean hasCSVstrictquotesProperty()
    {
       String prop = getProperty("csvstrictquotes");
 
@@ -1640,6 +1722,11 @@ public class DatatoolSettings extends Properties
    }
 
    public void setCSVstrictquotes(boolean strictquotes)
+   {
+      importSettings.setStrictQuotes(strictquotes);
+   }
+
+   public void setCSVstrictquotesProperty(boolean strictquotes)
    {
       setProperty("csvstrictquotes", ""+strictquotes);
    }
@@ -1669,6 +1756,7 @@ public class DatatoolSettings extends Properties
       setProperty("csvescape", esc == 0 ? "" : MessageHandler.codePointToString(esc));
    }
 
+   // deprecate? use csv-blank
    public void setSkipEmptyRows(boolean enable)
    {
       setProperty("skip-empty-rows", ""+enable);
@@ -1682,10 +1770,20 @@ public class DatatoolSettings extends Properties
 
    public void setCsvBlankOption(CsvBlankOption opt)
    {
+      importSettings.setBlankRowAction(opt);
+   }
+
+   public void setCsvBlankOptionProperty(CsvBlankOption opt)
+   {
       setProperty("csv-blank", opt.toString());
    }
 
    public CsvBlankOption getCsvBlankOption()
+   {
+      return importSettings.getBlankRowAction();
+   }
+
+   public CsvBlankOption getCsvBlankOptionProperty()
    {
       String val = getProperty("csv-blank");
 
@@ -1699,10 +1797,20 @@ public class DatatoolSettings extends Properties
 
    public void setEscapeCharsOption(EscapeCharsOption opt)
    {
+      importSettings.setEscapeCharsOption(opt);
+   }
+
+   public void setEscapeCharsOptionProperty(EscapeCharsOption opt)
+   {
       setProperty("csv-esc-chars", opt.toString());
    }
 
    public EscapeCharsOption getEscapeCharsOption()
+   {
+      return importSettings.getEscapeCharsOption();
+   }
+
+   public EscapeCharsOption getEscapeCharsOptionProperty()
    {
       String val = getProperty("csv-esc-chars");
 
@@ -1733,6 +1841,11 @@ public class DatatoolSettings extends Properties
 
    public int getCSVskiplines()
    {
+      return importSettings.getSkipLines();
+   }
+
+   public int getCSVskiplinesProperty()
+   {
       String prop = getProperty("csvskiplines");
 
       if (prop == null)
@@ -1754,6 +1867,13 @@ public class DatatoolSettings extends Properties
    }
 
    public void setCSVskiplines(int lines)
+   throws IllegalArgumentException
+   {
+      importSettings.setSkipLines(lines);
+   }
+
+   public void setCSVskiplinesProperty(int lines)
+   throws IllegalArgumentException
    {
       if (lines < 0)
       {
@@ -1765,45 +1885,40 @@ public class DatatoolSettings extends Properties
 
    public String getSqlDbName()
    {
+      return importSettings.getSqlDbName();
+   }
+
+   public String getSqlDbNameProperty()
+   {
       return getProperty("sqlDbName");
    }
 
    public void setSqlDbName(String name)
    {
+      importSettings.setSqlDbName(name);
+   }
+
+   public void setSqlDbNameProperty(String name)
+   {
       setProperty("sqlDbName", name);
    }
 
-   public void wipePasswordIfRequired()
-   {
-      if (sqlPassword != null && isWipePasswordEnabled())
-      {
-         java.util.Arrays.fill(sqlPassword, ' ');
-         sqlPassword = null;
-      }
-   }
-
-   public void setSqlPassword(char[] passwd)
-   {
-      sqlPassword = passwd;
-   }
-
-   public char[] getSqlPassword()
-     throws UserCancelledException
-   {
-      if (sqlPassword == null && passwordReader != null)
-      {
-         sqlPassword = passwordReader.requestPassword();
-      }
-
-      return sqlPassword;
-   }
-
    public void setWipePassword(boolean wipePassword)
+   {
+      importSettings.setWipePassword(wipePassword);
+   }
+
+   public void setWipePasswordProperty(boolean wipePassword)
    {
       setProperty("wipePassword", ""+wipePassword);
    }
 
    public boolean isWipePasswordEnabled()
+   {
+      return importSettings.isWipePasswordOn();
+   }
+
+   public boolean isWipePasswordEnabledProperty()
    {
       String prop = getProperty("wipePassword");
 
@@ -1818,17 +1933,27 @@ public class DatatoolSettings extends Properties
 
    public void setSqlUser(String username)
    {
+      importSettings.setSqlUser(username);
+   }
+
+   public void setSqlUserProperty(String username)
+   {
       setProperty("sqlUser", username);
    }
 
    public String getSqlUser()
+   {
+      return importSettings.getSqlUser();
+   }
+
+   public String getSqlUserProperty()
    {
       return getProperty("sqlUser");
    }
 
    public void setPasswordReader(DatatoolPasswordReader reader)
    {
-      passwordReader = reader;
+      importSettings.setPasswordReader(reader);
    }
 
    public void setStartUp(int category)
@@ -1907,10 +2032,20 @@ public class DatatoolSettings extends Properties
 
    public void setTeXMapping(boolean enable)
    {
+      importSettings.setMapChars(enable);
+   }
+
+   public void setTeXMappingProperty(boolean enable)
+   {
       setProperty("subtexspecials", ""+enable);
    }
 
    public boolean isSolutionEnvStripped()
+   {
+      return importSettings.isStripSolutionEnvOn();
+   }
+
+   public boolean isSolutionEnvStrippedProperty()
    {
       String prop = getProperty("probsolnstripenv");
 
@@ -1924,6 +2059,11 @@ public class DatatoolSettings extends Properties
    }
 
    public void setSolutionEnvStripped(boolean stripEnv)
+   {
+      importSettings.setStripSolutionEnv(stripEnv);
+   }
+
+   public void setSolutionEnvStrippedProperty(boolean stripEnv)
    {
       setProperty("probsolnstripenv", ""+stripEnv);
    }
@@ -1948,10 +2088,20 @@ public class DatatoolSettings extends Properties
 
    public void setAutoTrimLabels(boolean enable)
    {
+      importSettings.setTrimLabels(enable);
+   }
+
+   public void setAutoTrimLabelsProperty(boolean enable)
+   {
       setProperty("trimlabels", ""+enable);
    }
 
    public boolean isAutoTrimLabelsOn()
+   {
+      return importSettings.isTrimLabelsOn();
+   }
+
+   public boolean isAutoTrimLabelsOnProperty()
    {
       String prop = getProperty("trimlabels");
 
@@ -1966,6 +2116,11 @@ public class DatatoolSettings extends Properties
 
    public boolean isLiteralContent()
    {
+      return importSettings.isLiteralContent();
+   }
+
+   public boolean isLiteralContentProperty()
+   {
       String prop = getProperty("literalcontent");
 
       if (prop == null || prop.isEmpty())
@@ -1978,10 +2133,20 @@ public class DatatoolSettings extends Properties
 
    public void setLiteralContent(boolean on)
    {
+      importSettings.setLiteralContent(on);
+   }
+
+   public void setLiteralContentProperty(boolean on)
+   {
       setProperty("literalcontent", ""+on);
    }
 
    public boolean isTeXMappingOn()
+   {
+      return importSettings.isMapCharsOn();
+   }
+
+   public boolean isTeXMappingOnProperty()
    {
       String prop = getProperty("subtexspecials");
 
@@ -2626,6 +2791,11 @@ public class DatatoolSettings extends Properties
 
    public boolean isRedefNewProblemEnabled()
    {
+      return importSettings.isRedefNewProblemOn();
+   }
+
+   public boolean isRedefNewProblemEnabledProperty()
+   {
       String prop = getProperty("redefnewprob");
 
       if (prop == null)
@@ -2638,6 +2808,11 @@ public class DatatoolSettings extends Properties
    }
 
    public void setRedefNewProblem(boolean value)
+   {
+      importSettings.setRedefNewProblem(value);
+   }
+
+   public void setRedefNewProblemProperty(boolean value)
    {
       setProperty("redefnewprob", ""+value);
    }
@@ -2701,14 +2876,7 @@ public class DatatoolSettings extends Properties
 
    public void setDefaults()
    {
-      setSeparator(',');
-      setDelimiter('"');
-      setHasCSVHeader(true);
-      setCSVescape("\\");
-      setSqlHost("localhost");
-      setSqlPort(3306);
-      setSqlPrefix("jdbc:mysql://");
-      setWipePassword(true);
+      importSettings.setDefaults();
       setStartUp(STARTUP_HOME);
       setTeXMapping(false);
       setPerl("perl");
@@ -2914,15 +3082,16 @@ public class DatatoolSettings extends Properties
       this.loadSettings = settings;
    }
 
+   public ImportSettings getImportSettings()
+   {
+      return importSettings;
+   }
+
    private MessageHandler messageHandler;
 
    private TeXJavaHelpLib helpLib;
 
-   protected char[] sqlPassword = null;
-
-   protected DatatoolPasswordReader passwordReader;
-
-   private String sheetref = "0";
+   private ImportSettings importSettings;
 
    protected Vector<String> currencies;
 

@@ -41,23 +41,7 @@ public class DatatoolTeXApp extends TeXAppAdapter
    @Override
    public Charset getDefaultCharset()
    {
-      Charset charset = Charset.defaultCharset();
-
-      String encoding = messageHandler.getSettings().getTeXEncoding();
-
-      if (encoding != null)
-      {
-         try
-         {
-            charset = Charset.forName(encoding);
-         }
-         catch (Exception e)
-         {
-            messageHandler.warning(e);
-         }
-      }
-
-      return charset;
+      return messageHandler.getSettings().getTeXEncoding();
    }
 
    @Override

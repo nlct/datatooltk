@@ -1684,7 +1684,7 @@ public class DatatoolGUI extends JFrame
 
       FileFilter filter = fileChooser.getFileFilter();
 
-      DatatoolSpreadSheetImport imp;
+      DatatoolImport imp;
 
       if (filter == xlsFilter)
       {
@@ -1723,14 +1723,19 @@ public class DatatoolGUI extends JFrame
 
       try
       {
-         ref = JOptionPane.showInputDialog(this,
-            getMessageHandler().getLabel("importspread.sheet"),
-            getMessageHandler().getLabel("importspread.title"),
-            JOptionPane.PLAIN_MESSAGE,
-            null, imp.getSheetNames(file),
-            null);
+         if (imp instanceof DatatoolSpreadSheetImport)
+         {
+            String[] names
+               = ((DatatoolSpreadSheetImport)imp).getSheetNames(file);
 
-         if (ref == null) return;
+            ref = JOptionPane.showInputDialog(this,
+               getMessageHandler().getLabel("importspread.sheet"),
+               getMessageHandler().getLabel("importspread.title"),
+               JOptionPane.PLAIN_MESSAGE,
+               null, names, null);
+
+            if (ref == null) return;
+         }
       }
       catch (IOException e)
       {
@@ -1739,7 +1744,7 @@ public class DatatoolGUI extends JFrame
          return;
       }
 
-      settings.setSheetRef(ref.toString());
+      settings.getImportSettings().setSheetName(ref.toString());
 
       importData(imp,
        fileChooser.getSelectedFile().getAbsolutePath());

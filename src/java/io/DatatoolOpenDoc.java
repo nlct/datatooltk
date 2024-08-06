@@ -18,24 +18,351 @@
 */
 package com.dickimawbooks.datatooltk.io;
 
+import java.util.Vector;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 import java.io.*;
-import java.util.Iterator;
-import java.awt.Point;
+import java.nio.file.Files;
+import java.nio.charset.*;
 
-import org.jopendocument.dom.spreadsheet.*;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
 
-import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
-import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
+import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
+
 import com.dickimawbooks.datatooltk.*;
 
 /**
- * Class handling importing ODS data.
+ * Class handling importing Open Document spreadsheets (ODS and FODS).
  */
-public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
+public class DatatoolOpenDoc implements DatatoolImport
 {
    public DatatoolOpenDoc(DatatoolSettings settings)
    {
+      this(settings, false);
+   }
+
+   public DatatoolOpenDoc(DatatoolSettings settings, boolean isFlat)
+   {
       this.settings = settings;
+      this.isFlat = isFlat;
+   }
+
+   public DatatoolDb importData(String source)
+      throws DatatoolImportException
+   {
+      return importData(source, true);
+   }
+
+   public DatatoolDb importData(File file)
+      throws DatatoolImportException
+   {
+      return importData(file, true);
+   }
+
+   public DatatoolDb importData(String source, boolean checkForVerbatim)
+      throws DatatoolImportException
+   {
+      return importData(new File(source), checkForVerbatim);
+   }
+
+   public DatatoolDb importData(File file, boolean checkForVerbatim)
+      throws DatatoolImportException
+   {
+      ImportSettings importSettings = settings.getImportSettings();
+      importSettings.setCheckForVerbatim(checkForVerbatim);
+
+      return importData(importSettings, file);
+   }
+
+   @Override
+   public DatatoolDb importData(ImportSettings importSettings, String source)
+      throws DatatoolImportException
+   {
+      return importData(importSettings, new File(source));
+   }
+
+   public DatatoolDb importData(ImportSettings importSettings, File file)
+      throws DatatoolImportException
+   {
+      try
+      {
+         if (isFlat)
+         {
+            return importFlatData(importSettings, file);
+         }
+         else
+         {
+            return importZipData(importSettings, file);
+         }
+      }
+      catch (DatatoolImportException e)
+      {
+         throw e;
+      }
+      catch (SAXException e)
+      {
+         Throwable cause = e.getCause();
+
+         if (cause instanceof UserCancelledException)
+         {
+            throw new DatatoolImportException(
+              getMessageHandler().getLabelWithValues(
+                "error.import.failed", file, cause.getMessage()), cause);
+         }
+         else
+         {
+            throw new DatatoolImportException(
+              getMessageHandler().getLabelWithValues(
+                "error.import.failed", file, e.getMessage()), e);
+         }
+      }
+      catch (Throwable e)
+      {
+         throw new DatatoolImportException(
+           getMessageHandler().getLabelWithValues(
+             "error.import.failed", file, e.getMessage()), e);
+      }
+   }
+
+   protected DatatoolDb importZipData(ImportSettings importSettings, File file)
+      throws DatatoolImportException,SAXException,IOException
+   {
+      ZipFile zipFile = null;
+      InputStream in = null;
+      DatatoolDb db;
+      MessageHandler messageHandler = getMessageHandler();
+
+      try
+      {
+         zipFile = new ZipFile(file, StandardCharsets.UTF_8);
+
+         String entryName = "settings.xml";
+         ZipEntry zipEntry = zipFile.getEntry(entryName);
+
+         if (zipEntry == null)
+         {
+            throw new DatatoolImportException(
+             getMessageHandler().getLabelWithValues("error.zip_entry_not_found",
+               entryName, file));
+         }
+
+         in = zipFile.getInputStream(zipEntry);
+
+         Charset charset = getXmlEncoding(in);
+
+         if (!in.markSupported()
+             || (charset != null && !charset.equals(StandardCharsets.UTF_8)))
+         {
+            in.close();
+            in = null;
+            zipFile.close();
+            zipFile = null;
+
+            if (charset == null)
+            {
+               charset = StandardCharsets.UTF_8;
+            }
+
+            zipFile = new ZipFile(file, charset);
+
+            zipEntry = zipFile.getEntry(entryName);
+            in = zipFile.getInputStream(zipEntry);
+         }
+
+         OpenDocReader reader = new OpenDocReader(importSettings);
+
+         reader.parseSettings(new InputSource(in));
+
+         in.close();
+         in = null;
+
+         entryName = "content.xml";
+         zipEntry = zipFile.getEntry(entryName);
+
+         if (zipEntry == null)
+         {
+            throw new DatatoolImportException(
+             messageHandler.getLabelWithValues("error.zip_entry_not_found",
+               entryName, file));
+         }
+
+         in = zipFile.getInputStream(zipEntry);
+         reader.parseData(new InputSource(in));
+
+         db = reader.getDataBase();
+
+         if (db == null)
+         {
+            throw new DatatoolImportException(
+               messageHandler.getLabelWithValues(
+                "error.dbload.missing_data", file));
+         }
+
+         if (reader.verbatimFound())
+         {
+            messageHandler.warning(
+              messageHandler.getLabel("warning.verb_detected"));
+         }
+      }
+      finally
+      {
+         if (in != null)
+         {
+            in.close();
+         }
+
+         if (zipFile != null)
+         {
+            zipFile.close();
+         }
+      }
+
+      return db;
+   }
+
+   protected DatatoolDb importFlatData(ImportSettings importSettings, File file)
+      throws DatatoolImportException,SAXException,IOException
+   {
+      BufferedReader in = null;
+      DatatoolDb db;
+      MessageHandler messageHandler = getMessageHandler();
+
+      try
+      {
+         in = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
+
+         Charset charset = getXmlEncoding(in);
+
+         if (!in.markSupported()
+             || (charset != null && !charset.equals(StandardCharsets.UTF_8)))
+         {
+            in.close();
+            in = null;
+
+            if (charset == null)
+            {
+               charset = StandardCharsets.UTF_8;
+            }
+
+            in = Files.newBufferedReader(file.toPath(), charset);
+         }
+
+         OpenDocReader reader = new OpenDocReader(importSettings);
+
+         reader.parseFlat(new InputSource(in));
+
+         db = reader.getDataBase();
+
+         if (db == null)
+         {
+            throw new DatatoolImportException(messageHandler.getLabelWithValues(
+              "error.dbload.missing_data", file));
+         }
+
+         if (reader.verbatimFound())
+         {
+            messageHandler.warning(
+              messageHandler.getLabel("warning.verb_detected"));
+         }
+      }
+      finally
+      {
+         if (in != null)
+         {
+            in.close();
+         }
+      }
+
+      return db;
+   }
+
+   protected Charset getXmlEncoding(Reader in)
+    throws IOException,DatatoolImportException
+   {
+      char[] buff = new char[64];
+
+      boolean markSupported = in.markSupported();
+
+      if (markSupported)
+      {
+         in.mark(buff.length);
+      }
+
+      in.read(buff);
+
+      Matcher m = XML_PATTERN.matcher(new String(buff));
+
+      Charset charset = null;
+
+      if (m.matches())
+      {
+         String encoding = m.group(1);
+
+         try
+         {
+            charset = Charset.forName(encoding);
+         }
+         catch (UnsupportedCharsetException | IllegalCharsetNameException e)
+         {
+            throw new DatatoolImportException(
+              getMessageHandler().getLabelWithValues(
+               "error.syntax.unknown_encoding", encoding), e);
+         }
+      }
+
+      if (markSupported)
+      {
+         in.reset();
+      }
+
+      return charset;
+   }
+
+   protected Charset getXmlEncoding(InputStream in)
+    throws IOException,DatatoolImportException
+   {
+      byte[] buff = new byte[64];
+
+      boolean markSupported = in.markSupported();
+
+      if (markSupported)
+      {
+         in.mark(buff.length);
+      }
+
+      int n = in.read(buff);
+
+      String str = new String(buff, 0, n);
+
+      Matcher m = XML_PATTERN.matcher(str);
+
+      Charset charset = null;
+
+      if (m.matches())
+      {
+         String encoding = m.group(1);
+
+         try
+         {
+            charset = Charset.forName(encoding);
+         }
+         catch (UnsupportedCharsetException | IllegalCharsetNameException e)
+         {
+            throw new DatatoolImportException(
+              getMessageHandler().getLabelWithValues(
+               "error.syntax.unknown_encoding", encoding), e);
+         }
+      }
+
+      if (markSupported)
+      {
+         in.reset();
+      }
+
+      return charset;
    }
 
    public MessageHandler getMessageHandler()
@@ -43,259 +370,14 @@ public class DatatoolOpenDoc implements DatatoolSpreadSheetImport
       return settings.getMessageHandler();
    }
 
-   @Override
-   public DatatoolDb importData(IOSettings ioSettings, String source)
-      throws DatatoolImportException
+   public DatatoolSettings getSettings()
    {
-      return importData(source);
+      return settings;
    }
 
-   @Override
-   public DatatoolDb importData(String source)
-      throws DatatoolImportException
-   {
-      return importData(new File(source));
-   }
-
-   public String[] getSheetNames(File file)
-    throws IOException
-   {
-      if (!file.exists())
-      {
-         throw new IOException(
-            getMessageHandler().getLabelWithValues("error.io.file_not_found", ""+file));
-      }
-
-      SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
-
-      int numSheets = spreadSheet.getSheetCount();
-
-      String[] names = new String[numSheets];
-
-      for (int i = 0; i < numSheets; i++)
-      {
-         names[i] = spreadSheet.getSheet(i).getName();
-      }
-
-      return names;
-   }
-
-   public DatatoolDb importData(File file)
-      throws DatatoolImportException
-   {
-      DatatoolDb db = new DatatoolDb(settings);
-
-      try
-      {
-         if (!file.exists())
-         {
-            throw new IOException(
-               getMessageHandler().getLabelWithValues("error.io.file_not_found", ""+file));
-         }
-
-         SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
-
-         Sheet sheet;
-
-         String sheetRef = settings.getSheetRef();
-
-         int sheetIdx = 0;
-         String sheetName = null;
-
-         try
-         {
-            sheetIdx = Integer.parseInt(sheetRef);
-         }
-         catch (NumberFormatException e)
-         {
-            sheetName = sheetRef;
-         }
-
-         if (sheetName == null)
-         {
-            sheet = spreadSheet.getSheet(sheetIdx);
-            db.setName(sheet.getName());
-         }
-         else
-         {
-            sheet = spreadSheet.getSheet(sheetName);
-            db.setName(sheetName);
-         }
-
-         Point endPt = sheet.getUsedRange().getEndPoint();
-
-         int rowCount = endPt.y+1;
-         int colCount = endPt.x+1;
-
-         if (rowCount == 0 || colCount == 0)
-         {
-            return db;
-         }
-
-         int rowIdx = 0;
-
-         String[] fields = new String[colCount];
-
-         int skipLines = settings.getCSVskiplines();
-
-         for (int i = 0; i < skipLines && rowIdx < rowCount; i++)
-         {
-            rowIdx = readRow(sheet, rowIdx, fields,
-               CsvBlankOption.EMPTY_ROW, rowCount);
-         }
-
-         if (rowIdx >= rowCount) return db;
-
-         CsvBlankOption blankOpt = settings.getCsvBlankOption();
-
-         if (settings.hasCSVHeader())
-         {
-            // First row is header
-
-            rowIdx = readRow(sheet, rowIdx, fields, blankOpt, rowCount);
-         }
-         else
-         {
-            for (int colIdx = 0; colIdx < colCount; colIdx++)
-            {
-               fields[colIdx] = getMessageHandler().getLabelWithValues(
-                  "default.field", ""+(colIdx+1));
-            }
-         }
-
-         for (int i = 0; i < fields.length; i++)
-         {
-            DatatoolHeader header = new DatatoolHeader(db, fields[i]);
-            db.addColumn(header);
-         }
-
-         int dataRowIdx = 0;
-
-         while (rowIdx < rowCount)
-         {
-            rowIdx = readRow(sheet, rowIdx, fields, blankOpt, rowCount);
-
-            if (rowIdx == -1)
-            {
-               break;
-            }
-
-            for (int colIdx = 0; colIdx < fields.length; colIdx++)
-            {
-               db.addCell(dataRowIdx, colIdx, fields[colIdx]);
-            }
-
-            dataRowIdx++;
-         }
-      }
-      catch (Exception e)
-      {
-         throw new DatatoolImportException(
-          getMessageHandler().getLabelWithValues("error.import.failed", 
-           file), e);
-      }
-
-      return db;
-   }
-
-   private int readRow(Sheet sheet, int rowIdx, String[] fields, 
-     CsvBlankOption blankOpt, int rowCount)
-   {
-      if (blankOpt != CsvBlankOption.EMPTY_ROW)
-      {
-         boolean isEmpty = true;
-
-         while (isEmpty && rowIdx < rowCount)
-         {
-            for (int colIdx = 0; colIdx < fields.length; colIdx++)
-            {
-               fields[colIdx] = 
-                  getCellValue(sheet.getImmutableCellAt(colIdx, rowIdx));
-
-               if (!fields[colIdx].isEmpty())
-               {
-                  isEmpty = false;
-               }
-            }
-
-            if (isEmpty && blankOpt == CsvBlankOption.END)
-            {
-               return -1;
-            }
-
-            rowIdx++;
-         }
-
-         if (isEmpty && rowIdx == rowCount)
-         {
-            return -1;
-         }
-      }
-      else
-      {
-         for (int colIdx = 0; colIdx < fields.length; colIdx++)
-         {
-            fields[colIdx] = 
-               getCellValue(sheet.getImmutableCellAt(colIdx, rowIdx));
-         }
-
-         rowIdx++;
-      }
-
-      return rowIdx;
-   }
-
-   private String getCellValue(Cell cell)
-   {
-      String value = cell.getTextValue();
-
-      if (value == null)
-      {
-         return "\\@dtlnovalue ";
-      }
-
-      return mapFieldIfRequired(value);
-   }
-
-   public String mapFieldIfRequired(String field)
-   {
-      if (field.isEmpty())
-      {
-         return field;
-      }
-
-      if (!settings.isTeXMappingOn())
-      {
-         return DatatoolDb.PATTERN_PARAGRAPH.matcher(field)
-                         .replaceAll("\\\\DTLpar ");
-      }
-
-      String value = field.replaceAll("\\\\DTLpar *", String.format("%n%n"));
-
-      int n = value.length();
-
-      StringBuilder builder = new StringBuilder(n);
-
-      for (int j = 0; j < n; )
-      {
-         int c = value.codePointAt(j);
-         j += Character.charCount(c);
-
-         String map = settings.getTeXMap(c);
-
-         if (map == null)
-         {
-            builder.appendCodePoint(c);
-         }
-         else
-         {
-            builder.append(map);
-         }
-      }
-
-      return DatatoolDb.PATTERN_PARAGRAPH.matcher(builder.toString())
-                         .replaceAll("\\\\DTLpar ");
-   }
-
-   private DatatoolSettings settings;
+   protected boolean isFlat;
+   protected DatatoolSettings settings;
+   public static final Pattern XML_PATTERN
+    = Pattern.compile("<\\?xml.*\\s+encoding\\s*=\\s*\"([^\"]+)\".*\\?>.*",
+        Pattern.DOTALL);
 }

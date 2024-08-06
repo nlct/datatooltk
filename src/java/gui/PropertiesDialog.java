@@ -893,15 +893,15 @@ public class PropertiesDialog extends JDialog
       saveDatumDecimalBox.setSelected(settings.isDecimalDbTeX3DatumValue());
       saveDatumCurrencyBox.setSelected(settings.isCurrencyDbTeX3DatumValue());
 
-      String encoding = settings.getTeXEncoding();
+      Charset charset = settings.getTeXEncoding();
 
-      if (encoding == null)
+      if (charset == null)
       {
          texEncodingBox.setSelectedItem(Charset.defaultCharset());
       }
       else
       {
-         texEncodingBox.setSelectedItem(Charset.forName(encoding));
+         texEncodingBox.setSelectedItem(charset);
       }
 
       cellHeightModel.setValue(Integer.valueOf(settings.getCellHeight()));

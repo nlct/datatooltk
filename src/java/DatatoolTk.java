@@ -448,8 +448,7 @@ public class DatatoolTk
       System.out.println();
 
       System.out.println(getLabel("syntax.xlsods_opts"));
-      System.out.println(getLabelWithValues("syntax.sheet", "--sheet",
-        settings.getSheetRef()));
+      System.out.println(getLabelWithValues("syntax.sheet", "--sheet"));
       System.out.println();
 
       System.out.println(getLabelWithValues("syntax.bugreport", 
@@ -970,7 +969,7 @@ public class DatatoolTk
 
             if (args[i].equals("default") || args[i].isEmpty())
             {
-               settings.setCsvEncoding((String)null);
+               settings.setCsvEncoding(null);
             }
             else
             {
@@ -978,7 +977,7 @@ public class DatatoolTk
                {
                   if (Charset.isSupported(args[i]))
                   {
-                     settings.setCsvEncoding(args[i]);
+                     settings.setCsvEncoding(Charset.forName(args[i]));
                   }
                   else
                   {
@@ -1134,7 +1133,8 @@ public class DatatoolTk
             loadSettings.setImportSource(args[i]);
             loadSettings.setDataImport(new DatatoolExcel(settings));
          }
-         else if (args[i].equals("--ods") || args[i].equals("--odf"))
+         else if (args[i].equals("--ods") || args[i].equals("--odf")
+               || args[i].equals("--fods"))
          {
             if (loadSettings.getImportSource() != null)
             {
@@ -1158,7 +1158,8 @@ public class DatatoolTk
             }
 
             loadSettings.setImportSource(args[i]);
-            loadSettings.setDataImport(new DatatoolOpenDoc(settings));
+            loadSettings.setDataImport(new DatatoolOpenDoc(settings,
+              args[i].equals("--fods")));
          }
          else if (args[i].equals("--sheet"))
          {
@@ -1171,7 +1172,15 @@ public class DatatoolTk
                      args[i-1]));
             }
 
-            settings.setSheetRef(args[i]);
+            try
+            {
+               settings.getImportSettings().setSheetIndex(
+                 Integer.valueOf(args[i]));
+            }
+            catch (NumberFormatException e)
+            {
+               settings.getImportSettings().setSheetName(args[i]);
+            }
          }
          else if (args[i].equals("--probsoln"))
          {
@@ -1287,7 +1296,7 @@ public class DatatoolTk
                    args[i-1]));
             }
 
-            settings.setSqlPassword(args[i].toCharArray());
+            settings.getImportSettings().setSqlPassword(args[i].toCharArray());
             args[i] = "";
          }
          else if (args[i].equals("--wipepassword"))
@@ -1605,7 +1614,7 @@ public class DatatoolTk
 
             if (args[i].equals("default") || args[i].isEmpty())
             {
-               settings.setTeXEncoding((String)null);
+               settings.setTeXEncoding(null);
             }
             else
             {
@@ -1613,7 +1622,7 @@ public class DatatoolTk
                {
                   if (Charset.isSupported(args[i]))
                   {
-                     settings.setTeXEncoding(args[i]);
+                     settings.setTeXEncoding(Charset.forName(args[i]));
                   }
                   else
                   {

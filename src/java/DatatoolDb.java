@@ -533,26 +533,8 @@ public class DatatoolDb
       MessageHandler messageHandler = settings.getMessageHandler();
       LineNumberReader in = null;
       boolean hasVerbatim = false;
-      String encoding = settings.getTeXEncoding();
-      Charset charset;
+      Charset charset = settings.getTeXEncoding();
       DatatoolDb db;
-
-      if (encoding == null)
-      {
-         charset = Charset.defaultCharset();
-      }
-      else
-      {
-         try
-         {
-            charset = Charset.forName(encoding);
-         }
-         catch (Exception e)
-         {
-            settings.getMessageHandler().warning(e);
-            charset = Charset.defaultCharset();
-         }
-      }
 
       try
       {
@@ -2601,7 +2583,7 @@ public class DatatoolDb
 
       PrintWriter out = null;
 
-      String encoding = settings.getTeXEncoding();
+      Charset charset = settings.getTeXEncoding();
 
       MessageHandler messageHandler = getMessageHandler();
 
@@ -2609,17 +2591,6 @@ public class DatatoolDb
 
       try
       {
-         Charset charset;
-
-         if (encoding == null)
-         {
-            charset = Charset.defaultCharset();
-         }
-         else
-         {
-            charset = Charset.forName(encoding);
-         }
-
          out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset));
 
          out.format("%% DBTEX 2.0 %s%n", charset.name());
@@ -2800,7 +2771,7 @@ public class DatatoolDb
 
       PrintWriter out = null;
 
-      String encoding = settings.getTeXEncoding();
+      Charset charset = settings.getTeXEncoding();
 
       MessageHandler messageHandler = getMessageHandler();
 
@@ -2812,17 +2783,6 @@ public class DatatoolDb
 
       try
       {
-         Charset charset;
-
-         if (encoding == null)
-         {
-            charset = Charset.defaultCharset();
-         }
-         else
-         {
-            charset = Charset.forName(encoding);
-         }
-
          out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset));
 
          out.print("% DBTEX 3.0 ");
@@ -2979,7 +2939,7 @@ public class DatatoolDb
 
       PrintWriter out = null;
 
-      String encoding = settings.getTeXEncoding();
+      Charset charset = settings.getTeXEncoding();
 
       MessageHandler messageHandler = getMessageHandler();
 
@@ -2991,17 +2951,6 @@ public class DatatoolDb
 
       try
       {
-         Charset charset;
-
-         if (encoding == null)
-         {
-            charset = Charset.defaultCharset();
-         }
-         else
-         {
-            charset = Charset.forName(encoding);
-         }
-
          out = new PrintWriter(Files.newBufferedWriter(file.toPath(), charset));
 
          out.format("%% DTLTEX %s %s%n", version, charset.name());

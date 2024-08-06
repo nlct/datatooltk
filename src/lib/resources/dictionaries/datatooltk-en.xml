@@ -1175,7 +1175,7 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.sheet">{0} &lt;ref&gt;		Fetch data from sheet &lt;ref&gt;,
 			where &lt;ref&gt; can be an index (starting from 0)
-			or the name of a sheet. (Default: {1})</entry>
+			or the name of a sheet.</entry>
 
 <entry key="syntax.shuffle">{0}	Shuffle the database. (Shuffle is always performed after sort,
 		regardless of the option order.)</entry>
@@ -1463,5 +1463,6 @@ Extension ''{1}'' is forbidden for log files</entry>
 <entry key="error.empty_file">File appears to be empty.</entry>
 
 <entry key="error.expected_mimetype_but_found">Expected mimetype ''{0}'' but found ''{1}''</entry>
+<entry key="error.zip_entry_not_found">No entry ''{0}'' found in zip file ''{1}''</entry>
 
 </properties>

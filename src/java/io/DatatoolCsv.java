@@ -104,4 +104,40 @@ public class DatatoolCsv extends DatatoolTeX
       }
    }
 
+   @Override
+   public DatatoolDb importData(ImportSettings importSettings, String source)
+      throws DatatoolImportException
+   {
+      File file = new File(source);
+      String name = file.getName();
+
+      name = file.getName();
+      int idx = name.lastIndexOf(".");
+
+      if (idx != -1)
+      {
+         name = name.substring(0, idx);
+      }
+
+      try
+      {
+         DataToolTeXParserListener listener = settings.getTeXParserListener();
+         TeXParser parser = listener.getParser();
+         listener.applyCurrentCsvSettings();
+         IOSettings ioSettings = listener.getIOSettings();
+
+         ioSettings.setDefaultName(name);
+         importSettings.applyTo(ioSettings, parser);
+
+         return importData(ioSettings, file,
+           importSettings.isCheckForVerbatimOn());
+      }
+      catch (IOException e)
+      {
+         throw new DatatoolImportException(
+          getMessageHandler().getLabelWithValues("error.import.failed", 
+           file.toString(), e.getMessage()), e);
+      }
+   }
+
 }

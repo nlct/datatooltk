@@ -168,6 +168,59 @@ public class SqlPanel extends JPanel
       settings.setSqlDbName(databaseField.getText());
    }
 
+   public void resetFrom(ImportSettings settings)
+   {
+      hostField.setText(settings.getSqlHost());
+      prefixField.setText(settings.getSqlPrefix());
+      portField.setValue(settings.getSqlPort());
+      wipeBox.setSelected(settings.isWipePasswordOn());
+
+      String user = settings.getSqlUser();
+
+      userField.setText(user == null ? "" : user);
+
+      String db = settings.getSqlDbName();
+
+      databaseField.setText(db == null ? "" : db);
+   }
+
+   public void applyTo(ImportSettings settings)
+    throws IllegalArgumentException
+   {
+      String host = hostField.getText();
+
+      if (host.isEmpty())
+      {
+         throw new IllegalArgumentException(
+            getMessageHandler().getLabel("error.missing_host"));
+      }
+
+      settings.setSqlHost(host);
+
+      String prefix = prefixField.getText();
+
+      if (prefix.isEmpty())
+      {
+         throw new IllegalArgumentException(
+            getMessageHandler().getLabel("error.missing_prefix"));
+      }
+
+      settings.setSqlPrefix(prefix);
+
+      if (portField.getText().isEmpty())
+      {
+         throw new IllegalArgumentException(
+            getMessageHandler().getLabel("error.missing_port"));
+      }
+
+      settings.setSqlPort(portField.getValue());
+
+      settings.setSqlUser(userField.getText());
+      settings.setSqlDbName(databaseField.getText());
+
+      settings.setWipePassword(wipeBox.isSelected());
+   }
+
    public DatatoolGuiResources getResources()
    {
       return gui.getResources();

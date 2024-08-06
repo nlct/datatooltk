@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,7 @@ import com.dickimawbooks.datatooltk.DatatoolDb;
 import com.dickimawbooks.datatooltk.DataFilter;
 import com.dickimawbooks.datatooltk.FilterInfo;
 import com.dickimawbooks.datatooltk.LoadSettings;
+import com.dickimawbooks.datatooltk.ImportSettings;
 import com.dickimawbooks.datatooltk.io.DatatoolImport;
 import com.dickimawbooks.datatooltk.io.DatatoolImportException;
 
@@ -99,9 +100,18 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
          publish(gui.getMessageHandler().getLabelWithValues(
            "progress.importing", source));
 
-         if (loadSettings.hasIOSettings())
+         if (loadSettings.hasImportSettings())
          {
-            db = imp.importData(loadSettings.getIOSettings(), source);
+            db = imp.importData(loadSettings.getImportSettings(), source);
+         }
+         else if (loadSettings.hasIOSettings())
+         {
+            ImportSettings importSettings
+               = new ImportSettings(loadSettings.getMainSettings());
+            importSettings.update();
+            importSettings.setFrom(loadSettings.getIOSettings());
+
+            db = imp.importData(importSettings, source);
          }
          else
          {
@@ -132,9 +142,19 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
             publish(gui.getMessageHandler().getLabelWithValues(
               "progress.merging", mergeImportSource));
 
-            if (loadSettings.hasIOSettings())
+            if (loadSettings.hasImportSettings())
             {
-               db = mergeImport.importData(loadSettings.getIOSettings(),
+               db = mergeImport.importData(loadSettings.getImportSettings(), 
+                 mergeImportSource);
+            }
+            else if (loadSettings.hasIOSettings())
+            {
+               ImportSettings importSettings
+                  = new ImportSettings(loadSettings.getMainSettings());
+               importSettings.update();
+               importSettings.setFrom(loadSettings.getIOSettings());
+
+               db = mergeImport.importData(importSettings,
                       mergeImportSource);
             }
             else
@@ -170,9 +190,19 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
          publish(gui.getMessageHandler().getLabelWithValues(
            "progress.merging", mergeImportSource));
 
-         if (loadSettings.hasIOSettings())
+         if (loadSettings.hasImportSettings())
          {
-            db = mergeImport.importData(loadSettings.getIOSettings(),
+            db = mergeImport.importData(loadSettings.getImportSettings(), 
+              mergeImportSource);
+         }
+         else if (loadSettings.hasIOSettings())
+         {
+            ImportSettings importSettings
+               = new ImportSettings(loadSettings.getMainSettings());
+            importSettings.update();
+            importSettings.setFrom(loadSettings.getIOSettings());
+
+            db = mergeImport.importData(importSettings,
                    mergeImportSource);
          }
          else

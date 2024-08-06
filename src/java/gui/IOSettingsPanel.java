@@ -1792,6 +1792,139 @@ public class IOSettingsPanel extends JPanel
         == FILE_FORMAT_ANY_TEX;
    }
 
+   public void applyTo(ImportSettings settings)
+     throws IllegalArgumentException
+   {
+      boolean isCsvTsv = (((formatModifiers | FILE_FORMAT_CSV_OR_TSV)
+               & FILE_FORMAT_CSV_OR_TSV) == FILE_FORMAT_CSV_OR_TSV);
+
+      boolean isSpread = (((formatModifiers | FILE_FORMAT_ANY_SPREADSHEET)
+               & FILE_FORMAT_ANY_SPREADSHEET) == FILE_FORMAT_ANY_SPREADSHEET);
+
+      boolean isSql =
+         ((formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL);
+
+      if (isCsvTsv)
+      {
+         int sep = getSeparator();
+
+         if (sep >= 0xFFFF)
+         {
+            throw new IllegalArgumentException( 
+               getMessageHandler().getLabelWithValues("error.char_sep_required", 
+               MessageHandler.codePointToString(sep), 
+               "0xFFFF"));
+         }
+         else if (sep > 0)
+         {
+            settings.setSeparator(sep);
+         }
+         else
+         {
+            throw new IllegalArgumentException( 
+               getMessageHandler().getLabel("error.missing_sep"));
+         }
+
+         int delim = getDelimiter();
+
+         if (delim >= 0xFFFF)
+         {
+            throw new IllegalArgumentException( 
+               getMessageHandler().getLabelWithValues("error.char_delim_required", 
+               MessageHandler.codePointToString(delim), 
+               "0xFFFF"));
+         }
+         else if (delim > 0)
+         {
+            settings.setDelimiter(delim);
+         }
+         else
+         {
+            throw new IllegalArgumentException( 
+               getMessageHandler().getLabel("error.missing_delim"));
+         }
+
+         settings.setStrictQuotes(isStrictQuotes());
+
+         settings.setEscapeCharsOption(getEscapeCharsOption());
+
+         if (csvEncodingBox != null)
+         {
+            settings.setCsvEncoding((Charset)csvEncodingBox.getSelectedItem());
+         }
+      }
+
+      if (isCsvTsv || isSpread)
+      {
+         if (csvIncHeaderBox != null)
+         {
+            settings.setHasHeaderRow(csvIncHeaderBox.isSelected());
+         }
+
+         settings.setSkipLines(getSkipLines());
+         settings.setBlankRowAction(getCsvBlankOption());
+      }
+
+      if (isCsvTsv || isSpread || isSql)
+      {
+         settings.setLiteralContent(isLiteralContent());
+         settings.setMapChars(isTeXMappingOn());
+
+         texMapModel.updateSettings();
+      }
+      else
+      {
+         if (texEncodingBox != null)
+         {
+            settings.setTeXEncoding((Charset)texEncodingBox.getSelectedItem());
+         }
+      }
+
+      if (trimElementBox != null)
+      {
+         settings.setTrimElement(trimElementBox.isSelected());
+      }
+
+      if (isSql && sqlPanel != null)
+      {
+         sqlPanel.applyTo(settings);
+      }
+   }
+
+   public void resetFrom(ImportSettings settings)
+   {
+      setSeparator(settings.getSeparator());
+      setDelimiter(settings.getDelimiter());
+
+      setStrictQuotes(settings.isStrictQuotesOn());
+      setEscapeCharsOption(settings.getEscapeCharsOption());
+
+      setCsvEncoding(settings.getCsvEncoding());
+
+      if (csvIncHeaderBox != null)
+      {
+         csvIncHeaderBox.setSelected(settings.hasHeaderRow());
+      }
+
+      setSkipLines(settings.getSkipLines());
+      setCsvBlankOption(settings.getBlankRowAction());
+
+      setLiteralContent(settings.isLiteralContent());
+      setTeXMapping(settings.isMapCharsOn());
+
+      setTeXEncoding(settings.getTeXEncoding());
+
+      if (trimElementBox != null)
+      {
+         trimElementBox.setSelected(settings.isTrimElementOn());
+      }
+
+      if (sqlPanel != null)
+      {
+         sqlPanel.resetFrom(settings);
+      }
+   }
+
    public void applyCsvSettingsTo(DatatoolSettings settings)
      throws IllegalArgumentException
    {
@@ -1894,29 +2027,29 @@ public class IOSettingsPanel extends JPanel
 
       if (csvEncodingBox != null)
       {
-         String encoding = settings.getCsvEncoding();
+         Charset charset = settings.getCsvEncoding();
       
-         if (encoding == null)
+         if (charset == null)
          {
             csvEncodingBox.setSelectedItem(Charset.defaultCharset());
          }
          else
          {
-            csvEncodingBox.setSelectedItem(Charset.forName(encoding));
+            csvEncodingBox.setSelectedItem(charset);
          }
       }
 
       if (texEncodingBox != null)
       {
-         String encoding = settings.getTeXEncoding();
+         Charset charset = settings.getTeXEncoding();
 
-         if (encoding == null)
+         if (charset == null)
          {
             texEncodingBox.setSelectedItem(Charset.defaultCharset());
          }
          else
          {
-            texEncodingBox.setSelectedItem(Charset.forName(encoding));
+            texEncodingBox.setSelectedItem(charset);
          }
       }
    }

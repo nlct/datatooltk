@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2024 Nicola L.C. Talbot
+    Copyright (C) 2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -18,20 +18,17 @@
 */
 package com.dickimawbooks.datatooltk.io;
 
-import java.io.File;
-import java.io.IOException;
-
-import com.dickimawbooks.datatooltk.DatatoolDb;
-import com.dickimawbooks.datatooltk.ImportSettings;
+import org.xml.sax.SAXException;
 
 /**
- * Interface used when importing a database.
+ * Exception thrown to indicate end of parsing.
+ * This should be caught as it's not an actual error but just a
+ * quick way of stopping the parser.
  */
-public interface DatatoolImport
+public class ParsingTerminatedException extends SAXException
 {
-   public DatatoolDb importData(String source)
-    throws DatatoolImportException;
-
-   public DatatoolDb importData(ImportSettings importSettings, String source)
-    throws DatatoolImportException;
+   public ParsingTerminatedException()
+   {
+      super("Parsing terminated");
+   }
 }

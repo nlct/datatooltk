@@ -72,6 +72,11 @@ public class MessageHandler extends ErrorManager
       return texApp;
    }
 
+   public DatatoolTeXApp getDatatoolTeXApp()
+   {
+      return texApp;
+   }
+
    @Override
    public String getApplicationName()
    {
@@ -864,7 +869,7 @@ public class MessageHandler extends ErrorManager
 
    private Vector<URL> dictionarySources;
 
-   private TeXApp texApp;
+   private DatatoolTeXApp texApp;
 
    private StringBuffer errorBuffer, warningBuffer;
 

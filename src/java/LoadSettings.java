@@ -148,6 +148,7 @@ public class LoadSettings
 
    public void setIOSettings(IOSettings ioSettings)
    {
+      this.importSettings = null;
       this.ioSettings = ioSettings;
    }
 
@@ -159,6 +160,22 @@ public class LoadSettings
    public boolean hasIOSettings()
    {
       return ioSettings != null;
+   }
+
+   public void setImportSettings(ImportSettings importSettings)
+   {
+      this.ioSettings = null;
+      this.importSettings = importSettings;
+   }
+
+   public ImportSettings getImportSettings()
+   {
+      return importSettings;
+   }
+
+   public boolean hasImportSettings()
+   {
+      return importSettings != null;
    }
 
    public void setMergeImport(DatatoolImport dataImport)
@@ -370,6 +387,7 @@ public class LoadSettings
    private String target = null;
 
    private IOSettings ioSettings = null;
+   private ImportSettings importSettings = null;
 
    private DatatoolSettings settings;
 }
