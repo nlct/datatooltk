@@ -11,9 +11,6 @@ convert from SQL or CSV or import [probsoln](https://ctan.org/pkg/probsoln) data
 
 Requires at least Java 8 and the following libraries:
 
- - [jOpenDocument](https://jopendocument.org/) (GPL) to read OpenDocument
-   spreadsheets (ods): the file `jOpenDocument-`_version_`.jar`
-   should be placed in the `lib` directory;
  - [Apache POI](https://poi.apache.org/) (Apache License, Version 2.0)
     to read Microsoft Excel spreadsheets (xls): the files `poi-`_version_`.jar`, 
    `poi-ooxml-`_version_`.jar` and `poi-ooxml-schema-`_version_`.jar` 
