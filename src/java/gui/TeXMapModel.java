@@ -34,6 +34,12 @@ import com.dickimawbooks.datatooltk.*;
 public class TeXMapModel extends AbstractTableModel
 {
    public TeXMapModel(IOSettingsPanel ioSettingsPanel,
+      JTable table, ImportSettings importSettings)
+   {
+      this(ioSettingsPanel, table, importSettings.getSettings());
+   }
+
+   public TeXMapModel(IOSettingsPanel ioSettingsPanel,
       JTable table, DatatoolSettings settings)
    {
       super();

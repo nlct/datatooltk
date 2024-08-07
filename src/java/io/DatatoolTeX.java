@@ -248,9 +248,16 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
          IOSettings ioSettings = listener.getIOSettings();
 
          importSettings.applyTo(ioSettings, parser);
+         ioSettings.setFileFormat(FileFormatType.DTLTEX);
 
          return importData(ioSettings, file,
            importSettings.isCheckForVerbatimOn());
+      }
+      catch (TeXSyntaxException e)
+      {
+         throw new DatatoolImportException(
+          getMessageHandler().getLabelWithValues("error.import.failed", 
+           file.toString(), e.getMessage(importSettings.getTeXApp())), e);
       }
       catch (IOException e)
       {

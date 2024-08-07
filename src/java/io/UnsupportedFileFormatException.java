@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -18,20 +18,17 @@
 */
 package com.dickimawbooks.datatooltk.io;
 
-import java.io.File;
-import javax.swing.filechooser.FileFilter;
+import java.io.IOException;
 
-import com.dickimawbooks.datatooltk.DatatoolTk;
-import com.dickimawbooks.datatooltk.MessageHandler;
-
-/**
- * File filter for .dbtex, .dtltex .tex and .ltx files.
- */
-public class TeXFileFilter extends DatatoolFileFilter
+public class UnsupportedFileFormatException extends IOException
 {
-   public TeXFileFilter(MessageHandler messageHandler)
+   public UnsupportedFileFormatException(String message)
    {
-      super(messageHandler.getLabelWithValues("filter.tex", "*.dbtex, *.dtltex, *.tex, *.ltx"), "dbtex", "dtltex", "tex", "ltx");
+      super(message);
    }
 
+   public UnsupportedFileFormatException(String message, Throwable cause)
+   {
+      super(message, cause);
+   }
 }

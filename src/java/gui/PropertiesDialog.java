@@ -45,6 +45,7 @@ import com.dickimawbooks.texjavahelplib.JLabelGroup;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
 import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.io.DatatoolFileFormat;
 
 /**
  * Dialog box to allow user to edit application settings.
@@ -219,11 +220,12 @@ public class PropertiesDialog extends JDialog
 
       csvSettingsPanel = new IOSettingsPanel(this, resources, "preferences",
         IOSettingsPanel.IO_IN, 
-        IOSettingsPanel.FILE_FORMAT_CSV_OR_TSV
-      | IOSettingsPanel.FILE_FORMAT_ANY_SPREADSHEET,
+        DatatoolFileFormat.FILE_FORMAT_CSV_OR_TSV
+      | DatatoolFileFormat.FILE_FORMAT_ANY_SPREADSHEET,
         true, false);
 
-      csvSettingsPanel.setSelectedFileFormat(IOSettingsPanel.FILE_FORMAT_FLAG_CSV);
+      csvSettingsPanel.setSelectedFileFormat(
+        DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
       csvSettingsPanel.setFileFormatComponentVisible(false);
 
       csvTab.add(csvSettingsPanel);

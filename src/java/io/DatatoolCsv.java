@@ -129,6 +129,15 @@ public class DatatoolCsv extends DatatoolTeX
          ioSettings.setDefaultName(name);
          importSettings.applyTo(ioSettings, parser);
 
+         if (importSettings.getSeparator() == '\t')
+         {
+            ioSettings.setFileFormat(FileFormatType.TSV);
+         }
+         else
+         {
+            ioSettings.setFileFormat(FileFormatType.CSV);
+         }
+
          return importData(ioSettings, file,
            importSettings.isCheckForVerbatimOn());
       }

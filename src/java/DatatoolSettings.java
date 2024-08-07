@@ -2040,6 +2040,11 @@ public class DatatoolSettings extends Properties
       setProperty("subtexspecials", ""+enable);
    }
 
+   public boolean isEmptyQuestionToNullOn()
+   {
+      return false;// TODO
+   }
+
    public boolean isSolutionEnvStripped()
    {
       return importSettings.isStripSolutionEnvOn();

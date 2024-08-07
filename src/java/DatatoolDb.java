@@ -43,6 +43,7 @@ import com.dickimawbooks.datatooltk.io.*;
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.primitives.Undefined;
 import com.dickimawbooks.texparserlib.latex.datatool.*;
+import com.dickimawbooks.texparserlib.latex.probsoln.*;
 import com.dickimawbooks.texparserlib.latex.inputenc.InputEncSty;
 
 /**
@@ -234,6 +235,10 @@ public class DatatoolDb
       TeXParser texParser = listener.getParser();
       FileFormatType format = ioSettings.getFormat();
       DataToolSty sty = listener.getDataToolSty();
+
+      ProbSolnSty probSolnSty = listener.getProbSolnSty();
+      probSolnSty.clearAllData();
+
       File dbFile = texPath.getFile();
 
       try
@@ -264,6 +269,15 @@ public class DatatoolDb
 
          DataBase.read(sty, texPath, ioSettings, texParser, texParser);
          texParser.processBuffered();
+
+         if (probSolnSty.getTotalProblemCount() > 0)
+         {
+            db = fromProbSolnSty(dbName, settings, checkForVerbatim);
+
+            probSolnSty.clearAllData();
+
+            return db;
+         }
 
          DataBase texDb = sty.getLatestDataBase();
 
@@ -445,6 +459,121 @@ public class DatatoolDb
       sty.removeDataBase(db.getName());
 
       return db;
+   }
+
+   public static DatatoolDb fromProbSolnSty(String dbName, DatatoolSettings settings, 
+     boolean checkForVerbatim)
+     throws IOException
+   {
+      MessageHandler messageHandler = settings.getMessageHandler();
+      DataToolTeXParserListener listener = settings.getTeXParserListener();
+      TeXParser parser = listener.getParser();
+
+      ProbSolnSty probSolnSty = listener.getProbSolnSty();
+
+      int numDataSets = probSolnSty.getDatabaseCount();
+      int maxRows = probSolnSty.getTotalProblemCount();
+
+      DatatoolDb db = new DatatoolDb(settings, maxRows, numDataSets > 1 ? 4 : 3);
+      db.setName(dbName);
+
+      db.fromProbSolnSty(checkForVerbatim);
+
+      return db;
+   }
+
+   protected void fromProbSolnSty(boolean checkForVerbatim)
+     throws IOException
+   {
+      MessageHandler messageHandler = settings.getMessageHandler();
+      DataToolTeXParserListener listener = settings.getTeXParserListener();
+      TeXParser parser = listener.getParser();
+      TeXApp texApp = messageHandler.getTeXApp();
+
+      ProbSolnSty probSolnSty = listener.getProbSolnSty();
+
+      int numDataSets = probSolnSty.getDatabaseCount();
+
+      String key = messageHandler.getLabel("probsoln.label");
+      addColumn(new DatatoolHeader(this, key, key, DatumType.STRING));
+
+      if (numDataSets > 1)
+      {
+         key = messageHandler.getLabel("probsoln.set");
+         addColumn(new DatatoolHeader(this, key, key, DatumType.STRING));
+      }
+
+      key = messageHandler.getLabel("probsoln.question");
+      addColumn(new DatatoolHeader(this, key, key, DatumType.STRING));
+
+      key = messageHandler.getLabel("probsoln.answer");
+      addColumn(new DatatoolHeader(this, key, key, DatumType.STRING));
+
+      Iterator<ProbSolnData> allDataIt = probSolnSty.allEntriesIterator();
+
+      texApp.progress(0);
+      int maxRows = probSolnSty.getTotalProblemCount();
+
+      boolean stripSolnEnv = settings.isSolutionEnvStripped();
+
+      for (int rowIdx = 0; allDataIt.hasNext(); rowIdx++)
+      {
+         ProbSolnData data = allDataIt.next();
+
+         String probLabel = data.getName();
+         String dbLabel = data.getDataBaseLabel();
+
+         DatatoolRow row = new DatatoolRow(this, getColumnCount());
+         int colIdx = 0;
+   
+         row.addCell(colIdx++, probLabel);
+
+         if (numDataSets > 1)
+         {
+            row.addCell(colIdx++, dbLabel);
+         }
+
+         TeXObject question = data.getQuestion(parser);
+         TeXObject answer = data.getAnswer(parser, stripSolnEnv);
+
+         if (question instanceof TeXObjectList)
+         {
+            processEntry((TeXObjectList)question, checkForVerbatim);
+         }
+
+         if (answer instanceof TeXObjectList)
+         {
+            processEntry((TeXObjectList)answer, checkForVerbatim);
+         }
+
+         String questionText = question.toString(parser);
+         String answerText = answer.toString(parser);
+
+         row.addCell(colIdx++, questionText);
+
+         if (answerText.equals(questionText))
+         {
+            questionText = "";
+         }
+
+         if (questionText.isEmpty() && settings.isEmptyQuestionToNullOn())
+         {
+            row.addCell(colIdx++, Datum.createNull(settings));
+         }
+         else
+         {
+            row.addCell(colIdx++, answerText);
+         }
+
+         insertRow(rowIdx, row);
+
+         texApp.progress((100*rowIdx)/maxRows);
+      }
+
+      if (hasVerbatim)
+      {
+         messageHandler.warning(messageHandler.getLabel("warning.verb_detected"));
+      }
    }
 
    protected void processEntry(TeXObjectList list,

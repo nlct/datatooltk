@@ -231,22 +231,8 @@ public class DatatoolGUI extends JFrame
          KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK),
         toolBar));
 
-      JMenu importM = resources.createJMenu("file.import");
-      fileM.add(importM);
-
-      importM.add(resources.createJMenuItem(
-        "file.import", "importcsv", this, toolBar));
-
-      importM.add(resources.createJMenuItem(
-        "file.import", "importsql", this, toolBar));
-
-      importSqlDialog = new ImportSqlDialog(this);
-
-      importM.add(resources.createJMenuItem(
-        "file.import", "importprobsoln", this, toolBar));
-
-      importM.add(resources.createJMenuItem(
-        "file.import", "importspread", this, toolBar));
+      fileM.add(resources.createJMenuItem(
+        "file", "import", this, toolBar));
 
       saveItem = resources.createJMenuItem(
         "file", "save", this, toolBar);
@@ -459,17 +445,9 @@ public class DatatoolGUI extends JFrame
       dtltex3Filter = new DtlTeXVersionFileFilter(messageHandler, "3.0");
       dtltex2Filter = new DtlTeXVersionFileFilter(messageHandler, "2.0");
 
-      csvtxtFilter = new CsvTxtFileFilter(messageHandler);
-      csvtxtFilter = new CsvTxtFileFilter(messageHandler);
-      csvFilter = new CsvFileFilter(messageHandler);
-      txtFilter = new TxtFileFilter(messageHandler);
-      xlsFilter = new XlsFileFilter(messageHandler);
-      odsFilter = new OdsFileFilter(messageHandler);
-      spreadFilter = new SpreadSheetFilter(messageHandler);
-
       fileChooser = new JFileChooser(settings.getStartUpDirectory());
 
-      importDialog = new ImportDialog(this, fileChooser);
+      importDialog = new ImportDialog(this);
 
       headerDialog = new HeaderDialog(this);
       cellEditor = new CellDialog(this);
@@ -889,21 +867,9 @@ public class DatatoolGUI extends JFrame
       {
          load();
       }
-      else if (action.equals("importcsv"))
+      else if (action.equals("import"))
       {
-         importCsv();
-      }
-      else if (action.equals("importsql"))
-      {
-         importSqlDialog.requestImport(settings);
-      }
-      else if (action.equals("importprobsoln"))
-      {
-         importProbSoln();
-      }
-      else if (action.equals("importspread"))
-      {
-         importSpreadSheet();
+         importData();
       }
       else if (action.equals("close_db"))
       {
@@ -1225,6 +1191,11 @@ public class DatatoolGUI extends JFrame
       getDatatoolTk().exit(0);
    }
 
+   public File getCurrentChooserDirectory()
+   {
+      return fileChooser.getCurrentDirectory();
+   }
+
    private void setTeXFileFilters(boolean includeTeXFilter)
    {
       setTeXFileFilters(includeTeXFilter, false, FileFormatType.DBTEX, "3.0");
@@ -1352,113 +1323,6 @@ public class DatatoolGUI extends JFrame
             }
          }
       }
-   }
-
-   private void setCsvFileFilters()
-   {
-      FileFilter current = fileChooser.getFileFilter();
-
-      if (current == csvFilter || current == txtFilter 
-       || current == csvtxtFilter)
-      {
-         return;
-      }
-
-      File file = fileChooser.getSelectedFile();
-
-      fileChooser.resetChoosableFileFilters();
-
-      FileFilter all = fileChooser.getAcceptAllFileFilter();
-
-      fileChooser.removeChoosableFileFilter(all);
-
-      fileChooser.addChoosableFileFilter(csvtxtFilter);
-      fileChooser.addChoosableFileFilter(csvFilter);
-      fileChooser.addChoosableFileFilter(txtFilter);
-      fileChooser.addChoosableFileFilter(all);
-
-      fileChooser.setFileFilter(csvtxtFilter);
-
-      if (file != null && !csvtxtFilter.accept(file))
-      {
-         String name = file.getName();
-
-         int idx = name.lastIndexOf(".");
-
-         if (idx > 0)
-         {
-            file = new File(file.getParent(), 
-              String.format("%s.%s", name.substring(0, idx),
-                 csvtxtFilter.getDefaultExtension()));
-
-            if (file.exists())
-            {
-               fileChooser.setSelectedFile(file);
-            }
-         }
-      }
-   }
-
-   private void setSpreadSheetFilters()
-   {
-      FileFilter current = fileChooser.getFileFilter();
-
-      if (current == xlsFilter || current == odsFilter
-            || current == spreadFilter)
-      {
-         return;
-      }
-
-      File file = fileChooser.getSelectedFile();
-      fileChooser.resetChoosableFileFilters();
-
-      FileFilter all = fileChooser.getAcceptAllFileFilter();
-
-      fileChooser.removeChoosableFileFilter(all);
-
-      fileChooser.addChoosableFileFilter(spreadFilter);
-      fileChooser.addChoosableFileFilter(xlsFilter);
-      fileChooser.addChoosableFileFilter(odsFilter);
-      fileChooser.addChoosableFileFilter(all);
-
-      fileChooser.setFileFilter(spreadFilter);
-
-      if (file != null && !spreadFilter.accept(file))
-      {
-         String name = file.getName();
-
-         int idx = name.lastIndexOf(".");
-
-         if (idx > 0)
-         {
-            file = new File(file.getParent(), 
-              String.format("%s.%s", name.substring(0, idx),
-                 spreadFilter.getDefaultExtension()));
-
-            if (file.exists())
-            {
-               fileChooser.setSelectedFile(file);
-            }
-         }
-      }
-   }
-
-   private void setImportFileFilters()
-   {
-      FileFilter current = fileChooser.getFileFilter();
-
-      File file = fileChooser.getSelectedFile();
-      fileChooser.resetChoosableFileFilters();
-
-      FileFilter all = fileChooser.getAcceptAllFileFilter();
-
-      fileChooser.removeChoosableFileFilter(all);
-
-      fileChooser.addChoosableFileFilter(csvtxtFilter);
-      fileChooser.addChoosableFileFilter(spreadFilter);
-      fileChooser.addChoosableFileFilter(dbdtltexFilter);
-      fileChooser.addChoosableFileFilter(texFilter);
-      fileChooser.addChoosableFileFilter(all);
    }
 
    public DatatoolDbPanel getPanel(DatatoolDb db)
@@ -1670,119 +1534,9 @@ public class DatatoolGUI extends JFrame
       updateTools();
    }
 
-   public void importSpreadSheet()
+   public void importData()
    {
-      setSpreadSheetFilters();
-
-      if (fileChooser.showDialog(this, getMessageHandler().getLabel("button.import"))
-       != JFileChooser.APPROVE_OPTION)
-      {
-         return;
-      }
-
-      File file = fileChooser.getSelectedFile();
-
-      FileFilter filter = fileChooser.getFileFilter();
-
-      DatatoolImport imp;
-
-      if (filter == xlsFilter)
-      {
-         imp = new DatatoolExcel(settings);
-      }
-      else if (filter == odsFilter)
-      {
-         imp = new DatatoolOpenDoc(settings);
-      }
-      else
-      {
-         String name = file.getName();
-
-         int idx = name.lastIndexOf(".");
-
-         String suffix = name.substring(idx+1).toLowerCase();
-
-         if (suffix.equals("xls"))
-         {
-            imp = new DatatoolExcel(settings);
-         }
-         else if (suffix.equals("ods"))
-         {
-            imp = new DatatoolOpenDoc(settings);
-         }
-         else
-         {
-            getMessageHandler().error(this,  
-              getMessageHandler().getLabelWithValues("error.unknown_file_format", name));
-
-            return;
-         }
-      }
-
-      Object ref = null;
-
-      try
-      {
-         if (imp instanceof DatatoolSpreadSheetImport)
-         {
-            String[] names
-               = ((DatatoolSpreadSheetImport)imp).getSheetNames(file);
-
-            ref = JOptionPane.showInputDialog(this,
-               getMessageHandler().getLabel("importspread.sheet"),
-               getMessageHandler().getLabel("importspread.title"),
-               JOptionPane.PLAIN_MESSAGE,
-               null, names, null);
-
-            if (ref == null) return;
-         }
-      }
-      catch (IOException e)
-      {
-         getMessageHandler().error(this,  e);
-
-         return;
-      }
-
-      settings.getImportSettings().setSheetName(ref.toString());
-
-      importData(imp,
-       fileChooser.getSelectedFile().getAbsolutePath());
-   }
-
-// TODO: remove separate import options and replace with single
-// method
-   public void importCsv()
-   {
-      setImportFileFilters();
       importDialog.display();
-/*
-
-      if (fileChooser.showDialog(this, 
-             getMessageHandler().getLabel("button.import"))
-       != JFileChooser.APPROVE_OPTION)
-      {
-         return;
-      }
-
-      importData(new DatatoolCsv(settings),
-       fileChooser.getSelectedFile().getAbsolutePath());
-*/
-   }
-
-   public void importProbSoln()
-   {
-      setTeXFileFilter();
-
-      if (fileChooser.showDialog(this, 
-             getMessageHandler().getLabel("button.import"))
-       != JFileChooser.APPROVE_OPTION)
-      {
-         return;
-      }
-
-      importData(new DatatoolProbSoln(settings),
-       fileChooser.getSelectedFile().getAbsolutePath());
    }
 
    public void importData(DatatoolImport imp, String source)
@@ -2002,8 +1756,7 @@ public class DatatoolGUI extends JFrame
    private JFileChooser fileChooser;
 
    private DatatoolFileFilter texFilter, dbdtltexFilter,
-     dbtex2Filter, dbtex3Filter, dtltex2Filter, dtltex3Filter, csvFilter, txtFilter,
-     csvtxtFilter, xlsFilter, odsFilter, spreadFilter;
+     dbtex2Filter, dbtex3Filter, dtltex2Filter, dtltex3Filter;
 
    private HeaderDialog headerDialog;
 
@@ -2029,8 +1782,6 @@ public class DatatoolGUI extends JFrame
    private ActionListener recentFilesListener;
 
    private PropertiesDialog propertiesDialog;
-
-   private ImportSqlDialog importSqlDialog;
 
    private SortDialog sortDialog;
 

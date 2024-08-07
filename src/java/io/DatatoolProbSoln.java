@@ -175,7 +175,12 @@ public class DatatoolProbSoln implements DatatoolImport
 
          if (answerText.equals(questionText))
          {
-            row.addCell(colIdx++, "");
+            answerText = "";
+         }
+
+         if (answerText.isEmpty() && settings.isEmptyQuestionToNullOn())
+         {
+            row.addCell(colIdx++, Datum.createNull(settings));
          }
          else
          {

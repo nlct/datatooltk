@@ -35,6 +35,9 @@ import com.dickimawbooks.texjavahelplib.JLabelGroup;
 
 import com.dickimawbooks.datatooltk.*;
 
+import com.dickimawbooks.datatooltk.io.DatatoolFileFormat;
+import com.dickimawbooks.datatooltk.io.UnsupportedFileFormatException;
+
 public class IOSettingsPanel extends JPanel
   implements ActionListener
 {
@@ -62,6 +65,8 @@ public class IOSettingsPanel extends JPanel
       this.formatSingleSelection = formatSingleSelection;
       this.tagParentLabel = tagParentLabel;
 
+      this.selectedFormatModifiers = 0;
+
       init(addTrim);
    }
 
@@ -76,18 +81,12 @@ public class IOSettingsPanel extends JPanel
          add(trimElementBox);
       }
 
-      if (
-           ((formatModifiers | FILE_FORMAT_ANY_TEX)
-               & FILE_FORMAT_ANY_TEX) == FILE_FORMAT_ANY_TEX
-         )
+      if ( DatatoolFileFormat.isAnyTeX(formatModifiers) )
       {
          initTeXCardComp();
       }
 
-      if (
-           ((formatModifiers | FILE_FORMAT_ANY_NON_TEX)
-               & FILE_FORMAT_ANY_NON_TEX) == FILE_FORMAT_ANY_NON_TEX
-         )
+      if ( DatatoolFileFormat.isAnyNonTeX(formatModifiers) )
       {
          initNonTeXComp();
       }
@@ -136,7 +135,7 @@ public class IOSettingsPanel extends JPanel
 
       fileFormatComp.add(createJLabel("format"));
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_TEX) == FILE_FORMAT_FLAG_TEX)
+      if (DatatoolFileFormat.isTeX(formatModifiers))
       {
          formatTeXToggleButton = createFormatButton(
            fileFormatComp, "tex", formatBtnGrp);
@@ -144,7 +143,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DTLTEX) == FILE_FORMAT_FLAG_DTLTEX)
+      if (DatatoolFileFormat.isDTLTEX(formatModifiers))
       {
          formatDTLTEXToggleButton = createFormatButton(
            fileFormatComp, "dtltex", formatBtnGrp);
@@ -152,7 +151,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DTLTEX2) == FILE_FORMAT_FLAG_DTLTEX2)
+      if (DatatoolFileFormat.isDTLTEX2(formatModifiers))
       {
          formatDTLTEX2ToggleButton = createFormatButton(
            fileFormatComp, "dtltex-2", formatBtnGrp);
@@ -160,7 +159,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DTLTEX3) == FILE_FORMAT_FLAG_DTLTEX3)
+      if (DatatoolFileFormat.isDTLTEX3(formatModifiers))
       {
          formatDTLTEX3ToggleButton = createFormatButton(
            fileFormatComp, "dtltex-3", formatBtnGrp);
@@ -168,7 +167,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DBTEX) == FILE_FORMAT_FLAG_DBTEX)
+      if (DatatoolFileFormat.isDBTEX(formatModifiers))
       {
          formatDBTEXToggleButton = createFormatButton(
            fileFormatComp, "dbtex", formatBtnGrp);
@@ -176,7 +175,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DBTEX2) == FILE_FORMAT_FLAG_DBTEX2)
+      if (DatatoolFileFormat.isDBTEX2(formatModifiers))
       {
          formatDBTEX2ToggleButton = createFormatButton(
            fileFormatComp, "dbtex-2", formatBtnGrp);
@@ -184,7 +183,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DBTEX3) == FILE_FORMAT_FLAG_DBTEX3)
+      if (DatatoolFileFormat.isDBTEX3(formatModifiers))
       {
          formatDBTEX3ToggleButton = createFormatButton(
            fileFormatComp, "dbtex-3", formatBtnGrp);
@@ -192,7 +191,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_CSV) == FILE_FORMAT_FLAG_CSV)
+      if (DatatoolFileFormat.isCSV(formatModifiers))
       {
          formatCSVToggleButton = createFormatButton(
            fileFormatComp, "csv", formatBtnGrp);
@@ -200,7 +199,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_TSV) == FILE_FORMAT_FLAG_TSV)
+      if (DatatoolFileFormat.isTSV(formatModifiers))
       {
          formatTSVToggleButton = createFormatButton(
            fileFormatComp, "tsv", formatBtnGrp);
@@ -208,7 +207,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_ODS) == FILE_FORMAT_FLAG_ODS)
+      if (DatatoolFileFormat.isODS(formatModifiers))
       {
          formatODSToggleButton = createFormatButton(
            fileFormatComp, "ods", formatBtnGrp);
@@ -216,7 +215,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_FODS) == FILE_FORMAT_FLAG_FODS)
+      if (DatatoolFileFormat.isFODS(formatModifiers))
       {
          formatFODSToggleButton = createFormatButton(
            fileFormatComp, "fods", formatBtnGrp);
@@ -224,7 +223,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_XLSX) == FILE_FORMAT_FLAG_XLSX)
+      if (DatatoolFileFormat.isXLSX(formatModifiers))
       {
          formatXLSXToggleButton = createFormatButton(
            fileFormatComp, "xlsx", formatBtnGrp);
@@ -232,7 +231,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_XLS) == FILE_FORMAT_FLAG_XLS)
+      if (DatatoolFileFormat.isXLS(formatModifiers))
       {
          formatXLSToggleButton = createFormatButton(
            fileFormatComp, "xls", formatBtnGrp);
@@ -240,7 +239,7 @@ public class IOSettingsPanel extends JPanel
          numFormats++;
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL)
+      if (DatatoolFileFormat.isSQL(formatModifiers))
       {
          formatSQLToggleButton = createFormatButton(
            fileFormatComp, "sql", formatBtnGrp);
@@ -286,6 +285,15 @@ public class IOSettingsPanel extends JPanel
       row.add(createJLabel("tex.encoding", texEncodingBox));
       row.add(texEncodingBox);
 
+      row.setMaximumSize(row.getPreferredSize());
+
+      if (isRead())
+      {
+         stripSolnEnvBox = createJCheckBox("tex", "stripsolnenv");
+         texCardComp.add(stripSolnEnvBox);
+         stripSolnEnvBox.setMaximumSize(stripSolnEnvBox.getPreferredSize());
+      }
+
       if (isWrite())
       {
          if (isRead())
@@ -298,6 +306,7 @@ public class IOSettingsPanel extends JPanel
             texIncHeaderBox = createJCheckBox("write", "hasheader");
          }
 
+         texIncHeaderBox.setMaximumSize(texIncHeaderBox.getPreferredSize());
          texCardComp.add(texIncHeaderBox);
       }
    }
@@ -306,14 +315,13 @@ public class IOSettingsPanel extends JPanel
    {
       nonTeXCardComp = createVerticalBox();
 
-      boolean isCsvTsv = (((formatModifiers | FILE_FORMAT_CSV_OR_TSV)
-               & FILE_FORMAT_CSV_OR_TSV) == FILE_FORMAT_CSV_OR_TSV);
+      boolean isCsvTsv
+         = DatatoolFileFormat.isCsvOrTsv(formatModifiers);
 
-      boolean isSpread = (((formatModifiers | FILE_FORMAT_ANY_SPREADSHEET)
-               & FILE_FORMAT_ANY_SPREADSHEET) == FILE_FORMAT_ANY_SPREADSHEET);
+      boolean isSpread
+         = DatatoolFileFormat.isSpreadSheet(formatModifiers);
 
-      boolean isSql =
-         ((formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL);
+      boolean isSql = DatatoolFileFormat.isSQL(formatModifiers);
 
       if (isSql)
       {
@@ -567,6 +575,11 @@ public class IOSettingsPanel extends JPanel
              }
           }
        });
+
+      texMapModel = new TeXMapModel(this, texMapTable,
+        resources.getGUI().getSettings());
+      texMapTable.setModel(texMapModel);
+
       texMapTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
       texMapTable.setBorder(BorderFactory.createEtchedBorder());
       texMapTable.setIntercellSpacing(new Dimension(6, 1));
@@ -841,7 +854,7 @@ public class IOSettingsPanel extends JPanel
 
    protected void formatChanged()
    {
-      if (isFileFormatSelected(FILE_FORMAT_ANY_TEX))
+      if (isFileFormatSelected(DatatoolFileFormat.FILE_FORMAT_ANY_TEX))
       {
          if (cardLayout != null)
          {
@@ -855,7 +868,7 @@ public class IOSettingsPanel extends JPanel
             cardLayout.show(cardComp, "nontex");
          }
 
-         if (isFileFormatSelected(FILE_FORMAT_CSV_OR_TSV))
+         if (isFileFormatSelected(DatatoolFileFormat.FILE_FORMAT_CSV_OR_TSV))
          {
             csvTsvOnlyComp.setVisible(true);
 
@@ -882,8 +895,9 @@ public class IOSettingsPanel extends JPanel
             csvTsvOnlyComp.setVisible(false);
          }
 
-         if (isFileFormatSelected(FILE_FORMAT_CSV_OR_TSV
-              | FILE_FORMAT_ANY_SPREADSHEET))
+         if (isFileFormatSelected(
+                DatatoolFileFormat.FILE_FORMAT_CSV_OR_TSV
+              | DatatoolFileFormat.FILE_FORMAT_ANY_SPREADSHEET))
          {
             csvSpreadComp.setVisible(true);
          }
@@ -894,90 +908,87 @@ public class IOSettingsPanel extends JPanel
 
          if (sqlPanel != null)
          {
-            sqlPanel.setVisible(isFileFormatSelected(FILE_FORMAT_FLAG_SQL));
+            sqlPanel.setVisible(isFileFormatSelected(
+               DatatoolFileFormat.FILE_FORMAT_FLAG_SQL));
          }
       }
    }
 
    protected void updateFormatModifiers()
    {
-      formatModifiers = 0;
+      selectedFormatModifiers = 0;
 
       if (formatSingleSelection)
       {
          if (formatTeXToggleButton != null
                && formatTeXToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_ANY_TEX;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_ANY_TEX;
          }
          else if (formatDTLTEXToggleButton != null
                && formatDTLTEXToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_DTLTEX
-                            | FILE_FORMAT_FLAG_DTLTEX2
-                            | FILE_FORMAT_FLAG_DTLTEX3;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_ANY_DTLTEX;
          }
          else if (formatDTLTEX2ToggleButton != null
                && formatDTLTEX2ToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_DTLTEX2;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX2;
          }
          else if (formatDTLTEX3ToggleButton != null
                && formatDTLTEX3ToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_DTLTEX3;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX3;
          }
          else if (formatDBTEXToggleButton != null
                && formatDBTEXToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_DBTEX
-                            | FILE_FORMAT_FLAG_DBTEX2
-                            | FILE_FORMAT_FLAG_DBTEX3;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_ANY_DBTEX;
          }
          else if (formatDBTEX2ToggleButton != null
                && formatDBTEX2ToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_DBTEX2;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX2;
          }
          else if (formatDBTEX3ToggleButton != null
                && formatDBTEX3ToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_DBTEX3;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX3;
          }
          else if (formatCSVToggleButton != null
                && formatCSVToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_CSV;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_CSV;
          }
          else if (formatTSVToggleButton != null
                && formatTSVToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_TSV;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_TSV;
          }
          else if (formatODSToggleButton != null
                && formatODSToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_ODS;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_ODS;
          }
          else if (formatFODSToggleButton != null
                && formatFODSToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_FODS;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_FODS;
          }
          else if (formatXLSToggleButton != null
                && formatXLSToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_XLS;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_XLS;
          }
          else if (formatXLSXToggleButton != null
                && formatXLSXToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_XLSX;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX;
          }
          else if (formatSQLToggleButton != null
                && formatSQLToggleButton.isSelected())
          {
-            formatModifiers = FILE_FORMAT_FLAG_SQL;
+            selectedFormatModifiers = DatatoolFileFormat.FILE_FORMAT_FLAG_SQL;
          }
       }
       else
@@ -985,89 +996,85 @@ public class IOSettingsPanel extends JPanel
          if (formatTeXToggleButton != null
                && formatTeXToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_ANY_TEX;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_ANY_TEX;
          }
 
          if (formatDTLTEXToggleButton != null
                && formatDTLTEXToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_DTLTEX
-                            | FILE_FORMAT_FLAG_DTLTEX2
-                            | FILE_FORMAT_FLAG_DTLTEX3;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_ANY_DTLTEX;
          }
 
          if (formatDTLTEX2ToggleButton != null
                && formatDTLTEX2ToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_DTLTEX2;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX2;
          }
 
          if (formatDTLTEX3ToggleButton != null
                && formatDTLTEX3ToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_DTLTEX3;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX3;
          }
 
          if (formatDBTEXToggleButton != null
                && formatDBTEXToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_DBTEX
-                            | FILE_FORMAT_FLAG_DBTEX2
-                            | FILE_FORMAT_FLAG_DBTEX3;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_ANY_DBTEX;
          }
 
          if (formatDBTEX2ToggleButton != null
                && formatDBTEX2ToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_DBTEX2;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX2;
          }
 
          if (formatDBTEX3ToggleButton != null
                && formatDBTEX3ToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_DBTEX3;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX3;
          }
 
          if (formatCSVToggleButton != null
                && formatCSVToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_CSV;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_CSV;
          }
 
          if (formatTSVToggleButton != null
                && formatTSVToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_TSV;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_TSV;
          }
 
          if (formatODSToggleButton != null
                && formatODSToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_ODS;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_ODS;
          }
 
          if (formatFODSToggleButton != null
                && formatFODSToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_FODS;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_FODS;
          }
 
          if (formatXLSToggleButton != null
                && formatXLSToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_XLS;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_XLS;
          }
 
          if (formatXLSXToggleButton != null
                && formatXLSXToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_XLSX;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX;
          }
 
          if (formatSQLToggleButton != null
                && formatSQLToggleButton.isSelected())
          {
-            formatModifiers |= FILE_FORMAT_FLAG_SQL;
+            selectedFormatModifiers |= DatatoolFileFormat.FILE_FORMAT_FLAG_SQL;
          }
       }
    }
@@ -1079,16 +1086,16 @@ public class IOSettingsPanel extends JPanel
 
       if ("format".equals(action))
       {
-         int oldModifiers = formatModifiers;
+         int oldModifiers = selectedFormatModifiers;
          updateFormatModifiers();
 
          formatChanged();
 
-         if (oldModifiers != formatModifiers)
+         if (oldModifiers != selectedFormatModifiers)
          {
             fireFileFormatChange(
               new FileFormatSelectionChangeEvent(this,
-                     oldModifiers, formatModifiers));
+                     oldModifiers, selectedFormatModifiers));
          }
       }
       else if ("sepchar".equals(action))
@@ -1449,6 +1456,19 @@ public class IOSettingsPanel extends JPanel
       }
    }
 
+   public boolean isStripSolnEnvOn()
+   {
+      return stripSolnEnvBox != null && stripSolnEnvBox.isSelected();
+   }
+
+   public void setStripSolnEnvOn(boolean on)
+   {
+      if (stripSolnEnvBox != null)
+      {
+         stripSolnEnvBox.setSelected(on);
+      }
+   }
+
    public boolean isTrimElementOn()
    {
       return trimElementBox != null && trimElementBox.isSelected();
@@ -1464,7 +1484,7 @@ public class IOSettingsPanel extends JPanel
 
    public boolean isHeaderIncluded()
    {
-      if (isFileFormatSelected(FILE_FORMAT_ANY_TEX))
+      if (isFileFormatSelected(DatatoolFileFormat.FILE_FORMAT_ANY_TEX))
       {
          return texIncHeaderBox != null && texIncHeaderBox.isSelected();
       }
@@ -1487,9 +1507,9 @@ public class IOSettingsPanel extends JPanel
       }
    }
 
-   public boolean isFileFormatSelected(int formatModifiers)
+   public boolean isFileFormatSelected(int modifiers)
    {
-      if ((formatModifiers & FILE_FORMAT_FLAG_TEX) == FILE_FORMAT_FLAG_TEX)
+      if (DatatoolFileFormat.isTeX(modifiers))
       {
          if (formatTeXToggleButton != null
           && formatTeXToggleButton.isSelected())
@@ -1498,7 +1518,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DTLTEX) == FILE_FORMAT_FLAG_DTLTEX)
+      if (DatatoolFileFormat.isDTLTEX(modifiers))
       {
          if (formatDTLTEXToggleButton != null
           && formatDTLTEXToggleButton.isSelected())
@@ -1507,7 +1527,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DTLTEX2) == FILE_FORMAT_FLAG_DTLTEX2)
+      if (DatatoolFileFormat.isDTLTEX2(modifiers))
       {
          if (formatDTLTEX2ToggleButton != null
           && formatDTLTEX2ToggleButton.isSelected())
@@ -1516,7 +1536,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DTLTEX3) == FILE_FORMAT_FLAG_DTLTEX3)
+      if (DatatoolFileFormat.isDTLTEX3(modifiers))
       {
          if (formatDTLTEX3ToggleButton != null
           && formatDTLTEX3ToggleButton.isSelected())
@@ -1525,7 +1545,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DBTEX) == FILE_FORMAT_FLAG_DBTEX)
+      if (DatatoolFileFormat.isDBTEX(modifiers))
       {
          if (formatDBTEXToggleButton != null
           && formatDBTEXToggleButton.isSelected())
@@ -1534,7 +1554,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DBTEX2) == FILE_FORMAT_FLAG_DBTEX2)
+      if (DatatoolFileFormat.isDBTEX2(modifiers))
       {
          if (formatDBTEX2ToggleButton != null
           && formatDBTEX2ToggleButton.isSelected())
@@ -1543,7 +1563,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_DBTEX3) == FILE_FORMAT_FLAG_DBTEX3)
+      if (DatatoolFileFormat.isDBTEX3(modifiers))
       {
          if (formatDBTEX3ToggleButton != null
           && formatDBTEX3ToggleButton.isSelected())
@@ -1552,7 +1572,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_CSV) == FILE_FORMAT_FLAG_CSV)
+      if (DatatoolFileFormat.isCSV(modifiers))
       {
          if (formatCSVToggleButton != null
           && formatCSVToggleButton.isSelected())
@@ -1561,7 +1581,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_TSV) == FILE_FORMAT_FLAG_TSV)
+      if (DatatoolFileFormat.isTSV(modifiers))
       {
          if (formatTSVToggleButton != null
           && formatTSVToggleButton.isSelected())
@@ -1570,7 +1590,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_ODS) == FILE_FORMAT_FLAG_ODS)
+      if (DatatoolFileFormat.isODS(modifiers))
       {
          if (formatODSToggleButton != null
           && formatODSToggleButton.isSelected())
@@ -1579,7 +1599,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_FODS) == FILE_FORMAT_FLAG_FODS)
+      if (DatatoolFileFormat.isFODS(modifiers))
       {
          if (formatFODSToggleButton != null
           && formatFODSToggleButton.isSelected())
@@ -1588,7 +1608,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_XLS) == FILE_FORMAT_FLAG_XLS)
+      if (DatatoolFileFormat.isXLS(modifiers))
       {
          if (formatXLSToggleButton != null
           && formatXLSToggleButton.isSelected())
@@ -1597,7 +1617,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_XLSX) == FILE_FORMAT_FLAG_XLSX)
+      if (DatatoolFileFormat.isXLSX(modifiers))
       {
          if (formatXLSXToggleButton != null
           && formatXLSXToggleButton.isSelected())
@@ -1606,7 +1626,7 @@ public class IOSettingsPanel extends JPanel
          }
       }
 
-      if ((formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL)
+      if (DatatoolFileFormat.isSQL(modifiers))
       {
          if (formatSQLToggleButton != null
           && formatSQLToggleButton.isSelected())
@@ -1618,101 +1638,101 @@ public class IOSettingsPanel extends JPanel
       return false;
    }
 
-   public void setSelectedFileFormat(int formatModifiers)
+   public void setSelectedFileFormat(int modifiers)
    {
-      int oldModifiers = this.formatModifiers;
-      this.formatModifiers = formatModifiers;
+      int oldModifiers = selectedFormatModifiers;
+      selectedFormatModifiers = modifiers;
 
       if (formatTeXToggleButton != null)
       {
          formatTeXToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_TEX) == FILE_FORMAT_FLAG_TEX);
+            DatatoolFileFormat.isTeX(modifiers));
       }
 
       if (formatDBTEXToggleButton != null)
       {
          formatDBTEXToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_DBTEX) == FILE_FORMAT_FLAG_DBTEX);
+            DatatoolFileFormat.isDBTEX(modifiers));
       }
 
       if (formatDBTEX2ToggleButton != null)
       {
          formatDBTEX2ToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_DBTEX2) == FILE_FORMAT_FLAG_DBTEX2);
+            DatatoolFileFormat.isDBTEX2(modifiers));
       }
 
       if (formatDBTEX3ToggleButton != null)
       {
          formatDBTEX3ToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_DBTEX3) == FILE_FORMAT_FLAG_DBTEX3);
+            DatatoolFileFormat.isDBTEX3(modifiers));
       }
 
       if (formatDTLTEXToggleButton != null)
       {
          formatDTLTEXToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_DTLTEX) == FILE_FORMAT_FLAG_DTLTEX);
+            DatatoolFileFormat.isDTLTEX(modifiers));
       }
 
       if (formatDTLTEX2ToggleButton != null)
       {
          formatDTLTEX2ToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_DTLTEX2) == FILE_FORMAT_FLAG_DTLTEX2);
+            DatatoolFileFormat.isDTLTEX2(modifiers));
       }
 
       if (formatDTLTEX3ToggleButton != null)
       {
          formatDTLTEX3ToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_DTLTEX3) == FILE_FORMAT_FLAG_DTLTEX3);
+            DatatoolFileFormat.isDTLTEX3(modifiers));
       }
 
       if (formatCSVToggleButton != null)
       {
          formatCSVToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_CSV) == FILE_FORMAT_FLAG_CSV);
+            DatatoolFileFormat.isCSV(modifiers));
       }
 
       if (formatTSVToggleButton != null)
       {
          formatTSVToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_TSV) == FILE_FORMAT_FLAG_TSV);
+            DatatoolFileFormat.isTSV(modifiers));
       }
 
       if (formatODSToggleButton != null)
       {
          formatODSToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_ODS) == FILE_FORMAT_FLAG_ODS);
+            DatatoolFileFormat.isODS(modifiers));
       }
 
       if (formatFODSToggleButton != null)
       {
          formatFODSToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_FODS) == FILE_FORMAT_FLAG_FODS);
+            DatatoolFileFormat.isFODS(modifiers));
       }
 
       if (formatXLSToggleButton != null)
       {
          formatXLSToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_XLS) == FILE_FORMAT_FLAG_XLS);
+            DatatoolFileFormat.isXLS(modifiers));
       }
 
       if (formatXLSXToggleButton != null)
       {
          formatXLSXToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_XLSX) == FILE_FORMAT_FLAG_XLSX);
+            DatatoolFileFormat.isXLSX(modifiers));
       }
 
       if (formatSQLToggleButton != null)
       {
          formatSQLToggleButton.setSelected(
-          (formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL);
+            DatatoolFileFormat.isSQL(modifiers));
       }
 
       formatChanged();
 
-      if (oldModifiers != formatModifiers)
+      if (oldModifiers != modifiers)
       {
          fireFileFormatChange(
-          new FileFormatSelectionChangeEvent(this, oldModifiers, formatModifiers));
+          new FileFormatSelectionChangeEvent(this, oldModifiers, modifiers));
       }
    }
 
@@ -1780,29 +1800,30 @@ public class IOSettingsPanel extends JPanel
       return (ioModifiers & IO_OUT) == IO_OUT;
    }
 
+   /**
+    * Determines whether or not this panel only supports CSV/TSV.
+    */
    public boolean isCsvTsvOnly()
    {
-      return (formatModifiers | FILE_FORMAT_CSV_OR_TSV)
-       == FILE_FORMAT_CSV_OR_TSV;
+      return DatatoolFileFormat.isCsvOrTsvOnly(formatModifiers);
    }
 
+   /**
+    * Determines whether or not this panel only supports CSV/TSV.
+    */
    public boolean isTeXOnly()
    {
-      return (formatModifiers | FILE_FORMAT_ANY_TEX)
-        == FILE_FORMAT_ANY_TEX;
+      return DatatoolFileFormat.isTeXOnly(formatModifiers);
    }
 
    public void applyTo(ImportSettings settings)
      throws IllegalArgumentException
    {
-      boolean isCsvTsv = (((formatModifiers | FILE_FORMAT_CSV_OR_TSV)
-               & FILE_FORMAT_CSV_OR_TSV) == FILE_FORMAT_CSV_OR_TSV);
+      boolean isCsvTsv = DatatoolFileFormat.isCsvOrTsv(selectedFormatModifiers);
 
-      boolean isSpread = (((formatModifiers | FILE_FORMAT_ANY_SPREADSHEET)
-               & FILE_FORMAT_ANY_SPREADSHEET) == FILE_FORMAT_ANY_SPREADSHEET);
+      boolean isSpread = DatatoolFileFormat.isSpreadSheet(selectedFormatModifiers);
 
-      boolean isSql =
-         ((formatModifiers & FILE_FORMAT_FLAG_SQL) == FILE_FORMAT_FLAG_SQL);
+      boolean isSql = DatatoolFileFormat.isSQL(selectedFormatModifiers);
 
       if (isCsvTsv)
       {
@@ -1885,6 +1906,11 @@ public class IOSettingsPanel extends JPanel
          settings.setTrimElement(trimElementBox.isSelected());
       }
 
+      if (stripSolnEnvBox != null)
+      {
+         settings.setStripSolutionEnv(stripSolnEnvBox.isSelected());
+      }
+
       if (isSql && sqlPanel != null)
       {
          sqlPanel.applyTo(settings);
@@ -1912,11 +1938,20 @@ public class IOSettingsPanel extends JPanel
       setLiteralContent(settings.isLiteralContent());
       setTeXMapping(settings.isMapCharsOn());
 
+      texMapModel = new TeXMapModel(this, texMapTable, settings);
+      texMapTable.setModel(texMapModel);
+      updateTeXMapButtons();
+
       setTeXEncoding(settings.getTeXEncoding());
 
       if (trimElementBox != null)
       {
          trimElementBox.setSelected(settings.isTrimElementOn());
+      }
+
+      if (stripSolnEnvBox != null)
+      {
+         stripSolnEnvBox.setSelected(settings.isStripSolutionEnvOn());
       }
 
       if (sqlPanel != null)
@@ -2063,32 +2098,40 @@ public class IOSettingsPanel extends JPanel
          case DBTEX:
            if (isV3)
            {
-              setSelectedFileFormat(FILE_FORMAT_FLAG_TEX
-                | FILE_FORMAT_FLAG_DBTEX | FILE_FORMAT_FLAG_DBTEX3);
+              setSelectedFileFormat(
+                  DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX3);
            }
            else
            {
-              setSelectedFileFormat(FILE_FORMAT_FLAG_TEX
-                | FILE_FORMAT_FLAG_DBTEX | FILE_FORMAT_FLAG_DBTEX2);
+              setSelectedFileFormat(
+                  DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX2);
            }
          break;
          case DTLTEX:
            if (isV3)
            {
-              setSelectedFileFormat(FILE_FORMAT_FLAG_TEX
-                | FILE_FORMAT_FLAG_DTLTEX | FILE_FORMAT_FLAG_DTLTEX3);
+              setSelectedFileFormat(
+                  DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX3);
            }
            else
            {
-              setSelectedFileFormat(FILE_FORMAT_FLAG_TEX
-                | FILE_FORMAT_FLAG_DTLTEX | FILE_FORMAT_FLAG_DTLTEX2);
+              setSelectedFileFormat(
+                  DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX2);
            }
          break;
          case CSV:
-            setSelectedFileFormat(FILE_FORMAT_FLAG_CSV);
+            setSelectedFileFormat(DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
          break;
          case TSV:
-            setSelectedFileFormat(FILE_FORMAT_FLAG_TSV);
+            setSelectedFileFormat(DatatoolFileFormat.FILE_FORMAT_FLAG_TSV);
          break;
       }
 
@@ -2211,11 +2254,9 @@ public class IOSettingsPanel extends JPanel
       builder.append(String.format("DTLsetup{%n"));
 
       if (trimElementBox != null && isRead() && isFileFormatSelected(
-             FILE_FORMAT_FLAG_TEX 
-           | FILE_FORMAT_FLAG_DTLTEX 
-           | FILE_FORMAT_FLAG_DTLTEX2 
-           | FILE_FORMAT_FLAG_DTLTEX3 
-           | FILE_FORMAT_CSV_OR_TSV
+             DatatoolFileFormat.FILE_FORMAT_FLAG_TEX 
+           | DatatoolFileFormat.FILE_FORMAT_ANY_DTLTEX 
+           | DatatoolFileFormat.FILE_FORMAT_CSV_OR_TSV
           ))
       {
          builder.append(String.format("  new-value-trim={%s},%n",
@@ -2398,10 +2439,11 @@ public class IOSettingsPanel extends JPanel
    JToggleButton formatXLSToggleButton;
    JToggleButton formatSQLToggleButton;
 
-   int formatModifiers, ioModifiers;
+   int formatModifiers, ioModifiers, selectedFormatModifiers;
    boolean formatSingleSelection;
 
-   JCheckBox csvIncHeaderBox, texIncHeaderBox, trimElementBox;
+   JCheckBox csvIncHeaderBox, texIncHeaderBox, trimElementBox,
+    stripSolnEnvBox;
 
    JComponent fileFormatComp, csvSpreadComp, csvTsvOnlyComp, allNonTeXComp,
      texCardComp, nonTeXCardComp, cardComp;
@@ -2438,124 +2480,6 @@ public class IOSettingsPanel extends JPanel
    SqlPanel sqlPanel;
 
    Vector<FileFormatSelectionChangeListener> fileFormatChangeListeners;
-
-   /**
-    * Input file contains LaTeX code. Not applicable for output
-    * files.
-    */
-   public static final int FILE_FORMAT_FLAG_TEX = 1;
-
-   /**
-    * Input file contains LaTeX code in special DTLTEX format. Parse
-    * header to determine version and encoding. Output file 
-    * latest DTLTEX version.
-    */
-   public static final int FILE_FORMAT_FLAG_DTLTEX = 1 << 1;
-
-   /**
-    * Input file contains LaTeX code in special DTLTEX format. Parse
-    * header to determine encoding. Output file format
-    * DTLTEX version 2.0.
-    */
-   public static final int FILE_FORMAT_FLAG_DTLTEX2 = 1 << 2;
-
-   /**
-    * Input file contains LaTeX code in special DTLTEX format. Parse
-    * header to determine encoding. Output file format
-    * DTLTEX version 3.0.
-    */
-   public static final int FILE_FORMAT_FLAG_DTLTEX3 = 1 << 3;
-
-   /**
-    * Input file contains LaTeX code in DBTEX format. Parse
-    * header to determine version and encoding. Output file 
-    * latest DBTEX version.
-    */
-   public static final int FILE_FORMAT_FLAG_DBTEX = 1 << 4;
-
-   /**
-    * Input file contains LaTeX code in special DBTEX format. Parse
-    * header to determine encoding. Output file format
-    * DBTEX version 2.0.
-    */
-   public static final int FILE_FORMAT_FLAG_DBTEX2 = 1 << 5;
-
-   /**
-    * Input file contains LaTeX code in special DBTEX format. Parse
-    * header to determine encoding. Output file format
-    * DBTEX version 3.0.
-    */
-   public static final int FILE_FORMAT_FLAG_DBTEX3 = 1 << 6;
-
-   /**
-    * CSV file format.
-    */
-   public static final int FILE_FORMAT_FLAG_CSV = 1 << 7;
-
-   /**
-    * TSV file format (tab separator).
-    */
-   public static final int FILE_FORMAT_FLAG_TSV = 1 << 8;
-
-   /**
-    * ODS (zip) file format.
-    */
-   public static final int FILE_FORMAT_FLAG_ODS = 1 << 9;
-
-   /**
-    * FODS (flat xml) file format.
-    */
-   public static final int FILE_FORMAT_FLAG_FODS = 1 << 10;
-
-   /**
-    * XLSX (Excel xml) file format.
-    */
-   public static final int FILE_FORMAT_FLAG_XLSX = 1 << 11;
-
-   /**
-    * XLS (Excel) file format.
-    */
-   public static final int FILE_FORMAT_FLAG_XLS = 1 << 12;
-
-   /**
-    * SQL format.
-    */
-   public static final int FILE_FORMAT_FLAG_SQL = 1 << 13;
-
-   /**
-    * Either CSV or TSV.
-    */
-   public static final int FILE_FORMAT_CSV_OR_TSV =
-     FILE_FORMAT_FLAG_CSV | FILE_FORMAT_FLAG_TSV;
-
-   /**
-    * Any TeX format.
-    */
-   public static final int FILE_FORMAT_ANY_TEX =
-     FILE_FORMAT_FLAG_TEX
-   | FILE_FORMAT_FLAG_DTLTEX
-   | FILE_FORMAT_FLAG_DTLTEX2
-   | FILE_FORMAT_FLAG_DTLTEX3
-   | FILE_FORMAT_FLAG_DBTEX
-   | FILE_FORMAT_FLAG_DBTEX2
-   | FILE_FORMAT_FLAG_DBTEX3;
-
-   /**
-    * Any spreadsheet format.
-    */
-   public static final int FILE_FORMAT_ANY_SPREADSHEET =
-     FILE_FORMAT_FLAG_ODS
-   | FILE_FORMAT_FLAG_FODS
-   | FILE_FORMAT_FLAG_XLSX
-   | FILE_FORMAT_FLAG_XLS;
-
-   /**
-    * Any non-TeX format.
-    */
-   public static final int FILE_FORMAT_ANY_NON_TEX =
-     FILE_FORMAT_CSV_OR_TSV
-   | FILE_FORMAT_ANY_SPREADSHEET
-   | FILE_FORMAT_FLAG_SQL;
 
    /**
     * Read settings.

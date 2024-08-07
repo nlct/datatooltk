@@ -11,25 +11,11 @@
 <entry key="menu.file.close_db.mnemonic">C</entry>
 <entry key="menu.file.close_db.tooltip">Close current database</entry>
 
-<entry key="menu.file.import">Import</entry>
+<entry key="menu.file.import">Import...</entry>
 <entry key="menu.file.import.mnemonic">I</entry>
+<entry key="menu.file.import.tooltip">Import data</entry>
+<entry key="menu.file.import.description">Import data from CSV/TSV, spreadsheets or probsoln.sty files, or select data from an SQL database</entry>
 
-<entry key="menu.file.import.importprobsoln.mnemonic">P</entry>
-<entry key="menu.file.import.importprobsoln.tooltip">Import data from a probsoln database</entry>
-
-<entry key="menu.file.import.importcsv">Import CSV...</entry>
-<entry key="menu.file.import.importcsv.mnemonic">V</entry>
-<entry key="menu.file.import.importcsv.tooltip">Import data from a CSV file</entry>
-
-<entry key="menu.file.import.importprobsoln">Import probsoln File...</entry>
-
-<entry key="menu.file.import.importspread">Import Spreadsheet...</entry>
-<entry key="menu.file.import.importspread.mnemonic">S</entry>
-<entry key="menu.file.import.importspread.tooltip">Import data from an Excel or OpenDocument spreadsheet</entry>
-
-<entry key="menu.file.import.importsql">Import SQL...</entry>
-<entry key="menu.file.import.importsql.mnemonic">L</entry>
-<entry key="menu.file.import.importsql.tooltip">Import data from a SQL database</entry>
 
 <entry key="menu.file.new">New</entry>
 <entry key="menu.file.new.mnemonic">N</entry>
@@ -308,6 +294,9 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="iosettings.format.sql">SQL</entry>
 
 <entry key="iosettings.element.trim">Trim elements</entry>
+
+<entry key="iosettings.tex.stripsolnenv">Strip solution environment from probsoln problems</entry>
+<entry key="iosettings.tex.stripsolnenv.mnemonic">B</entry>
 
 <entry key="iosettings.csvtsv.optionsonly.note">These options are only applicable to CSV/TSV files, not to spreadsheets or SQL imports.</entry>
 <entry key="iosettings.imports_all.note">These options are applicable to all non-TeX imported sources (CSV/TSV, spreadsheets and SQL queries).</entry>

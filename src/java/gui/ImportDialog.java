@@ -22,12 +22,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileInputStream;
 
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.filechooser.FileFilter;
 
 import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 
@@ -42,20 +43,37 @@ public class ImportDialog extends JDialog
   FileSelectionChangeListener,
   FileFormatSelectionChangeListener
 {
-   public ImportDialog(DatatoolGUI gui, JFileChooser fileChooser)
+   public ImportDialog(DatatoolGUI gui)
    {
       this(gui, "import",
-        IOSettingsPanel.FILE_FORMAT_FLAG_TEX
-      | IOSettingsPanel.FILE_FORMAT_ANY_NON_TEX,
+        DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+      | DatatoolFileFormat.FILE_FORMAT_ANY_NON_TEX,
         true,
-        fileChooser, IOSettingsPanel.FILE_FORMAT_FLAG_CSV);
+        DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
    }
 
    public ImportDialog(DatatoolGUI gui, String tagPrefix, int formatModifiers,
-     boolean addTrim, JFileChooser fileChooser, int initialFormat)
+     boolean addTrim, int initialFormat)
    {
       super(gui, gui.getMessageHandler().getLabel(tagPrefix+".title"), true);
       this.gui = gui;
+
+      MessageHandler messageHandler = gui.getMessageHandler();
+
+      fileChooser = new JFileChooser();
+      fileChooser.setCurrentDirectory(gui.getCurrentChooserDirectory());
+
+      texFilter = new TeXFileFilter(messageHandler);
+      csvtxtFilter = new CsvTxtFileFilter(messageHandler);
+      spreadFilter = new SpreadSheetFilter(messageHandler);
+
+      allFilter = fileChooser.getAcceptAllFileFilter();
+      fileChooser.removeChoosableFileFilter(allFilter);
+
+      fileChooser.addChoosableFileFilter(texFilter);
+      fileChooser.addChoosableFileFilter(csvtxtFilter);
+      fileChooser.addChoosableFileFilter(spreadFilter);
+      fileChooser.addChoosableFileFilter(allFilter);
 
       DatatoolGuiResources resources = gui.getResources();
 
@@ -64,15 +82,12 @@ public class ImportDialog extends JDialog
 
       getContentPane().add(new JScrollPane(settingsPanel), BorderLayout.CENTER);
 
-      fileField = new FileField(gui.getMessageHandler(), this, null, fileChooser,
+      fileField = new FileField(messageHandler, this, null, fileChooser,
         JFileChooser.FILES_ONLY, tagPrefix+".file");
 
       fileField.addFileSelectionChangeListener(this);
 
-      if (
-           ( formatModifiers & IOSettingsPanel.FILE_FORMAT_FLAG_SQL )
-             == IOSettingsPanel.FILE_FORMAT_FLAG_SQL
-         )
+      if ( DatatoolFileFormat.isSQL(formatModifiers))
       {
          settingsPanel.addFileFormatSelectionChangeListener(this);
 
@@ -112,19 +127,36 @@ public class ImportDialog extends JDialog
    @Override
    public void fileFormatSelectionChanged(FileFormatSelectionChangeEvent evt)
    {
-      if (
-            (evt.getNewModifiers() & IOSettingsPanel.FILE_FORMAT_FLAG_SQL)
-              == IOSettingsPanel.FILE_FORMAT_FLAG_SQL
-         )
+      int modifiers = evt.getNewModifiers();
+
+      if ( DatatoolFileFormat.isSQLOnly(modifiers))
       {
          fileSelectCardLayout.show(fileSelectCardComp, "select");
       }
-      else if (
-            (evt.getOldModifiers() & IOSettingsPanel.FILE_FORMAT_FLAG_SQL)
-              == IOSettingsPanel.FILE_FORMAT_FLAG_SQL
-         )
+      else
       {
-         fileSelectCardLayout.show(fileSelectCardComp, "file");
+         if ( DatatoolFileFormat.isSQL(evt.getOldModifiers()) )
+         {
+            fileSelectCardLayout.show(fileSelectCardComp, "file");
+         }
+
+         if ( DatatoolFileFormat.isCsvOrTsvOnly(modifiers) )
+         {
+            fileChooser.setFileFilter(csvtxtFilter);
+         }
+         else if ( DatatoolFileFormat.isSpreadSheetOnly(modifiers) )
+         {
+            fileChooser.setFileFilter(spreadFilter);
+         }
+         else if ( DatatoolFileFormat.isTeXOnly(modifiers) )
+         {
+            fileChooser.setFileFilter(texFilter);
+         }
+         else
+         {
+            fileChooser.setFileFilter(allFilter);
+         }
+
       }
    }
 
@@ -133,218 +165,38 @@ public class ImportDialog extends JDialog
    {
       String newFile = evt.getNewFilename();
 
-      if (!newFile.isEmpty())
+      if (!newFile.isEmpty() && !newFile.equals(evt.getOldFilename()))
       {
-         String oldFile = evt.getOldFilename();
-         String oldExt = "";
-         String newExt = "";
-
-         int idx = newFile.lastIndexOf(".");
-
-         if (idx > 0)
+         try
          {
-            newExt = newFile.substring(idx+1).toLowerCase();
-         }
+            DatatoolFileFormat newFmt = DatatoolFileFormat.valueOf(
+              gui.getMessageHandler(), new File(newFile));
 
-         if (!oldFile.isEmpty())
-         {
-            idx = oldFile.lastIndexOf(".");
+            int format = newFmt.getFileFormat();
+            Charset newCharset = newFmt.getEncoding();
 
-            if (idx > 0)
+            if (format != 0)
             {
-               oldExt = oldFile.substring(idx+1).toLowerCase();
-            }
-         }
+               settingsPanel.setSelectedFileFormat(format);
 
-         if (!newExt.equals(oldExt))
-         {
-            int modifiers = 0;
-
-            if (newExt.endsWith("tex") || newExt.equals("ltx"))
-            {
-               modifiers = IOSettingsPanel.FILE_FORMAT_ANY_TEX;
-            }
-            else if (newExt.equals("tsv"))
-            {
-               modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_TSV;
-            }
-            else
-            {
-               File file = new File(newFile);
-
-               if (file.exists())
+               if (newCharset != null)
                {
-                  try
+                  if (newFmt.isAnyTeX())
                   {
-                     modifiers = probeFile(file);
+                     settingsPanel.setTeXEncoding(newCharset);
                   }
-                  catch (IOException e)
+                  else if (newFmt.isCsvOrTsv())
                   {
-                     gui.getMessageHandler().error(this, e);
+                     settingsPanel.setCsvEncoding(newCharset);
                   }
                }
             }
-
-            if (modifiers != 0)
-            {
-               settingsPanel.setSelectedFileFormat(modifiers);
-            }
          }
-      }
-   }
-
-   protected int probeFile(File file)
-    throws IOException
-   {
-      MessageHandler messageHandler = gui.getMessageHandler();
-
-      int modifiers = 0;
-      byte[] buffer = new byte[256];
-
-      FileInputStream in = null;
-
-      try
-      {
-         in = new FileInputStream(file);
-
-         int n = in.read(buffer);
-
-         if (n > 0)
+         catch (IOException e)
          {
-            if (startsWith(buffer, BOM, 0, n))
-            {
-               if (buffer[BOM.length] == '%')
-               {
-                  modifiers = IOSettingsPanel.FILE_FORMAT_ANY_TEX;
-                  settingsPanel.setTeXEncoding(StandardCharsets.UTF_8);
-               }
-               else if (contains(buffer, (byte)'\t', BOM.length, n))
-               {
-                  modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_TSV;
-                  settingsPanel.setCsvEncoding(StandardCharsets.UTF_8);
-               }
-               else
-               {
-                  modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_CSV;
-                  settingsPanel.setCsvEncoding(StandardCharsets.UTF_8);
-               }
-            }
-            else if (startsWith(buffer, ZIP_MARKER, 0, n))
-            {
-               if (startsWith(buffer, MIMETYPE_MARKER, 30, n))
-               {
-                  if (startsWith(buffer, ODS_MIMETYPE, 38, n))
-                  {
-                     modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_ODS;
-                  }
-                  else if (startsWith(buffer, XLSX_MIMETYPE, 38, n))
-                  {
-                     // xlsx doesn't seem to include mimetype but
-                     // include check anyway
-                     modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_XLSX;
-                  }
-                  else
-                  {
-                     messageHandler.error(this, 
-                      messageHandler.getLabel("error.unsupported_mimetype"));
-                  }
-               }
-               else
-               {
-                  // assume xlsx
-                  modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_XLSX;
-               }
-            }
-            else if (startsWith(buffer, XML_MARKER, 0, n))
-            {
-               if (contains(buffer, OFFICE_DOCUMENT_MARKER, 6, n))
-               {
-                  modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_FODS;
-               }
-               else
-               {
-                  messageHandler.error(this, 
-                   messageHandler.getLabel("error.unsupported_xml"));
-               }
-            }
-            else if (startsWith(buffer, XLS_MARKER, 0, n))
-            {
-               modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_XLS;
-            }
-            else if (buffer[0] == '%')
-            {
-               modifiers = IOSettingsPanel.FILE_FORMAT_ANY_TEX;
-            }
-            else if (contains(buffer, (byte)'\t', 0, n))
-            {
-               modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_TSV;
-            }
-            else if (contains(buffer, (byte)settingsPanel.getSeparator(), 0, n)
-                   ||contains(buffer, (byte)settingsPanel.getDelimiter(), 0, n))
-            {
-               modifiers = IOSettingsPanel.FILE_FORMAT_FLAG_CSV;
-            }
-            else
-            {
-               modifiers = IOSettingsPanel.FILE_FORMAT_ANY_TEX;
-            }
-         }
-         else
-         {
-            messageHandler.error(this,
-              messageHandler.getLabel("error.empty_file"));
+            gui.getMessageHandler().error(this, e);
          }
       }
-      finally
-      {
-         if (in != null)
-         {
-            in.close();
-         }
-      }
-
-      return modifiers;
-   }
-
-   protected boolean startsWith(byte[] buffer, byte[] marker,
-      int startIdx, int buffLen)
-   {
-      if (buffLen - startIdx < marker.length)
-      {
-         return false;
-      }
-
-      for (int i = startIdx, j = 0; i < buffLen && j < marker.length; i++, j++)
-      {
-         if (buffer[i] != marker[j]) return false;
-      }
-
-      return true;
-   }
-
-   protected boolean contains(byte[] buffer, byte[] marker,
-      int startIdx, int buffLen)
-   {
-      for (int i = startIdx; i < buffLen; i++)
-      {
-         if (startsWith(buffer, marker, i, buffLen))
-         {
-            return true;
-         }
-      }
-
-      return false;
-   }
-
-   protected boolean contains(byte[] buffer, byte marker,
-      int startIdx, int buffLen)
-   {
-      for (int i = startIdx; i < buffLen; i++)
-      {
-         if (buffer[i] == marker) return true;
-      }
-
-      return false;
    }
 
    @Override
@@ -379,7 +231,7 @@ public class ImportDialog extends JDialog
       MessageHandler messageHandler = gui.getMessageHandler();
 
       boolean isSql = (settingsPanel.isFileFormatSelected(
-          IOSettingsPanel.FILE_FORMAT_FLAG_SQL));
+          DatatoolFileFormat.FILE_FORMAT_FLAG_SQL));
 
       String filename = "";
       String select = "";
@@ -432,7 +284,7 @@ public class ImportDialog extends JDialog
       DatatoolImport imp;
 
       if (settingsPanel.isFileFormatSelected(
-           IOSettingsPanel.FILE_FORMAT_CSV_OR_TSV))
+           DatatoolFileFormat.FILE_FORMAT_CSV_OR_TSV))
       {
          imp = new DatatoolCsv(settings);
       }
@@ -441,22 +293,22 @@ public class ImportDialog extends JDialog
          imp = new DatatoolSql(settings);
       }
       else if (settingsPanel.isFileFormatSelected(
-           IOSettingsPanel.FILE_FORMAT_FLAG_ODS))
+           DatatoolFileFormat.FILE_FORMAT_FLAG_ODS))
       {
          imp = new DatatoolOpenDoc(settings, false);
       }
       else if (settingsPanel.isFileFormatSelected(
-           IOSettingsPanel.FILE_FORMAT_FLAG_FODS))
+           DatatoolFileFormat.FILE_FORMAT_FLAG_FODS))
       {
          imp = new DatatoolOpenDoc(settings, true);
       }
       else if (settingsPanel.isFileFormatSelected(
-           IOSettingsPanel.FILE_FORMAT_FLAG_XLS))
+           DatatoolFileFormat.FILE_FORMAT_FLAG_XLS))
       {
          imp = new DatatoolExcel(settings);
       }
       else if (settingsPanel.isFileFormatSelected(
-           IOSettingsPanel.FILE_FORMAT_FLAG_XLSX))
+           DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX))
       {
          imp = new DatatoolExcel(settings);
       }
@@ -495,30 +347,7 @@ public class ImportDialog extends JDialog
    public void display()
    {
       DatatoolSettings settings = gui.getSettings();
-
-      try
-      {
-         DataToolTeXParserListener listener = settings.getTeXParserListener();
-         listener.applyCurrentSettings();
-         IOSettings ioSettings = listener.getIOSettings();
-
-         settingsPanel.setFrom(ioSettings);
-      }
-      catch (IOException e)
-      {
-         gui.getMessageHandler().error(this, e);
-      }
-
-      settingsPanel.setCsvSettingsFrom(settings);
-
-      if (settings.getSeparator() == '\t')
-      {
-         settingsPanel.setSelectedFileFormat(IOSettingsPanel.FILE_FORMAT_FLAG_TSV);
-      }
-      else
-      {
-         settingsPanel.setSelectedFileFormat(IOSettingsPanel.FILE_FORMAT_FLAG_CSV);
-      }
+      settingsPanel.resetFrom(settings.getImportSettings());
 
       fileField.setFileName("");
 
@@ -530,30 +359,11 @@ public class ImportDialog extends JDialog
    FileField fileField;
    JTextField selectField;
 
+   JFileChooser fileChooser;
+
+   private FileFilter texFilter, csvtxtFilter, spreadFilter, allFilter;
+
    CardLayout fileSelectCardLayout;
    JComponent fileSelectCardComp, selectComp;
 
-   public static final byte[] ZIP_MARKER = new byte[]
-     { (byte)0x50, (byte)0x4B, (byte)0x03, (byte)0x04 };
-
-   public static final byte[] MIMETYPE_MARKER = 
-     "mimetype".getBytes();
-
-   public static final byte[] ODS_MIMETYPE = 
-     "application/vnd.oasis.opendocument.spreadsheet".getBytes();
-
-   public static final byte[] XML_MARKER = "<?xml".getBytes();
-
-   public static final byte[] OFFICE_DOCUMENT_MARKER
-    = "<office:document".getBytes();
-
-   public static final byte[] XLSX_MIMETYPE =
-     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".getBytes();
-
-   public static final byte[] XLS_MARKER = new byte[]
-     { (byte)0xD0, (byte)0xCF, (byte)0x11, (byte)0xE0,
-       (byte)0xA1, (byte)0xB1, (byte)0x1A, (byte)0xE1};
-
-   public static final byte[] BOM = new byte[]
-     { (byte)0xEF, (byte)0xBB, (byte)0xBF };
 }

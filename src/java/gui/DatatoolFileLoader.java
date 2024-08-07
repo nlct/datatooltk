@@ -382,11 +382,7 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
 
          if (cause instanceof DatatoolImportException)
          {
-            gui.getMessageHandler().error(gui,
-              gui.getMessageHandler().getLabelWithValues(
-                "error.import.failed",
-                 loadSettings.getImportSource(), 
-                 gui.getMessageHandler().getMessage(cause)));
+            gui.getMessageHandler().error(gui, cause.getMessage());
 
             gui.getMessageHandler().debug(ex);
          }

@@ -24,6 +24,7 @@ import java.io.IOException;
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texparserlib.latex.*;
 import com.dickimawbooks.texparserlib.latex.datatool.*;
+import com.dickimawbooks.texparserlib.latex.probsoln.*;
 
 public class DataToolTeXParserListener extends PreambleParser
 {
@@ -45,6 +46,11 @@ public class DataToolTeXParserListener extends PreambleParser
       datatoolSty = new DataToolSty(null, this, false);
       usepackage(datatoolSty, parser);
 
+      probSolnSty = new ProbSolnSty(
+         settings.getInitialRowCapacity(), true,
+        null, this, false);
+      usepackage(probSolnSty, parser);
+
       addVerbEnv("lstlisting");
       addVerbEnv("alltt");
 
@@ -56,6 +62,11 @@ public class DataToolTeXParserListener extends PreambleParser
    public DataToolSty getDataToolSty()
    {
       return datatoolSty;
+   }
+
+   public ProbSolnSty getProbSolnSty()
+   {
+      return probSolnSty;
    }
 
    public DatatoolSettings getSettings()
@@ -142,6 +153,7 @@ public class DataToolTeXParserListener extends PreambleParser
    }
 
    protected DataToolSty datatoolSty;
+   protected ProbSolnSty probSolnSty;
    protected DatatoolSettings settings;
    protected IOSettings ioSettings;
 }

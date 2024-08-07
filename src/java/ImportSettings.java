@@ -493,6 +493,7 @@ public class ImportSettings
       stripSolutionEnv = on;
    }
 
+   // TODO what was this setting for??
    public boolean isRedefNewProblemOn()
    {
       return redefNewProblem;
