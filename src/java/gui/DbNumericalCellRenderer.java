@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ public class DbNumericalCellRenderer implements TableCellRenderer
    private JTextField textField, typeField, currencyField, numField;
    private JPanel panel;
    private DatatoolSettings settings;
-   private JComponent currencyRow;
+   private JComponent currencyRow, valueRow;
 
    public DbNumericalCellRenderer(DatatoolSettings settings)
    {
@@ -60,9 +60,28 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       rowComp = createRow();
       mainComp.add(rowComp);
 
-      rowComp.add(resources.createJLabel("celledit.type"));
+      JLabel typeLabel = resources.createJLabel("celledit.type");
+      rowComp.add(typeLabel);
       typeField = createField();
       rowComp.add(typeField);
+
+      Dimension prefDim = typeLabel.getPreferredSize();
+      Dimension maxDim = rowComp.getMaximumSize();
+      maxDim.height = 2*prefDim.height;
+      rowComp.setMaximumSize(maxDim);
+
+      valueRow = createRow();
+      mainComp.add(valueRow);
+
+      JLabel valueLabel = resources.createJLabel("celledit.numeric");
+      valueRow.add(valueLabel);
+      numField = createField();
+      valueRow.add(numField);
+
+      prefDim = valueLabel.getPreferredSize();
+      maxDim = valueRow.getMaximumSize();
+      maxDim.height = 2*prefDim.height;
+      valueRow.setMaximumSize(maxDim);
 
       currencyRow = createRow();
       mainComp.add(currencyRow);
@@ -70,13 +89,6 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       currencyRow.add(resources.createJLabel("celledit.currency"));
       currencyField = createField();
       currencyRow.add(currencyField);
-
-      rowComp = createRow();
-      mainComp.add(rowComp);
-
-      rowComp.add(resources.createJLabel("celledit.numeric"));
-      numField = createField();
-      rowComp.add(numField);
 
       mainComp.add(Box.createVerticalGlue());
    }
@@ -153,10 +165,12 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       if (num == null)
       {
          numField.setText("");
+         valueRow.setVisible(false);
       }
       else
       {
          numField.setText(num.toString());
+         valueRow.setVisible(true);
       }
 
       return panel;
