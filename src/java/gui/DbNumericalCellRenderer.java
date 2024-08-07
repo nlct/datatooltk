@@ -38,22 +38,45 @@ public class DbNumericalCellRenderer implements TableCellRenderer
    private JTextField textField, typeField, currencyField, numField;
    private JPanel panel;
    private DatatoolSettings settings;
-   private JComponent currencyRow, valueRow;
+   private CardLayout cardLayout;
+   private JComponent currencyRow, valueRow,
+      nullCard, numericCard;
+   private JTextComponent textCard;
+   private static final Color NULL_BG = Color.LIGHT_GRAY;
 
    public DbNumericalCellRenderer(DatatoolSettings settings)
    {
       this.settings = settings;
       DatatoolGuiResources resources = settings.getDatatoolGuiResources();
 
+      cardLayout = new CardLayout();
+      panel = new JPanel(cardLayout);
+      panel.setOpaque(true);
+
+      textCard = new JTextArea();
+      textCard.setEditable(false);
+      textCard.setOpaque(false);
+      panel.add(textCard, "string");
+      
+      nullCard = new JPanel();
+      nullCard.setOpaque(false);
+      panel.add(textCard, "null");
+
+      nullCard.add(new JLabel("NULL"));
+      
+      numericCard = new JPanel(new BorderLayout());
+      numericCard.setOpaque(false);
+      panel.add(numericCard, "numeric");
+
       textField = new JTextField();
       textField.setEditable(false);
       textField.setHorizontalAlignment(JTextField.TRAILING);
-      panel = new JPanel(new BorderLayout());
 
-      panel.add(textField, BorderLayout.NORTH);
+      numericCard.add(textField, BorderLayout.NORTH);
 
       JComponent mainComp = Box.createVerticalBox();
-      panel.add(mainComp, BorderLayout.CENTER);
+      mainComp.setOpaque(false);
+      numericCard.add(mainComp, BorderLayout.CENTER);
 
       JComponent rowComp;
 
@@ -96,6 +119,7 @@ public class DbNumericalCellRenderer implements TableCellRenderer
    protected JComponent createRow()
    {
       JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.setOpaque(false);
 
       return comp;
    }
@@ -105,6 +129,7 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       JTextField field = new JTextField();
       field.setEditable(false);
       field.setBorder(BorderFactory.createEmptyBorder());
+      field.setOpaque(false);
 
       return field;
    }
@@ -121,6 +146,7 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       DatumType type = DatumType.UNKNOWN;
       String currencySym = null;
       Number num = null;
+      boolean isNull = false;
 
       if (value instanceof Datum)
       {
@@ -132,45 +158,87 @@ public class DbNumericalCellRenderer implements TableCellRenderer
             currencySym = datum.getCurrencySymbol();
             num = datum.getNumber();
          }
+
+         isNull = datum.isNull();
       }
 
-      textField.setText(value.toString());
+      JTextComponent textComp = textField;
+      String text = value.toString();
+
+      switch (type)
+      {
+         case STRING:
+            cardLayout.show(panel, "string");
+            textComp = textCard;
+         break;
+         case UNKNOWN:
+            if (isNull)
+            {
+               cardLayout.show(panel, "null");
+               textComp = null;
+            }
+            else
+            {
+               cardLayout.show(panel, "string");
+               textComp = textCard;
+            }
+         break;
+         default:
+            cardLayout.show(panel, "numeric");
+         break;
+      }
+
+      Color bg, fg;
 
       if (isSelected)
       {
-         textField.setBackground(table.getSelectionBackground());
-         textField.setForeground(table.getSelectionForeground());
+         bg = table.getSelectionBackground();
+         fg = table.getSelectionForeground();
       }
       else
       {
-         textField.setBackground(table.getBackground());
-         textField.setForeground(table.getForeground());
+         bg = isNull ? NULL_BG : table.getBackground();
+         fg = table.getForeground();
       }
 
-      textField.setFont(table.getFont());
+      panel.setBackground(bg);
+      panel.setForeground(fg);
 
-      typeField.setText(settings.getTypeLabel(type));
+      if (textComp != null)
+      {
+         textComp.setText(text);
 
-      if (currencySym == null)
-      {
-         currencyField.setText("");
-         currencyRow.setVisible(false);
-      }
-      else
-      {
-         currencyField.setText(currencySym);
-         currencyRow.setVisible(true);
+         textComp.setBackground(bg);
+         textComp.setForeground(fg);
+
+         textComp.setFont(table.getFont());
       }
 
-      if (num == null)
+      if (type.isNumeric())
       {
-         numField.setText("");
-         valueRow.setVisible(false);
-      }
-      else
-      {
-         numField.setText(num.toString());
-         valueRow.setVisible(true);
+         typeField.setText(settings.getTypeLabel(type));
+
+         if (currencySym == null)
+         {
+            currencyField.setText("");
+            currencyRow.setVisible(false);
+         }
+         else
+         {
+            currencyField.setText(currencySym);
+            currencyRow.setVisible(true);
+         }
+
+         if (num == null)
+         {
+            numField.setText("");
+            valueRow.setVisible(false);
+         }
+         else
+         {
+            numField.setText(num.toString());
+            valueRow.setVisible(true);
+         }
       }
 
       return panel;
