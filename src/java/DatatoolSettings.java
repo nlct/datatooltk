@@ -2040,9 +2040,32 @@ public class DatatoolSettings extends Properties
       setProperty("subtexspecials", ""+enable);
    }
 
-   public boolean isEmptyQuestionToNullOn()
+   public boolean isImportEmptyToNullOn()
    {
-      return false;// TODO
+      return importSettings.isImportEmptyToNullOn();
+   }
+
+   public boolean isImportEmptyToNullOnProperty()
+   {
+      String prop = getProperty("impemptytonull");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setImportEmptyToNull(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setImportEmptyToNull(boolean on)
+   {
+      importSettings.setImportEmptyToNull(on);
+   }
+
+   public void setImportEmptyToNullProperty(boolean on)
+   {
+      setProperty("impemptytonull", ""+on);
    }
 
    public boolean isSolutionEnvStripped()
@@ -2113,6 +2136,34 @@ public class DatatoolSettings extends Properties
       if (prop == null || prop.isEmpty())
       {
          setAutoTrimLabels(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setTrimElement(boolean enable)
+   {
+      importSettings.setTrimElement(enable);
+   }
+
+   public void setTrimElementProperty(boolean enable)
+   {
+      setProperty("trimelement", ""+enable);
+   }
+
+   public boolean isTrimElementOn()
+   {
+      return importSettings.isTrimElementOn();
+   }
+
+   public boolean isTrimElementOnProperty()
+   {
+      String prop = getProperty("trimelement");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setTrimElement(true);
          return true;
       }
 

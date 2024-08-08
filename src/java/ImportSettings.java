@@ -59,6 +59,7 @@ public class ImportSettings
       mapTeXChars = true;
       stripSolutionEnv = true;
       redefNewProblem = true;
+      importEmptyToNull = true;
 
       nonTeXLiteral = true;
       skipLines=0;
@@ -127,7 +128,11 @@ public class ImportSettings
       stripSolutionEnv = settings.isSolutionEnvStrippedProperty();
       redefNewProblem = settings.isRedefNewProblemEnabledProperty();
 
+      importEmptyToNull = settings.isImportEmptyToNullOnProperty();
+
       trimLabels = settings.isAutoTrimLabelsOnProperty();
+      trimElement = settings.isTrimElementOnProperty();
+
       nonTeXLiteral = settings.isLiteralContentProperty();
       mapTeXChars = settings.isTeXMappingOnProperty();
    }
@@ -155,8 +160,11 @@ public class ImportSettings
       settings.setWipePasswordProperty(wipePassword);
 
       settings.setAutoTrimLabelsProperty(trimLabels);
+      settings.setTrimElementProperty(trimElement);
+
       settings.setTeXMappingProperty(mapTeXChars);
       settings.setLiteralContentProperty(nonTeXLiteral);
+      settings.setImportEmptyToNullProperty(importEmptyToNull);
 
       settings.setSolutionEnvStrippedProperty(stripSolutionEnv);
       settings.setRedefNewProblemProperty(redefNewProblem);
@@ -493,6 +501,16 @@ public class ImportSettings
       stripSolutionEnv = on;
    }
 
+   public boolean isImportEmptyToNullOn()
+   {
+      return importEmptyToNull;
+   }
+
+   public void setImportEmptyToNull(boolean on)
+   {
+      importEmptyToNull = on;
+   }
+
    // TODO what was this setting for??
    public boolean isRedefNewProblemOn()
    {
@@ -714,6 +732,7 @@ public class ImportSettings
       trimLabels = other.trimLabels;
       mapTeXChars = other.mapTeXChars;
       stripSolutionEnv = other.stripSolutionEnv;
+      importEmptyToNull = other.importEmptyToNull;
       redefNewProblem = other.redefNewProblem;
       texEncoding = other.texEncoding;
       csvEncoding = other.csvEncoding;
@@ -770,7 +789,8 @@ public class ImportSettings
    boolean mapTeXChars = true;
 
    boolean stripSolutionEnv = true;
-   boolean redefNewProblem = true;
+   boolean redefNewProblem = true;//??
+   boolean importEmptyToNull = true;
 
    String[] keys, headers;
 

@@ -538,25 +538,40 @@ public class DatatoolDb
 
          if (question instanceof TeXObjectList)
          {
+            ((TeXObjectList)question).trimEmptyIgnoreablesAndEol();
             processEntry((TeXObjectList)question, checkForVerbatim);
          }
 
          if (answer instanceof TeXObjectList)
          {
+            ((TeXObjectList)answer).trimEmptyIgnoreablesAndEol();
             processEntry((TeXObjectList)answer, checkForVerbatim);
          }
 
          String questionText = question.toString(parser);
          String answerText = answer.toString(parser);
 
-         row.addCell(colIdx++, questionText);
+         if (settings.isTrimElementOn())
+         {
+            questionText = questionText.trim();
+            answerText = answerText.trim();
+         }
 
          if (answerText.equals(questionText))
          {
-            questionText = "";
+            answerText = "";
          }
 
-         if (questionText.isEmpty() && settings.isEmptyQuestionToNullOn())
+         if (questionText.isEmpty() && settings.isImportEmptyToNullOn())
+         {
+            row.addCell(colIdx++, Datum.createNull(settings));
+         }
+         else
+         {
+            row.addCell(colIdx++, questionText);
+         }
+
+         if (answerText.isEmpty() && settings.isImportEmptyToNullOn())
          {
             row.addCell(colIdx++, Datum.createNull(settings));
          }

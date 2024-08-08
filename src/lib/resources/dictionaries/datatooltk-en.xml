@@ -748,6 +748,7 @@ the \strong'{'lazy'}' dog.
 <entry key="celledit.numeric">Value:</entry>
 <entry key="celledit.numeric.mnemonic">V</entry>
 
+
 <entry key="message.celledit.not_numeric">Text is not numeric.
 Check the parser settings if this is incorrect.</entry>
 
@@ -756,6 +757,8 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="celledit.reformat.mnemonic">F</entry>
 <entry key="celledit.reparse">Reparse on edit</entry>
 <entry key="celledit.reparse.mnemonic">P</entry>
+
+<entry key="celledit.NULL">NULL</entry>
 
 <!-- Cell Editor Dialog Menus -->
 

@@ -551,9 +551,11 @@ public class OpenDocReader extends XMLReaderAdapter
 
             String text = currentCell.getText();
 
-            if (importSettings.isTrimElementOn())
+            if (importSettings.isTrimElementOn()
+             || currentCell.isNumeric())
             {
                text = text.trim();
+               currentCell.setText(text);
             }
 
             if (DatatoolDb.NULL_VALUE.equals(text))

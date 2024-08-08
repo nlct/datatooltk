@@ -171,14 +171,27 @@ public class DatatoolProbSoln implements DatatoolImport
          String questionText = question.toString(texParser);
          String answerText = answer.toString(texParser);
 
-         row.addCell(colIdx++, questionText);
+         if (importSettings.isTrimElementOn())
+         {
+            questionText = questionText.trim();
+            answerText = answerText.trim();
+         }
 
          if (answerText.equals(questionText))
          {
             answerText = "";
          }
 
-         if (answerText.isEmpty() && settings.isEmptyQuestionToNullOn())
+         if (questionText.isEmpty() && importSettings.isImportEmptyToNullOn())
+         {
+            row.addCell(colIdx++, Datum.createNull(settings));
+         }
+         else
+         {
+            row.addCell(colIdx++, questionText);
+         }
+
+         if (answerText.isEmpty() && importSettings.isImportEmptyToNullOn())
          {
             row.addCell(colIdx++, Datum.createNull(settings));
          }
@@ -208,47 +221,7 @@ public class DatatoolProbSoln implements DatatoolImport
 
       TeXObjectList list = (TeXObjectList)object;
 
-      TeXObject element = list.peek();
-
-      while (element != null && 
-         (element instanceof Ignoreable
-          || element instanceof Eol))
-      {
-         if (element instanceof Comment)
-         {
-            String commentText = ((Comment)element).getText().trim();
-
-            if (commentText.isEmpty())
-            {
-               list.pop();
-            }
-         }
-         else if (element instanceof Eol
-           || element instanceof SkippedEols)
-         {
-            list.pop();
-         }
-         else
-         {
-            break;
-         }
-
-         element = list.peek();
-      }
-
-      element = list.peekLast();
-
-      while (element != null && element instanceof Comment)
-      {
-         String commentText = ((Comment)element).getText().trim();
-
-         if (commentText.isEmpty())
-         {
-            list.remove(list.size()-1);
-         }
-
-         element = list.peekLast();
-      }
+      list.trimEmptyIgnoreablesAndEol();
 
       if (list.isEmpty())
       {
@@ -260,7 +233,7 @@ public class DatatoolProbSoln implements DatatoolImport
 
       for (int i = 0; i < list.size(); i++)
       {
-         element = list.get(i);
+         TeXObject element = list.get(i);
 
          if (element instanceof ControlSequence)
          {

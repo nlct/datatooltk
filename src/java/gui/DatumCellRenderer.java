@@ -79,32 +79,36 @@ public class DatumCellRenderer implements TableCellRenderer
 
    protected JComponent createNullComp()
    {
+      DatatoolGuiResources resources = settings.getDatatoolGuiResources();
+
       JPanel nullComp = new JPanel();
       nullComp.setOpaque(true);
 
-      nullComp.add(new JLabel("NULL"));
+      nullComp.add(resources.createJLabel("celledit.NULL"));
 
       return nullComp;
    }
 
    protected JComponent createNumericComp()
    {
+      JComponent numComp = new JPanel(new BorderLayout());
+      numComp.setOpaque(true);
+
       DatatoolGuiResources resources = settings.getDatatoolGuiResources();
 
-      JComponent numericComp = new JPanel(new BorderLayout());
-      numericComp.setOpaque(true);
+      JComponent mainComp = Box.createVerticalBox();
+      mainComp.setOpaque(false);
+      numComp.add(mainComp, BorderLayout.CENTER);
+
+      JComponent rowComp;
 
       JTextField textField = createField();
       textField.setHorizontalAlignment(JTextField.TRAILING);
       textComp = textField;
 
-      numericComp.add(textComp, BorderLayout.NORTH);
+      textField.setText("\\DTLcurrency{0.00}");
 
-      JComponent mainComp = Box.createVerticalBox();
-      mainComp.setOpaque(false);
-      numericComp.add(mainComp, BorderLayout.CENTER);
-
-      JComponent rowComp;
+      numComp.add(textComp, BorderLayout.NORTH);
 
       rowComp = createRow();
       mainComp.add(rowComp);
@@ -112,12 +116,9 @@ public class DatumCellRenderer implements TableCellRenderer
       JLabel typeLabel = resources.createJLabel("celledit.type");
       rowComp.add(typeLabel);
       typeField = createField();
-      rowComp.add(typeField);
+      typeField.setText(settings.getTypeLabel(type));
 
-      Dimension prefDim = typeLabel.getPreferredSize();
-      Dimension maxDim = rowComp.getMaximumSize();
-      maxDim.height = 2*prefDim.height;
-      rowComp.setMaximumSize(maxDim);
+      rowComp.add(typeField);
 
       JComponent valueRow = createRow();
       mainComp.add(valueRow);
@@ -126,11 +127,6 @@ public class DatumCellRenderer implements TableCellRenderer
       valueRow.add(valueLabel);
       numField = createField();
       valueRow.add(numField);
-
-      prefDim = valueLabel.getPreferredSize();
-      maxDim = valueRow.getMaximumSize();
-      maxDim.height = 2*prefDim.height;
-      valueRow.setMaximumSize(maxDim);
 
       if (type == DatumType.CURRENCY)
       {
@@ -145,12 +141,17 @@ public class DatumCellRenderer implements TableCellRenderer
 
       mainComp.add(Box.createVerticalGlue());
 
-      return numericComp;
+      return numComp;
    }
 
    protected JComponent createRow()
    {
-      JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      return createRow(FlowLayout.LEADING);
+   }
+
+   protected JComponent createRow(int align)
+   {
+      JComponent comp = new JPanel(new FlowLayout(align));
       comp.setOpaque(false);
 
       return comp;
@@ -170,9 +171,11 @@ public class DatumCellRenderer implements TableCellRenderer
      Object value, boolean isSelected, boolean hasFocus,
      int row, int column)
    {
+      String text = value.toString();
+
       if (textComp != null)
       {
-         textComp.setText(value.toString());
+         textComp.setText(text);
 
          if (table != null)
          {
