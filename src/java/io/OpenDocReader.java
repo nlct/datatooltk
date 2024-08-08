@@ -390,7 +390,15 @@ public class OpenDocReader extends XMLReaderAdapter
                      {
                         case CURRENCY:
                         case DECIMAL:
-                           num = Double.valueOf(strVal);
+                           try
+                           {
+                              num = Integer.valueOf(strVal);
+                              datumType = DatumType.INTEGER;
+                           }
+                           catch (NumberFormatException e)
+                           {
+                              num = Double.valueOf(strVal);
+                           }
                         break;
                         case INTEGER:
                            num = Integer.valueOf(strVal);
@@ -423,6 +431,7 @@ public class OpenDocReader extends XMLReaderAdapter
                {
                   importSettings.getMessageHandler().debug(e);
                }
+
             }
             else if (currentCell != null)
             {
@@ -449,7 +458,7 @@ public class OpenDocReader extends XMLReaderAdapter
                   }
                }
 
-               if (qName.startsWith("text:") && currentBuilder == null)
+               if (currentBuilder == null && qName.startsWith("text:"))
                {
                   currentBuilder = new StringBuilder();
                }
@@ -561,6 +570,11 @@ public class OpenDocReader extends XMLReaderAdapter
                      return;
                   }
                }
+               else if (columnIdx + tableCellRepetition > columnCount)
+               {
+                  columnIdx += tableCellRepetition;
+                  return;
+               }
             }
 
             if (inHeader)
@@ -576,8 +590,8 @@ public class OpenDocReader extends XMLReaderAdapter
                else
                {
                   for (int i = columnIdx, 
-                       n = Math.min(columnCount, columnIdx+tableCellRepetition);
-                       i < n; i++)
+                    n = columnIdx+tableCellRepetition;
+                    i < n && i <= columnCount; i++)
                   {
                      String key = importSettings.getColumnKey(i);
 
@@ -627,8 +641,8 @@ public class OpenDocReader extends XMLReaderAdapter
                boolean repeated = false;
 
                for (int i = columnIdx, 
-                    n = Math.min(columnCount, columnIdx+tableCellRepetition);
-                    i < n; i++)
+                    n = columnIdx+tableCellRepetition;
+                    i < n && i <= columnCount; i++)
                {
                   if (repeated)
                   {
