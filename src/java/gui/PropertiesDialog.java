@@ -222,7 +222,7 @@ public class PropertiesDialog extends JDialog
         IOSettingsPanel.IO_IN, 
         DatatoolFileFormat.FILE_FORMAT_CSV_OR_TSV
       | DatatoolFileFormat.FILE_FORMAT_ANY_SPREADSHEET,
-        true, false);
+        true, false, false);
 
       csvSettingsPanel.setSelectedFileFormat(
         DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);

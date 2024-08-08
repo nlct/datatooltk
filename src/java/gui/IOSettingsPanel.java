@@ -45,13 +45,13 @@ public class IOSettingsPanel extends JPanel
       int formatModifiers, boolean formatSingleSelection)
    {
       this(owner, resources, null, IO_IN | IO_OUT,
-       formatModifiers, formatSingleSelection, true);
+       formatModifiers, formatSingleSelection, true, true);
    }
 
    public IOSettingsPanel(Window owner, DatatoolGuiResources resources,
       String tagParentLabel, int ioModifiers,
       int formatModifiers, boolean formatSingleSelection,
-      boolean addTrim)
+      boolean addTrim, boolean addEmptyToNull)
    {
       super(null);
 
@@ -67,18 +67,31 @@ public class IOSettingsPanel extends JPanel
 
       this.selectedFormatModifiers = 0;
 
-      init(addTrim);
+      init(addTrim, addEmptyToNull);
    }
 
-   protected void init(boolean addTrim)
+   protected void init(boolean addTrim, boolean addEmptyToNull)
    {
       initFormatButtons();
 
-      if (addTrim)
+      if (addTrim || addEmptyToNull)
       {
-         trimElementBox = createJCheckBox("element", "trim");
+         JComponent row = createRow();
+         add(row);
 
-         add(trimElementBox);
+         if (addTrim)
+         {
+            trimElementBox = createJCheckBox("element", "trim");
+
+            row.add(trimElementBox);
+         }
+
+         if (addEmptyToNull)
+         {
+            emptyToNullBox = createJCheckBox("element", "empty_to_null");
+
+            row.add(emptyToNullBox);
+         }
       }
 
       if ( DatatoolFileFormat.isAnyTeX(formatModifiers) )
@@ -1469,6 +1482,19 @@ public class IOSettingsPanel extends JPanel
       }
    }
 
+   public boolean isEmptyToNullOn()
+   {
+      return emptyToNullBox != null && emptyToNullBox.isSelected();
+   }
+
+   public void setEmptyToNullOn(boolean on)
+   {
+      if (emptyToNullBox != null)
+      {
+         emptyToNullBox.setSelected(on);
+      }
+   }
+
    public boolean isTrimElementOn()
    {
       return trimElementBox != null && trimElementBox.isSelected();
@@ -1906,6 +1932,11 @@ public class IOSettingsPanel extends JPanel
          settings.setTrimElement(trimElementBox.isSelected());
       }
 
+      if (emptyToNullBox != null)
+      {
+         settings.setImportEmptyToNull(emptyToNullBox.isSelected());
+      }
+
       if (stripSolnEnvBox != null)
       {
          settings.setStripSolutionEnv(stripSolnEnvBox.isSelected());
@@ -1947,6 +1978,11 @@ public class IOSettingsPanel extends JPanel
       if (trimElementBox != null)
       {
          trimElementBox.setSelected(settings.isTrimElementOn());
+      }
+
+      if (emptyToNullBox != null)
+      {
+         emptyToNullBox.setSelected(settings.isImportEmptyToNullOn());
       }
 
       if (stripSolnEnvBox != null)
@@ -2443,7 +2479,7 @@ public class IOSettingsPanel extends JPanel
    boolean formatSingleSelection;
 
    JCheckBox csvIncHeaderBox, texIncHeaderBox, trimElementBox,
-    stripSolnEnvBox;
+    stripSolnEnvBox, emptyToNullBox;
 
    JComponent fileFormatComp, csvSpreadComp, csvTsvOnlyComp, allNonTeXComp,
      texCardComp, nonTeXCardComp, cardComp;

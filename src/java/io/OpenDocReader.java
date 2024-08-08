@@ -261,6 +261,22 @@ public class OpenDocReader extends XMLReaderAdapter
                lineCount++;
                columnIdx=0;
 
+               tableRowRepetitions = 1;
+
+               try
+               {
+                  String val = attrs.getValue("table:number-rows-repeated");
+
+                  if (val != null)
+                  {
+                     tableRowRepetitions = Integer.parseInt(val);
+                  }
+               }
+               catch (NumberFormatException e)
+               {
+                  importSettings.getMessageHandler().debug(e);
+               }
+
                if (db != null)
                {
                   if (lineCount >= startLine)
@@ -523,14 +539,26 @@ public class OpenDocReader extends XMLReaderAdapter
             else if (currentRow == null)
             {// do nothing
             }
-            else if (currentRow.isEmpty())
+            else if (currentRow.isNullOrEmptyRow())
             {
+               currentRow.clear();
+
                switch (importSettings.getBlankRowAction())
                {
                   case IGNORE:
                   break;
                   case EMPTY_ROW:
-                    db.appendRow(currentRow);
+
+                    if (tableRowRepetitions == 1)
+                    {
+                       for (int i = 0; i < db.getColumnCount(); i++)
+                       {
+                          currentRow.add(new Datum("", importSettings.getSettings()));
+                       }
+
+                       db.appendRow(currentRow);
+                    }
+
                   break;
                   case END:
                      throw new ParsingTerminatedException();
@@ -558,9 +586,20 @@ public class OpenDocReader extends XMLReaderAdapter
                currentCell.setText(text);
             }
 
-            if (DatatoolDb.NULL_VALUE.equals(text))
+            if (DatatoolDb.NULL_VALUE.equals(text) || text.isEmpty())
             {
-               text = null;
+               if (importSettings.isImportEmptyToNullOn())
+               {
+                  text = null;
+                  currentCell.setText(DatatoolDb.NULL_VALUE);
+               }
+               else
+               {
+                  text = "";
+                  currentCell.setText("");
+               }
+
+               currentCell.setDatumType(DatumType.UNKNOWN);
 
                if (columnIdx == 1 && tableCellRepetition > columnCount)
                {
@@ -839,7 +878,7 @@ public class OpenDocReader extends XMLReaderAdapter
    protected int tableCount=0, lineCount=0, columnCount=0, columnIdx=0;
    protected DatatoolRow currentRow;
    protected Datum currentCell;
-   protected int tableCellRepetition;
+   protected int tableCellRepetition, tableRowRepetitions;
    protected Vector<String> cellEnvironments;
    protected String currentEnvironment;
 

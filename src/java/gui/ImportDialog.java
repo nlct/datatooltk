@@ -48,12 +48,12 @@ public class ImportDialog extends JDialog
       this(gui, "import",
         DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
       | DatatoolFileFormat.FILE_FORMAT_ANY_NON_TEX,
-        true,
+        true, true,
         DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
    }
 
    public ImportDialog(DatatoolGUI gui, String tagPrefix, int formatModifiers,
-     boolean addTrim, int initialFormat)
+     boolean addTrim, boolean addEmptyToNull, int initialFormat)
    {
       super(gui, gui.getMessageHandler().getLabel(tagPrefix+".title"), true);
       this.gui = gui;
@@ -78,7 +78,7 @@ public class ImportDialog extends JDialog
       DatatoolGuiResources resources = gui.getResources();
 
       settingsPanel = new IOSettingsPanel(this, resources, tagPrefix,
-        IOSettingsPanel.IO_IN, formatModifiers, true, addTrim);
+        IOSettingsPanel.IO_IN, formatModifiers, true, addTrim, addEmptyToNull);
 
       getContentPane().add(new JScrollPane(settingsPanel), BorderLayout.CENTER);
 

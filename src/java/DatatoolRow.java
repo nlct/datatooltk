@@ -133,5 +133,18 @@ public class DatatoolRow extends Vector<Datum>
       return db;
    }
 
+   public boolean isNullOrEmptyRow()
+   {
+      for (int i = 0; i < size(); i++)
+      {
+         if (!get(i).isNullOrEmpty())
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
    private DatatoolDb db;
 }

@@ -294,6 +294,7 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="iosettings.format.sql">SQL</entry>
 
 <entry key="iosettings.element.trim">Trim elements</entry>
+<entry key="iosettings.element.empty_to_null">Convert empty elements to null (probsoln and spreadsheets only)</entry>
 
 <entry key="iosettings.tex.stripsolnenv">Strip solution environment from probsoln problems</entry>
 <entry key="iosettings.tex.stripsolnenv.mnemonic">B</entry>

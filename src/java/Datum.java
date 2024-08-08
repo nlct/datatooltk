@@ -108,6 +108,11 @@ public class Datum implements Comparable<Datum>
       return stringValue.equals(DatatoolDb.NULL_VALUE);
    }
 
+   public boolean isNullOrEmpty()
+   {
+      return isNull() || stringValue.isEmpty();
+   }
+
    public static Datum valueOf(TeXObject entryContents, TeXParser parser,
      DatatoolSettings settings)
    {
