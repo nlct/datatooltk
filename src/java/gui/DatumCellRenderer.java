@@ -31,52 +31,78 @@ import com.dickimawbooks.datatooltk.Datum;
 import com.dickimawbooks.datatooltk.DatatoolSettings;
 
 /**
- * Cell renderer for data in numerical columns.
+ * Cell renderer for Datum values.
  */
-public class DbNumericalCellRenderer implements TableCellRenderer
+public class DatumCellRenderer implements TableCellRenderer
 {
-   private JTextField textField, typeField, currencyField, numField;
-   private JPanel panel;
    private DatatoolSettings settings;
-   private CardLayout cardLayout;
-   private JComponent currencyRow, valueRow,
-      nullCard, numericCard;
-   private JTextComponent textCard;
+
+   private JTextField typeField, currencyField, numField;
+   private Component panel;
+   private JTextComponent textComp;
+
+   private DatumType type;
+
    private static final Color NULL_BG = Color.LIGHT_GRAY;
 
-   public DbNumericalCellRenderer(DatatoolSettings settings)
+   public DatumCellRenderer(DatatoolSettings settings, DatumType type)
    {
       this.settings = settings;
+      this.type = type;
+
+      switch (type)
+      {
+         case STRING:
+           panel = createStringComp();
+         break;
+         case UNKNOWN: 
+           panel = createNullComp();
+         break;      
+         default:
+           panel = createNumericComp();
+      }
+   }
+
+   protected JComponent createStringComp()
+   {
+      JTextArea textArea = new JTextArea();
+      textArea.setLineWrap(true);
+      textArea.setWrapStyleWord(true);
+
+      textArea.setEditable(false);
+      textArea.setOpaque(true);
+
+      textComp = textArea;
+
+      return textComp;
+   }
+
+   protected JComponent createNullComp()
+   {
+      JPanel nullComp = new JPanel();
+      nullComp.setOpaque(true);
+
+      nullComp.add(new JLabel("NULL"));
+
+      return nullComp;
+   }
+
+   protected JComponent createNumericComp()
+   {
       DatatoolGuiResources resources = settings.getDatatoolGuiResources();
 
-      cardLayout = new CardLayout();
-      panel = new JPanel(cardLayout);
-      panel.setOpaque(true);
+      JComponent numericComp = new JPanel(new BorderLayout());
+      numericComp.setOpaque(true);
 
-      textCard = new JTextArea();
-      textCard.setEditable(false);
-      textCard.setOpaque(false);
-      panel.add(textCard, "string");
-      
-      nullCard = new JPanel();
-      nullCard.setOpaque(false);
-      panel.add(textCard, "null");
-
-      nullCard.add(new JLabel("NULL"));
-      
-      numericCard = new JPanel(new BorderLayout());
-      numericCard.setOpaque(false);
-      panel.add(numericCard, "numeric");
-
-      textField = new JTextField();
-      textField.setEditable(false);
+      JTextField textField = createField();
       textField.setHorizontalAlignment(JTextField.TRAILING);
+      textComp = textField;
 
-      numericCard.add(textField, BorderLayout.NORTH);
+      numericComp.add(textComp, BorderLayout.NORTH);
 
       JComponent mainComp = Box.createVerticalBox();
       mainComp.setOpaque(false);
-      numericCard.add(mainComp, BorderLayout.CENTER);
+      numericComp.add(mainComp, BorderLayout.CENTER);
 
       JComponent rowComp;
 
@@ -93,7 +119,7 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       maxDim.height = 2*prefDim.height;
       rowComp.setMaximumSize(maxDim);
 
-      valueRow = createRow();
+      JComponent valueRow = createRow();
       mainComp.add(valueRow);
 
       JLabel valueLabel = resources.createJLabel("celledit.numeric");
@@ -106,14 +132,20 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       maxDim.height = 2*prefDim.height;
       valueRow.setMaximumSize(maxDim);
 
-      currencyRow = createRow();
-      mainComp.add(currencyRow);
+      if (type == DatumType.CURRENCY)
+      {
+         JComponent currencyRow = createRow();
+         mainComp.add(currencyRow);
 
-      currencyRow.add(resources.createJLabel("celledit.currency"));
-      currencyField = createField();
-      currencyRow.add(currencyField);
+         currencyRow.add(resources.createJLabel("celledit.currency"));
+         currencyField = createField();
+
+         currencyRow.add(currencyField);
+      }
 
       mainComp.add(Box.createVerticalGlue());
+
+      return numericComp;
    }
 
    protected JComponent createRow()
@@ -138,54 +170,38 @@ public class DbNumericalCellRenderer implements TableCellRenderer
      Object value, boolean isSelected, boolean hasFocus,
      int row, int column)
    {
-      if (table == null)
+      if (textComp != null)
       {
-         return textField;
+         textComp.setText(value.toString());
+
+         if (table != null)
+         {
+            textComp.setFont(table.getFont());
+         }
       }
 
-      DatumType type = DatumType.UNKNOWN;
+      if (table == null)
+      {
+         return panel;
+      }
+
       String currencySym = null;
       Number num = null;
       boolean isNull = false;
+      DatumType valType = type;
 
       if (value instanceof Datum)
       {
          Datum datum = (Datum)value;
-         type = datum.getDatumType();
+         valType = datum.getDatumType();
 
-         if (type.isNumeric())
+         if (valType.isNumeric())
          {
             currencySym = datum.getCurrencySymbol();
             num = datum.getNumber();
          }
 
          isNull = datum.isNull();
-      }
-
-      JTextComponent textComp = textField;
-      String text = value.toString();
-
-      switch (type)
-      {
-         case STRING:
-            cardLayout.show(panel, "string");
-            textComp = textCard;
-         break;
-         case UNKNOWN:
-            if (isNull)
-            {
-               cardLayout.show(panel, "null");
-               textComp = null;
-            }
-            else
-            {
-               cardLayout.show(panel, "string");
-               textComp = textCard;
-            }
-         break;
-         default:
-            cardLayout.show(panel, "numeric");
-         break;
       }
 
       Color bg, fg;
@@ -204,40 +220,32 @@ public class DbNumericalCellRenderer implements TableCellRenderer
       panel.setBackground(bg);
       panel.setForeground(fg);
 
-      if (textComp != null)
+      if (typeField != null)
       {
-         textComp.setText(text);
-
-         textComp.setBackground(bg);
-         textComp.setForeground(fg);
-
-         textComp.setFont(table.getFont());
+         typeField.setText(settings.getTypeLabel(valType));
       }
 
-      if (type.isNumeric())
+      if (currencyField != null)
       {
-         typeField.setText(settings.getTypeLabel(type));
-
          if (currencySym == null)
          {
             currencyField.setText("");
-            currencyRow.setVisible(false);
          }
          else
-         {
+         { 
             currencyField.setText(currencySym);
-            currencyRow.setVisible(true);
          }
+      }
 
+      if (numField != null)
+      {
          if (num == null)
          {
             numField.setText("");
-            valueRow.setVisible(false);
          }
          else
-         {
+         { 
             numField.setText(num.toString());
-            valueRow.setVisible(true);
          }
       }
 

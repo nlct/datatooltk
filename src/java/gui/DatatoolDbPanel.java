@@ -1837,17 +1837,17 @@ class ButtonTabComponent extends JPanel
 class DatatoolCellRenderer implements TableCellRenderer
 {
    private DatatoolDb db;
-   private DbNumericalCellRenderer numericalCellRenderer;
-   private DbCellRenderer cellRenderer;
-   private DefaultTableCellRenderer defRenderer;
+   private DatumCellRenderer strCellRenderer, numCellRenderer,
+    currCellRenderer, nullCellRenderer;
 
    public DatatoolCellRenderer(DatatoolDb db)
    {
       super();
       this.db = db;
-      numericalCellRenderer = new DbNumericalCellRenderer(db.getSettings());
-      cellRenderer = new DbCellRenderer();
-      defRenderer = new DefaultTableCellRenderer();
+      strCellRenderer = new DatumCellRenderer(db.getSettings(), DatumType.STRING);
+      numCellRenderer = new DatumCellRenderer(db.getSettings(), DatumType.DECIMAL);
+      currCellRenderer = new DatumCellRenderer(db.getSettings(), DatumType.CURRENCY);
+      nullCellRenderer = new DatumCellRenderer(db.getSettings(), DatumType.UNKNOWN);
    }
 
    public Component getTableCellRendererComponent(JTable table,
@@ -1861,22 +1861,33 @@ class DatatoolCellRenderer implements TableCellRenderer
          return null;
       }
 
-      DatumType type = db.getHeader(modelIndex).getDatumType();
+      DatumCellRenderer renderer = strCellRenderer;
 
-      switch (type)
+      if (value instanceof Datum)
       {
-         case INTEGER:
-         case DECIMAL:
-         case CURRENCY:
-            return numericalCellRenderer.getTableCellRendererComponent(table,
-              value, isSelected, hasFocus, row, column);
-         case STRING:
-            return cellRenderer.getTableCellRendererComponent(table,
-              value, isSelected, hasFocus, row, column);
+         Datum datum = (Datum)value;
+
+         if (datum.isNull())
+         {
+            renderer = nullCellRenderer;
+         }
+         else
+         {
+            switch (datum.getDatumType())
+            {
+               case CURRENCY:
+                  renderer = currCellRenderer;
+               break;
+               case INTEGER:
+               case DECIMAL:
+                  renderer = numCellRenderer;
+               break;
+            }
+         }
       }
 
-      return defRenderer.getTableCellRendererComponent(table,
-           value, isSelected, hasFocus, row, column);
+      return renderer.getTableCellRendererComponent(table,
+        value, isSelected, hasFocus, row, column);
    }
 }
 
