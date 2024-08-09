@@ -1238,9 +1238,11 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.version">{0} (or {1})	Print version and exit.</entry>
 
-<entry key="syntax.xls">{0} &lt;filename&gt;	Import Excel data from &lt;filename&gt;</entry>
+<entry key="syntax.xlsx">{0} &lt;filename&gt;	Import MS Excel (*.xlsx) data from &lt;filename&gt;</entry>
 <entry key="syntax.xlsods_opts">Excel and ODS Options:</entry>
 <entry key="syntax.xls_opts">Excel Options:</entry>
+
+<entry key="syntax.import">{0} &lt;filename&gt;	Import data from &lt;filename&gt;</entry>
 
 <!-- Warning Messages -->
 
@@ -1390,6 +1392,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.invalid_name">Invalid name ''{0}'' (can''t be empty or contain TeX special characters)</entry>
 
 <entry key="error.io.file_not_found">No such file ''{0}''</entry>
+<entry key="error.io.file_not_found_query_sql">No such file ''{0}''. If you want to import SQL data, use {1} instead</entry>
 
 <entry key="error.key_exists">Header key ''{0}'' already exists</entry>
 <entry key="error.line">Line {0,number}: {1}</entry>
@@ -1449,8 +1452,6 @@ Extension ''{1}'' is forbidden for log files</entry>
 <entry key="error.template.missing_tag">Missing ''{0}'' tag</entry>
 <entry key="error.template.invalid_type">Invalid type ''{0}''</entry>
 <entry key="error.unknown_key">Unknown header key ''{0}''</entry>
-
-<entry key="error.xlsx_not_supported">Sorry, .xlsx files not supported.</entry>
 
 <entry key="error.unsupported_mimetype">Unsupported mimetype.</entry>
 <entry key="error.unsupported_xml">Unsupported XML format.</entry>

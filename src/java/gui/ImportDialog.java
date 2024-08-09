@@ -319,25 +319,6 @@ public class ImportDialog extends JDialog
 
       loadSettings.setDataImport(imp, source);
 
-      if (imp instanceof DatatoolSpreadSheetImport)
-      {
-         File file = new File(source);
-
-         Object ref = JOptionPane.showInputDialog(this,
-            messageHandler.getLabel("importspread.sheet"),
-            messageHandler.getLabel("importspread.title"),
-            JOptionPane.PLAIN_MESSAGE,
-            null, ((DatatoolSpreadSheetImport)imp).getSheetNames(file),
-            null);
-
-         if (ref == null)
-         {
-            return;
-         }
-
-         importSettings.setSheetName(ref.toString());
-      }
-
       setVisible(false);
 
       DatatoolFileLoader loader = new DatatoolFileLoader(gui, loadSettings);

@@ -432,13 +432,18 @@ public class DatatoolTk
         "--noconsole-action"));
       System.out.println();
 
+      System.out.println(getLabelWithValues("syntax.import", "--import"));
+      System.out.println(getLabelWithValues("syntax.merge_import", "--merge-import"));
+
+      System.out.println();
+
       System.out.println(getLabel("syntax.probsoln_opts"));
       System.out.println(getLabelWithValues("syntax.probsoln", "--probsoln"));
       System.out.println(getLabelWithValues("syntax.merge_probsoln", "--merge-probsoln"));
       System.out.println();
 
       System.out.println(getLabel("syntax.xls_opts"));
-      System.out.println(getLabelWithValues("syntax.xls", "--xls"));
+      System.out.println(getLabelWithValues("syntax.xlsx", "--xlsx"));
       System.out.println(getLabelWithValues("syntax.merge_xls", "--merge-xls"));
       System.out.println();
 
@@ -1081,6 +1086,75 @@ public class DatatoolTk
             loadSettings.setExportTarget(args[i]);
             loadSettings.setDataExport(new DatatoolTeX(optList, settings));
          }
+         else if (args[i].equals("--import"))
+         {
+            if (loadSettings.getImportSource() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.syntax.only_one_import"));
+            }
+
+            if (loadSettings.getInputFile() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.import_clash", args[i]));
+            }
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_filename",
+                     args[i-1]));
+            }
+
+            File file = new File(args[i]);
+
+            if (!file.exists())
+            {
+               if (args[i].lastIndexOf('.') == -1)
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValues("error.io.file_not_found_query_sql",
+                        args[i], "--sql"));
+               }
+               else
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValues("error.io.file_not_found",
+                        args[i]));
+               }
+            }
+
+            DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
+              getMessageHandler(), file);
+
+            loadSettings.setImportSource(args[i]);
+
+            switch (fmt.getFileFormat())
+            {
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_TSV:
+                  settings.setSeparator('\t');
+               // fall through
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_CSV:
+                  loadSettings.setDataImport(new DatatoolCsv(settings));
+               break;
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_ODS:
+                 loadSettings.setDataImport(new DatatoolOpenDoc(settings, false));
+               break;
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_FODS:
+                 loadSettings.setDataImport(new DatatoolOpenDoc(settings, true));
+               break;
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX:
+                 loadSettings.setDataImport(new DatatoolOfficeOpenXML(settings));
+               break;
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_XLS:
+                 loadSettings.setDataImport(new DatatoolExcel(settings));
+               default: // assume TeX
+                 loadSettings.setDataImport(new DatatoolTeX(settings));
+            }
+         }
          else if (args[i].equals("--csv"))
          {
             if (loadSettings.getImportSource() != null)
@@ -1132,6 +1206,32 @@ public class DatatoolTk
 
             loadSettings.setImportSource(args[i]);
             loadSettings.setDataImport(new DatatoolExcel(settings));
+         }
+         else if (args[i].equals("--xlsx"))
+         {
+            if (loadSettings.getImportSource() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.syntax.only_one_import"));
+            }
+
+            if (loadSettings.getInputFile() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.import_clash", args[i]));
+            }
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_filename",
+                     args[i-1]));
+            }
+
+            loadSettings.setImportSource(args[i]);
+            loadSettings.setDataImport(new DatatoolOfficeOpenXML(settings));
          }
          else if (args[i].equals("--ods") || args[i].equals("--odf")
                || args[i].equals("--fods"))
@@ -1828,6 +1928,81 @@ public class DatatoolTk
             loadSettings.setMergeKey(mergeKey);
             loadSettings.setMergeFile(mergeFile);
          }
+         else if (args[i].equals("--merge-import"))
+         {
+            if (loadSettings.getMergeImportSource() != null
+                || loadSettings.getMergeFile() != null)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.only_one", args[i]));
+            }
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_merge_key",
+                   args[i-1]));
+            }
+
+            String mergeKey = args[i];
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_merge_file",
+                     args[i-2], args[i-1]));
+            }
+
+            loadSettings.setMergeKey(mergeKey);
+            loadSettings.setMergeImportSource(args[i]);
+
+            File file = new File(args[i]);
+
+            if (!file.exists())
+            {
+               if (args[i].lastIndexOf('.') == -1)
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValues("error.io.file_not_found_query_sql",
+                        args[i], "--merge-sql"));
+               }
+               else
+               {
+                  throw new InvalidSyntaxException(
+                     getLabelWithValues("error.io.file_not_found",
+                        args[i]));
+               }
+            }
+
+            DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
+              getMessageHandler(), file);
+
+            switch (fmt.getFileFormat())
+            {
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_TSV:
+                  settings.setSeparator('\t');
+               // fall through
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_CSV:
+                  loadSettings.setMergeImport(new DatatoolCsv(settings));
+               break;
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_ODS:
+                 loadSettings.setMergeImport(new DatatoolOpenDoc(settings, false));
+               break;
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_FODS:
+                 loadSettings.setMergeImport(new DatatoolOpenDoc(settings, true));
+               break;
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX:
+                 loadSettings.setMergeImport(new DatatoolOfficeOpenXML(settings));
+               case DatatoolFileFormat.FILE_FORMAT_FLAG_XLS:
+                 loadSettings.setMergeImport(new DatatoolExcel(settings));
+               default: // assume TeX
+                 loadSettings.setMergeImport(new DatatoolTeX(settings));
+            }
+         }
          else if (args[i].equals("--merge-csv"))
          {
             if (loadSettings.getMergeImportSource() != null
@@ -1959,6 +2134,39 @@ public class DatatoolTk
             loadSettings.setMergeKey(mergeKey);
             loadSettings.setMergeImportSource(args[i]);
             loadSettings.setMergeImport(new DatatoolExcel(settings));
+         }
+         else if (args[i].equals("--merge-xlsx"))
+         {
+            if (loadSettings.getMergeImportSource() != null
+                || loadSettings.getMergeFile() != null)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.only_one", args[i]));
+            }
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_merge_key",
+                   args[i-1]));
+            }
+
+            String mergeKey = args[i];
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_merge_file",
+                     args[i-2], args[i-1]));
+            }
+
+            loadSettings.setMergeKey(mergeKey);
+            loadSettings.setMergeImportSource(args[i]);
+            loadSettings.setMergeImport(new DatatoolOfficeOpenXML(settings));
          }
          else if (args[i].equals("--merge-ods"))
          {
@@ -2153,8 +2361,8 @@ public class DatatoolTk
    }
 
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_VERSION = "1.9.20240719";
-   public static final String APP_DATE = "2024-07-19";
+   public static final String APP_VERSION = "1.9.20240809";
+   public static final String APP_DATE = "2024-08-09";
    public static final String START_COPYRIGHT_YEAR = "2014";
    public static final String COPYRIGHT_YEAR
     = START_COPYRIGHT_YEAR+"-"+APP_DATE.substring(0,4);

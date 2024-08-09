@@ -22,17 +22,18 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
-import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 import com.dickimawbooks.datatooltk.*;
 
 /**
  * Class handling importing Excel data.
  */
-public class DatatoolExcel implements DatatoolSpreadSheetImport
+public class DatatoolExcel implements DatatoolImport
 {
    public DatatoolExcel(DatatoolSettings settings)
    {
@@ -60,30 +61,6 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
       return importData(settings.getImportSettings(), source);
    }
 
-   public String[] getSheetNames(File file)
-    throws IOException
-   {
-      if (!file.exists())
-      {
-         throw new IOException(
-            getMessageHandler().getLabelWithValues("error.io.file_not_found", 
-             file.toString()));
-      }
-
-      Workbook workBook = WorkbookFactory.create(file);
-
-      int numSheets = workBook.getNumberOfSheets();
-
-      String[] names = new String[numSheets];
-
-      for (int i = 0; i < numSheets; i++)
-      {
-         names[i] = workBook.getSheetName(i);
-      }
-
-      return names;
-   }
-
    public DatatoolDb importData(File file)
       throws DatatoolImportException
    {
@@ -97,16 +74,41 @@ public class DatatoolExcel implements DatatoolSpreadSheetImport
                getMessageHandler().getLabelWithValues("error.io.file_not_found", ""+file));
          }
 
-         if (file.getName().toLowerCase().endsWith(".xlsx"))
-         {
-            throw new IOException(
-              getMessageHandler().getLabel("error.xlsx_not_supported"));
-         }
-
          Workbook workBook = WorkbookFactory.create(file);
          Sheet sheet;
 
          Object sheetRef = importSettings.getSheetRef();
+
+         if (sheetRef == null)
+         {
+            int numSheets = workBook.getNumberOfSheets();
+
+            if (numSheets == 1 || getMessageHandler().isBatchMode())
+            {
+               sheetRef = workBook.getSheetName(0);
+            }
+            else
+            {
+               String[] names = new String[numSheets];
+
+               for (int i = 0; i < numSheets; i++)
+               {
+                  names[i] = workBook.getSheetName(i);
+               }
+
+               sheetRef = JOptionPane.showInputDialog(null,
+                  getMessageHandler().getLabel("importspread.sheet"),
+                  getMessageHandler().getLabel("importspread.title"),
+                  JOptionPane.PLAIN_MESSAGE,
+                  null, names,
+                  null);
+
+               if (sheetRef == null)
+               {
+                  throw new UserCancelledException(getMessageHandler());
+               }
+            }
+         }
 
          if (sheetRef instanceof Number)
          {
