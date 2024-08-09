@@ -32,6 +32,8 @@ import com.dickimawbooks.datatooltk.*;
 
 /**
  * Class handling importing Excel data.
+ * This is pending deletion. (Too many dependencies and Log4j
+ * configuration required.)
  */
 public class DatatoolExcel implements DatatoolImport
 {
