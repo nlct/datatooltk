@@ -1416,6 +1416,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.no_templates">No templates found</entry>
 <entry key="error.not_currency">''{0}'' not in currency format</entry>
 <entry key="error.not_decimal">''{0}'' not a decimal number</entry>
+<entry key="error.number_expected">Number expected, found ''{0}''</entry>
 <entry key="error.not_decimal_type">''{0}'' is not a decimal type.
 (Change the ''{1}'' selector.)</entry>
 <entry key="error.missing.numeric_pattern">{0} missing numeric pattern</entry>
@@ -1457,5 +1458,13 @@ Extension ''{1}'' is forbidden for log files</entry>
 
 <entry key="error.expected_mimetype_but_found">Expected mimetype ''{0}'' but found ''{1}''</entry>
 <entry key="error.zip_entry_not_found">No entry ''{0}'' found in zip file ''{1}''</entry>
+
+<entry key="error.xlsx.invalid_column_ref">Invalid column reference ''{0}''.</entry>
+<entry key="error.xlsx.unknown_shared_string_ref">Unknown shared string reference ''{0}''.</entry>
+
+<entry key="error.xml.invalid_attr_in_tag">Invalid ''{0}'' attribute value ''{1}'' found for &lt;{2}&gt;</entry>
+
+<entry key="error.xml.invalid_attr_in_tag_cause">Invalid ''{0}'' attribute value ''{1}'' found for &lt;{2}&gt; ({2})</entry>
+
 
 </properties>

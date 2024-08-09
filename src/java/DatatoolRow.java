@@ -47,6 +47,20 @@ public class DatatoolRow extends Vector<Datum>
       this.db = db;
    }
 
+   public static DatatoolRow createEmptyRow(DatatoolDb db)
+   {
+      int numCols = db.getColumnCount();
+
+      DatatoolRow row = new DatatoolRow(db, numCols);
+
+      for (int i = 0; i < numCols; i++)
+      {
+         row.add(new Datum(db.getSettings()));
+      }
+
+      return row;
+   }
+
    public void setCell(int colIdx, String value)
    {
       Datum datum;

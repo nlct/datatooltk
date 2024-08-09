@@ -310,7 +310,7 @@ public class ImportDialog extends JDialog
       else if (settingsPanel.isFileFormatSelected(
            DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX))
       {
-         imp = new DatatoolExcel(settings);
+         imp = new DatatoolOfficeOpenXML(settings);
       }
       else
       {

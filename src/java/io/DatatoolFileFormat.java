@@ -18,9 +18,14 @@
 */
 package com.dickimawbooks.datatooltk.io;
 
-import java.io.FileInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -437,6 +442,104 @@ public class DatatoolFileFormat
       }
    }
 
+   public Charset getXmlEncoding(Reader in)
+    throws IOException,DatatoolImportException
+   {
+      return getXmlEncoding(messageHandler, in);
+   }
+
+   public static Charset getXmlEncoding(MessageHandler messageHandler, Reader in)
+    throws IOException,DatatoolImportException
+   {
+      char[] buff = new char[64];
+
+      boolean markSupported = in.markSupported();
+
+      if (markSupported)
+      {
+         in.mark(buff.length);
+      }
+
+      in.read(buff);
+
+      Matcher m = XML_PATTERN.matcher(new String(buff));
+
+      Charset charset = null;
+
+      if (m.matches())
+      {
+         String encoding = m.group(1);
+
+         try
+         {
+            charset = Charset.forName(encoding);
+         }
+         catch (UnsupportedCharsetException | IllegalCharsetNameException e)
+         {
+            throw new DatatoolImportException(
+              messageHandler.getLabelWithValues(
+               "error.syntax.unknown_encoding", encoding), e);
+         }
+      }
+
+      if (markSupported)
+      {
+         in.reset();
+      }
+
+      return charset;
+   }
+
+   public Charset getXmlEncoding(InputStream in)
+    throws IOException,DatatoolImportException
+   {
+      return getXmlEncoding(messageHandler, in);
+   }
+
+   public static Charset getXmlEncoding(MessageHandler messageHandler, InputStream in)
+    throws IOException,DatatoolImportException
+   {
+      byte[] buff = new byte[64];
+
+      boolean markSupported = in.markSupported();
+
+      if (markSupported)
+      {
+         in.mark(buff.length);
+      }
+
+      int n = in.read(buff);
+
+      String str = new String(buff, 0, n);
+
+      Matcher m = XML_PATTERN.matcher(str);
+
+      Charset charset = null;
+
+      if (m.matches())
+      {
+         String encoding = m.group(1);
+
+         try
+         {
+            charset = Charset.forName(encoding);
+         }
+         catch (UnsupportedCharsetException | IllegalCharsetNameException e)
+         {
+            throw new DatatoolImportException(
+              messageHandler.getLabelWithValues(
+               "error.syntax.unknown_encoding", encoding), e);
+         }
+      }
+
+      if (markSupported)
+      {
+         in.reset();
+      }
+
+      return charset;
+   }
+
    public int getFileFormat()
    {
       return format;
@@ -614,6 +717,10 @@ public class DatatoolFileFormat
 
    public static final byte[] V2_MARKER = " 2.0".getBytes();
    public static final byte[] V3_MARKER = " 3.0".getBytes();
+
+   public static final Pattern XML_PATTERN
+    = Pattern.compile("<\\?xml.*\\s+encoding\\s*=\\s*\"([^\"]+)\".*\\?>.*",
+        Pattern.DOTALL);
 
    /**
     * Input file contains LaTeX code. Not applicable for output

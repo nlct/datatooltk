@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2024 Nicola L.C. Talbot
+    Copyright (C) 2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -35,19 +35,13 @@ import org.xml.sax.InputSource;
 import com.dickimawbooks.datatooltk.*;
 
 /**
- * Class handling importing Open Document spreadsheets (ODS and FODS).
+ * Class handling importing Office Open XML Spreadsheet (.xlsx).
  */
-public class DatatoolOpenDoc implements DatatoolImport
+public class DatatoolOfficeOpenXML implements DatatoolImport
 {
-   public DatatoolOpenDoc(DatatoolSettings settings)
-   {
-      this(settings, false);
-   }
-
-   public DatatoolOpenDoc(DatatoolSettings settings, boolean isFlat)
+   public DatatoolOfficeOpenXML(DatatoolSettings settings)
    {
       this.settings = settings;
-      this.isFlat = isFlat;
    }
 
    public DatatoolDb importData(String source)
@@ -89,35 +83,17 @@ public class DatatoolOpenDoc implements DatatoolImport
    {
       try
       {
-         if (isFlat)
-         {
-            return importFlatData(importSettings, file);
-         }
-         else
-         {
-            return importZipData(importSettings, file);
-         }
+         return importZipData(importSettings, file);
       }
       catch (DatatoolImportException e)
       {
          throw e;
       }
-      catch (SAXException e)
+      catch (UserCancelledException e)
       {
-         Throwable cause = e.getCause();
-
-         if (cause instanceof UserCancelledException)
-         {
-            throw new DatatoolImportException(
-              getMessageHandler().getLabelWithValues(
-                "error.import.failed", file, cause.getMessage()), cause);
-         }
-         else
-         {
-            throw new DatatoolImportException(
-              getMessageHandler().getLabelWithValues(
-                "error.import.failed", file, e.getMessage()), e);
-         }
+         throw new DatatoolImportException(
+           getMessageHandler().getLabelWithValues(
+             "error.import.failed", file, e.getMessage()), e);
       }
       catch (Throwable e)
       {
@@ -128,7 +104,7 @@ public class DatatoolOpenDoc implements DatatoolImport
    }
 
    protected DatatoolDb importZipData(ImportSettings importSettings, File file)
-      throws DatatoolImportException,SAXException,IOException
+      throws DatatoolImportException,SAXException,IOException,UserCancelledException
    {
       ZipFile zipFile = null;
       InputStream in = null;
@@ -139,7 +115,7 @@ public class DatatoolOpenDoc implements DatatoolImport
       {
          zipFile = new ZipFile(file, StandardCharsets.UTF_8);
 
-         String entryName = "settings.xml";
+         String entryName = "xl/workbook.xml";
          ZipEntry zipEntry = zipFile.getEntry(entryName);
 
          if (zipEntry == null)
@@ -172,14 +148,54 @@ public class DatatoolOpenDoc implements DatatoolImport
             in = zipFile.getInputStream(zipEntry);
          }
 
-         OpenDocReader reader = new OpenDocReader(importSettings);
+         OfficeOpenReader reader = new OfficeOpenReader(importSettings);
 
-         reader.parseSettings(new InputSource(in));
+         reader.parseWorkBook(new InputSource(in));
 
          in.close();
          in = null;
 
-         entryName = "content.xml";
+         entryName = "xl/_rels/workbook.xml.rels";
+         zipEntry = zipFile.getEntry(entryName);
+
+         if (zipEntry == null)
+         {
+            throw new DatatoolImportException(
+             messageHandler.getLabelWithValues("error.zip_entry_not_found",
+               entryName, file));
+         }
+
+         in = zipFile.getInputStream(zipEntry);
+         reader.parseRelationships(new InputSource(in));
+
+         in.close();
+         in = null;
+
+         entryName = "xl/sharedStrings.xml";
+         zipEntry = zipFile.getEntry(entryName);
+
+         if (zipEntry == null)
+         {
+            throw new DatatoolImportException(
+             messageHandler.getLabelWithValues("error.zip_entry_not_found",
+               entryName, file));
+         }
+
+         in = zipFile.getInputStream(zipEntry);
+         reader.parseSharedStrings(new InputSource(in));
+
+         in.close();
+         in = null;
+
+         entryName = reader.getSelectedWorkBookPath();
+
+         if (entryName == null)
+         {
+            throw new DatatoolImportException(
+               messageHandler.getLabelWithValues(
+                "error.dbload.missing_data", file));
+         }
+
          zipEntry = zipFile.getEntry(entryName);
 
          if (zipEntry == null)
@@ -223,62 +239,6 @@ public class DatatoolOpenDoc implements DatatoolImport
       return db;
    }
 
-   protected DatatoolDb importFlatData(ImportSettings importSettings, File file)
-      throws DatatoolImportException,SAXException,IOException
-   {
-      BufferedReader in = null;
-      DatatoolDb db;
-      MessageHandler messageHandler = getMessageHandler();
-
-      try
-      {
-         in = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
-
-         Charset charset = DatatoolFileFormat.getXmlEncoding(messageHandler, in);
-
-         if (!in.markSupported()
-             || (charset != null && !charset.equals(StandardCharsets.UTF_8)))
-         {
-            in.close();
-            in = null;
-
-            if (charset == null)
-            {
-               charset = StandardCharsets.UTF_8;
-            }
-
-            in = Files.newBufferedReader(file.toPath(), charset);
-         }
-
-         OpenDocReader reader = new OpenDocReader(importSettings);
-
-         reader.parseFlat(new InputSource(in));
-
-         db = reader.getDataBase();
-
-         if (db == null)
-         {
-            throw new DatatoolImportException(messageHandler.getLabelWithValues(
-              "error.dbload.missing_data", file));
-         }
-
-         if (reader.verbatimFound())
-         {
-            messageHandler.warning(
-              messageHandler.getLabel("warning.verb_detected"));
-         }
-      }
-      finally
-      {
-         if (in != null)
-         {
-            in.close();
-         }
-      }
-
-      return db;
-   }
-
    public MessageHandler getMessageHandler()
    {
       return settings.getMessageHandler();
@@ -289,6 +249,5 @@ public class DatatoolOpenDoc implements DatatoolImport
       return settings;
    }
 
-   protected boolean isFlat;
    protected DatatoolSettings settings;
 }
