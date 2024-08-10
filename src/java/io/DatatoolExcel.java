@@ -203,7 +203,7 @@ public class DatatoolExcel implements DatatoolImport
       {
          throw new DatatoolImportException(
           getMessageHandler().getLabelWithValues("error.import.failed", 
-           file), e);
+           file, getMessageHandler().getMessage(e)), e);
       }
 
       return db;

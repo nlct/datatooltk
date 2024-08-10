@@ -110,20 +110,23 @@ public class DatatoolOpenDoc implements DatatoolImport
          {
             throw new DatatoolImportException(
               getMessageHandler().getLabelWithValues(
-                "error.import.failed", file, cause.getMessage()), cause);
+                "error.import.failed", file,
+                 getMessageHandler().getMessage(cause)), cause);
          }
          else
          {
             throw new DatatoolImportException(
               getMessageHandler().getLabelWithValues(
-                "error.import.failed", file, e.getMessage()), e);
+                "error.import.failed", file,
+                getMessageHandler().getMessage(e)), e);
          }
       }
       catch (Throwable e)
       {
          throw new DatatoolImportException(
            getMessageHandler().getLabelWithValues(
-             "error.import.failed", file, e.getMessage()), e);
+             "error.import.failed", file,
+                getMessageHandler().getMessage(e)), e);
       }
    }
 

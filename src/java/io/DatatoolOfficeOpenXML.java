@@ -89,17 +89,12 @@ public class DatatoolOfficeOpenXML implements DatatoolImport
       {
          throw e;
       }
-      catch (UserCancelledException e)
-      {
-         throw new DatatoolImportException(
-           getMessageHandler().getLabelWithValues(
-             "error.import.failed", file, e.getMessage()), e);
-      }
       catch (Throwable e)
       {
          throw new DatatoolImportException(
            getMessageHandler().getLabelWithValues(
-             "error.import.failed", file, e.getMessage()), e);
+             "error.import.failed", file,
+             getMessageHandler().getMessage(e)), e);
       }
    }
 

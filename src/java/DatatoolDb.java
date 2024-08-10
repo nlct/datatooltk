@@ -207,7 +207,7 @@ public class DatatoolDb
      File dbFile, IOSettings ioSettings)
      throws IOException
    {
-      DataToolTeXParserListener listener = settings.getTeXParserListener();
+      DataToolTeXParserListener listener = settings.getTeXParserListener(true);
       TeXParser texParser = listener.getParser();
 
       TeXPath texPath = new TeXPath(texParser, dbFile);
@@ -221,17 +221,30 @@ public class DatatoolDb
       ioSettings.setFileFormat(format);
       ioSettings.setFileVersion(version);
 
-      return loadTeXParser(settings, texPath, ioSettings, true);
+      return loadTeXParser(settings, texPath, ioSettings, true, listener);
    }
 
    public static DatatoolDb loadTeXParser(DatatoolSettings settings, 
      TeXPath texPath, IOSettings ioSettings, boolean checkForVerbatim)
      throws IOException
    {
+      return loadTeXParser(settings, texPath, ioSettings, checkForVerbatim, null);
+   }
+
+   public static DatatoolDb loadTeXParser(DatatoolSettings settings, 
+     TeXPath texPath, IOSettings ioSettings, boolean checkForVerbatim,
+     DataToolTeXParserListener listener)
+     throws IOException
+   {
       DatatoolDb db = null;
 
       MessageHandler messageHandler = settings.getMessageHandler();
-      DataToolTeXParserListener listener = settings.getTeXParserListener();
+
+      if (listener == null)
+      {
+         listener = settings.getTeXParserListener(true);
+      }
+
       TeXParser texParser = listener.getParser();
       FileFormatType format = ioSettings.getFormat();
       DataToolSty sty = listener.getDataToolSty();
@@ -270,8 +283,12 @@ public class DatatoolDb
          DataBase.read(sty, texPath, ioSettings, texParser, texParser);
          texParser.processBuffered();
 
-         if (probSolnSty.getTotalProblemCount() > 0)
+         int numProbs = probSolnSty.getTotalProblemCount();
+
+         if (numProbs > 0)
          {
+            messageHandler.debug("Number of probsoln.sty problems found: "+numProbs);
+
             db = fromProbSolnSty(dbName, settings, checkForVerbatim);
 
             probSolnSty.clearAllData();
@@ -279,7 +296,24 @@ public class DatatoolDb
             return db;
          }
 
-         DataBase texDb = sty.getLatestDataBase();
+         DataBase texDb = null;
+
+         DataGidxSty datagidxSty = sty.getDataGidxSty();
+
+         if (datagidxSty != null)
+         {
+            String dbLabel = datagidxSty.getLatestIndexDataBaseName();
+
+            if (dbLabel != null)
+            {
+               texDb = datagidxSty.getIndexDataBase(dbLabel);
+            }
+         }
+
+         if (texDb == null)
+         {
+            texDb = sty.getLatestDataBase();
+         }
 
          if (texDb != null)
          {
@@ -288,7 +322,10 @@ public class DatatoolDb
          else if (format == FileFormatType.DTLTEX
                || format == FileFormatType.DBTEX)
          {
-            ControlSequence cs = texParser.getControlSequence(DataToolSty.LAST_LOADED_NAME);
+            ControlSequence cs = texParser.getControlSequence(
+               DataToolSty.LAST_LOADED_NAME);
+
+            dbName = null;
 
             if (cs != null && cs instanceof Expandable)
             {
@@ -298,7 +335,8 @@ public class DatatoolDb
                ioSettings.setFileFormat(FileFormatType.DBTEX);
                ioSettings.setFileVersion("2.0");
             }
-            else
+
+            if (dbName == null || dbName.isEmpty())
             {
                ioSettings.setFileFormat(FileFormatType.DTLTEX);
 
@@ -342,9 +380,22 @@ public class DatatoolDb
                   }
                }
             }
-      
-            if (dbName == null)
+
+            if (dbName == null || dbName.isEmpty())
+            {
+               throw new IOException(messageHandler.getLabelWithValues(
+                 "error.dbload.missing_data", dbFile));
+            }
+
+            ControlSequence headerTok = texParser.getControlSequence(
+               DataToolSty.getHeaderRegisterName(dbName));
+
+            if (headerTok == null)
             {// shouldn't happen unless file has code missing
+               
+               messageHandler.debug("No header token register associated with '"
+                + dbName+"'");
+
                throw new IOException(messageHandler.getLabelWithValues(
                  "error.dbload.missing_data", dbFile));
             }

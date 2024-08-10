@@ -173,18 +173,12 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
 
          return importData(ioSettings, file, checkForVerbatim);
       }
-      catch (TeXSyntaxException e)
-      {
-         throw new DatatoolImportException(
-           String.format("%s%n%s",
-            getMessageHandler().getLabelWithValues(
-              "error.import.failed", file), e.getMessage(getTeXApp())), e);
-      }
       catch (IOException e)
       {
          throw new DatatoolImportException(
            getMessageHandler().getLabelWithValues(
-             "error.import.failed", file), e);
+             "error.import.failed", file,
+              getMessageHandler().getMessage(e)), e);
       }
    }
 
@@ -219,18 +213,12 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
 
          return db;
       }
-      catch (TeXSyntaxException e)
-      {
-         throw new DatatoolImportException(
-           String.format("%s%n%s",
-            getMessageHandler().getLabelWithValues(
-              "error.import.failed", file), e.getMessage(getTeXApp())), e);
-      }
       catch (IOException e)
       {
          throw new DatatoolImportException(
            getMessageHandler().getLabelWithValues(
-             "error.import.failed", file), e);
+             "error.import.failed", file, getMessageHandler().getMessage(e)),
+              e);
       }
    }
 
@@ -253,17 +241,11 @@ public class DatatoolTeX implements DatatoolImport,DatatoolExport
          return importData(ioSettings, file,
            importSettings.isCheckForVerbatimOn());
       }
-      catch (TeXSyntaxException e)
-      {
-         throw new DatatoolImportException(
-          getMessageHandler().getLabelWithValues("error.import.failed", 
-           file.toString(), e.getMessage(importSettings.getTeXApp())), e);
-      }
       catch (IOException e)
       {
          throw new DatatoolImportException(
           getMessageHandler().getLabelWithValues("error.import.failed", 
-           file.toString(), e.getMessage()), e);
+           file.toString(), getMessageHandler().getMessage(e)), e);
       }
    }
 

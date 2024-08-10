@@ -100,7 +100,7 @@ public class DatatoolCsv extends DatatoolTeX
       {
          throw new DatatoolImportException(
           getMessageHandler().getLabelWithValues("error.import.failed", 
-           file.toString(), e.getMessage()), e);
+           file.toString(), getMessageHandler().getMessage(e)), e);
       }
    }
 
@@ -145,7 +145,7 @@ public class DatatoolCsv extends DatatoolTeX
       {
          throw new DatatoolImportException(
           getMessageHandler().getLabelWithValues("error.import.failed", 
-           file.toString(), e.getMessage()), e);
+           file.toString(), getMessageHandler().getMessage(e)), e);
       }
    }
 

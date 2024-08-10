@@ -343,7 +343,11 @@ public class MessageHandler extends ErrorManager
 
    public String getMessage(Throwable throwable)
    {
-      if (throwable instanceof TeXSyntaxException)
+      if (throwable == null)
+      {
+         return "";
+      }
+      else if (throwable instanceof TeXSyntaxException)
       {
          return ((TeXSyntaxException)throwable).getMessage(texApp);
       }

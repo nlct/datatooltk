@@ -2989,7 +2989,13 @@ public class DatatoolSettings extends Properties
    public DataToolTeXParserListener getTeXParserListener()
      throws IOException
    {
-      if (parserListener == null)
+      return getTeXParserListener(false);
+   }
+
+   public DataToolTeXParserListener getTeXParserListener(boolean reset)
+     throws IOException
+   {
+      if (parserListener == null || reset)
       {
          parserListener = new DataToolTeXParserListener(this);
       }

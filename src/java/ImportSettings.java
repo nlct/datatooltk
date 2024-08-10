@@ -233,7 +233,7 @@ public class ImportSettings
    throws IOException
    {
       ioSettings.setHeaderIncluded(incHeader);
-      ioSettings.setSeparator(separator );
+      ioSettings.setSeparator(separator);
       ioSettings.setDelimiter(delimiter);
       ioSettings.setEscapeCharsOption(escCharsOpt);
       ioSettings.setCsvStrictQuotes(strictQuotes);
