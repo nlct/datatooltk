@@ -299,6 +299,8 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="iosettings.tex.stripsolnenv">Strip solution environment from probsoln problems</entry>
 <entry key="iosettings.tex.stripsolnenv.mnemonic">B</entry>
 
+<entry key="iosettings.tex.preambleonly">Stop parsing if \begin'{'document'}' encountered</entry>
+
 <entry key="iosettings.csvtsv.optionsonly.note">These options are only applicable to CSV/TSV files, not to spreadsheets or SQL imports.</entry>
 <entry key="iosettings.imports_all.note">These options are applicable to all non-TeX imported sources (CSV/TSV, spreadsheets and SQL queries).</entry>
 <entry key="iosettings.csvspreadsheets.note">These options are applicable to CSV/TSV files and spreadsheets.</entry>
@@ -661,6 +663,8 @@ the \strong'{'lazy'}' dog.
 
 <entry key="preferences.tex.stripsolnenv">Strip solution environment from probsoln problems</entry>
 <entry key="preferences.tex.stripsolnenv.mnemonic">B</entry>
+
+<entry key="preferences.tex.preambleonly">Stop parsing if \begin'{'document'}' encountered</entry>
 
 <entry key="preferences.tex.other_import">For other import settings, go to the {0} tab.</entry>
 
@@ -1094,6 +1098,8 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="syntax.help">{0} (or {1})		Print this help message and exit.</entry>
 <entry key="syntax.homepage">{0} home page: {1}</entry>
 
+<entry key="syntax.import">{0} &lt;filename&gt;	Import data from &lt;filename&gt;</entry>
+
 <entry key="syntax.in">{0} (or {1}) &lt;datatool file&gt;
 		Load &lt;datatool file&gt;. (Can''t be used with --csv or --sql or
 		--probsoln.) The {0} (or {1}) switch is optional so
@@ -1101,11 +1107,18 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.in">{0} &lt;log file&gt;	Write messages to log file</entry>
 
+<entry key="syntax.log">{0} &lt;filename&gt;		If debugging on, log TeX Parser messages in the given file.</entry>
+
 <entry key="syntax.maptexspecials">{0}	Map TeX special characters.{1}</entry>
 
 <entry key="syntax.merge">{0} &lt;key&gt; &lt;file&gt;
 		Merge input or imported database with the database
 		stored in the given file on the column whose label is &lt;key&gt;.
+		(Only one of the merge options is permitted.)</entry>
+
+<entry key="syntax.merge_import">{0} &lt;key&gt; &lt;file&gt;
+		Merge input or imported database with data imported from
+		given file on the column whose label is &lt;key&gt;.
 		(Only one of the merge options is permitted.)</entry>
 
 <entry key="syntax.merge_csv">{0} &lt;key&gt; &lt;file&gt;	Import CSV data from &lt;file&gt;
@@ -1157,6 +1170,7 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.owner_only">{0}	Set file permissions to owner read/write on .dbtex files. {1}</entry>
 
+<entry key="syntax.preamble_only">{0}	If the TeX parser encounters \begin'{'document'}', stop parsing</entry>
 <entry key="syntax.probsoln">{0} &lt;filename&gt;	Import probsoln data from &lt;filename&gt;</entry>
 <entry key="syntax.probsoln_opts">probsoln Options:</entry>
 
@@ -1241,8 +1255,6 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="syntax.xlsx">{0} &lt;filename&gt;	Import MS Excel (*.xlsx) data from &lt;filename&gt;</entry>
 <entry key="syntax.xlsods_opts">Excel and ODS Options:</entry>
 <entry key="syntax.xls_opts">Excel Options:</entry>
-
-<entry key="syntax.import">{0} &lt;filename&gt;	Import data from &lt;filename&gt;</entry>
 
 <!-- Warning Messages -->
 
@@ -1369,7 +1381,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.dbload.invalid_col_id">invalid column index ''{0}''</entry>
 <entry key="error.dbload.invalid_row_id">invalid row index ''{0}''</entry>
 <entry key="error.dbload.missing_data">No database information found in ''{0}''.</entry>
-<entry key="error.dbload.multiple_db_found">Multiple databases found in ''{0}''. (Only one permitted.)</entry>
+<entry key="error.dbload.multiple_db_found">Multiple databases found in ''{0}''. Selecting ''{1}''</entry>
 <entry key="error.dbload.not_found">Premature end of file. Not a DBTEX v2.0 file. Failed to find ''{0}''</entry>
 <entry key="error.dbload.unknown_type">unknown data type ''{0}''</entry>
 <entry key="error.dbload.wrong_end_col_tag">column {0,number} ended with closing tag for column {1,number}</entry>

@@ -305,6 +305,10 @@ public class IOSettingsPanel extends JPanel
          stripSolnEnvBox = createJCheckBox("tex", "stripsolnenv");
          texCardComp.add(stripSolnEnvBox);
          stripSolnEnvBox.setMaximumSize(stripSolnEnvBox.getPreferredSize());
+
+         preambleOnlyBox = createJCheckBox("tex", "preambleonly");
+         texCardComp.add(preambleOnlyBox);
+         preambleOnlyBox.setMaximumSize(preambleOnlyBox.getPreferredSize());
       }
 
       if (isWrite())
@@ -1469,9 +1473,22 @@ public class IOSettingsPanel extends JPanel
       }
    }
 
+   public boolean isPreambleOnly()
+   {
+      return preambleOnlyBox == null || preambleOnlyBox.isSelected();
+   }
+
+   public void setPreambleOnly(boolean on)
+   {
+      if (preambleOnlyBox != null)
+      {
+         preambleOnlyBox.setSelected(on);
+      }
+   }
+
    public boolean isStripSolnEnvOn()
    {
-      return stripSolnEnvBox != null && stripSolnEnvBox.isSelected();
+      return stripSolnEnvBox == null || stripSolnEnvBox.isSelected();
    }
 
    public void setStripSolnEnvOn(boolean on)
@@ -1942,6 +1959,11 @@ public class IOSettingsPanel extends JPanel
          settings.setStripSolutionEnv(stripSolnEnvBox.isSelected());
       }
 
+      if (preambleOnlyBox != null)
+      {
+         settings.setPreambleOnly(preambleOnlyBox.isSelected());
+      }
+
       if (isSql && sqlPanel != null)
       {
          sqlPanel.applyTo(settings);
@@ -1988,6 +2010,11 @@ public class IOSettingsPanel extends JPanel
       if (stripSolnEnvBox != null)
       {
          stripSolnEnvBox.setSelected(settings.isStripSolutionEnvOn());
+      }
+
+      if (preambleOnlyBox != null)
+      {
+         preambleOnlyBox.setSelected(settings.isPreambleOnly());
       }
 
       if (sqlPanel != null)
@@ -2479,7 +2506,7 @@ public class IOSettingsPanel extends JPanel
    boolean formatSingleSelection;
 
    JCheckBox csvIncHeaderBox, texIncHeaderBox, trimElementBox,
-    stripSolnEnvBox, emptyToNullBox;
+    stripSolnEnvBox, emptyToNullBox, preambleOnlyBox;
 
    JComponent fileFormatComp, csvSpreadComp, csvTsvOnlyComp, allNonTeXComp,
      texCardComp, nonTeXCardComp, cardComp;

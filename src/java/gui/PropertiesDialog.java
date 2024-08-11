@@ -270,7 +270,7 @@ public class PropertiesDialog extends JDialog
       box.add(createLabel("preferences.tex.format", outputFormatBox));
       box.add(outputFormatBox);
 
-      overrideInputFormatBox = createCheckBox("preferences", "tex.override_format");
+      overrideInputFormatBox = createCheckBox("preferences", "tex.override_format", null);
       box.add(overrideInputFormatBox);
 
       box = createNewRow(outputComp);
@@ -318,8 +318,11 @@ public class PropertiesDialog extends JDialog
         BorderFactory.createEtchedBorder(), 
         messageHandler.getLabel("preferences.tex.import")));
 
-      stripSolnEnvBox = createCheckBox("preferences.tex", "stripsolnenv");
+      stripSolnEnvBox = createCheckBox("preferences.tex", "stripsolnenv", null);
       importComp.add(stripSolnEnvBox);
+
+      preambleOnlyBox = createCheckBox("preferences.tex", "preambleonly", null);
+      importComp.add(preambleOnlyBox);
 
       JTextArea msgArea = resources.createMessageArea(0, 0);
       msgArea.setText(messageHandler.getLabelWithValues(
@@ -860,6 +863,7 @@ public class PropertiesDialog extends JDialog
       sqlSettingsPanel.resetFrom(settings);
 
       stripSolnEnvBox.setSelected(settings.isSolutionEnvStripped());
+      preambleOnlyBox.setSelected(settings.isPreambleOnly());
 
       String outFmt = settings.getDefaultOutputFormat();
 
@@ -1367,6 +1371,7 @@ public class PropertiesDialog extends JDialog
       settings.setCurrencyDbTeX3DatumValue(saveDatumCurrencyBox.isSelected());
 
       settings.setSolutionEnvStripped(stripSolnEnvBox.isSelected());
+      settings.setPreambleOnly(preambleOnlyBox.isSelected());
 
       settings.setTeXEncoding((Charset)texEncodingBox.getSelectedItem());
 
@@ -1544,7 +1549,7 @@ public class PropertiesDialog extends JDialog
 
    private IOSettingsPanel csvSettingsPanel;
 
-   private JCheckBox hasSeedBox, stripSolnEnvBox, autoTrimBox;
+   private JCheckBox hasSeedBox, stripSolnEnvBox, autoTrimBox, preambleOnlyBox;
 
    private FileField customFileField, perlFileField;
 

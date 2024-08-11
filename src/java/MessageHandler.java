@@ -412,6 +412,13 @@ public class MessageHandler extends ErrorManager
             bufferingComponent = parent;
             warningBuffer.append(String.format("%s%n", message));
          }
+         else if (guiResources == null)
+         {
+            JOptionPane.showMessageDialog(null, message,
+              getMessageWithFallback("warning.title", "Warning"),
+              JOptionPane.WARNING_MESSAGE);
+            System.err.println(message);
+         }
          else
          {
             guiResources.warning(parent, message);

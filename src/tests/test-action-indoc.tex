@@ -1,0 +1,82 @@
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{datatool}
+
+\DTLaction{new}
+\DTLaction
+ [
+   assign =
+    {
+      firstname = John,
+      surname = Brown ,
+      age = 40
+    }
+ ]
+{new row}
+\DTLaction
+ [
+   assign =
+    {
+      firstname = Jane,
+      surname = Brown ,
+      age = 42
+    }
+ ]
+{new row}
+\DTLaction
+ [
+   assign =
+    {
+      firstname = Fred,
+      surname = Jones,
+      age = 45
+    }
+ ]
+{new row}
+\DTLaction
+ [
+   assign =
+    {
+      firstname = Joe,
+      surname = Adams,
+      age = 47
+    }
+ ]
+{new row}
+\DTLaction
+ [
+   assign =
+    {
+      firstname = John,
+      surname = Brown ,
+      age = 101
+    }
+ ]
+{new row}
+
+\begin{document}
+
+\DTLaction
+ [
+   assign =
+    {
+      firstname = In,
+      surname = Document,
+      age = 92
+    }
+ ]
+{new row}
+
+\DTLaction{display}
+
+Sorting
+\DTLsortdata[save-group,save-sort]{}{
+ surname,
+ firstname,
+ age=descending
+}
+
+\DTLaction{display}
+\end{document}

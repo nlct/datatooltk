@@ -60,6 +60,7 @@ public class ImportSettings
       stripSolutionEnv = true;
       redefNewProblem = true;
       importEmptyToNull = true;
+      preambleOnly = true;
 
       nonTeXLiteral = true;
       skipLines=0;
@@ -127,6 +128,7 @@ public class ImportSettings
 
       stripSolutionEnv = settings.isSolutionEnvStrippedProperty();
       redefNewProblem = settings.isRedefNewProblemEnabledProperty();
+      preambleOnly = settings.isPreambleOnlyProperty();
 
       importEmptyToNull = settings.isImportEmptyToNullOnProperty();
 
@@ -168,6 +170,7 @@ public class ImportSettings
 
       settings.setSolutionEnvStrippedProperty(stripSolutionEnv);
       settings.setRedefNewProblemProperty(redefNewProblem);
+      settings.setPreambleOnlyProperty(preambleOnly);
    }
 
    public void setFrom(IOSettings ioSettings)
@@ -501,6 +504,16 @@ public class ImportSettings
       stripSolutionEnv = on;
    }
 
+   public boolean isPreambleOnly()
+   {
+      return preambleOnly;
+   }
+
+   public void setPreambleOnly(boolean on)
+   {
+      preambleOnly = on;
+   }
+
    public boolean isImportEmptyToNullOn()
    {
       return importEmptyToNull;
@@ -791,6 +804,7 @@ public class ImportSettings
    boolean stripSolutionEnv = true;
    boolean redefNewProblem = true;//??
    boolean importEmptyToNull = true;
+   boolean preambleOnly = true;
 
    String[] keys, headers;
 

@@ -2096,6 +2096,34 @@ public class DatatoolSettings extends Properties
       setProperty("probsolnstripenv", ""+stripEnv);
    }
 
+   public boolean isPreambleOnly()
+   {
+      return importSettings.isPreambleOnly();
+   }
+
+   public boolean isPreambleOnlyProperty()
+   {
+      String prop = getProperty("preambleonly");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setPreambleOnly(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setPreambleOnly(boolean on)
+   {
+      importSettings.setPreambleOnly(on);
+   }
+
+   public void setPreambleOnlyProperty(boolean on)
+   {
+      setProperty("preambleonly", ""+on);
+   }
+
    public void setOwnerOnly(boolean enable)
    {
       setProperty("owneronly", ""+enable);

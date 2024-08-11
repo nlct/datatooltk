@@ -368,15 +368,21 @@ public class DatatoolDb
                }
                else
                { 
+                  int numFound = 0;
+
                   for (; it.hasNext(); )
                   {
-                     if (dbName != null)
-                     {
-                        throw new IOException(messageHandler.getLabelWithValues(
-                          "error.dbload.multiple_db_found", dbFile));
-                     }
-      
                      dbName = it.next();
+
+                     messageHandler.debug("Found database: "+dbName);
+                     numFound++;
+                  }
+
+                  if (numFound > 1)
+                  {
+                     // warn but choose the last one
+                     messageHandler.warning(messageHandler.getLabelWithValues(
+                       "error.dbload.multiple_db_found", dbFile, dbName));
                   }
                }
             }

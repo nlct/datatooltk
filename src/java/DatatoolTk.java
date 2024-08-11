@@ -380,7 +380,7 @@ public class DatatoolTk
 
       CsvBlankOption blankOpt = settings.getCsvBlankOption();
 
-      System.out.println(getLabelWithValues("syntax.csvemptyrows",
+      System.out.println(getLabelWithValues("syntax.csv_empty_rows",
         "--csv-empty-rows", blankOpt.getName()));
 
       System.out.println(getLabelWithValues("syntax.skipemptyrows",
@@ -434,6 +434,8 @@ public class DatatoolTk
 
       System.out.println(getLabelWithValues("syntax.import", "--import"));
       System.out.println(getLabelWithValues("syntax.merge_import", "--merge-import"));
+      System.out.println(getLabelWithValues("syntax.preamble_only",
+         "--[no]preamble-only"));
 
       System.out.println();
 
@@ -1085,6 +1087,14 @@ public class DatatoolTk
 
             loadSettings.setExportTarget(args[i]);
             loadSettings.setDataExport(new DatatoolTeX(optList, settings));
+         }
+         else if (args[i].equals("--preamble-only"))
+         {
+            settings.setPreambleOnly(true);
+         }
+         else if (args[i].equals("--nopreamble-only"))
+         {
+            settings.setPreambleOnly(false);
          }
          else if (args[i].equals("--import"))
          {

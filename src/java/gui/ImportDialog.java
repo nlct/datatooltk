@@ -31,6 +31,7 @@ import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
 
 import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
+import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
 import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.*;
@@ -210,7 +211,11 @@ public class ImportDialog extends JDialog
          {
             okay();
          }
-         catch (Exception e)
+         catch (InvalidSyntaxException e)
+         {
+            gui.getMessageHandler().error(this, e.getMessage());
+         }
+         catch (Throwable e)
          {
             gui.getMessageHandler().error(this, e);
          }
@@ -243,7 +248,9 @@ public class ImportDialog extends JDialog
 
          if (select.isEmpty())
          {
-            throw new IOException(messageHandler.getLabel(
+            selectField.requestFocusInWindow();
+
+            throw new InvalidSyntaxException(messageHandler.getLabel(
               "error.missing_select"));
          }
 
@@ -255,7 +262,9 @@ public class ImportDialog extends JDialog
 
          if (filename.isEmpty())
          {
-            throw new IOException(messageHandler.getLabel(
+            fileField.requestFocusInWindow();
+
+            throw new InvalidSyntaxException(messageHandler.getLabel(
               "error.missing_filename"));
          }
 

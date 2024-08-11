@@ -34,6 +34,7 @@ public class DataToolTeXParserListener extends PreambleParser
       super(settings.getTeXApp(), UndefAction.WARN);
 
       this.settings = settings;
+      setStopAtBeginDocument(settings.isPreambleOnly());
 
       TeXParser parser = new TeXParser(this);
       parser.setBaseDir(new File(System.getProperty("user.dir")));
@@ -57,6 +58,25 @@ public class DataToolTeXParserListener extends PreambleParser
       parser.addVerbCommand("lstinline");
 
       ioSettings = new IOSettings(datatoolSty);
+   }
+
+   @Override
+   protected void addPredefined()
+   {
+      super.addPredefined();
+
+      // Some commands that may be encountered in the preamble that
+      // should be ignored.
+
+      parser.putControlSequence(new GobbleOpt("DTLsortdata", 1, 2));
+      parser.putControlSequence(new GobbleOpt("dtlsort", 1, 3));
+      parser.putControlSequence(new GobbleOpt("DTLsort", 1, 2, '*'));
+
+      parser.putControlSequence(new AtGobble("SetStartMonth"));
+      parser.putControlSequence(new AtGobble("SetStartYear"));
+      parser.putControlSequence(new AtGobble("SetUsedFileName"));
+      parser.putControlSequence(new AtGobble("ClearUsedFile"));
+      parser.putControlSequence(new GobbleOpt("ExcludePreviousFile", 1, 1));
    }
 
    public DataToolSty getDataToolSty()
