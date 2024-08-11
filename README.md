@@ -14,15 +14,17 @@ Requires at least Java 8 and the following libraries:
  - [Apache POI](https://poi.apache.org/) (Apache License, Version 2.0)
     to read Microsoft Excel spreadsheets (xls): the files `poi-`_version_`.jar`, 
    `poi-ooxml-`_version_`.jar` and `poi-ooxml-schema-`_version_`.jar` 
-   should be placed in the `lib` directory;
+   should be placed in the `lib` directory. This library in turn
+   requires Apache Commons IO, which requires Log4j, so those
+   jar files are also required.
  - [mysql-connector-java.jar](https://dev.mysql.com/downloads/connector/j/)
    (GPL-2.0-only) 
    to pull data from MySQL databases: the file `mysql-connector-java.jar`
-   should be placed in the `lib` directory;
+   should be placed in the `lib` directory.
  - [TeX Parser Library](https://github.com/nlct/texparser)
    (GPL-3.0)
    to parse LaTeX files: the file `texparserlib.jar`
-   should be placed in the `lib` directory;
+   should be placed in the `lib` directory.
  - [TeX Java Help](https://github.com/nlct/texjavahelp) (GPL-3.0)
    to convert the LaTeX manual with `texjavahelpmk`
    to the HTML and XML files required by `texjavahelplib.jar`

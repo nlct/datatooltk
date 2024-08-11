@@ -6,7 +6,6 @@ ifeq ($(IZPACKDIR),)
 IZPACKDIR:=/usr/local/IzPack
 endif
 POIVER=5.3.0
-ODFVER=1.5
 
 test-gui	: app
 	bin/datatooltk-gui --debug
