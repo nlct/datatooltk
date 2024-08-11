@@ -440,7 +440,7 @@ public class DatatoolDb
          for (int i = 0; i < columnCount; i++)
          {
             DataToolHeader header = headerRow.getHeader(i+1);
-   
+
             String key = header.getColumnLabel();
             String title = key;
 
@@ -448,7 +448,7 @@ public class DatatoolDb
 
             if (headerTitle != null)
             {
-               key = headerTitle.toString(texParser);
+               title = headerTitle.toString(texParser);
             }
    
             DatumType type = header.getDataType();
@@ -3084,18 +3084,21 @@ public class DatatoolDb
          for (int i = 0; i < numCols; i++)
          {
             DatatoolHeader header;
+            int colIdx;
 
             if (columnIndexes == null)
             {
                header = headers.get(i);
+               colIdx = i+1;
             }
             else
             {
                header = headers.get(columnIndexes[i]);
+               colIdx = columnIndexes[i]+1;
             }
 
             out.format((Locale)null, "\\dtldbreconstructkeyindex{%s}{%d}%%%n",
-              header.getKey(), header.getDatumType().getValue());
+              header.getKey(), colIdx);
 
             messageHandler.progress((100*(++progress))/maxProgress);
          }

@@ -368,7 +368,7 @@ public class ImportSettings
       return autoKeys;
    }
 
-   public void setAutoKeysOn(boolean on)
+   public void setAutoKeys(boolean on)
    {
       autoKeys = on;
    }
@@ -551,6 +551,11 @@ public class ImportSettings
       this.keys = keys;
    }
 
+   public String[] getColumnKeys()
+   {
+      return keys;
+   }
+
    public int getColumnHeaderCount()
    {
       return headers == null ? 0 : headers.length;
@@ -565,6 +570,11 @@ public class ImportSettings
    public void setColumnHeaders(String[] headers)
    {
       this.headers = headers;
+   }
+
+   public String[] getColumnHeaders()
+   {
+      return headers;
    }
 
    public Charset getTeXEncoding()

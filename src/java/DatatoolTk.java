@@ -831,6 +831,10 @@ public class DatatoolTk
 
             settings.setSeparator(args[i].charAt(0));
          }
+         else if (args[i].equals("--tab-sep"))
+         {
+            settings.setSeparator('\t');
+         }
          else if (args[i].equals("--delim") || args[i].equals("--csv-delim"))
          {
             i++;
@@ -1191,6 +1195,33 @@ public class DatatoolTk
             loadSettings.setImportSource(args[i]);
             loadSettings.setDataImport(new DatatoolCsv(settings));
          }
+         else if (args[i].equals("--tsv"))
+         {
+            if (loadSettings.getImportSource() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.syntax.only_one_import"));
+            }
+
+            if (loadSettings.getInputFile() != null)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.import_clash", args[i]));
+            }
+
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.syntax.missing_filename",
+                     args[i-1]));
+            }
+
+            settings.setSeparator('\t');
+            loadSettings.setImportSource(args[i]);
+            loadSettings.setDataImport(new DatatoolCsv(settings));
+         }
          else if (args[i].equals("--xls"))
          {
             if (loadSettings.getImportSource() != null)
@@ -1538,13 +1569,69 @@ public class DatatoolTk
          {
             settings.getMessageHandler().setLogFile((File)null);
          }
-         else if (args[i].equals("--map-tex-specials"))
+         else if (args[i].equals("--map-tex-specials")
+                || args[i].equals("--csv-literal"))
          {
             settings.setTeXMapping(true);
+            settings.setLiteralContent(true);
          }
-         else if (args[i].equals("--nomap-tex-specials"))
+         else if (args[i].equals("--nomap-tex-specials")
+                || args[i].equals("--nocsv-literal"))
          {
             settings.setTeXMapping(false);
+            settings.setLiteralContent(false);
+         }
+         else if (args[i].equals("--headers"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_arg",
+                   args[i-1]));
+            }
+
+            String value = args[i].trim();
+
+            if (value.isEmpty())
+            {
+               settings.setColumnHeaders(null);
+            }
+            else
+            {
+               settings.setColumnHeaders(value.split(" *, *"));
+            }
+         }
+         else if (args[i].equals("--keys"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                 getLabelWithValues("error.syntax.missing_arg",
+                   args[i-1]));
+            }
+
+            String value = args[i].trim();
+
+            if (value.isEmpty())
+            {
+               settings.setColumnKeys(null);
+            }
+            else
+            {
+               settings.setColumnKeys(value.split(" *, *"));
+            }
+         }
+         else if (args[i].equals("--auto-keys"))
+         {
+            settings.setAutoKeys(true);
+         }
+         else if (args[i].equals("--noauto-keys"))
+         {
+            settings.setAutoKeys(false);
          }
          else if (args[i].equals("--auto-trim-labels"))
          {

@@ -3,6 +3,7 @@ test-sql-data.dbtex
 test-*out.dbtex
 *-merged.dbtex
 *saved.dbtex
+*-converted.dbtex
 *.aux
 *.log
 *.pdf

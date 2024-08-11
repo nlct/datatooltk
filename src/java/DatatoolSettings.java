@@ -1703,6 +1703,36 @@ public class DatatoolSettings extends Properties
       setProperty("csvHasHeader", ""+hasHeader);
    }
 
+   public void setColumnHeaders(String[] headers)
+   {
+      importSettings.setColumnHeaders(headers);
+   }
+
+   public String[] getColumnHeaders()
+   {
+      return importSettings.getColumnHeaders();
+   }
+
+   public void setColumnKeys(String[] keys)
+   {
+      importSettings.setColumnKeys(keys);
+   }
+
+   public String[] getColumnKeys()
+   {
+      return importSettings.getColumnKeys();
+   }
+
+   public void setAutoKeys(boolean on)
+   {
+      importSettings.setAutoKeys(on);
+   }
+
+   public boolean isAutoKeysOn()
+   {
+      return importSettings.isAutoKeysOn();
+   }
+
    public boolean hasCSVstrictquotes()
    {
       return importSettings.isStrictQuotesOn();

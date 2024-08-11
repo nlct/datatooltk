@@ -108,6 +108,8 @@ public class DataToolTeXParserListener extends PreambleParser
       ioSettings.setHeaderIncluded(true);
       ioSettings.setTrimElement(true);
       ioSettings.setAutoKeys(false);
+      ioSettings.setColumnHeaders(null);
+      ioSettings.setColumnKeys(null);
       ioSettings.setAppendAllowed(false);
       ioSettings.setExpandOption(IOExpandOption.NONE);
    }
@@ -152,6 +154,27 @@ public class DataToolTeXParserListener extends PreambleParser
       ioSettings.setHeaderIncluded(settings.hasCSVHeader());
       ioSettings.setSkipLines(settings.getCSVskiplines());
       ioSettings.setCsvBlankOption(settings.getCsvBlankOption());
+
+      ioSettings.setAutoKeys(settings.isAutoKeysOn());
+      ioSettings.setColumnKeys(settings.getColumnKeys());
+
+      String[] headers = settings.getColumnHeaders();
+
+      if (headers == null || headers.length == 0)
+      {
+         ioSettings.setColumnHeaders(null);
+      }
+      else
+      {
+         TeXObject[] texHeaders = new TeXObject[headers.length];
+
+         for (int i = 0; i < headers.length; i++)
+         {
+            texHeaders[i] = createString(headers[i]);
+         }
+
+         ioSettings.setColumnHeaders(texHeaders);
+      }
 
       ioSettings.setEscapeCharsOption(settings.getEscapeCharsOption());
       ioSettings.setAddDelimiterOption(settings.getAddDelimiterOption());

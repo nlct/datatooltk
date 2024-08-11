@@ -1,0 +1,31 @@
+% arara: datatooltk: {
+% arara: --> output: booklist-tsv-converted.dbtex, sort: Title, maptex: true,
+% arara: --> options: [
+% arara: -->   --tsv, ../booklist.tsv,
+% arara: -->   --keys, "Title,Author,Format,Quantity,Price",
+% arara: -->  ]
+% arara: --> }
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{datatool}% v3.0 required
+
+\DTLsetup{default-name=booklist}
+
+\DTLread[format=dbtex]{booklist-tsv-converted}
+
+\begin{document}
+\DTLaction
+ [
+   options =
+    {
+       init = {\renewcommand{\arraystretch}{1.5}},
+       align-specs = {>{\raggedright}p{0.25\linewidth}llrr},
+       after-head = \midrule
+    }
+ ]
+ {display}
+\end{document}
