@@ -70,3 +70,4 @@ clean	:
 
 squeaky	:
 	\rm -f lib/datatooltk.jar
+	make -C doc clean
