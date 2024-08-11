@@ -1,0 +1,21 @@
+% arara: datatooltk: {
+% arara: --> output: booklist-csv-converted.dbtex, sort: Author, maptex: true,
+% arara: --> options: [
+% arara: -->   --csv, ../booklist.csv, --csv-sep, "," ,
+% arara: -->   --csv-empty-rows, end
+% arara: -->  ]
+% arara: --> }
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage[landscape]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{datatool}% v3.0 required
+
+\DTLsetup{default-name=booklist}
+
+\DTLread[format=dbtex]{booklist-csv-converted}
+
+\begin{document}
+\DTLaction{display}
+\end{document}

@@ -1649,6 +1649,39 @@ public class DatatoolTk
          {
             settings.setSkipEmptyRows(false);
          }
+         else if (args[i].equals("--csv-empty-rows"))
+         {
+            i++;
+
+            if (i == args.length)
+            {
+               throw new InvalidSyntaxException(
+                getLabelWithValues("error.syntax.missing_arg", args[i-1]));
+            }
+
+            CsvBlankOption opt = CsvBlankOption.fromOptionName(args[i]);
+
+            if (opt == null)
+            {
+               StringBuilder builder = new StringBuilder();
+
+               for (CsvBlankOption blankOpt : CsvBlankOption.values())
+               {
+                  if (builder.length() > 0)
+                  {
+                     builder.append(", ");
+                  }
+
+                  builder.append(blankOpt.getName());
+               }
+
+               throw new InvalidSyntaxException(
+                getLabelWithValues("error.syntax.invalid_set_value", args[i],
+                  args[i-1], builder.toString()));
+            }
+
+            settings.setCsvBlankOption(opt);
+         }
          else if (args[i].equals("--owner-only"))
          {
             settings.setOwnerOnly(true);
