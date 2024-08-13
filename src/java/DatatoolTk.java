@@ -1300,7 +1300,7 @@ public class DatatoolTk
 
             loadSettings.setImportSource(args[i]);
             loadSettings.setDataImport(new DatatoolOpenDoc(settings,
-              args[i].equals("--fods")));
+              args[i-1].equals("--fods")));
          }
          else if (args[i].equals("--sheet"))
          {
