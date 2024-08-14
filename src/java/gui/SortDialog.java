@@ -28,6 +28,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
+
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -208,11 +210,20 @@ public class SortDialog extends JDialog
       for (int i = 0, n = getSortCriteriaCount(); i < n; i++)
       {
          SortCriteriaPanel sortCriteriaPanel = getSortCriteriaPanel(i);
-         SortCriteria criteria = sortCriteriaPanel.getCriteria();
 
-         if (criteria != null)
+         try
          {
-            list.add(criteria);
+            SortCriteria criteria = sortCriteriaPanel.getCriteria();
+
+            if (criteria != null)
+            {
+               list.add(criteria);
+            }
+         }
+         catch (InvalidSyntaxException e)
+         {
+            getMessageHandler().error(this, e.getMessage());
+            return;
          }
       }
 
@@ -530,6 +541,47 @@ class SortCriteriaPanel extends JPanel implements ActionListener
        "down", true, this, null, true);
       buttonPanel.add(downButton);
 
+      // Fallbacks
+
+      JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.setAlignmentY(0);
+      add(comp, BorderLayout.SOUTH);
+
+      fallbackButton = resources.createJCheckBox(
+        "sort", "fallbacks", this);
+      fallbackButton.setAlignmentY(0);
+      comp.add(fallbackButton);
+
+      fallbackComp = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      fallbackComp.setAlignmentY(0);
+      comp.add(fallbackComp);
+
+      fallbackListModel = new DefaultListModel<DatatoolHeader>();
+      fallbackList = new JList<DatatoolHeader>(fallbackListModel);
+      fallbackList.setAlignmentY(0);
+      fallbackComp.add(fallbackList);
+
+      fallbackAddButton = resources.createActionButton("sort", "add_fallback",
+       "increase", true, this, null, true);
+      fallbackAddButton.setAlignmentY(0);
+      fallbackComp.add(fallbackAddButton);
+
+      fallbackRemoveButton = resources.createActionButton("sort", "remove_fallback",
+       "decrease", true, this, null, true);
+      fallbackRemoveButton.setAlignmentY(0);
+      fallbackComp.add(fallbackRemoveButton);
+
+      fallbackUpButton = resources.createActionButton("sort", "fallbackup",
+       "up", true, this, null, true);
+      fallbackUpButton.setAlignmentY(0);
+      fallbackComp.add(fallbackUpButton);
+
+      fallbackDownButton = resources.createActionButton("sort", "fallbackdown",
+       "down", true, this, null, true);
+      fallbackDownButton.setAlignmentY(0);
+      fallbackComp.add(fallbackDownButton);
+
+
       setComponentIndex(compIndex);
 
       reset(-1);
@@ -551,17 +603,39 @@ class SortCriteriaPanel extends JPanel implements ActionListener
    }
 
    public SortCriteria getCriteria()
+     throws InvalidSyntaxException 
    {
       int colIdx = headerBox.getSelectedIndex();
 
       if (colIdx < 0)
       {
-         // This shouldn't happen
          return null;
       }
 
       SortCriteria criteria = new SortCriteria(colIdx, 
          ascendingButton.isSelected());
+
+      if (fallbackButton.isSelected() && !fallbackListModel.isEmpty())
+      {
+         int[] fallbacks = new int[fallbackListModel.getSize()];
+
+         for (int i = 0; i < fallbacks.length; i++)
+         {
+            DatatoolHeader header = fallbackListModel.get(i);
+            int headerIdx = headers.indexOf(header);
+
+            if (headerIdx == colIdx)
+            {
+               throw new InvalidSyntaxException(
+                 getMessageHandler().getLabelWithValues(
+                  "error.field_in_fallbacks", header));
+            }
+
+            fallbacks[i] = headerIdx;
+         }
+
+         criteria.setFallbackColumns(fallbacks);
+      }
 
       return criteria;
    }
@@ -580,8 +654,10 @@ class SortCriteriaPanel extends JPanel implements ActionListener
          return;
       }
 
+      headers = db.getHeaders();
+
       headerBox.setModel(
-         new DefaultComboBoxModel<DatatoolHeader>(db.getHeaders()));
+         new DefaultComboBoxModel<DatatoolHeader>(headers));
 
       boolean asc = true;
 
@@ -609,6 +685,29 @@ class SortCriteriaPanel extends JPanel implements ActionListener
          descendingButton.setSelected(true);
       }
 
+      int[] fallbacks = criteria == null ? null : criteria.getFallbackColumnIndexes();
+
+      fallbackListModel.clear();
+
+      if (fallbacks != null)
+      {
+         for (int idx : fallbacks)
+         {
+            if (idx >= 0 && idx < headers.size())
+            {
+               fallbackListModel.addElement(headers.get(idx));
+            }
+         }
+      }
+
+      fallbackButton.setSelected(fallbacks != null);
+
+      if (fallbackButton.isSelected())
+      {
+         updateFallbackButtons();
+      }
+
+      fallbackComp.setVisible(fallbackButton.isSelected());
    }
 
    @Override
@@ -639,9 +738,101 @@ class SortCriteriaPanel extends JPanel implements ActionListener
          dialog.moveSortCriteriaPanelDown(this);
          dialog.revalidate();
       }
+      else if ("fallbacks".equals(action))
+      {
+         fallbackComp.setVisible(fallbackButton.isSelected());
+
+         if (fallbackComp.isVisible())
+         {
+            updateFallbackButtons();
+         }
+
+         dialog.revalidate();
+         dialog.pack();
+      }
+      else if ("add_fallback".equals(action))
+      {
+         addFallback();
+      }
       else
       {
          getMessageHandler().debug("Unknown action "+action);
+      }
+   }
+
+   protected void addFallback()
+   {
+      Vector<DatatoolHeader> sublist
+         = new Vector<DatatoolHeader>(headers.capacity());
+
+      for (DatatoolHeader h : headers)
+      {
+         if (fallbackListModel.indexOf(h) == -1
+               && h != headerBox.getSelectedItem())
+         {
+            sublist.add(h);
+         }
+      }
+
+      if (sublist.isEmpty())
+      {
+         getMessageHandler().error(this,
+           getMessageHandler().getLabel("error.no_fallbacks_available"));
+      }
+      else
+      {
+         Object result = JOptionPane.showInputDialog(this,
+           getMessageHandler().getLabel("sort.fallback_selection.field"),
+           getMessageHandler().getLabel("sort.fallback_selection.title"),
+           JOptionPane.PLAIN_MESSAGE, null,
+           sublist.toArray(), null);
+
+         if (result != null && result instanceof DatatoolHeader)
+         {
+            DatatoolHeader header = (DatatoolHeader)result;
+
+            int idx = fallbackList.getLeadSelectionIndex();
+
+            if (idx == -1 || idx == fallbackListModel.getSize()-1)
+            {
+               fallbackListModel.addElement(header);
+            }
+            else
+            {
+               fallbackListModel.add(idx+1, header);
+            }
+
+            dialog.revalidate();
+            dialog.pack();
+         }
+      }
+   }
+
+   protected void updateFallbackButtons()
+   {
+      int minIdx = fallbackList.getMinSelectionIndex();
+      int maxIdx = fallbackList.getMaxSelectionIndex();
+
+      if (minIdx == -1)
+      {
+         fallbackRemoveButton.setEnabled(false);
+         fallbackUpButton.setEnabled(false);
+         fallbackDownButton.setEnabled(false);
+      }
+      else
+      {
+         fallbackRemoveButton.setEnabled(true);
+
+         if (maxIdx == minIdx)
+         {
+            fallbackUpButton.setEnabled(true);
+            fallbackDownButton.setEnabled(true);
+         }
+         else
+         {
+            fallbackUpButton.setEnabled(false);
+            fallbackDownButton.setEnabled(false);
+         }
       }
    }
 
@@ -661,8 +852,18 @@ class SortCriteriaPanel extends JPanel implements ActionListener
    SortDialog dialog;
    int compIndex;
 
+   Vector<DatatoolHeader> headers;
+
    JComboBox<DatatoolHeader> headerBox;
    JRadioButton ascendingButton, descendingButton;
 
    JButton addButton, removeButton, upButton, downButton;
+
+   JCheckBox fallbackButton;
+   JComponent fallbackComp;
+   JList<DatatoolHeader> fallbackList;
+   DefaultListModel<DatatoolHeader> fallbackListModel;
+
+   JButton fallbackAddButton, fallbackRemoveButton, fallbackUpButton,
+     fallbackDownButton;
 }

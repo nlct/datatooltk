@@ -709,6 +709,15 @@ the \strong'{'lazy'}' dog.
 <entry key="sort.descending">Descending</entry>
 <entry key="sort.descending.mnemonic">D</entry>
 
+<entry key="sort.fallbacks">Use fallback if value missing</entry>
+<entry key="sort.add_fallback">Add Fallback</entry>
+<entry key="sort.remove_fallback">Remove Fallback</entry>
+<entry key="sort.fallbackup">Move Up</entry>
+<entry key="sort.fallbackdown">Move Down</entry>
+
+<entry key="sort.fallback_selection.title">Select Fallback Field</entry>
+<entry key="sort.fallback_selection.field">Field:</entry>
+
 <entry key="sort.letter">Character Code</entry>
 <entry key="sort.letter.mnemonic">T</entry>
 
@@ -1407,6 +1416,8 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.expected_after">expected ''{0}'' after {1}</entry>
 <entry key="error.export.failed">Failed to export to ''{0}''.</entry>
 
+<entry key="error.field_in_fallbacks">Field ''{0}'' not permitted in its own fallback list.</entry>
+
 <entry key="error.import.failed">Failed to import ''{0}''.
 {1}</entry>
 
@@ -1439,6 +1450,8 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.missing_user">Missing User Name</entry>
 
 <entry key="error.no_console">No console available.</entry>
+<entry key="error.no_fallbacks_available">No fallback fields available</entry>
+
 <entry key="error.nopanel">No current panel!</entry>
 <entry key="error.no_sort_column_selected">No sort column selected</entry>
 <entry key="error.no_templates">No templates found</entry>
