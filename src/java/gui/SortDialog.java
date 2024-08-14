@@ -49,10 +49,28 @@ public class SortDialog extends JDialog
 
       // common settings
 
+      JComponent row;
+      ButtonGroup bg;
+
       JComponent commonPanel = Box.createVerticalBox();
       commonPanel.setAlignmentX(0);
 
-      JComponent row = createRow();
+      row = createRow();
+      commonPanel.add(row);
+
+      row.add(resources.createJLabel("sort.null"));
+
+      bg = new ButtonGroup();
+
+      nullFirstButton = resources.createJRadioButton(
+         "sort", "null_first", bg, null);
+      row.add(nullFirstButton);
+
+      nullLastButton = resources.createJRadioButton(
+         "sort", "null_last", bg, null);
+      row.add(nullLastButton);
+
+      row = createRow();
       commonPanel.add(row);
 
       row.add(resources.createJLabel("sort.string.message", 0));
@@ -60,7 +78,7 @@ public class SortDialog extends JDialog
       row = createRow();
       commonPanel.add(row);
 
-      ButtonGroup bg = new ButtonGroup();
+      bg = new ButtonGroup();
 
       letterSortButton = resources.createJRadioButton(
          "sort", "letter", bg, this, 0);
@@ -122,6 +140,15 @@ public class SortDialog extends JDialog
       success = false;
 
       resetSortCriteriaPanels(colIdx);
+
+      if (db.getSettings().isNullFirst())
+      {
+         nullFirstButton.setSelected(true);
+      }
+      else
+      {
+         nullLastButton.setSelected(true);
+      }
 
       isCaseSensitiveBox.setSelected(db.isSortCaseSensitive());
 
@@ -209,6 +236,8 @@ public class SortDialog extends JDialog
       {
          db.setSortLocale((Locale)localeBox.getSelectedItem());
       }
+
+      db.getSettings().setNullFirst(nullFirstButton.isSelected());
 
       success = true;
       setVisible(false);
@@ -389,6 +418,8 @@ public class SortDialog extends JDialog
    private JRadioButton letterSortButton, localeSortButton;
 
    private JCheckBox isCaseSensitiveBox;
+
+   private JRadioButton nullFirstButton, nullLastButton;
 
    private DatatoolDb db;
 

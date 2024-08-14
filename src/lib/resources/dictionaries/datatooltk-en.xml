@@ -692,6 +692,14 @@ the \strong'{'lazy'}' dog.
 <entry key="sort.ascending">Ascending</entry>
 <entry key="sort.ascending.mnemonic">A</entry>
 
+<entry key="sort.null">Treat null values as:</entry>
+
+<entry key="sort.null_first">smallest</entry>
+<entry key="sort.null_first.mnemonic">M</entry>
+
+<entry key="sort.null_last">largest</entry>
+<entry key="sort.null_last.mnemonic">G</entry>
+
 <entry key="sort.case_sensitive">Case sensitive</entry>
 <entry key="sort.case_sensitive.mnemonic">S</entry>
 

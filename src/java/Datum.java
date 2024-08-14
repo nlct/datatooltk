@@ -448,6 +448,17 @@ public class Datum implements Comparable<Datum>
    {
       int result=0;
 
+      if (isNull())
+      {
+         if (other.isNull()) return 0;
+
+         return settings.isNullFirst() ? -1 : 1;
+      }
+      else if (other.isNull())
+      {
+         return settings.isNullFirst() ? 1 : -1;
+      }
+
       switch (compareType)
       {
          case INTEGER:
@@ -466,7 +477,8 @@ public class Datum implements Comparable<Datum>
          break;
       }
 
-      if (result == 0)
+      if (result == 0 && 
+          (!compareType.isNumeric() || getDatumType() != other.getDatumType()))
       {
          Collator collator = settings.getSortCollator();
 
@@ -502,6 +514,17 @@ public class Datum implements Comparable<Datum>
    public int compareTo(Datum other)
    {
       int result = 0;
+
+      if (isNull())
+      {
+         if (other.isNull()) return 0;
+
+         return settings.isNullFirst() ? -1 : 1;
+      }
+      else if (other.isNull())
+      {
+         return settings.isNullFirst() ? 1 : -1;
+      }
 
       if (isNumeric() && other.isNumeric())
       {

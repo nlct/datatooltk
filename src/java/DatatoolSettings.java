@@ -3192,6 +3192,16 @@ public class DatatoolSettings extends Properties
       }
    }
 
+   public boolean isNullFirst()
+   {
+      return isNullFirst;
+   }
+
+   public void setNullFirst(boolean isFirst)
+   {
+      isNullFirst = isFirst;
+   }
+
    public LoadSettings getLoadSettings()
    {
       return loadSettings;
@@ -3236,6 +3246,8 @@ public class DatatoolSettings extends Properties
    private int compatLevel = COMPAT_LATEST;
 
    private LoadSettings loadSettings;
+
+   private boolean isNullFirst=true;
 
    private Collator sortCollator;
 
