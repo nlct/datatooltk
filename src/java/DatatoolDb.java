@@ -4266,24 +4266,14 @@ public class DatatoolDb
       return settings.getMessageHandler();
    }
 
-   public int getSortColumn()
+   public Vector<SortCriteria> getSortCriteria()
    {
-      return sortColumn;
+      return sortCriteriaList;
    }
 
-   public void setSortColumn(int columnIndex)
+   public void setSortCriteria(Vector<SortCriteria> list)
    {
-      sortColumn = columnIndex;
-   }
-
-   public boolean isSortAscending()
-   {
-      return sortAscending;
-   }
-
-   public void setSortAscending(boolean isAscending)
-   {
-      sortAscending = isAscending;
+      sortCriteriaList = list;
    }
 
    public boolean isSortCaseSensitive()
@@ -4315,9 +4305,75 @@ public class DatatoolDb
       }
    }
 
+   public MissingSortValueAction getMissingSortValueAction()
+   {
+      return missingSortValueAction;
+   }
+
+   public void setMissingSortValueAction(MissingSortValueAction action)
+   {
+      if (action == null)
+      {
+         throw new NullPointerException();
+      }
+
+      missingSortValueAction = action;
+   }
+
    public void sort()
    {
-      Collections.sort(data);
+      int numCriteria = 0;
+
+      if (sortCriteriaList != null)
+      {
+         for (SortCriteria criteria : sortCriteriaList)
+         {
+            String colKey = criteria.getColumnKey();
+
+            if (colKey != null)
+            {
+               int colIdx = getColumnIndex(colKey);
+
+               if (colIdx == -1)
+               {
+                  getMessageHandler().warning(
+                    getMessageHandler().getLabelWithValues(
+                   "error.syntax.unknown_field", colKey));
+               }
+
+               criteria.setColumnIndex(colIdx);
+            }
+
+            if (criteria.getColumnIndex() != -1)
+            {
+               numCriteria++;
+            }
+
+            String[] keys = criteria.getFallbackColumnKeys();
+
+            if (keys != null)
+            {
+               int[] indexes = new int[keys.length];
+
+               for (int j = 0; j < indexes.length; j++)
+               {
+                  indexes[j] = getColumnIndex(keys[j]);
+
+                  if (indexes[j] == -1)
+                  {
+                     getMessageHandler().warning(
+                       getMessageHandler().getLabelWithValues(
+                      "error.syntax.unknown_field", keys[j]));
+                  }
+               }
+            }
+         }
+      }
+
+      if (numCriteria > 0)
+      {
+         Collections.sort(data);
+      }
    }
 
    public void shuffle()
@@ -4513,11 +4569,11 @@ public class DatatoolDb
 
    private int linenum;
 
-   private int sortColumn = 0;
-
-   private boolean sortAscending = true;
+   private Vector<SortCriteria> sortCriteriaList;
 
    private boolean sortCaseSensitive = false;
+   private MissingSortValueAction missingSortValueAction
+     = MissingSortValueAction.REPLACE_NULL_ONLY;
 
    public static final String NULL_VALUE="\\@dtlnovalue";
 

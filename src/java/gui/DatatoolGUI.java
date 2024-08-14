@@ -1588,7 +1588,12 @@ public class DatatoolGUI extends JFrame
 
    public boolean requestSortDialog(DatatoolDb db)
    {
-      return sortDialog.requestInput(db);
+      return requestSortDialog(db, -1);
+   }
+
+   public boolean requestSortDialog(DatatoolDb db, int initColIdx)
+   {
+      return sortDialog.requestInput(db, initColIdx);
    }
 
    public String getDefaultUntitled()

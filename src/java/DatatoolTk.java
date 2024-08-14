@@ -158,25 +158,17 @@ public class DatatoolTk
             db.merge(mergeDb, mergeKey);
          }
 
-         String sort = loadSettings.getSort();
+         Vector<SortCriteria> sort = loadSettings.getSortCriteria();
 
          if (sort != null)
          {
             debug("sorting");
 
             db.setSortCaseSensitive(loadSettings.isCaseSensitive());
+            db.setMissingSortValueAction(
+              loadSettings.getMissingSortValueAction());
 
-            int colIndex = db.getColumnIndex(sort);
-
-            if (colIndex == -1)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.unknown_field",
-                  sort));
-            }
-
-            db.setSortColumn(colIndex);
-            db.setSortAscending(loadSettings.isAscending());
+            db.setSortCriteria(sort);
             db.sort();
          }
 

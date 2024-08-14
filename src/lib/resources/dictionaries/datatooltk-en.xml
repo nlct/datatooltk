@@ -684,6 +684,11 @@ the \strong'{'lazy'}' dog.
 
 <entry key="sort.title">Sort Database</entry>
 
+<entry key="sort.add_criteria">Add Criteria</entry>
+<entry key="sort.remove_criteria">Remove Criteria</entry>
+<entry key="sort.moveup">Move Up</entry>
+<entry key="sort.movedown">Move Down</entry>
+
 <entry key="sort.ascending">Ascending</entry>
 <entry key="sort.ascending.mnemonic">A</entry>
 

@@ -38,6 +38,7 @@ import com.dickimawbooks.datatooltk.DataFilter;
 import com.dickimawbooks.datatooltk.FilterInfo;
 import com.dickimawbooks.datatooltk.LoadSettings;
 import com.dickimawbooks.datatooltk.ImportSettings;
+import com.dickimawbooks.datatooltk.SortCriteria;
 import com.dickimawbooks.datatooltk.io.DatatoolImport;
 import com.dickimawbooks.datatooltk.io.DatatoolImportException;
 
@@ -225,7 +226,7 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
          modified = true;
       }
 
-      String sort = loadSettings.getSort();
+      Vector<SortCriteria> sort = loadSettings.getSortCriteria();
 
       if (sort != null)
       {
@@ -233,18 +234,8 @@ public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
            "progress.sorting"));
 
          db.setSortCaseSensitive(loadSettings.isCaseSensitive());
-
-         int colIndex = db.getColumnIndex(sort);
-
-         if (colIndex == -1)
-         {
-            throw new IOException(
-               gui.getMessageHandler().getLabelWithValues("error.syntax.unknown_field",
-               sort));
-         }
-
-         db.setSortColumn(colIndex);
-         db.setSortAscending(loadSettings.isAscending());
+         db.setMissingSortValueAction(loadSettings.getMissingSortValueAction());
+         db.setSortCriteria(sort);
          db.sort();
          modified = true;
       }

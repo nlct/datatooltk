@@ -527,12 +527,7 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
 
       int colIdx = getModelSelectedColumn();
 
-      if (colIdx > -1)
-      {
-         db.setSortColumn(colIdx);
-      }
-
-      if (!gui.requestSortDialog(db))
+      if (!gui.requestSortDialog(db, colIdx))
       {
          return;
       }

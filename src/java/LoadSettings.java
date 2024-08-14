@@ -42,7 +42,7 @@ public class LoadSettings
    public boolean hasInputAction()
    {
       return inFile != null || imp != null || mergeKey != null
-           || dbname != null || sort != null || doShuffle
+           || dbname != null || sortCriteriaList != null || doShuffle
            || filterInfo != null || truncate > -1;
    }
 
@@ -232,38 +232,66 @@ public class LoadSettings
       return mergeKey;
    }
 
+   public void setSort(Vector<SortCriteria> list)
+   {
+      sortCriteriaList = list;
+   }
+
    public void setSort(String sortValue)
    {
-      if ("".equals(sortValue))
+      if (sortValue == null)
       {
-         sort = null;
-      }
-      else
-      {
-         sort = sortValue;
+         sortCriteriaList = null;
+         return;
       }
 
-      if (sort == null) return;
+      sortValue = sortValue.trim();
 
-      sortAscend = true;
-
-      int codePoint = sort.codePointAt(0);
-
-      if (codePoint == '+')
+      if (sortValue.isEmpty())
       {
-         sortAscend = true;
-         sort = sort.substring(1);
+         sortCriteriaList = null;
+         return;
       }
-      else if (codePoint == '-')
+
+      String[] split = sortValue.split(" *, *");
+
+      sortCriteriaList = new Vector<SortCriteria>(split.length);
+
+      for (String sort : split)
       {
-         sortAscend = false;
-         sort = sort.substring(1);
+         boolean sortAscend = true;
+
+         int codePoint = sort.codePointAt(0);
+
+         if (codePoint == '+')
+         {
+            sortAscend = true;
+            sort = sort.substring(1);
+         }
+         else if (codePoint == '-')
+         {
+            sortAscend = false;
+            sort = sort.substring(1);
+         }
+
+         SortCriteria criteria;
+
+         try
+         {
+            criteria = new SortCriteria(Integer.parseInt(sort), sortAscend);
+         }
+         catch (NumberFormatException e)
+         {
+            criteria = new SortCriteria(sort, sortAscend);
+         }
+
+         sortCriteriaList.add(criteria);
       }
    }
 
-   public String getSort()
+   public Vector<SortCriteria> getSortCriteria()
    {
-      return sort;
+      return sortCriteriaList;
    }
 
    public void setCaseSensitive(boolean isCase)
@@ -276,9 +304,14 @@ public class LoadSettings
       return isCaseSensitive;
    }
 
-   public boolean isAscending()
+   public void setMissingSortValueAction(MissingSortValueAction action)
    {
-      return sortAscend;
+      missingSortValueAction = action;
+   }
+
+   public MissingSortValueAction getMissingSortValueAction()
+   {
+      return missingSortValueAction;
    }
 
    public void setShuffle(boolean doShuffle)
@@ -374,8 +407,13 @@ public class LoadSettings
    private File inFile=null, mergeFile=null, outFile=null;
    private DatatoolImport imp=null, mergeImport=null;
    private String source=null, mergeImportSource=null, mergeKey=null;
-   private String dbname=null, sort = null;
-   private boolean sortAscend=true, isCaseSensitive=false;
+   private String dbname=null;
+
+   private Vector<SortCriteria> sortCriteriaList;
+   private boolean isCaseSensitive=false;
+   private MissingSortValueAction missingSortValueAction
+     = MissingSortValueAction.REPLACE_NULL_ONLY;
+
    private boolean doShuffle=false;
    private Vector<FilterInfo> filterInfo=null;
    private boolean filterOr=true, filterInclude=true;
