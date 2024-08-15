@@ -39,6 +39,7 @@ public class DatumCellRenderer implements TableCellRenderer
 
    private JTextField typeField, currencyField, numField;
    private Component panel;
+   private JComponent datumInfoComponent;
    private JTextComponent textComp;
 
    private DatumType type;
@@ -96,9 +97,9 @@ public class DatumCellRenderer implements TableCellRenderer
 
       DatatoolGuiResources resources = settings.getDatatoolGuiResources();
 
-      JComponent mainComp = Box.createVerticalBox();
-      mainComp.setOpaque(false);
-      numComp.add(mainComp, BorderLayout.CENTER);
+      datumInfoComponent = Box.createVerticalBox();
+      datumInfoComponent.setOpaque(false);
+      numComp.add(datumInfoComponent, BorderLayout.CENTER);
 
       JComponent rowComp;
 
@@ -111,7 +112,7 @@ public class DatumCellRenderer implements TableCellRenderer
       numComp.add(textComp, BorderLayout.NORTH);
 
       rowComp = createRow();
-      mainComp.add(rowComp);
+      datumInfoComponent.add(rowComp);
 
       JLabel typeLabel = resources.createJLabel("celledit.type");
       rowComp.add(typeLabel);
@@ -121,7 +122,7 @@ public class DatumCellRenderer implements TableCellRenderer
       rowComp.add(typeField);
 
       JComponent valueRow = createRow();
-      mainComp.add(valueRow);
+      datumInfoComponent.add(valueRow);
 
       JLabel valueLabel = resources.createJLabel("celledit.numeric");
       valueRow.add(valueLabel);
@@ -131,7 +132,7 @@ public class DatumCellRenderer implements TableCellRenderer
       if (type == DatumType.CURRENCY)
       {
          JComponent currencyRow = createRow();
-         mainComp.add(currencyRow);
+         datumInfoComponent.add(currencyRow);
 
          currencyRow.add(resources.createJLabel("celledit.currency"));
          currencyField = createField();
@@ -139,7 +140,9 @@ public class DatumCellRenderer implements TableCellRenderer
          currencyRow.add(currencyField);
       }
 
-      mainComp.add(Box.createVerticalGlue());
+      datumInfoComponent.add(Box.createVerticalGlue());
+
+      datumInfoComponent.setVisible(settings.isCellDatumVisible());
 
       return numComp;
    }
@@ -151,7 +154,7 @@ public class DatumCellRenderer implements TableCellRenderer
 
    protected JComponent createRow(int align)
    {
-      JComponent comp = new JPanel(new FlowLayout(align));
+      JComponent comp = new JPanel(new FlowLayout(align, 2, 1));
       comp.setOpaque(false);
 
       return comp;
@@ -250,6 +253,8 @@ public class DatumCellRenderer implements TableCellRenderer
          { 
             numField.setText(num.toString());
          }
+
+         datumInfoComponent.setVisible(settings.isCellDatumVisible());
       }
 
       return panel;

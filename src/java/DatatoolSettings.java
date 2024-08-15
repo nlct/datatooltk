@@ -2593,6 +2593,24 @@ public class DatatoolSettings extends Properties
       return defValue;
    }
 
+   public boolean isCellDatumVisible()
+   {
+      String prop = getProperty("celldatumvisible");
+
+      if (prop == null || prop.isEmpty())
+      {
+         setCellDatumVisible(true);
+         return true;
+      }
+
+      return Boolean.parseBoolean(prop);
+   }
+
+   public void setCellDatumVisible(boolean visible)
+   {
+      setProperty("celldatumvisible", ""+visible);
+   }
+
    public int getCellEditorPreferredHeight()
    {
       try

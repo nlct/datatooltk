@@ -508,6 +508,11 @@ public class PropertiesDialog extends JDialog
          box.add(spinner);
       }
 
+      cellDatumVisibleBox = resources.createJCheckBox(
+       "preferences.display", "cell_show_datum", null, 0);
+
+      rightPanel.add(cellDatumVisibleBox);
+
       return displayTab;
    }
 
@@ -917,6 +922,8 @@ public class PropertiesDialog extends JDialog
          cellWidthModels[i].setValue(
            Integer.valueOf(settings.getCellWidth(DatumType.toDatumType(i-1))));
       }
+
+      cellDatumVisibleBox.setSelected(settings.isCellDatumVisible());
 
       String lookAndFeelClassName = settings.getLookAndFeel();
 
@@ -1387,6 +1394,8 @@ public class PropertiesDialog extends JDialog
           DatumType.toDatumType(i-1));
       }
 
+      settings.setCellDatumVisible(cellDatumVisibleBox.isSelected());
+
       int lookAndFeelIdx = lookAndFeelBox.getSelectedIndex();
 
       if (lookAndFeelIdx > -1)
@@ -1563,6 +1572,8 @@ public class PropertiesDialog extends JDialog
 
    private SpinnerNumberModel[] cellWidthModels;
 
+   private JCheckBox cellDatumVisibleBox;
+
    private SqlPanel sqlSettingsPanel;
 
    private JButton removeCurrencyButton, editCurrencyButton;
@@ -1583,11 +1594,14 @@ public class PropertiesDialog extends JDialog
 
    private JComboBox<HelpSetLocale> helpsetLangBox, dictLangBox;
    private JComboBox<Locale> numericLocaleBox;
+
    private JLabel numericParsingLabel, intFmtLabel,
     currencyFmtLabel, decimalFmtLabel;
+
    private JTextField numericParserField, intFormatterField,
     currencyFormatterField, decimalFormatterField;
    private JEditorPane decimalSymbolsField;
+
    private JRadioButton numParseMatchLocaleButton, numParsePatternButton,
     intFmtMatchLocaleButton, intFmtPatternButton,
     currencyFmtMatchLocaleButton, currencyFmtPatternButton,

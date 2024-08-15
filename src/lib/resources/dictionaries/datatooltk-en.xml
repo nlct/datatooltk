@@ -506,6 +506,9 @@ the \strong'{'lazy'}' dog.
 
 <entry key="preferences.display.cellwidths">Cell Widths</entry>
 
+<entry key="preferences.display.cell_show_datum">Show datum info</entry>
+<entry key="preferences.display.cell_show_datum.tooltip">Show datum information in numeric cells</entry>
+
 <entry key="preferences.display.lookandfeel.title">Graphical Interface</entry>
 
 <entry key="preferences.display.lookandfeel">Look and Feel:</entry>
