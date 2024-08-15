@@ -18,7 +18,9 @@
 */
 package com.dickimawbooks.datatooltk;
 
+import java.text.CollationKey;
 import java.text.Collator;
+
 import java.util.Locale;
 import java.util.Vector;
 
@@ -127,8 +129,7 @@ public class DatatoolRow extends Vector<Datum>
    public int compareTo(DatatoolRow row)
    {
       Vector<SortCriteria> criteriaList = db.getSortCriteria();
-      boolean caseSensitive = db.isSortCaseSensitive();
-      MissingSortValueAction missingAction = db.getMissingSortValueAction();
+      boolean nullFirst = db.getSettings().isNullFirst();
 
       int result = 0;
 
@@ -142,90 +143,53 @@ public class DatatoolRow extends Vector<Datum>
          Datum x = get(columnIdx);
          Datum y = row.get(columnIdx);
 
-         boolean replaceX = false;
-         boolean replaceY = false;
+         Number xNum = x.getNumber();
+         Number yNum = y.getNumber();
 
-         switch (missingAction)
+         if (xNum != null && yNum != null && !xNum.equals(yNum))
          {
-            case REPLACE_NULL_AND_EMPTY:
-               if (x.getText().isEmpty())
-               {
-                  replaceX = true;
-               }
-
-               if (y.getText().isEmpty())
-               {
-                  replaceY = true;
-               }
-            // fall through
-            case REPLACE_NULL_ONLY:
-               if (x.isNull())
-               {
-                  replaceX = true;
-               }
-
-               if (y.isNull())
-               {
-                  replaceY = true;
-               }
-            break;
-         }
-
-         int[] fallbacks = criteria.getFallbackColumnIndexes();
-
-         if (fallbacks != null && fallbacks.length > 0)
-         {
-            for (int i = 0; i < fallbacks.length && replaceX; i++)
+            if (xNum instanceof Double || yNum instanceof Double)
             {
-               if (fallbacks[i] == -1) continue;
-
-               x = get(fallbacks[i]);
-               replaceX = false;
-
-               switch (missingAction)
-               {
-                  case REPLACE_NULL_AND_EMPTY:
-                     if (x.getText().isEmpty())
-                     {
-                        replaceX = true;
-                     }
-                  // fall through
-                  case REPLACE_NULL_ONLY:
-                     if (x.isNull())
-                     {
-                        replaceX = true;
-                     }
-                  break;
-               }
+               result = (xNum.doubleValue() < yNum.doubleValue() ? -1 : 1);
             }
-
-            for (int i = 0; i < fallbacks.length && replaceY; i++)
+            else
             {
-               if (fallbacks[i] == -1) continue;
-
-               y = get(fallbacks[i]);
-               replaceY = false;
-
-               switch (missingAction)
-               {
-                  case REPLACE_NULL_AND_EMPTY:
-                     if (y.getText().isEmpty())
-                     {
-                        replaceY = true;
-                     }
-                  // fall through
-                  case REPLACE_NULL_ONLY:
-                     if (y.isNull())
-                     {
-                        replaceY = true;
-                     }
-                  break;
-               }
+               result = (xNum.intValue() < yNum.intValue() ? -1 : 1);
             }
          }
 
-         result = x.compareTo(y, db.getColumnDatumType(columnIdx),
-          caseSensitive);
+         if (result == 0)
+         {
+            CollationKey xKey = x.getCollationKey();
+            CollationKey yKey = y.getCollationKey();
+
+            if (xKey != null && yKey != null)
+            {
+               result = xKey.compareTo(yKey);
+            }
+
+            if (result == 0)
+            {
+               String xStr = x.getStringSort();
+               String yStr = y.getStringSort();
+
+               if (xStr != null && yStr != null)
+               {
+                  result = xStr.compareTo(yStr);
+               }
+               else if (xStr == null)
+               {
+                  if (yStr != null)
+                  {
+                     result = nullFirst ? -1 : 1;
+                  }
+               }
+               else if (yStr == null)
+               {
+                  result = nullFirst ? 1 : -1;
+               }
+            }
+         }
 
          if (!ascending)
          {

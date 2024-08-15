@@ -21,6 +21,8 @@ package com.dickimawbooks.datatooltk;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import java.text.CollationKey;
 import java.text.Collator;
 import java.text.ParseException;
 import java.text.ParsePosition;
@@ -634,11 +636,45 @@ public class Datum implements Comparable<Datum>
       return new Datum(text, currencySym, num, settings);
    }
 
+   public void setCollationKey(CollationKey key)
+   {
+      collationKey = key;
+   }
+
+   public CollationKey getCollationKey()
+   {
+      return collationKey;
+   }
+
+   public void setStringSort(String sortValue)
+   {
+      stringSort = sortValue;
+   }
+
+   public String getStringSort()
+   {
+      return stringSort;
+   }
+
+   public void setNumericSort(Number num)
+   {
+      numericSort = num;
+   }
+
+   public Number getNumericSort()
+   {
+      return numericSort;
+   }
+
    private DatumType type;
    private String stringValue;
    private String currencySymbol;
    private Number numValue;
    DatatoolSettings settings;
+
+   CollationKey collationKey;
+   String stringSort;
+   Number numericSort;
 
    public static int TEX_MAX_INT = 2147483647;
    public static final Pattern TRAILING_EMPTY_COMMENT_PATTERN = 

@@ -22,16 +22,21 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.Vector;
-import java.util.List;
-import java.util.Random;
-import java.util.Enumeration;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.regex.*;
-import java.util.Date;
-import java.util.Locale;
+
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+import java.util.Vector;
+
+import java.util.regex.*;
+
+import java.text.CollationKey;
+import java.text.Collator;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -4323,6 +4328,23 @@ public class DatatoolDb
    public void sort()
    {
       int numCriteria = 0;
+      Collator collator = null;
+
+      Locale sortLocale = getSortLocale();
+
+      if (sortLocale != null)
+      {
+         collator = Collator.getInstance(sortLocale);
+
+         if (sortCaseSensitive)
+         {
+            collator.setStrength(Collator.TERTIARY);
+         }
+         else
+         {
+            collator.setStrength(Collator.PRIMARY);
+         }
+      }
 
       if (sortCriteriaList != null)
       {
@@ -4364,6 +4386,95 @@ public class DatatoolDb
                      getMessageHandler().warning(
                        getMessageHandler().getLabelWithValues(
                       "error.syntax.unknown_field", keys[j]));
+                  }
+               }
+            }
+         }
+
+         for (DatatoolRow row : data)
+         {
+            for (SortCriteria criteria : sortCriteriaList)
+            {
+               int colIdx = criteria.getColumnIndex();
+
+               if (colIdx == -1) continue;
+
+               Datum datum = row.get(colIdx);
+               Datum actualDatum = datum;
+               boolean missing = false;
+
+               switch (missingSortValueAction)
+               {
+                  case REPLACE_NULL_AND_EMPTY:
+                     if (datum.getText().isEmpty())
+                     {
+                        missing = true;
+                     }
+                  // fall through
+                  case REPLACE_NULL_ONLY:
+                     if (datum.isNull())
+                     {
+                        missing = true;
+                     }
+                  break;
+               }
+
+               if (missing)
+               {
+                  int[] fallbacks = criteria.getFallbackColumnIndexes();
+
+                  if (fallbacks != null)
+                  {
+                     for (int i = 0; i < fallbacks.length && missing; i++)
+                     {
+
+                        if (fallbacks[i] == -1) continue;
+
+                        datum = row.get(fallbacks[i]);
+                        missing = false;
+
+                        switch (missingSortValueAction)
+                        {
+                           case REPLACE_NULL_AND_EMPTY:
+                              if (datum.getText().isEmpty())
+                              {
+                                 missing = true;
+                              }
+                           // fall through
+                           case REPLACE_NULL_ONLY:
+                              if (datum.isNull())
+                              {
+                                 missing = true;
+                              }
+                           break;
+                        }
+                     }
+                  }
+               }
+
+               actualDatum.setStringSort(null);
+               actualDatum.setNumericSort(null);
+               actualDatum.setCollationKey(null);
+
+               if (!datum.isNull())
+               {
+                  String text = datum.getText();
+
+                  if (collator != null)
+                  {
+                     actualDatum.setCollationKey(collator.getCollationKey(text));
+                  }
+
+                  if (!sortCaseSensitive)
+                  {
+                     text = text.toLowerCase();
+                  }
+
+                  actualDatum.setStringSort(text);
+
+                  if (datum.isNumeric())
+                  {
+                     actualDatum.setNumericSort(datum.getNumber());
                   }
                }
             }
@@ -4572,6 +4683,7 @@ public class DatatoolDb
    private Vector<SortCriteria> sortCriteriaList;
 
    private boolean sortCaseSensitive = false;
+
    private MissingSortValueAction missingSortValueAction
      = MissingSortValueAction.REPLACE_NULL_ONLY;
 
