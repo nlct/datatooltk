@@ -613,8 +613,15 @@ public class OpenDocReader extends XMLReaderAdapter
                }
                else if (columnIdx + tableCellRepetition > columnCount)
                {
-                  columnIdx += tableCellRepetition;
-                  return;
+                  if (inHeader)
+                  {
+                     columnIdx += tableCellRepetition;
+                     return;
+                  }
+                  else
+                  {
+                     tableCellRepetition = columnCount - columnIdx + 1;
+                  }
                }
             }
 
@@ -630,6 +637,11 @@ public class OpenDocReader extends XMLReaderAdapter
                }
                else
                {
+                  if (columnCount <= db.getColumnCount())
+                  {
+                     columnCount = db.getColumnCount() + 1;
+                  }
+
                   for (int i = columnIdx, 
                     n = columnIdx+tableCellRepetition;
                     i < n && i <= columnCount; i++)
