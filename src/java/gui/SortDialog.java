@@ -27,6 +27,7 @@ import java.text.Collator;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.*;
 
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
@@ -348,7 +349,7 @@ public class SortDialog extends JDialog
    {
       // first panel can't be removed
 
-      if (idx > 1)
+      if (idx > 0)
       {
          int n = getSortCriteriaCount();
 
@@ -484,7 +485,8 @@ class LocaleComparator implements Comparator<Locale>
    private Collator collator;
 }
 
-class SortCriteriaPanel extends JPanel implements ActionListener
+class SortCriteriaPanel extends JPanel
+ implements ActionListener,ListSelectionListener
 {
    public SortCriteriaPanel(SortDialog dialog)
    {
@@ -559,7 +561,12 @@ class SortCriteriaPanel extends JPanel implements ActionListener
       fallbackListModel = new DefaultListModel<DatatoolHeader>();
       fallbackList = new JList<DatatoolHeader>(fallbackListModel);
       fallbackList.setAlignmentY(0);
-      fallbackComp.add(fallbackList);
+      fallbackList.setVisibleRowCount(3);
+      fallbackList.addListSelectionListener(this);
+
+      JScrollPane sp = new JScrollPane(fallbackList);
+      sp.setAlignmentY(0);
+      fallbackComp.add(sp);
 
       fallbackAddButton = resources.createActionButton("sort", "add_fallback",
        "increase", true, this, null, true);
@@ -685,6 +692,8 @@ class SortCriteriaPanel extends JPanel implements ActionListener
          descendingButton.setSelected(true);
       }
 
+      fallbackList.setFixedCellWidth(headerBox.getPreferredSize().width+10);
+
       int[] fallbacks = criteria == null ? null : criteria.getFallbackColumnIndexes();
 
       fallbackListModel.clear();
@@ -708,6 +717,15 @@ class SortCriteriaPanel extends JPanel implements ActionListener
       }
 
       fallbackComp.setVisible(fallbackButton.isSelected());
+   }
+
+   @Override
+   public void valueChanged(ListSelectionEvent e)
+   {
+      if (fallbackComp.isVisible())
+      {
+         updateFallbackButtons();
+      }
    }
 
    @Override
@@ -754,6 +772,18 @@ class SortCriteriaPanel extends JPanel implements ActionListener
       {
          addFallback();
       }
+      else if ("remove_fallback".equals(action))
+      {
+         removeSelectedFallback();
+      }
+      else if ("fallbackup".equals(action))
+      {
+         moveSelectedFallbackUp();
+      }
+      else if ("fallbackdown".equals(action))
+      {
+         moveSelectedFallbackDown();
+      }
       else
       {
          getMessageHandler().debug("Unknown action "+action);
@@ -791,20 +821,63 @@ class SortCriteriaPanel extends JPanel implements ActionListener
          {
             DatatoolHeader header = (DatatoolHeader)result;
 
-            int idx = fallbackList.getLeadSelectionIndex();
+            int idx = fallbackList.getMaxSelectionIndex();
 
             if (idx == -1 || idx == fallbackListModel.getSize()-1)
             {
                fallbackListModel.addElement(header);
+               idx = fallbackListModel.getSize()-1;
             }
             else
             {
-               fallbackListModel.add(idx+1, header);
+               idx++;
+               fallbackListModel.add(idx, header);
             }
 
-            dialog.revalidate();
-            dialog.pack();
+            fallbackList.ensureIndexIsVisible(idx);
+
+            updateFallbackButtons();
          }
+      }
+   }
+
+   protected void removeSelectedFallback()
+   {
+      int[] indexes = fallbackList.getSelectedIndices();
+
+      for (int i = indexes.length-1; i >= 0; i--)
+      {
+         fallbackListModel.remove(indexes[i]);
+      }
+
+      fallbackList.clearSelection();
+   }
+
+   public void moveSelectedFallbackUp()
+   {
+      int idx = fallbackList.getSelectedIndex();
+
+      if (idx > 0)
+      {
+         DatatoolHeader header = fallbackListModel.remove(idx);
+         idx--;
+         fallbackListModel.add(idx, header);
+         fallbackList.setSelectedIndex(idx);
+         fallbackList.ensureIndexIsVisible(idx);
+      }
+   }
+
+   public void moveSelectedFallbackDown()
+   {
+      int idx = fallbackList.getSelectedIndex();
+
+      if (idx > -1 && idx < fallbackListModel.getSize() - 1)
+      {
+         DatatoolHeader header = fallbackListModel.remove(idx);
+         idx++;
+         fallbackListModel.add(idx, header);
+         fallbackList.setSelectedIndex(idx);
+         fallbackList.ensureIndexIsVisible(idx);
       }
    }
 
@@ -825,8 +898,8 @@ class SortCriteriaPanel extends JPanel implements ActionListener
 
          if (maxIdx == minIdx)
          {
-            fallbackUpButton.setEnabled(true);
-            fallbackDownButton.setEnabled(true);
+            fallbackUpButton.setEnabled(minIdx > 0);
+            fallbackDownButton.setEnabled(maxIdx < fallbackListModel.size()-1);
          }
          else
          {
