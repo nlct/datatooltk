@@ -24,7 +24,7 @@ booklist-fods-doc.pdf	: booklist-fods-converted.dbtex booklist-fods-doc.tex
 
 booklist-fods-converted.dbtex	: ../booklist.fods $(deps)
 	datatooltk --output booklist-fods-converted.dbtex --output-format dbtex-3 \
-	--sort Author,Title --csv-literal --fods ../booklist.fods \
+	--sort Author,Title,Format --csv-literal --fods ../booklist.fods \
 	--csv-empty-rows end
 
 clean	:

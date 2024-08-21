@@ -21,6 +21,9 @@ package com.dickimawbooks.datatooltk;
 import java.io.File;
 import java.util.Vector;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 
 import com.dickimawbooks.datatooltk.io.DatatoolImport;
@@ -274,6 +277,15 @@ public class LoadSettings
             sort = sort.substring(1);
          }
 
+         Matcher m = SORT_CRITERIA_FALLBACK_PATTERN.matcher(sort);
+         String fallbacks = null;
+
+         if (m.matches())
+         {
+            sort = m.group(1);
+            fallbacks = m.group(2).trim();
+         }
+
          SortCriteria criteria;
 
          try
@@ -283,6 +295,35 @@ public class LoadSettings
          catch (NumberFormatException e)
          {
             criteria = new SortCriteria(sort, sortAscend);
+         }
+
+         if (fallbacks != null && !fallbacks.isEmpty())
+         {
+            String[] cols = fallbacks.split(" *; *");
+
+            if (NUMERIC_FALLBACK_PATTERN.matcher(fallbacks).matches())
+            {
+               int[] columnIndexes = new int[cols.length];
+
+               try
+               {
+                  for (int i = 0; i < cols.length; i++)
+                  {
+                     columnIndexes[i] = Integer.parseInt(cols[i]);
+                  }
+
+                  criteria.setFallbackColumns(columnIndexes);
+               }
+               catch (NumberFormatException e)
+               {
+                  // shouldn't happen
+                  criteria.setFallbackColumns(cols);
+               }
+            }
+            else
+            {
+               criteria.setFallbackColumns(cols);
+            }
          }
 
          sortCriteriaList.add(criteria);
@@ -428,4 +469,10 @@ public class LoadSettings
    private ImportSettings importSettings = null;
 
    private DatatoolSettings settings;
+
+   public static final Pattern SORT_CRITERIA_FALLBACK_PATTERN
+     = Pattern.compile("(.+)\\[(.*)\\]");
+
+   public static final Pattern NUMERIC_FALLBACK_PATTERN
+     = Pattern.compile("\\d+( *; *\\d+)*");
 }
