@@ -3850,6 +3850,139 @@ public class DatatoolDb
       }
    }
 
+   public void removeNullColumns()
+   {
+      if (getColumnCount() == 0) return;
+
+      boolean[] nullCols = new boolean[headers.size()];
+
+      for (int i = 0; i < nullCols.length; i++)
+      {
+         nullCols[i] = true;
+      }
+
+      for (int i = 0; i < data.size(); i++)
+      {
+         DatatoolRow row = data.get(i);
+
+         for (int j = 0; j < nullCols.length; j++)
+         {
+            Datum datum = row.get(j);
+
+            if (nullCols[j] && !datum.isNull())
+            {
+               nullCols[j] = false;
+
+               boolean found = false;
+
+               for (int k = nullCols.length-1; k >= 0; k--)
+               {
+                  if (nullCols[k])
+                  {
+                     found = true;
+                     break;
+                  }
+               }
+
+               if (!found) return;
+            }
+         }
+      }
+
+      for (int i = nullCols.length-1; i >= 0; i--)
+      {
+         if (nullCols[i])
+         {
+            headers.remove(i);
+         }
+      }
+
+      for (DatatoolRow row : data)
+      {
+         for (int i = nullCols.length-1; i >= 0; i--)
+         {
+            if (nullCols[i])
+            {
+               row.remove(i);
+            }
+         }
+      }
+   }
+
+   public void removeTrailingNullColumns()
+   {
+      if (getColumnCount() == 0) return;
+
+      boolean[] nullCols = new boolean[headers.size()];
+
+      for (int i = 0; i < nullCols.length; i++)
+      {
+         nullCols[i] = true;
+      }
+
+      int cutoff = 0;
+
+      for (int i = 0; i < data.size(); i++)
+      {
+         DatatoolRow row = data.get(i);
+
+         for (int j = 0; j < nullCols.length; j++)
+         {
+            Datum datum = row.get(j);
+
+            if (nullCols[j] && !datum.isNull())
+            {
+               nullCols[j] = false;
+
+               if (j >= cutoff) cutoff = j+1;
+
+               boolean found = false;
+
+               for (int k = nullCols.length-1; k >= 0; k--)
+               {
+                  if (nullCols[k])
+                  {
+                     found = true;
+                     break;
+                  }
+               }
+
+               if (!found)
+               {
+                  return;
+               }
+            }
+         }
+      }
+
+      for (int i = nullCols.length-1; i >= cutoff; i--)
+      {
+         if (nullCols[i])
+         {
+            headers.remove(i);
+         }
+         else
+         {
+            break;
+         }
+      }
+
+      for (DatatoolRow row : data)
+      {
+         for (int i = nullCols.length-1; i >= cutoff; i--)
+         {
+            if (nullCols[i])
+            {
+               row.remove(i);
+            }
+            else
+            {
+               break;
+            }
+         }
+      }
+   }
+
    public DatatoolColumn removeColumn(int colIdx)
    {
       DatatoolHeader header = headers.remove(colIdx);
