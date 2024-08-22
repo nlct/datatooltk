@@ -475,7 +475,8 @@ public class DatatoolTk
       StringBuilder builder = new StringBuilder();
 
       builder.append(
-        getLabelWithValues("about.version", APP_NAME, APP_VERSION, APP_DATE)
+        getLabelWithValues("about.version", getApplicationName(),
+          APP_VERSION, APP_DATE)
       );
 
       builder.append(nl);
@@ -720,18 +721,6 @@ public class DatatoolTk
       }
 
       return helpLib.getMessageIfExists(propLabel);
-   }
-
-   @Deprecated
-   public char getMnemonic(String label)
-   {
-      return getMnemonic(null, label);
-   }
-
-   @Deprecated
-   public char getMnemonic(String parent, String label)
-   {
-      return (char)getMnemonicInt(parent, label);
    }
 
    public int getMnemonicInt(String label)

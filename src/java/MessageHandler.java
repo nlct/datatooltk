@@ -762,18 +762,6 @@ public class MessageHandler extends ErrorManager
       return datatooltk.getToolTip(parent, label);
    }
 
-   @Deprecated
-   public char getMnemonic(String label)
-   {
-      return datatooltk.getMnemonic(label);
-   }
-
-   @Deprecated
-   public char getMnemonic(String parent, String label)
-   {
-      return datatooltk.getMnemonic(parent, label);
-   }
-
    public int getMnemonicInt(String label)
    {
       return datatooltk.getMnemonicInt(label);
