@@ -97,7 +97,8 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
    {
       undoManager = new UndoManager();
 
-      table = new JTable(new DatatoolDbTableModel(db, this));
+      dbTableModel = new DatatoolDbTableModel(db, this);
+      table = new JTable(dbTableModel);
 
       table.setTableHeader(new DatatoolTableHeader(table.getColumnModel(),
          this));
@@ -672,6 +673,92 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
       {
          JOptionPane.showMessageDialog(this,
             messageHandler.getLabel("find.not_found"));
+      }
+   }
+
+   public void emptyToNull()
+   {
+      int numRows = db.getRowCount();
+      int numCols = db.getColumnCount();
+      int numChanged = 0;
+
+      startCompoundEdit(
+         messageHandler.getLabel("undo.empty_to_null"));
+
+      for (int rowIdx = 0; rowIdx < numRows; rowIdx++)
+      {
+         for (int colIdx = 0; colIdx < numCols; colIdx++)
+         {
+            Datum datum = db.getDatum(rowIdx, colIdx);
+
+            if (datum.getText().isEmpty())
+            {
+               updateCell(rowIdx, colIdx, DatatoolDb.NULL_VALUE);
+               numChanged++;
+            }
+         }
+      }
+
+      if (numChanged > 0)
+      {
+         commitCompoundEdit();
+
+         JOptionPane.showMessageDialog(this,
+            messageHandler.getLabelWithValues("message.cells_updated",
+              numChanged)
+         );
+
+         dbTableModel.fireTableDataChanged();
+      }
+      else
+      {
+         cancelCompoundEdit();
+
+         JOptionPane.showMessageDialog(this,
+           messageHandler.getLabel("message.no_empty_cells_found"));
+      }
+   }
+
+   public void nullToEmpty()
+   {
+      int numRows = db.getRowCount();
+      int numCols = db.getColumnCount();
+      int numChanged = 0;
+
+      startCompoundEdit(
+         messageHandler.getLabel("undo.empty_to_null"));
+
+      for (int rowIdx = 0; rowIdx < numRows; rowIdx++)
+      {
+         for (int colIdx = 0; colIdx < numCols; colIdx++)
+         {
+            Datum datum = db.getDatum(rowIdx, colIdx);
+
+            if (datum.isNull())
+            {
+               updateCell(rowIdx, colIdx, "");
+               numChanged++;
+            }
+         }
+      }
+
+      if (numChanged > 0)
+      {
+         commitCompoundEdit();
+
+         JOptionPane.showMessageDialog(this,
+            messageHandler.getLabelWithValues("message.cells_updated",
+              numChanged)
+         );
+
+         dbTableModel.fireTableDataChanged();
+      }
+      else
+      {
+         cancelCompoundEdit();
+
+         JOptionPane.showMessageDialog(this,
+           messageHandler.getLabel("message.no_null_cells_found"));
       }
    }
 
@@ -1438,6 +1525,7 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
    protected DatatoolGUI gui;
 
    protected JTable table;
+   protected DatatoolDbTableModel dbTableModel;
 
    private JScrollPane sp;
 

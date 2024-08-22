@@ -307,6 +307,16 @@ public class DatatoolGUI extends JFrame
       editM.add(setToNullItem);
       setToNullItem.setEnabled(false);
 
+      setEmptyToNullItem = resources.createJMenuItem(
+         "edit", "empty_to_null", this, null, toolBar);
+      editM.add(setEmptyToNullItem);
+      setEmptyToNullItem.setEnabled(false);
+
+      setNullToEmptyItem = resources.createJMenuItem(
+         "edit", "null_to_empty", this, null, toolBar);
+      editM.add(setNullToEmptyItem);
+      setNullToEmptyItem.setEnabled(false);
+
       JMenu colM = resources.createJMenu("edit.column");
       editM.add(colM);
 
@@ -967,6 +977,26 @@ public class DatatoolGUI extends JFrame
             }
 
             dbPanel.commitCompoundEdit();
+         }
+      }
+      else if (action.equals("empty_to_null"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            DatatoolDbPanel dbPanel = ((DatatoolDbPanel)tab);
+            dbPanel.emptyToNull();
+         }
+      }
+      else if (action.equals("null_to_empty"))
+      {
+         Component tab = tabbedPane.getSelectedComponent();
+
+         if (tab != null && (tab instanceof DatatoolDbPanel))
+         {
+            DatatoolDbPanel dbPanel = ((DatatoolDbPanel)tab);
+            dbPanel.nullToEmpty();
          }
       }
       else if (action.equals("edit_header"))
@@ -1674,6 +1704,8 @@ public class DatatoolGUI extends JFrame
       addColumnBeforeItem.setEnabled(enable);
       addColumnAfterItem.setEnabled(enable);
       editDbNameItem.setEnabled(enable);
+      setEmptyToNullItem.setEnabled(enable);
+      setNullToEmptyItem.setEnabled(enable);
       toolsM.setEnabled(enable);
 
       enable = (enable && panel.getColumnCount() > 0);
@@ -1782,7 +1814,8 @@ public class DatatoolGUI extends JFrame
       removeRowItem, clearRecentItem, sortItem, shuffleItem,
       findCellItem, findNextItem, replaceItem,
       setToNullItem, deselectItem, setColToNullItem, setRowToNullItem,
-      saveItem, saveAsItem, closeItem;
+      saveItem, saveAsItem, closeItem,
+      setNullToEmptyItem, setEmptyToNullItem;
 
    private ActionListener recentFilesListener;
 

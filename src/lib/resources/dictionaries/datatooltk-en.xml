@@ -54,6 +54,14 @@
 <entry key="menu.edit.cell_to_null.mnemonic">S</entry>
 <entry key="menu.edit.cell_to_null.tooltip">Replace cell contents with null value</entry>
 
+<entry key="menu.edit.empty_to_null">Empty to Null</entry>
+<entry key="menu.edit.empty_to_null.mnemonic">P</entry>
+<entry key="menu.edit.empty_to_null.tooltip">Replace all empty cells with null value</entry>
+
+<entry key="menu.edit.null_to_empty">Null to Empty</entry>
+<entry key="menu.edit.null_to_empty.mnemonic">Y</entry>
+<entry key="menu.edit.null_to_empty.tooltip">Replace all null cells with empty value</entry>
+
 <entry key="menu.edit.column">Column</entry>
 <entry key="menu.edit.column.mnemonic">L</entry>
 
@@ -1024,6 +1032,7 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="undo.move_row">Move Row</entry>
 <entry key="undo.nullify_row">Nullify Row</entry>
 <entry key="undo.nullify_column">Nullify Column</entry>
+<entry key="undo.empty_to_null">Empty to Null</entry>
 <entry key="undo.plugin_action">Plugin ''{0}'' action</entry>
 <entry key="undo.remove_column">Remove Column</entry>
 <entry key="undo.remove_row">Remove Row</entry>
@@ -1039,6 +1048,8 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="message.confirm_overwrite">Confirm Overwrite</entry>
 <entry key="message.discard_edit_query">Discard the edits you have just made?</entry>
 <entry key="message.input_database_name">Database Name (as used in \DTLnewdb):</entry>
+<entry key="message.no_empty_cells_found">No empty cells found</entry>
+<entry key="message.no_null_cells_found">No null cells found</entry>
 <entry key="message.overwrite_query">Overwrite {0}?</entry>
 <entry key="message.unsaved_data">Unsaved Data</entry>
 <entry key="message.unsaved_data_query">''{0}'' has been modified. Do you want to save it?</entry>
