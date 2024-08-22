@@ -225,5 +225,20 @@ public class DatatoolRow extends Vector<Datum>
       return true;
    }
 
+   public void trimTrailingNullOrEmpty()
+   {
+      for (int i = size()-1; i >= 0; i--)
+      {
+         if (get(i).isNullOrEmpty())
+         {
+            remove(i);
+         }
+         else
+         {
+            break;
+         }
+      }
+   }
+
    private DatatoolDb db;
 }

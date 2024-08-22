@@ -4351,11 +4351,23 @@ public class DatatoolDb
 
    public void addColumn(DatatoolHeader header)
    {
+      addColumn(header, false);
+   }
+
+   public void addColumn(DatatoolHeader header, boolean insertNull)
+   {
       headers.add(header);
 
       for (DatatoolRow row : data)
       {
-         row.add(new Datum(getSettings()));
+         if (insertNull)
+         {
+            row.add(Datum.createNull(getSettings()));
+         }
+         else
+         {
+            row.add(new Datum(getSettings()));
+         }
       }
    }
 

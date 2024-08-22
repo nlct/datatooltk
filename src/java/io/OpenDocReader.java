@@ -310,54 +310,15 @@ public class OpenDocReader extends XMLReaderAdapter
 
                   db.setName(dblabel);
 
+                  currentRow = new DatatoolRow(db, columnCount);
+
                   if (importSettings.hasHeaderRow())
                   {
                      inHeader = true;
                   }
                   else
                   {
-                     int n = Math.max(importSettings.getColumnKeyCount(),
-                                      importSettings.getColumnHeaderCount());
-
-                     if (n > 0)
-                     {
-                        columnCount = n;
-                     }
-
-                     for (int i = 1; i <= columnCount; i++)
-                     {
-                        String key = importSettings.getColumnKey(i);
-                        String originalKey = key;
-
-                        if (key != null)
-                        {
-                           Matcher m = DatatoolDb.INVALID_LABEL_CONTENT.matcher(key);
-
-                           key = m.replaceAll("");
-
-                           if (importSettings.isTrimLabelsOn())
-                           {
-                              key = key.trim();
-                           }
-                        }
-
-                        if (key == null || key.isEmpty())
-                        {
-                           key = messageSystem.getMessageWithFallback(
-                            "default.field", "Field{0,number}", i);
-                        }
-
-                        String title = importSettings.getColumnHeader(i);
-
-                        if (title == null || title.isEmpty())
-                        {
-                           title = originalKey;
-                        }
-
-                        db.addColumn(new DatatoolHeader(db, key, title));
-                     }
-
-                     currentRow = new DatatoolRow(db, columnCount);
+                     setHeaderFromRow();
                   }
                }
             }
@@ -549,7 +510,12 @@ public class OpenDocReader extends XMLReaderAdapter
                   break;
                   case EMPTY_ROW:
 
-                    if (tableRowRepetitions == 1)
+                    if (inHeader)
+                    {
+                       setHeaderFromRow();
+                       inHeader = false;
+                    }
+                    else if (tableRowRepetitions == 1)
                     {
                        for (int i = 0; i < db.getColumnCount(); i++)
                        {
@@ -564,9 +530,14 @@ public class OpenDocReader extends XMLReaderAdapter
                      throw new ParsingTerminatedException();
                }
             }
+            else if (inHeader)
+            {
+               setHeaderFromRow();
+               inHeader = false;
+            }
             else
             {
-               db.appendRow(currentRow);
+               appendRow();
             }
 
             currentRow = null;
@@ -625,88 +596,17 @@ public class OpenDocReader extends XMLReaderAdapter
                }
             }
 
-            if (inHeader)
+            currentRow.add(currentCell);
+
+            for (int i = columnIdx+1, 
+                 n = columnIdx+tableCellRepetition;
+                 i < n && i <= columnCount; i++)
             {
-               int maxProvided = Math.max(importSettings.getColumnKeyCount(),
-                                 importSettings.getColumnHeaderCount());
+               currentCell = new Datum(currentCell.getDatumType(),
+                 currentCell.getText(), currentCell.getCurrencySymbol(),
+                 currentCell.getNumber(), importSettings.getSettings());
 
-               if (columnIdx == columnCount && columnCount > maxProvided
-                   && (text == null || text.isEmpty()))
-               {
-                  columnCount--;
-               }
-               else
-               {
-                  if (columnCount <= db.getColumnCount())
-                  {
-                     columnCount = db.getColumnCount() + 1;
-                  }
-
-                  for (int i = columnIdx, 
-                    n = columnIdx+tableCellRepetition;
-                    i < n && i <= columnCount; i++)
-                  {
-                     String key = importSettings.getColumnKey(i);
-
-                     if (key == null || key.isEmpty())
-                     {
-                        if (importSettings.isAutoKeysOn()
-                            || text == null || text.isEmpty()
-                            || db.getColumnIndex(text) != -1)
-                        {
-                           key = messageSystem.getMessageWithFallback(
-                            "default.field", "Field{0,number}", i);
-                        }
-                        else
-                        {
-                           key = text;
-                        }
-                     }
-
-                     Matcher m = DatatoolDb.INVALID_LABEL_CONTENT.matcher(key);
-
-                     key = m.replaceAll("");
-
-                     if (importSettings.isTrimLabelsOn())
-                     {
-                        key = key.trim();
-                     }
-
-                     if (key.isEmpty())
-                     {
-                        key = messageSystem.getMessageWithFallback(
-                         "default.field", "Field{0,number}", i);
-                     }
-
-                     String title = importSettings.getColumnHeader(i);
-
-                     if (title == null || title.isEmpty())
-                     {
-                        title = text;
-                     }
-
-                     db.addColumn(new DatatoolHeader(db, key, title));
-                  }
-               }
-            }
-            else
-            {
-               boolean repeated = false;
-
-               for (int i = columnIdx, 
-                    n = columnIdx+tableCellRepetition;
-                    i < n && i <= columnCount; i++)
-               {
-                  if (repeated)
-                  {
-                     currentCell = new Datum(currentCell.getDatumType(),
-                      currentCell.getText(), currentCell.getCurrencySymbol(),
-                      currentCell.getNumber(), importSettings.getSettings());
-                  }
-
-                  currentRow.add(currentCell);
-                  repeated = true;
-               }
+               currentRow.add(currentCell);
             }
 
             currentCell = null;
@@ -729,6 +629,102 @@ public class OpenDocReader extends XMLReaderAdapter
                currentCell.setText(text);
             }
          }
+      }
+   }
+
+   protected void appendRow()
+   {
+      if (currentRow.size() > columnCount)
+      {
+         currentRow.trimTrailingNullOrEmpty();
+
+         setHeaderFromRow(currentRow.size(), columnCount);
+      }
+
+      db.appendRow(currentRow);
+      columnCount = db.getColumnCount();
+   }
+
+   protected void setHeaderFromRow()
+   {
+      currentRow.trimTrailingNullOrEmpty();
+
+      int n = Math.max(importSettings.getColumnKeyCount(),
+                       importSettings.getColumnHeaderCount());
+
+      columnCount = Math.max(currentRow.size(), n);
+
+      setHeaderFromRow(0, columnCount);
+   }
+
+   protected void setHeaderFromRow(int startIdxIncl, int endIdxExcl)
+   {
+      for (int i = startIdxIncl; i < endIdxExcl; i++)
+      {
+         String value = null;
+         String key = null;
+         String title = importSettings.getColumnHeader(i);
+
+         if (i < currentRow.size())
+         {
+            Datum datum = currentRow.get(i);
+
+            if (!datum.isNullOrEmpty())
+            {
+               value = datum.getText();
+            }
+         }
+
+         if (importSettings.isAutoKeysOn()
+          || value == null || value.isEmpty())
+         {
+            key = messageSystem.getMessageWithFallback(
+               "default.field", "Field{0,number}", i);
+         }
+         else
+         {
+            key = importSettings.getColumnKey(i);
+
+            if (key == null || key.isEmpty())
+            {
+               key = value;
+            }
+         }
+
+         if (title == null || title.isEmpty())
+         {
+            if (value == null || value.isEmpty())
+            {
+               title = key;
+            }
+            else
+            {
+               title = value;
+            }
+         }
+
+         Matcher m = DatatoolDb.INVALID_LABEL_CONTENT.matcher(key);
+
+         key = m.replaceAll("");
+
+         if (importSettings.isTrimLabelsOn())
+         {
+            key = key.trim();
+         }
+
+         if (importSettings.isTrimElementOn())
+         {
+            title = title.trim();
+         }
+
+         if (key.isEmpty())
+         {
+            key = messageSystem.getMessageWithFallback(
+               "default.field", "Field{0,number}", i);
+         }
+
+         db.addColumn(new DatatoolHeader(db, key, title),
+           importSettings.isImportEmptyToNullOn());
       }
    }
 
