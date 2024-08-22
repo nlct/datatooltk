@@ -457,6 +457,11 @@ public class DatatoolTk
         "http://www.dickimaw-books.com/software/datatooltk/"));
    }
 
+   public String getApplicationName()
+   {
+      return APP_NAME;
+   }
+
    public String getAppInfo()
    {
       return getAppInfo(false);
