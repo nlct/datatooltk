@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,6 @@ import java.util.regex.*;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 
 import com.dickimawbooks.datatooltk.io.*;
-import com.dickimawbooks.datatooltk.gui.*;
 
 /**
  * Class representing header information.
