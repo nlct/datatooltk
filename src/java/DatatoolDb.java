@@ -2802,7 +2802,7 @@ public class DatatoolDb
          out.format("%% DBTEX 2.0 %s%n", charset.name());
          out.print("% ");
          out.println(messageHandler.getLabelWithValues("default.texheader",
-           DatatoolTk.APP_NAME, new Date()));
+           messageHandler.getApplicationName(), new Date()));
          out.println("\\DTLifdbexists{"+name+"}%");
          out.println("{\\PackageError{datatool}{Database `"+name+"'");
          out.println("already exists}{}%");
@@ -2995,7 +2995,7 @@ public class DatatoolDb
          out.println(charset.name());
          out.print("% ");
          out.println(messageHandler.getLabelWithValues("default.texheader",
-           DatatoolTk.APP_NAME, new Date()));
+           messageHandler.getApplicationName(), new Date()));
 
          out.format("\\DTLdbProvideData{%s}%%%n", name);
          out.println("\\DTLreconstructdatabase");
@@ -3165,7 +3165,7 @@ public class DatatoolDb
          out.format("%% DTLTEX %s %s%n", version, charset.name());
          out.print("% ");
          out.println(messageHandler.getLabelWithValues("default.texheader",
-           DatatoolTk.APP_NAME, new Date()));
+           messageHandler.getApplicationName(), new Date()));
 
          name = getName();
 

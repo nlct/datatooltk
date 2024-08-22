@@ -100,7 +100,7 @@ public class DatatoolSettings extends Properties
       }
 
       helpLib = new TeXJavaHelpLib(messageHandler,
-       DatatoolTk.APP_NAME, RESOURCES_PATH,
+       datatooltk.getApplicationName(), RESOURCES_PATH,
        DICT_DIR, dictLocale, helpSetLocale,
        "texparserlib", RESOURCE_PREFIX);
 
@@ -3077,6 +3077,11 @@ public class DatatoolSettings extends Properties
       }
 
       return parserListener;
+   }
+
+   public String getApplicationName()
+   {
+      return getDatatoolTk().getApplicationName();
    }
 
    public DatatoolTk getDatatoolTk()

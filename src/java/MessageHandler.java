@@ -403,7 +403,7 @@ public class MessageHandler extends ErrorManager
       if (isBatchMode)
       {
          System.err.println(String.format("%s: %s", 
-           DatatoolTk.APP_NAME, message));
+           getApplicationName(), message));
       }
       else
       {
@@ -460,7 +460,7 @@ public class MessageHandler extends ErrorManager
       if (debugMode)
       {
          System.err.println(String.format("%s: %s", 
-           DatatoolTk.APP_NAME, message));
+           getApplicationName(), message));
 
          logMessage(message);
       }
@@ -472,7 +472,7 @@ public class MessageHandler extends ErrorManager
       if (debugMode)
       {
          System.err.println(String.format("%s: %s", 
-           DatatoolTk.APP_NAME, message));
+           getApplicationName(), message));
          e.printStackTrace();
 
          logMessage(message);
@@ -597,12 +597,12 @@ public class MessageHandler extends ErrorManager
          if (msg == null)
          {
             System.err.println(String.format("%s: %s", 
-              DatatoolTk.APP_NAME, getMessage(exception)));
+              getApplicationName(), getMessage(exception)));
          }
          else
          {
             System.err.println(String.format("%s: %s", 
-              DatatoolTk.APP_NAME, msg));
+              getApplicationName(), msg));
          }
 
          if (exception != null)

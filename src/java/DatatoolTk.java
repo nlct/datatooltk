@@ -267,20 +267,20 @@ public class DatatoolTk
       System.out.println();
       System.out.println(getLabel("syntax.title"));
       System.out.println();
-      System.out.println(APP_NAME+" --gui");
+      System.out.println(getApplicationName()+" --gui");
       System.out.println(getLabel("syntax.or"));
-      System.out.println(getLabelWithValues("syntax.opt_db", APP_NAME));
+      System.out.println(getLabelWithValues("syntax.opt_db", getApplicationName()));
       System.out.println(getLabel("syntax.or"));
-      System.out.println(getLabelWithValues("syntax.opt_csv", APP_NAME));
+      System.out.println(getLabelWithValues("syntax.opt_csv", getApplicationName()));
       System.out.println(getLabel("syntax.or"));
-      System.out.println(getLabelWithValues("syntax.opt_sql", APP_NAME));
+      System.out.println(getLabelWithValues("syntax.opt_sql", getApplicationName()));
       System.out.println();
 
       System.out.println(getLabel("syntax.general"));
       System.out.println(getLabelWithValues("syntax.gui", "--gui", "-g"));
       System.out.println(getLabelWithValues("syntax.batch", "--batch", "-b"));
       System.out.println(getLabelWithValues("syntax.in", 
-        "--in", "-i", APP_NAME));
+        "--in", "-i", getApplicationName()));
       System.out.println(getLabelWithValues("syntax.name", "--name"));
       System.out.println(getLabelWithValues("syntax.out", "--output", "-o"));
 
@@ -453,7 +453,7 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.bugreport", 
         "https://github.com/nlct/datatooltk/issues"));
       System.out.println(getLabelWithValues("syntax.homepage", 
-        APP_NAME,
+        getApplicationName(),
         "http://www.dickimaw-books.com/software/datatooltk/"));
    }
 
@@ -2410,7 +2410,8 @@ public class DatatoolTk
                 catch (IOException e)
                 {
                    JOptionPane.showMessageDialog(null, 
-                    String.format("%s: Fatal I/O error: %s", APP_NAME, e.getMessage()),
+                    String.format("%s: Fatal I/O error: %s",
+                      getApplicationName(), e.getMessage()),
                     "Error", JOptionPane.ERROR_MESSAGE);
                    e.printStackTrace();
                    exit(EXIT_IO);

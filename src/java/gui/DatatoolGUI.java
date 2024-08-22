@@ -62,12 +62,7 @@ public class DatatoolGUI extends JFrame
    public DatatoolGUI(DatatoolSettings settings, LoadSettings loadSettings)
     throws IOException
    {
-      super(DatatoolTk.APP_NAME);
-
-      if (settings == null)
-      {
-         throw new NullPointerException();
-      }
+      super(settings.getApplicationName());
 
       this.settings = settings;
       resources = new DatatoolGuiResources(this, settings.getMessageHandler());
@@ -430,7 +425,8 @@ public class DatatoolGUI extends JFrame
          "help", "about", "information", this, null, toolBar));
 
       aboutDialog = new MessageDialog(this,
-       getMessageHandler().getLabelWithValues("about.title", DatatoolTk.APP_NAME),
+       getMessageHandler().getLabelWithValues("about.title", 
+           getMessageHandler().getApplicationName()),
        true, helpLib, getMessageHandler().getDatatoolTk().getAppInfo(true));
 
       createLicenceDialog();
@@ -1665,13 +1661,14 @@ public class DatatoolGUI extends JFrame
    {
       if (panel == null)
       {
-         setTitle(DatatoolTk.APP_NAME);
+         setTitle(settings.getApplicationName());
       }
       else
       {
          File file = panel.getDatabase().getFile();
 
-         setTitle(String.format("%s - %s", DatatoolTk.APP_NAME, 
+         setTitle(String.format("%s - %s", 
+            settings.getApplicationName(), 
             file == null ? getDefaultUntitled() : file.getName()));
 
          tabbedPane.setToolTipTextAt(tabbedPane.indexOfComponent(panel), 

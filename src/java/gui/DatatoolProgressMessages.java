@@ -36,7 +36,7 @@ public class DatatoolProgressMessages extends JDialog
    public DatatoolProgressMessages(DatatoolGUI gui)
    {
       super(gui, gui.getMessageHandler().getLabelWithValues(
-        "progress.title", DatatoolTk.APP_NAME));
+        "progress.title", gui.getMessageHandler().getApplicationName()));
       this.gui = gui;
 
       setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
