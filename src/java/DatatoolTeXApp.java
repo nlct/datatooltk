@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2017-2024 Nicola L.C. Talbot
+    Copyright (C) 2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -18,17 +18,11 @@
 */
 package com.dickimawbooks.datatooltk;
 
-import java.util.logging.ErrorManager;
-import java.io.File;
 import java.nio.charset.Charset;
 
-import java.awt.Component;
-
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
-
-import com.dickimawbooks.texparserlib.*;
-import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
+import com.dickimawbooks.texparserlib.TeXAppAdapter;
+import com.dickimawbooks.texparserlib.TeXParser;
+import com.dickimawbooks.texparserlib.TeXSyntaxException;
 
 public class DatatoolTeXApp extends TeXAppAdapter 
 {
@@ -47,7 +41,7 @@ public class DatatoolTeXApp extends TeXAppAdapter
    @Override
    public String getApplicationName()
    {
-      return DatatoolTk.APP_NAME;
+      return messageHandler.getDatatoolTk().getApplicationName();
    }
 
    @Override
