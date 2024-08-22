@@ -11,3 +11,5 @@ test-*out.dbtex
 *.dvi
 *.toc
 .~lock.*
+datatool*.sty
+datatool*.def
