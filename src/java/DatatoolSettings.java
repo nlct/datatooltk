@@ -19,9 +19,9 @@
 package com.dickimawbooks.datatooltk;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.Path;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
@@ -41,8 +41,6 @@ import java.text.DecimalFormatSymbols;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-
-import org.xml.sax.SAXException;
 
 import com.dickimawbooks.texparserlib.TeXApp;
 import com.dickimawbooks.texparserlib.TeXSyntaxException;
@@ -79,9 +77,21 @@ public class DatatoolSettings extends Properties
    {
       super();
 
+      this.datatooltk = datatooltk;
       messageHandler = new MessageHandler(datatooltk);
       importSettings = new ImportSettings(this);
 
+      initLocalisation(dictionaryTag, helpsetTag);
+
+      recentFiles = new Vector<String>();
+      currencies = new Vector<String>();
+
+      setDefaults();
+   }
+
+   protected void initLocalisation(String dictionaryTag, String helpsetTag)
+     throws IOException
+   {
       setPropertiesPath();
 
       if (dictionaryTag != null)
@@ -107,11 +117,6 @@ public class DatatoolSettings extends Properties
       helpLib.setIconPath(ICON_DIR);
       helpLib.setSmallIconSuffix(DEFAULT_SMALL_ICON_SUFFIX);
       helpLib.setLargeIconSuffix(DEFAULT_LARGE_ICON_SUFFIX);
-
-      recentFiles = new Vector<String>();
-      currencies = new Vector<String>();
-
-      setDefaults();
    }
 
    private void initLangTags() throws IOException
@@ -124,7 +129,7 @@ public class DatatoolSettings extends Properties
 
          try
          {
-            in = Files.newBufferedReader(file.toPath());
+            in = createBufferedReader(file);
 
             String line = in.readLine();
 
@@ -286,7 +291,7 @@ public class DatatoolSettings extends Properties
 
          try
          {
-            in = Files.newBufferedReader(file.toPath());
+            in = createBufferedReader(file);
 
             String line;
 
@@ -362,7 +367,7 @@ public class DatatoolSettings extends Properties
 
          try
          {
-            in = Files.newBufferedReader(file.toPath());
+            in = createBufferedReader(file);
 
             recentFiles.clear();
 
@@ -402,7 +407,7 @@ public class DatatoolSettings extends Properties
 
          try
          {
-            in = Files.newBufferedReader(file.toPath());
+            in = createBufferedReader(file);
 
             currencies.clear();
 
@@ -514,7 +519,7 @@ public class DatatoolSettings extends Properties
 
       try
       {
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath()));
+         out = new PrintWriter(createBufferedWriter(file));
 
          for (Integer key : texMap.keySet())
          {
@@ -539,7 +544,7 @@ public class DatatoolSettings extends Properties
 
       try
       {
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath()));
+         out = new PrintWriter(createBufferedWriter(file.toPath()));
 
          for (String filename : recentFiles)
          {
@@ -564,7 +569,7 @@ public class DatatoolSettings extends Properties
 
       try
       {
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath()));
+         out = new PrintWriter(createBufferedWriter(file));
 
          for (String currency : currencies)
          {
@@ -589,7 +594,7 @@ public class DatatoolSettings extends Properties
 
       try
       {
-         out = new PrintWriter(Files.newBufferedWriter(file.toPath()));
+         out = new PrintWriter(createBufferedWriter(file));
 
          out.println(dictLocale.getTag());
          out.println(helpSetLocale.getTag());
@@ -2937,10 +2942,10 @@ public class DatatoolSettings extends Properties
    public void setDefaults()
    {
       importSettings.setDefaults();
-      setStartUp(STARTUP_HOME);
       setTeXMapping(false);
       setPerl("perl");
 
+      setStartUp(STARTUP_HOME);
       setFontName("Monospaced");
       setFontSize(12);
       setCellHeight(4);
@@ -3168,45 +3173,70 @@ public class DatatoolSettings extends Properties
       return importSettings;
    }
 
-   private MessageHandler messageHandler;
+   public BufferedReader createBufferedReader(File file)
+    throws IOException,SecurityException
+   {
+      return createBufferedReader(file.toPath());
+   }
 
-   private TeXJavaHelpLib helpLib;
+   public BufferedReader createBufferedReader(Path path)
+    throws IOException,SecurityException
+   {
+      return getTeXApp().createBufferedReader(path, StandardCharsets.UTF_8);
+   }
 
-   private ImportSettings importSettings;
+   public BufferedWriter createBufferedWriter(File file)
+    throws IOException,SecurityException
+   {
+      return createBufferedWriter(file.toPath());
+   }
+
+   public BufferedWriter createBufferedWriter(Path path)
+    throws IOException,SecurityException
+   {
+      return getTeXApp().createBufferedWriter(path, StandardCharsets.UTF_8);
+   }
+
+   protected DatatoolTk datatooltk;
+   protected MessageHandler messageHandler;
+
+   protected TeXJavaHelpLib helpLib;
+
+   protected ImportSettings importSettings;
 
    protected Vector<String> currencies;
 
-   private Vector<String> recentFiles;
+   protected Vector<String> recentFiles;
 
-   private HashMap<Integer,String> texMap;
+   protected HashMap<Integer,String> texMap;
 
-   private File propertiesPath = null;
+   protected File propertiesPath = null;
 
-   private static final String PROPERTIES_NAME = "datatooltk.prop";
+   protected static final String PROPERTIES_NAME = "datatooltk.prop";
 
-   private static final String TEX_MAP_NAME = "texmap.prop";
+   protected static final String TEX_MAP_NAME = "texmap.prop";
 
-   private static final String RECENT_NAME = "recentfiles";
+   protected static final String RECENT_NAME = "recentfiles";
 
-   private final String CURRENCY_FILE_NAME = "currencies";
+   protected final String CURRENCY_FILE_NAME = "currencies";
 
-   private final String LANGTAG_FILE_NAME = "languages";
+   protected final String LANGTAG_FILE_NAME = "languages";
 
-   private boolean upgrade=false;
+   protected boolean upgrade=false;
 
-   private int compatLevel = COMPAT_LATEST;
+   protected int compatLevel = COMPAT_LATEST;
 
-   private LoadSettings loadSettings;
+   protected LoadSettings loadSettings;
 
-   private boolean isNullFirst=true;
+   protected boolean isNullFirst=true;
 
-   private Collator sortCollator;
+   protected Collator sortCollator;
 
-   private DbTeX3DatumValue dbtex3DatumValue;
+   protected DbTeX3DatumValue dbtex3DatumValue;
 
-   private HelpSetLocale helpSetLocale, dictLocale;
+   protected HelpSetLocale helpSetLocale, dictLocale;
 
-   private DataToolTeXParserListener parserListener;
+   protected DataToolTeXParserListener parserListener;
 
    public static final int COMPAT_LATEST=0;
    public static final int COMPAT_1_6=1;
@@ -3247,6 +3277,6 @@ public class DatatoolSettings extends Properties
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;
 
-   private static final String DEFAULT_LARGE_ICON_SUFFIX = "-24";
-   private static final String DEFAULT_SMALL_ICON_SUFFIX = "-16";
+   public static final String DEFAULT_LARGE_ICON_SUFFIX = "-24";
+   public static final String DEFAULT_SMALL_ICON_SUFFIX = "-16";
 }
