@@ -25,9 +25,9 @@ import  com.dickimawbooks.datatooltk.DatatoolSettings;
 
 public class DatumTypeComboBox extends JComboBox<String>
 {
-   public DatumTypeComboBox(DatatoolSettings settings)
+   public DatumTypeComboBox(DatatoolGuiResources resources)
    {
-      super(settings.getTypeLabels());
+      super(resources.getTypeLabels());
    }
 
    public void setSelectedType(DatumType type)

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -35,31 +35,31 @@ import com.dickimawbooks.datatooltk.MessageHandler;
 public class FileField extends Box
   implements ActionListener
 {
-   public FileField(MessageHandler messageHandler, Container parent, 
+   public FileField(DatatoolGuiResources guiResources, Container parent, 
        JFileChooser fileChooser)
    {
-      this(messageHandler, parent, null, fileChooser, JFileChooser.FILES_ONLY);
+      this(guiResources, parent, null, fileChooser, JFileChooser.FILES_ONLY);
    }
 
-   public FileField(MessageHandler messageHandler, Container parent,
+   public FileField(DatatoolGuiResources guiResources, Container parent,
       JFileChooser fileChooser, int mode)
    {
-      this(messageHandler, parent, null, fileChooser, mode);
+      this(guiResources, parent, null, fileChooser, mode);
    }
 
-   public FileField(MessageHandler messageHandler, Container parent, 
+   public FileField(DatatoolGuiResources guiResources, Container parent, 
       String fileName, JFileChooser fileChooser)
    {
-      this(messageHandler, parent, fileName, fileChooser, JFileChooser.FILES_ONLY);
+      this(guiResources, parent, fileName, fileChooser, JFileChooser.FILES_ONLY);
    }
 
-   public FileField(MessageHandler messageHandler, Container parent, 
+   public FileField(DatatoolGuiResources guiResources, Container parent, 
       String fileName, JFileChooser fileChooser, int mode)
    {
-      this(messageHandler, parent, fileName, fileChooser, mode, null);
+      this(guiResources, parent, fileName, fileChooser, mode, null);
    }
 
-   public FileField(MessageHandler messageHandler, Container parent, 
+   public FileField(DatatoolGuiResources guiResources, Container parent, 
       String fileName, JFileChooser fileChooser, int mode,
       String labelTag)
    {
@@ -68,9 +68,9 @@ public class FileField extends Box
       this.fileChooser = fileChooser;
       this.parent = parent;
       this.mode = mode;
-      this.messageHandler = messageHandler;
+      this.guiResources = guiResources;
 
-      TeXJavaHelpLib helpLib = messageHandler.getHelpLib();
+      TeXJavaHelpLib helpLib = guiResources.getHelpLib();
 
       add(Box.createVerticalGlue());
 
@@ -152,10 +152,10 @@ public class FileField extends Box
          }
 
          fileChooser.setApproveButtonMnemonic(
-            messageHandler.getMnemonicInt("button.select"));
+            guiResources.getMnemonicInt("button.select"));
 
          if (fileChooser.showDialog(parent,
-            messageHandler.getLabel("button.select"))
+            guiResources.getMessage("button.select"))
             == JFileChooser.APPROVE_OPTION)
          {
             oldFile = textField.getText();
@@ -266,7 +266,7 @@ public class FileField extends Box
 
    private int mode;
 
-   private MessageHandler messageHandler;
+   private DatatoolGuiResources guiResources;
 
    private Vector<FileSelectionChangeListener> fileChangeListeners;
    private String oldFile="";

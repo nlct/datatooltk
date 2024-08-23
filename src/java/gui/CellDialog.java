@@ -196,7 +196,7 @@ public class CellDialog extends JDialog
       parentLabel = "editormenu."+parentLabel; 
 
       return gui.getResources().createJMenuItem(parentLabel, action, iconPrefix,
-        this, gui.getMessageHandler().getKeyStroke(parentLabel, action), toolBar);
+        this, gui.getResources().getKeyStroke(parentLabel, action), toolBar);
    }
 
    protected JComponent createDatumComponent()
@@ -206,7 +206,7 @@ public class CellDialog extends JDialog
       JComponent datumPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 
       typeBoxLabel = resources.createJLabel("celledit.type", typeBox);
-      typeBox = new DatumTypeComboBox(gui.getSettings());
+      typeBox = new DatumTypeComboBox(resources);
       typeBox.addItemListener(this);
       datumPanel.add(typeBoxLabel);
       datumPanel.add(typeBox);

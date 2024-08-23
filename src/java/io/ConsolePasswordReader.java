@@ -66,7 +66,7 @@ public class ConsolePasswordReader implements DatatoolPasswordReader
 
             case NO_CONSOLE_GUI:
                GuiPasswordReader reader = new GuiPasswordReader(
-                  messageHandler, (Frame)null);
+                  messageHandler.getHelpLib(), (Frame)null);
                
                passwd = reader.requestPassword();
 

@@ -35,7 +35,7 @@ import com.dickimawbooks.datatooltk.DatatoolSettings;
  */
 public class DatumCellRenderer implements TableCellRenderer
 {
-   private DatatoolSettings settings;
+   private DatatoolGuiResources resources;
 
    private JTextField typeField, currencyField, numField;
    private Component panel;
@@ -46,9 +46,9 @@ public class DatumCellRenderer implements TableCellRenderer
 
    private static final Color NULL_BG = Color.LIGHT_GRAY;
 
-   public DatumCellRenderer(DatatoolSettings settings, DatumType type)
+   public DatumCellRenderer(DatatoolGuiResources resources, DatumType type)
    {
-      this.settings = settings;
+      this.resources = resources;
       this.type = type;
 
       switch (type)
@@ -80,8 +80,6 @@ public class DatumCellRenderer implements TableCellRenderer
 
    protected JComponent createNullComp()
    {
-      DatatoolGuiResources resources = settings.getDatatoolGuiResources();
-
       JPanel nullComp = new JPanel();
       nullComp.setOpaque(true);
 
@@ -94,8 +92,6 @@ public class DatumCellRenderer implements TableCellRenderer
    {
       JComponent numComp = new JPanel(new BorderLayout());
       numComp.setOpaque(true);
-
-      DatatoolGuiResources resources = settings.getDatatoolGuiResources();
 
       datumInfoComponent = Box.createVerticalBox();
       datumInfoComponent.setOpaque(false);
@@ -117,7 +113,7 @@ public class DatumCellRenderer implements TableCellRenderer
       JLabel typeLabel = resources.createJLabel("celledit.type");
       rowComp.add(typeLabel);
       typeField = createField();
-      typeField.setText(settings.getTypeLabel(type));
+      typeField.setText(resources.getTypeLabel(type));
 
       rowComp.add(typeField);
 
@@ -142,7 +138,7 @@ public class DatumCellRenderer implements TableCellRenderer
 
       datumInfoComponent.add(Box.createVerticalGlue());
 
-      datumInfoComponent.setVisible(settings.isCellDatumVisible());
+      datumInfoComponent.setVisible(resources.isCellDatumVisible());
 
       return numComp;
    }
@@ -228,7 +224,7 @@ public class DatumCellRenderer implements TableCellRenderer
 
       if (typeField != null)
       {
-         typeField.setText(settings.getTypeLabel(valType));
+         typeField.setText(resources.getTypeLabel(valType));
       }
 
       if (currencyField != null)
@@ -254,7 +250,7 @@ public class DatumCellRenderer implements TableCellRenderer
             numField.setText(num.toString());
          }
 
-         datumInfoComponent.setVisible(settings.isCellDatumVisible());
+         datumInfoComponent.setVisible(resources.isCellDatumVisible());
       }
 
       return panel;

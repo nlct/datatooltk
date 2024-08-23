@@ -142,7 +142,7 @@ public class PropertiesDialog extends JDialog
 
       fileChooser = new JFileChooser();
 
-      customFileField = new FileField(messageHandler, startupComp, fileChooser,
+      customFileField = new FileField(resources, startupComp, fileChooser,
          JFileChooser.DIRECTORIES_ONLY);
 
       box.add(customFileField);
@@ -486,8 +486,8 @@ public class PropertiesDialog extends JDialog
 
       cellDimsPanel.add(resources.createJLabel("preferences.display.cellwidths"));
 
-      String[] typeLabels = settings.getTypeLabels();
-      int[] typeMnemonics = settings.getTypeMnemonics();
+      String[] typeLabels = resources.getTypeLabels();
+      int[] typeMnemonics = resources.getTypeMnemonics();
 
       cellWidthModels = new SpinnerNumberModel[typeLabels.length];
 
@@ -698,7 +698,6 @@ public class PropertiesDialog extends JDialog
    private JComponent createPluginsTab()
    {
       DatatoolGuiResources resources = gui.getResources();
-      MessageHandler messageHandler = gui.getMessageHandler();
 
       JComponent pluginsTab = addTab("plugins");
 
@@ -706,7 +705,7 @@ public class PropertiesDialog extends JDialog
       box.add(resources.createMessageArea("preferences.plugins.note"));
 
       box = createNewRow(pluginsTab);
-      perlFileField = new FileField(messageHandler, this, "perl", fileChooser);
+      perlFileField = new FileField(resources, this, "perl", fileChooser);
       box.add(createLabel("preferences.plugins.perl", perlFileField));
       box.add(perlFileField);
 
@@ -720,6 +719,8 @@ public class PropertiesDialog extends JDialog
 
    private JComponent addTab(JComponent tab, String label)
    {
+      DatatoolGuiResources resources = gui.getResources();
+
       int index = tabbedPane.getTabCount();
 
       JPanel panel = new JPanel();
@@ -727,10 +728,10 @@ public class PropertiesDialog extends JDialog
       panel.setBorder(BorderFactory.createEtchedBorder());
       panel.add(tab);
 
-      tabbedPane.addTab(getMessageHandler().getLabel("preferences", label), 
+      tabbedPane.addTab(resources.getLabel("preferences", label), 
          new JScrollPane(panel));
 
-      String tooltip = getMessageHandler().getToolTip("preferences", label);
+      String tooltip = resources.getToolTip("preferences", label);
 
       if (tooltip != null)
       {
@@ -738,7 +739,7 @@ public class PropertiesDialog extends JDialog
       }
 
       tabbedPane.setMnemonicAt(index,
-         getMessageHandler().getMnemonicInt("preferences", label));
+         resources.getMnemonicInt("preferences", label));
 
       return tab;
    }

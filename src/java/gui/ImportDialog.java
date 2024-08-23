@@ -83,7 +83,7 @@ public class ImportDialog extends JDialog
 
       getContentPane().add(new JScrollPane(settingsPanel), BorderLayout.CENTER);
 
-      fileField = new FileField(messageHandler, this, null, fileChooser,
+      fileField = new FileField(resources, this, null, fileChooser,
         JFileChooser.FILES_ONLY, tagPrefix+".file");
 
       fileField.addFileSelectionChangeListener(this);

@@ -38,7 +38,7 @@ public class HeaderDialog extends JDialog
 
       messageHandler = gui.getMessageHandler();
 
-      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
+      resources = gui.getResources();
 
       Box box = Box.createVerticalBox();
       getContentPane().add(box, BorderLayout.CENTER);
@@ -79,7 +79,7 @@ public class HeaderDialog extends JDialog
       p = new JPanel(new FlowLayout(FlowLayout.LEFT));
       box.add(p);
 
-      typeBox = new DatumTypeComboBox(getSettings());
+      typeBox = new DatumTypeComboBox(resources);
 
       labels[idx] = resources.createJLabel("header.column_type",
          typeBox);
@@ -160,9 +160,7 @@ public class HeaderDialog extends JDialog
    {
       DatumType type = typeBox.getSelectedType();
 
-      DatatoolSettings settings = getSettings();
-
-      String[] typeLabels = settings.getTypeLabels();
+      String[] typeLabels = resources.getTypeLabels();
 
       if (colIdx > -1 && type != DatumType.UNKNOWN
            && type != DatumType.STRING)
@@ -233,7 +231,7 @@ public class HeaderDialog extends JDialog
 
       String key = labelField.getText();
 
-      if (settings.isAutoTrimLabelsOn())
+      if (resources.getSettings().isAutoTrimLabelsOn())
       {// trim here, to help empty and non-unique checks
          key = key.trim();
       }
@@ -276,11 +274,6 @@ public class HeaderDialog extends JDialog
       return messageHandler;
    }
 
-   public DatatoolSettings getSettings()
-   {
-      return messageHandler.getSettings();
-   }
-
    private JTextField titleField, labelField;
 
    private DatumTypeComboBox typeBox;
@@ -290,6 +283,7 @@ public class HeaderDialog extends JDialog
    private DatatoolDb db;
 
    private MessageHandler messageHandler;
+   private DatatoolGuiResources resources;
 
    private boolean checkUnique;
 

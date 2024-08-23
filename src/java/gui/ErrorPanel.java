@@ -32,12 +32,11 @@ import com.dickimawbooks.datatooltk.MessageHandler;
 public class ErrorPanel extends JPanel
   implements ActionListener
 {
-   public ErrorPanel(MessageHandler messageHandler)
+   public ErrorPanel(DatatoolGuiResources resources)
    {
       super(new BorderLayout());
-      this.messageHandler = messageHandler;
-
-      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
+      this.resources = resources;
+      MessageHandler messageHandler = resources.getMessageHandler();
 
       messageArea = resources.createMessageArea();
       stackTraceArea = resources.createMessageArea();
@@ -58,14 +57,14 @@ public class ErrorPanel extends JPanel
        new JScrollPane(messageArea));
 
       tabbedPane.setMnemonicAt(tabbedPane.getTabCount()-1,
-         messageHandler.getMnemonicInt("error.message"));
+         resources.getMnemonicInt("error.message"));
 
       tabbedPane.addTab(messageHandler.getLabelWithAlt(
           "error.stacktrace", "Stack Trace"),
        new JScrollPane(stackTraceArea));
 
       tabbedPane.setMnemonicAt(tabbedPane.getTabCount()-1,
-         messageHandler.getMnemonicInt("error.stacktrace"));
+         resources.getMnemonicInt("error.stacktrace"));
 
       cardPanel.add(tabbedPane, "tabbedpane");
 
@@ -101,7 +100,7 @@ public class ErrorPanel extends JPanel
       {
          if (message == null)
          {
-            messageArea.setText(messageHandler.getMessage(exception));
+            messageArea.setText(resources.getMessageHandler().getMessage(exception));
          }
          else
          {
@@ -161,7 +160,7 @@ public class ErrorPanel extends JPanel
       }
       else if (action.equals("exit"))
       {
-         messageHandler.getDatatoolTk().exit(DatatoolTk.EXIT_USER_FORCED);
+         resources.getDatatoolTk().exit(DatatoolTk.EXIT_USER_FORCED);
       }
    }
 
@@ -176,5 +175,5 @@ public class ErrorPanel extends JPanel
 
    private JPanel cardPanel;
 
-   private MessageHandler messageHandler;
+   private DatatoolGuiResources resources;
 }

@@ -752,26 +752,6 @@ public class MessageHandler extends ErrorManager
        lineNumber, msg);
    }
 
-   public String getToolTip(String label)
-   {
-      return datatooltk.getToolTip(label);
-   }
-
-   public String getToolTip(String parent, String label)
-   {
-      return datatooltk.getToolTip(parent, label);
-   }
-
-   public int getMnemonicInt(String label)
-   {
-      return datatooltk.getMnemonicInt(label);
-   }
-
-   public int getMnemonicInt(String parent, String label)
-   {
-      return datatooltk.getMnemonicInt(parent, label);
-   }
-
    @Override
    public ImageIcon getSmallIcon(String base, String... extensions)
    {
@@ -794,27 +774,6 @@ public class MessageHandler extends ErrorManager
    public IconSet getLargeIconSet(String base, String... extensions)
    {
       return null;
-   }
-
-   public KeyStroke getKeyStroke(String parentLabel, String actionLabel)
-   {
-      String property;
-
-      if (parentLabel == null)
-      {
-         property = actionLabel;
-      }
-      else
-      {
-         property = parentLabel + "." + actionLabel;
-      }
-
-      return datatooltk.getKeyStroke(property);
-   }
-
-   public KeyStroke getKeyStroke(String property)
-   {
-      return datatooltk.getKeyStroke(property);
    }
 
    public DatatoolTk getDatatoolTk()

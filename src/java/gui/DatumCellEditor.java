@@ -52,7 +52,7 @@ public class DatumCellEditor extends DefaultCellEditor
       rowComp = createRow();
       midComp.add(rowComp);
 
-      typeBox = new DatumTypeComboBox(gui.getSettings());
+      typeBox = new DatumTypeComboBox(resources);
       typeBox.addItemListener(this);
 
       rowComp.add(resources.createJLabel("celledit.type", typeBox));

@@ -37,19 +37,20 @@ lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*
 lib/resources/helpsets/datatooltk-en/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
 	make -C doc en
 
-lib/datatooltk.jar	: java/Manifest.txt \
-			classes/com/dickimawbooks/datatooltk/DatatoolTk.class \
+lib/datatooltk.jar	: java/combined/Manifest.txt \
+			classes/com/dickimawbooks/datatooltk/combined/FullDatatoolTk.class \
 			lib/resources/helpsets/datatooltk-en/index.xml \
 			lib/resources/helpsets/datatooltk-en-GB/index.xml 
 	cp -u -r java/gui/icons classes/com/dickimawbooks/datatooltk/gui/
 	cd classes; \
-	jar cmf ../java/Manifest.txt ../lib/datatooltk.jar \
+	jar cmf ../java/combined/Manifest.txt ../lib/datatooltk.jar \
 	com/dickimawbooks/datatooltk/*.class \
 	com/dickimawbooks/datatooltk/*/*.class \
 	com/dickimawbooks/datatooltk/gui/icons/*.png
 
-classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/*.java java/*/*.java \
+classes/com/dickimawbooks/datatooltk/combined/FullDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
+	java/*.java java/gui/*.java \
+	java/io/*.java java/combined/*.java \
 	lib/texjavahelplib.jar lib/mysql-connector-java.jar\
 	lib/poi-$(POIVER).jar lib/poi-ooxml-$(POIVER).jar \
 	lib/poi-ooxml-full-$(POIVER).jar \
@@ -60,7 +61,8 @@ classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbook
 	cd java; \
 	javac $(target_version) -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar *.java */*.java
+	-cp ../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar \
+	*.java combined/*.java io/*.java gui/*.java
 
 classes/com/dickimawbooks/datatooltk	:
 	mkdir -p classes/com/dickimawbooks/datatooltk

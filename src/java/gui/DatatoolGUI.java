@@ -436,7 +436,7 @@ public class DatatoolGUI extends JFrame
          helpM.add(resources.createJMenuItem("help", "licence", this));
       }
 
-      settings.setPasswordReader(new GuiPasswordReader(messageHandler, this));
+      settings.setPasswordReader(new GuiPasswordReader(helpLib, this));
 
       getContentPane().add(tabbedPane, BorderLayout.CENTER);
       getContentPane().add(toolBar, BorderLayout.PAGE_START);

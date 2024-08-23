@@ -163,78 +163,6 @@ public class DatatoolSettings extends Properties
       }
    }
 
-   private void initLabels()
-   {
-      TYPE_LABELS = new String[] 
-      {
-         messageHandler.getLabel("header.type.unset"),
-         messageHandler.getLabel("header.type.string"),
-         messageHandler.getLabel("header.type.int"),
-         messageHandler.getLabel("header.type.real"),
-         messageHandler.getLabel("header.type.currency")
-      };
-
-      TYPE_MNEMONICS = new int[] 
-      {
-         messageHandler.getMnemonicInt("header.type.unset"),
-         messageHandler.getMnemonicInt("header.type.string"),
-         messageHandler.getMnemonicInt("header.type.int"),
-         messageHandler.getMnemonicInt("header.type.real"),
-         messageHandler.getMnemonicInt("header.type.currency")
-      };
-   }
-
-   public String getTypeLabel(DatumType type)
-   {
-      if (TYPE_LABELS == null)
-      {
-         initLabels();
-      }
-
-      return TYPE_LABELS[type.getValue()+1];
-   }
-
-   @Deprecated
-   public String getTypeLabel(int type)
-   {
-      if (TYPE_LABELS == null)
-      {
-         initLabels();
-      }
-
-      return TYPE_LABELS[type];
-   }
-
-   public String[] getTypeLabels()
-   {
-      if (TYPE_LABELS == null)
-      {
-         initLabels();
-      }
-
-      return TYPE_LABELS;
-   }
-
-   public int getTypeMnemonic(DatumType type)
-   {
-      if (TYPE_MNEMONICS == null)
-      {
-         initLabels();
-      }
-
-      return TYPE_MNEMONICS[type.getValue()+1];
-   }
-
-   public int[] getTypeMnemonics()
-   {
-      if (TYPE_MNEMONICS == null)
-      {
-         initLabels();
-      }
-
-      return TYPE_MNEMONICS;
-   }
-
    public static String getApplicationIconPath()
    {
       return RESOURCES_PATH + "/icons/datatooltk-logosmall.png";
@@ -3318,9 +3246,6 @@ public class DatatoolSettings extends Properties
 
    public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
      TYPE_REAL=2, TYPE_CURRENCY=3;
-
-   private static String[] TYPE_LABELS = null;
-   private static int[] TYPE_MNEMONICS = null;
 
    private static final String DEFAULT_LARGE_ICON_SUFFIX = "-24";
    private static final String DEFAULT_SMALL_ICON_SUFFIX = "-16";

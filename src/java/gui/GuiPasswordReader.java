@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -18,51 +18,46 @@
 */
 package com.dickimawbooks.datatooltk.gui;
 
-import java.net.URL;
-
 import java.awt.Frame;
 import java.awt.Dialog;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
 
-import com.dickimawbooks.texjavahelplib.IconSet;
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
 /**
  * Dialog to prompt user for a password.
+ * Note that this may be used in batch mode, in which case
+ * there may be no DatatoolGuiResources object.
  */
 public class GuiPasswordReader extends JDialog 
   implements DatatoolPasswordReader,ActionListener
 {
-   public GuiPasswordReader(MessageHandler messageHandler, Frame parent)
+   public GuiPasswordReader(TeXJavaHelpLib helpLib, Frame parent)
    {
-      super(parent, messageHandler.getLabel("password.title"), true);
+      super(parent, helpLib.getMessage("password.title"), true);
 
-      init(messageHandler, parent);
+      init(helpLib, parent);
    }
 
-   public GuiPasswordReader(MessageHandler messageHandler, Dialog parent)
+   public GuiPasswordReader(TeXJavaHelpLib helpLib, Dialog parent)
    {
-      super(parent, messageHandler.getLabel("password.title"), true);
+      super(parent, helpLib.getMessage("password.title"), true);
 
-      init(messageHandler, parent);
+      init(helpLib, parent);
    }
 
-   private void init(MessageHandler messageHandler, Component parent)
+   private void init(TeXJavaHelpLib helpLib, Component parent)
    {
-      this.messageHandler = messageHandler;
-      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
+      this.helpLib = helpLib;
 
       JPanel panel = new JPanel();
 
@@ -70,8 +65,7 @@ public class GuiPasswordReader extends JDialog
 
       passwordField = new JPasswordField(10);
 
-      JLabel label = createJLabel(messageHandler, "password.prompt",
-         passwordField);
+      JLabel label = helpLib.createJLabel("password.prompt", passwordField);
 
       panel.add(label);
       panel.add(passwordField);
@@ -80,104 +74,16 @@ public class GuiPasswordReader extends JDialog
 
       getContentPane().add(buttonPanel, "South");
 
-      buttonPanel.add(createActionButton(messageHandler, "button", "okay",
-          KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0)));
+      JButton okayButton = helpLib.createOkayButton(this);
+      buttonPanel.add(okayButton);
+      getRootPane().setDefaultButton(okayButton);
 
-      buttonPanel.add(createActionButton(messageHandler, "button", "cancel",
-          KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)));
+      buttonPanel.add(helpLib.createCancelButton(this));
 
       pack();
 
       setLocationRelativeTo(parent);
    }
-
-   // GUI resources won't have been created if password dialog is
-   // required in batch mode, so provide local methods:
-   private JLabel createJLabel(MessageHandler messageHandler, String label,
-     JComponent comp)
-   {
-       JLabel jLabel = new JLabel(messageHandler.getLabel(label));
-
-       int mnemonic = messageHandler.getMnemonicInt(label);
-
-       if (mnemonic != -1)
-       {
-          jLabel.setDisplayedMnemonic(mnemonic);
-       }
-
-       String tooltip = messageHandler.getToolTip(label);
-
-       if (tooltip != null)
-       {
-          jLabel.setToolTipText(tooltip);
-       }
-
-       if (comp != null)
-       {
-          jLabel.setLabelFor(comp);
-       }
-
-       return jLabel;
-   }
-
-    public JButton createActionButton(MessageHandler messageHandler,
-      String parent, String label, KeyStroke keyStroke)
-    {
-       String tooltipText = messageHandler.getToolTip(parent, label);
-       
-       DatatoolGuiResources resources
-          = messageHandler.getDatatoolGuiResources();
-
-       IconSet iconSet = null;
-
-       if (resources != null)
-       {
-          iconSet = resources.getImageIconSet(label);
-       }
-
-       String buttonLabel = messageHandler.getLabel(parent, label);
-       int mnemonic = messageHandler.getMnemonicInt(parent, label);
-       String actionCommand = label;
-
-       JButton button;
-
-       if (iconSet == null)
-       {
-          button = new JButton(buttonLabel);
-       }
-       else
-       {
-          button = new JButton(buttonLabel, iconSet.getDefaultIcon());
-
-          iconSet.setButtonExtraIcons(button);
-       }
-
-       if (mnemonic != -1)
-       {
-          button.setMnemonic(mnemonic);
-       }
-
-       button.addActionListener(this);
-
-       if (actionCommand != null)
-       {
-          button.setActionCommand(actionCommand);
-
-          if (keyStroke != null)
-          {
-             button.registerKeyboardAction(this,
-               actionCommand, keyStroke,
-               JComponent.WHEN_IN_FOCUSED_WINDOW);
-          }
-       }
-
-       if (tooltipText != null)
-       {
-          button.setToolTipText(tooltipText);
-       }
-
-       return button;
-    }
 
    public void actionPerformed(ActionEvent evt)
    {
@@ -212,12 +118,12 @@ public class GuiPasswordReader extends JDialog
          return passwordField.getPassword();
       }
 
-      throw new UserCancelledException(messageHandler);
+      throw new UserCancelledException(helpLib.getMessageSystem());
    }
 
    private boolean success=false;
 
    private JPasswordField passwordField;
 
-   private MessageHandler messageHandler;
+   private TeXJavaHelpLib helpLib;
 }

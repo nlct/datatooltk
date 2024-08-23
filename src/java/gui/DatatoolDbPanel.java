@@ -52,8 +52,7 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
 
       this.db = db;
       this.gui = gui;
-      DatatoolSettings settings = gui.getSettings();
-      messageHandler = settings.getMessageHandler();
+      messageHandler = gui.getMessageHandler();
 
       setName(db.getName());
       buttonTabComponent = new ButtonTabComponent(this);
@@ -106,7 +105,8 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
       table.getTableHeader().setReorderingAllowed(false);
 
-      table.setDefaultRenderer(Object.class, new DatatoolCellRenderer(db));
+      table.setDefaultRenderer(Object.class,
+         new DatatoolCellRenderer(gui.getResources(), db));
 
       table.setDefaultEditor(Datum.class, new DatumCellEditor(gui));
 
@@ -1514,6 +1514,11 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
       return gui;
    }
 
+   public DatatoolGuiResources getResources()
+   {
+      return gui.getResources();
+   }
+
    protected DatatoolDb db;
 
    protected RowHeaderComponent rowHeaderComponent;
@@ -1812,11 +1817,9 @@ class DatatoolTableHeader extends JTableHeader
          return null;
       }
 
-      DatatoolSettings settings = panel.getSettings();
-
       return panel.getMessageHandler().getLabelWithValues(
-        "header.tooltip_format",
-        header.getKey(), settings.getTypeLabel(header.getDatumType()));
+        "header.tooltip_format", header.getKey(),
+        panel.getResources().getTypeLabel(header.getDatumType()));
    }
 
    private DatatoolDbPanel panel;
@@ -1923,14 +1926,14 @@ class DatatoolCellRenderer implements TableCellRenderer
    private DatumCellRenderer strCellRenderer, numCellRenderer,
     currCellRenderer, nullCellRenderer;
 
-   public DatatoolCellRenderer(DatatoolDb db)
+   public DatatoolCellRenderer(DatatoolGuiResources resources, DatatoolDb db)
    {
       super();
       this.db = db;
-      strCellRenderer = new DatumCellRenderer(db.getSettings(), DatumType.STRING);
-      numCellRenderer = new DatumCellRenderer(db.getSettings(), DatumType.DECIMAL);
-      currCellRenderer = new DatumCellRenderer(db.getSettings(), DatumType.CURRENCY);
-      nullCellRenderer = new DatumCellRenderer(db.getSettings(), DatumType.UNKNOWN);
+      strCellRenderer = new DatumCellRenderer(resources, DatumType.STRING);
+      numCellRenderer = new DatumCellRenderer(resources, DatumType.DECIMAL);
+      currCellRenderer = new DatumCellRenderer(resources, DatumType.CURRENCY);
+      nullCellRenderer = new DatumCellRenderer(resources, DatumType.UNKNOWN);
    }
 
    public Component getTableCellRendererComponent(JTable table,

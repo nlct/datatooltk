@@ -20,27 +20,14 @@ package com.dickimawbooks.datatooltk;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-
-import java.net.URISyntaxException;
-import java.net.URL;
 
 import java.util.Locale;
 import java.util.Locale.Builder;
-import java.util.Properties;
 import java.util.Vector;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import java.text.MessageFormat;
-
-import java.awt.Cursor;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.texparserlib.TeXParser;
 import com.dickimawbooks.texparserlib.TeXSyntaxException;
@@ -50,31 +37,26 @@ import com.dickimawbooks.texparserlib.html.HtmlTag;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.*;
-import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
-import com.dickimawbooks.datatooltk.gui.DatatoolGUI;
-import com.dickimawbooks.datatooltk.gui.DatatoolDbPanel;
 
 /**
- * Main application class.
+ * Abstract application class.
  */
-public class DatatoolTk
+public abstract class DatatoolTk
 {
-   public DatatoolTk() throws IOException
+   public DatatoolTk(boolean allowsGUI, boolean allowsSQL) throws IOException
    {
-      settings = new DatatoolSettings(this);
+      this.allowsGUI = allowsGUI;
+      this.allowsSQL = allowsSQL;
 
-      MessageHandler messageHandler = settings.getMessageHandler();
+      if (!allowsGUI)
+      {
+         noConsoleAction = ConsolePasswordReader.NO_CONSOLE_ERROR;
+      }
 
-      try
-      {
-         settings.loadProperties();
-      }
-      catch (IOException e)
-      {
-         messageHandler.error(messageHandler.getLabel("error.load_props_failed"), e,
-             MessageHandler.OPEN_FAILURE);
-      }
+      settings = createSettings();
    }
+
+   protected abstract DatatoolSettings createSettings() throws IOException;
 
    public MessageHandler getMessageHandler()
    {
@@ -96,16 +78,37 @@ public class DatatoolTk
 
       if (imp == null && inFile == null)
       {
-         getMessageHandler().error(getLabelWithValues("error.cli.no_data",
-           "--gui", "--help"), MessageHandler.SYNTAX_FAILURE);
+         if (allowsGUI)
+         {
+            getMessageHandler().error(getLabelWithValues("error.cli.no_data",
+              "--gui", "--help"), MessageHandler.SYNTAX_FAILURE);
+         }
+         else
+         {
+            getMessageHandler().error(
+              getLabelWithValues("error.cli.no_data_no_gui", "--help"),
+              MessageHandler.SYNTAX_FAILURE);
+         }
+
          System.exit(1);
       }
 
       if (!loadSettings.hasOutputAction())
       {
-         getMessageHandler().error(getLabelWithValues("error.cli.no_out",
-           "--output", "--dtl-write", "--gui", "--help"),
-           MessageHandler.SYNTAX_FAILURE);
+         if (allowsGUI)
+         {
+            getMessageHandler().error(getLabelWithValues("error.cli.no_out",
+              "--output", "--dtl-write", "--gui", "--help"),
+              MessageHandler.SYNTAX_FAILURE);
+         }
+         else
+         {
+            getMessageHandler().error(
+              getLabelWithValues("error.cli.no_out_no_gui",
+              "--output", "--dtl-write", "--help"),
+              MessageHandler.SYNTAX_FAILURE);
+         }
+
          System.exit(1);
       }
 
@@ -267,18 +270,34 @@ public class DatatoolTk
       System.out.println();
       System.out.println(getLabel("syntax.title"));
       System.out.println();
-      System.out.println(getApplicationName()+" --gui");
-      System.out.println(getLabel("syntax.or"));
+
+      if (allowsGUI)
+      {
+         System.out.println(getApplicationName()+" --gui");
+         System.out.println(getLabel("syntax.or"));
+      }
+
       System.out.println(getLabelWithValues("syntax.opt_db", getApplicationName()));
       System.out.println(getLabel("syntax.or"));
-      System.out.println(getLabelWithValues("syntax.opt_csv", getApplicationName()));
-      System.out.println(getLabel("syntax.or"));
-      System.out.println(getLabelWithValues("syntax.opt_sql", getApplicationName()));
+      System.out.println(getLabelWithValues("syntax.opt_import", getApplicationName()));
+
+      if (allowsSQL)
+      {
+         System.out.println(getLabel("syntax.or"));
+         System.out.println(getLabelWithValues("syntax.opt_sql",
+            getApplicationName()));
+      }
+
       System.out.println();
 
       System.out.println(getLabel("syntax.general"));
-      System.out.println(getLabelWithValues("syntax.gui", "--gui", "-g"));
-      System.out.println(getLabelWithValues("syntax.batch", "--batch", "-b"));
+
+      if (allowsGUI)
+      {
+         System.out.println(getLabelWithValues("syntax.gui", "--gui", "-g"));
+         System.out.println(getLabelWithValues("syntax.batch", "--batch", "-b"));
+      }
+
       System.out.println(getLabelWithValues("syntax.in", 
         "--in", "-i", getApplicationName()));
       System.out.println(getLabelWithValues("syntax.name", "--name"));
@@ -399,30 +418,34 @@ public class DatatoolTk
       System.out.println(getLabelWithValues("syntax.csv_encoding", 
         "--csv-encoding", "--csvencoding"));
       System.out.println();
-      System.out.println(getLabel("syntax.sql_opts"));
-      System.out.println(getLabelWithValues("syntax.sql", "--sql"));
-      System.out.println(getLabelWithValues("syntax.merge_sql", "--merge-sql"));
-      System.out.println(getLabelWithValues("syntax.sql_db", "--sqldb"));
-      System.out.println(getLabelWithValues("syntax.sql_prefix",
-        "--sqlprefix", settings.getSqlPrefix()));
-      System.out.println(getLabelWithValues("syntax.sql_port",
-        "--sqlport", ""+settings.getSqlPort()));
-      System.out.println(getLabelWithValues("syntax.sql_host",
-        "--sqlhost", settings.getSqlHost()));
-      System.out.println(getLabelWithValues("syntax.sql_user", "--sqluser"));
-      System.out.println(getLabelWithValues("syntax.sql_password",
-        "--sqlpassword"));
-      System.out.println(getLabelWithValues("syntax.sql_wipepassword",
-        "--wipepassword", 
-        (settings.isWipePasswordEnabled()?
-           " ("+getLabel("syntax.default")+")":"")));
-      System.out.println(getLabelWithValues("syntax.sql_nowipepassword",
-        "--nowipepassword", 
-        (settings.isWipePasswordEnabled()?
-           "":" ("+getLabel("syntax.default")+")")));
-      System.out.println(getLabelWithValues("syntax.sql_noconsole",
-        "--noconsole-action"));
-      System.out.println();
+
+      if (allowsSQL)
+      {
+         System.out.println(getLabel("syntax.sql_opts"));
+         System.out.println(getLabelWithValues("syntax.sql", "--sql"));
+         System.out.println(getLabelWithValues("syntax.merge_sql", "--merge-sql"));
+         System.out.println(getLabelWithValues("syntax.sql_db", "--sqldb"));
+         System.out.println(getLabelWithValues("syntax.sql_prefix",
+           "--sqlprefix", settings.getSqlPrefix()));
+         System.out.println(getLabelWithValues("syntax.sql_port",
+           "--sqlport", ""+settings.getSqlPort()));
+         System.out.println(getLabelWithValues("syntax.sql_host",
+           "--sqlhost", settings.getSqlHost()));
+         System.out.println(getLabelWithValues("syntax.sql_user", "--sqluser"));
+         System.out.println(getLabelWithValues("syntax.sql_password",
+           "--sqlpassword"));
+         System.out.println(getLabelWithValues("syntax.sql_wipepassword",
+           "--wipepassword", 
+           (settings.isWipePasswordEnabled()?
+              " ("+getLabel("syntax.default")+")":"")));
+         System.out.println(getLabelWithValues("syntax.sql_nowipepassword",
+           "--nowipepassword", 
+           (settings.isWipePasswordEnabled()?
+              "":" ("+getLabel("syntax.default")+")")));
+         System.out.println(getLabelWithValues("syntax.sql_noconsole",
+           "--noconsole-action"));
+         System.out.println();
+      }
 
       System.out.println(getLabelWithValues("syntax.import", "--import"));
       System.out.println(getLabelWithValues("syntax.merge_import", "--merge-import"));
@@ -695,81 +718,6 @@ public class DatatoolTk
       return helpLib.getMessage(propLabel);
    }
 
-   public String getToolTip(String label)
-   {
-      return getToolTip(null, label);
-   }
-
-   public String getToolTip(String parent, String label)
-   {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      if (helpLib == null)
-      {
-         return null;
-      }
-
-      String propLabel;
-
-      if (parent == null)
-      {
-         propLabel = String.format("%s.tooltip", label);
-      }
-      else
-      {
-         propLabel = String.format("%s.%s.tooltip", parent, label);
-      }
-
-      return helpLib.getMessageIfExists(propLabel);
-   }
-
-   public int getMnemonicInt(String label)
-   {
-      return getMnemonicInt(null, label);
-   }
-
-   public int getMnemonicInt(String parent, String label)
-   {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      if (helpLib == null)
-      {
-         return -1;
-      }
-
-      String propLabel;
-
-      if (parent == null)
-      {
-         propLabel = String.format("%s.mnemonic", label);
-      }
-      else
-      {
-         propLabel = String.format("%s.%s.mnemonic", parent, label);
-      }
-
-      String msg = helpLib.getMessageIfExists(propLabel);
-
-      if (msg == null || msg.isEmpty())
-      {
-         return -1;
-      }
-
-      return msg.codePointAt(0);
-   }
-
-   public KeyStroke getKeyStroke(String property)
-   {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      if (helpLib == null)
-      {
-         return null;
-      }
-
-      return helpLib.getKeyStroke(property);
-   }
-
    public String getLabelWithValues(String label, Object... values)
    {
       TeXJavaHelpLib helpLib = getHelpLib();
@@ -782,7 +730,7 @@ public class DatatoolTk
       return helpLib.getMessage(label, values);
    }
 
-   private void parseArgs(String[] args)
+   protected void parseArgs(String[] args)
       throws InvalidSyntaxException,IOException
    {
       loadSettings = new LoadSettings(settings);
@@ -1337,6 +1285,12 @@ public class DatatoolTk
          }
          else if (args[i].equals("--sql"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             if (loadSettings.getDataImport() != null)
             {
                throw new InvalidSyntaxException(
@@ -1362,6 +1316,12 @@ public class DatatoolTk
          }
          else if (args[i].equals("--sqldb"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             i++;
 
             if (i == args.length)
@@ -1375,6 +1335,12 @@ public class DatatoolTk
          }
          else if (args[i].equals("--sqlprefix"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             i++;
 
             if (i == args.length)
@@ -1388,6 +1354,12 @@ public class DatatoolTk
          }
          else if (args[i].equals("--sqlhost"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             i++;
 
             if (i == args.length)
@@ -1401,6 +1373,12 @@ public class DatatoolTk
          }
          else if (args[i].equals("--sqluser"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             i++;
 
             if (i == args.length)
@@ -1414,6 +1392,12 @@ public class DatatoolTk
          }
          else if (args[i].equals("--sqlpassword"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             i++;
 
             if (i == args.length)
@@ -1428,10 +1412,22 @@ public class DatatoolTk
          }
          else if (args[i].equals("--wipepassword"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             settings.setWipePassword(true);
          }
          else if (args[i].equals("--nowipepassword"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             settings.setWipePassword(false);
          }
          else if (args[i].equals("--noconsole-action"))
@@ -1466,6 +1462,12 @@ public class DatatoolTk
          }
          else if (args[i].equals("--sqlport"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             i++;
 
             if (i == args.length)
@@ -1488,6 +1490,12 @@ public class DatatoolTk
          }
          else if (args[i].equals("--gui") || args[i].equals("-g"))
          {
+            if (!allowsGUI)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             settings.setBatchMode(false);
          }
          else if (args[i].equals("--batch") || args[i].equals("-b"))
@@ -2154,6 +2162,12 @@ public class DatatoolTk
          }
          else if (args[i].equals("--merge-sql"))
          {
+            if (!allowsSQL)
+            {
+               throw new InvalidSyntaxException(
+                 getLabel("error.unsupported_option", args[i]));
+            }
+
             if (loadSettings.getMergeImportSource() != null
                 || loadSettings.getMergeFile() != null)
             {
@@ -2390,35 +2404,13 @@ public class DatatoolTk
       }
    }
 
-   private void process()
+   protected abstract void process();
+
+   public void runApplication(String[] args)
+      throws InvalidSyntaxException,IOException
    {
-      if (settings.isBatchMode())
-      {
-         doBatchProcess();
-         exit(0);
-      }
-      else
-      {
-         javax.swing.SwingUtilities.invokeLater(new Runnable()
-          {
-             public void run()
-             {
-                try
-                {
-                   new DatatoolGUI(settings, loadSettings);
-                }
-                catch (IOException e)
-                {
-                   JOptionPane.showMessageDialog(null, 
-                    String.format("%s: Fatal I/O error: %s",
-                      getApplicationName(), e.getMessage()),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-                   e.printStackTrace();
-                   exit(EXIT_IO);
-                }
-             }
-          });
-      } 
+      parseArgs(args);
+      process();
    }
 
    public static void exit(DatatoolTk datatooltk, int exitCode,
@@ -2450,33 +2442,6 @@ public class DatatoolTk
       System.exit(exitCode);
    }
 
-   public static void main(String[] args)
-   {
-      DatatoolTk datatooltk = null;
-
-      try
-      {
-         datatooltk = new DatatoolTk();
-         datatooltk.parseArgs(args);
-         datatooltk.process();
-      }
-      catch (InvalidSyntaxException e)
-      {
-         exit(datatooltk, EXIT_SYNTAX, e, "Fatal syntax error", null, 
-          MessageHandler.FORMAT_FAILURE, false);
-      }
-      catch (IOException e)
-      {
-         exit(datatooltk, EXIT_IO, e, "Fatal I/O error", null, 
-          MessageHandler.OPEN_FAILURE, true);
-      }
-      catch (Throwable e)
-      {
-         exit(datatooltk, EXIT_OTHER, e, "Fatal runtime error", null, 
-          MessageHandler.RUNTIME_FAILURE, true);
-      }
-   }
-
    public static final String APP_NAME = "datatooltk";
    public static final String APP_VERSION = "1.9.20240822";
    public static final String APP_DATE = "2024-08-22";
@@ -2484,13 +2449,15 @@ public class DatatoolTk
    public static final String COPYRIGHT_YEAR
     = START_COPYRIGHT_YEAR+"-"+APP_DATE.substring(0,4);
 
-   private LoadSettings loadSettings;
+   protected LoadSettings loadSettings;
 
    private int noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
 
    private String dict = null;
 
-   private DatatoolSettings settings;
+   protected DatatoolSettings settings;
+
+   protected boolean allowsGUI, allowsSQL;
 
    public static final int EXIT_SYNTAX=1, EXIT_IO=2, EXIT_USER_FORCED=3,
     EXIT_OTHER=255;

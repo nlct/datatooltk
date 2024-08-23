@@ -26,6 +26,8 @@ import java.net.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+
 import com.dickimawbooks.texjavahelplib.IconSet;
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
@@ -33,6 +35,7 @@ import com.dickimawbooks.texjavahelplib.TJHAbstractAction;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.MessageHandler;
+import com.dickimawbooks.datatooltk.DatatoolSettings;
 
 /**
  * Application GUI resources.
@@ -44,8 +47,60 @@ public class DatatoolGuiResources
        this.gui = gui;
        this.messageHandler = messageHandler;
        messageHandler.setDatatoolGuiResources(this);
-       errorPanel = new ErrorPanel(messageHandler);
+       errorPanel = new ErrorPanel(this);
+       initLabels();
     }
+
+   private void initLabels()
+   {
+      TYPE_LABELS = new String[] 
+      {
+         getMessage("header.type.unset"),
+         getMessage("header.type.string"),
+         getMessage("header.type.int"),
+         getMessage("header.type.real"),
+         getMessage("header.type.currency")
+      };
+
+      TYPE_MNEMONICS = new int[] 
+      {
+         getMnemonicInt("header.type.unset"),
+         getMnemonicInt("header.type.string"),
+         getMnemonicInt("header.type.int"),
+         getMnemonicInt("header.type.real"),
+         getMnemonicInt("header.type.currency")
+      };
+   }
+
+   public String getTypeLabel(DatumType type)
+   {
+      return TYPE_LABELS[type.getValue()+1];
+   }
+
+   public String[] getTypeLabels()
+   {
+      return TYPE_LABELS;
+   }
+
+   public int getTypeMnemonic(DatumType type)
+   {
+      return TYPE_MNEMONICS[type.getValue()+1];
+   }
+
+   public int[] getTypeMnemonics()
+   {
+      return TYPE_MNEMONICS;
+   }
+
+   public boolean isCellDatumVisible()
+   {
+      return gui.getSettings().isCellDatumVisible();
+   }
+
+   public DatatoolSettings getSettings()
+   {
+      return gui.getSettings();
+   }
 
     public void error(Component parent, String message)
     {
@@ -95,6 +150,86 @@ public class DatatoolGuiResources
           JOptionPane.WARNING_MESSAGE);
     }
 
+   public String getLabel(String parentLabel, String propLabel)
+   {
+      return messageHandler.getLabel(parentLabel, propLabel);
+   }
+
+   public String getMessage(String propLabel, Object... params)
+   {
+      return getHelpLib().getMessage(propLabel, params);
+   }
+
+   public String getToolTip(String label)
+   {
+      return getToolTip(null, label);
+   }
+
+   public String getToolTip(String parent, String label)
+   {
+      String propLabel;
+
+      if (parent == null)
+      {
+         propLabel = String.format("%s.tooltip", label);
+      }
+      else
+      {
+         propLabel = String.format("%s.%s.tooltip", parent, label);
+      }
+
+      return getHelpLib().getMessageIfExists(propLabel);
+   }
+
+   public int getMnemonicInt(String label)
+   {
+      return getMnemonicInt(null, label);
+   }
+
+   public int getMnemonicInt(String parent, String label)
+   {
+      String propLabel;
+
+      if (parent == null)
+      {
+         propLabel = String.format("%s.mnemonic", label);
+      }
+      else
+      {
+         propLabel = String.format("%s.%s.mnemonic", parent, label);
+      }
+
+      String msg = getHelpLib().getMessageIfExists(propLabel);
+
+      if (msg == null || msg.isEmpty())
+      {
+         return -1;
+      }
+
+      return msg.codePointAt(0);
+   }
+
+   public KeyStroke getKeyStroke(String property)
+   {
+      return getHelpLib().getKeyStroke(property);
+   }
+
+   public KeyStroke getKeyStroke(String parent, String label)
+   {
+      String propLabel;
+
+      if (parent == null)
+      {
+         propLabel = String.format("%s.mnemonic", label);
+      }
+      else
+      {
+         propLabel = String.format("%s.%s.mnemonic", parent, label);
+      }
+
+      return getHelpLib().getKeyStroke(propLabel);
+   }
+
     public JButton createOkayButton(ActionListener listener)
     {
        return createActionButton("button", "okay", 
@@ -111,14 +246,14 @@ public class DatatoolGuiResources
       ActionListener listener, KeyStroke keyStroke)
     {
        return createActionButton(parent, label, listener, keyStroke,
-         messageHandler.getToolTip(parent, label));
+         getToolTip(parent, label));
     }
 
     public JButton createActionButton(String parent, String label, 
       String iconPrefix, ActionListener listener, KeyStroke keyStroke)
     {
        return createActionButton(parent, label, iconPrefix, true,
-         listener, keyStroke, messageHandler.getToolTip(parent, label));
+         listener, keyStroke, getToolTip(parent, label));
     }
 
     public JButton createActionButton(String parent, String label, 
@@ -143,7 +278,7 @@ public class DatatoolGuiResources
       ActionListener listener, KeyStroke keyStroke, boolean omitTextIfIcon)
     {
        return createActionButton(parent, label, iconPrefix, true,
-         listener, keyStroke, messageHandler.getToolTip(parent, label),
+         listener, keyStroke, getToolTip(parent, label),
          omitTextIfIcon);
     }
 
@@ -177,7 +312,7 @@ public class DatatoolGuiResources
       boolean omitTextIfIcon)
     {
        return createActionButton(parent, label, listener, keyStroke,
-         messageHandler.getToolTip(parent, label), iconSet, omitTextIfIcon);
+         getToolTip(parent, label), iconSet, omitTextIfIcon);
     }
 
     public JButton createActionButton(String parent, String label, 
@@ -193,7 +328,7 @@ public class DatatoolGuiResources
      String tooltipText, IconSet iconSet, boolean omitTextIfIcon)
    {
       String buttonLabel = messageHandler.getLabel(parent, label);
-      int mnemonic = messageHandler.getMnemonicInt(parent, label);
+      int mnemonic = getMnemonicInt(parent, label);
       String tag = parent == null ? label : parent+"."+label;
 
       String actionCommand = label;
@@ -268,7 +403,7 @@ public class DatatoolGuiResources
       String tooltipText, ImageIcon imageIcon)
     {
        String buttonLabel = messageHandler.getLabel(parent, label);
-       int mnemonic = messageHandler.getMnemonicInt(parent, label);
+       int mnemonic = getMnemonicInt(parent, label);
        String actionCommand = label;
 
        JButton button;
@@ -328,14 +463,14 @@ public class DatatoolGuiResources
     {
        JLabel jLabel = new JLabel(messageHandler.getLabel(label));
 
-       int mnemonic = messageHandler.getMnemonicInt(label);
+       int mnemonic = getMnemonicInt(label);
 
        if (mnemonic != -1)
        {
           jLabel.setDisplayedMnemonic(mnemonic);
        }
 
-       String tooltip = messageHandler.getToolTip(label);
+       String tooltip = getToolTip(label);
 
        if (tooltip != null)
        {
@@ -353,10 +488,7 @@ public class DatatoolGuiResources
    public JLabel createJLabel(JLabelGroup grp, String label, JComponent comp)
    {
       return grp.createJLabel(messageHandler.getLabel(label),
-         messageHandler.getMnemonicInt(label),
-         messageHandler.getToolTip(label),
-         comp
-       );
+         getMnemonicInt(label), getToolTip(label), comp);
    }
 
     public JLabel createJLabel(String label, JComponent comp, float alignment)
@@ -378,9 +510,9 @@ public class DatatoolGuiResources
       JRadioButton button = new JRadioButton(
         messageHandler.getLabel(parentLabel, label));
 
-      button.setMnemonic(messageHandler.getMnemonicInt(parentLabel, label));
+      button.setMnemonic(getMnemonicInt(parentLabel, label));
 
-      String tooltip = messageHandler.getToolTip(parentLabel, label);
+      String tooltip = getToolTip(parentLabel, label);
 
       if (tooltip != null)
       {
@@ -430,7 +562,7 @@ public class DatatoolGuiResources
     {
        JCheckBox checkBox = new JCheckBox(
           messageHandler.getLabel(parentLabel, label));
-       checkBox.setMnemonic(messageHandler.getMnemonicInt(parentLabel, label));
+       checkBox.setMnemonic(getMnemonicInt(parentLabel, label));
        checkBox.setActionCommand(action);
 
        if (listener != null)
@@ -601,9 +733,9 @@ public class DatatoolGuiResources
        text = messageHandler.getLabel(propName);
 
        JMenu menu = new JMenu(text);
-       menu.setMnemonic(messageHandler.getMnemonicInt(propName));
+       menu.setMnemonic(getMnemonicInt(propName));
 
-       String tooltip = messageHandler.getToolTip(propName);
+       String tooltip = getToolTip(propName);
 
        if (tooltip != null)
        {
@@ -654,7 +786,7 @@ public class DatatoolGuiResources
           parent = "menu."+parent;
        }
 
-       return new ItemButton(messageHandler, parent, label, iconPrefix,
+       return new ItemButton(this, parent, label, iconPrefix,
          listener, keyStroke, toolBar);
     }
 
@@ -721,6 +853,11 @@ public class DatatoolGuiResources
       return gui;
    }
 
+   public DatatoolTk getDatatoolTk()
+   {
+      return messageHandler.getDatatoolTk();
+   }
+
    private ErrorPanel errorPanel;
 
    private MessageHandler messageHandler;
@@ -731,5 +868,8 @@ public class DatatoolGuiResources
 
    public static final Pattern PATTERN_CS = Pattern.compile(
       "((?:\\\\[^a-zA-Z]{1})|(?:\\\\[a-zA-Z]+)|(?:[#~\\{\\}\\^\\$_])|(?:%.*))");
+
+   private static String[] TYPE_LABELS = null;
+   private static int[] TYPE_MNEMONICS = null;
 
 }

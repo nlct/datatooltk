@@ -35,24 +35,26 @@ import com.dickimawbooks.datatooltk.*;
 
 public class ItemButton extends JMenuItem
 {
-   public ItemButton(MessageHandler messageHandler, String parentLabel,
+   public ItemButton(DatatoolGuiResources guiResources, String parentLabel,
      String actionLabel, ActionListener listener, KeyStroke keyStroke,
      ScrollToolBar toolBar)
    {
-      this(messageHandler, parentLabel, actionLabel, actionLabel,
+      this(guiResources, parentLabel, actionLabel, actionLabel,
        listener, keyStroke, toolBar);
    }
 
-   public ItemButton(MessageHandler messageHandler, String parentLabel,
+   public ItemButton(DatatoolGuiResources guiResources, String parentLabel,
      String actionLabel, String iconPrefix, ActionListener listener,
      KeyStroke keyStroke, ScrollToolBar toolBar)
    {
-      super(messageHandler.getLabelRemoveArgs(parentLabel, actionLabel));
-      setMnemonic(messageHandler.getMnemonicInt(parentLabel, actionLabel));
+      super(guiResources.getMessageHandler().getLabelRemoveArgs(
+             parentLabel, actionLabel));
+
+      setMnemonic(guiResources.getMnemonicInt(parentLabel, actionLabel));
       setActionCommand(actionLabel);
 
       IconSet iconSet
-         = messageHandler.getDatatoolGuiResources().getImageIconSet(iconPrefix, true);
+         = guiResources.getImageIconSet(iconPrefix, true);
 
       if (iconSet != null)
       {
@@ -63,8 +65,7 @@ public class ItemButton extends JMenuItem
 
       if (toolBar != null)
       {
-         iconSet
-            = messageHandler.getDatatoolGuiResources().getImageIconSet(iconPrefix);
+         iconSet = guiResources.getImageIconSet(iconPrefix);
 
          if (iconSet != null)
          {
@@ -89,7 +90,7 @@ public class ItemButton extends JMenuItem
          } 
       }
 
-      String tooltip = messageHandler.getToolTip(parentLabel, actionLabel);
+      String tooltip = guiResources.getToolTip(parentLabel, actionLabel);
 
       if (tooltip != null)
       {
