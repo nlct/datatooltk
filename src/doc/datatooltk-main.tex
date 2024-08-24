@@ -1746,8 +1746,8 @@ sys	0m0.065s
    the \sty{probsoln} package's \gls{loadallproblems} command
    (see \sectionref{sec:importprobsoln}). In the case of the first
    two, \appname\ can automatically convert \TeX's special characters if the
-   \switch{map-tex-specials} command line option is used or the
-   \widget{iosettings.tex.map} option has been selected in the 
+   \switch{map-tex-specials} (or \switch{literal}) command line option is used or the
+   \widget{iosettings.csv.content.literal} option has been selected in the 
    \dialog{preferences} dialog box (see \sectionref{sec:preferences}).
    Both the column title and label will be obtained from the appropriate data 
    header.  The title will have any mappings applied (if set). The label will 
@@ -2368,15 +2368,16 @@ If checked, any instances of \env{solution} contained within
 definitions (provided by \gls{newproblem} or \env{defproblem}) 
 will be removed.
 
-In the \widget{preferences.tex} tab you can also specify whether or
-not to map \TeX\ special characters when you import data from
-non-\TeX\ sources.  If you want the mapping, make sure the
-\widget{iosettings.tex.map} box is checked. The mapping table and
-buttons are hidden if \widget{iosettings.tex.map} is unchecked. If
-it is checked, the performed mappings are listed in the table in the
-tab. To add another mapping, click on the
+In the \widget{preferences.tex} tab you can also specify whether 
+non-\TeX\ sources contain literal content or \TeX\ code.
+If the \widget{iosettings.csv.content.literal} box is selected,
+then the mapping table and buttons will become visible.
+This table will be used to map the identified characters to
+the given commands. To add another mapping, click on the
 \widget{iosettings.tex.add_map} button, which opens the dialog box
-shown in \figureref{fig:addmap}. 
+shown in \figureref{fig:addmap}. Note that this table is only
+designed to map single characters. You will need to use the search
+and replace function to perform more complex changes.
 
 \FloatFig[htbp]
  {fig:addmap}
