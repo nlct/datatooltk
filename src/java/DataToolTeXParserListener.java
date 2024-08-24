@@ -152,7 +152,7 @@ public class DataToolTeXParserListener extends PreambleParser
       ioSettings.setSeparator(sep);
       ioSettings.setDelimiter(settings.getDelimiter());
       ioSettings.setHeaderIncluded(settings.hasCSVHeader());
-      ioSettings.setSkipLines(settings.getCSVskiplines());
+      ioSettings.setSkipLines(settings.getCSVSkipLines());
       ioSettings.setCsvBlankOption(settings.getCsvBlankOption());
 
       ioSettings.setAutoKeys(settings.isAutoKeysOn());
@@ -181,7 +181,7 @@ public class DataToolTeXParserListener extends PreambleParser
       ioSettings.setCsvBlankOption(settings.getCsvBlankOption());
 
       ioSettings.setTrimElement(settings.isAutoTrimLabelsOn());
-      ioSettings.setCsvStrictQuotes(settings.hasCSVstrictquotes());
+      ioSettings.setCsvStrictQuotes(settings.hasCSVStrictQuotes());
 
       if (settings.isTeXMappingOn())
       {

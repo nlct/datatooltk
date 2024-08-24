@@ -307,15 +307,21 @@ public class DatatoolProperties extends DatatoolSettings
       initFromProperties();
    }
 
+   /**
+    * Ensures the properties and the class variables are synced.
+    * If the associated property is set, the underlying variable
+    * will be updated. If the property hasn't been set, it will be
+    * set to the underlying variable's value.
+    */
    protected void initFromProperties()
    {
-      setInitialRowCapacity(getInitialRowCapacityProperty());
-      setInitialColumnCapacity(getInitialColumnCapacityProperty());
+      setInitialRowCapacityProperty(getInitialRowCapacityProperty());
+      setInitialColumnCapacityProperty(getInitialColumnCapacityProperty());
 
-      setDefaultOutputFormat(getDefaultOutputFormatProperty());
-      setOverrideInputFormat(getOverrideInputFormatProperty());
-      setTeXEncodingProperty(getProperty("tex-encoding"));
-      setCsvEncodingProperty(getProperty("csv-encoding"));
+      setDefaultOutputFormatProperty(getDefaultOutputFormatProperty());
+      setOverrideInputFormatProperty(getOverrideInputFormatProperty());
+      setTeXEncodingProperty(getTeXEncodingProperty());
+      setCsvEncodingProperty(getCsvEncodingProperty());
 
       setSeparatorProperty(getSeparatorProperty());
       setDelimiterProperty(getDelimiterProperty());
@@ -325,13 +331,14 @@ public class DatatoolProperties extends DatatoolSettings
       setSqlPortProperty(getSqlPortProperty());
       setSqlDbNameProperty(getSqlDbNameProperty());
       setSqlUserProperty(getSqlUserProperty());
+      setWipePasswordProperty(isWipePasswordEnabledProperty());
 
       setHasCSVHeaderProperty(hasCSVHeaderProperty());
-      setCSVstrictquotesProperty(hasCSVstrictquotesProperty());
+      setCSVStrictQuotesProperty(hasCSVStrictQuotesProperty());
       setCsvBlankOptionProperty(getCsvBlankOptionProperty());
       setEscapeCharsOptionProperty(getEscapeCharsOptionProperty());
       setAddDelimiterOptionProperty(getAddDelimiterOptionProperty());
-      setCSVskiplinesProperty(getCSVskiplinesProperty());
+      setCSVSkipLinesProperty(getCSVSkipLinesProperty());
 
       setTeXMappingProperty(isTeXMappingOnProperty());
       setImportEmptyToNullProperty(isImportEmptyToNullOnProperty());
@@ -343,12 +350,12 @@ public class DatatoolProperties extends DatatoolSettings
       setTrimElementProperty(isTrimElementOnProperty());
       setLiteralContentProperty(isLiteralContentProperty());
 
-      setStringDbTeX3DatumValue(isStringDbTeX3DatumValueProperty());
-      setIntegerDbTeX3DatumValue(isIntegerDbTeX3DatumValueProperty());
-      setDecimalDbTeX3DatumValue(isDecimalDbTeX3DatumValueProperty());
-      setCurrencyDbTeX3DatumValue(isCurrencyDbTeX3DatumValueProperty());
-      setDbTeX3DatumValue(getDbTeX3DatumValueProperty());
-      setSIforDecimals(useSIforDecimalsProperty());
+      setStringDbTeX3DatumValueProperty(isStringDbTeX3DatumValueProperty());
+      setIntegerDbTeX3DatumValueProperty(isIntegerDbTeX3DatumValueProperty());
+      setDecimalDbTeX3DatumValueProperty(isDecimalDbTeX3DatumValueProperty());
+      setCurrencyDbTeX3DatumValueProperty(isCurrencyDbTeX3DatumValueProperty());
+      setDbTeX3DatumValueProperty(getDbTeX3DatumValueProperty());
+      setSIforDecimalsProperty(useSIforDecimalsProperty());
 
       setNumericLocaleProperty(getNumericLocaleProperty());
       setNumericParserProperty(getNumericParserProperty());
@@ -752,11 +759,7 @@ public class DatatoolProperties extends DatatoolSettings
 
       int capacity = getInitialRowCapacity();
 
-      if (prop == null)
-      {
-         setInitialRowCapacity(capacity);
-      }
-      else
+      if (prop != null && !prop.isEmpty())
       {
          try
          {
@@ -766,17 +769,15 @@ public class DatatoolProperties extends DatatoolSettings
          {
             messageHandler.debug("Invalid initial row capacity setting '"
                +prop+"'");
-            setInitialRowCapacity(capacity);
          }
       }
 
       return capacity;
    }
 
-   @Override
-   public void setInitialRowCapacity(int capacity)
+   public void setInitialRowCapacityProperty(int capacity)
    {
-      super.setInitialRowCapacity(capacity);
+      setInitialRowCapacity(capacity);
       setProperty("initial-row-capacity", ""+capacity);
    }
 
@@ -786,11 +787,7 @@ public class DatatoolProperties extends DatatoolSettings
 
       int capacity = getInitialColumnCapacity();
 
-      if (prop == null)
-      {
-         setInitialColumnCapacity(capacity);
-      }
-      else
+      if (prop != null && !prop.isEmpty())
       {
          try
          {
@@ -800,17 +797,15 @@ public class DatatoolProperties extends DatatoolSettings
          {
             messageHandler.debug("Invalid initial column capacity setting '"
                +prop+"'");
-            setInitialColumnCapacity(capacity);
          }
       }
 
       return capacity;
    }
 
-   @Override
-   public void setInitialColumnCapacity(int capacity)
+   public void setInitialColumnCapacityProperty(int capacity)
    {
-      super.setInitialColumnCapacity(capacity);
+      setInitialColumnCapacity(capacity);
       setProperty("initial-column-capacity", ""+capacity);
    }
 
@@ -1059,10 +1054,9 @@ public class DatatoolProperties extends DatatoolSettings
       return getProperty("fileformat");
    }
 
-   @Override
-   public void setDefaultOutputFormat(String fmt)
+   public void setDefaultOutputFormatProperty(String fmt)
    {
-      super.setDefaultOutputFormat(fmt);
+      setDefaultOutputFormat(fmt);
 
       if (fmt == null)
       {
@@ -1074,10 +1068,9 @@ public class DatatoolProperties extends DatatoolSettings
       }
    }
 
-   @Override
-   public void setOverrideInputFormat(boolean on)
+   public void setOverrideInputFormatProperty(boolean on)
    {
-      super.setOverrideInputFormat(on);
+      setOverrideInputFormat(on);
       setProperty("fileformatoverride", ""+on);
    }
 
@@ -1085,7 +1078,7 @@ public class DatatoolProperties extends DatatoolSettings
    {
       String val = getProperty("fileformatoverride");
 
-      if (val == null)
+      if (val == null || val.isEmpty())
       {
          return getOverrideInputFormat();
       }
@@ -1093,10 +1086,21 @@ public class DatatoolProperties extends DatatoolSettings
       return Boolean.parseBoolean(val);
    }
 
-   @Override
+   public String getTeXEncodingProperty()
+   {
+      String val = getProperty("tex-encoding");
+
+      if (val != null && !val.isEmpty())
+      {
+         return val;
+      }
+
+      return getTeXEncodingNameDefault();
+   }
+
    public void setTeXEncodingProperty(Charset encoding)
    {
-      super.setTeXEncodingProperty(encoding);
+      setTeXEncodingDefault(encoding);
 
       if (encoding == null)
       {
@@ -1104,14 +1108,27 @@ public class DatatoolProperties extends DatatoolSettings
       }
       else
       {
-         setProperty("tex-encoding", texEncodingName);
+         setProperty("tex-encoding", encoding.name());
       }
    }
 
-   @Override
    public void setTeXEncodingProperty(String encoding)
    {
-      super.setTeXEncodingProperty(encoding);
+      Charset charset = null;
+
+      if (encoding != null)
+      {
+         try
+         {
+            charset = Charset.forName(encoding);
+         }
+         catch (Throwable e)
+         {
+            getMessageHandler().debug(e);
+         }
+      }
+
+      setTeXEncodingDefault(charset);
 
       if (encoding == null)
       {
@@ -1123,10 +1140,21 @@ public class DatatoolProperties extends DatatoolSettings
       }
    }
 
-   @Override
+   public String getCsvEncodingProperty()
+   {
+      String val = getProperty("csv-encoding");
+
+      if (val != null && !val.isEmpty())
+      {
+         return val;
+      }
+
+      return getCsvEncodingNameDefault();
+   }
+
    public void setCsvEncodingProperty(Charset encoding)
    {
-      super.setCsvEncodingProperty(encoding);
+      setCsvEncodingDefault(encoding);
 
       if (encoding == null)
       {
@@ -1134,14 +1162,27 @@ public class DatatoolProperties extends DatatoolSettings
       }
       else
       {
-         setProperty("csv-encoding", csvEncodingName);
+         setProperty("csv-encoding", encoding.name());
       }
    }
 
-   @Override
    public void setCsvEncodingProperty(String encoding)
    {
-      super.setCsvEncodingProperty(encoding);
+      Charset charset = null;
+
+      if (encoding != null)
+      {
+         try
+         {
+            charset = Charset.forName(encoding);
+         }
+         catch (Throwable e)
+         {
+            getMessageHandler().debug(e);
+         }
+      }
+
+      setCsvEncodingDefault(charset);
 
       if (encoding == null)
       {
@@ -1165,10 +1206,9 @@ public class DatatoolProperties extends DatatoolSettings
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
-   public void setStringDbTeX3DatumValue(boolean enable)
+   public void setStringDbTeX3DatumValueProperty(boolean enable)
    {
-      super.setStringDbTeX3DatumValue(enable);
+      setStringDbTeX3DatumValue(enable);
       setProperty("dbtex3-string", ""+enable);
    }
 
@@ -1184,10 +1224,9 @@ public class DatatoolProperties extends DatatoolSettings
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
-   public void setIntegerDbTeX3DatumValue(boolean enable)
+   public void setIntegerDbTeX3DatumValueProperty(boolean enable)
    {
-      super.setIntegerDbTeX3DatumValue(enable);
+      setIntegerDbTeX3DatumValue(enable);
       setProperty("dbtex3-integer", ""+enable);
    }
 
@@ -1203,10 +1242,9 @@ public class DatatoolProperties extends DatatoolSettings
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
-   public void setDecimalDbTeX3DatumValue(boolean enable)
+   public void setDecimalDbTeX3DatumValueProperty(boolean enable)
    {
-      super.setDecimalDbTeX3DatumValue(enable);
+      setDecimalDbTeX3DatumValue(enable);
       setProperty("dbtex3-decimal", ""+enable);
    }
 
@@ -1219,10 +1257,9 @@ public class DatatoolProperties extends DatatoolSettings
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
-   public void setCurrencyDbTeX3DatumValue(boolean enable)
+   public void setCurrencyDbTeX3DatumValueProperty(boolean enable)
    {
-      super.setCurrencyDbTeX3DatumValue(enable);
+      setCurrencyDbTeX3DatumValue(enable);
       setProperty("dbtex3-currency", ""+enable);
    }
 
@@ -1250,10 +1287,9 @@ public class DatatoolProperties extends DatatoolSettings
       return dbtex3DatumValue;
    }
 
-   @Override
-   public void setDbTeX3DatumValue(DbTeX3DatumValue value)
+   public void setDbTeX3DatumValueProperty(DbTeX3DatumValue value)
    {
-      super.setDbTeX3DatumValue(value);
+      setDbTeX3DatumValue(value);
       setProperty("dbtex-3-datum", value.toString());
    }
 
@@ -1269,10 +1305,9 @@ public class DatatoolProperties extends DatatoolSettings
       return Boolean.valueOf(prop);
    }
 
-   @Override
-   public void setSIforDecimals(boolean enable)
+   public void setSIforDecimalsProperty(boolean enable)
    {
-      super.setSIforDecimals(enable);
+      setSIforDecimals(enable);
       setProperty("si-decimals", ""+enable);
    }
 
@@ -1489,14 +1524,12 @@ public class DatatoolProperties extends DatatoolSettings
       }
    }
 
-   @Override
    public void setSeparatorProperty(int separator)
    {
-      super.setSeparatorProperty(separator);
+      setSeparatorDefault(separator);
       setProperty("sep", new String(Character.toChars(separator)));
    }
 
-   @Override
    public int getSeparatorProperty()
    {
       String prop = getProperty("sep");
@@ -1507,18 +1540,16 @@ public class DatatoolProperties extends DatatoolSettings
       }
       else
       {
-         return super.getSeparatorProperty();
+         return getSeparatorDefault();
       }
    }
 
-   @Override
    public void setDelimiterProperty(int delimiter)
    {
-      super.setDelimiterProperty(delimiter);
+      setDelimiterDefault(delimiter);
       setProperty("delim", new String(Character.toChars(delimiter)));
    }
 
-   @Override
    public int getDelimiterProperty()
    {
       String prop = getProperty("delim");
@@ -1529,11 +1560,10 @@ public class DatatoolProperties extends DatatoolSettings
       }
       else
       {
-         return super.getDelimiterProperty();
+         return getDelimiterDefault();
       }
    }
 
-   @Override
    public String getSqlHostProperty()
    {
       String prop = getProperty("sqlHost");
@@ -1544,18 +1574,16 @@ public class DatatoolProperties extends DatatoolSettings
       }
       else
       {
-         return super.getSqlHostProperty();
+         return getSqlHostDefault();
       }
    }
 
-   @Override
    public void setSqlHostProperty(String host)
    {
-      super.setSqlHostProperty(host);
+      setSqlHostDefault(host);
       setProperty("sqlHost", host);
    }
 
-   @Override
    public String getSqlPrefixProperty()
    {
       String prop = getProperty("sqlPrefix");
@@ -1566,51 +1594,45 @@ public class DatatoolProperties extends DatatoolSettings
       }
       else
       {
-         return super.getSqlPrefixProperty();
+         return getSqlPrefixDefault();
       }
    }
 
-   @Override
    public void setSqlPrefixProperty(String prefix)
    {
-      super.setSqlPrefixProperty(prefix);
+      setSqlPrefixDefault(prefix);
       setProperty("sqlPrefix", prefix);
    }
 
-   @Override
    public int getSqlPortProperty()
    {
       String prop = getProperty("sqlPort");
 
-      if (prop == null || prop.isEmpty())
+      if (prop != null && !prop.isEmpty())
       {
-         return super.getSqlPortProperty();
+         try
+         {
+            return Integer.parseInt(prop);
+         }
+         catch (NumberFormatException e)
+         {
+            // This shouldn't happen unless someone messes around with
+            // the properties file
+
+            throw new IllegalArgumentException(
+               "Invalid port number "+prop, e);
+         }
       }
 
-      try
-      {
-         return Integer.parseInt(prop);
-      }
-      catch (NumberFormatException e)
-      {
-         // This shouldn't happen unless someone messes around with
-         // the properties file
-
-         setSqlPortProperty(sqlPort);
-
-         throw new IllegalArgumentException(
-            "Invalid port number "+prop, e);
-      }
+      return getSqlPortDefault();
    }
 
-   @Override
    public void setSqlPortProperty(int port)
    {
-      super.setSqlPortProperty(port);
+      setSqlPortDefault(port);
       setProperty("sqlPort", ""+port);
    }
 
-   @Override
    public String getSqlDbNameProperty()
    {
       String prop = getProperty("sqlDbName");
@@ -1620,13 +1642,12 @@ public class DatatoolProperties extends DatatoolSettings
          return prop;
       }
 
-      return super.getSqlDbNameProperty();
+      return getSqlDbNameDefault();
    }
 
-   @Override
    public void setSqlDbNameProperty(String name)
    {
-      super.setSqlDbNameProperty(name);
+      setSqlDbNameDefault(name);
 
       if (name == null)
       {
@@ -1638,30 +1659,27 @@ public class DatatoolProperties extends DatatoolSettings
       }
    }
 
-   @Override
    public void setWipePasswordProperty(boolean wipePassword)
    {
-      super.setWipePasswordProperty(wipePassword);
+      setWipePasswordDefault(wipePassword);
       setProperty("wipePassword", ""+wipePassword);
    }
 
-   @Override
    public boolean isWipePasswordEnabledProperty()
    {
       String prop = getProperty("wipePassword");
 
       if (prop == null)
       {
-         return super.isWipePasswordEnabledProperty();
+         return isWipePasswordEnabledDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public void setSqlUserProperty(String username)
    {
-      super.setSqlUserProperty(username);
+      setSqlUserDefault(username);
 
       if (username == null)
       {
@@ -1673,58 +1691,53 @@ public class DatatoolProperties extends DatatoolSettings
       }
    }
 
-   @Override
    public String getSqlUserProperty()
    {
       String prop = getProperty("sqlUser");
 
-      if (prop != null)
+      if (prop != null && !prop.isEmpty())
       {
          return prop;
       }
       else
       {
-         return super.getSqlUserProperty();
+         return getSqlUserDefault();
       }
    }
 
-   @Override
    public boolean hasCSVHeaderProperty()
    {
       String prop = getProperty("csvHasHeader");
 
       if (prop == null)
       {
-         return super.hasCSVHeaderProperty();
+         return hasCSVHeaderDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public void setHasCSVHeaderProperty(boolean hasHeader)
    {
-      super.setHasCSVHeaderProperty(hasHeader);
+      setHasCSVHeaderDefault(hasHeader);
       setProperty("csvHasHeader", ""+hasHeader);
    }
 
-   @Override
-   public boolean hasCSVstrictquotesProperty()
+   public boolean hasCSVStrictQuotesProperty()
    {
       String prop = getProperty("csvstrictquotes");
 
       if (prop == null)
       {
-         return super.hasCSVstrictquotesProperty();
+         return hasCSVStrictQuotesDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
-   public void setCSVstrictquotesProperty(boolean strictquotes)
+   public void setCSVStrictQuotesProperty(boolean strictquotes)
    {
-      super.setCSVstrictquotesProperty(strictquotes);
+      setCSVStrictQuotesDefault(strictquotes);
       setProperty("csvstrictquotes", ""+strictquotes);
    }
 
@@ -1765,44 +1778,40 @@ public class DatatoolProperties extends DatatoolSettings
       return getCsvBlankOption() == CsvBlankOption.IGNORE;
    }
 
-   @Override
    public void setCsvBlankOptionProperty(CsvBlankOption opt)
    {
-      super.setCsvBlankOptionProperty(opt);
+      setCsvBlankOptionDefault(opt);
       setProperty("csv-blank", opt.toString());
    }
 
-   @Override
    public CsvBlankOption getCsvBlankOptionProperty()
    {
       String val = getProperty("csv-blank");
 
-      if (val != null)
+      if (val != null && !val.isEmpty())
       {
          return CsvBlankOption.valueOf(val);
       }
 
-      return super.getCsvBlankOptionProperty();
+      return getCsvBlankOptionDefault();
    }
 
-   @Override
    public void setEscapeCharsOptionProperty(EscapeCharsOption opt)
    {
-      super.setEscapeCharsOptionProperty(opt);
+      setEscapeCharsOptionDefault(opt);
       setProperty("csv-esc-chars", opt.toString());
    }
 
-   @Override
    public EscapeCharsOption getEscapeCharsOptionProperty()
    {
       String val = getProperty("csv-esc-chars");
 
-      if (val != null)
+      if (val != null && !val.isEmpty())
       {
          return EscapeCharsOption.valueOf(val);
       }
 
-      return super.getEscapeCharsOptionProperty();
+      return getEscapeCharsOptionDefault();
    }
 
    public void setAddDelimiterOptionProperty(AddDelimiterOption opt)
@@ -1815,7 +1824,7 @@ public class DatatoolProperties extends DatatoolSettings
    {
       String val = getProperty("csv-add-delim");
 
-      if (val != null)
+      if (val != null && !val.isEmpty())
       {
          return AddDelimiterOption.valueOf(val);
       }
@@ -1823,32 +1832,29 @@ public class DatatoolProperties extends DatatoolSettings
       return getAddDelimiterOption();
    }
 
-   @Override
-   public int getCSVskiplinesProperty()
+   public int getCSVSkipLinesProperty()
    {
       String prop = getProperty("csvskiplines");
 
-      if (prop == null)
+      if (prop != null && !prop.isEmpty())
       {
-         return super.getCSVskiplinesProperty();
+         try
+         {
+            return Integer.parseInt(prop);
+         }
+         catch (NumberFormatException e)
+         {
+            getMessageHandler().debug(e);
+         }
       }
 
-      try
-      {
-         return Integer.parseInt(prop);
-      }
-      catch (NumberFormatException e)
-      {
-         getMessageHandler().debug(e);
-         return super.getCSVskiplinesProperty();
-      }
+      return getCSVSkipLinesDefault();
    }
 
-   @Override
-   public void setCSVskiplinesProperty(int lines)
+   public void setCSVSkipLinesProperty(int lines)
    throws IllegalArgumentException
    {
-      super.setCSVskiplinesProperty(lines);
+      setCSVSkipLinesDefault(lines);
       setProperty("csvskiplines", ""+lines);
    }
 
@@ -1926,63 +1932,57 @@ public class DatatoolProperties extends DatatoolSettings
       return new File(name);
    }
 
-   @Override
    public boolean isImportEmptyToNullOnProperty()
    {
       String prop = getProperty("impemptytonull");
 
       if (prop == null || prop.isEmpty())
       {
-         return super.isImportEmptyToNullOnProperty();
+         return isImportEmptyToNullOnDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public void setImportEmptyToNullProperty(boolean on)
    {
-      super.setImportEmptyToNullProperty(on);
+      setImportEmptyToNullDefault(on);
       setProperty("impemptytonull", ""+on);
    }
 
-   @Override
    public boolean isSolutionEnvStrippedProperty()
    {
       String prop = getProperty("probsolnstripenv");
 
       if (prop == null || prop.isEmpty())
       {
-         return super.isSolutionEnvStrippedProperty();
+         return isSolutionEnvStrippedDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public void setSolutionEnvStrippedProperty(boolean stripEnv)
    {
-      super.setSolutionEnvStrippedProperty(stripEnv);
+      setSolutionEnvStrippedDefault(stripEnv);
       setProperty("probsolnstripenv", ""+stripEnv);
    }
 
-   @Override
    public boolean isPreambleOnlyProperty()
    {
       String prop = getProperty("preambleonly");
 
       if (prop == null || prop.isEmpty())
       {
-         return super.isPreambleOnlyProperty();
+         return isPreambleOnlyDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public void setPreambleOnlyProperty(boolean on)
    {
-      super.setPreambleOnlyProperty(on);
+      setPreambleOnlyDefault(on);
       setProperty("preambleonly", ""+on);
    }
 
@@ -2004,81 +2004,73 @@ public class DatatoolProperties extends DatatoolSettings
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public void setAutoTrimLabelsProperty(boolean enable)
    {
-      super.setAutoTrimLabelsProperty(enable);
+      setAutoTrimLabelsDefault(enable);
       setProperty("trimlabels", ""+enable);
    }
 
-   @Override
    public boolean isAutoTrimLabelsOnProperty()
    {
       String prop = getProperty("trimlabels");
 
       if (prop == null || prop.isEmpty())
       {
-         return isAutoTrimLabelsOnProperty();
+         return isAutoTrimLabelsOnDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public void setTrimElementProperty(boolean enable)
    {
-      super.setTrimElementProperty(enable);
+      setTrimElementDefault(enable);
       setProperty("trimelement", ""+enable);
    }
 
-   @Override
    public boolean isTrimElementOnProperty()
    {
       String prop = getProperty("trimelement");
 
       if (prop == null || prop.isEmpty())
       {
-         return super.isTrimElementOnProperty();
+         return isTrimElementOnDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public boolean isLiteralContentProperty()
    {
       String prop = getProperty("literalcontent");
 
       if (prop == null || prop.isEmpty())
       {
-         return super.isLiteralContentProperty();
+         return isLiteralContentDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public void setLiteralContentProperty(boolean on)
    {
-      super.setLiteralContentProperty(on);
+      setLiteralContentDefault(on);
       setProperty("literalcontent", ""+on);
    }
 
-   @Override
    public void setTeXMappingProperty(boolean enable)
    {
-      super.setTeXMappingProperty(enable);
+      setTeXMappingDefault(enable);
       setProperty("subtexspecials", ""+enable);
    }
 
-   @Override
    public boolean isTeXMappingOnProperty()
    {
       String prop = getProperty("subtexspecials");
 
       if (prop == null || prop.isEmpty())
       {
-         return super.isTeXMappingOnProperty();
+         return isTeXMappingOnDefault();
       }
 
       return Boolean.parseBoolean(prop);
@@ -2614,23 +2606,21 @@ public class DatatoolProperties extends DatatoolSettings
       setProperty("shuffle.iter", ""+number);
    }
 
-   @Override
    public boolean isRedefNewProblemEnabledProperty()
    {
       String prop = getProperty("redefnewprob");
 
       if (prop == null)
       {
-         return super.isRedefNewProblemEnabledProperty();
+         return isRedefNewProblemEnabledDefault();
       }
 
       return Boolean.parseBoolean(prop);
    }
 
-   @Override
    public void setRedefNewProblemProperty(boolean value)
    {
-      super.setRedefNewProblemProperty(value);
+      setRedefNewProblemDefault(value);
       setProperty("redefnewprob", ""+value);
    }
 

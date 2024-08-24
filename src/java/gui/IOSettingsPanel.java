@@ -1251,6 +1251,7 @@ public class IOSettingsPanel extends JPanel
          if (sep == '\t')
          {
             tabSeparatorButton.setSelected(true);
+            csvSepField.setEnabled(false);
 
             if (formatCSVToggleButton.isSelected())
             {
@@ -1260,6 +1261,7 @@ public class IOSettingsPanel extends JPanel
          else
          {
             csvSeparatorButton.setSelected(true);
+            csvSepField.setEnabled(true);
             csvSepField.setValue(sep);
 
             if (formatTSVToggleButton.isSelected())
@@ -2023,7 +2025,7 @@ public class IOSettingsPanel extends JPanel
       }
    }
 
-   public void applyCsvSettingsTo(DatatoolProperties settings)
+   public void applyCsvSettingsTo(DatatoolProperties settings, boolean updateProperty)
      throws IllegalArgumentException
    {
       int sep = getSeparator();
@@ -2037,7 +2039,14 @@ public class IOSettingsPanel extends JPanel
       }
       else if (sep > 0)
       {
-         settings.setSeparator(sep);
+         if (updateProperty)
+         {
+            settings.setSeparatorProperty(sep);
+         }
+         else
+         {
+            settings.setSeparatorDefault(sep);
+         }
       }
       else
       {
@@ -2056,7 +2065,14 @@ public class IOSettingsPanel extends JPanel
       }
       else if (delim > 0)
       {
-         settings.setDelimiter(delim);
+         if (updateProperty)
+         {
+            settings.setDelimiterProperty(delim);
+         }
+         else
+         {
+            settings.setDelimiterDefault(delim);
+         }
       }
       else
       {
@@ -2064,49 +2080,95 @@ public class IOSettingsPanel extends JPanel
             getMessageHandler().getLabel("error.missing_delim"));
       }
 
-      settings.setCSVstrictquotes(isStrictQuotes());
-      settings.setHasCSVHeader(isHeaderIncluded());
-      settings.setCSVskiplines(getSkipLines());
-      settings.setEscapeCharsOption(getEscapeCharsOption());
+      if (updateProperty)
+      {
+         settings.setCSVStrictQuotesProperty(isStrictQuotes());
+         settings.setHasCSVHeaderProperty(isHeaderIncluded());
+         settings.setCSVSkipLinesProperty(getSkipLines());
+         settings.setEscapeCharsOptionProperty(getEscapeCharsOption());
 
-      settings.setLiteralContent(isLiteralContent());
-      settings.setTeXMapping(isTeXMappingOn());
+         settings.setLiteralContentProperty(isLiteralContent());
+         settings.setTeXMappingProperty(isTeXMappingOn());
+      }
+      else
+      {
+         settings.setCSVStrictQuotesDefault(isStrictQuotes());
+         settings.setHasCSVHeaderDefault(isHeaderIncluded());
+         settings.setCSVSkipLinesDefault(getSkipLines());
+         settings.setEscapeCharsOptionDefault(getEscapeCharsOption());
+
+         settings.setLiteralContentDefault(isLiteralContent());
+         settings.setTeXMappingDefault(isTeXMappingOn());
+      }
 
       texMapModel.updateSettings();
 
       if (isRead())
       {
-         settings.setCsvBlankOption(getCsvBlankOption());
-         settings.setCSVskiplines(getSkipLines());
+         if (updateProperty)
+         {
+            settings.setCsvBlankOptionProperty(getCsvBlankOption());
+            settings.setCSVSkipLinesProperty(getSkipLines());
+         }
+         else
+         {
+            settings.setCsvBlankOptionDefault(getCsvBlankOption());
+            settings.setCSVSkipLinesDefault(getSkipLines());
+         }
       }
 
       if (isWrite())
       {
-         settings.setAddDelimiterOption(getAddDelimiterOption());
+         if (updateProperty)
+         {
+            settings.setAddDelimiterOptionProperty(getAddDelimiterOption());
+         }
+         else
+         {
+            settings.setAddDelimiterOption(getAddDelimiterOption());
+         }
       }
 
       if (texEncodingBox != null)
       {
-         settings.setTeXEncoding((Charset)texEncodingBox.getSelectedItem());
+         if (updateProperty)
+         {
+            settings.setTeXEncodingProperty(
+              (Charset)texEncodingBox.getSelectedItem());
+         }
+         else
+         {
+            settings.setTeXEncodingDefault(
+              (Charset)texEncodingBox.getSelectedItem());
+         }
       }
 
       if (csvEncodingBox != null)
       {
-         settings.setCsvEncoding((Charset)csvEncodingBox.getSelectedItem());
+         if (updateProperty)
+         {
+            settings.setCsvEncodingProperty(
+               (Charset)csvEncodingBox.getSelectedItem());
+         }
+         else
+         {
+            settings.setCsvEncodingDefault(
+               (Charset)csvEncodingBox.getSelectedItem());
+         }
       }
    }
 
    public void setCsvSettingsFrom(DatatoolProperties settings)
    {
-      setSeparator(settings.getSeparator());
-      setDelimiter(settings.getDelimiter());
+      setSeparator(settings.getSeparatorDefault());
+      setDelimiter(settings.getDelimiterDefault());
 
-      setStrictQuotes(settings.hasCSVstrictquotes());
-      setHeaderIncluded(settings.hasCSVHeader());
-      setEscapeCharsOption(settings.getEscapeCharsOption());
+      setStrictQuotes(settings.hasCSVStrictQuotesDefault());
+      setHeaderIncluded(settings.hasCSVHeaderDefault());
+      setEscapeCharsOption(settings.getEscapeCharsOptionDefault());
 
-      setLiteralContent(settings.isLiteralContent());
-      setTeXMapping(settings.isTeXMappingOn());
+      setLiteralContent(settings.isLiteralContentDefault());
+      setTeXMapping(settings.isTeXMappingOnDefault());
 
       texMapModel = new TeXMapModel(this, texMapTable, settings);
       texMapTable.setModel(texMapModel);
@@ -2114,8 +2176,8 @@ public class IOSettingsPanel extends JPanel
 
       if (isRead())
       {
-         setCsvBlankOption(settings.getCsvBlankOption());
-         setSkipLines(settings.getCSVskiplines());
+         setCsvBlankOption(settings.getCsvBlankOptionDefault());
+         setSkipLines(settings.getCSVSkipLinesDefault());
       }
 
       if (isWrite())
@@ -2125,7 +2187,7 @@ public class IOSettingsPanel extends JPanel
 
       if (csvEncodingBox != null)
       {
-         Charset charset = settings.getCsvEncoding();
+         Charset charset = settings.getCsvEncodingDefault();
       
          if (charset == null)
          {
@@ -2139,7 +2201,7 @@ public class IOSettingsPanel extends JPanel
 
       if (texEncodingBox != null)
       {
-         Charset charset = settings.getTeXEncoding();
+         Charset charset = settings.getTeXEncodingDefault();
 
          if (charset == null)
          {

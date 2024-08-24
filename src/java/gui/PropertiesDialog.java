@@ -865,11 +865,10 @@ public class PropertiesDialog extends JDialog
         settings.getInitialColumnCapacity()));
 
       csvSettingsPanel.setCsvSettingsFrom(settings);
-
       sqlSettingsPanel.resetFrom(settings);
 
-      stripSolnEnvBox.setSelected(settings.isSolutionEnvStripped());
-      preambleOnlyBox.setSelected(settings.isPreambleOnly());
+      stripSolnEnvBox.setSelected(settings.isSolutionEnvStrippedDefault());
+      preambleOnlyBox.setSelected(settings.isPreambleOnlyDefault());
 
       String outFmt = settings.getDefaultOutputFormat();
 
@@ -905,7 +904,7 @@ public class PropertiesDialog extends JDialog
       saveDatumDecimalBox.setSelected(settings.isDecimalDbTeX3DatumValue());
       saveDatumCurrencyBox.setSelected(settings.isCurrencyDbTeX3DatumValue());
 
-      Charset charset = settings.getTeXEncoding();
+      Charset charset = settings.getTeXEncodingDefault();
 
       if (charset == null)
       {
@@ -987,7 +986,7 @@ public class PropertiesDialog extends JDialog
          seedField.setValue(seed.intValue());
       }
 
-      autoTrimBox.setSelected(settings.isAutoTrimLabelsOn());
+      autoTrimBox.setSelected(settings.isAutoTrimLabelsOnDefault());
 
       helpsetLangBox.setSelectedItem(settings.getHelpSetLocale());
       dictLangBox.setSelectedItem(settings.getDictionaryLocale());
@@ -998,7 +997,8 @@ public class PropertiesDialog extends JDialog
       if (settings.isNumericParserSet())
       {
          numParsePatternButton.setSelected(true);
-         numericParserField.setText(getDecimalPattern(settings.getNumericParser()));
+         numericParserField.setText(
+            getDecimalPattern(settings.getNumericParser()));
       }
       else
       {
@@ -1344,44 +1344,47 @@ public class PropertiesDialog extends JDialog
          settings.setCustomStartUp(file);
       }
 
-      settings.setInitialRowCapacity(
+      settings.setInitialRowCapacityProperty(
         ((Number)initialRowCapacitySpinner.getValue()).intValue());
-      settings.setInitialColumnCapacity(
+      settings.setInitialColumnCapacityProperty(
         ((Number)initialColumnCapacitySpinner.getValue()).intValue());
 
-      csvSettingsPanel.applyCsvSettingsTo(settings);
+      csvSettingsPanel.applyCsvSettingsTo(settings, true);
 
-      sqlSettingsPanel.applyTo(settings);
+      sqlSettingsPanel.applyTo(settings, true);
 
-      settings.setDefaultOutputFormat(outputFormatBox.getSelectedItem().toString());
-      settings.setOverrideInputFormat(overrideInputFormatBox.isSelected());
+      settings.setDefaultOutputFormatProperty(
+         outputFormatBox.getSelectedItem().toString());
+      settings.setOverrideInputFormatProperty(
+         overrideInputFormatBox.isSelected());
 
       if (saveDatumAllBox.isSelected())
       {
-         settings.setDbTeX3DatumValue(DbTeX3DatumValue.ALL);
+         settings.setDbTeX3DatumValueProperty(DbTeX3DatumValue.ALL);
       }
       else if (saveDatumNoneBox.isSelected())
       {
-         settings.setDbTeX3DatumValue(DbTeX3DatumValue.NONE);
+         settings.setDbTeX3DatumValueProperty(DbTeX3DatumValue.NONE);
       }
       else if (saveDatumHeaderBox.isSelected())
       {
-         settings.setDbTeX3DatumValue(DbTeX3DatumValue.HEADER);
+         settings.setDbTeX3DatumValueProperty(DbTeX3DatumValue.HEADER);
       }
       else if (saveDatumEntryBox.isSelected())
       {
-         settings.setDbTeX3DatumValue(DbTeX3DatumValue.CELL);
+         settings.setDbTeX3DatumValueProperty(DbTeX3DatumValue.CELL);
       }
 
-      settings.setStringDbTeX3DatumValue(saveDatumStringBox.isSelected());
-      settings.setIntegerDbTeX3DatumValue(saveDatumIntegerBox.isSelected());
-      settings.setDecimalDbTeX3DatumValue(saveDatumDecimalBox.isSelected());
-      settings.setCurrencyDbTeX3DatumValue(saveDatumCurrencyBox.isSelected());
+      settings.setStringDbTeX3DatumValueProperty(saveDatumStringBox.isSelected());
+      settings.setIntegerDbTeX3DatumValueProperty(saveDatumIntegerBox.isSelected());
+      settings.setDecimalDbTeX3DatumValueProperty(saveDatumDecimalBox.isSelected());
+      settings.setCurrencyDbTeX3DatumValueProperty(saveDatumCurrencyBox.isSelected());
 
-      settings.setSolutionEnvStripped(stripSolnEnvBox.isSelected());
-      settings.setPreambleOnly(preambleOnlyBox.isSelected());
+      settings.setSolutionEnvStrippedProperty(stripSolnEnvBox.isSelected());
+      settings.setPreambleOnlyProperty(preambleOnlyBox.isSelected());
 
-      settings.setTeXEncoding((Charset)texEncodingBox.getSelectedItem());
+      settings.setTeXEncodingProperty(
+        (Charset)texEncodingBox.getSelectedItem());
 
       currencyListModel.updateSettings();
 
@@ -1435,71 +1438,74 @@ public class PropertiesDialog extends JDialog
 
       if (hasSeedBox.isSelected())
       {
-         settings.setRandomSeed(Long.valueOf(seedField.getValue()));
+         settings.setRandomSeedProperty(Long.valueOf(seedField.getValue()));
       }
       else
       {
-         settings.setRandomSeed(null);
+         settings.setRandomSeedProperty(null);
       }
 
-      settings.setAutoTrimLabels(autoTrimBox.isSelected());
+      settings.setAutoTrimLabelsProperty(autoTrimBox.isSelected());
 
       settings.setHelpSet((HelpSetLocale)helpsetLangBox.getSelectedItem());
       settings.setDictionary((HelpSetLocale)dictLangBox.getSelectedItem());
 
-      settings.setNumericLocale((Locale)numericLocaleBox.getSelectedItem());
+      settings.setNumericLocaleProperty((Locale)numericLocaleBox.getSelectedItem());
 
       if (numParseMatchLocaleButton.isSelected())
       {
-         settings.setNumericParser(null);
+         settings.setNumericParserProperty(null);
       }
       else
       {
-         settings.setNumericParser(getDecimalFormat(numericParserField.getText(),
-           numericParsingLabel.getText()));
+         settings.setNumericParserProperty(
+           getDecimalFormat(numericParserField.getText(),
+             numericParsingLabel.getText()));
       }
 
       if (intFmtMatchLocaleButton.isSelected())
       {
-         settings.setIntegerFormatter(null);
+         settings.setIntegerFormatterProperty(null);
       }
       else
       {
-         settings.setIntegerFormatter(
+         settings.setIntegerFormatterProperty(
            getDecimalFormat(intFormatterField.getText(),
            intFmtLabel.getText()));
       }
 
       if (currencyFmtMatchLocaleButton.isSelected())
       {
-         settings.setCurrencyFormatter(null);
+         settings.setCurrencyFormatterProperty(null);
       }
       else
       {
-         settings.setCurrencyFormatter(
+         settings.setCurrencyFormatterProperty(
            getDecimalFormat(currencyFormatterField.getText(),
            currencyFmtLabel.getText()));
       }
 
       if (decimalFmtSIButton.isSelected())
       {
-         settings.setSIforDecimals(true);
-         settings.setDecimalFormatter(null);
+         settings.setSIforDecimalsProperty(true);
+         settings.setDecimalFormatterProperty(null);
       }
       else if (decimalFmtMatchLocaleButton.isSelected())
       {
-         settings.setSIforDecimals(false);
-         settings.setDecimalFormatter(null);
+         settings.setSIforDecimalsProperty(false);
+         settings.setDecimalFormatterProperty(null);
       }
       else
       {
-         settings.setSIforDecimals(false);
-         settings.setDecimalFormatter(
+         settings.setSIforDecimalsProperty(false);
+         settings.setDecimalFormatterProperty(
             getDecimalFormat(decimalFormatterField.getText(),
               decimalFmtLabel.getText()));
       }
 
       settings.setPerl(perlFileField.getFileName());
+
+      settings.getImportSettings().setFrom(settings);
 
       setVisible(false);
    }

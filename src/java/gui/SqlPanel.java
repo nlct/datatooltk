@@ -119,21 +119,21 @@ public class SqlPanel extends JPanel
 
    public void resetFrom(DatatoolProperties settings)
    {
-      hostField.setText(settings.getSqlHost());
-      prefixField.setText(settings.getSqlPrefix());
-      portField.setValue(settings.getSqlPort());
-      wipeBox.setSelected(settings.isWipePasswordEnabled());
+      hostField.setText(settings.getSqlHostDefault());
+      prefixField.setText(settings.getSqlPrefixDefault());
+      portField.setValue(settings.getSqlPortDefault());
+      wipeBox.setSelected(settings.isWipePasswordEnabledDefault());
 
-      String user = settings.getSqlUser();
+      String user = settings.getSqlUserDefault();
 
       userField.setText(user == null ? "" : user);
 
-      String db = settings.getSqlDbName();
+      String db = settings.getSqlDbNameDefault();
 
       databaseField.setText(db == null ? "" : db);
    }
 
-   public void applyTo(DatatoolProperties settings)
+   public void applyTo(DatatoolProperties settings, boolean updateProperty)
     throws IllegalArgumentException
    {
       String host = hostField.getText();
@@ -144,8 +144,6 @@ public class SqlPanel extends JPanel
             getMessageHandler().getLabel("error.missing_host"));
       }
 
-      settings.setSqlHost(host);
-
       String prefix = prefixField.getText();
 
       if (prefix.isEmpty())
@@ -154,18 +152,28 @@ public class SqlPanel extends JPanel
             getMessageHandler().getLabel("error.missing_prefix"));
       }
 
-      settings.setSqlPrefix(prefix);
-
       if (portField.getText().isEmpty())
       {
          throw new IllegalArgumentException(
             getMessageHandler().getLabel("error.missing_port"));
       }
 
-      settings.setSqlPort(portField.getValue());
-
-      settings.setSqlUser(userField.getText());
-      settings.setSqlDbName(databaseField.getText());
+      if (updateProperty)
+      {
+         settings.setSqlHostProperty(host);
+         settings.setSqlPrefixProperty(prefix);
+         settings.setSqlPortProperty(portField.getValue());
+         settings.setSqlUserProperty(userField.getText());
+         settings.setSqlDbNameDefault(databaseField.getText());
+      }
+      else
+      {
+         settings.setSqlHostDefault(host);
+         settings.setSqlPrefixDefault(prefix);
+         settings.setSqlPortDefault(portField.getValue());
+         settings.setSqlUserDefault(userField.getText());
+         settings.setSqlDbNameDefault(databaseField.getText());
+      }
    }
 
    public void resetFrom(ImportSettings settings)

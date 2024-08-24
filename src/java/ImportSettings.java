@@ -80,97 +80,72 @@ public class ImportSettings
    {
       this.settings = settings;
 
-      String charsetName = settings.getTeXEncodingProperty();
+      texEncoding = settings.getTeXEncodingDefault();
+      csvEncoding = settings.getCsvEncodingDefault();
 
-      if (charsetName != null)
-      {
-         try
-         {
-            texEncoding = Charset.forName(charsetName);
-         }
-         catch (Throwable e)
-         {
-            settings.getMessageHandler().debug(e);
-         }
-      }
+      separator = settings.getSeparatorDefault();
+      delimiter = settings.getDelimiterDefault();
 
-      charsetName = settings.getCsvEncodingProperty();
+      incHeader = settings.hasCSVHeaderDefault();
+      strictQuotes = settings.hasCSVStrictQuotesDefault();
 
-      if (charsetName != null)
-      {
-         try
-         {
-            csvEncoding = Charset.forName(charsetName);
-         }
-         catch (Throwable e)
-         {
-            settings.getMessageHandler().debug(e);
-         }
-      }
+      blankRowOpt = settings.getCsvBlankOptionDefault();
+      escCharsOpt = settings.getEscapeCharsOptionDefault();
+      skipLines = settings.getCSVSkipLinesDefault();
 
-      separator = settings.getSeparatorProperty();
-      delimiter = settings.getDelimiterProperty();
+      sqlHost = settings.getSqlHostDefault();
+      sqlPrefix = settings.getSqlPrefixDefault();
+      sqlPort = settings.getSqlPortDefault();
 
-      incHeader = settings.hasCSVHeaderProperty();
-      strictQuotes = settings.hasCSVstrictquotesProperty();
+      sqlDbName = settings.getSqlDbNameDefault();
+      sqlUser = settings.getSqlUserDefault();
+      wipePassword = settings.isWipePasswordEnabledDefault();
 
-      blankRowOpt = settings.getCsvBlankOptionProperty();
-      escCharsOpt = settings.getEscapeCharsOptionProperty();
-      skipLines = settings.getCSVskiplinesProperty();
+      stripSolutionEnv = settings.isSolutionEnvStrippedDefault();
+      redefNewProblem = settings.isRedefNewProblemEnabledDefault();
+      preambleOnly = settings.isPreambleOnlyDefault();
 
-      sqlHost = settings.getSqlHostProperty();
-      sqlPrefix = settings.getSqlPrefixProperty();
-      sqlPort = settings.getSqlPortProperty();
+      importEmptyToNull = settings.isImportEmptyToNullOnDefault();
 
-      sqlDbName = settings.getSqlDbNameProperty();
-      sqlUser = settings.getSqlUserProperty();
-      wipePassword = settings.isWipePasswordEnabledProperty();
+      trimLabels = settings.isAutoTrimLabelsOnDefault();
+      trimElement = settings.isTrimElementOnDefault();
 
-      stripSolutionEnv = settings.isSolutionEnvStrippedProperty();
-      redefNewProblem = settings.isRedefNewProblemEnabledProperty();
-      preambleOnly = settings.isPreambleOnlyProperty();
-
-      importEmptyToNull = settings.isImportEmptyToNullOnProperty();
-
-      trimLabels = settings.isAutoTrimLabelsOnProperty();
-      trimElement = settings.isTrimElementOnProperty();
-
-      nonTeXLiteral = settings.isLiteralContentProperty();
-      mapTeXChars = settings.isTeXMappingOnProperty();
+      nonTeXLiteral = settings.isLiteralContentDefault();
+      mapTeXChars = settings.isTeXMappingOnDefault();
    }
 
    public void applyTo(DatatoolSettings settings)
    {
-      settings.setTeXEncodingProperty(texEncoding);
-      settings.setCsvEncodingProperty(csvEncoding);
+      settings.setTeXEncodingDefault(texEncoding);
+      settings.setCsvEncodingDefault(csvEncoding);
 
-      settings.setSeparatorProperty(separator);
-      settings.setDelimiterProperty(delimiter);
+      settings.setSeparatorDefault(separator);
+      settings.setDelimiterDefault(delimiter);
 
-      settings.setHasCSVHeaderProperty(incHeader);
-      settings.setCSVstrictquotesProperty(strictQuotes);
-      settings.setCsvBlankOptionProperty(blankRowOpt);
-      settings.setEscapeCharsOptionProperty(escCharsOpt);
-      settings.setCSVskiplinesProperty(skipLines);
+      settings.setHasCSVHeaderDefault(incHeader);
+      settings.setCSVStrictQuotesDefault(strictQuotes);
+      settings.setCsvBlankOptionDefault(blankRowOpt);
+      settings.setEscapeCharsOptionDefault(escCharsOpt);
+      settings.setCSVSkipLinesDefault(skipLines);
 
-      settings.setSqlHostProperty(sqlHost);
-      settings.setSqlPrefixProperty(sqlPrefix);
-      settings.setSqlPortProperty(sqlPort);
+      settings.setSqlHostDefault(sqlHost);
+      settings.setSqlPrefixDefault(sqlPrefix);
+      settings.setSqlPortDefault(sqlPort);
 
-      settings.setSqlDbNameProperty(sqlDbName);
-      settings.setSqlUserProperty(sqlUser);
-      settings.setWipePasswordProperty(wipePassword);
+      settings.setSqlDbNameDefault(sqlDbName);
+      settings.setSqlUserDefault(sqlUser);
+      settings.setWipePasswordDefault(wipePassword);
 
-      settings.setAutoTrimLabelsProperty(trimLabels);
-      settings.setTrimElementProperty(trimElement);
+      settings.setAutoTrimLabelsDefault(trimLabels);
+      settings.setTrimElementDefault(trimElement);
 
-      settings.setTeXMappingProperty(mapTeXChars);
-      settings.setLiteralContentProperty(nonTeXLiteral);
-      settings.setImportEmptyToNullProperty(importEmptyToNull);
+      settings.setTeXMappingDefault(mapTeXChars);
+      settings.setLiteralContentDefault(nonTeXLiteral);
+      settings.setImportEmptyToNullDefault(importEmptyToNull);
 
-      settings.setSolutionEnvStrippedProperty(stripSolutionEnv);
-      settings.setRedefNewProblemProperty(redefNewProblem);
-      settings.setPreambleOnlyProperty(preambleOnly);
+      settings.setSolutionEnvStrippedDefault(stripSolutionEnv);
+      settings.setRedefNewProblemDefault(redefNewProblem);
+      settings.setPreambleOnlyDefault(preambleOnly);
    }
 
    public void setFrom(IOSettings ioSettings)

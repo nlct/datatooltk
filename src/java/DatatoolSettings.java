@@ -21,7 +21,9 @@ package com.dickimawbooks.datatooltk;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 
 import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
@@ -191,9 +193,14 @@ public class DatatoolSettings
       return importSettings.getTeXEncoding();
    }
 
-   public String getTeXEncodingProperty()
+   public Charset getTeXEncodingDefault()
    {
-      return texEncodingName;
+      return texEncoding;
+   }
+
+   public String getTeXEncodingNameDefault()
+   {
+      return texEncoding == null ? null : texEncoding.name();
    }
 
    public void setTeXEncoding(Charset encoding)
@@ -201,21 +208,24 @@ public class DatatoolSettings
       importSettings.setTeXEncoding(encoding);
    }
 
-   public void setTeXEncodingProperty(Charset encoding)
+   public void setTeXEncodingDefault(Charset encoding)
+   {
+      texEncoding = encoding;
+   }
+
+   public void setTeXEncodingDefault(String encoding)
+     throws IllegalCharsetNameException,
+            UnsupportedCharsetException,
+            IllegalArgumentException
    {
       if (encoding == null)
       {
-         texEncodingName = null;
+         texEncoding = null;
       }
       else
       {
-         texEncodingName = encoding.name();
+         texEncoding = Charset.forName(encoding);
       }
-   }
-
-   public void setTeXEncodingProperty(String encoding)
-   {
-      texEncodingName = encoding;
    }
 
    public Charset getCsvEncoding()
@@ -223,9 +233,14 @@ public class DatatoolSettings
       return importSettings.getCsvEncoding();
    }
 
-   public String getCsvEncodingProperty()
+   public Charset getCsvEncodingDefault()
    {
-      return csvEncodingName;
+      return csvEncoding;
+   }
+
+   public String getCsvEncodingNameDefault()
+   {
+      return csvEncoding == null ? null : csvEncoding.name();
    }
 
    public void setCsvEncoding(Charset encoding)
@@ -233,21 +248,24 @@ public class DatatoolSettings
       importSettings.setCsvEncoding(encoding);
    }
 
-   public void setCsvEncodingProperty(Charset encoding)
+   public void setCsvEncodingDefault(Charset encoding)
+   {
+      csvEncoding = encoding;
+   }
+
+   public void setCsvEncodingDefault(String encoding)
+     throws IllegalCharsetNameException,
+            UnsupportedCharsetException,
+            IllegalArgumentException
    {
       if (encoding == null)
       {
-         csvEncodingName = null;
+         csvEncoding = null;
       }
       else
       {
-         csvEncodingName = encoding.name();
+         csvEncoding = Charset.forName(encoding);
       }
-   }
-
-   public void setCsvEncodingProperty(String encoding)
-   {
-      csvEncodingName = encoding;
    }
 
    /**
@@ -518,7 +536,7 @@ public class DatatoolSettings
       importSettings.setSeparator(separator);
    }
 
-   public void setSeparatorProperty(int separator)
+   public void setSeparatorDefault(int separator)
    {
       csvSeparator = separator;
    }
@@ -528,7 +546,7 @@ public class DatatoolSettings
       return importSettings.getSeparator();
    }
 
-   public int getSeparatorProperty()
+   public int getSeparatorDefault()
    {
       return csvSeparator;
    }
@@ -538,7 +556,7 @@ public class DatatoolSettings
       importSettings.setDelimiter(delimiter);
    }
 
-   public void setDelimiterProperty(int delimiter)
+   public void setDelimiterDefault(int delimiter)
    {
       csvDelimiter = delimiter;
    }
@@ -548,7 +566,7 @@ public class DatatoolSettings
       return importSettings.getDelimiter();
    }
 
-   public int getDelimiterProperty()
+   public int getDelimiterDefault()
    {
       return csvDelimiter;
    }
@@ -568,7 +586,7 @@ public class DatatoolSettings
       return importSettings.getSqlHost();
    }
 
-   public String getSqlHostProperty()
+   public String getSqlHostDefault()
    {
       return sqlHost;
    }
@@ -578,7 +596,7 @@ public class DatatoolSettings
       importSettings.setSqlHost(host);
    }
 
-   public void setSqlHostProperty(String host)
+   public void setSqlHostDefault(String host)
    {
       sqlHost = host;
    }
@@ -588,7 +606,7 @@ public class DatatoolSettings
       return importSettings.getSqlPrefix();
    }
 
-   public String getSqlPrefixProperty()
+   public String getSqlPrefixDefault()
    {
       return sqlPrefix;
    }
@@ -598,7 +616,7 @@ public class DatatoolSettings
       importSettings.setSqlPrefix(prefix);
    }
 
-   public void setSqlPrefixProperty(String prefix)
+   public void setSqlPrefixDefault(String prefix)
    {
       sqlPrefix = prefix;
    }
@@ -608,7 +626,7 @@ public class DatatoolSettings
       return importSettings.getSqlPort();
    }
 
-   public int getSqlPortProperty()
+   public int getSqlPortDefault()
    {
       return sqlPort;
    }
@@ -618,7 +636,7 @@ public class DatatoolSettings
       importSettings.setSqlPort(port);
    }
 
-   public void setSqlPortProperty(int port)
+   public void setSqlPortDefault(int port)
    {
       sqlPort = port;
    }
@@ -628,7 +646,7 @@ public class DatatoolSettings
       return importSettings.getSqlDbName();
    }
 
-   public String getSqlDbNameProperty()
+   public String getSqlDbNameDefault()
    {
       return sqlDbName;
    }
@@ -638,7 +656,7 @@ public class DatatoolSettings
       importSettings.setSqlDbName(name);
    }
 
-   public void setSqlDbNameProperty(String name)
+   public void setSqlDbNameDefault(String name)
    {
       sqlDbName = name;
    }
@@ -648,7 +666,7 @@ public class DatatoolSettings
       importSettings.setWipePassword(wipePassword);
    }
 
-   public void setWipePasswordProperty(boolean wipePassword)
+   public void setWipePasswordDefault(boolean wipePassword)
    {
       this.wipePassword = wipePassword;
    }
@@ -658,7 +676,7 @@ public class DatatoolSettings
       return importSettings.isWipePasswordOn();
    }
 
-   public boolean isWipePasswordEnabledProperty()
+   public boolean isWipePasswordEnabledDefault()
    {
       return wipePassword;
    }
@@ -668,7 +686,7 @@ public class DatatoolSettings
       importSettings.setSqlUser(username);
    }
 
-   public void setSqlUserProperty(String username)
+   public void setSqlUserDefault(String username)
    {
       sqlDbUser = username;
    }
@@ -678,7 +696,7 @@ public class DatatoolSettings
       return importSettings.getSqlUser();
    }
 
-   public String getSqlUserProperty()
+   public String getSqlUserDefault()
    {
       return sqlDbUser;
    }
@@ -693,7 +711,7 @@ public class DatatoolSettings
       return importSettings.hasHeaderRow();
    }
 
-   public boolean hasCSVHeaderProperty()
+   public boolean hasCSVHeaderDefault()
    {
       return hasCsvHeader;
    }
@@ -703,7 +721,7 @@ public class DatatoolSettings
       importSettings.setHasHeaderRow(hasHeader);
    }
 
-   public void setHasCSVHeaderProperty(boolean hasHeader)
+   public void setHasCSVHeaderDefault(boolean hasHeader)
    {
       hasCsvHeader = hasHeader;
    }
@@ -738,22 +756,22 @@ public class DatatoolSettings
       return importSettings.isAutoKeysOn();
    }
 
-   public boolean hasCSVstrictquotes()
+   public boolean hasCSVStrictQuotes()
    {
       return importSettings.isStrictQuotesOn();
    }
 
-   public boolean hasCSVstrictquotesProperty()
+   public boolean hasCSVStrictQuotesDefault()
    {
       return csvStrictQuotes;
    }
 
-   public void setCSVstrictquotes(boolean strictquotes)
+   public void setCSVStrictQuotes(boolean strictquotes)
    {
       importSettings.setStrictQuotes(strictquotes);
    }
 
-   public void setCSVstrictquotesProperty(boolean strictquotes)
+   public void setCSVStrictQuotesDefault(boolean strictquotes)
    {
       csvStrictQuotes = strictquotes;
    }
@@ -763,7 +781,7 @@ public class DatatoolSettings
       importSettings.setBlankRowAction(opt);
    }
 
-   public void setCsvBlankOptionProperty(CsvBlankOption opt)
+   public void setCsvBlankOptionDefault(CsvBlankOption opt)
    {
       csvBlankOption = opt;
    }
@@ -773,7 +791,7 @@ public class DatatoolSettings
       return importSettings.getBlankRowAction();
    }
 
-   public CsvBlankOption getCsvBlankOptionProperty()
+   public CsvBlankOption getCsvBlankOptionDefault()
    {
       return csvBlankOption;
    }
@@ -783,7 +801,7 @@ public class DatatoolSettings
       importSettings.setEscapeCharsOption(opt);
    }
 
-   public void setEscapeCharsOptionProperty(EscapeCharsOption opt)
+   public void setEscapeCharsOptionDefault(EscapeCharsOption opt)
    {
       escapeCharsOption = opt;
    }
@@ -793,7 +811,7 @@ public class DatatoolSettings
       return importSettings.getEscapeCharsOption();
    }
 
-   public EscapeCharsOption getEscapeCharsOptionProperty()
+   public EscapeCharsOption getEscapeCharsOptionDefault()
    {
       return escapeCharsOption;
    }
@@ -808,23 +826,23 @@ public class DatatoolSettings
       return addDelimiterOption;
    }
 
-   public int getCSVskiplines()
+   public int getCSVSkipLines()
    {
       return importSettings.getSkipLines();
    }
 
-   public int getCSVskiplinesProperty()
+   public int getCSVSkipLinesDefault()
    {
       return skipLines;
    }
 
-   public void setCSVskiplines(int lines)
+   public void setCSVSkipLines(int lines)
    throws IllegalArgumentException
    {
       importSettings.setSkipLines(lines);
    }
 
-   public void setCSVskiplinesProperty(int lines)
+   public void setCSVSkipLinesDefault(int lines)
    throws IllegalArgumentException
    {
       if (lines < 0)
@@ -840,7 +858,7 @@ public class DatatoolSettings
       return importSettings.isImportEmptyToNullOn();
    }
 
-   public boolean isImportEmptyToNullOnProperty()
+   public boolean isImportEmptyToNullOnDefault()
    {
       return importEmptyToNull;
    }
@@ -850,7 +868,7 @@ public class DatatoolSettings
       importSettings.setImportEmptyToNull(on);
    }
 
-   public void setImportEmptyToNullProperty(boolean on)
+   public void setImportEmptyToNullDefault(boolean on)
    {
       importEmptyToNull = on;
    }
@@ -860,7 +878,7 @@ public class DatatoolSettings
       return importSettings.isStripSolutionEnvOn();
    }
 
-   public boolean isSolutionEnvStrippedProperty()
+   public boolean isSolutionEnvStrippedDefault()
    {
       return stripSolnEnv;
    }
@@ -870,7 +888,7 @@ public class DatatoolSettings
       importSettings.setStripSolutionEnv(stripEnv);
    }
 
-   public void setSolutionEnvStrippedProperty(boolean stripEnv)
+   public void setSolutionEnvStrippedDefault(boolean stripEnv)
    {
       stripSolnEnv = stripEnv;
    }
@@ -880,7 +898,7 @@ public class DatatoolSettings
       return importSettings.isPreambleOnly();
    }
 
-   public boolean isPreambleOnlyProperty()
+   public boolean isPreambleOnlyDefault()
    {
       return isPreambleOnly;
    }
@@ -890,7 +908,7 @@ public class DatatoolSettings
       importSettings.setPreambleOnly(on);
    }
 
-   public void setPreambleOnlyProperty(boolean on)
+   public void setPreambleOnlyDefault(boolean on)
    {
       isPreambleOnly = on;
    }
@@ -910,7 +928,7 @@ public class DatatoolSettings
       importSettings.setTrimLabels(enable);
    }
 
-   public void setAutoTrimLabelsProperty(boolean enable)
+   public void setAutoTrimLabelsDefault(boolean enable)
    {
       autoTrimLabels = enable;
    }
@@ -920,7 +938,7 @@ public class DatatoolSettings
       return importSettings.isTrimLabelsOn();
    }
 
-   public boolean isAutoTrimLabelsOnProperty()
+   public boolean isAutoTrimLabelsOnDefault()
    {
       return autoTrimLabels;
    }
@@ -930,7 +948,7 @@ public class DatatoolSettings
       importSettings.setTrimElement(enable);
    }
 
-   public void setTrimElementProperty(boolean enable)
+   public void setTrimElementDefault(boolean enable)
    {
       trimElements = enable;
    }
@@ -940,7 +958,7 @@ public class DatatoolSettings
       return importSettings.isTrimElementOn();
    }
 
-   public boolean isTrimElementOnProperty()
+   public boolean isTrimElementOnDefault()
    {
       return trimElements;
    }
@@ -951,12 +969,12 @@ public class DatatoolSettings
    }
 
 // TODO replace with just literal content setting?
-   public void setTeXMappingProperty(boolean enable)
+   public void setTeXMappingDefault(boolean enable)
    {
       mapTeXSpecials = enable;
    }
 
-   public boolean isTeXMappingOnProperty()
+   public boolean isTeXMappingOnDefault()
    {
       return mapTeXSpecials;
    }
@@ -966,7 +984,7 @@ public class DatatoolSettings
       return importSettings.isLiteralContent();
    }
 
-   public boolean isLiteralContentProperty()
+   public boolean isLiteralContentDefault()
    {
       return literalContent;
    }
@@ -976,7 +994,7 @@ public class DatatoolSettings
       importSettings.setLiteralContent(on);
    }
 
-   public void setLiteralContentProperty(boolean on)
+   public void setLiteralContentDefault(boolean on)
    {
       literalContent = on;
    }
@@ -1140,7 +1158,7 @@ public class DatatoolSettings
       return importSettings.isRedefNewProblemOn();
    }
 
-   public boolean isRedefNewProblemEnabledProperty()
+   public boolean isRedefNewProblemEnabledDefault()
    {
       return allowRedefNewProb;
    }
@@ -1150,7 +1168,7 @@ public class DatatoolSettings
       importSettings.setRedefNewProblem(value);
    }
 
-   public void setRedefNewProblemProperty(boolean value)
+   public void setRedefNewProblemDefault(boolean value)
    {
       allowRedefNewProb = value;
    }
@@ -1348,8 +1366,8 @@ public class DatatoolSettings
    protected int initialColumnCapacity = 10;
    protected String defaultOutputFormat = null;
    protected boolean overrideInputFormat = false;
-   protected String texEncodingName = null;
-   protected String csvEncodingName = null;
+   protected Charset texEncoding = null;
+   protected Charset csvEncoding = null;
    protected boolean isStringDbTeX3DatumValueOn = false;
    protected boolean isDecimalDbTeX3DatumValueOn = true;
    protected boolean isCurrencyDbTeX3DatumValueOn = true;

@@ -885,7 +885,7 @@ public abstract class DatatoolTk
 
             try
             {
-               settings.setCSVskiplines(Integer.parseInt(args[i]));
+               settings.setCSVSkipLines(Integer.parseInt(args[i]));
             }
             catch (Exception e)
             {
@@ -895,11 +895,11 @@ public abstract class DatatoolTk
          }
          else if (args[i].equals("--csv-strictquotes"))
          {
-            settings.setCSVstrictquotes(true);
+            settings.setCSVStrictQuotes(true);
          }
          else if (args[i].equals("--nocsv-strictquotes"))
          {
-            settings.setCSVstrictquotes(false);
+            settings.setCSVStrictQuotes(false);
          }
          else if (args[i].equals("--csv-encoding") 
             || args[i].equals("--csvencoding"))
