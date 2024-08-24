@@ -52,6 +52,43 @@ public class CombinedDatatoolTk extends DatatoolTk
    }
 
    @Override
+   public DatatoolImport getDatatoolImport(int fmtId,
+       DatatoolSettings settings)
+   throws UnsupportedFileFormatException
+   {
+      if (fmtId == DatatoolFileFormat.FILE_FORMAT_FLAG_SQL)
+      {
+         return new DatatoolSql(settings);
+      }
+      else if (fmtId == DatatoolFileFormat.FILE_FORMAT_FLAG_XLS)
+      {
+         return new DatatoolExcel(settings);
+      }
+
+      return super.getDatatoolImport(fmtId, settings);
+   }
+
+   @Override
+   public void helpSpreadSheetImportOptions()
+   {
+      System.out.println(getLabel("syntax.xls_opts"));
+      System.out.println(getLabelWithValues("syntax.xlsx", "--xlsx"));
+      System.out.println(getLabelWithValues("syntax.xls", "--xls"));
+      System.out.println(getLabelWithValues("syntax.merge_xlsx", "--merge-xlsx"));
+      System.out.println(getLabelWithValues("syntax.merge_xls", "--merge-xls"));
+      System.out.println();
+
+      System.out.println(getLabel("syntax.ods_opts"));
+      System.out.println(getLabelWithValues("syntax.ods", "--ods"));
+      System.out.println(getLabelWithValues("syntax.merge_ods", "--merge-ods"));
+      System.out.println();
+
+      System.out.println(getLabel("syntax.xlsods_opts"));
+      System.out.println(getLabelWithValues("syntax.sheet", "--sheet"));
+      System.out.println();
+   }
+
+   @Override
    protected void process()
    {
       if (settings.isBatchMode())

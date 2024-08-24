@@ -1095,6 +1095,8 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.csv_sep">{0} &lt;character&gt;	Separator used in CSV files. (Defaults to ''{1}''. Synonym: {2})</entry>
 
+<entry key="syntax.tsv_sep">{0}		CSV files have TAB separators. (Equivalent to using ''{1}'' with TAB character)</entry>
+
 <entry key="syntax.csv_skiplines">{0} &lt;number&gt;		Skip the specified &lt;number&gt; of lines at the start of CSV files.</entry>
 
 <entry key="syntax.csv_strictquotes">{0}		Ignore characters not enclosed in the designated delimiters.</entry>

@@ -211,11 +211,15 @@ Import data from the given CSV file.
 As B<--merge> but the data to be merged is imported from the given
 CSV file.
 
-=item B<--csv-sep> I<character>
+=item B<--csv-sep> I<character> (or B<--sep>)
 
 Specify the character used to separate values in the CSV file.
 
-=item B<--csv-delim> I<character>
+=item B<--tab-sep>
+
+Equivalent to using B<--csv-sep> with TAB as the supplied I<character>.
+
+=item B<--csv-delim> I<character> (or B<--delim>)
 
 Specify the character used to delimit values in the CSV file.
 

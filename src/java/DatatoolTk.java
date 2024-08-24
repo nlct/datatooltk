@@ -68,6 +68,250 @@ public abstract class DatatoolTk
       return settings;
    }
 
+   public DatatoolImport getDatatoolImport(DatatoolFileFormat fmt)
+   throws UnsupportedFileFormatException
+   {
+      return getDatatoolImport(fmt, settings);
+   }
+
+   public DatatoolImport getDatatoolImport(DatatoolFileFormat fmt,
+     DatatoolSettings settings)
+   throws UnsupportedFileFormatException
+   {
+      return getDatatoolImport(fmt.getFileFormat(), settings);
+   }
+
+   public DatatoolImport getDatatoolImport(int fmtId)
+   throws UnsupportedFileFormatException
+   {
+      return getDatatoolImport(fmtId, settings);
+   }
+
+   public DatatoolImport getDatatoolImport(int fmtId,
+     DatatoolSettings settings)
+   throws UnsupportedFileFormatException
+   {
+      switch (fmtId)
+      {
+         case DatatoolFileFormat.FILE_FORMAT_FLAG_SQL:
+
+            throw new UnsupportedFileFormatException(
+              getLabelWithValues("error.unsupported_option", "sql"));
+
+         case DatatoolFileFormat.FILE_FORMAT_FLAG_XLS:
+
+            throw new UnsupportedFileFormatException(
+              getLabelWithValues("error.unsupported_option", "xls"));
+
+         case DatatoolFileFormat.FILE_FORMAT_FLAG_TSV:
+            return new DatatoolCsv(settings, '\t');
+         case DatatoolFileFormat.FILE_FORMAT_FLAG_CSV:
+            return new DatatoolCsv(settings);
+         case DatatoolFileFormat.FILE_FORMAT_FLAG_ODS:
+           return new DatatoolOpenDoc(settings, false);
+         case DatatoolFileFormat.FILE_FORMAT_FLAG_FODS:
+           return new DatatoolOpenDoc(settings, true);
+         case DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX:
+           return new DatatoolOfficeOpenXML(settings);
+         default: // assume TeX
+           return new DatatoolTeX(settings);
+      }
+   }
+
+   public DatatoolImport getDatatoolImport(String type)
+     throws UnsupportedFileFormatException
+   {
+      if (type.equals("sql"))
+      {
+         return getDatatoolImport(DatatoolFileFormat.FILE_FORMAT_FLAG_SQL);
+      }
+      else if (type.equals("csv"))
+      {
+         return getDatatoolImport(DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
+      }
+      else if (type.equals("tsv"))
+      {
+         return getDatatoolImport(DatatoolFileFormat.FILE_FORMAT_FLAG_TSV);
+      }
+      else if (type.equals("probsoln"))
+      {
+         return new DatatoolProbSoln(settings);
+      }
+      else if (type.equals("xls"))
+      {
+         return getDatatoolImport(DatatoolFileFormat.FILE_FORMAT_FLAG_XLS);
+      }
+      else if (type.equals("xlsx"))
+      {
+         return getDatatoolImport(DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX);
+      }
+      else if (type.equals("ods"))
+      {
+         return getDatatoolImport(DatatoolFileFormat.FILE_FORMAT_FLAG_ODS);
+      }
+      else if (type.equals("fods"))
+      {
+         return getDatatoolImport(DatatoolFileFormat.FILE_FORMAT_FLAG_FODS);
+      }
+      else
+      {
+         throw new UnsupportedFileFormatException(
+            getLabelWithValues("error.unsupported_option", type));
+      }
+   }
+
+   public int processMergeOption(int i, String[] args, String type)
+     throws InvalidSyntaxException,IOException
+   {
+      String opt = args[i];
+      boolean isSql = allowsSQL && type.equals("sql");
+
+      if (loadSettings.getMergeImport() != null)
+      {
+         throw new InvalidSyntaxException(
+            getLabelWithValues("error.syntax.only_one", opt));
+      }
+
+      i++;
+
+      if (i == args.length)
+      {
+         throw new InvalidSyntaxException(
+           getLabelWithValues("error.syntax.missing_merge_key",
+             opt));
+      }
+
+      String mergeKey = args[i];
+
+      i++;
+
+      if (i == args.length)
+      {
+         throw new InvalidSyntaxException(
+            getLabelWithValues(
+               isSql ? "error.syntax.missing_merge_statement" :
+               "error.syntax.missing_merge_file",
+               opt, mergeKey));
+      }
+
+      loadSettings.setMergeKey(mergeKey);
+      loadSettings.setMergeImportSource(args[i]);
+
+      if (type.equals("import"))
+      {
+         File file = new File(args[i]);
+
+         if (!file.exists())
+         {
+            if (allowsSQL && args[i].lastIndexOf('.') == -1)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.io.file_not_found_query_sql",
+                     args[i], "--merge-sql"));
+            }
+            else
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.io.file_not_found",
+                     args[i]));
+            }
+         }
+
+         DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
+           getMessageHandler(), file);
+
+         loadSettings.setMergeImport(getDatatoolImport(fmt));
+      }
+      else
+      {
+         try
+         {
+            loadSettings.setMergeImport(getDatatoolImport(type));
+         }
+         catch (UnsupportedFileFormatException e)
+         {
+            throw new InvalidSyntaxException( 
+              getLabelWithValues("error.syntax.unknown_option", opt), e);
+         }
+      }
+
+      return i;
+   }
+
+   public int processImportOption(int i, String[] args, String type)
+     throws InvalidSyntaxException,IOException
+   {
+      String opt = args[i];
+      boolean isSql = allowsSQL && type.equals("sql");
+
+      if (loadSettings.getDataImport() != null)
+      {
+         throw new InvalidSyntaxException(
+            getLabel("error.syntax.only_one_import", opt));
+      }
+
+      i++;
+
+      if (i == args.length)
+      {
+         throw new InvalidSyntaxException(
+            getLabelWithValues(
+               isSql ? "error.syntax.missing_sql" :
+               "error.syntax.missing_filename",
+               opt));
+      }
+
+      loadSettings.setImportSource(args[i]);
+
+      if (type.equals("import"))
+      {
+         File file = new File(args[i]);
+
+         if (!file.exists())
+         {
+            if (allowsSQL && args[i].lastIndexOf('.') == -1)
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.io.file_not_found_query_sql",
+                     args[i], "--sql"));
+            }
+            else
+            {
+               throw new InvalidSyntaxException(
+                  getLabelWithValues("error.io.file_not_found",
+                     args[i]));
+            }
+         }
+
+         DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
+           getMessageHandler(), file);
+
+         loadSettings.setDataImport(getDatatoolImport(fmt));
+      }
+      else
+      {
+         try
+         {
+            loadSettings.setDataImport(getDatatoolImport(type));
+         }
+         catch (UnsupportedFileFormatException e)
+         {
+            throw new InvalidSyntaxException( 
+              getLabelWithValues("error.syntax.unknown_option", opt), e);
+         }
+      }
+
+      return i;
+   }
+
+   // may be overridden to provide extra options
+   public int processOption(int i, String[] args)
+     throws InvalidSyntaxException
+   {
+      throw new InvalidSyntaxException(
+       getLabelWithValues("error.syntax.unknown_option", args[i]));
+   }
+
    public void doBatchProcess()
    {
       settings.setPasswordReader(new ConsolePasswordReader(
@@ -373,13 +617,49 @@ public abstract class DatatoolTk
          "--merge"));
       System.out.println();
 
+      helpImportOptions();
+
+      System.out.println(getLabelWithValues("syntax.bugreport", 
+        "https://github.com/nlct/datatooltk/issues"));
+      System.out.println(getLabelWithValues("syntax.homepage", 
+        getApplicationName(),
+        "http://www.dickimaw-books.com/software/datatooltk/"));
+   }
+
+   public void helpImportOptions()
+   {
+      System.out.println(getLabelWithValues("syntax.import", "--import"));
+      System.out.println(getLabelWithValues("syntax.merge_import", "--merge-import"));
+      System.out.println(getLabelWithValues("syntax.preamble_only",
+         "--[no]preamble-only"));
+
+      System.out.println();
+
+      helpTeXImportOptions();
+      helpSQLImportOptions();
+      helpCSVImportOptions();
+      helpSpreadSheetImportOptions();
+   }
+
+   public void helpTeXImportOptions()
+   {
+      System.out.println(getLabel("syntax.probsoln_opts"));
+      System.out.println(getLabelWithValues("syntax.probsoln", "--probsoln"));
+      System.out.println(getLabelWithValues("syntax.merge_probsoln", "--merge-probsoln"));
+      System.out.println();
+
+   }
+
+   public void helpCSVImportOptions()
+   {
       System.out.println(getLabel("syntax.csv_opts"));
       System.out.println(getLabelWithValues("syntax.csv", "--csv"));
       System.out.println(getLabelWithValues("syntax.merge_csv", "--merge-csv"));
+      System.out.println(getLabelWithValues("syntax.tsv_sep", "--tab-sep", "--csv-sep"));
       System.out.println(getLabelWithValues("syntax.csv_sep", "--csv-sep", 
-        MessageHandler.codePointToString(settings.getSeparator()), "--sep"));
+        new String(Character.toChars(settings.getSeparator())), "--sep"));
       System.out.println(getLabelWithValues("syntax.csv_delim", "--csv-delim", 
-        MessageHandler.codePointToString(settings.getDelimiter()), "--delim"));
+        new String(Character.toChars(settings.getDelimiter())), "--delim"));
       System.out.println(getLabelWithValues("syntax.csv_header",
         "--csv-header",
         (settings.hasCSVHeader()?" ("+getLabel("syntax.default")+".)":""),
@@ -419,6 +699,28 @@ public abstract class DatatoolTk
         "--csv-encoding", "--csvencoding"));
       System.out.println();
 
+   }
+
+   public void helpSpreadSheetImportOptions()
+   {
+      System.out.println(getLabel("syntax.xls_opts"));
+      System.out.println(getLabelWithValues("syntax.xlsx", "--xlsx"));
+      System.out.println(getLabelWithValues("syntax.merge_xlsx", "--merge-xlsx"));
+      System.out.println();
+
+      System.out.println(getLabel("syntax.ods_opts"));
+      System.out.println(getLabelWithValues("syntax.ods", "--ods"));
+      System.out.println(getLabelWithValues("syntax.merge_ods", "--merge-ods"));
+      System.out.println();
+
+      System.out.println(getLabel("syntax.xlsods_opts"));
+      System.out.println(getLabelWithValues("syntax.sheet", "--sheet"));
+      System.out.println();
+
+   }
+
+   public void helpSQLImportOptions()
+   {
       if (allowsSQL)
       {
          System.out.println(getLabel("syntax.sql_opts"));
@@ -447,37 +749,6 @@ public abstract class DatatoolTk
          System.out.println();
       }
 
-      System.out.println(getLabelWithValues("syntax.import", "--import"));
-      System.out.println(getLabelWithValues("syntax.merge_import", "--merge-import"));
-      System.out.println(getLabelWithValues("syntax.preamble_only",
-         "--[no]preamble-only"));
-
-      System.out.println();
-
-      System.out.println(getLabel("syntax.probsoln_opts"));
-      System.out.println(getLabelWithValues("syntax.probsoln", "--probsoln"));
-      System.out.println(getLabelWithValues("syntax.merge_probsoln", "--merge-probsoln"));
-      System.out.println();
-
-      System.out.println(getLabel("syntax.xls_opts"));
-      System.out.println(getLabelWithValues("syntax.xlsx", "--xlsx"));
-      System.out.println(getLabelWithValues("syntax.merge_xls", "--merge-xls"));
-      System.out.println();
-
-      System.out.println(getLabel("syntax.ods_opts"));
-      System.out.println(getLabelWithValues("syntax.ods", "--ods"));
-      System.out.println(getLabelWithValues("syntax.merge_ods", "--merge-ods"));
-      System.out.println();
-
-      System.out.println(getLabel("syntax.xlsods_opts"));
-      System.out.println(getLabelWithValues("syntax.sheet", "--sheet"));
-      System.out.println();
-
-      System.out.println(getLabelWithValues("syntax.bugreport", 
-        "https://github.com/nlct/datatooltk/issues"));
-      System.out.println(getLabelWithValues("syntax.homepage", 
-        getApplicationName(),
-        "http://www.dickimaw-books.com/software/datatooltk/"));
    }
 
    public String getApplicationName()
@@ -1036,205 +1307,31 @@ public abstract class DatatoolTk
          }
          else if (args[i].equals("--import"))
          {
-            if (loadSettings.getImportSource() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_import"));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.import_clash", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_filename",
-                     args[i-1]));
-            }
-
-            File file = new File(args[i]);
-
-            if (!file.exists())
-            {
-               if (args[i].lastIndexOf('.') == -1)
-               {
-                  throw new InvalidSyntaxException(
-                     getLabelWithValues("error.io.file_not_found_query_sql",
-                        args[i], "--sql"));
-               }
-               else
-               {
-                  throw new InvalidSyntaxException(
-                     getLabelWithValues("error.io.file_not_found",
-                        args[i]));
-               }
-            }
-
-            DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
-              getMessageHandler(), file);
-
-            loadSettings.setImportSource(args[i]);
-
-            switch (fmt.getFileFormat())
-            {
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_TSV:
-                  settings.setSeparator('\t');
-               // fall through
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_CSV:
-                  loadSettings.setDataImport(new DatatoolCsv(settings));
-               break;
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_ODS:
-                 loadSettings.setDataImport(new DatatoolOpenDoc(settings, false));
-               break;
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_FODS:
-                 loadSettings.setDataImport(new DatatoolOpenDoc(settings, true));
-               break;
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX:
-                 loadSettings.setDataImport(new DatatoolOfficeOpenXML(settings));
-               break;
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_XLS:
-                 loadSettings.setDataImport(new DatatoolExcel(settings));
-               default: // assume TeX
-                 loadSettings.setDataImport(new DatatoolTeX(settings));
-            }
+            i = processImportOption(i, args, "import");
          }
          else if (args[i].equals("--csv"))
          {
-            if (loadSettings.getImportSource() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_import"));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.import_clash", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_filename",
-                     args[i-1]));
-            }
-
-            loadSettings.setImportSource(args[i]);
-            loadSettings.setDataImport(new DatatoolCsv(settings));
+            i = processImportOption(i, args, "csv");
          }
          else if (args[i].equals("--tsv"))
          {
-            if (loadSettings.getImportSource() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_import"));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.import_clash", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_filename",
-                     args[i-1]));
-            }
-
-            settings.setSeparator('\t');
-            loadSettings.setImportSource(args[i]);
-            loadSettings.setDataImport(new DatatoolCsv(settings));
+            i = processImportOption(i, args, "tsv");
          }
          else if (args[i].equals("--xls"))
          {
-            if (loadSettings.getImportSource() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_import"));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.import_clash", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_filename",
-                     args[i-1]));
-            }
-
-            loadSettings.setImportSource(args[i]);
-            loadSettings.setDataImport(new DatatoolExcel(settings));
+            i = processImportOption(i, args, "xls");
          }
          else if (args[i].equals("--xlsx"))
          {
-            if (loadSettings.getImportSource() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_import"));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.import_clash", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_filename",
-                     args[i-1]));
-            }
-
-            loadSettings.setImportSource(args[i]);
-            loadSettings.setDataImport(new DatatoolOfficeOpenXML(settings));
+            i = processImportOption(i, args, "xlsx");
          }
-         else if (args[i].equals("--ods") || args[i].equals("--odf")
-               || args[i].equals("--fods"))
+         else if (args[i].equals("--ods"))
          {
-            if (loadSettings.getImportSource() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_import"));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.import_clash", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_filename",
-                     args[i-1]));
-            }
-
-            loadSettings.setImportSource(args[i]);
-            loadSettings.setDataImport(new DatatoolOpenDoc(settings,
-              args[i-1].equals("--fods")));
+            i = processImportOption(i, args, "ods");
+         }
+         else if (args[i].equals("--odf") || args[i].equals("--fods"))
+         {
+            i = processImportOption(i, args, "fods");
          }
          else if (args[i].equals("--sheet"))
          {
@@ -1259,60 +1356,11 @@ public abstract class DatatoolTk
          }
          else if (args[i].equals("--probsoln"))
          {
-            if (loadSettings.getImportSource() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_import"));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.import_clash", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_filename",
-                     args[i-1]));
-            }
-
-            loadSettings.setImportSource(args[i]);
-            loadSettings.setDataImport(new DatatoolProbSoln(settings));
+            i = processImportOption(i, args, "probsoln");
          }
          else if (args[i].equals("--sql"))
          {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
-            }
-
-            if (loadSettings.getDataImport() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_import"));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.import_clash", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_sql", args[i-1]));
-            }
-
-            loadSettings.setImportSource(args[i]);
-            loadSettings.setDataImport(new DatatoolSql(settings));
+            i = processImportOption(i, args, "sql");
          }
          else if (args[i].equals("--sqldb"))
          {
@@ -2050,284 +2098,9 @@ public abstract class DatatoolTk
             loadSettings.setMergeKey(mergeKey);
             loadSettings.setMergeFile(mergeFile);
          }
-         else if (args[i].equals("--merge-import"))
+         else if (args[i].startsWith("--merge-"))
          {
-            if (loadSettings.getMergeImportSource() != null
-                || loadSettings.getMergeFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.only_one", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_merge_key",
-                   args[i-1]));
-            }
-
-            String mergeKey = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_merge_file",
-                     args[i-2], args[i-1]));
-            }
-
-            loadSettings.setMergeKey(mergeKey);
-            loadSettings.setMergeImportSource(args[i]);
-
-            File file = new File(args[i]);
-
-            if (!file.exists())
-            {
-               if (args[i].lastIndexOf('.') == -1)
-               {
-                  throw new InvalidSyntaxException(
-                     getLabelWithValues("error.io.file_not_found_query_sql",
-                        args[i], "--merge-sql"));
-               }
-               else
-               {
-                  throw new InvalidSyntaxException(
-                     getLabelWithValues("error.io.file_not_found",
-                        args[i]));
-               }
-            }
-
-            DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
-              getMessageHandler(), file);
-
-            switch (fmt.getFileFormat())
-            {
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_TSV:
-                  settings.setSeparator('\t');
-               // fall through
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_CSV:
-                  loadSettings.setMergeImport(new DatatoolCsv(settings));
-               break;
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_ODS:
-                 loadSettings.setMergeImport(new DatatoolOpenDoc(settings, false));
-               break;
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_FODS:
-                 loadSettings.setMergeImport(new DatatoolOpenDoc(settings, true));
-               break;
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX:
-                 loadSettings.setMergeImport(new DatatoolOfficeOpenXML(settings));
-               case DatatoolFileFormat.FILE_FORMAT_FLAG_XLS:
-                 loadSettings.setMergeImport(new DatatoolExcel(settings));
-               default: // assume TeX
-                 loadSettings.setMergeImport(new DatatoolTeX(settings));
-            }
-         }
-         else if (args[i].equals("--merge-csv"))
-         {
-            if (loadSettings.getMergeImportSource() != null
-                || loadSettings.getMergeFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.only_one", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_merge_key",
-                   args[i-1]));
-            }
-
-            String mergeKey = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_merge_file",
-                     args[i-2], args[i-1]));
-            }
-
-            loadSettings.setMergeKey(mergeKey);
-            loadSettings.setMergeImportSource(args[i]);
-            loadSettings.setMergeImport(new DatatoolCsv(settings));
-         }
-         else if (args[i].equals("--merge-sql"))
-         {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
-            }
-
-            if (loadSettings.getMergeImportSource() != null
-                || loadSettings.getMergeFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.only_one", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_merge_key",
-                   args[i-1]));
-            }
-
-            String mergeKey = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_merge_statement",
-                     args[i-2], args[i-1]));
-            }
-
-            loadSettings.setMergeKey(mergeKey);
-            loadSettings.setMergeImportSource(args[i]);
-            loadSettings.setMergeImport(new DatatoolSql(settings));
-         }
-         else if (args[i].equals("--merge-probsoln"))
-         {
-            if (loadSettings.getMergeImportSource() != null
-                || loadSettings.getMergeFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.only_one", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_merge_key",
-                   args[i-1]));
-            }
-
-            String mergeKey = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_merge_file",
-                     args[i-2], args[i-1]));
-            }
-
-            loadSettings.setMergeKey(mergeKey);
-            loadSettings.setMergeImportSource(args[i]);
-            loadSettings.setMergeImport(new DatatoolProbSoln(settings));
-         }
-         else if (args[i].equals("--merge-xls"))
-         {
-            if (loadSettings.getMergeImportSource() != null
-                || loadSettings.getMergeFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.only_one", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_merge_key",
-                   args[i-1]));
-            }
-
-            String mergeKey = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_merge_file",
-                     args[i-2], args[i-1]));
-            }
-
-            loadSettings.setMergeKey(mergeKey);
-            loadSettings.setMergeImportSource(args[i]);
-            loadSettings.setMergeImport(new DatatoolExcel(settings));
-         }
-         else if (args[i].equals("--merge-xlsx"))
-         {
-            if (loadSettings.getMergeImportSource() != null
-                || loadSettings.getMergeFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.only_one", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_merge_key",
-                   args[i-1]));
-            }
-
-            String mergeKey = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_merge_file",
-                     args[i-2], args[i-1]));
-            }
-
-            loadSettings.setMergeKey(mergeKey);
-            loadSettings.setMergeImportSource(args[i]);
-            loadSettings.setMergeImport(new DatatoolOfficeOpenXML(settings));
-         }
-         else if (args[i].equals("--merge-ods"))
-         {
-            if (loadSettings.getMergeImportSource() != null
-                || loadSettings.getMergeFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.only_one", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_merge_key",
-                   args[i-1]));
-            }
-
-            String mergeKey = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_merge_file",
-                     args[i-2], args[i-1]));
-            }
-
-            loadSettings.setMergeKey(mergeKey);
-            loadSettings.setMergeImportSource(args[i]);
-            loadSettings.setMergeImport(new DatatoolOpenDoc(settings));
+            i = processMergeOption(i, args, args[i].substring(8));
          }
          else if (args[i].equals("--name"))
          {
@@ -2377,9 +2150,7 @@ public abstract class DatatoolTk
          }
          else if (args[i].charAt(0) == '-')
          {
-            throw new InvalidSyntaxException(
-             getLabelWithValues("error.syntax.unknown_option",
-               args[i]));
+            i = processOption(i, args);
          }
          else
          {

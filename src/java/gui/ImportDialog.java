@@ -233,7 +233,8 @@ public class ImportDialog extends JDialog
    protected void okay() throws IOException
    {
       DatatoolProperties settings = gui.getSettings();
-      MessageHandler messageHandler = gui.getMessageHandler();
+      CombinedMessageHandler messageHandler = gui.getMessageHandler();
+      DatatoolTk datatooltk = gui.getDatatoolTk();
 
       boolean isSql = (settingsPanel.isFileFormatSelected(
           DatatoolFileFormat.FILE_FORMAT_FLAG_SQL));
@@ -293,33 +294,45 @@ public class ImportDialog extends JDialog
       DatatoolImport imp;
 
       if (settingsPanel.isFileFormatSelected(
-           DatatoolFileFormat.FILE_FORMAT_CSV_OR_TSV))
+           DatatoolFileFormat.FILE_FORMAT_FLAG_CSV))
       {
-         imp = new DatatoolCsv(settings);
+         imp = datatooltk.getDatatoolImport(
+           DatatoolFileFormat.FILE_FORMAT_FLAG_CSV, settings);
+      }
+      else if (settingsPanel.isFileFormatSelected(
+           DatatoolFileFormat.FILE_FORMAT_FLAG_TSV))
+      {
+         imp = datatooltk.getDatatoolImport(
+           DatatoolFileFormat.FILE_FORMAT_FLAG_TSV, settings);
       }
       else if (isSql)
       {
-         imp = new DatatoolSql(settings);
+         imp = datatooltk.getDatatoolImport(
+           DatatoolFileFormat.FILE_FORMAT_FLAG_SQL, settings);
       }
       else if (settingsPanel.isFileFormatSelected(
            DatatoolFileFormat.FILE_FORMAT_FLAG_ODS))
       {
-         imp = new DatatoolOpenDoc(settings, false);
+         imp = datatooltk.getDatatoolImport(
+           DatatoolFileFormat.FILE_FORMAT_FLAG_ODS, settings);
       }
       else if (settingsPanel.isFileFormatSelected(
            DatatoolFileFormat.FILE_FORMAT_FLAG_FODS))
       {
-         imp = new DatatoolOpenDoc(settings, true);
+         imp = datatooltk.getDatatoolImport(
+           DatatoolFileFormat.FILE_FORMAT_FLAG_FODS, settings);
       }
       else if (settingsPanel.isFileFormatSelected(
            DatatoolFileFormat.FILE_FORMAT_FLAG_XLS))
       {
-         imp = new DatatoolExcel(settings);
+         imp = datatooltk.getDatatoolImport(
+           DatatoolFileFormat.FILE_FORMAT_FLAG_XLS, settings);
       }
       else if (settingsPanel.isFileFormatSelected(
            DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX))
       {
-         imp = new DatatoolOfficeOpenXML(settings);
+         imp = datatooltk.getDatatoolImport(
+           DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX, settings);
       }
       else
       {

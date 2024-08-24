@@ -35,7 +35,13 @@ public class DatatoolCsv extends DatatoolTeX
 {
    public DatatoolCsv(DatatoolSettings settings)
    {
+      this(settings, -1);
+   }
+
+   public DatatoolCsv(DatatoolSettings settings, int separator)
+   {
       super(settings);
+      this.separator = separator;
    }
 
    public void exportData(DatatoolDb db, String target)
@@ -44,9 +50,15 @@ public class DatatoolCsv extends DatatoolTeX
       try
       {
          DataToolTeXParserListener listener = settings.getTeXParserListener();
+
          listener.applyCurrentCsvSettings();
          IOSettings ioSettings = listener.getIOSettings();
          ioSettings.setFileOverwriteOption(FileOverwriteOption.ALLOW);
+
+         if (separator > 0)
+         {
+            ioSettings.setSeparator(separator);
+         }
 
          exportData(db, ioSettings, target);
       }
@@ -129,6 +141,11 @@ public class DatatoolCsv extends DatatoolTeX
          ioSettings.setDefaultName(name);
          importSettings.applyTo(ioSettings, parser);
 
+         if (separator > 0)
+         {
+            ioSettings.setSeparator(separator);
+         }
+
          if (importSettings.getSeparator() == '\t')
          {
             ioSettings.setFileFormat(FileFormatType.TSV);
@@ -149,4 +166,5 @@ public class DatatoolCsv extends DatatoolTeX
       }
    }
 
+   int separator = -1;
 }
