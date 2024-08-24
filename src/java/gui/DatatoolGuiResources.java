@@ -34,7 +34,6 @@ import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.TJHAbstractAction;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
-import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Application GUI resources.
