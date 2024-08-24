@@ -34,9 +34,9 @@ import com.dickimawbooks.datatooltk.*;
 /**
  * Main application class with batch and GUI mode.
  */
-public class FullDatatoolTk extends DatatoolTk
+public class CombinedDatatoolTk extends DatatoolTk
 {
-   public FullDatatoolTk() throws IOException
+   public CombinedDatatoolTk() throws IOException
    {
       // Allows both GUI and SQL.
       super(true, true);
@@ -88,7 +88,7 @@ public class FullDatatoolTk extends DatatoolTk
 
       try
       {
-         datatooltk = new FullDatatoolTk();
+         datatooltk = new CombinedDatatoolTk();
          datatooltk.runApplication(args);
       }
       catch (InvalidSyntaxException e)

@@ -38,7 +38,7 @@ lib/resources/helpsets/datatooltk-en/index.xml	: lib/resources/dictionaries/*.xm
 	make -C doc en
 
 lib/datatooltk.jar	: java/combined/Manifest.txt \
-			classes/com/dickimawbooks/datatooltk/combined/FullDatatoolTk.class \
+			classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class \
 			lib/resources/helpsets/datatooltk-en/index.xml \
 			lib/resources/helpsets/datatooltk-en-GB/index.xml 
 	cp -u -r java/gui/icons classes/com/dickimawbooks/datatooltk/gui/
@@ -48,7 +48,7 @@ lib/datatooltk.jar	: java/combined/Manifest.txt \
 	com/dickimawbooks/datatooltk/*/*.class \
 	com/dickimawbooks/datatooltk/gui/icons/*.png
 
-classes/com/dickimawbooks/datatooltk/combined/FullDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
+classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
 	java/*.java java/gui/*.java \
 	java/io/*.java java/combined/*.java \
 	lib/texjavahelplib.jar lib/mysql-connector-java.jar\
