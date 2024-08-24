@@ -35,8 +35,7 @@ import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
 
 /**
  * Dialog to prompt user for a password.
- * Note that this may be used in batch mode, in which case
- * there may be no DatatoolGuiResources object.
+ * Note that this may be used in batch mode with console action "gui".
  */
 public class GuiPasswordReader extends JDialog 
   implements DatatoolPasswordReader,ActionListener
