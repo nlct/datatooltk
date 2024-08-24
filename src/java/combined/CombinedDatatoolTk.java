@@ -40,8 +40,8 @@ public class CombinedDatatoolTk extends DatatoolTk
 {
    public CombinedDatatoolTk() throws IOException
    {
-      // Allows both GUI and SQL.
-      super(true, true);
+      // Allows GUI and SQL and Binary Excel.
+      super(true, true, true);
    }
 
    @Override
@@ -59,34 +59,30 @@ public class CombinedDatatoolTk extends DatatoolTk
    {
       if (fmtId == DatatoolFileFormat.FILE_FORMAT_FLAG_SQL)
       {
-         return new DatatoolSql(settings);
+         if (allowsSQL)
+         {
+            return new DatatoolSql(settings);
+         }
+         else
+         {
+            throw new UnsupportedFileFormatException(
+              getLabelWithValues("error.unsupported_option", "sql"));
+         }
       }
       else if (fmtId == DatatoolFileFormat.FILE_FORMAT_FLAG_XLS)
       {
-         return new DatatoolExcel(settings);
+         if (allowsXLS)
+         {
+            return new DatatoolExcel(settings);
+         }
+         else
+         {
+            throw new UnsupportedFileFormatException(
+              getLabelWithValues("error.unsupported_option", "xls"));
+         }
       }
 
       return super.getDatatoolImport(fmtId, settings);
-   }
-
-   @Override
-   public void helpSpreadSheetImportOptions()
-   {
-      System.out.println(getLabel("syntax.xls_opts"));
-      System.out.println(getLabelWithValues("syntax.xlsx", "--xlsx"));
-      System.out.println(getLabelWithValues("syntax.xls", "--xls"));
-      System.out.println(getLabelWithValues("syntax.merge_xlsx", "--merge-xlsx"));
-      System.out.println(getLabelWithValues("syntax.merge_xls", "--merge-xls"));
-      System.out.println();
-
-      System.out.println(getLabel("syntax.ods_opts"));
-      System.out.println(getLabelWithValues("syntax.ods", "--ods"));
-      System.out.println(getLabelWithValues("syntax.merge_ods", "--merge-ods"));
-      System.out.println();
-
-      System.out.println(getLabel("syntax.xlsods_opts"));
-      System.out.println(getLabelWithValues("syntax.sheet", "--sheet"));
-      System.out.println();
    }
 
    @Override

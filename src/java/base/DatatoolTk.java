@@ -43,10 +43,12 @@ import com.dickimawbooks.datatooltk.base.io.*;
  */
 public abstract class DatatoolTk
 {
-   public DatatoolTk(boolean allowsGUI, boolean allowsSQL) throws IOException
+   public DatatoolTk(boolean allowsGUI, boolean allowsSQL, boolean allowsXLS)
+     throws IOException
    {
       this.allowsGUI = allowsGUI;
       this.allowsSQL = allowsSQL;
+      this.allowsXLS = allowsXLS;
 
       if (!allowsGUI)
       {
@@ -54,6 +56,45 @@ public abstract class DatatoolTk
       }
 
       settings = createSettings();
+   }
+
+   /**
+    * Checks if this application supports SQL imports.
+    */
+   public boolean isSQLSupported()
+   {
+      return allowsSQL;
+   }
+
+   /**
+    * Checks if this application supports Binary Excel format
+    * imports.
+    * That is, the non-XML format (which requires Apache POI library).
+    */
+   public boolean isBinaryExcelSupported()
+   {
+      return allowsXLS;
+   }
+
+   public int getSupportedFileFormatFlags()
+   {
+      int flags = DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+                | DatatoolFileFormat.FILE_FORMAT_CSV_OR_TSV
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_XLSX
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_ODS
+                | DatatoolFileFormat.FILE_FORMAT_FLAG_FODS;
+
+      if (allowsSQL)
+      {
+         flags = flags | DatatoolFileFormat.FILE_FORMAT_FLAG_SQL;
+      }
+
+      if (allowsXLS)
+      {
+         flags = flags | DatatoolFileFormat.FILE_FORMAT_FLAG_XLS;
+      }
+
+      return flags;
    }
 
    protected abstract DatatoolSettings createSettings() throws IOException;
@@ -87,6 +128,11 @@ public abstract class DatatoolTk
       return getDatatoolImport(fmtId, settings);
    }
 
+   /**
+    * Gets a new DatatoolImport corresponding to the given file format
+    * identifier. This method will need to be override if support
+    * for SQL or Binary Excel is required.
+    */
    public DatatoolImport getDatatoolImport(int fmtId,
      DatatoolSettings settings)
    throws UnsupportedFileFormatException
@@ -705,7 +751,19 @@ public abstract class DatatoolTk
    {
       System.out.println(getLabel("syntax.xls_opts"));
       System.out.println(getLabelWithValues("syntax.xlsx", "--xlsx"));
+
+      if (allowsXLS)
+      {
+         System.out.println(getLabelWithValues("syntax.xls", "--xls"));
+      }
+
       System.out.println(getLabelWithValues("syntax.merge_xlsx", "--merge-xlsx"));
+
+      if (allowsXLS)
+      {
+         System.out.println(getLabelWithValues("syntax.merge_xls", "--merge-xls"));
+      }
+
       System.out.println();
 
       System.out.println(getLabel("syntax.ods_opts"));
@@ -2226,7 +2284,7 @@ public abstract class DatatoolTk
 
    protected DatatoolSettings settings;
 
-   protected boolean allowsGUI, allowsSQL;
+   protected boolean allowsGUI, allowsSQL, allowsXLS;
 
    public static final int EXIT_SYNTAX=1, EXIT_IO=2, EXIT_USER_FORCED=3,
     EXIT_OTHER=255;

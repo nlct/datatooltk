@@ -32,7 +32,26 @@ public class SpreadSheetFilter extends DatatoolFileFilter
    public SpreadSheetFilter(MessageHandler messageHandler)
    {
       super(messageHandler.getLabelWithValues("filter.xlsods", 
-       "*.xls, *.xlsx, *.ods, *.fods"), "xls", "xlsx", "ods", "fods");
+       "*.xls, *.xlsx, *.ods, *.fods"), "xls", "xlsx", "ods", "fods" );
+   }
+
+   public SpreadSheetFilter(String description, String... fileExts)
+   {
+      super(description, fileExts);
+   }
+
+   public static SpreadSheetFilter createFilter(MessageHandler messageHandler)
+   {
+      if (messageHandler.getDatatoolTk().isBinaryExcelSupported())
+      {
+         return new SpreadSheetFilter(messageHandler);
+      }
+      else
+      {
+         return new SpreadSheetFilter(
+           messageHandler.getLabelWithValues("filter.xlsods", 
+           "*.xlsx, *.ods, *.fods"), "xlsx", "ods", "fods" );
+      }
    }
 
 }

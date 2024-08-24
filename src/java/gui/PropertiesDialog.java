@@ -67,39 +67,42 @@ public class PropertiesDialog extends JDialog
 
       // General tab
 
-      JComponent generalTab = createGeneralTab();
+      createGeneralTab();
 
       // CSV tab
 
-      JComponent csvTab = createCsvTab();
+      createCsvTab();
 
       // SQL tab
 
-      JComponent sqlTab = createSqlTab();
+      if (gui.getDatatoolTk().isSQLSupported())
+      {
+         createSqlTab();
+      }
 
       // TeX Tab
 
-      JComponent texTab = createTeXTab();
+      createTeXTab();
 
       // Currencies Tab
 
-      JComponent currencyTab = createCurrenciesTab();
+      createCurrenciesTab();
 
       // Display Tab
 
-      JComponent displayTab = createDisplayTab();
+      createDisplayTab();
 
       // Cell Editor Tab
 
-      JComponent editorTab = createEditorTab();
+      createEditorTab();
 
       // Language Tab
 
-      JComponent languageTab = createLanguageTab();
+      createLanguageTab();
 
       // Plugins tab
 
-      JComponent pluginsTab = createPluginsTab();
+      createPluginsTab();
 
       getContentPane().add(
         resources.createDialogOkayCancelHelpPanel(this, this, gui, "preferences"),
@@ -865,7 +868,11 @@ public class PropertiesDialog extends JDialog
         settings.getInitialColumnCapacity()));
 
       csvSettingsPanel.setCsvSettingsFrom(settings);
-      sqlSettingsPanel.resetFrom(settings);
+
+      if (sqlSettingsPanel != null)
+      {
+         sqlSettingsPanel.resetFrom(settings);
+      }
 
       stripSolnEnvBox.setSelected(settings.isSolutionEnvStrippedDefault());
       preambleOnlyBox.setSelected(settings.isPreambleOnlyDefault());
@@ -1351,7 +1358,10 @@ public class PropertiesDialog extends JDialog
 
       csvSettingsPanel.applyCsvSettingsTo(settings, true);
 
-      sqlSettingsPanel.applyTo(settings, true);
+      if (sqlSettingsPanel != null)
+      {
+         sqlSettingsPanel.applyTo(settings, true);
+      }
 
       settings.setDefaultOutputFormatProperty(
          outputFormatBox.getSelectedItem().toString());

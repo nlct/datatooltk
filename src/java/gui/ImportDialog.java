@@ -47,8 +47,7 @@ public class ImportDialog extends JDialog
    public ImportDialog(DatatoolGUI gui)
    {
       this(gui, "import",
-        DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
-      | DatatoolFileFormat.FILE_FORMAT_ANY_NON_TEX,
+        gui.getDatatoolTk().getSupportedFileFormatFlags(),
         true, true,
         DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
    }
@@ -66,7 +65,7 @@ public class ImportDialog extends JDialog
 
       texFilter = new TeXFileFilter(messageHandler);
       csvtxtFilter = new CsvTxtFileFilter(messageHandler);
-      spreadFilter = new SpreadSheetFilter(messageHandler);
+      spreadFilter = SpreadSheetFilter.createFilter(messageHandler);
 
       allFilter = fileChooser.getAcceptAllFileFilter();
       fileChooser.removeChoosableFileFilter(allFilter);
