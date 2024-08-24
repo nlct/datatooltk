@@ -38,8 +38,8 @@ public class ReplaceAllDialog extends JDialog
       super(gui, gui.getMessageHandler().getLabel("replace.title"), true);
       this.gui = gui;
 
-      MessageHandler messageHandler = gui.getMessageHandler();
-      DatatoolGuiResources resources = messageHandler.getDatatoolGuiResources();
+      CombinedMessageHandler messageHandler = gui.getMessageHandler();
+      DatatoolGuiResources resources = gui.getResources();
 
       JComponent mainPanel = Box.createVerticalBox();
       getContentPane().add(mainPanel, BorderLayout.CENTER);

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.*;
+import java.nio.charset.StandardCharsets;
 import java.net.URL;
 
 import java.util.Vector;
@@ -32,15 +33,12 @@ import java.util.regex.Pattern;
 import java.awt.Component;
 
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texjavahelplib.*;
-import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 
 /**
  * Handler for dealing with messages.
@@ -90,52 +88,24 @@ public class MessageHandler extends ErrorManager
 
    public void progress(int percentage)
    {
-      if (isBatchMode) return;
-
-      guiResources.progress(percentage);
    }
 
    public void progress(String msg)
    {
-      if (isBatchMode)
-      {
-         message(msg);
-      }
-      else
-      {
-         guiResources.progress(msg);
-      }
+      message(msg);
    }
 
    public void startBuffering()
    {
-      if (isBatchMode) return;
-
-      errorBuffer = new StringBuffer();
-      warningBuffer = new StringBuffer();
    }
 
    public void stopBuffering()
    {
-      if (isBatchMode) return;
-
-      if (errorBuffer.length() > 0)
-      {
-         guiResources.error(bufferingComponent, errorBuffer.toString());
-      }
-
-      if (warningBuffer.length() > 0)
-      {
-         guiResources.warning(bufferingComponent, warningBuffer.toString());
-      }
-
-      errorBuffer = null;
-      warningBuffer = null;
    }
 
    public boolean buffering()
    {
-      return errorBuffer != null;
+      return false;
    }
 
    public void setBatchMode(boolean isBatchMode)
@@ -257,7 +227,8 @@ public class MessageHandler extends ErrorManager
       if (logWriter == null && logFile != null)
       {
          logWriter = new PrintWriter(
-           Files.newBufferedWriter(logFile.toPath()));
+           texApp.createBufferedWriter(logFile.toPath(), 
+             StandardCharsets.UTF_8));
       }
    }
 
@@ -295,7 +266,8 @@ public class MessageHandler extends ErrorManager
             if (logWriter == null)
             {
                logWriter = new PrintWriter(
-                 Files.newBufferedWriter(logFile.toPath()));
+                 texApp.createBufferedWriter(logFile.toPath(),
+                  StandardCharsets.UTF_8));
             }
 
             t.printStackTrace(logWriter);
@@ -333,7 +305,7 @@ public class MessageHandler extends ErrorManager
 
    public void message(int level, String msg)
    {
-      if (isBatchMode && level <= verbosity)
+      if (level <= verbosity)
       {
          System.out.println(msg);
       }
@@ -392,7 +364,7 @@ public class MessageHandler extends ErrorManager
          }
       }
 
-      warning((Component)null, message);
+      warning(message);
    }
 
    @Override
@@ -400,30 +372,8 @@ public class MessageHandler extends ErrorManager
    {
       logMessage(message);
 
-      if (isBatchMode)
-      {
-         System.err.println(String.format("%s: %s", 
-           getApplicationName(), message));
-      }
-      else
-      {
-         if (buffering())
-         {
-            bufferingComponent = parent;
-            warningBuffer.append(String.format("%s%n", message));
-         }
-         else if (guiResources == null)
-         {
-            JOptionPane.showMessageDialog(null, message,
-              getMessageWithFallback("warning.title", "Warning"),
-              JOptionPane.WARNING_MESSAGE);
-            System.err.println(message);
-         }
-         else
-         {
-            guiResources.warning(parent, message);
-         }
-      }
+      System.err.println(String.format("%s: %s", 
+        getApplicationName(), message));
    }
 
    @Override
@@ -592,102 +542,30 @@ public class MessageHandler extends ErrorManager
       logMessage(msg);
       logMessage(exception);
 
-      if (isBatchMode)
+      if (msg == null)
       {
-         if (msg == null)
-         {
-            System.err.println(String.format("%s: %s", 
-              getApplicationName(), getMessage(exception)));
-         }
-         else
-         {
-            System.err.println(String.format("%s: %s", 
-              getApplicationName(), msg));
-         }
-
-         if (exception != null)
-         {
-            Throwable cause = exception.getCause();
-
-            if (cause != null)
-            {
-               System.err.println(getMessage(cause));
-            }
-         }
+         System.err.println(String.format("%s: %s", 
+           getApplicationName(), getMessage(exception)));
       }
       else
       {
-         if (buffering())
-         {
-            bufferingComponent = parent;
-
-            if (msg == null)
-            {
-               errorBuffer.append(getMessage(exception));
-            }
-            else
-            {
-               errorBuffer.append(msg);
-            }
-         }
-         else
-         {
-            // guiResources may be null if there's an error
-            // in the command line syntax
-
-            if (msg != null && exception != null)
-            {
-               if (guiResources == null)
-               {
-                  JOptionPane.showMessageDialog(null, msg, 
-                    getLabel("error.title"),
-                    JOptionPane.ERROR_MESSAGE);
-                  System.err.println(msg);
-
-                  debug(exception);
-               }
-               else
-               {
-                  guiResources.error(parent, msg, exception);
-               }
-            }
-            else if (exception == null)
-            {
-               if (guiResources == null)
-               {
-                  JOptionPane.showMessageDialog(null, msg, 
-                    getLabel("error.title"),
-                    JOptionPane.ERROR_MESSAGE);
-                  System.err.println(msg);
-               }
-               else
-               {
-                  guiResources.error(parent, msg);
-               }
-            }
-            else
-            {
-               if (guiResources == null)
-               {
-                  JOptionPane.showMessageDialog(null, 
-                    exception.getMessage(), 
-                    getLabel("error.title"),
-                    JOptionPane.ERROR_MESSAGE);
-
-                  System.err.println(exception.getMessage());
-                  debug(exception);
-               }
-               else
-               {
-                  guiResources.error(parent, exception);
-               }
-            }
-         }
+         System.err.println(String.format("%s: %s", 
+           getApplicationName(), msg));
       }
 
-      if (exception != null && debugMode)
+      if (exception != null)
       {
-         exception.printStackTrace();
+         Throwable cause = exception.getCause();
+
+         if (cause != null)
+         {
+            System.err.println(getMessage(cause));
+         }
+
+         if (debugMode)
+         {
+            exception.printStackTrace();
+         }
       }
    }
 
@@ -781,16 +659,6 @@ public class MessageHandler extends ErrorManager
       return datatooltk;
    }
 
-   public DatatoolGuiResources getDatatoolGuiResources()
-   {
-      return guiResources;
-   }
-
-   public void setDatatoolGuiResources(DatatoolGuiResources guiResources)
-   {
-      this.guiResources = guiResources;
-   }
-
    public DatatoolSettings getSettings()
    {
       return datatooltk.getSettings();
@@ -817,21 +685,16 @@ public class MessageHandler extends ErrorManager
       return dictionarySources;
    }
 
-   private int verbosity = 0;
-   private boolean isBatchMode, debugMode=false;
-   private DatatoolTk datatooltk;
-   private DatatoolGuiResources guiResources;
-   private File logFile;
-   private PrintWriter logWriter;
-   private int texParserDebugLevel=0;
+   protected int verbosity = 0;
+   protected boolean isBatchMode, debugMode=false;
+   protected DatatoolTk datatooltk;
+   protected File logFile;
+   protected PrintWriter logWriter;
+   protected int texParserDebugLevel=0;
 
-   private Vector<URL> dictionarySources;
+   protected Vector<URL> dictionarySources;
 
-   private DatatoolTeXApp texApp;
-
-   private StringBuffer errorBuffer, warningBuffer;
-
-   private Component bufferingComponent=null;
+   protected DatatoolTeXApp texApp;
 
    public static final int SYNTAX_FAILURE=7;
    public static final int RUNTIME_FAILURE=8;

@@ -65,7 +65,8 @@ public class DatatoolGUI extends JFrame
       super(settings.getApplicationName());
 
       this.settings = settings;
-      resources = new DatatoolGuiResources(this, settings.getMessageHandler());
+      resources = new DatatoolGuiResources(this, 
+          (CombinedMessageHandler)settings.getMessageHandler());
 
       initGui();
       setVisible(true);
@@ -79,7 +80,7 @@ public class DatatoolGUI extends JFrame
 
    private void initGui() throws IOException
    {
-      MessageHandler messageHandler = getMessageHandler();
+      CombinedMessageHandler messageHandler = getMessageHandler();
 
       // Need to set L&F before creating components
 
@@ -1761,9 +1762,9 @@ public class DatatoolGUI extends JFrame
       return settings.getDatatoolTk();
    }
 
-   public MessageHandler getMessageHandler()
+   public CombinedMessageHandler getMessageHandler()
    {
-      return settings.getMessageHandler();
+      return (CombinedMessageHandler)settings.getMessageHandler();
    }
 
    public DatatoolGuiResources getResources()

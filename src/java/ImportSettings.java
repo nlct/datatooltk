@@ -31,7 +31,6 @@ import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
 import com.dickimawbooks.texparserlib.latex.datatool.EscapeCharsOption;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
-import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 
 public class ImportSettings
 {

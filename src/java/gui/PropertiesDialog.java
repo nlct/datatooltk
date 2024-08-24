@@ -1544,14 +1544,14 @@ public class PropertiesDialog extends JDialog
       }
    }
 
-   public MessageHandler getMessageHandler()
+   public CombinedMessageHandler getMessageHandler()
    {
-      return settings.getMessageHandler();
+      return (CombinedMessageHandler)settings.getMessageHandler();
    }
 
    public DatatoolGuiResources getResources()
    {
-      return settings.getMessageHandler().getDatatoolGuiResources();
+      return settings.getDatatoolGuiResources();
    }
 
    public TeXJavaHelpLib getHelpLib()

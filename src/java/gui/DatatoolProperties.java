@@ -16,25 +16,19 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.dickimawbooks.datatooltk;
+package com.dickimawbooks.datatooltk.gui;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
-import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.Random;
 import java.util.Vector;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import java.text.Collator;
-import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
@@ -42,19 +36,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
-import com.dickimawbooks.texparserlib.TeXApp;
-import com.dickimawbooks.texparserlib.TeXSyntaxException;
 import com.dickimawbooks.texparserlib.latex.datatool.AddDelimiterOption;
 import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texparserlib.latex.datatool.EscapeCharsOption;
-import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
-import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 import com.dickimawbooks.texjavahelplib.*;
 
-import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
-import com.dickimawbooks.datatooltk.gui.DatatoolPlugin;
-import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Application settings for datatooltk GUI/batch with a properties
@@ -77,7 +65,7 @@ public class DatatoolProperties extends DatatoolSettings
     throws IOException
    {
       this.datatooltk = datatooltk;
-      messageHandler = new MessageHandler(datatooltk);
+      messageHandler = new CombinedMessageHandler(datatooltk);
       importSettings = new ImportSettings(this);
 
       initLocalisation(dictionaryTag, helpsetTag);
@@ -2666,7 +2654,7 @@ public class DatatoolProperties extends DatatoolSettings
 
    public DatatoolGuiResources getDatatoolGuiResources()
    {
-      return messageHandler.getDatatoolGuiResources();
+      return ((CombinedMessageHandler)messageHandler).getDatatoolGuiResources();
    }
 
    public Template[] getTemplates()

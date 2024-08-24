@@ -32,7 +32,7 @@ import com.dickimawbooks.datatooltk.*;
 public class ScrollToolBar extends JPanel
    implements ActionListener,ChangeListener
 {
-   public ScrollToolBar(MessageHandler messageHandler, int orientation)
+   public ScrollToolBar(CombinedMessageHandler messageHandler, int orientation)
    {
       super();
       this.messageHandler = messageHandler;
@@ -161,5 +161,5 @@ public class ScrollToolBar extends JPanel
    private JScrollPane scrollPane;
    private JComponent toolPanel;
    private JComponent backComponent, forwardComponent;
-   private MessageHandler messageHandler;
+   private CombinedMessageHandler messageHandler;
 }

@@ -35,14 +35,14 @@ import com.dickimawbooks.texjavahelplib.TJHAbstractAction;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.MessageHandler;
-import com.dickimawbooks.datatooltk.DatatoolProperties;
 
 /**
  * Application GUI resources.
  */
 public class DatatoolGuiResources
 {
-    public DatatoolGuiResources(DatatoolGUI gui, MessageHandler messageHandler)
+    public DatatoolGuiResources(DatatoolGUI gui,
+       CombinedMessageHandler messageHandler)
     {
        this.gui = gui;
        this.messageHandler = messageHandler;
@@ -810,7 +810,7 @@ public class DatatoolGuiResources
        return getHelpLib().getHelpIconSet(action, small);
     }
 
-    public MessageHandler getMessageHandler()
+    public CombinedMessageHandler getMessageHandler()
     {
        return messageHandler;
     }
@@ -860,7 +860,7 @@ public class DatatoolGuiResources
 
    private ErrorPanel errorPanel;
 
-   private MessageHandler messageHandler;
+   private CombinedMessageHandler messageHandler;
 
    private DatatoolGUI gui;
 

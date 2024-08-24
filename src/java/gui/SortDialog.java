@@ -255,7 +255,7 @@ public class SortDialog extends JDialog
       setVisible(false);
    }
 
-   public MessageHandler getMessageHandler()
+   public CombinedMessageHandler getMessageHandler()
    {
       return messageHandler;
    }
@@ -435,7 +435,7 @@ public class SortDialog extends JDialog
 
    private DatatoolDb db;
 
-   private MessageHandler messageHandler;
+   private CombinedMessageHandler messageHandler;
 
    private boolean success=false;
 }
@@ -909,7 +909,7 @@ class SortCriteriaPanel extends JPanel
       }
    }
 
-   public MessageHandler getMessageHandler()
+   public CombinedMessageHandler getMessageHandler()
    {
       return dialog.getMessageHandler();
    }

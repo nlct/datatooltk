@@ -26,9 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 
 import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.Random;
 import java.util.Vector;
 
@@ -38,11 +36,6 @@ import java.util.regex.Pattern;
 import java.text.Collator;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 
 import com.dickimawbooks.texparserlib.TeXApp;
 import com.dickimawbooks.texparserlib.TeXSyntaxException;
@@ -55,8 +48,6 @@ import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
-import com.dickimawbooks.datatooltk.gui.DatatoolPlugin;
-import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 
 /**
  * Application settings for datatooltk.

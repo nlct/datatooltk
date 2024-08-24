@@ -34,7 +34,7 @@ import com.dickimawbooks.datatooltk.MessageHandler;
 public class FindDialog extends JDialog
   implements ActionListener,CaretListener
 {
-   public FindDialog(MessageHandler messageHandler, 
+   public FindDialog(CombinedMessageHandler messageHandler, 
       JDialog parent, JTextComponent textComp)
    {
       super(parent, messageHandler.getLabel("find.title"), false);
@@ -460,5 +460,5 @@ public class FindDialog extends JDialog
 
    private boolean found = false, updating=false;
 
-   private MessageHandler messageHandler;
+   private CombinedMessageHandler messageHandler;
 }
