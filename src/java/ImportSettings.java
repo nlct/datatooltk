@@ -728,11 +728,6 @@ public class ImportSettings
       return settings.getDatatoolTk();
    }
 
-   public DatatoolGuiResources getDatatoolGuiResources()
-   {
-      return settings.getDatatoolGuiResources();
-   }
-
    public boolean isBatchMode()
    {
       return settings.isBatchMode();

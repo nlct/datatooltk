@@ -833,25 +833,25 @@ public class PropertiesDialog extends JDialog
       return checkBox;
    }
 
-   public void display(DatatoolSettings settings)
+   public void display(DatatoolProperties settings)
    {
       this.settings = settings;
 
       switch (settings.getStartUp())
       {
-         case DatatoolSettings.STARTUP_HOME:
+         case DatatoolProperties.STARTUP_HOME:
            homeButton.setSelected(true);
            customFileField.setEnabled(false);
          break;
-         case DatatoolSettings.STARTUP_CWD:
+         case DatatoolProperties.STARTUP_CWD:
            cwdButton.setSelected(true);
            customFileField.setEnabled(false);
          break;
-         case DatatoolSettings.STARTUP_LAST:
+         case DatatoolProperties.STARTUP_LAST:
            lastButton.setSelected(true);
            customFileField.setEnabled(false);
          break;
-         case DatatoolSettings.STARTUP_CUSTOM:
+         case DatatoolProperties.STARTUP_CUSTOM:
            customButton.setSelected(true);
            customFileField.setEnabled(true);
            customFileField.setFile(settings.getStartUpDirectory());
@@ -1321,15 +1321,15 @@ public class PropertiesDialog extends JDialog
    {
       if (homeButton.isSelected())
       {
-         settings.setStartUp(DatatoolSettings.STARTUP_HOME);
+         settings.setStartUp(DatatoolProperties.STARTUP_HOME);
       }
       else if (cwdButton.isSelected())
       {
-         settings.setStartUp(DatatoolSettings.STARTUP_CWD);
+         settings.setStartUp(DatatoolProperties.STARTUP_CWD);
       }
       else if (lastButton.isSelected())
       {
-         settings.setStartUp(DatatoolSettings.STARTUP_LAST);
+         settings.setStartUp(DatatoolProperties.STARTUP_LAST);
       }
       else if (customButton.isSelected())
       {
@@ -1553,7 +1553,7 @@ public class PropertiesDialog extends JDialog
       return settings.getHelpLib();
    }
 
-   private DatatoolSettings settings;
+   private DatatoolProperties settings;
 
    private JRadioButton homeButton, cwdButton, lastButton, customButton;
 
@@ -1632,7 +1632,7 @@ public class PropertiesDialog extends JDialog
 
 class CurrencyListModel extends AbstractListModel<String>
 {
-   public CurrencyListModel(JList<String> list, DatatoolSettings settings)
+   public CurrencyListModel(JList<String> list, DatatoolProperties settings)
    {
       this.settings = settings;
       this.list = list;
@@ -1712,7 +1712,7 @@ class CurrencyListModel extends AbstractListModel<String>
       }
    }
 
-   private DatatoolSettings settings;
+   private DatatoolProperties settings;
 
    private Vector<String> currencies;
 

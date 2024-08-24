@@ -22,6 +22,7 @@ import java.io.*;
 import java.util.regex.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.DataToolHeader;
 
 import com.dickimawbooks.datatooltk.io.*;
 
@@ -106,8 +107,8 @@ public class DatatoolHeader
    @Deprecated
    public void setType(int typeId)
    {
-      if (typeId < DatatoolSettings.TYPE_UNKNOWN
-       || typeId > DatatoolSettings.TYPE_CURRENCY)
+      if (typeId < DataToolHeader.TYPE_UNDEF
+       || typeId > DataToolHeader.TYPE_CURRENCY)
       {
          throw new IllegalArgumentException(
             messageHandler.getLabelWithValues(

@@ -232,7 +232,7 @@ public class ImportDialog extends JDialog
 
    protected void okay() throws IOException
    {
-      DatatoolSettings settings = gui.getSettings();
+      DatatoolProperties settings = gui.getSettings();
       MessageHandler messageHandler = gui.getMessageHandler();
 
       boolean isSql = (settingsPanel.isFileFormatSelected(
@@ -336,7 +336,7 @@ public class ImportDialog extends JDialog
 
    public void display()
    {
-      DatatoolSettings settings = gui.getSettings();
+      DatatoolProperties settings = gui.getSettings();
       settingsPanel.resetFrom(settings.getImportSettings());
 
       fileField.setFileName("");

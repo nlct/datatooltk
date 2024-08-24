@@ -21,7 +21,6 @@ package com.dickimawbooks.datatooltk.gui;
 import javax.swing.JComboBox;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
-import  com.dickimawbooks.datatooltk.DatatoolSettings;
 
 public class DatumTypeComboBox extends JComboBox<String>
 {

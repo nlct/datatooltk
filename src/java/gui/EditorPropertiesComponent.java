@@ -332,7 +332,7 @@ public class EditorPropertiesComponent extends JPanel
       return checkBox;
    }
 
-   public void resetFrom(DatatoolSettings settings)
+   public void resetFrom(DatatoolProperties settings)
    {
       fontSizeModel.setValue(Integer.valueOf(settings.getFontSize()));
       fontBox.setSelectedItem(settings.getFontName());
@@ -489,7 +489,7 @@ public class EditorPropertiesComponent extends JPanel
       updateCellEditor = true;
    }
 
-   public void applySelected(DatatoolSettings settings)
+   public void applySelected(DatatoolProperties settings)
    {
       settings.setFontName(getSelectedFontName());
       settings.setFontSize(getSelectedFontSize());
@@ -516,7 +516,7 @@ public class EditorPropertiesComponent extends JPanel
       }
    }
 
-   public DatatoolSettings getSettings()
+   public DatatoolProperties getSettings()
    {
       return gui.getSettings();
    }

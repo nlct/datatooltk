@@ -1637,11 +1637,11 @@ public abstract class DatatoolTk
          }
          else if (args[i].equals("--csv-skip-empty-rows"))
          {
-            settings.setSkipEmptyRows(true);
+            settings.setCsvBlankOption(CsvBlankOption.IGNORE);
          }
          else if (args[i].equals("--nocsv-skip-empty-rows"))
          {
-            settings.setSkipEmptyRows(false);
+            settings.setCsvBlankOption(CsvBlankOption.EMPTY_ROW);
          }
          else if (args[i].equals("--csv-empty-rows"))
          {

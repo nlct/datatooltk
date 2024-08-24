@@ -2415,7 +2415,7 @@ public class DatatoolDb
                "error.dbload.not_found", "\\db@type@id@end@"));
          }
 
-         int typeId = DatatoolSettings.TYPE_UNKNOWN;
+         int typeId = (int)DataToolHeader.TYPE_UNDEF;
 
          try
          {
@@ -3587,14 +3587,14 @@ public class DatatoolDb
    {
       if (value == null || value.isEmpty() || value.equals(NULL_VALUE))
       {
-         return DatatoolSettings.TYPE_UNKNOWN;
+         return (int)DataToolHeader.TYPE_UNDEF;
       }
 
       try
       {
          Integer.parseInt(value);
 
-         return DatatoolSettings.TYPE_INTEGER;
+         return (int)DataToolHeader.TYPE_INT;
       }
       catch (NumberFormatException e)
       {
@@ -3604,7 +3604,7 @@ public class DatatoolDb
       {
          Float.parseFloat(value);
 
-         return DatatoolSettings.TYPE_REAL;
+         return (int)DataToolHeader.TYPE_REAL;
       }
       catch (NumberFormatException e)
       {
@@ -3614,13 +3614,13 @@ public class DatatoolDb
       {
          settings.parseCurrency(value);
 
-         return DatatoolSettings.TYPE_CURRENCY;
+         return (int)DataToolHeader.TYPE_CURRENCY;
       }
       catch (NumberFormatException e)
       {
       }
 
-      return DatatoolSettings.TYPE_STRING;
+      return (int)DataToolHeader.TYPE_STRING;
    }
 
    @Deprecated
@@ -3634,29 +3634,29 @@ public class DatatoolDb
 
       // If it's unknown, return
 
-      if (type == DatatoolSettings.TYPE_UNKNOWN)
+      if (type == DataToolHeader.TYPE_UNDEF)
       {
          return type;
       }
 
       switch (header.getType())
       {
-         case DatatoolSettings.TYPE_UNKNOWN:
-         case DatatoolSettings.TYPE_INTEGER:
+         case DataToolHeader.TYPE_UNDEF:
+         case DataToolHeader.TYPE_INT:
             // All other types override unknown and int
             return type;
-         case DatatoolSettings.TYPE_CURRENCY:
+         case DataToolHeader.TYPE_CURRENCY:
             // string overrides currency
 
-            if (type == DatatoolSettings.TYPE_STRING)
+            if (type == DataToolHeader.TYPE_STRING)
             {
                return type;
             }
          break;
-         case DatatoolSettings.TYPE_REAL:
+         case DataToolHeader.TYPE_REAL:
             // string and currency override real
-            if (type == DatatoolSettings.TYPE_STRING
-             || type == DatatoolSettings.TYPE_CURRENCY)
+            if (type == DataToolHeader.TYPE_STRING
+             || type == DataToolHeader.TYPE_CURRENCY)
             {
                return type;
             }
@@ -3702,9 +3702,9 @@ public class DatatoolDb
 
       DatatoolHeader header = getHeader(colIdx);
 
-      int type = header.getType();
+      DatumType type = header.getDatumType();
 
-      if (type == DatatoolSettings.TYPE_INTEGER)
+      if (type == DatumType.INTEGER)
       {
          if (value.isEmpty())
          {
@@ -3726,7 +3726,7 @@ public class DatatoolDb
          {
             Float num = new Float(value);
 
-            header.setType(DatatoolSettings.TYPE_REAL);
+            header.setType(DatumType.DECIMAL);
 
             return num;
          }
@@ -3741,7 +3741,7 @@ public class DatatoolDb
          {
             Currency currency = settings.parseCurrency(value);
 
-            header.setType(DatatoolSettings.TYPE_CURRENCY);
+            header.setType(DatumType.CURRENCY);
 
             return currency;
          }
@@ -3750,9 +3750,9 @@ public class DatatoolDb
             // Not currency.
          }
 
-         header.setType(DatatoolSettings.TYPE_STRING);
+         header.setType(DatumType.STRING);
       }
-      else if (type == DatatoolSettings.TYPE_REAL)
+      else if (type == DatumType.DECIMAL)
       {
          if (value.isEmpty())
          {
@@ -3774,7 +3774,7 @@ public class DatatoolDb
          {
             Currency currency = settings.parseCurrency(value);
 
-            header.setType(DatatoolSettings.TYPE_CURRENCY);
+            header.setType(DatumType.CURRENCY);
 
             return currency;
          }
@@ -3785,9 +3785,9 @@ public class DatatoolDb
 
          // Set to String.
 
-         header.setType(DatatoolSettings.TYPE_STRING);
+         header.setType(DatumType.STRING);
       }
-      else if (type == DatatoolSettings.TYPE_CURRENCY)
+      else if (type == DatumType.CURRENCY)
       {
          if (value.isEmpty())
          {
@@ -3798,7 +3798,7 @@ public class DatatoolDb
          {
             Currency currency = settings.parseCurrency(value);
 
-            header.setType(DatatoolSettings.TYPE_CURRENCY);
+            header.setType(DatumType.CURRENCY);
 
             return currency;
          }
@@ -3809,7 +3809,7 @@ public class DatatoolDb
 
          // Set to String.
 
-         header.setType(DatatoolSettings.TYPE_STRING);
+         header.setType(DatumType.STRING);
       }
 
       return value;
@@ -4443,16 +4443,7 @@ public class DatatoolDb
 
    public Locale getSortLocale()
    {
-      String prop = settings.getSortLocale();
-
-      if (prop == null)
-      {
-         return null;
-      }
-      else
-      {
-         return Locale.forLanguageTag(prop);
-      }
+      return settings.getSortLocale();
    }
 
    public MissingSortValueAction getMissingSortValueAction()

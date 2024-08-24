@@ -58,12 +58,8 @@ import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 
 /**
  * Application settings for datatooltk.
- * It's necessary to determine the preferred dictionary
- * language before initiating the message system, so the
- * localisation information is now stored in a separate simple file 
- * which reduces the amount of non-localised error messages.
  */
-public class DatatoolSettings extends Properties
+public class DatatoolSettings
 {
    public DatatoolSettings(DatatoolTk datatooltk)
     throws IOException
@@ -75,25 +71,23 @@ public class DatatoolSettings extends Properties
       String dictionaryTag, String helpsetTag)
     throws IOException
    {
-      super();
-
       this.datatooltk = datatooltk;
       messageHandler = new MessageHandler(datatooltk);
       importSettings = new ImportSettings(this);
 
       initLocalisation(dictionaryTag, helpsetTag);
 
-      recentFiles = new Vector<String>();
-      currencies = new Vector<String>();
-
       setDefaults();
+   }
+
+   protected DatatoolSettings()
+   {
+      currencies = new Vector<String>();
    }
 
    protected void initLocalisation(String dictionaryTag, String helpsetTag)
      throws IOException
    {
-      setPropertiesPath();
-
       if (dictionaryTag != null)
       {
          dictLocale = new HelpSetLocale(dictionaryTag);
@@ -106,871 +100,44 @@ public class DatatoolSettings extends Properties
 
       if (dictLocale == null || helpSetLocale == null)
       {
-         initLangTags();
+         dictLocale = new HelpSetLocale("en");
+         helpSetLocale = new HelpSetLocale("en");
       }
 
       helpLib = new TeXJavaHelpLib(messageHandler,
        datatooltk.getApplicationName(), RESOURCES_PATH,
        DICT_DIR, dictLocale, helpSetLocale,
        "texparserlib", RESOURCE_PREFIX);
-
-      helpLib.setIconPath(ICON_DIR);
-      helpLib.setSmallIconSuffix(DEFAULT_SMALL_ICON_SUFFIX);
-      helpLib.setLargeIconSuffix(DEFAULT_LARGE_ICON_SUFFIX);
-   }
-
-   private void initLangTags() throws IOException
-   {
-      File file = new File(propertiesPath, LANGTAG_FILE_NAME);
-
-      if (file.exists())
-      {
-         BufferedReader in = null;
-
-         try
-         {
-            in = createBufferedReader(file);
-
-            String line = in.readLine();
-
-            if (line != null && dictLocale == null)
-            {
-               dictLocale = new HelpSetLocale(line.trim());
-            }
-
-            if (line != null && helpSetLocale == null)
-            {
-               line = in.readLine();
-
-               if (line != null)
-               {
-                  helpSetLocale = new HelpSetLocale(line.trim());
-               }
-            }
-         }
-         finally
-         {
-            if (in != null)
-            {
-               in.close();
-            }
-         }
-      }
-
-      if (dictLocale == null)
-      {
-         dictLocale = new HelpSetLocale(Locale.getDefault());
-      }
-
-      if (helpSetLocale == null)
-      {
-         helpSetLocale = dictLocale;
-      }
-   }
-
-   public static String getApplicationIconPath()
-   {
-      return RESOURCES_PATH + "/icons/datatooltk-logosmall.png";
-   }
-
-   private void setPropertiesPath()
-   {
-      String dirname = System.getenv("DATATOOLTK");
-
-      if (dirname != null && !dirname.isEmpty())
-      {
-         propertiesPath = new File(dirname);
-
-         if (!propertiesPath.exists())
-         {
-            if (!propertiesPath.mkdir())
-            {
-               messageHandler.debug(String.format("Unable to mkdir '%s'", propertiesPath));
-               propertiesPath = null;
-            }
-         }
-         else if (!propertiesPath.isDirectory())
-         {
-            messageHandler.debug(String.format(
-             "DATATOOLTK environment variable '%s' is not a directory.", propertiesPath));
-            propertiesPath = null;
-         }
-      }
-
-      if (propertiesPath == null)
-      {
-         String base;
-
-         if (System.getProperty("os.name").toLowerCase().startsWith("win"))
-         {
-            base = "datatooltk-settings";
-         }
-         else
-         {
-            base = ".datatooltk";
-         }
-
-         String home = System.getProperty("user.home");
-
-         if (home == null)
-         {
-            messageHandler.debug("No 'user.home' property! (Set DATATOOLTK environment variable to appropriate directory.)");
-            return;
-         }
-
-         File dir = new File(home);
-
-         if (!dir.exists())
-         {
-            messageHandler.debug("Home directory '"+home+"' doesn't exist!");
-            return;
-         }
-
-         propertiesPath = new File(dir, base);
-      }
-
-      if (propertiesPath.exists())
-      {
-         if (!propertiesPath.isDirectory())
-         {
-            messageHandler.debug("'"+propertiesPath+"' isn't a directory");
-            propertiesPath = null;
-            return;
-         }
-      }
-      else
-      {
-         if (!propertiesPath.mkdir())
-         {
-            messageHandler.debug("Unable to mkdir '"+propertiesPath+"'");
-            propertiesPath = null;
-
-            return;
-         }
-      }
-   }
-
-   protected void loadMainProperties()
-     throws IOException
-   {
-      File file = new File(propertiesPath, PROPERTIES_NAME);
-
-      if (file.exists())
-      {
-         InputStream in = null;
-
-         try
-         {
-            in = new FileInputStream(file);
-
-            loadFromXML(in);
-         }
-         finally
-         {
-            setDefaultTeXMaps();
-
-            if (in != null)
-            {
-               in.close();
-            }
-         }
-
-         helpLib.setLargeIconSuffix(getLargeIconSuffix());
-         helpLib.setSmallIconSuffix(getSmallIconSuffix());
-      }
-   }
-
-   protected void loadTeXMappings()
-     throws IOException
-   {
-      File file = new File(propertiesPath, TEX_MAP_NAME);
-
-      if (file.exists())
-      {
-         BufferedReader in = null;
-
-         try
-         {
-            in = createBufferedReader(file);
-
-            String line;
-
-            while ((line = in.readLine()) != null)
-            {
-               if (line.startsWith("#") || line.isEmpty()) continue;
-
-               Matcher m = PATTERN_TEX_MAP.matcher(line);
-
-               if (m.matches())
-               {
-                  try
-                  {
-                     setTeXMap(Integer.parseInt(m.group(1), 16), m.group(2));
-                  }
-                  catch (NumberFormatException e)
-                  {
-                     messageHandler.debug(e);
-                  }
-               }
-            }
-         }
-         finally
-         {
-            if (in != null)
-            {
-               in.close();
-            }
-         }
-      }
-      else
-      {
-         for (String key : stringPropertyNames())
-         {
-            Matcher m = PATTERN_OLDER_TEX_MAP.matcher(key);
-
-            if (m.matches())
-            {
-               setTeXMap(m.group(1).codePointAt(0), getProperty(key));
-               remove(key);
-            }
-            else
-            {
-               m = PATTERN_OLD_TEX_MAP.matcher(key);
-
-               if (m.matches())
-               {
-                  try
-                  {
-                     setTeXMap(Integer.parseInt(m.group(1)), getProperty(key));
-                  }
-                  catch (NumberFormatException e)
-                  {
-                     // shouldn't happen
-                     messageHandler.debug(e);
-                  }
-
-                  remove(key);
-               }
-            }
-         }
-      }
-   }
-
-   protected void loadRecentFiles()
-     throws IOException
-   {
-      File file = new File(propertiesPath, RECENT_NAME);
-
-      if (file.exists())
-      {
-         BufferedReader in = null;
-
-         try
-         {
-            in = createBufferedReader(file);
-
-            recentFiles.clear();
-
-            String line;
-
-            while ((line = in.readLine()) != null)
-            {
-               if (!line.isEmpty())
-               {
-                  File f = new File(line);
-
-                  if (f.exists())
-                  {
-                     recentFiles.add(line);
-                  }
-               }
-            }
-         }
-         finally
-         {
-            if (in != null)
-            {
-               in.close();
-            }
-         }
-      }
-   }
-
-   protected void loadCurrencies()
-     throws IOException
-   {
-      File file = new File(propertiesPath, CURRENCY_FILE_NAME);
-
-      if (file.exists())
-      {
-         BufferedReader in = null;
-
-         try
-         {
-            in = createBufferedReader(file);
-
-            currencies.clear();
-
-            String line;
-
-            while ((line = in.readLine()) != null)
-            {
-               if (!line.isEmpty())
-               {
-                  currencies.add(line);
-               }
-            }
-         }
-         finally
-         {
-            if (in != null)
-            {
-               in.close();
-            }
-         }
-      }
-      else
-      {
-         setDefaultCurrency();
-      }
-   }
-
-   public void loadProperties()
-      throws IOException,InvalidPropertiesFormatException
-   {
-      if (propertiesPath == null) return;
-
-      loadMainProperties();
-
-      String lastVersion = getProperty("version");
-
-      if (lastVersion == null
-            || lastVersion.compareTo(DatatoolTk.APP_VERSION) < 0)
-      {
-         upgrade=true;
-
-         if (lastVersion == null
-            || lastVersion.compareTo("2.0") < 0)
-         {
-            for (String key : stringPropertyNames())
-            {
-               if (key.equals("skip-empty-rows"))
-               {
-                  if (Boolean.parseBoolean(getProperty(key)))
-                  {
-                     setCsvBlankOption(CsvBlankOption.IGNORE);
-                  }
-                  else
-                  {
-                     setCsvBlankOption(CsvBlankOption.EMPTY_ROW);
-                  }
-
-                  remove(key);
-               }
-               else if (key.equals("helpset") || key.equals("dictionary"))
-               {
-                  remove(key);
-               }
-            }
-         }
-      }
-
-      loadTeXMappings();
-
-      if (texMap == null)
-      {
-         setDefaultTeXMaps();
-      }
-
-      loadRecentFiles();
-      loadCurrencies();
-
-      importSettings.setFrom(this);
-   }
-
-   protected void saveMainProperties()
-    throws IOException
-   {
-      File file = new File(propertiesPath, PROPERTIES_NAME);
-
-      FileOutputStream out = null;
-
-      try
-      {
-         out = new FileOutputStream(file);
-
-         storeToXML(out, null);
-      }
-      finally
-      {
-         if (out != null)
-         {
-            out.close();
-         }
-      }
-   }
-
-   protected void saveTeXMappings()
-    throws IOException
-   {
-      File file = new File(propertiesPath, TEX_MAP_NAME);
-
-      PrintWriter out = null;
-
-      try
-      {
-         out = new PrintWriter(createBufferedWriter(file));
-
-         for (Integer key : texMap.keySet())
-         {
-            out.format("%04x=%s%n", key.intValue(), texMap.get(key));
-         }
-      }
-      finally
-      {
-         if (out != null)
-         {
-            out.close();
-         }
-      }
-   }
-
-   protected void saveRecentFiles()
-    throws IOException
-   {
-      File file = new File(propertiesPath, RECENT_NAME);
-
-      PrintWriter out = null;
-
-      try
-      {
-         out = new PrintWriter(createBufferedWriter(file.toPath()));
-
-         for (String filename : recentFiles)
-         {
-            out.println(filename);
-         }
-      }
-      finally
-      {
-         if (out != null)
-         {
-            out.close();
-         }
-      }
-   }
-
-   protected void saveCurrencies()
-    throws IOException
-   {
-      File file = new File(propertiesPath, CURRENCY_FILE_NAME);
-
-      PrintWriter out = null;
-
-      try
-      {
-         out = new PrintWriter(createBufferedWriter(file));
-
-         for (String currency : currencies)
-         {
-            out.println(currency);
-         }
-      }
-      finally
-      {
-         if (out != null)
-         {
-            out.close();
-         }
-      }
-   }
-
-   protected void saveLanguages()
-      throws IOException
-   {
-      File file = new File(propertiesPath, LANGTAG_FILE_NAME);
-
-      PrintWriter out = null;
-
-      try
-      {
-         out = new PrintWriter(createBufferedWriter(file));
-
-         out.println(dictLocale.getTag());
-         out.println(helpSetLocale.getTag());
-      }
-      finally
-      {
-         if (out != null)
-         {
-            out.close();
-         }
-      }
-   }
-
-   public void saveProperties()
-      throws IOException
-   {
-      saveProperties(true);
-   }
-
-   public void saveProperties(boolean updateImportSettings)
-      throws IOException
-   {
-      if (propertiesPath == null) return;
-
-      if (updateImportSettings)
-      {
-         importSettings.applyTo(this);
-      }
-
-      saveMainProperties();
-      saveTeXMappings();
-      saveRecentFiles();
-      saveCurrencies();
-      saveLanguages();
-   }
-
-   public void clearRecentFiles()
-   {
-      recentFiles.clear();
-   }
-
-   public String getRecentFileName(int i)
-   {
-      return recentFiles.get(i);
-   }
-
-   public int getRecentFileCount()
-   {
-      return recentFiles.size();
-   }
-
-   public void addRecentFile(File file)
-   {
-      String name = file.getAbsolutePath();
-
-      // remove if already in the list
-
-      recentFiles.remove(name);
-
-      // Insert at the start of the list
-
-      recentFiles.add(0, name);
    }
 
    public int getInitialRowCapacity()
    {
-      String prop = getProperty("initial-row-capacity");
-
-      int capacity = 100;
-
-      if (prop == null)
-      {
-         setInitialRowCapacity(capacity);
-      }
-      else
-      {
-         try
-         {
-            capacity = Integer.parseInt(prop);
-         }
-         catch (NumberFormatException e)
-         {
-            messageHandler.debug("Invalid initial row capacity setting '"
-               +prop+"'");
-            setInitialRowCapacity(capacity);
-         }
-      }
-
-      return capacity;
+      return initialRowCapacity;
    }
 
    public void setInitialRowCapacity(int capacity)
    {
-      setProperty("initial-row-capacity", ""+capacity);
+      initialRowCapacity = capacity;
    }
 
    public int getInitialColumnCapacity()
    {
-      String prop = getProperty("initial-column-capacity");
-
-      int capacity = 10;
-
-      if (prop == null)
-      {
-         setInitialColumnCapacity(capacity);
-      }
-      else
-      {
-         try
-         {
-            capacity = Integer.parseInt(prop);
-         }
-         catch (NumberFormatException e)
-         {
-            messageHandler.debug("Invalid initial column capacity setting '"
-               +prop+"'");
-            setInitialColumnCapacity(capacity);
-         }
-      }
-
-      return capacity;
+      return initialColumnCapacity;
    }
 
    public void setInitialColumnCapacity(int capacity)
    {
-      setProperty("initial-column-capacity", ""+capacity);
-   }
-
-   public int getWindowWidth()
-   {
-      String prop = getProperty("window-width");
-
-      if (prop == null) return 0;
-
-      int width = 0;
-
-      try
-      {
-         width = Integer.parseInt(prop);
-
-         if (width < 0)
-         {
-            return 0;
-         }
-      }
-      catch (NumberFormatException e)
-      {
-      }
-
-      return width;
-   }
-
-   public void setWindowWidth(int width)
-   {
-      setProperty("window-width", ""+width);
-   }
-
-   public int getWindowHeight()
-   {
-      String prop = getProperty("window-height");
-
-      if (prop == null) return 0;
-
-      int height = 0;
-
-      try
-      {
-         height = Integer.parseInt(prop);
-
-         if (height < 0)
-         {
-            return 0;
-         }
-      }
-      catch (NumberFormatException e)
-      {
-      }
-
-      return height;
-   }
-
-   public void setWindowHeight(int height)
-   {
-      setProperty("window-height", ""+height);
-   }
-
-   public void setWindowSize(Dimension dim)
-   {
-      setWindowWidth(dim.width);
-      setWindowHeight(dim.height);
-   }
-
-   public String getLargeIconSuffix()
-   {
-      String val = getProperty("largeiconsuffix");
-
-      if (val == null)
-      {
-         return DEFAULT_LARGE_ICON_SUFFIX;
-      }
-
-      return val;
-   }
-
-   public void setLargeIconSuffix(String suffix)
-   {
-      setProperty("largeiconsuffix", suffix);
-   }
-
-   public String getSmallIconSuffix()
-   {
-      String val = getProperty("smalliconsuffix");
-
-      if (val == null)
-      {
-         return DEFAULT_SMALL_ICON_SUFFIX;
-      }
-
-      return val;
-   }
-
-   public void setSmallIconSuffix(String suffix)
-   {
-      setProperty("smalliconsuffix", suffix);
-   }
-
-   public void setLookAndFeel(String lookAndFeel)
-   {
-      if (lookAndFeel == null)
-      {
-         remove("lookandfeel");
-      }
-      else
-      {
-         setProperty("lookandfeel", lookAndFeel);
-      }
-   }
-
-   public String getLookAndFeel()
-   {
-      return getProperty("lookandfeel");
-   }
-
-   public int getHelpSetLowerNavLabelLimit()
-   {
-      String val = getProperty("manual.lower_nav.limit");
-
-      if (val == null || val.isEmpty())
-      {
-         return 20;
-      }
-
-      try
-      {
-         return Integer.parseInt(val);
-      }
-      catch (NumberFormatException e)
-      {
-         return 20;
-      }
-   }
-
-   public boolean isHelpSetLowerNavLabelTextOn()
-   {
-      String val = getProperty("manual.lower_nav.text");
-
-      if (val == null || val.isEmpty())
-      {
-         return true;
-      }
-
-      return Boolean.parseBoolean(val);
-   }
-
-   public void setHelpSetLowerNavLabelLimit(int limit)
-   {
-      setProperty("manual.lower_nav.limit", ""+limit);
-   }
-
-   public void setHelpSetLowerNavLabelText(boolean on)
-   {
-      setProperty("manual.lower_nav.text", ""+on);
-   }
-
-   public void initHelpSetSettings()
-   {
-      helpLib.setDefaultLowerNavSettings(
-        isHelpSetLowerNavLabelTextOn(),
-        getHelpSetLowerNavLabelLimit());
-
-      helpLib.getHelpFontSettings().copyFrom(getManualFontSettings());
-   }
-
-   public void updateHelpSetSettings()
-   {
-      setManualFont(helpLib.getHelpFontSettings());
-      setHelpSetLowerNavLabelLimit(helpLib.getDefaultLowerNavLabelLimit());
-      setHelpSetLowerNavLabelText(helpLib.isDefaultLowerNavLabelTextOn());
-   }
-
-   public HelpFontSettings getManualFontSettings()
-   {
-      HelpFontSettings fontSettings = new HelpFontSettings();
-      String val = getProperty("manual.body_font");
-
-      if (val != null && !val.isEmpty())
-      {
-         fontSettings.setBodyFontCssName(val);
-      }
-
-      val = getProperty("manual.body_font_size");
-
-      if (val != null && !val.isEmpty())
-      {
-         try
-         {
-            fontSettings.setBodyFontSize(Integer.parseInt(val));
-         }
-         catch (NumberFormatException e)
-         {// ignore if invalid
-         }
-      }
-
-      val = getProperty("manual.icon_font");
-
-      if (val != null && !val.isEmpty())
-      {
-         fontSettings.setIconFontCssName(val);
-      }
-
-      val = getProperty("manual.keystroke_font");
-
-      if (val != null && !val.isEmpty())
-      {
-         fontSettings.setKeyStrokeFontCssName(val);
-      }
-
-      val = getProperty("manual.mono_font");
-
-      if (val != null && !val.isEmpty())
-      {
-         fontSettings.setMonoFontCssName(val);
-      }
-
-      return fontSettings;
-   }
-
-   public void setManualFont(HelpFontSettings fontSettings)
-   {
-      if (fontSettings == null)
-      {
-         remove("manual.body_font");
-         remove("manual.body_font_size");
-         remove("manual.icon_font");
-         remove("manual.keystroke_font");
-         remove("manual.mono_font");
-      }
-      else
-      {
-         setProperty("manual.body_font", fontSettings.getBodyFontCssName());
-         setProperty("manual.body_font_size",
-           ""+fontSettings.getBodyFontSize());
-         setProperty("manual.icon_font", fontSettings.getIconFontCssName());
-         setProperty("manual.keystroke_font", fontSettings.getKeyStrokeFontCssName());
-         setProperty("manual.mono_font", fontSettings.getMonoFontCssName());
-      }
+      initialColumnCapacity = capacity;
    }
 
    public String getDefaultOutputFormat()
    {
-      return getProperty("fileformat");
+      return defaultOutputFormat;
    }
 
    public void applyDefaultOutputFormat(IOSettings ioSettings)
    {
-      String val = getProperty("fileformat");
+      String val = getDefaultOutputFormat();
 
       if (val != null && !val.isEmpty())
       {
@@ -1006,31 +173,17 @@ public class DatatoolSettings extends Properties
 
    public void setDefaultOutputFormat(String fmt)
    {
-      if (fmt == null)
-      {
-         remove("fileformat");
-      }
-      else
-      {
-         setProperty("fileformat", fmt);
-      }
+      defaultOutputFormat = fmt;
    }
 
    public void setOverrideInputFormat(boolean on)
    {
-      setProperty("fileformatoverride", ""+on);
+      overrideInputFormat = on;
    }
 
    public boolean getOverrideInputFormat()
    {
-      String val = getProperty("fileformatoverride");
-
-      if (val == null)
-      {
-         return false;
-      }
-
-      return Boolean.parseBoolean(val);
+      return overrideInputFormat;
    }
 
    public Charset getTeXEncoding()
@@ -1040,7 +193,7 @@ public class DatatoolSettings extends Properties
 
    public String getTeXEncodingProperty()
    {
-      return getProperty("tex-encoding");
+      return texEncodingName;
    }
 
    public void setTeXEncoding(Charset encoding)
@@ -1052,24 +205,17 @@ public class DatatoolSettings extends Properties
    {
       if (encoding == null)
       {
-         remove("tex-encoding");
+         texEncodingName = null;
       }
       else
       {
-         setProperty("tex-encoding", encoding.name());
+         texEncodingName = encoding.name();
       }
    }
 
    public void setTeXEncodingProperty(String encoding)
    {
-      if (encoding == null)
-      {
-         remove("tex-encoding");
-      }
-      else
-      {
-         setProperty("tex-encoding", encoding);
-      }
+      texEncodingName = encoding;
    }
 
    public Charset getCsvEncoding()
@@ -1079,7 +225,7 @@ public class DatatoolSettings extends Properties
 
    public String getCsvEncodingProperty()
    {
-      return getProperty("csv-encoding");
+      return csvEncodingName;
    }
 
    public void setCsvEncoding(Charset encoding)
@@ -1091,24 +237,17 @@ public class DatatoolSettings extends Properties
    {
       if (encoding == null)
       {
-         remove("csv-encoding");
+         csvEncodingName = null;
       }
       else
       {
-         setProperty("csv-encoding", encoding.name());
+         csvEncodingName = encoding.name();
       }
    }
 
    public void setCsvEncodingProperty(String encoding)
    {
-      if (encoding == null)
-      {
-         remove("csv-encoding");
-      }
-      else
-      {
-         setProperty("csv-encoding", encoding);
-      }
+      csvEncodingName = encoding;
    }
 
    /**
@@ -1171,272 +310,164 @@ public class DatatoolSettings extends Properties
 
    public boolean isStringDbTeX3DatumValue()
    {
-      String prop = getProperty("dbtex3-string");
-
-      if (prop == null || prop.isEmpty()) return false;
-
-      return Boolean.parseBoolean(prop);
+      return isStringDbTeX3DatumValueOn;
    }
 
    public void setStringDbTeX3DatumValue(boolean enable)
    {
-      setProperty("dbtex3-string", ""+enable);
+      isStringDbTeX3DatumValueOn = enable;
    }
 
    public boolean isIntegerDbTeX3DatumValue()
    {
-      String prop = getProperty("dbtex3-integer");
-
-      if (prop == null || prop.isEmpty()) return false;
-
-      return Boolean.parseBoolean(prop);
+      return isStringDbTeX3DatumValueOn;
    }
 
    public void setIntegerDbTeX3DatumValue(boolean enable)
    {
-      setProperty("dbtex3-integer", ""+enable);
+      isStringDbTeX3DatumValueOn = enable;
    }
 
    public boolean isDecimalDbTeX3DatumValue()
    {
-      String prop = getProperty("dbtex3-decimal");
-
-      if (prop == null || prop.isEmpty()) return true;
-
-      return Boolean.parseBoolean(prop);
+      return isDecimalDbTeX3DatumValueOn;
    }
 
    public void setDecimalDbTeX3DatumValue(boolean enable)
    {
-      setProperty("dbtex3-decimal", ""+enable);
+      isDecimalDbTeX3DatumValueOn = enable;
    }
 
    public boolean isCurrencyDbTeX3DatumValue()
    {
-      String prop = getProperty("dbtex3-currency");
-
-      if (prop == null || prop.isEmpty()) return true;
-
-      return Boolean.parseBoolean(prop);
+      return isCurrencyDbTeX3DatumValueOn;
    }
 
    public void setCurrencyDbTeX3DatumValue(boolean enable)
    {
-      setProperty("dbtex3-currency", ""+enable);
+      isCurrencyDbTeX3DatumValueOn = enable;
    }
 
    public DbTeX3DatumValue getDbTeX3DatumValue()
    {
-      if (dbtex3DatumValue == null)
-      {
-         String prop = getProperty("dbtex-3-datum");
-
-         if (prop == null || prop.isEmpty())
-         {
-            dbtex3DatumValue = DbTeX3DatumValue.HEADER;
-         }
-         else
-         {
-            try
-            {
-               dbtex3DatumValue = DbTeX3DatumValue.valueOf(prop);
-            }
-            catch (IllegalArgumentException e)
-            {
-               dbtex3DatumValue = DbTeX3DatumValue.HEADER;
-               messageHandler.debug(e);
-            }
-         }
-      }
-
       return dbtex3DatumValue;
    }
 
    public void setDbTeX3DatumValue(DbTeX3DatumValue value)
    {
       dbtex3DatumValue = value;
-      setProperty("dbtex-3-datum", value.toString());
    }
 
    public boolean useSIforDecimals()
    {
-      String prop = getProperty("si-decimals");
-
-      if (prop == null)
-      {
-         return false;
-      }
-
-      return Boolean.valueOf(prop);
+      return useSiForDecimals;
    }
 
    public void setSIforDecimals(boolean enable)
    {
-      setProperty("si-decimals", ""+enable);
+      useSiForDecimals = enable;
    }
 
    public boolean isIntegerFormatterSet()
    {
-      String prop = getProperty("integer-formatter");
-      return prop != null && !prop.isEmpty();
+      return integerFormat != null;
    }
 
    public void setIntegerFormatter(DecimalFormat format)
    {
-      if (format == null)
-      {
-         remove("integer-formatter");
-      }
-      else
-      {
-         setProperty("integer-formatter", format.toPattern());
-      }
+      integerFormat = format;
    }
 
    public boolean isCurrencyFormatterSet()
    {
-      String prop = getProperty("currency-formatter");
-      return prop != null && !prop.isEmpty();
+      return currencyFormat != null;
    }
 
    public void setCurrencyFormatter(DecimalFormat format)
    {
-      if (format == null)
-      {
-         remove("currency-formatter");
-      }
-      else
-      {
-         setProperty("currency-formatter", format.toPattern());
-      }
+      currencyFormat = format;
    }
 
    public boolean isDecimalFormatterSet()
    {
-      String prop = getProperty("decimal-formatter");
-      return prop != null && !prop.isEmpty();
+      return decimalFormat != null;
    }
 
    public void setDecimalFormatter(DecimalFormat format)
    {
-      if (format == null)
-      {
-         remove("decimal-formatter");
-      }
-      else
-      {
-         setProperty("decimal-formatter", format.toPattern());
-      }
+      decimalFormat = format;
    }
 
    public NumberFormat getNumericFormatter(DatumType type)
    {
-      String prop = null;
-
-      switch (type)
-      {
-         case INTEGER:
-            prop = getProperty("integer-formatter");
-         break;
-         case CURRENCY:
-            prop = getProperty("currency-formatter");
-            break;
-         default:
-            prop = getProperty("decimal-formatter");
-      }
-
       Locale locale = getNumericLocale();
 
-      if (prop != null && !prop.isEmpty())
-      {
-         NumberFormat numfmt
-            = new DecimalFormat(prop, DecimalFormatSymbols.getInstance(locale));
-
-         numfmt.setParseIntegerOnly(type==DatumType.INTEGER);
-
-         return numfmt;
-      }
-
       switch (type)
       {
          case INTEGER:
-           return NumberFormat.getIntegerInstance(locale);
-         case CURRENCY:
-           return NumberFormat.getCurrencyInstance(locale);
-      }
 
-      return NumberFormat.getInstance(locale);
+            if (integerFormat != null)
+            {
+               return integerFormat;
+            }
+            else
+            {
+               return NumberFormat.getIntegerInstance(locale);
+            }
+
+         case CURRENCY:
+
+            if (currencyFormat != null)
+            {
+               return currencyFormat;
+            }
+            else
+            {
+               return NumberFormat.getCurrencyInstance(locale);
+            }
+
+         default:
+
+            if (decimalFormat != null)
+            {
+               return decimalFormat;
+            }
+            else
+            {
+               return NumberFormat.getInstance(locale);
+            }
+
+      }
    }
 
    public void setNumericParser(DecimalFormat format)
    {
-      if (format == null)
-      {
-         remove("numeric-parser");
-      }
-      else
-      {
-         setProperty("numeric-parser", format.toPattern());
-      }
+      numericParser = format;
    }
 
    public boolean isNumericParserSet()
    {
-      String prop = getProperty("numeric-parser");
-      return prop != null && !prop.isEmpty();
+      return numericParser != null;
    }
 
    public NumberFormat getNumericParser()
    {
-      Locale locale = getNumericLocale();
-      String prop = getProperty("numeric-parser");
-
-      if (prop != null && !prop.isEmpty())
+      if (numericParser == null)
       {
-         return new DecimalFormat(prop, DecimalFormatSymbols.getInstance(locale));
+         return NumberFormat.getInstance(getNumericLocale());
       }
 
-      return NumberFormat.getInstance(locale);
+      return numericParser;
    }
 
    public Locale getNumericLocale()
    {
-      String prop = getProperty("numeric-locale");
-
-      Locale locale;
-
-      if (prop != null && !prop.isEmpty())
-      {
-         locale = Locale.forLanguageTag(prop.replaceAll("_", "-"));
-
-         if (locale.toLanguageTag().equals("und"))
-         {
-            System.err.println("Unknown language tag '"+prop+"'");
-         }
-         else
-         {
-            return locale;
-         }
-      }
-
-      locale = getLocaleProperty("sort-locale",
-         Locale.getDefault(Locale.Category.FORMAT));
-
-      setProperty("numeric-locale", locale.toLanguageTag());
-
-      return locale;
+      return numericLocale;
    }
 
    public void setNumericLocale(Locale locale)
    {
-      if (locale == null)
-      {
-         remove("numeric-locale");
-      }
-      else
-      {
-         setProperty("numeric-locale", locale.toString());
-      }
+      numericLocale = locale;
    }
 
    public Collator getSortCollator()
@@ -1444,21 +475,26 @@ public class DatatoolSettings extends Properties
       return sortCollator;
    }
 
-   public String getSortLocale()
+   public String getSortLocaleString()
    {
-      return getProperty("sort-locale");
+      return sortLocale == null ? null : sortLocale.toLanguageTag();
+   }
+
+   public Locale getSortLocale()
+   {
+      return sortLocale;
    }
 
    public void setSortLocale(Locale locale)
    {
+      sortLocale = locale;
+
       if (locale == null)
       {
-         remove("sort-locale");
          sortCollator = null;
       }
       else
       {
-         setProperty("sort-locale", locale.toLanguageTag());
          sortCollator = Collator.getInstance(locale);
       }
    }
@@ -1467,13 +503,13 @@ public class DatatoolSettings extends Properties
    {
       if (locale == null || "".equals(locale))
       {
-         remove("sort-locale");
+         sortLocale = null;
          sortCollator = null;
       }
       else
       {
-         setProperty("sort-locale", locale);
-         sortCollator = Collator.getInstance(Locale.forLanguageTag(locale));
+         sortLocale = Locale.forLanguageTag(locale);
+         sortCollator = Collator.getInstance(sortLocale);
       }
    }
 
@@ -1484,7 +520,7 @@ public class DatatoolSettings extends Properties
 
    public void setSeparatorProperty(int separator)
    {
-      setProperty("sep", MessageHandler.codePointToString(separator));
+      csvSeparator = separator;
    }
 
    public int getSeparator()
@@ -1494,7 +530,7 @@ public class DatatoolSettings extends Properties
 
    public int getSeparatorProperty()
    {
-      return getProperty("sep").codePointAt(0);
+      return csvSeparator;
    }
 
    public void setDelimiter(int delimiter)
@@ -1504,7 +540,7 @@ public class DatatoolSettings extends Properties
 
    public void setDelimiterProperty(int delimiter)
    {
-      setProperty("delim", MessageHandler.codePointToString(delimiter));
+      csvDelimiter = delimiter;
    }
 
    public int getDelimiter()
@@ -1514,7 +550,7 @@ public class DatatoolSettings extends Properties
 
    public int getDelimiterProperty()
    {
-      return getProperty("delim").codePointAt(0);
+      return csvDelimiter;
    }
 
    public String getSqlUrl()
@@ -1534,48 +570,7 @@ public class DatatoolSettings extends Properties
 
    public String getSqlHostProperty()
    {
-      return getProperty("sqlHost");
-   }
-
-   public String getSqlPrefix()
-   {
-      return importSettings.getSqlPrefix();
-   }
-
-   public String getSqlPrefixProperty()
-   {
-      return getProperty("sqlPrefix");
-   }
-
-   public int getSqlPort()
-   {
-      return importSettings.getSqlPort();
-   }
-
-   public int getSqlPortProperty()
-   {
-      String prop = getProperty("sqlPort");
-
-      if (prop == null)
-      {
-         setSqlPort(3306);
-         return 3306;
-      }
-
-      try
-      {
-         return Integer.parseInt(prop);
-      }
-      catch (NumberFormatException e)
-      {
-         // This shouldn't happen unless someone messes around with
-         // the properties file
-
-         setSqlPort(3306);
-
-         throw new IllegalArgumentException(
-            "Invalid port number "+prop, e);
-      }
+      return sqlHost;
    }
 
    public void setSqlHost(String host)
@@ -1585,7 +580,17 @@ public class DatatoolSettings extends Properties
 
    public void setSqlHostProperty(String host)
    {
-      setProperty("sqlHost", host);
+      sqlHost = host;
+   }
+
+   public String getSqlPrefix()
+   {
+      return importSettings.getSqlPrefix();
+   }
+
+   public String getSqlPrefixProperty()
+   {
+      return sqlPrefix;
    }
 
    public void setSqlPrefix(String prefix)
@@ -1595,7 +600,17 @@ public class DatatoolSettings extends Properties
 
    public void setSqlPrefixProperty(String prefix)
    {
-      setProperty("sqlPrefix", prefix);
+      sqlPrefix = prefix;
+   }
+
+   public int getSqlPort()
+   {
+      return importSettings.getSqlPort();
+   }
+
+   public int getSqlPortProperty()
+   {
+      return sqlPort;
    }
 
    public void setSqlPort(int port)
@@ -1605,7 +620,72 @@ public class DatatoolSettings extends Properties
 
    public void setSqlPortProperty(int port)
    {
-      setProperty("sqlPort", ""+port);
+      sqlPort = port;
+   }
+
+   public String getSqlDbName()
+   {
+      return importSettings.getSqlDbName();
+   }
+
+   public String getSqlDbNameProperty()
+   {
+      return sqlDbName;
+   }
+
+   public void setSqlDbName(String name)
+   {
+      importSettings.setSqlDbName(name);
+   }
+
+   public void setSqlDbNameProperty(String name)
+   {
+      sqlDbName = name;
+   }
+
+   public void setWipePassword(boolean wipePassword)
+   {
+      importSettings.setWipePassword(wipePassword);
+   }
+
+   public void setWipePasswordProperty(boolean wipePassword)
+   {
+      this.wipePassword = wipePassword;
+   }
+
+   public boolean isWipePasswordEnabled()
+   {
+      return importSettings.isWipePasswordOn();
+   }
+
+   public boolean isWipePasswordEnabledProperty()
+   {
+      return wipePassword;
+   }
+
+   public void setSqlUser(String username)
+   {
+      importSettings.setSqlUser(username);
+   }
+
+   public void setSqlUserProperty(String username)
+   {
+      sqlDbUser = username;
+   }
+
+   public String getSqlUser()
+   {
+      return importSettings.getSqlUser();
+   }
+
+   public String getSqlUserProperty()
+   {
+      return sqlDbUser;
+   }
+
+   public void setPasswordReader(DatatoolPasswordReader reader)
+   {
+      importSettings.setPasswordReader(reader);
    }
 
    public boolean hasCSVHeader()
@@ -1615,15 +695,7 @@ public class DatatoolSettings extends Properties
 
    public boolean hasCSVHeaderProperty()
    {
-      String prop = getProperty("csvHasHeader");
-
-      if (prop == null)
-      {
-         setHasCSVHeader(true);
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
+      return hasCsvHeader;
    }
 
    public void setHasCSVHeader(boolean hasHeader)
@@ -1633,7 +705,7 @@ public class DatatoolSettings extends Properties
 
    public void setHasCSVHeaderProperty(boolean hasHeader)
    {
-      setProperty("csvHasHeader", ""+hasHeader);
+      hasCsvHeader = hasHeader;
    }
 
    public void setColumnHeaders(String[] headers)
@@ -1673,15 +745,7 @@ public class DatatoolSettings extends Properties
 
    public boolean hasCSVstrictquotesProperty()
    {
-      String prop = getProperty("csvstrictquotes");
-
-      if (prop == null)
-      {
-         setCSVstrictquotes(false);
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
+      return csvStrictQuotes;
    }
 
    public void setCSVstrictquotes(boolean strictquotes)
@@ -1691,44 +755,7 @@ public class DatatoolSettings extends Properties
 
    public void setCSVstrictquotesProperty(boolean strictquotes)
    {
-      setProperty("csvstrictquotes", ""+strictquotes);
-   }
-
-// TODO deprecate?
-// make equivalent to EscapeCharsOption.ESC_DELIM_BKSL/DOUBLE_DELIM
-   public int getCSVescape()
-   {
-      String prop = getProperty("csvescape");
-
-      if (prop == null)
-      {
-         setCSVescape("\\");
-         return '\\';
-      }
-
-      return prop.isEmpty() || prop.equals("\\0") ? 0 : prop.codePointAt(0);
-   }
-
-   public void setCSVescape(String esc)
-   {
-      setProperty("csvescape", esc);
-   }
-
-   public void setCSVescape(int esc)
-   {
-      setProperty("csvescape", esc == 0 ? "" : MessageHandler.codePointToString(esc));
-   }
-
-   // deprecate? use csv-blank
-   public void setSkipEmptyRows(boolean enable)
-   {
-      setProperty("skip-empty-rows", ""+enable);
-   }
-
-   @Deprecated
-   public boolean isSkipEmptyRowsOn()
-   {
-      return getCsvBlankOption() == CsvBlankOption.IGNORE;
+      csvStrictQuotes = strictquotes;
    }
 
    public void setCsvBlankOption(CsvBlankOption opt)
@@ -1738,7 +765,7 @@ public class DatatoolSettings extends Properties
 
    public void setCsvBlankOptionProperty(CsvBlankOption opt)
    {
-      setProperty("csv-blank", opt.toString());
+      csvBlankOption = opt;
    }
 
    public CsvBlankOption getCsvBlankOption()
@@ -1748,14 +775,7 @@ public class DatatoolSettings extends Properties
 
    public CsvBlankOption getCsvBlankOptionProperty()
    {
-      String val = getProperty("csv-blank");
-
-      if (val != null)
-      {
-         return CsvBlankOption.valueOf(val);
-      }
-
-      return CsvBlankOption.IGNORE;
+      return csvBlankOption;
    }
 
    public void setEscapeCharsOption(EscapeCharsOption opt)
@@ -1765,7 +785,7 @@ public class DatatoolSettings extends Properties
 
    public void setEscapeCharsOptionProperty(EscapeCharsOption opt)
    {
-      setProperty("csv-esc-chars", opt.toString());
+      escapeCharsOption = opt;
    }
 
    public EscapeCharsOption getEscapeCharsOption()
@@ -1775,31 +795,17 @@ public class DatatoolSettings extends Properties
 
    public EscapeCharsOption getEscapeCharsOptionProperty()
    {
-      String val = getProperty("csv-esc-chars");
-
-      if (val != null)
-      {
-         return EscapeCharsOption.valueOf(val);
-      }
-
-      return EscapeCharsOption.DOUBLE_DELIM;
+      return escapeCharsOption;
    }
 
    public void setAddDelimiterOption(AddDelimiterOption opt)
    {
-      setProperty("csv-add-delim", opt.toString());
+      addDelimiterOption = opt;
    }
 
    public AddDelimiterOption getAddDelimiterOption()
    {
-      String val = getProperty("csv-add-delim");
-
-      if (val != null)
-      {
-         return AddDelimiterOption.valueOf(val);
-      }
-
-      return AddDelimiterOption.DETECT;
+      return addDelimiterOption;
    }
 
    public int getCSVskiplines()
@@ -1809,24 +815,7 @@ public class DatatoolSettings extends Properties
 
    public int getCSVskiplinesProperty()
    {
-      String prop = getProperty("csvskiplines");
-
-      if (prop == null)
-      {
-         setCSVskiplines(0);
-         return 0;
-      }
-
-      try
-      {
-         return Integer.parseInt(prop);
-      }
-      catch (NumberFormatException e)
-      {
-         getMessageHandler().debug(e);
-         setCSVskiplines(0);
-         return 0;
-      }
+      return skipLines;
    }
 
    public void setCSVskiplines(int lines)
@@ -1843,164 +832,7 @@ public class DatatoolSettings extends Properties
          throw new IllegalArgumentException("Invalid skip lines value: "+lines);
       }
 
-      setProperty("csvskiplines", ""+lines);
-   }
-
-   public String getSqlDbName()
-   {
-      return importSettings.getSqlDbName();
-   }
-
-   public String getSqlDbNameProperty()
-   {
-      return getProperty("sqlDbName");
-   }
-
-   public void setSqlDbName(String name)
-   {
-      importSettings.setSqlDbName(name);
-   }
-
-   public void setSqlDbNameProperty(String name)
-   {
-      setProperty("sqlDbName", name);
-   }
-
-   public void setWipePassword(boolean wipePassword)
-   {
-      importSettings.setWipePassword(wipePassword);
-   }
-
-   public void setWipePasswordProperty(boolean wipePassword)
-   {
-      setProperty("wipePassword", ""+wipePassword);
-   }
-
-   public boolean isWipePasswordEnabled()
-   {
-      return importSettings.isWipePasswordOn();
-   }
-
-   public boolean isWipePasswordEnabledProperty()
-   {
-      String prop = getProperty("wipePassword");
-
-      if (prop == null)
-      {
-         setWipePassword(false);
-         return false;
-      }
-
-      return Boolean.parseBoolean(prop);
-   }
-
-   public void setSqlUser(String username)
-   {
-      importSettings.setSqlUser(username);
-   }
-
-   public void setSqlUserProperty(String username)
-   {
-      setProperty("sqlUser", username);
-   }
-
-   public String getSqlUser()
-   {
-      return importSettings.getSqlUser();
-   }
-
-   public String getSqlUserProperty()
-   {
-      return getProperty("sqlUser");
-   }
-
-   public void setPasswordReader(DatatoolPasswordReader reader)
-   {
-      importSettings.setPasswordReader(reader);
-   }
-
-   public void setStartUp(int category)
-   {
-      if (category < 0 || category > STARTUP_CUSTOM)
-      {
-         throw new IllegalArgumentException(
-           "Invalid startup category "+category);
-      }
-
-      setProperty("startup", ""+category);
-   }
-
-   public int getStartUp()
-   {
-      String prop = getProperty("startup");
-
-      if (prop == null)
-      {
-         setStartUp(STARTUP_HOME);
-         return STARTUP_HOME;
-      }
-
-      try
-      {
-         int result = Integer.parseInt(prop);
-
-         if (result < 0 || result > STARTUP_CUSTOM)
-         {
-            messageHandler.debug("Invalid startup setting '"+prop+"'");
-            return STARTUP_HOME;
-         }
-
-         return result;
-      }
-      catch (NumberFormatException e)
-      {
-         messageHandler.debug("Invalid startup setting '"+prop+"'");
-         return STARTUP_HOME;
-      }
-   }
-
-   public void directoryOnExit(File file)
-   {
-      if (getStartUp() == STARTUP_LAST)
-      {
-         setProperty("startupdir", file.getAbsolutePath());
-      }
-   }
-
-   public void setCustomStartUp(File file)
-   {
-      setStartUp(STARTUP_CUSTOM);
-      setProperty("startupdir", file.getAbsolutePath());
-   }
-
-   public File getStartUpDirectory()
-   {
-      switch (getStartUp())
-      {
-         case STARTUP_HOME:
-            return new File(System.getProperty("user.home"));
-         case STARTUP_CWD:
-            return new File(".");
-      }
-
-      String name = getProperty("startupdir");
-
-      if (name == null)
-      {
-         return new File(System.getProperty("user.home"));
-      }
-
-      return new File(name);
-   }
-
-   public void setTeXMapping(boolean enable)
-   {
-      importSettings.setMapChars(enable);
-   }
-
-   public void setTeXMappingProperty(boolean enable)
-   {
-      setProperty("subtexspecials", ""+enable);
+      skipLines = lines;
    }
 
    public boolean isImportEmptyToNullOn()
@@ -2010,15 +842,7 @@ public class DatatoolSettings extends Properties
 
    public boolean isImportEmptyToNullOnProperty()
    {
-      String prop = getProperty("impemptytonull");
-
-      if (prop == null || prop.isEmpty())
-      {
-         setImportEmptyToNull(true);
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
+      return importEmptyToNull;
    }
 
    public void setImportEmptyToNull(boolean on)
@@ -2028,7 +852,7 @@ public class DatatoolSettings extends Properties
 
    public void setImportEmptyToNullProperty(boolean on)
    {
-      setProperty("impemptytonull", ""+on);
+      importEmptyToNull = on;
    }
 
    public boolean isSolutionEnvStripped()
@@ -2038,15 +862,7 @@ public class DatatoolSettings extends Properties
 
    public boolean isSolutionEnvStrippedProperty()
    {
-      String prop = getProperty("probsolnstripenv");
-
-      if (prop == null || prop.isEmpty())
-      {
-         setSolutionEnvStripped(true);
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
+      return stripSolnEnv;
    }
 
    public void setSolutionEnvStripped(boolean stripEnv)
@@ -2056,7 +872,7 @@ public class DatatoolSettings extends Properties
 
    public void setSolutionEnvStrippedProperty(boolean stripEnv)
    {
-      setProperty("probsolnstripenv", ""+stripEnv);
+      stripSolnEnv = stripEnv;
    }
 
    public boolean isPreambleOnly()
@@ -2066,15 +882,7 @@ public class DatatoolSettings extends Properties
 
    public boolean isPreambleOnlyProperty()
    {
-      String prop = getProperty("preambleonly");
-
-      if (prop == null || prop.isEmpty())
-      {
-         setPreambleOnly(true);
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
+      return isPreambleOnly;
    }
 
    public void setPreambleOnly(boolean on)
@@ -2084,25 +892,17 @@ public class DatatoolSettings extends Properties
 
    public void setPreambleOnlyProperty(boolean on)
    {
-      setProperty("preambleonly", ""+on);
+      isPreambleOnly = on;
    }
 
    public void setOwnerOnly(boolean enable)
    {
-      setProperty("owneronly", ""+enable);
+      ownerOnly = enable;
    }
 
    public boolean isOwnerOnly()
    {
-      String prop = getProperty("owneronly");
-
-      if (prop == null || prop.isEmpty())
-      {
-         setOwnerOnly(false);
-         return false;
-      }
-
-      return Boolean.parseBoolean(prop);
+      return ownerOnly;
    }
 
    public void setAutoTrimLabels(boolean enable)
@@ -2112,7 +912,7 @@ public class DatatoolSettings extends Properties
 
    public void setAutoTrimLabelsProperty(boolean enable)
    {
-      setProperty("trimlabels", ""+enable);
+      autoTrimLabels = enable;
    }
 
    public boolean isAutoTrimLabelsOn()
@@ -2122,15 +922,7 @@ public class DatatoolSettings extends Properties
 
    public boolean isAutoTrimLabelsOnProperty()
    {
-      String prop = getProperty("trimlabels");
-
-      if (prop == null || prop.isEmpty())
-      {
-         setAutoTrimLabels(true);
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
+      return autoTrimLabels;
    }
 
    public void setTrimElement(boolean enable)
@@ -2140,7 +932,7 @@ public class DatatoolSettings extends Properties
 
    public void setTrimElementProperty(boolean enable)
    {
-      setProperty("trimelement", ""+enable);
+      trimElements = enable;
    }
 
    public boolean isTrimElementOn()
@@ -2150,15 +942,23 @@ public class DatatoolSettings extends Properties
 
    public boolean isTrimElementOnProperty()
    {
-      String prop = getProperty("trimelement");
+      return trimElements;
+   }
 
-      if (prop == null || prop.isEmpty())
-      {
-         setTrimElement(true);
-         return true;
-      }
+   public void setTeXMapping(boolean enable)
+   {
+      importSettings.setMapChars(enable);
+   }
 
-      return Boolean.parseBoolean(prop);
+// TODO replace with just literal content setting?
+   public void setTeXMappingProperty(boolean enable)
+   {
+      mapTeXSpecials = enable;
+   }
+
+   public boolean isTeXMappingOnProperty()
+   {
+      return mapTeXSpecials;
    }
 
    public boolean isLiteralContent()
@@ -2168,14 +968,7 @@ public class DatatoolSettings extends Properties
 
    public boolean isLiteralContentProperty()
    {
-      String prop = getProperty("literalcontent");
-
-      if (prop == null || prop.isEmpty())
-      {
-         return isTeXMappingOn();
-      }
-
-      return Boolean.parseBoolean(prop);
+      return literalContent;
    }
 
    public void setLiteralContent(boolean on)
@@ -2185,24 +978,12 @@ public class DatatoolSettings extends Properties
 
    public void setLiteralContentProperty(boolean on)
    {
-      setProperty("literalcontent", ""+on);
+      literalContent = on;
    }
 
    public boolean isTeXMappingOn()
    {
       return importSettings.isMapCharsOn();
-   }
-
-   public boolean isTeXMappingOnProperty()
-   {
-      String prop = getProperty("subtexspecials");
-
-      if (prop == null || prop.isEmpty())
-      {
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
    }
 
    public HashMap<Integer,String> getTeXMappings()
@@ -2326,507 +1107,14 @@ public class DatatoolSettings extends Properties
          "error.not_currency", text));
    }
 
-   public String getFontName()
-   {
-      return getProperty("fontname");
-   }
-
-   public void setFontName(String name)
-   {
-      setProperty("fontname", name);
-   }
-
-   public int getFontSize()
-   {
-      try
-      {
-         return Integer.parseInt(getProperty("fontsize"));
-      }
-      catch (NumberFormatException e)
-      {
-         setFontSize(12);
-         return 12;
-      }
-   }
-
-   public void setFontSize(int fontSize)
-   {
-      setProperty("fontsize", ""+fontSize);
-   }
-
-   public Font getFont()
-   {
-      return new Font(getFontName(), Font.PLAIN, getFontSize());
-   }
-
-   public void setCellWidth(int cellWidth, DatumType type)
-   {
-      String tag="";
-
-      switch (type)
-      {
-         case STRING:
-            tag = "string";
-         break;
-         case UNKNOWN:
-            tag = "unset";
-         break;
-         case INTEGER:
-            tag = "int";
-         break;
-         case DECIMAL:
-            tag = "real";
-         break;
-         case CURRENCY:
-            tag = "currency";
-         break;
-         default:
-            assert false : "Invalid data type "+type;
-      }
-
-      setProperty("cellwidth."+tag, ""+cellWidth);
-   }
-
-   @Deprecated
-   public void setCellWidth(int cellWidth, int type)
-   {
-      String tag;
-
-      switch (type)
-      {
-         case TYPE_STRING:
-            tag = "string";
-         break;
-         case TYPE_UNKNOWN:
-            tag = "unset";
-         break;
-         case TYPE_INTEGER:
-            tag = "int";
-         break;
-         case TYPE_REAL:
-            tag = "real";
-         break;
-         case TYPE_CURRENCY:
-            tag = "currency";
-         break;
-         default:
-            throw new IllegalArgumentException(
-              "setCellWidth(int,int): Invalid data type "+type);
-      }
-
-      setProperty("cellwidth."+tag, ""+cellWidth);
-   }
-
-   public int getCellWidth(DatumType type)
-   {
-      String tag;
-      int defValue;
-
-      switch (type)
-      {
-         case STRING:
-            tag = "string";
-            defValue = 300;
-         break;
-         case UNKNOWN:
-            tag = "unset";
-            defValue = 100;
-         break;
-         case INTEGER:
-            tag = "int";
-            defValue = 40;
-         break;
-         case DECIMAL:
-            tag = "real";
-            defValue = 60;
-         break;
-         case CURRENCY:
-            tag = "currency";
-            defValue = 150;
-         break;
-         default:
-            throw new IllegalArgumentException(
-              "getCellWidth(DatumType): Invalid data type "+type);
-      }
-
-      String prop = getProperty("cellwidth."+tag);
-
-      if (prop == null)
-      {
-         setCellWidth(defValue, type);
-         return defValue;
-      }
-
-      try
-      {
-         return Integer.parseInt(prop);
-      }
-      catch (NumberFormatException e)
-      {
-         setCellWidth(defValue, type);
-         messageHandler.debug("Property 'cellwidth."+tag
-           +"' should be an integer. Found: '"+prop+"'");
-      }
-
-      return defValue;
-   }
-
-   @Deprecated
-   public int getCellWidth(int type)
-   {
-      String tag;
-      int defValue;
-
-      switch (type)
-      {
-         case TYPE_STRING:
-            tag = "string";
-            defValue = 300;
-         break;
-         case TYPE_UNKNOWN:
-            tag = "unset";
-            defValue = 100;
-         break;
-         case TYPE_INTEGER:
-            tag = "int";
-            defValue = 40;
-         break;
-         case TYPE_REAL:
-            tag = "real";
-            defValue = 60;
-         break;
-         case TYPE_CURRENCY:
-            tag = "currency";
-            defValue = 150;
-         break;
-         default:
-            throw new IllegalArgumentException(
-              "getCellWidth(int): Invalid data type "+type);
-      }
-
-      String prop = getProperty("cellwidth."+tag);
-
-      if (prop == null)
-      {
-         setCellWidth(defValue, type);
-         return defValue;
-      }
-
-      try
-      {
-         return Integer.parseInt(prop);
-      }
-      catch (NumberFormatException e)
-      {
-         setCellWidth(defValue, type);
-         messageHandler.debug("Property 'cellwidth."+tag
-           +"' should be an integer. Found: '"+prop+"'");
-      }
-
-      return defValue;
-   }
-
-   public boolean isCellDatumVisible()
-   {
-      String prop = getProperty("celldatumvisible");
-
-      if (prop == null || prop.isEmpty())
-      {
-         setCellDatumVisible(true);
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
-   }
-
-   public void setCellDatumVisible(boolean visible)
-   {
-      setProperty("celldatumvisible", ""+visible);
-   }
-
-   public int getCellEditorPreferredHeight()
-   {
-      try
-      {
-         String val = getProperty("celleditorprefheight");
-
-         if (val == null)
-         {
-            val = getProperty("celleditorheight");
-
-            if (val != null)
-            {
-               int h = Integer.parseInt(val)*10;
-               setProperty("celleditorprefheight", ""+h);
-               remove("celleditorheight");
-               return h;
-            }
-         }
-         else
-         {
-            return Integer.parseInt(val);
-         }
-      }
-      catch (NumberFormatException e)
-      {
-      }
-
-      setProperty("celleditorprefheight", "170");
-      return 170;
-   }
-
-   public void setCellEditorPreferredHeight(int height)
-   {
-      setProperty("celleditorprefheight", ""+height);
-   }
-
-   public int getCellEditorPreferredWidth()
-   {
-      try
-      {
-         String val = getProperty("celleditorprefwidth");
-
-         if (val == null)
-         {
-            val = getProperty("celleditorwidth");
-
-            if (val != null)
-            {
-               int w = Integer.parseInt(val)*22;
-               setProperty("celleditorprefwidth", ""+w);
-               remove("celleditorwidth");
-               return w;
-            }
-         }
-         else
-         {
-            return Integer.parseInt(val);
-         }
-      }
-      catch (NumberFormatException e)
-      {
-      }
-
-      setProperty("celleditorprefwidth", "220");
-      return 220;
-   }
-
-   public void setCellEditorPreferredWidth(int width)
-   {
-      setProperty("celleditorprefwidth", ""+width);
-   }
-
-   @Deprecated
-   public int getCellEditorHeight()
-   {
-      try
-      {
-         return Integer.parseInt(getProperty("celleditorheight"));
-      }
-      catch (NumberFormatException e)
-      {
-         return 10;
-      }
-   }
-
-   @Deprecated
-   public void setCellEditorHeight(int numLines)
-   {
-      setProperty("celleditorheight", ""+numLines);
-   }
-
-   @Deprecated
-   public int getCellEditorWidth()
-   {
-      try
-      {
-         return Integer.parseInt(getProperty("celleditorwidth"));
-      }
-      catch (NumberFormatException e)
-      {
-         return 8;
-      }
-   }
-
-   @Deprecated
-   public void setCellEditorWidth(int maxCharsPerLine)
-   {
-      setProperty("celleditorwidth", ""+maxCharsPerLine);
-   }
-
-   public void setStringCellEditable(boolean enable)
-   {
-      setProperty("stringcelleditable", ""+enable);
-   }
-
-   public boolean isStringCellEditable()
-   {
-      String prop = getProperty("stringcelleditable");
-
-      if (prop == null || prop.isEmpty())
-      {
-         setStringCellEditable(false);
-         return false;
-      }
-
-      return Boolean.parseBoolean(prop);
-   }
-
-   public void setSyntaxHighlighting(boolean enable)
-   {
-      setProperty("syntaxhighlighting", ""+enable);
-   }
-
-   public boolean isSyntaxHighlightingOn()
-   {
-      String prop = getProperty("syntaxhighlighting");
-
-      if (prop == null || prop.isEmpty())
-      {
-         setSyntaxHighlighting(true);
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
-   }
-
-   public Color getCellBackground()
-   {
-      String prop = getProperty("cellbackground");
-
-      if (prop == null)
-      {
-         return Color.WHITE;
-      }
-
-      try
-      {
-         return new Color(Integer.parseInt(prop));
-      }
-      catch (NumberFormatException e)
-      {
-         return Color.WHITE;
-      }
-   }
-
-   public void setCellBackground(Color background)
-   {
-      setProperty("cellbackground", ""+background.getRGB());
-   }
-
-   public Color getCellForeground()
-   {
-      String prop = getProperty("cellforeground");
-
-      if (prop == null)
-      {
-         return Color.BLACK;
-      }
-
-      try
-      {
-         return new Color(Integer.parseInt(prop));
-      }
-      catch (NumberFormatException e)
-      {
-         return Color.BLACK;
-      }
-   }
-
-   public void setCellForeground(Color foreground)
-   {
-      setProperty("cellforeground", ""+foreground.getRGB());
-   }
-
-   public Color getControlSequenceHighlight()
-   {
-      String prop = getProperty("highlightcs");
-
-      if (prop == null)
-      {
-         setControlSequenceHighlight(Color.BLUE);
-         return Color.BLUE;
-      }
-
-      try
-      {
-         return new Color(Integer.parseInt(prop));
-      }
-      catch (NumberFormatException e)
-      {
-         setControlSequenceHighlight(Color.BLUE);
-         return Color.BLUE;
-      }
-   }
-
-   public void setControlSequenceHighlight(Color highlight)
-   {
-      setProperty("highlightcs", ""+highlight.getRGB());
-   }
-
-   public Color getCommentHighlight()
-   {
-      String prop = getProperty("highlightcomment");
-
-      if (prop == null)
-      {
-         setCommentHighlight(Color.GRAY);
-         return Color.GRAY;
-      }
-
-      try
-      {
-         return new Color(Integer.parseInt(prop));
-      }
-      catch (NumberFormatException e)
-      {
-         setCommentHighlight(Color.GRAY);
-         return Color.GRAY;
-      }
-   }
-
-   public void setCommentHighlight(Color highlight)
-   {
-      setProperty("highlightcomment", ""+highlight.getRGB());
-   }
-
-   public int getCellHeight()
-   {
-      try
-      {
-         return Integer.parseInt(getProperty("cellheight"));
-      }
-      catch (NumberFormatException e)
-      {
-         setCellHeight(4);
-         return 4;
-      }
-   }
-
-   public void setCellHeight(int height)
-   {
-      setProperty("cellheight", ""+height);
-   }
-
    public void setRandomSeed(Long seed)
    {
-      setProperty("seed", seed == null ? "" : seed.toString());
+      randomSeed = seed;
    }
 
    public Long getRandomSeed()
    {
-      String prop = getProperty("seed");
-
-      if (prop == null || prop.isEmpty()) return null;
-
-      try
-      {
-         return Long.valueOf(prop);
-      }
-      catch (NumberFormatException e)
-      {
-         return null;
-      }
+      return randomSeed;
    }
 
    public Random getRandom()
@@ -2838,22 +1126,15 @@ public class DatatoolSettings extends Properties
 
    public int getShuffleIterations()
    {
-      try
-      {
-         return Integer.parseInt(getProperty("shuffle.iter"));
-      }
-      catch (Exception e)
-      {
-         setShuffleIterations(100);
-         return 100;
-      }
+      return shuffleIterations;
    }
 
    public void setShuffleIterations(int number)
    {
-      setProperty("shuffle.iter", ""+number);
+      shuffleIterations = number;
    }
 
+// TODO?? allow \newproblem to be redefined??
    public boolean isRedefNewProblemEnabled()
    {
       return importSettings.isRedefNewProblemOn();
@@ -2861,15 +1142,7 @@ public class DatatoolSettings extends Properties
 
    public boolean isRedefNewProblemEnabledProperty()
    {
-      String prop = getProperty("redefnewprob");
-
-      if (prop == null)
-      {
-         setRedefNewProblem(true);
-         return true;
-      }
-
-      return Boolean.parseBoolean(prop);
+      return allowRedefNewProb;
    }
 
    public void setRedefNewProblem(boolean value)
@@ -2879,19 +1152,7 @@ public class DatatoolSettings extends Properties
 
    public void setRedefNewProblemProperty(boolean value)
    {
-      setProperty("redefnewprob", ""+value);
-   }
-
-   public Locale getLocaleProperty(String propName, Locale defaultValue)
-   {
-      String value = getProperty(propName);
-
-      if (value == null)
-      {
-         return defaultValue;
-      }
-
-      return Locale.forLanguageTag(value);
+      allowRedefNewProb = value;
    }
 
    public String getDictionary()
@@ -2929,30 +1190,13 @@ public class DatatoolSettings extends Properties
       return helpLib;
    }
 
-   public void setPerl(String perlExe)
-   {
-      setProperty("perl", perlExe);
-   }
-
-   public String getPerl()
-   {
-      return getProperty("perl");
-   }
-
    public void setDefaults()
    {
       importSettings.setDefaults();
       setTeXMapping(false);
-      setPerl("perl");
-
-      setStartUp(STARTUP_HOME);
-      setFontName("Monospaced");
-      setFontSize(12);
-      setCellHeight(4);
-
    }
 
-   private void setDefaultTeXMaps()
+   protected void setDefaultTeXMaps()
    {
       setTeXMap((int)'\\', "\\textbackslash ");
       setTeXMap((int)'$', "\\$");
@@ -2966,7 +1210,7 @@ public class DatatoolSettings extends Properties
       setTeXMap((int)'^', "\\textasciicircum ");
    }
 
-   private void setDefaultCurrency()
+   protected void setDefaultCurrency()
    {
       addCurrency("\\$");
       addCurrency("\\pounds");
@@ -3022,11 +1266,6 @@ public class DatatoolSettings extends Properties
       return messageHandler.getDatatoolTk();
    }
 
-   public DatatoolGuiResources getDatatoolGuiResources()
-   {
-      return messageHandler.getDatatoolGuiResources();
-   }
-
    public boolean isBatchMode()
    {
       return messageHandler == null ? true : messageHandler.isBatchMode();
@@ -3035,98 +1274,6 @@ public class DatatoolSettings extends Properties
    public void setBatchMode(boolean enabled)
    {
       messageHandler.setBatchMode(enabled);
-   }
-
-   public Template[] getTemplates()
-     throws java.net.URISyntaxException
-   {
-      File dir = new File(DatatoolTk.class.getResource(TEMPLATE_DIR).toURI());
-
-      File[] mainList = dir.listFiles(new FilenameFilter()
-      {
-         public boolean accept(File directory, String name)
-         {
-            return name.toLowerCase().endsWith(".xml");
-         }
-      });
-
-      File[] userList = null;
-
-      int num = mainList.length;
-
-      if (propertiesPath != null)
-      {
-         File templatesDir = new File(propertiesPath, "templates");
-
-         if (templatesDir.exists() && templatesDir.isDirectory())
-         {
-            userList = templatesDir.listFiles(new FilenameFilter()
-            {
-               public boolean accept(File directory, String name)
-               {
-                  return name.toLowerCase().endsWith(".xml");
-               }
-            });
-
-            num += userList.length;
-         }
-      }
-
-      Template[] templates = new Template[num];
-
-      for (int i = 0; i < num; i++)
-      {
-         templates[i] = new Template(i < mainList.length ?
-            mainList[i] : userList[i-mainList.length]);
-      }
-
-      return templates;
-   }
-
-   public DatatoolPlugin[] getPlugins()
-     throws java.net.URISyntaxException
-   {
-      File dir = new File(DatatoolTk.class.getResource(PLUGIN_DIR).toURI());
-
-      File[] mainList = dir.listFiles(new FilenameFilter()
-      {
-         public boolean accept(File directory, String name)
-         {
-            return name.toLowerCase().endsWith(".pl");
-         }
-      });
-
-      File[] userList = null;
-
-      int num = mainList.length;
-
-      if (propertiesPath != null)
-      {
-         File pluginsDir = new File(propertiesPath, "plugins");
-
-         if (pluginsDir.exists() && pluginsDir.isDirectory())
-         {
-            userList = pluginsDir.listFiles(new FilenameFilter()
-            {
-               public boolean accept(File directory, String name)
-               {
-                  return name.toLowerCase().endsWith(".pl");
-               }
-            });
-
-            num += userList.length;
-         }
-      }
-
-      DatatoolPlugin[] plugins = new DatatoolPlugin[num];
-
-      for (int i = 0; i < num; i++)
-      {
-         plugins[i] = new DatatoolPlugin(i < mainList.length ?
-            mainList[i] : userList[i-mainList.length], messageHandler);
-      }
-
-      return plugins;
    }
 
    public boolean isCompatibilityLevel(int level)
@@ -3197,6 +1344,56 @@ public class DatatoolSettings extends Properties
       return getTeXApp().createBufferedWriter(path, StandardCharsets.UTF_8);
    }
 
+   protected int initialRowCapacity = 100;
+   protected int initialColumnCapacity = 10;
+   protected String defaultOutputFormat = null;
+   protected boolean overrideInputFormat = false;
+   protected String texEncodingName = null;
+   protected String csvEncodingName = null;
+   protected boolean isStringDbTeX3DatumValueOn = false;
+   protected boolean isDecimalDbTeX3DatumValueOn = true;
+   protected boolean isCurrencyDbTeX3DatumValueOn = true;
+   protected DbTeX3DatumValue dbtex3DatumValue = DbTeX3DatumValue.HEADER;
+   protected boolean useSiForDecimals = false;
+   protected DecimalFormat integerFormat = null;
+   protected DecimalFormat currencyFormat = null;
+   protected DecimalFormat decimalFormat = null;
+   protected DecimalFormat numericParser = null;
+   protected Locale numericLocale = null;
+   protected Locale sortLocale = null;
+
+   protected String sqlHost = "localhost";
+   protected String sqlPrefix = "jdbc:mysql://";
+   protected int sqlPort = 3306;
+   protected String sqlDbName = "";
+   protected String sqlDbUser = "";
+   protected boolean wipePassword = false;
+
+   protected int csvSeparator = ',';
+   protected int csvDelimiter = '"';
+   protected boolean hasCsvHeader = true;
+   protected boolean csvStrictQuotes = false;
+   protected CsvBlankOption csvBlankOption = CsvBlankOption.IGNORE;
+   protected EscapeCharsOption escapeCharsOption = EscapeCharsOption.DOUBLE_DELIM;
+   protected AddDelimiterOption addDelimiterOption = AddDelimiterOption.DETECT;
+   protected int skipLines = 0;
+
+   // merge??
+   protected boolean mapTeXSpecials = true;
+   protected boolean literalContent = true;
+
+   protected boolean importEmptyToNull = false;
+   protected boolean stripSolnEnv = true;
+   protected boolean allowRedefNewProb = false;
+   protected boolean isPreambleOnly = true;
+
+   protected boolean autoTrimLabels = true;
+   protected boolean trimElements = true;
+
+   protected boolean ownerOnly = false;
+   protected Long randomSeed = null;
+   protected int shuffleIterations = 100;
+
    protected DatatoolTk datatooltk;
    protected MessageHandler messageHandler;
 
@@ -3206,23 +1403,7 @@ public class DatatoolSettings extends Properties
 
    protected Vector<String> currencies;
 
-   protected Vector<String> recentFiles;
-
    protected HashMap<Integer,String> texMap;
-
-   protected File propertiesPath = null;
-
-   protected static final String PROPERTIES_NAME = "datatooltk.prop";
-
-   protected static final String TEX_MAP_NAME = "texmap.prop";
-
-   protected static final String RECENT_NAME = "recentfiles";
-
-   protected final String CURRENCY_FILE_NAME = "currencies";
-
-   protected final String LANGTAG_FILE_NAME = "languages";
-
-   protected boolean upgrade=false;
 
    protected int compatLevel = COMPAT_LATEST;
 
@@ -3232,8 +1413,6 @@ public class DatatoolSettings extends Properties
 
    protected Collator sortCollator;
 
-   protected DbTeX3DatumValue dbtex3DatumValue;
-
    protected HelpSetLocale helpSetLocale, dictLocale;
 
    protected DataToolTeXParserListener parserListener;
@@ -3241,42 +1420,11 @@ public class DatatoolSettings extends Properties
    public static final int COMPAT_LATEST=0;
    public static final int COMPAT_1_6=1;
 
-   public static final int STARTUP_HOME   = 0;
-   public static final int STARTUP_CWD    = 1;
-   public static final int STARTUP_LAST   = 2;
-   public static final int STARTUP_CUSTOM = 3;
-
    public static final Pattern PATTERN_CURRENCY
       = Pattern.compile("(.+?) *(\\d*\\.?\\d+)");
 
    public static final String RESOURCES_PATH = "/resources";
-   public static final String ICON_DIR = "/com/dickimawbooks/datatooltk/gui/icons/";
-   public static final String HELPSETS = "helpsets";
-   public static final String HELPSET_DIR = RESOURCES_PATH+"/"+HELPSETS;
    public static final String DICT_DIR = RESOURCES_PATH+"/dictionaries/";
 
-   public static final String TEMPLATE_DIR = RESOURCES_PATH+"/templates/";
-
-   public static final String PLUGIN_DIR = RESOURCES_PATH+"/plugins/";
-
    public static final String RESOURCE_PREFIX = "datatooltk-";
-
-   // old TeX map property setting with key "tex.<c>" where <c> is
-   // the character to map
-   public static final Pattern PATTERN_OLDER_TEX_MAP
-    = Pattern.compile("tex\\.(.)");
-
-   // TeX map property setting with key "tex.<hex>" where <hex> is
-   // the character code point to map
-   public static final Pattern PATTERN_OLD_TEX_MAP
-    = Pattern.compile("tex\\.([0-9]{4})");
-
-   public static final Pattern PATTERN_TEX_MAP
-    = Pattern.compile("([0-9a-fA-F].+)=(.+)");
-
-   public static final int TYPE_UNKNOWN=-1, TYPE_STRING = 0, TYPE_INTEGER=1,
-     TYPE_REAL=2, TYPE_CURRENCY=3;
-
-   public static final String DEFAULT_LARGE_ICON_SUFFIX = "-24";
-   public static final String DEFAULT_SMALL_ICON_SUFFIX = "-16";
 }

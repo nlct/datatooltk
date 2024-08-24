@@ -672,7 +672,7 @@ public class CellDialog extends JDialog
       return gui.getMessageHandler();
    }
 
-   public DatatoolSettings getSettings()
+   public DatatoolProperties getSettings()
    {
       return gui.getSettings();
    }
@@ -716,7 +716,7 @@ class CellDocument extends DefaultStyledDocument
 
       this.cellDialog = dialog;
 
-      DatatoolSettings settings = cellDialog.getSettings();
+      DatatoolProperties settings = cellDialog.getSettings();
 
       highlightOn = settings.isSyntaxHighlightingOn();
 
@@ -754,7 +754,7 @@ class CellDocument extends DefaultStyledDocument
 
    public void settingsUpdated()
    {
-      DatatoolSettings settings = cellDialog.getSettings();
+      DatatoolProperties settings = cellDialog.getSettings();
 
       Color defaultForeground = settings.getCellForeground();
       highlightOn = settings.isSyntaxHighlightingOn();

@@ -40,24 +40,14 @@ public class FullDatatoolTk extends DatatoolTk
    {
       // Allows both GUI and SQL.
       super(true, true);
-
-      MessageHandler messageHandler = getMessageHandler();
-
-      try
-      {
-         settings.loadProperties();
-      }
-      catch (IOException e)
-      {
-         messageHandler.error(messageHandler.getLabel("error.load_props_failed"), e,
-             MessageHandler.OPEN_FAILURE);
-      }
    }
 
    @Override
    protected DatatoolSettings createSettings() throws IOException
    {
-      return new DatatoolSettings(this);
+      properties = new DatatoolProperties(this);
+      properties.loadProperties();
+      return properties;
    }
 
    @Override
@@ -76,7 +66,7 @@ public class FullDatatoolTk extends DatatoolTk
              {
                 try
                 {
-                   new DatatoolGUI(settings, loadSettings);
+                   new DatatoolGUI(properties, loadSettings);
                 }
                 catch (IOException e)
                 {
@@ -118,4 +108,5 @@ public class FullDatatoolTk extends DatatoolTk
       }
    }
 
+   DatatoolProperties properties;
 }

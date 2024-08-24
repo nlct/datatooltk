@@ -153,7 +153,7 @@ class FieldFilter
       MessageHandler messageHandler = db.getMessageHandler();
       DatatoolSettings settings = db.getSettings();
 
-      String sortLocale = settings.getSortLocale();
+      Locale sortLocale = settings.getSortLocale();
 
       if (sortLocale == null)
       {
@@ -161,7 +161,7 @@ class FieldFilter
       }
       else
       {
-         collator = Collator.getInstance(Locale.forLanguageTag(sortLocale));
+         collator = Collator.getInstance(sortLocale);
       }
 
       Vector<DatatoolHeader> headers = db.getHeaders();

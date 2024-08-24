@@ -35,7 +35,7 @@ import com.dickimawbooks.texjavahelplib.TJHAbstractAction;
 
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.MessageHandler;
-import com.dickimawbooks.datatooltk.DatatoolSettings;
+import com.dickimawbooks.datatooltk.DatatoolProperties;
 
 /**
  * Application GUI resources.
@@ -97,7 +97,7 @@ public class DatatoolGuiResources
       return gui.getSettings().isCellDatumVisible();
    }
 
-   public DatatoolSettings getSettings()
+   public DatatoolProperties getSettings()
    {
       return gui.getSettings();
    }

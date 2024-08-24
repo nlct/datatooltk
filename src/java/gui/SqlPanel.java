@@ -117,7 +117,7 @@ public class SqlPanel extends JPanel
       return getResources().createJLabel(label, comp);
    }
 
-   public void resetFrom(DatatoolSettings settings)
+   public void resetFrom(DatatoolProperties settings)
    {
       hostField.setText(settings.getSqlHost());
       prefixField.setText(settings.getSqlPrefix());
@@ -133,7 +133,7 @@ public class SqlPanel extends JPanel
       databaseField.setText(db == null ? "" : db);
    }
 
-   public void applyTo(DatatoolSettings settings)
+   public void applyTo(DatatoolProperties settings)
     throws IllegalArgumentException
    {
       String host = hostField.getText();

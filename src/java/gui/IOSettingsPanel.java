@@ -2023,7 +2023,7 @@ public class IOSettingsPanel extends JPanel
       }
    }
 
-   public void applyCsvSettingsTo(DatatoolSettings settings)
+   public void applyCsvSettingsTo(DatatoolProperties settings)
      throws IllegalArgumentException
    {
       int sep = getSeparator();
@@ -2096,7 +2096,7 @@ public class IOSettingsPanel extends JPanel
       }
    }
 
-   public void setCsvSettingsFrom(DatatoolSettings settings)
+   public void setCsvSettingsFrom(DatatoolProperties settings)
    {
       setSeparator(settings.getSeparator());
       setDelimiter(settings.getDelimiter());

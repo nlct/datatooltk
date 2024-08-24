@@ -28,7 +28,6 @@ import javax.swing.text.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.datatooltk.Datum;
-import com.dickimawbooks.datatooltk.DatatoolSettings;
 
 /**
  * Cell renderer for Datum values.

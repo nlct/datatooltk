@@ -82,14 +82,14 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
       return messageHandler;
    }
 
-   public DatatoolSettings getSettings()
+   public DatatoolProperties getSettings()
    {
-      return messageHandler.getSettings();
+      return gui.getSettings();
    }
 
    public DatatoolGuiResources getDatatoolGuiResources()
    {
-      return messageHandler.getDatatoolGuiResources();
+      return gui.getResources();
    }
 
    private void initTable()
@@ -1501,7 +1501,7 @@ public class DatatoolDbPanel extends JPanel implements ActionListener
 
    public String getPerl()
    {
-      return db.getSettings().getPerl();
+      return getSettings().getPerl();
    }
 
    public DatatoolDb getDatabase()

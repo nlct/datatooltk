@@ -59,7 +59,7 @@ public class DatatoolGUI extends JFrame
       super(DatatoolTk.APP_NAME);
    }
 
-   public DatatoolGUI(DatatoolSettings settings, LoadSettings loadSettings)
+   public DatatoolGUI(DatatoolProperties settings, LoadSettings loadSettings)
     throws IOException
    {
       super(settings.getApplicationName());
@@ -487,8 +487,8 @@ public class DatatoolGUI extends JFrame
 
       settings.initHelpSetSettings();
 
-      helpLib.setHelpsetSubDirPrefix(DatatoolSettings.RESOURCE_PREFIX);
-      helpLib.initHelpSet(DatatoolSettings.HELPSETS);
+      helpLib.setHelpsetSubDirPrefix(DatatoolProperties.RESOURCE_PREFIX);
+      helpLib.initHelpSet(DatatoolProperties.HELPSETS);
       helpFrame = helpLib.getHelpFrame();
 
       Image img = getLogoImage();
@@ -503,14 +503,14 @@ public class DatatoolGUI extends JFrame
       HelpSetLocale dictLocale = helpLib.getMessagesLocale();
 
       String tag = dictLocale.getTag();
-      String prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
+      String prop = DatatoolProperties.DICT_DIR + "plugins-"+tag+".prop";
       pluginDictURL = getClass().getResource(prop);
 
       if (pluginDictURL == null)
       {
          Locale locale = dictLocale.getLocale();
          tag = locale.toLanguageTag();
-         prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
+         prop = DatatoolProperties.DICT_DIR + "plugins-"+tag+".prop";
          pluginDictURL = getClass().getResource(prop);
 
          if (pluginDictURL == null)
@@ -519,7 +519,7 @@ public class DatatoolGUI extends JFrame
 
             if (!tag.equals(dictLocale.getTag()))
             {
-               prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
+               prop = DatatoolProperties.DICT_DIR + "plugins-"+tag+".prop";
                pluginDictURL = getClass().getResource(prop);
             }
          }
@@ -527,7 +527,7 @@ public class DatatoolGUI extends JFrame
          if (pluginDictURL == null)
          {
             tag = "en";
-            prop = DatatoolSettings.DICT_DIR + "plugins-"+tag+".prop";
+            prop = DatatoolProperties.DICT_DIR + "plugins-"+tag+".prop";
             pluginDictURL = getClass().getResource(prop);
 
             if (pluginDictURL == null)
@@ -1746,7 +1746,7 @@ public class DatatoolGUI extends JFrame
       return settings.getCellWidth(type);
    }
 
-   public DatatoolSettings getSettings()
+   public DatatoolProperties getSettings()
    {
       return settings;
    }
@@ -1781,7 +1781,7 @@ public class DatatoolGUI extends JFrame
       }
    }
 
-   private DatatoolSettings settings;
+   private DatatoolProperties settings;
 
    private DatatoolGuiResources resources;
 
