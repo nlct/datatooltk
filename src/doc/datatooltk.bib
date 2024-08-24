@@ -194,10 +194,20 @@ may be \qtt{latest} or \qtt{1.6}}
   non-TeX sources (that is, from \gls{csv}, spreadsheets or databases)}
 }
 
+@switch{switch.literal,
+  parent={app.datatooltk},
+  alias={switch.map-tex-specials}
+}
+
 @switch{switch.nomap-tex-specials,
   parent={app.datatooltk},
   description={Don't map \TeX\ special characters when importing
 data (default)}
+}
+
+@switch{switch.noliteral,
+  parent={app.datatooltk},
+  alias={switch.nomap-tex-specials}
 }
 
 @switch{switch.auto-trim-labels,

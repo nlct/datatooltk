@@ -182,7 +182,7 @@ public class DatatoolSql implements DatatoolImport
 
    public String mapFieldIfRequired(String value)
    {
-      if (!importSettings.isMapCharsOn())
+      if (!importSettings.isLiteralContent())
       {
          if (!hasVerbatim && importSettings.isCheckForVerbatimOn())
          {

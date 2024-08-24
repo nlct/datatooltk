@@ -100,14 +100,17 @@ only. (Has no effect on some operating systems.)
 
 Don't change read/write permissions when saving B<.dbtex> files.
 
-=item B<--map-tex-specials>
+=item B<--literal> (or B<--map-tex-specials>)
 
-Map TeX special characters when importing data from CSV or SQL.
+Non-TeX imports have literal content. That is,
+map TeX special characters when importing data from CSV,
+spreadsheets or SQL.
 
-=item B<--nomap-tex-specials>
+=item B<--noliteral> (or B<--nomap-tex-specials>)
 
-Don't map TeX special characters when importing data from CSV or
-SQL.
+Non-TeX imports do not have literal content. That is,
+don't map TeX special characters when importing data from CSV,
+spreadsheets or SQL.
 
 =item B<--seed> I<number>
 

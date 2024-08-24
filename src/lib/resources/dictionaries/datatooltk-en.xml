@@ -379,9 +379,6 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <!-- character mappings -->
 
-<entry key="iosettings.tex.map">Map TeX characters</entry>
-<entry key="iosettings.tex.map.mnemonic">M</entry>
-
 <entry key="iosettings.tex.add_map">Add</entry>
 <entry key="iosettings.tex.add_map.mnemonic">A</entry>
 
@@ -1146,6 +1143,7 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="syntax.log">{0} &lt;filename&gt;		If debugging on, log TeX Parser messages in the given file.</entry>
 
 <entry key="syntax.maptexspecials">{0}	Map TeX special characters.{1}</entry>
+<entry key="syntax.literal">{0}	Non-TeX imports have literal content.{1}</entry>
 
 <entry key="syntax.merge">{0} &lt;key&gt; &lt;file&gt;
 		Merge input or imported database with the database

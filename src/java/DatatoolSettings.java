@@ -963,20 +963,22 @@ public class DatatoolSettings
       return trimElements;
    }
 
+   @Deprecated
    public void setTeXMapping(boolean enable)
    {
-      importSettings.setMapChars(enable);
+      setLiteralContent(enable);
    }
 
-// TODO replace with just literal content setting?
+   @Deprecated
    public void setTeXMappingDefault(boolean enable)
    {
-      mapTeXSpecials = enable;
+      setLiteralContentDefault(enable);
    }
 
+   @Deprecated
    public boolean isTeXMappingOnDefault()
    {
-      return mapTeXSpecials;
+      return isLiteralContentDefault();
    }
 
    public boolean isLiteralContent()
@@ -999,9 +1001,10 @@ public class DatatoolSettings
       literalContent = on;
    }
 
+   @Deprecated
    public boolean isTeXMappingOn()
    {
-      return importSettings.isMapCharsOn();
+      return isLiteralContent();
    }
 
    public HashMap<Integer,String> getTeXMappings()
@@ -1396,8 +1399,6 @@ public class DatatoolSettings
    protected AddDelimiterOption addDelimiterOption = AddDelimiterOption.DETECT;
    protected int skipLines = 0;
 
-   // merge??
-   protected boolean mapTeXSpecials = true;
    protected boolean literalContent = true;
 
    protected boolean importEmptyToNull = false;

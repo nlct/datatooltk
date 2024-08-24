@@ -462,12 +462,9 @@ public class IOSettingsPanel extends JPanel
          literalSourceComp = createVerticalBox();
          allNonTeXComp.add(literalSourceComp);
 
-         mapTeXBox = createJCheckBox("tex", "map", "texmap");
-         literalSourceComp.add(mapTeXBox);
-
          createTeXMapTable();
          literalSourceComp.add(texMappingsComp);
-         setTeXMapping(false);
+         setLiteralContent(false);
       }
    }
 
@@ -1138,17 +1135,11 @@ public class IOSettingsPanel extends JPanel
          if (isLiteralContent())
          {
             literalSourceComp.setVisible(true);
-            mapTeXBox.setSelected(true);
-            texMappingsComp.setVisible(true);
          }
          else
          {
             literalSourceComp.setVisible(false);
          }
-      }
-      else if (action.equals("texmap"))
-      {
-         texMappingsComp.setVisible(mapTeXBox.isSelected());
       }
       else if (action.equals("add_map"))
       {
@@ -1205,28 +1196,11 @@ public class IOSettingsPanel extends JPanel
          if (isLiteral)
          {
             literalSourceComp.setVisible(true);
-            mapTeXBox.setSelected(true);
-            texMappingsComp.setVisible(true);
          }
          else
          {
             literalSourceComp.setVisible(false);
          }
-      }
-   }
-
-   public boolean isTeXMappingOn()
-   {
-      return mapTeXBox != null && mapTeXBox.isSelected();
-   }
-
-   public void setTeXMapping(boolean on)
-   {
-      if (mapTeXBox != null)
-      {
-         mapTeXBox.setSelected(on);
-
-         texMappingsComp.setVisible(on);
       }
    }
 
@@ -1934,7 +1908,6 @@ public class IOSettingsPanel extends JPanel
       if (isCsvTsv || isSpread || isSql)
       {
          settings.setLiteralContent(isLiteralContent());
-         settings.setMapChars(isTeXMappingOn());
 
          texMapModel.updateSettings();
       }
@@ -1991,7 +1964,6 @@ public class IOSettingsPanel extends JPanel
       setCsvBlankOption(settings.getBlankRowAction());
 
       setLiteralContent(settings.isLiteralContent());
-      setTeXMapping(settings.isMapCharsOn());
 
       texMapModel = new TeXMapModel(this, texMapTable, settings);
       texMapTable.setModel(texMapModel);
@@ -2088,7 +2060,6 @@ public class IOSettingsPanel extends JPanel
          settings.setEscapeCharsOptionProperty(getEscapeCharsOption());
 
          settings.setLiteralContentProperty(isLiteralContent());
-         settings.setTeXMappingProperty(isTeXMappingOn());
       }
       else
       {
@@ -2098,7 +2069,6 @@ public class IOSettingsPanel extends JPanel
          settings.setEscapeCharsOptionDefault(getEscapeCharsOption());
 
          settings.setLiteralContentDefault(isLiteralContent());
-         settings.setTeXMappingDefault(isTeXMappingOn());
       }
 
       texMapModel.updateSettings();
@@ -2168,7 +2138,6 @@ public class IOSettingsPanel extends JPanel
       setEscapeCharsOption(settings.getEscapeCharsOptionDefault());
 
       setLiteralContent(settings.isLiteralContentDefault());
-      setTeXMapping(settings.isTeXMappingOnDefault());
 
       texMapModel = new TeXMapModel(this, texMapTable, settings);
       texMapTable.setModel(texMapModel);
@@ -2596,7 +2565,6 @@ public class IOSettingsPanel extends JPanel
 
    JComboBox<Charset> texEncodingBox, csvEncodingBox;
 
-   JCheckBox mapTeXBox;
    JComponent texMappingsComp, literalSourceComp;
    TeXMapModel texMapModel;
    JButton removeMapButton, editMapButton;

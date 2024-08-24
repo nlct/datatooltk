@@ -320,12 +320,12 @@ public abstract class DatatoolTk
       System.out.println(getLabelWithValues("syntax.dtl_read", "--dtl-read"));
       System.out.println(getLabelWithValues("syntax.dtl_write", "--dtl-write"));
 
-      System.out.println(getLabelWithValues("syntax.maptexspecials",
-          "--map-tex-specials",
-          (settings.isTeXMappingOn()?" ("+getLabel("syntax.default")+".)":"")));
-      System.out.println(getLabelWithValues("syntax.nomaptexspecials",
-         "--nomap-tex-specials",
-         (settings.isTeXMappingOn() ?
+      System.out.println(getLabelWithValues("syntax.literal",
+          "--literal",
+          (settings.isLiteralContent()?" ("+getLabel("syntax.default")+".)":"")));
+      System.out.println(getLabelWithValues("syntax.noliteral",
+         "--noliteral",
+         (settings.isLiteralContent() ?
          "": " ("+getLabel("syntax.default")+".)")));
 
       System.out.println(getLabelWithValues("syntax.autotrimlabels",
@@ -1564,15 +1564,13 @@ public abstract class DatatoolTk
             settings.getMessageHandler().setLogFile((File)null);
          }
          else if (args[i].equals("--map-tex-specials")
-                || args[i].equals("--csv-literal"))
+                || args[i].equals("--literal"))
          {
-            settings.setTeXMapping(true);
             settings.setLiteralContent(true);
          }
          else if (args[i].equals("--nomap-tex-specials")
-                || args[i].equals("--nocsv-literal"))
+                || args[i].equals("--noliteral"))
          {
-            settings.setTeXMapping(false);
             settings.setLiteralContent(false);
          }
          else if (args[i].equals("--headers"))
@@ -2443,8 +2441,8 @@ public abstract class DatatoolTk
    }
 
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_VERSION = "1.9.20240822";
-   public static final String APP_DATE = "2024-08-22";
+   public static final String APP_VERSION = "1.9.20240824";
+   public static final String APP_DATE = "2024-08-24";
    public static final String START_COPYRIGHT_YEAR = "2014";
    public static final String COPYRIGHT_YEAR
     = START_COPYRIGHT_YEAR+"-"+APP_DATE.substring(0,4);

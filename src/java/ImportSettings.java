@@ -56,7 +56,6 @@ public class ImportSettings
 
       trimElement=true;
       trimLabels = true;
-      mapTeXChars = true;
       stripSolutionEnv = true;
       redefNewProblem = true;
       importEmptyToNull = true;
@@ -111,7 +110,6 @@ public class ImportSettings
       trimElement = settings.isTrimElementOnDefault();
 
       nonTeXLiteral = settings.isLiteralContentDefault();
-      mapTeXChars = settings.isTeXMappingOnDefault();
    }
 
    public void applyTo(DatatoolSettings settings)
@@ -139,7 +137,6 @@ public class ImportSettings
       settings.setAutoTrimLabelsDefault(trimLabels);
       settings.setTrimElementDefault(trimElement);
 
-      settings.setTeXMappingDefault(mapTeXChars);
       settings.setLiteralContentDefault(nonTeXLiteral);
       settings.setImportEmptyToNullDefault(importEmptyToNull);
 
@@ -382,16 +379,6 @@ public class ImportSettings
    public void setTrimLabels(boolean on)
    {
       trimLabels = on;
-   }
-
-   public boolean isMapCharsOn()
-   {
-      return mapTeXChars;
-   }
-
-   public void setMapChars(boolean on)
-   {
-      mapTeXChars = on;
    }
 
    public HashMap<Integer,String> getTeXMappings()
@@ -723,7 +710,6 @@ public class ImportSettings
       skipLines = other.skipLines;
       trimElement = other.trimElement;
       trimLabels = other.trimLabels;
-      mapTeXChars = other.mapTeXChars;
       stripSolutionEnv = other.stripSolutionEnv;
       importEmptyToNull = other.importEmptyToNull;
       redefNewProblem = other.redefNewProblem;
@@ -779,7 +765,6 @@ public class ImportSettings
    int skipLines=0;
    boolean trimElement=true;
    boolean trimLabels = true;
-   boolean mapTeXChars = true;
 
    boolean stripSolutionEnv = true;
    boolean redefNewProblem = true;//??

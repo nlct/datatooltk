@@ -283,7 +283,7 @@ public class DatatoolExcel implements DatatoolImport
          return field;
       }
 
-      if (!importSettings.isMapCharsOn())
+      if (!importSettings.isLiteralContent())
       {
          return DatatoolDb.PATTERN_PARAGRAPH.matcher(field)
             .replaceAll("\\\\DTLpar ");

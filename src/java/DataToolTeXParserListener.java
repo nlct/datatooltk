@@ -183,7 +183,7 @@ public class DataToolTeXParserListener extends PreambleParser
       ioSettings.setTrimElement(settings.isAutoTrimLabelsOn());
       ioSettings.setCsvStrictQuotes(settings.hasCSVStrictQuotes());
 
-      if (settings.isTeXMappingOn())
+      if (settings.isLiteralContent())
       {
          ioSettings.setCsvLiteral(true);
          datatoolSty.setCsvLiteralMappingOn(true);

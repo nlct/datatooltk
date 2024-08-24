@@ -340,7 +340,6 @@ public class DatatoolProperties extends DatatoolSettings
       setAddDelimiterOptionProperty(getAddDelimiterOptionProperty());
       setCSVSkipLinesProperty(getCSVSkipLinesProperty());
 
-      setTeXMappingProperty(isTeXMappingOnProperty());
       setImportEmptyToNullProperty(isImportEmptyToNullOnProperty());
       setSolutionEnvStrippedProperty(isSolutionEnvStrippedProperty());
       setPreambleOnlyProperty(isPreambleOnlyProperty());
@@ -563,6 +562,11 @@ public class DatatoolProperties extends DatatoolSettings
                }
                else if (key.equals("helpset") || key.equals("dictionary"))
                {
+                  removeProperty(key);
+               }
+               else if (key.equals("subtexspecials"))
+               {
+                  setProperty("literalcontent", getProperty(key));
                   removeProperty(key);
                }
             }
@@ -2058,12 +2062,14 @@ public class DatatoolProperties extends DatatoolSettings
       setProperty("literalcontent", ""+on);
    }
 
+   @Deprecated
    public void setTeXMappingProperty(boolean enable)
    {
       setTeXMappingDefault(enable);
       setProperty("subtexspecials", ""+enable);
    }
 
+   @Deprecated
    public boolean isTeXMappingOnProperty()
    {
       String prop = getProperty("subtexspecials");
