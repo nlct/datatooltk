@@ -1,7 +1,7 @@
 # Java 8 extended support until December 2030
 target_version := --release 8 -Xlint:-options
 
-APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION=//" | tr -d "\"\; ")
+APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/base/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION=//" | tr -d "\"\; ")
 ifeq ($(IZPACKDIR),)
 IZPACKDIR:=/usr/local/IzPack
 endif
@@ -48,7 +48,7 @@ classes/com/dickimawbooks/datatooltk/base/DatatoolTk.class	: classes/com/dickima
 	lib/texjavahelplib.jar \
 	lib/texparserlib.jar
 	cd java/base; \
-	javac $(target_version) -d ../classes \
+	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
 	-cp ../../lib/texjavahelplib.jar:../../lib/texparserlib.jar \
 	*.java io/*.java

@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.dickimawbooks.datatooltk.base.io;
+package com.dickimawbooks.datatooltk.combined;
 
 import java.io.*;
 import java.util.Iterator;
@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
 import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.base.io.*;
 
 /**
  * Class handling importing Excel data.
