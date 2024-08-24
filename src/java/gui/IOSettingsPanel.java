@@ -1852,7 +1852,7 @@ public class IOSettingsPanel extends JPanel
          {
             throw new IllegalArgumentException( 
                getMessageHandler().getLabelWithValues("error.char_sep_required", 
-               MessageHandler.codePointToString(sep), 
+               new String(Character.toChars(sep)), 
                "0xFFFF"));
          }
          else if (sep > 0)
@@ -1871,7 +1871,7 @@ public class IOSettingsPanel extends JPanel
          {
             throw new IllegalArgumentException( 
                getMessageHandler().getLabelWithValues("error.char_delim_required", 
-               MessageHandler.codePointToString(delim), 
+               new String(Character.toChars(delim)), 
                "0xFFFF"));
          }
          else if (delim > 0)
@@ -2006,7 +2006,7 @@ public class IOSettingsPanel extends JPanel
       {
          throw new IllegalArgumentException( 
             getMessageHandler().getLabelWithValues("error.char_sep_required", 
-            MessageHandler.codePointToString(sep), 
+            new String(Character.toChars(sep)), 
             "0xFFFF"));
       }
       else if (sep > 0)
@@ -2032,7 +2032,7 @@ public class IOSettingsPanel extends JPanel
       {
          throw new IllegalArgumentException( 
             getMessageHandler().getLabelWithValues("error.char_delim_required", 
-            MessageHandler.codePointToString(delim), 
+            new String(Character.toChars(delim)), 
             "0xFFFF"));
       }
       else if (delim > 0)

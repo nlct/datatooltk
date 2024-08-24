@@ -81,11 +81,6 @@ public class MessageHandler extends ErrorManager
       return texApp.getApplicationName();
    }
 
-   public static String codePointToString(int codePoint)
-   {
-      return new String(Character.toChars(codePoint));
-   }
-
    public void progress(int percentage)
    {
    }

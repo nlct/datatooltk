@@ -38,7 +38,7 @@ public class CharField extends JTextField
 
    public CharField(int defVal)
    {
-      super(MessageHandler.codePointToString(defVal), 1);
+      super(new String(Character.toChars(defVal)), 1);
       setHorizontalAlignment(CENTER);
    }
 
@@ -57,7 +57,7 @@ public class CharField extends JTextField
    {
       if (val > 0)
       {
-         super.setText(MessageHandler.codePointToString(val));
+         super.setText(new String(Character.toChars(val)));
       }
       else
       {

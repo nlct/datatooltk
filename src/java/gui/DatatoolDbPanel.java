@@ -2005,12 +2005,12 @@ class MoveIndicatorIcon implements Icon
 
       if (left)
       {
-         g2.drawString(MessageHandler.codePointToString(LEFT_SYMBOL),
+         g2.drawString(new String(Character.toChars(LEFT_SYMBOL)),
             x, (int)bounds.getHeight()-y);
       }
       else
       {
-         g2.drawString(MessageHandler.codePointToString(RIGHT_SYMBOL), 
+         g2.drawString(new String(Character.toChars(RIGHT_SYMBOL)), 
            (int)bounds.getWidth()-getIconWidth(), 
            (int)bounds.getHeight()-y);
       }
@@ -2024,8 +2024,10 @@ class MoveIndicatorIcon implements Icon
       {
         g2.setFont(font);
         FontRenderContext frc = g2.getFontRenderContext();
-        TextLayout layout = new TextLayout(MessageHandler.codePointToString(
-           left ? LEFT_SYMBOL : RIGHT_SYMBOL),
+
+        int cp = left ? LEFT_SYMBOL : RIGHT_SYMBOL;
+
+        TextLayout layout = new TextLayout(new String(Character.toChars(cp)),
            font, frc);
 
         Rectangle2D bounds = layout.getBounds();
