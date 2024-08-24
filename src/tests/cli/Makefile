@@ -8,7 +8,7 @@ booklist-tsv-doc.pdf	: booklist-tsv-converted.dbtex booklist-tsv-doc.tex
 
 booklist-tsv-converted.dbtex	: ../booklist.tsv $(deps)
 	datatooltk --output booklist-tsv-converted.dbtex --output-format dbtex-3 \
-	--sort Title --csv-literal --tsv ../booklist.tsv \
+	--sort Title --literal --tsv ../booklist.tsv \
 	--keys "Title,Author,Format,Quantity,Price"
 
 booklist-csv-doc.pdf	: booklist-csv-converted.dbtex booklist-csv-doc.tex
@@ -16,7 +16,7 @@ booklist-csv-doc.pdf	: booklist-csv-converted.dbtex booklist-csv-doc.tex
 
 booklist-csv-converted.dbtex	: ../booklist.csv $(deps)
 	datatooltk --output booklist-csv-converted.dbtex --output-format dbtex-3 \
-	--sort Author --csv-literal --csv ../booklist.csv --csv-sep "," \
+	--sort Author --literal --csv ../booklist.csv --csv-sep "," \
 	--csv-empty-rows end
 
 booklist-fods-doc.pdf	: booklist-fods-converted.dbtex booklist-fods-doc.tex
@@ -24,7 +24,7 @@ booklist-fods-doc.pdf	: booklist-fods-converted.dbtex booklist-fods-doc.tex
 
 booklist-fods-converted.dbtex	: ../booklist.fods $(deps)
 	datatooltk --output booklist-fods-converted.dbtex --output-format dbtex-3 \
-	--sort Author,Title,Format --csv-literal --fods ../booklist.fods \
+	--sort Author,Title,Format --literal --fods ../booklist.fods \
 	--csv-empty-rows end
 
 clean	:
