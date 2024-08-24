@@ -33,14 +33,14 @@ import java.beans.PropertyChangeEvent;
 
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
-import com.dickimawbooks.datatooltk.DatatoolDb;
-import com.dickimawbooks.datatooltk.DataFilter;
-import com.dickimawbooks.datatooltk.FilterInfo;
-import com.dickimawbooks.datatooltk.LoadSettings;
-import com.dickimawbooks.datatooltk.ImportSettings;
-import com.dickimawbooks.datatooltk.SortCriteria;
-import com.dickimawbooks.datatooltk.io.DatatoolImport;
-import com.dickimawbooks.datatooltk.io.DatatoolImportException;
+import com.dickimawbooks.datatooltk.base.DatatoolDb;
+import com.dickimawbooks.datatooltk.base.DataFilter;
+import com.dickimawbooks.datatooltk.base.FilterInfo;
+import com.dickimawbooks.datatooltk.base.LoadSettings;
+import com.dickimawbooks.datatooltk.base.ImportSettings;
+import com.dickimawbooks.datatooltk.base.SortCriteria;
+import com.dickimawbooks.datatooltk.base.io.DatatoolImport;
+import com.dickimawbooks.datatooltk.base.io.DatatoolImportException;
 
 public class DatatoolFileLoader extends SwingWorker<DatatoolDb,String>
   implements ProgressMonitor,PropertyChangeListener

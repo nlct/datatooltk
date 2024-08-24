@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@ import java.util.regex.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
-import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.base.*;
 
 /**
  * Class representing a plugin.

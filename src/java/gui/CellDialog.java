@@ -27,7 +27,7 @@ import javax.swing.undo.*;
 import javax.swing.text.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
-import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.base.*;
 
 /**
  * Dialog box for editing cell contents.

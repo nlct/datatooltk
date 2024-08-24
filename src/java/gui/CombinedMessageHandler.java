@@ -25,8 +25,8 @@ import javax.swing.JOptionPane;
 import com.dickimawbooks.texparserlib.*;
 import com.dickimawbooks.texjavahelplib.*;
 
-import com.dickimawbooks.datatooltk.DatatoolTk;
-import com.dickimawbooks.datatooltk.MessageHandler;
+import com.dickimawbooks.datatooltk.base.DatatoolTk;
+import com.dickimawbooks.datatooltk.base.MessageHandler;
 
 /**
  * Handler for dealing with gui/batch messages.

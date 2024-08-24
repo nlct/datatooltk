@@ -42,7 +42,7 @@ import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texparserlib.latex.datatool.EscapeCharsOption;
 import com.dickimawbooks.texjavahelplib.*;
 
-import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.base.*;
 
 /**
  * Application settings for datatooltk GUI/batch with a properties

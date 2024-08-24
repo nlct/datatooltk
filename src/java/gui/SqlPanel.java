@@ -24,7 +24,7 @@ import java.awt.FlowLayout;
 import javax.swing.*;
 
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
-import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.base.*;
 
 public class SqlPanel extends JPanel
 {

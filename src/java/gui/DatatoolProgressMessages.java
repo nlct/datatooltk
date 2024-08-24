@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 
-import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.base.DatatoolTk;
 
 /**
  * Progress messages window.

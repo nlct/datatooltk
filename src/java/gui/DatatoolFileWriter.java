@@ -32,7 +32,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
 import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
-import com.dickimawbooks.datatooltk.DatatoolDb;
+import com.dickimawbooks.datatooltk.base.DatatoolDb;
 
 public class DatatoolFileWriter extends SwingWorker<Void,String>
   implements ProgressMonitor,PropertyChangeListener

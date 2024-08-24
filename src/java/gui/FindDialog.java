@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Nicola L.C. Talbot
+    Copyright (C) 2013-2024 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import com.dickimawbooks.datatooltk.DatatoolTk;
-import com.dickimawbooks.datatooltk.MessageHandler;
+import com.dickimawbooks.datatooltk.base.DatatoolTk;
+import com.dickimawbooks.datatooltk.base.MessageHandler;
 
 /**
  * Dialog box for searching for text within displayed cell editor dialog.

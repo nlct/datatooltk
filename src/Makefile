@@ -37,21 +37,36 @@ lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*
 lib/resources/helpsets/datatooltk-en/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
 	make -C doc en
 
-lib/datatooltk.jar	: java/combined/Manifest.txt \
+lib/datatooltklib.jar	: classes/com/dickimawbooks/datatooltk/base/DatatoolTk.class 
+	cd classes; \
+	jar cf ../lib/datatooltklib.jar \
+	com/dickimawbooks/datatooltk/base/*.class \
+	com/dickimawbooks/datatooltk/base/*/*.class 
+
+classes/com/dickimawbooks/datatooltk/base/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
+	java/base/*.java java/base/io/*.java \
+	lib/texjavahelplib.jar \
+	lib/texparserlib.jar
+	cd java/base; \
+	javac $(target_version) -d ../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../../lib/texjavahelplib.jar:../../lib/texparserlib.jar \
+	*.java io/*.java
+
+lib/datatooltk.jar	: lib/datatooltklib.jar java/combined/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class \
 			lib/resources/helpsets/datatooltk-en/index.xml \
 			lib/resources/helpsets/datatooltk-en-GB/index.xml 
 	cp -u -r java/gui/icons classes/com/dickimawbooks/datatooltk/gui/
 	cd classes; \
 	jar cmf ../java/combined/Manifest.txt ../lib/datatooltk.jar \
-	com/dickimawbooks/datatooltk/*.class \
-	com/dickimawbooks/datatooltk/*/*.class \
+	com/dickimawbooks/datatooltk/combined/*.class \
+	com/dickimawbooks/datatooltk/gui/*.class \
 	com/dickimawbooks/datatooltk/gui/icons/*.png
 
 classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/*.java java/gui/*.java \
-	java/io/*.java java/combined/*.java \
-	lib/texjavahelplib.jar lib/mysql-connector-java.jar\
+	java/gui/*.java java/combined/*.java \
+	lib/mysql-connector-java.jar \
 	lib/poi-$(POIVER).jar lib/poi-ooxml-$(POIVER).jar \
 	lib/poi-ooxml-full-$(POIVER).jar \
 	lib/apache-commons-io.jar \
@@ -61,8 +76,8 @@ classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes
 	cd java; \
 	javac $(target_version) -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar \
-	*.java combined/*.java io/*.java gui/*.java
+	-cp ../lib/datatooltklib.jar:../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar \
+	combined/*.java gui/*.java
 
 classes/com/dickimawbooks/datatooltk	:
 	mkdir -p classes/com/dickimawbooks/datatooltk
@@ -72,4 +87,5 @@ clean	:
 
 squeaky	:
 	\rm -f lib/datatooltk.jar
+	\rm -f lib/datatooltklib.jar
 	make -C doc clean

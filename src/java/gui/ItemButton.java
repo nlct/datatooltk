@@ -25,7 +25,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import com.dickimawbooks.texjavahelplib.IconSet;
-import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.base.*;
 
 /**
  * Provides a JMenuItem that optionally has an associated button in

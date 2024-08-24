@@ -33,10 +33,10 @@ import com.dickimawbooks.texparserlib.latex.datatool.*;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
 
-import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.base.*;
 
-import com.dickimawbooks.datatooltk.io.DatatoolFileFormat;
-import com.dickimawbooks.datatooltk.io.UnsupportedFileFormatException;
+import com.dickimawbooks.datatooltk.base.io.DatatoolFileFormat;
+import com.dickimawbooks.datatooltk.base.io.UnsupportedFileFormatException;
 
 public class IOSettingsPanel extends JPanel
   implements ActionListener

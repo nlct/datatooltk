@@ -25,12 +25,13 @@ import javax.swing.KeyStroke;
 
 import com.dickimawbooks.texjavahelplib.*;
 
-import com.dickimawbooks.datatooltk.io.*;
+import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.base.io.*;
+
 import com.dickimawbooks.datatooltk.gui.DatatoolProperties;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 import com.dickimawbooks.datatooltk.gui.DatatoolGUI;
 
-import com.dickimawbooks.datatooltk.*;
 
 /**
  * Main application class with batch and GUI mode.

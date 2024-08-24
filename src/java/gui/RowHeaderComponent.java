@@ -26,7 +26,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.base.*;
 
 /**
  * Component used for the row header.
