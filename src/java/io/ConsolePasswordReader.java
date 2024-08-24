@@ -28,7 +28,6 @@ import java.awt.Frame;
 import com.dickimawbooks.datatooltk.DatatoolTk;
 import com.dickimawbooks.datatooltk.UserCancelledException;
 import com.dickimawbooks.datatooltk.MessageHandler;
-import com.dickimawbooks.datatooltk.gui.GuiPasswordReader;
 
 /**
  * Class for reading password in from the console.
