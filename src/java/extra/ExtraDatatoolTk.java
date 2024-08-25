@@ -80,6 +80,46 @@ public class ExtraDatatoolTk extends DatatoolTk
    }
 
    @Override
+   public String getAppInfo(boolean html)
+   {
+      String par = html ? "<p>" : String.format("%n%n");
+      String nl = html ? "<br>" : String.format("%n");
+
+      StringBuilder builder = new StringBuilder(super.getAppInfo(html));
+
+      String log4jVersion = org.apache.logging.log4j.util.PropertiesUtil.class.getPackage().getImplementationVersion();
+
+      builder.append(par);
+
+      String info = getHelpLib().getMessage("about.extra");
+
+      if (html)
+      {
+         info = TeXJavaHelpLib.encodeHTML(info, false);
+      }
+
+      builder.append(info);
+
+      builder.append(nl);
+
+      if (log4jVersion == null)
+      {
+         log4jVersion = "??";
+      }
+
+      info = getHelpLib().getMessage("about.log4j_details", log4jVersion);
+
+      if (html)
+      {
+         info = TeXJavaHelpLib.encodeHTML(info, false);
+      }
+
+      builder.append(info);
+
+      return builder.toString();
+   }
+
+   @Override
    protected void process()
    {
       if (settings.isBatchMode())

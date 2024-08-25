@@ -247,6 +247,8 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 <entry key="about.database_driver.supports">Database driver: {0} {1}.{2} (Supports {3})</entry>
 <entry key="about.no_database_drivers">No database drivers found.</entry>
 <entry key="about.no_database_support">No database support.</entry>
+<entry key="about.extra">Bundled with Apache POI, Apache Commons and Log4j.</entry>
+<entry key="about.log4j_details">Log4j version: {0}</entry>
 
 <!-- Import Dialog -->
 
