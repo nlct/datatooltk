@@ -7,6 +7,8 @@ IZPACKDIR:=/usr/local/IzPack
 endif
 POIVER=5.3.0
 
+all	: lib/datatooltk.jar lib/datatooltk-restricted.jar
+
 test-gui	: app
 	bin/datatooltk-gui --debug
 
@@ -19,8 +21,6 @@ test-cli	: app
 
 test-sql	: app
 	bin/datatooltk --debug --output tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
-
-app	: lib lib/datatooltk.jar 
 
 dist	: ../dist/datatooltk-installer.jar
 	cp doc/datatooltk-en-GB.pdf ../dist
@@ -61,11 +61,13 @@ lib/datatooltk.jar	: lib/datatooltklib.jar java/combined/Manifest.txt \
 	cd classes; \
 	jar cmf ../java/combined/Manifest.txt ../lib/datatooltk.jar \
 	com/dickimawbooks/datatooltk/combined/*.class \
+	com/dickimawbooks/datatooltk/thirdparty/*.class \
 	com/dickimawbooks/datatooltk/gui/*.class \
 	com/dickimawbooks/datatooltk/gui/icons/*.png
 
 classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/gui/*.java java/combined/*.java \
+	java/thirdparty/*.java java/gui/*.java java/combined/*.java \
+	lib/datatooltklib.jar \
 	lib/mysql-connector-java.jar \
 	lib/poi-$(POIVER).jar lib/poi-ooxml-$(POIVER).jar \
 	lib/poi-ooxml-full-$(POIVER).jar \
@@ -77,7 +79,24 @@ classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes
 	javac $(target_version) -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
 	-cp ../lib/datatooltklib.jar:../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar \
-	combined/*.java gui/*.java
+	combined/*.java gui/*.java thirdparty/*.java
+
+lib/datatooltk-restricted.jar	: lib/datatooltklib.jar java/restricted/Manifest.txt \
+			classes/com/dickimawbooks/datatooltk/restricted/RestrictedDatatoolTk.class 
+	cd classes; \
+	jar cmf ../java/restricted/Manifest.txt ../lib/datatooltk.jar \
+	com/dickimawbooks/datatooltk/restricted/*.class 
+
+classes/com/dickimawbooks/datatooltk/restricted/RestrictedDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
+	java/restricted/*.java \
+	lib/datatooltklib.jar \
+	lib/texjavahelplib.jar \
+	lib/texparserlib.jar
+	cd java; \
+	javac $(target_version) -d ../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../lib/datatooltklib.jar:../lib/texjavahelplib.jar:../lib/texparserlib.jar \
+	restricted/*.java
 
 classes/com/dickimawbooks/datatooltk	:
 	mkdir -p classes/com/dickimawbooks/datatooltk

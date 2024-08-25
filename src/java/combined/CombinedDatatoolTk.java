@@ -27,6 +27,7 @@ import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.base.*;
 import com.dickimawbooks.datatooltk.base.io.*;
+import com.dickimawbooks.datatooltk.thirdparty.*;
 
 import com.dickimawbooks.datatooltk.gui.DatatoolProperties;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
