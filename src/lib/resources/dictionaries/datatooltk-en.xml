@@ -243,6 +243,11 @@ There is NO WARRANTY, to the extent permitted by law.</entry>
 
 <entry key="about.version">{0} {1} ({2})</entry>
 
+<entry key="about.database_driver">Database driver: {0} {1}.{2}</entry>
+<entry key="about.database_driver.supports">Database driver: {0} {1}.{2} (Supports {3})</entry>
+<entry key="about.no_database_drivers">No database drivers found.</entry>
+<entry key="about.no_database_support">No database support.</entry>
+
 <!-- Import Dialog -->
 
 <entry key="import.title">Import Data</entry>

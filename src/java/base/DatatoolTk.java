@@ -21,6 +21,7 @@ package com.dickimawbooks.datatooltk.base;
 import java.io.*;
 import java.nio.charset.Charset;
 
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Locale.Builder;
 import java.util.Vector;
@@ -28,6 +29,10 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 
 import java.text.MessageFormat;
+
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import com.dickimawbooks.texparserlib.TeXParser;
 import com.dickimawbooks.texparserlib.TeXSyntaxException;
@@ -141,8 +146,15 @@ public abstract class DatatoolTk
       {
          case DatatoolFileFormat.FILE_FORMAT_FLAG_SQL:
 
-            throw new UnsupportedFileFormatException(
-              getLabelWithValues("error.unsupported_option", "sql"));
+            if (allowsSQL)
+            {
+               return new DatatoolSql(settings);
+            }
+            else
+            {
+               throw new UnsupportedFileFormatException(
+                 getLabelWithValues("error.unsupported_option", "sql"));
+            }
 
          case DatatoolFileFormat.FILE_FORMAT_FLAG_XLS:
 
@@ -895,6 +907,86 @@ public abstract class DatatoolTk
         "texparserlib.jar", TeXParser.VERSION, TeXParser.VERSION_DATE));
       builder.append(nl);
       builder.append(getInfoUrl(html, "https://github.com/nlct/texparser"));
+
+      if (allowsSQL)
+      {
+         String url = String.format("%s%s:%d",
+           settings.getSqlPrefix(),
+           settings.getSqlHost(),
+           settings.getSqlPort()
+         );
+
+         int found = 0;
+
+         for (Enumeration<Driver> en = DriverManager.getDrivers();
+              en.hasMoreElements(); )
+         {
+            builder.append(par);
+
+            Driver driver = en.nextElement();
+            String dbInfo = null;
+
+            int majorVersion = driver.getMajorVersion();
+            int minorVersion = driver.getMinorVersion();
+
+            try
+            {
+               if (driver.acceptsURL(url))
+               {
+                  dbInfo = getHelpLib().getMessage(
+                    "about.database_driver.supports",
+                     driver.getClass().getName(),
+                     majorVersion, minorVersion, url);
+               }
+            }
+            catch (SQLException e)
+            {
+            }
+
+            if (dbInfo == null)
+            {
+               dbInfo = getHelpLib().getMessage(
+                 "about.database_driver", driver.getClass().getName(),
+                  majorVersion, minorVersion);
+            }
+
+            if (html)
+            {
+               dbInfo = TeXJavaHelpLib.encodeHTML(dbInfo, false);
+            }
+
+            builder.append(dbInfo);
+
+            found++;
+         }
+
+         if (found == 0)
+         {
+            builder.append(par);
+
+            String dbInfo = getLabel("about.no_database_drivers");
+
+            if (html)
+            {
+               dbInfo = TeXJavaHelpLib.encodeHTML(dbInfo, false);
+            }
+
+            builder.append(dbInfo);
+         }
+      }
+      else
+      {
+         builder.append(par);
+
+         String dbInfo = getLabel("about.no_database_support");
+
+         if (html)
+         {
+            dbInfo = TeXJavaHelpLib.encodeHTML(dbInfo, false);
+         }
+
+         builder.append(dbInfo);
+      }
 
       return builder.toString();
    }

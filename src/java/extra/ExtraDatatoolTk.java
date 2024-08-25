@@ -63,19 +63,7 @@ public class ExtraDatatoolTk extends DatatoolTk
        DatatoolSettings settings)
    throws UnsupportedFileFormatException
    {
-      if (fmtId == DatatoolFileFormat.FILE_FORMAT_FLAG_SQL)
-      {
-         if (allowsSQL)
-         {
-            return new DatatoolSql(settings);
-         }
-         else
-         {
-            throw new UnsupportedFileFormatException(
-              getLabelWithValues("error.unsupported_option", "sql"));
-         }
-      }
-      else if (fmtId == DatatoolFileFormat.FILE_FORMAT_FLAG_XLS)
+      if (fmtId == DatatoolFileFormat.FILE_FORMAT_FLAG_XLS)
       {
          if (allowsXLS)
          {

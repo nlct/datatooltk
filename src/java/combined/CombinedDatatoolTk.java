@@ -51,27 +51,6 @@ public class CombinedDatatoolTk extends DatatoolTk
    }
 
    @Override
-   public DatatoolImport getDatatoolImport(int fmtId,
-       DatatoolSettings settings)
-   throws UnsupportedFileFormatException
-   {
-      if (fmtId == DatatoolFileFormat.FILE_FORMAT_FLAG_SQL)
-      {
-         if (allowsSQL)
-         {
-            return new DatatoolSql(settings);
-         }
-         else
-         {
-            throw new UnsupportedFileFormatException(
-              getLabelWithValues("error.unsupported_option", "sql"));
-         }
-      }
-
-      return super.getDatatoolImport(fmtId, settings);
-   }
-
-   @Override
    protected void process()
    {
       if (settings.isBatchMode())
