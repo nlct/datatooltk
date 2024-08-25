@@ -1,7 +1,7 @@
 # datatooltk
 Java application for use with the datatool LaTeX package.
 
-The datatooltk Java application that can be used to create
+The DatatoolTk Java application that can be used to create
 [datatool.sty](https://ctan.org/pkg/datatool) databases in
 datatool's internal format, which can be quickly imported into a
 LaTeX document using `\DTLread` (for `datatool.sty` v3.0+ or 
@@ -19,38 +19,47 @@ The following applications are available:
    Preferred settings (which can be changed in GUI mode) are saved
    in a properties directory and picked up on the
    next run (`~/.datatooltk` on Unix-like systems
-   or `datatooltk-settings` or the path identified by the
+   or `datatooltk-settings` for Windows or the path identified by the
    environment variable `DATATOOLTK`).
 
    This application supports importing data from TeX files
-   (containing `datatool.sty` database construction commands or
-    `probsoln.sty` problem definitions), CSV/TSV files,
-   ODS (Open Document SpreadSheet), FODS (Flat Open Document SpreadSheet),
-   XLSX, and SQL. For database connections, a driver is required.
-   For example, to provide support for MySQL, the
+   (that contain `datatool.sty` database construction commands or
+    [`probsoln.sty`](https://ctan.org/pkg/probsoln) problem definitions),
+   CSV/TSV files,
+   ODS (OpenDocument Spreadsheet), FODS (Flat OpenDocument Spreadsheet),
+   XLSX (XML Excel Spreadsheet), and SQL. For database connections (SQL), 
+   a driver is required.  For example, to provide support for MySQL, the
    `mysql-connector-java.jar` library needs to be on the class path.
-   (Support for MySQL is automatically included in the Manifest.)
+   (Support for MySQL is automatically included in the Manifest.
+    For other database systems, you will need to add the applicable JDBC driver to
+    the Java class path.)
 
-  ```bash
-  datatooltk [options]
-  ```
-  The `datatooltk` script simply runs the `datatooltk.jar`
-  application. You can run it directly where `path/to/lib` should be
-  changed to the path to the `lib` directory:
-  ```bash
-  java -jar path/to/lib/datatooltk.jar [options]
-  ```
-  If run in batch mode (the default) the options must include an input
-  file or input source and an output file. To run in GUI mode, the
-  options list should include `--gui`.
-  ```bash
-  datatooltk-gui [options]
-  ```
-  The `datatooltk-gui` script simply runs the `datatooltk.jar`
-  application with `--gui` and a splash image:
-  ```bash
-  java -splash:path/to/lib/datatooltk-splash.png -jar path/to/lib/datatooltk.jar --gui [options]
-  ```
+    ```bash
+   datatooltk [options]
+    ```
+    The `datatooltk` script simply runs the `datatooltk.jar`
+    application. You can run it directly using the following
+    command line invocation, where `path/to/lib` should be
+    changed to the path to the `lib` directory:
+
+    ```bash
+   java -jar path/to/lib/datatooltk.jar [options]
+    ```
+
+    If run in batch mode (the default) the options must include an input
+    file or input source and an output file. To run in GUI mode, the
+    options list should include `--gui`.
+
+    ```bash
+   datatooltk-gui [options]
+    ```
+
+    The `datatooltk-gui` script simply runs the `datatooltk.jar`
+    application with `--gui` and a splash image:
+
+    ```bash
+   java -splash:path/to/lib/datatooltk-splash.png -jar path/to/lib/datatooltk.jar --gui [options]
+    ```
 
  - DatatoolTk Restricted (`datatooltk-restricted.jar`):
    a restricted version of the DatatoolTk application that only runs
@@ -58,12 +67,50 @@ The following applications are available:
    it will trigger an "Unsupported option" error. The restricted
    application doesn't support SQL connections, but otherwise
    supports the import file formats that the primary DatatoolTk
-   application supports.
+   application supports (TeX, CSV/TSV, ODS, FODS and XLSX).
+
+   Again, this comes with a helper script to run the Java
+   application:
+
+    ```bash
+   datatooltk-restricted [options]
+    ```
+
+   Alternatively:
+
+    ```bash
+   java -jar path/to/lib/datatooltk-restricted.jar [options]
+    ```
 
  - DatatoolTk Extra (`datatooltk-extra.jar`):
    as the primary DatatoolTk application but additionally
    supports Microsoft's old binary Excel (`.xls`) file format.
    This requires the third party Apache POI library.
+
+   Again, this comes with helper scripts to run the Java
+   application:
+
+    ```bash
+   datatooltk-extra [options]
+    ```
+
+   Alternatively:
+
+    ```bash
+   java -jar path/to/lib/datatooltk-extra.jar [options]
+    ```
+
+   Or for GUI mode with a splash screen:
+
+    ```bash
+   datatooltk-extra-gui [options]
+    ```
+
+   Alternatively:
+    ```bash
+   java -splash:path/to/lib/datatooltk-splash.png -jar path/to/lib/datatooltk-extra.jar --gui [options]
+    ```
+
 
 ## Requirements
 
@@ -87,10 +134,12 @@ Requires at least Java 8 and the following libraries:
    (The `texjavahelpmk.jar` and `texjavahelp.sty` files are only required 
    when compiling the manual to PDF or HTML. The PDF file needs to be created first
    to ensure that the `toc`, `aux` and `glstex` files are available
-   when `texjavahelpmk.jar` parses the document source.)
+   when `texjavahelpmk.jar` parses the document source. Only the
+   `texjavahelplib.jar` file needs to be included in the
+   distribution.)
 
- - [mysql-connector-java.jar](https://dev.mysql.com/downloads/connector/j/)
-   (GPL-2.0-only) 
+ - [MySQL Connector/J](https://dev.mysql.com/downloads/connector/j/)
+   (GPL-2.0) 
    to pull data from MySQL databases: the file `mysql-connector-java.jar`
    should be placed in the `lib` directory.
    **This library is required for the primary DatatoolTk application
