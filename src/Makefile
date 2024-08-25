@@ -7,7 +7,7 @@ IZPACKDIR:=/usr/local/IzPack
 endif
 POIVER=5.3.0
 
-all	: lib/datatooltk.jar lib/datatooltk-restricted.jar
+all	: lib/datatooltk.jar lib/datatooltk-restricted.jar lib/datatooltk-extra.jar
 
 test-gui	: lib/datatooltk.jar
 	bin/datatooltk-gui --debug
@@ -77,24 +77,41 @@ lib/datatooltk.jar	: lib/datatooltkguilib.jar java/combined/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class 
 	cd classes; \
 	jar cmf ../java/combined/Manifest.txt ../lib/datatooltk.jar \
-	com/dickimawbooks/datatooltk/combined/*.class \
-	com/dickimawbooks/datatooltk/thirdparty/*.class 
+	com/dickimawbooks/datatooltk/combined/*.class 
 
 classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/thirdparty/*.java java/combined/*.java \
+	java/combined/*.java \
 	lib/datatooltkguilib.jar \
-	lib/mysql-connector-java.jar \
-	lib/poi-$(POIVER).jar lib/poi-ooxml-$(POIVER).jar \
-	lib/poi-ooxml-full-$(POIVER).jar \
-	lib/apache-commons-io.jar \
-	lib/log4j-api.jar \
 	lib/texjavahelplib.jar \
 	lib/texparserlib.jar
 	cd java; \
 	javac $(target_version) -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../lib/datatooltklib.jar:../lib/datatooltkguilib.jar:../lib/texjavahelplib.jar:../lib/texparserlib.jar \
+	combined/*.java 
+
+lib/datatooltk-extra.jar	: lib/datatooltkguilib.jar java/extra/Manifest.txt \
+			classes/com/dickimawbooks/datatooltk/extra/ExtraDatatoolTk.class 
+	cd classes; \
+	jar cmf ../java/extra/Manifest.txt ../lib/datatooltk-extra.jar \
+	com/dickimawbooks/datatooltk/extra/*.class \
+	com/dickimawbooks/datatooltk/thirdparty/*.class 
+
+classes/com/dickimawbooks/datatooltk/extra/ExtraDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
+	java/thirdparty/*.java java/extra/*.java \
+	lib/datatooltkguilib.jar \
+	lib/texjavahelplib.jar \
+	lib/texparserlib.jar \
+	lib/mysql-connector-java.jar \
+	lib/poi-$(POIVER).jar lib/poi-ooxml-$(POIVER).jar \
+	lib/poi-ooxml-full-$(POIVER).jar \
+	lib/apache-commons-io.jar \
+	lib/log4j-api.jar 
+	cd java; \
+	javac $(target_version) -d ../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
 	-cp ../lib/datatooltklib.jar:../lib/datatooltkguilib.jar:../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar \
-	combined/*.java gui/*.java thirdparty/*.java
+	extra/*.java thirdparty/*.java
 
 lib/datatooltk-restricted.jar	: lib/datatooltklib.jar java/restricted/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/restricted/RestrictedDatatoolTk.class 
@@ -122,6 +139,7 @@ clean	:
 squeaky	:
 	\rm -f lib/datatooltk.jar
 	\rm -f lib/datatooltk-restricted.jar
+	\rm -f lib/datatooltk-extra.jar
 	\rm -f lib/datatooltklib.jar
 	\rm -f lib/datatooltkguilib.jar
 	make -C doc clean

@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.dickimawbooks.datatooltk.combined;
+package com.dickimawbooks.datatooltk.extra;
 
 import java.io.*;
 
@@ -26,20 +26,22 @@ import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.base.*;
 import com.dickimawbooks.datatooltk.base.io.*;
+import com.dickimawbooks.datatooltk.thirdparty.*;
 
 import com.dickimawbooks.datatooltk.gui.DatatoolProperties;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;
 import com.dickimawbooks.datatooltk.gui.DatatoolGUI;
 
+
 /**
  * Main application class with batch and GUI mode.
  */
-public class CombinedDatatoolTk extends DatatoolTk
+public class ExtraDatatoolTk extends DatatoolTk
 {
-   public CombinedDatatoolTk() throws IOException
+   public ExtraDatatoolTk() throws IOException
    {
-      // Allows GUI and SQL but not Binary Excel.
-      super(true, true, false);
+      // Allows GUI and SQL and Binary Excel.
+      super(true, true, true);
    }
 
    @Override
@@ -48,6 +50,12 @@ public class CombinedDatatoolTk extends DatatoolTk
       properties = new DatatoolProperties(this);
       properties.loadProperties();
       return properties;
+   }
+
+   @Override
+   public String getApplicationName()
+   {
+      return APP_NAME+"-extra";
    }
 
    @Override
@@ -65,6 +73,18 @@ public class CombinedDatatoolTk extends DatatoolTk
          {
             throw new UnsupportedFileFormatException(
               getLabelWithValues("error.unsupported_option", "sql"));
+         }
+      }
+      else if (fmtId == DatatoolFileFormat.FILE_FORMAT_FLAG_XLS)
+      {
+         if (allowsXLS)
+         {
+            return new DatatoolExcel(settings);
+         }
+         else
+         {
+            throw new UnsupportedFileFormatException(
+              getLabelWithValues("error.unsupported_option", "xls"));
          }
       }
 
@@ -109,7 +129,7 @@ public class CombinedDatatoolTk extends DatatoolTk
 
       try
       {
-         datatooltk = new CombinedDatatoolTk();
+         datatooltk = new ExtraDatatoolTk();
          datatooltk.runApplication(args);
       }
       catch (InvalidSyntaxException e)
