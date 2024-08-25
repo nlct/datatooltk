@@ -64,6 +64,7 @@ public class DatatoolSettings
       String dictionaryTag, String helpsetTag)
     throws IOException
    {
+      this();
       this.datatooltk = datatooltk;
       messageHandler = new MessageHandler(datatooltk);
       importSettings = new ImportSettings(this);
@@ -471,6 +472,11 @@ public class DatatoolSettings
 
    public Locale getNumericLocale()
    {
+      if (numericLocale == null)
+      {
+         numericLocale = Locale.getDefault(Locale.Category.FORMAT);
+      }
+
       return numericLocale;
    }
 
