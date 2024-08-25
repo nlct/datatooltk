@@ -437,8 +437,13 @@ public class DatatoolDb
 
          db.setName(dbName);
 
-         db.currentFileFormat = ioSettings.getFormat();
-         db.currentFileVersion = ioSettings.getFileVersion();
+         FileFormatType fmt = ioSettings.getFormat();
+
+         if (fmt == FileFormatType.DBTEX || fmt == FileFormatType.DTLTEX)
+         {
+            db.currentFileFormat = fmt;
+            db.currentFileVersion = ioSettings.getFileVersion();
+         }
    
          DataToolHeaderRow headerRow = texDb.getHeaders();
    
@@ -845,8 +850,14 @@ public class DatatoolDb
       }
 
       db.setFile(dbFile);
-      db.currentFileFormat = ioSettings.getFormat();
-      db.currentFileVersion = ioSettings.getFileVersion();
+
+      FileFormatType fmt = ioSettings.getFormat();
+
+      if (fmt == FileFormatType.DBTEX || fmt == FileFormatType.DTLTEX)
+      {
+         db.currentFileFormat = fmt;
+         db.currentFileVersion = ioSettings.getFileVersion();
+      }
 
       if (hasVerbatim)
       {
