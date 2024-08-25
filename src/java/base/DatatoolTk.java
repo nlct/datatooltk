@@ -2270,8 +2270,8 @@ public abstract class DatatoolTk
    }
 
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_VERSION = "1.9.20240824";
-   public static final String APP_DATE = "2024-08-24";
+   public static final String APP_VERSION = "1.9.20240825";
+   public static final String APP_DATE = "2024-08-25";
    public static final String START_COPYRIGHT_YEAR = "2014";
    public static final String COPYRIGHT_YEAR
     = START_COPYRIGHT_YEAR+"-"+APP_DATE.substring(0,4);

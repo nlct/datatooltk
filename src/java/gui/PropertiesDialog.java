@@ -46,6 +46,7 @@ import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
 import com.dickimawbooks.datatooltk.base.*;
 import com.dickimawbooks.datatooltk.base.io.DatatoolFileFormat;
+import com.dickimawbooks.datatooltk.base.io.UnsupportedFileFormatException;
 
 /**
  * Dialog box to allow user to edit application settings.
@@ -227,9 +228,16 @@ public class PropertiesDialog extends JDialog
       | DatatoolFileFormat.FILE_FORMAT_ANY_SPREADSHEET,
         true, false, false);
 
-      csvSettingsPanel.setSelectedFileFormat(
-        DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
-      csvSettingsPanel.setFileFormatComponentVisible(false);
+      try
+      {
+         csvSettingsPanel.setSelectedFileFormat(
+           DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
+         csvSettingsPanel.setFileFormatComponentVisible(false);
+      }
+      catch (UnsupportedFileFormatException e)
+      {// shouldn't happen
+         resources.error(null, e);
+      }
 
       csvTab.add(csvSettingsPanel);
 

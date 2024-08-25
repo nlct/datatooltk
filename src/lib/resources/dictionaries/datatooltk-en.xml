@@ -1512,6 +1512,7 @@ Extension ''{1}'' is forbidden for log files</entry>
 <entry key="error.unsupported_mimetype">Unsupported mimetype.</entry>
 <entry key="error.unsupported_xml">Unsupported XML format.</entry>
 <entry key="error.unsupported_option">Unsupported option {0}.</entry>
+<entry key="error.unsupported_format">Unsupported format {0}.</entry>
 <entry key="error.empty_file">File appears to be empty.</entry>
 
 <entry key="error.expected_mimetype_but_found">Expected mimetype ''{0}'' but found ''{1}''</entry>

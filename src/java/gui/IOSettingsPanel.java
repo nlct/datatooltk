@@ -1657,7 +1657,29 @@ public class IOSettingsPanel extends JPanel
       return false;
    }
 
+   protected void setFileFormatToggle(JToggleButton btn, boolean select, String type)
+    throws UnsupportedFileFormatException
+   {
+      if (select)
+      {
+         if (btn == null)
+         {
+            throw new UnsupportedFileFormatException(resources.getMessage(
+              "error.unsupported_format", type));
+         }
+         else
+         {
+            btn.setSelected(true);
+         }
+      }
+      else if (btn != null)
+      {
+         btn.setSelected(false);
+      }
+   }
+
    public void setSelectedFileFormat(int modifiers)
+    throws UnsupportedFileFormatException
    {
       int oldModifiers = selectedFormatModifiers;
       selectedFormatModifiers = modifiers;
@@ -1728,11 +1750,8 @@ public class IOSettingsPanel extends JPanel
             DatatoolFileFormat.isFODS(modifiers));
       }
 
-      if (formatXLSToggleButton != null)
-      {
-         formatXLSToggleButton.setSelected(
-            DatatoolFileFormat.isXLS(modifiers));
-      }
+      setFileFormatToggle(formatXLSToggleButton,
+        DatatoolFileFormat.isXLS(modifiers), "XLS");
 
       if (formatXLSXToggleButton != null)
       {
@@ -1740,11 +1759,8 @@ public class IOSettingsPanel extends JPanel
             DatatoolFileFormat.isXLSX(modifiers));
       }
 
-      if (formatSQLToggleButton != null)
-      {
-         formatSQLToggleButton.setSelected(
-            DatatoolFileFormat.isSQL(modifiers));
-      }
+      setFileFormatToggle(formatSQLToggleButton,
+         DatatoolFileFormat.isSQL(modifiers), "SQL");
 
       formatChanged();
 
@@ -2187,46 +2203,53 @@ public class IOSettingsPanel extends JPanel
    {
       boolean isV3 = "3.0".equals(ioSettings.getFileVersion());
 
-      switch (ioSettings.getFormat())
+      try
       {
-         case DBTEX:
-           if (isV3)
-           {
-              setSelectedFileFormat(
-                  DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
-                | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX
-                | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX3);
-           }
-           else
-           {
-              setSelectedFileFormat(
-                  DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
-                | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX
-                | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX2);
-           }
-         break;
-         case DTLTEX:
-           if (isV3)
-           {
-              setSelectedFileFormat(
-                  DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
-                | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX
-                | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX3);
-           }
-           else
-           {
-              setSelectedFileFormat(
-                  DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
-                | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX
-                | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX2);
-           }
-         break;
-         case CSV:
-            setSelectedFileFormat(DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
-         break;
-         case TSV:
-            setSelectedFileFormat(DatatoolFileFormat.FILE_FORMAT_FLAG_TSV);
-         break;
+         switch (ioSettings.getFormat())
+         {
+            case DBTEX:
+              if (isV3)
+              {
+                 setSelectedFileFormat(
+                     DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+                   | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX
+                   | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX3);
+              }
+              else
+              {
+                 setSelectedFileFormat(
+                     DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+                   | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX
+                   | DatatoolFileFormat.FILE_FORMAT_FLAG_DBTEX2);
+                 }
+            break;
+            case DTLTEX:
+              if (isV3)
+              {
+                 setSelectedFileFormat(
+                     DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+                   | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX
+                   | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX3);
+              }
+              else
+              {
+                 setSelectedFileFormat(
+                     DatatoolFileFormat.FILE_FORMAT_FLAG_TEX
+                   | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX
+                   | DatatoolFileFormat.FILE_FORMAT_FLAG_DTLTEX2);
+              }
+            break;
+            case CSV:
+               setSelectedFileFormat(DatatoolFileFormat.FILE_FORMAT_FLAG_CSV);
+            break;
+            case TSV:
+               setSelectedFileFormat(DatatoolFileFormat.FILE_FORMAT_FLAG_TSV);
+            break;
+         }
+      }
+      catch (UnsupportedFileFormatException e)
+      {// shouldn't happen
+         resources.error(this, e);
       }
 
       setHeaderIncluded(ioSettings.isHeaderIncluded());

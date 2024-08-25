@@ -117,7 +117,14 @@ public class ImportDialog extends JDialog
         resources.createDialogOkayCancelHelpPanel(this, this, gui, tagPrefix),
         BorderLayout.SOUTH);
 
-      settingsPanel.setSelectedFileFormat(initialFormat);
+      try
+      {
+         settingsPanel.setSelectedFileFormat(initialFormat);
+      }
+      catch (UnsupportedFileFormatException e)
+      {
+         messageHandler.debug(e);
+      }
 
       pack();
 
@@ -191,6 +198,11 @@ public class ImportDialog extends JDialog
                   }
                }
             }
+         }
+         catch (UnsupportedFileFormatException e)
+         {
+            gui.getMessageHandler().error(this, e.getMessage());
+            fileField.setFileName("");
          }
          catch (IOException e)
          {
