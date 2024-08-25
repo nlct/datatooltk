@@ -9,17 +9,17 @@ POIVER=5.3.0
 
 all	: lib/datatooltk.jar lib/datatooltk-restricted.jar
 
-test-gui	: app
+test-gui	: lib/datatooltk.jar
 	bin/datatooltk-gui --debug
 
-test-csv	: app
-	bin/datatooltk-gui --debug --csv tests/test-para.csv
+test-csv	: lib/datatooltk.jar
+	bin/datatooltk-gui --debug --csv-sep ',' --csv tests/test-para.csv
 
-test-cli	: app
-	bin/datatooltk --debug --output tests/test-out.dbtex --in tests/data-raw.dbtex
-	bin/datatooltk --debug --output tests/test-csv-out.dbtex --csv tests/test.csv
+test-cli	: lib/datatooltk-restricted.jar
+	bin/datatooltk-restricted --debug --output tests/test-out.dbtex --in tests/data-raw.dbtex
+	bin/datatooltk-restricted --debug --output tests/test-csv-out.dbtex --csv tests/test.csv
 
-test-sql	: app
+test-sql	: lib/datatooltk.jar
 	bin/datatooltk --debug --output tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
 
 dist	: ../dist/datatooltk-installer.jar
@@ -53,21 +53,36 @@ classes/com/dickimawbooks/datatooltk/base/DatatoolTk.class	: classes/com/dickima
 	-cp ../../lib/texjavahelplib.jar:../../lib/texparserlib.jar \
 	*.java io/*.java
 
-lib/datatooltk.jar	: lib/datatooltklib.jar java/combined/Manifest.txt \
-			classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class \
-			lib/resources/helpsets/datatooltk-en/index.xml \
-			lib/resources/helpsets/datatooltk-en-GB/index.xml 
+lib/datatooltkguilib.jar	: classes/com/dickimawbooks/datatooltk/gui/DatatoolGUI.class \
+	java/gui/icons/*.png \
+	lib/resources/helpsets/datatooltk-en/index.xml \
+	lib/resources/helpsets/datatooltk-en-GB/index.xml
 	cp -u -r java/gui/icons classes/com/dickimawbooks/datatooltk/gui/
 	cd classes; \
-	jar cmf ../java/combined/Manifest.txt ../lib/datatooltk.jar \
-	com/dickimawbooks/datatooltk/combined/*.class \
-	com/dickimawbooks/datatooltk/thirdparty/*.class \
+	jar cf ../lib/datatooltkguilib.jar \
 	com/dickimawbooks/datatooltk/gui/*.class \
 	com/dickimawbooks/datatooltk/gui/icons/*.png
 
-classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/thirdparty/*.java java/gui/*.java java/combined/*.java \
+classes/com/dickimawbooks/datatooltk/gui/DatatoolGUI.class	: java/gui/*.java \
 	lib/datatooltklib.jar \
+	lib/texjavahelplib.jar \
+	lib/texparserlib.jar
+	cd java/gui; \
+	javac $(target_version) -d ../../classes \
+	 -Xlint:unchecked -Xlint:deprecation \
+	-cp ../../lib/datatooltklib.jar:../../lib/texjavahelplib.jar:../../lib/texparserlib.jar \
+	*.java
+
+lib/datatooltk.jar	: lib/datatooltkguilib.jar java/combined/Manifest.txt \
+			classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class 
+	cd classes; \
+	jar cmf ../java/combined/Manifest.txt ../lib/datatooltk.jar \
+	com/dickimawbooks/datatooltk/combined/*.class \
+	com/dickimawbooks/datatooltk/thirdparty/*.class 
+
+classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
+	java/thirdparty/*.java java/combined/*.java \
+	lib/datatooltkguilib.jar \
 	lib/mysql-connector-java.jar \
 	lib/poi-$(POIVER).jar lib/poi-ooxml-$(POIVER).jar \
 	lib/poi-ooxml-full-$(POIVER).jar \
@@ -78,13 +93,13 @@ classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes
 	cd java; \
 	javac $(target_version) -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../lib/datatooltklib.jar:../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar \
+	-cp ../lib/datatooltklib.jar:../lib/datatooltkguilib.jar:../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar \
 	combined/*.java gui/*.java thirdparty/*.java
 
 lib/datatooltk-restricted.jar	: lib/datatooltklib.jar java/restricted/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/restricted/RestrictedDatatoolTk.class 
 	cd classes; \
-	jar cmf ../java/restricted/Manifest.txt ../lib/datatooltk.jar \
+	jar cmf ../java/restricted/Manifest.txt ../lib/datatooltk-restricted.jar \
 	com/dickimawbooks/datatooltk/restricted/*.class 
 
 classes/com/dickimawbooks/datatooltk/restricted/RestrictedDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
@@ -106,5 +121,7 @@ clean	:
 
 squeaky	:
 	\rm -f lib/datatooltk.jar
+	\rm -f lib/datatooltk-restricted.jar
 	\rm -f lib/datatooltklib.jar
+	\rm -f lib/datatooltkguilib.jar
 	make -C doc clean

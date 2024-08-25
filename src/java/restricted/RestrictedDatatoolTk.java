@@ -46,6 +46,12 @@ public class RestrictedDatatoolTk extends DatatoolTk
    }
 
    @Override
+   public String getApplicationName()
+   {
+      return APP_NAME+"-restricted";
+   }
+
+   @Override
    protected void process()
    {
       doBatchProcess();

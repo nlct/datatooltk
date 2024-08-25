@@ -1425,7 +1425,7 @@ public abstract class DatatoolTk
             if (!allowsSQL)
             {
                throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
+                 getLabelWithValues("error.unsupported_option", args[i]));
             }
 
             i++;
@@ -1444,7 +1444,7 @@ public abstract class DatatoolTk
             if (!allowsSQL)
             {
                throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
+                 getLabelWithValues("error.unsupported_option", args[i]));
             }
 
             i++;
@@ -1463,7 +1463,7 @@ public abstract class DatatoolTk
             if (!allowsSQL)
             {
                throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
+                 getLabelWithValues("error.unsupported_option", args[i]));
             }
 
             i++;
@@ -1482,7 +1482,7 @@ public abstract class DatatoolTk
             if (!allowsSQL)
             {
                throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
+                 getLabelWithValues("error.unsupported_option", args[i]));
             }
 
             i++;
@@ -1501,7 +1501,7 @@ public abstract class DatatoolTk
             if (!allowsSQL)
             {
                throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
+                 getLabelWithValues("error.unsupported_option", args[i]));
             }
 
             i++;
@@ -1521,7 +1521,7 @@ public abstract class DatatoolTk
             if (!allowsSQL)
             {
                throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
+                 getLabelWithValues("error.unsupported_option", args[i]));
             }
 
             settings.setWipePassword(true);
@@ -1531,7 +1531,7 @@ public abstract class DatatoolTk
             if (!allowsSQL)
             {
                throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
+                 getLabelWithValues("error.unsupported_option", args[i]));
             }
 
             settings.setWipePassword(false);
@@ -1571,7 +1571,7 @@ public abstract class DatatoolTk
             if (!allowsSQL)
             {
                throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
+                 getLabelWithValues("error.unsupported_option", args[i]));
             }
 
             i++;
@@ -1599,7 +1599,7 @@ public abstract class DatatoolTk
             if (!allowsGUI)
             {
                throw new InvalidSyntaxException(
-                 getLabel("error.unsupported_option", args[i]));
+                 getLabelWithValues("error.unsupported_option", args[i]));
             }
 
             settings.setBatchMode(false);
