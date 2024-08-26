@@ -1,0 +1,15 @@
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage[landscape]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{datatool}% v3.0 required
+
+\DTLsetup{default-name=booklist}
+
+\DTLread[format=csv,csv-content=literal,csv-blank=end]{../booklist.csv}
+
+\begin{document}
+\DTLaction[assign={Author,Title}]{sort}
+\DTLaction{display}
+\end{document}
