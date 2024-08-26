@@ -115,7 +115,7 @@ The `datatooltk` script simply runs the `datatooltk.jar`
 application. You can run it directly using the following
 command line invocation, where `path/to/lib` should be
 changed to the path to the directory that contains the jar file and
-associated libraries:
+associated libraries and resources:
 ```bash
 java -jar path/to/lib/datatooltk.jar [options]
 ```
@@ -251,12 +251,15 @@ check the version with `bib2gls -v`)
 The HTML files for the help window in GUI mode need to be created from the
 dictionary XML files and the LaTeX source.
 
- 1. Change to the source code `doc` directory:
+  1. Change to the source code `doc` directory:
+
     ```bash
    cd doc
     ```
- 2. Convert the application dictionary files (`.xml` and `.prop`) to 
+
+  2. Convert the application dictionary files (`.xml` and `.prop`) to 
     `datatooltk-props-en.bib` (a `bib2gls` file):
+
     ```bash
    xml2bib --copy-overwrite-xml \
    ../lib/resources/dictionaries/texparserlib-en.xml \
@@ -265,32 +268,43 @@ dictionary XML files and the LaTeX source.
    --prop ../lib/resources/dictionaries/plugins-en.prop \
    -o datatooltk-props-en.bib
     ```
+
    (`xml2bib` is provided by TeX Java Help.)
- 3. (Optional) Create the file `version.tex` which should simply
+
+  3. (Optional) Create the file `version.tex` which should simply
     contain `\date{Version `_version_`}`. For example:
+
     ```bash
    echo "\\date{Version " > version.tex
    grep 'String APP_VERSION = ' ../java/base/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION\s=//" | tr -d "\"\; " >> version.tex
    grep 'String APP_DATE = ' .../java/base/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_DATE\s=//" | tr -d "\"\; " >> version.tex
    echo "}" >> version.tex
     ```
+
    This file is input with `\InputIfFileExists` so it can be omitted.
- 4. Build the document (this requires `texjavahelp.sty` provided
+
+  4. Build the document (this requires `texjavahelp.sty` provided
     by TeX Java Help). Either use Arara:
+
     ```bash
    arara datatooltk-en
     ```
+
    Or:
+
     ```bash
    lualatex datatooltk-en
    bib2gls --group --no-warn-unknown-entry-types datatooltk-en
    lualatex datatooltk-en
    lualatex datatooltk-en
     ```
- 5. Create the XML and HTML files needed for the GUI help window:
+
+  5. Create the XML and HTML files needed for the GUI help window:
+
     ```bash
    texjavahelpmk datatooltk-en.tex ../lib/resources/helpsets/datatooltk-en
     ```
+
    (`texjavahelpmk` is provided by TeX Java Help.)
    Note that it's necessary to successfully perform step 4 before
    trying step 5 as `texjavahelpmk` needs the `toc`, `aux` and
@@ -318,6 +332,7 @@ The source code for `datatooltk-extra.jar` is in the `java/extra`
 directory. This will need the same libraries
 as `datatooltk.jar` but will also require the Apache POI, Apache
 Commons and Log4j API libraries on the class path.
+
 ---
 
 Nicola Talbot [dickimaw-books.com](https://www.dickimaw-books.com/)
