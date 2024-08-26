@@ -28,14 +28,18 @@ import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.NumberFormat;
 
+import java.math.BigDecimal;
+
 import com.dickimawbooks.texparserlib.TeXParser;
 import com.dickimawbooks.texparserlib.Comment;
 import com.dickimawbooks.texparserlib.TeXObject;
 import com.dickimawbooks.texparserlib.TeXObjectList;
-import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+
 import com.dickimawbooks.texparserlib.latex.datatool.DataElement;
 import com.dickimawbooks.texparserlib.latex.datatool.DataNumericElement;
+import com.dickimawbooks.texparserlib.latex.datatool.DataToolBaseSty;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumElement;
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 
 public class Datum implements Comparable<Datum>
 {
@@ -235,7 +239,20 @@ public class Datum implements Comparable<Datum>
          return createNull(settings);
       }
 
-      // First try if the text is formatted according to the
+      // First try scientific notation
+
+      if (DataToolBaseSty.SCIENTIFIC_PATTERN.matcher(text).matches())
+      {
+         try
+         {
+            return new Datum(text, null, new BigDecimal(text), settings);
+         }
+         catch (NumberFormatException e)
+         {
+         }
+      }
+
+      // Try if the text is formatted according to the
       // numeric locale's currency.
 
       Locale numLocale = settings.getNumericLocale();
