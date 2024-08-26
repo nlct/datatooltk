@@ -76,9 +76,9 @@ every LaTeX run.
 
 The following applications are available:
 
- - [Basic DatatoolTk](#basicdatatooltk)
- - [DatatoolTk Restricted](#datatooltkrestricted)
- - [DatatoolTk Extra](#datatooltkextra)
+ - [Basic DatatoolTk](#basic-datatooltk)
+ - [DatatoolTk Restricted](#datatooltk-restricted)
+ - [DatatoolTk Extra](#datatooltk-extra)
 
 ### Basic DatatoolTk
 

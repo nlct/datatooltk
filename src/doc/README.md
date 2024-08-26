@@ -36,12 +36,12 @@ old binary Excel (XLS) format.
 There are three DatatoolTk applications. Their availability depends
 on your installation.
 
- - [Basic DatatoolTk](#basicdatatooltk): provides both batch and GUI
+ - [Basic DatatoolTk](#basic-datatooltk): provides both batch and GUI
    mode. Supports imports from CSV/TSV, ODS, XLSX files and from
    MySQL databases.
- - [DatatoolTk Extra](#datatooltkextra): as basic, but additionally provides
+ - [DatatoolTk Extra](#datatooltk-extra): as basic, but additionally provides
    support for importing XLS files.
- - [DatatoolTk Restricted](#datatooltkrestricted): only provides
+ - [DatatoolTk Restricted](#datatooltk-restricted): only provides
    batch mode. Supports imports from CSV/TSV, ODS, and XLSX files.
    No database or XLS support.
 
