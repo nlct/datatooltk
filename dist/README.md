@@ -2,7 +2,7 @@
 
 Current unstable release 1.9.20240825.
 
-Installation options:
+To install, choose one of the following options:
 
  1. Download and run graphical installer: datatooltk-installer.jar
 
@@ -17,7 +17,7 @@ remove the bash scripts, otherwise remove the .bat files.
 
  - `datatooltk-restricted.zip`: only contains restricted version.
 
- - `datatooltk-extra.zip`: only contains restricted version.
+ - `datatooltk-extra.zip`: only contains extra version.
 
 See the general [README.md](https://github.com/nlct/datatooltk) for further details.
 
