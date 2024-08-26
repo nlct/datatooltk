@@ -9,8 +9,8 @@ versions). The output format may also be set to DTLTEX
 (which contains user-level LaTeX commands rather than special
 internals).  If your version of `datatool.sty`
 is older than 3.0, be sure to set the format to `dbtex-2` or
-`dtltex-2` (`--output-format` switch in batch mode or the
-appropriate file filter selector in GUI mode).
+`dtltex-2` (with the `--output-format` switch in batch mode or the
+appropriate format selector in GUI mode).
 
 For example, the file `booklist.csv` contains:
 ```csv
