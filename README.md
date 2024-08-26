@@ -81,7 +81,7 @@ The following applications are available (as from version 2.0):
  - [DatatoolTk Extra](#datatooltk-extra)
 
 Go to the [Releases page](https://github.com/nlct/datatooltk/releases) for the latest stable release or
-the [`dist` directory](https://github.com/nlct/datatooltk/tree/master/dist)
+the [`unstable` directory](https://github.com/nlct/datatooltk/tree/master/unstable)
 for the most recent development (unstable) version.
 
 ### Basic DatatoolTk

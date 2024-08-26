@@ -25,32 +25,32 @@ test-sql	: lib/datatooltk.jar
 test-extra	: lib/datatooltk-extra.jar
 	bin/datatooltk-extra --debug --gui --xls tests/booklist.xls
 
-dist	: ../dist/datatooltk-installer.jar \
-	../dist/datatooltk-all.zip doc/LICENSE
-	cp doc/datatooltk-en.pdf ../dist
-	cp doc/datatooltk.1 ../dist
-	sed "s/APPVERSION/$(APP_VERSION)/g" README-dist.md > ../dist/README.md
+dist	: ../unstable/datatooltk-installer.jar \
+	../unstable/datatooltk-all.zip doc/LICENSE
+	cp doc/datatooltk-en.pdf ../unstable
+	cp doc/datatooltk.1 ../unstable
+	sed "s/APPVERSION/$(APP_VERSION)/g" README-dist.md > ../unstable/README.md
 
 doc/LICENSE	:
 	cd doc; ln -s ../../LICENSE
 
-../dist/datatooltk-installer.jar	: lib/datatooltk-restricted.jar lib/datatooltk.jar lib/datatooltk-extra.jar installer/install.xml
+../unstable/datatooltk-installer.jar	: lib/datatooltk-restricted.jar lib/datatooltk.jar lib/datatooltk-extra.jar installer/install.xml
 	"$(IZPACKDIR)/bin/compile" installer/install.xml -b . \
 	-h "$(IZPACKDIR)" \
-	-o ../dist/datatooltk-installer.jar -k standard
+	-o ../unstable/datatooltk-installer.jar -k standard
 
-../dist/datatooltk-all.zip	: lib/datatooltk-extra.jar lib/datatooltk-restricted.jar lib/datatooltk.jar
-	mkdir -p ../dist/datatooltk
-	mkdir -p ../dist/datatooltk/doc
-	rsync -rLKptgov --exclude=".*" lib ../dist/datatooltk
-	rsync -rLKptgov --exclude=".*" bin ../dist/datatooltk
-	cp doc/*.{1,pdf} ../dist/datatooltk/doc
-	cp doc/README.md ../dist/datatooltk/
-	cp CHANGES ../dist/datatooltk/
-	cd ../dist; zip -r datatooltk-all.zip datatooltk
+../unstable/datatooltk-all.zip	: lib/datatooltk-extra.jar lib/datatooltk-restricted.jar lib/datatooltk.jar
+	mkdir -p ../unstable/datatooltk
+	mkdir -p ../unstable/datatooltk/doc
+	rsync -rLKptgov --exclude=".*" lib ../unstable/datatooltk
+	rsync -rLKptgov --exclude=".*" bin ../unstable/datatooltk
+	cp doc/*.{1,pdf} ../unstable/datatooltk/doc
+	cp doc/README.md ../unstable/datatooltk/
+	cp CHANGES ../unstable/datatooltk/
+	cd ../unstable; zip -r datatooltk-all.zip datatooltk
 
-../dist/datatooltk-restricted.zip	: ../dist/datatooltk-all.zip
-	cd ../dist; \
+../unstable/datatooltk-restricted.zip	: ../unstable/datatooltk-all.zip
+	cd ../unstable; \
 	zip datatooltk-restricted.zip datatooltk/ \
 	datatooltk/README.md \
 	datatooltk/CHANGES \
@@ -64,8 +64,8 @@ doc/LICENSE	:
 	datatooltk/lib/resources/dictionaries \
 	datatooltk/lib/resources/dictionaries/*.xml 
 
-../dist/datatooltk.zip	: ../dist/datatooltk-all.zip
-	cd ../dist; \
+../unstable/datatooltk.zip	: ../unstable/datatooltk-all.zip
+	cd ../unstable; \
 	zip datatooltk.zip -r  \
 	datatooltk/README.md \
 	datatooltk/CHANGES \
@@ -84,8 +84,8 @@ doc/LICENSE	:
 	datatooltk/lib/*.{html,png} \
 	datatooltk/lib/resources/ 
 
-../dist/datatooltk-extra.zip	: ../dist/datatooltk-all.zip
-	cd ../dist; \
+../unstable/datatooltk-extra.zip	: ../unstable/datatooltk-all.zip
+	cd ../unstable; \
 	zip datatooltk-extra.zip -r  \
 	datatooltk/README.md \
 	datatooltk/CHANGES \
