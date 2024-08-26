@@ -114,7 +114,8 @@ datatooltk [options]
 The `datatooltk` script simply runs the `datatooltk.jar`
 application. You can run it directly using the following
 command line invocation, where `path/to/lib` should be
-changed to the path to the `lib` directory:
+changed to the path to the directory that contains the jar file and
+associated libraries:
 ```bash
 java -jar path/to/lib/datatooltk.jar [options]
 ```
