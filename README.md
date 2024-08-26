@@ -252,66 +252,66 @@ The HTML files for the help window in GUI mode need to be created from the
 dictionary XML files and the LaTeX source.
 
   1. Change to the source code `doc` directory:
+   
+      ```bash
+     cd doc
+      ```
 
-    ```bash
-   cd doc
-    ```
+  3. Convert the application dictionary files (`.xml` and `.prop`) to 
+     `datatooltk-props-en.bib` (a `bib2gls` file):
 
-  2. Convert the application dictionary files (`.xml` and `.prop`) to 
-    `datatooltk-props-en.bib` (a `bib2gls` file):
+      ```bash
+     xml2bib --copy-overwrite-xml \
+     ../lib/resources/dictionaries/texparserlib-en.xml \
+     ../lib/resources/dictionaries/texjavahelplib-en.xml \
+     ../lib/resources/dictionaries/datatooltk-en.xml \
+     --prop ../lib/resources/dictionaries/plugins-en.prop \
+     -o datatooltk-props-en.bib
+      ```
 
-    ```bash
-   xml2bib --copy-overwrite-xml \
-   ../lib/resources/dictionaries/texparserlib-en.xml \
-   ../lib/resources/dictionaries/texjavahelplib-en.xml \
-   ../lib/resources/dictionaries/datatooltk-en.xml \
-   --prop ../lib/resources/dictionaries/plugins-en.prop \
-   -o datatooltk-props-en.bib
-    ```
-
-   (`xml2bib` is provided by TeX Java Help.)
+     (`xml2bib` is provided by TeX Java Help.)
 
   3. (Optional) Create the file `version.tex` which should simply
-    contain `\date{Version `_version_`}`. For example:
+     contain `\date{Version `_version_`}`. For example:
 
-    ```bash
-   echo "\\date{Version " > version.tex
-   grep 'String APP_VERSION = ' ../java/base/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION\s=//" | tr -d "\"\; " >> version.tex
-   grep 'String APP_DATE = ' .../java/base/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_DATE\s=//" | tr -d "\"\; " >> version.tex
-   echo "}" >> version.tex
-    ```
+      ```bash
+     echo "\\date{Version " > version.tex
+     grep 'String APP_VERSION = ' ../java/base/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION\s=//" | tr -d "\"\; " >> version.tex
+     grep 'String APP_DATE = ' .../java/base/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_DATE\s=//" | tr -d "\"\; " >> version.tex
+     echo "}" >> version.tex
+      ```
 
-   This file is input with `\InputIfFileExists` so it can be omitted.
+     This file is input with `\InputIfFileExists` so it can be omitted.
 
   4. Build the document (this requires `texjavahelp.sty` provided
-    by TeX Java Help). Either use Arara:
+     by TeX Java Help). Either use Arara:
+      ```bash
+     arara datatooltk-en
+      ```
 
-    ```bash
-   arara datatooltk-en
-    ```
+     Or:
 
-   Or:
-
-    ```bash
-   lualatex datatooltk-en
-   bib2gls --group --no-warn-unknown-entry-types datatooltk-en
-   lualatex datatooltk-en
-   lualatex datatooltk-en
-    ```
+      ```bash
+     lualatex datatooltk-en
+     bib2gls --group --no-warn-unknown-entry-types datatooltk-en
+     lualatex datatooltk-en
+     lualatex datatooltk-en
+      ```
 
   5. Create the XML and HTML files needed for the GUI help window:
 
-    ```bash
-   texjavahelpmk datatooltk-en.tex ../lib/resources/helpsets/datatooltk-en
-    ```
+      ```bash
+     texjavahelpmk datatooltk-en.tex ../lib/resources/helpsets/datatooltk-en
+      ```
 
-   (`texjavahelpmk` is provided by TeX Java Help.)
-   Note that it's necessary to successfully perform step 4 before
-   trying step 5 as `texjavahelpmk` needs the `toc`, `aux` and
-   `glstex` files created by LaTeX and `bib2gls`.
+     (`texjavahelpmk` is provided by TeX Java Help.)
 
-The source code for `datatooltklib.jar` is in the `java/base` directory
-(including the files in `java/base/io`).
+Note that it's necessary to successfully perform step 4 before
+trying step 5 as `texjavahelpmk` needs the `toc`, `aux` and
+`glstex` files created by LaTeX and `bib2gls`.
+
+The source code for `datatooltklib.jar` is in the `java/lib` directory
+(including the files in `java/lib/io`).
 
 The source code for `datatooltkguilib.jar` is in the `java/gui` directory
 (which includes widget icons in `java/gui/icons`). Note that
@@ -321,15 +321,16 @@ window and also a few common icons).
 The source code for `datatooltk-restricted.jar` is in the
 `java/restricted` directory. This will need `datatooltklib.jar`,
 `texjavahelplib.jar` and `texparserlib.jar` on the
-class path.
+class path. This application needs the `lib/resources/dictionaries/` xml files
+but not the helpsets, icons, plugins and templates directories.
 
 The source code for `datatooltk.jar` is in the 
-`java/combined` directory. This will need the same libraries 
+`java/basic` directory. This will need the same libraries 
 as `datatooltk-restricted.jar` but will also require
-`datatooltkguilib.jar` on the class path.
+`datatooltkguilib.jar` on the class path. This application requires all the `lib/resources` subdirectories.
 
 The source code for `datatooltk-extra.jar` is in the `java/extra`
-directory. This will need the same libraries
+directory. This will need the same libraries and resources files
 as `datatooltk.jar` but will also require the Apache POI, Apache
 Commons and Log4j API libraries on the class path.
 
