@@ -2,115 +2,180 @@
 Java application for use with the datatool LaTeX package.
 
 The DatatoolTk Java application that can be used to create
-[datatool.sty](https://ctan.org/pkg/datatool) databases in
-datatool's internal format, which can be quickly imported into a
-LaTeX document using `\DTLread` (for `datatool.sty` v3.0+ or 
-`\input` for older versions). If your version of `datatool.sty`
+[datatool.sty](https://ctan.org/pkg/datatool) DBTEX files, 
+which can be quickly imported into a LaTeX document using 
+`\DTLread` (for `datatool.sty` v3.0+ or `\input` for older 
+versions). The output format may also be set to DTLTEX
+(which contains user-level LaTeX commands rather than special
+internals).  If your version of `datatool.sty`
 is older than 3.0, be sure to set the format to `dbtex-2` or
 `dtltex-2` (`--output-format` switch in batch mode or the
 appropriate file filter selector in GUI mode).
 
+For example, the file `booklist.csv` contains:
+```csv
+Title,Author,Format,Quantity,Price
+The Adventures of Duck and Goose,Sir Quackalot,paperback,3,$10.99
+The Return of Duck and Goose,Sir Quackalot,paperback,5,$19.99
+More Fun with Duck and Goose,Sir Quackalot,paperback,1,$12.99
+Duck and Goose on Holiday,Sir Quackalot,paperback,3,$11.99
+The Return of Duck and Goose,Sir Quackalot,hardback,3,$19.99
+The Adventures of Duck and Goose,Sir Quackalot,hardback,9,$18.99
+My Friend is a Duck,A. Parrot,paperback,20,$14.99
+Annotated Notes on the ‘Duck and Goose’ chronicles,Prof Macaw,ebook,10,$8.99
+‘Duck and Goose’ Cheat Sheet for Students,Polly Parrot,ebook,50,$5.99
+‘Duck and Goose’: an allegory for modern times?,Bor Ing,hardback,0,$59.99
+Oh No! The Chickens have Escaped!,Dickie Duck,ebook,11,$2.00
+```
+The LaTeX document (`myDoc.tex`) contains:
+```latex
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{datatool}% v3.0 required
+\DTLsetup{default-name=booklist}
+
+\DTLread[format=dbtex]{booklist-converted}
+\begin{document}
+\DTLaction{display}
+\end{document}
+```
+The document build:
+```bash
+datatooltk --output-format dbtex-3 --output booklist-converted.dbtex --sort-locale en --sort 'Author,Title' --literal --csv-sep ',' --csv booklist.csv
+pdflatex myDoc
+```
+The `--literal` switch indicates that the CSV file contains literal
+(that is, non-TeX) content, so the `$` symbol will be mapped to `\$`.
+
+Note that `\DTLread` does support CSV and data can be sorted in the document, 
+so DatatoolTk isn't required in the following:
+```latex
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{datatool}% v3.0 required
+\DTLsetup{default-name=booklist}
+
+\DTLread[format=csv,csv-content=literal]{booklist.csv}
+
+\begin{document}
+\DTLaction[assign={Author,Title}]{sort}
+\DTLaction{display}
+\end{document}
+```
+However, extra support needs to be added for localised sorting with
+`datatool.sty`, Java can support and parse more efficiently than TeX,
+and DatatoolTk can also import data from other sources that aren't 
+supported by `\DTLread`, as well as shuffling and filtering the data.
+
+In the first example, the DatatoolTk call is only needed when the 
+source data (`booklist.csv`) changes. In the second example, the data is sorted on 
+every LaTeX run.
+
+## Provided Applications
+
 The following applications are available:
 
- - DatatoolTk (`datatooltk.jar`): the basic application which can be run in batch
-   mode or with a graphical user interface (GUI). That is, it can
-   either be run from the command line with an input and output
-   file, or it can open a window with menus and buttons.
-   Preferred settings (which can be changed in GUI mode) are saved
-   in a properties directory and picked up on the
-   next run (`~/.datatooltk` on Unix-like systems
-   or `datatooltk-settings` for Windows or the path identified by the
-   environment variable `DATATOOLTK`).
+ - [Basic DatatoolTk](#basicdatatooltk)
+ - [DatatoolTk Restricted](#datatooltkrestricted)
+ - [DatatoolTk Extra](#datatooltkextra)
 
-   This application supports importing data from TeX files
-   (that contain `datatool.sty` database construction commands or
-    [`probsoln.sty`](https://ctan.org/pkg/probsoln) problem definitions),
-   CSV/TSV files,
-   ODS (OpenDocument Spreadsheet), FODS (Flat OpenDocument Spreadsheet),
-   XLSX (XML Excel Spreadsheet), and SQL. For database connections (SQL), 
-   a driver is required.  For example, to provide support for MySQL, the
-   `mysql-connector-java.jar` library needs to be on the class path.
-   (Support for MySQL is automatically included in the Manifest.
-    For other database systems, you will need to add the applicable JDBC driver to
-    the Java class path.)
+### Basic DatatoolTk
 
-    ```bash
-   datatooltk [options]
-    ```
-    The `datatooltk` script simply runs the `datatooltk.jar`
-    application. You can run it directly using the following
-    command line invocation, where `path/to/lib` should be
-    changed to the path to the `lib` directory:
+The basic application (`datatooltk.jar`) can be run in batch
+mode or with a graphical user interface (GUI). That is, it can
+either be run from the command line with an input and output
+file, or it can open a window with menus and buttons.
+Preferred settings (which can be changed in GUI mode) are saved
+in a properties directory and picked up on the
+next run (`~/.datatooltk` on Unix-like systems
+or `datatooltk-settings` for Windows or the path identified by the
+environment variable `DATATOOLTK`).
 
-    ```bash
-   java -jar path/to/lib/datatooltk.jar [options]
-    ```
+The basic application supports importing data from TeX files
+(that contain `datatool.sty` database construction commands or
+[`probsoln.sty`](https://ctan.org/pkg/probsoln) problem definitions),
+CSV/TSV files,
+ODS (OpenDocument Spreadsheet), FODS (Flat OpenDocument Spreadsheet),
+XLSX (XML Excel Spreadsheet), and SQL. For database connections (SQL), 
+a driver is required.  For example, to provide support for MySQL, the
+`mysql-connector-java.jar` library needs to be on the class path.
+(Support for MySQL is automatically included.
+For other database systems, you will need to add the applicable JDBC driver to
+the Java class path.)
 
-    If run in batch mode (the default) the options must include an input
-    file or input source and an output file. To run in GUI mode, the
-    options list should include `--gui`.
+```bash
+datatooltk [options]
+```
+The `datatooltk` script simply runs the `datatooltk.jar`
+application. You can run it directly using the following
+command line invocation, where `path/to/lib` should be
+changed to the path to the `lib` directory:
+```bash
+java -jar path/to/lib/datatooltk.jar [options]
+```
 
-    ```bash
-   datatooltk-gui [options]
-    ```
+If run in batch mode (the default) the options must include an input
+file or input source and an output file. To run in GUI mode, the
+options list should include `--gui`.
 
-    The `datatooltk-gui` script simply runs the `datatooltk.jar`
-    application with `--gui` and a splash image:
+```bash
+datatooltk-gui [options]
+```
+The `datatooltk-gui` script simply runs the `datatooltk.jar`
+application with `--gui` and a splash image:
+```bash
+java -splash:path/to/lib/datatooltk-splash.png -jar path/to/lib/datatooltk.jar --gui [options]
+```
 
-    ```bash
-   java -splash:path/to/lib/datatooltk-splash.png -jar path/to/lib/datatooltk.jar --gui [options]
-    ```
+### DatatoolTk Restricted
 
- - DatatoolTk Restricted (`datatooltk-restricted.jar`):
-   a restricted version of the DatatoolTk application that only runs
-   in batch mode. If you attempt to run this application in GUI mode
-   it will trigger an "Unsupported option" error. The restricted
-   application doesn't support SQL connections, but otherwise
-   supports the import file formats that the basic DatatoolTk
-   application supports (TeX, CSV/TSV, ODS, FODS and XLSX).
+The restricted application (`datatooltk-restricted.jar`)
+is a version of the DatatoolTk application that only runs
+in batch mode. If you attempt to run this application in GUI mode
+it will trigger an "Unsupported option" error. The restricted
+application doesn't support SQL connections, but otherwise
+supports the import file formats that the basic DatatoolTk
+application supports (TeX, CSV/TSV, ODS, FODS and XLSX).
 
-   Again, this comes with a helper script to run the Java
-   application:
+Again, this comes with a helper script to run the Java
+application:
+```bash
+datatooltk-restricted [options]
+```
 
-    ```bash
-   datatooltk-restricted [options]
-    ```
+Alternatively:
+```bash
+java -jar path/to/lib/datatooltk-restricted.jar [options]
+```
 
-   Alternatively:
+### DatatoolTk Extra
 
-    ```bash
-   java -jar path/to/lib/datatooltk-restricted.jar [options]
-    ```
+The DatatoolTk Extra application (`datatooltk-extra.jar`)
+has all the features of the basic DatatoolTk application but additionally
+supports Microsoft's old binary Excel (`.xls`) file format.
+This requires the third party Apache POI library.
 
- - DatatoolTk Extra (`datatooltk-extra.jar`):
-   as the basic DatatoolTk application but additionally
-   supports Microsoft's old binary Excel (`.xls`) file format.
-   This requires the third party Apache POI library.
+Again, this comes with helper scripts to run the Java
+application:
+```bash
+datatooltk-extra [options]
+```
 
-   Again, this comes with helper scripts to run the Java
-   application:
+Alternatively:
+```bash
+java -jar path/to/lib/datatooltk-extra.jar [options]
+```
 
-    ```bash
-   datatooltk-extra [options]
-    ```
+Or for GUI mode with a splash screen:
+```bash
+datatooltk-extra-gui [options]
+```
 
-   Alternatively:
-
-    ```bash
-   java -jar path/to/lib/datatooltk-extra.jar [options]
-    ```
-
-   Or for GUI mode with a splash screen:
-
-    ```bash
-   datatooltk-extra-gui [options]
-    ```
-
-   Alternatively:
-    ```bash
-   java -splash:path/to/lib/datatooltk-splash.png -jar path/to/lib/datatooltk-extra.jar --gui [options]
-    ```
-
+Alternatively:
+```bash
+java -splash:path/to/lib/datatooltk-splash.png -jar path/to/lib/datatooltk-extra.jar --gui [options]
+```
 
 ## Requirements
 
@@ -121,6 +186,7 @@ Requires at least Java 8 and the following libraries:
    to parse LaTeX files: the file `texparserlib.jar`
    should be placed in the `lib` directory. **This library is
    required by all DatatoolTk applications.**
+
  - [TeX Java Help](https://github.com/nlct/texjavahelp) (GPL-3.0)
    to convert the LaTeX manual with `texjavahelpmk`
    to the HTML and XML files required by `texjavahelplib.jar`
