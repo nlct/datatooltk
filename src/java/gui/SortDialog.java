@@ -31,7 +31,7 @@ import javax.swing.event.*;
 
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Dialog for specifying sort criteria.

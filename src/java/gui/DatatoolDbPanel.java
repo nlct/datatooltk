@@ -38,7 +38,7 @@ import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Panel used in the main GUI window tabs.

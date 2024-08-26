@@ -27,7 +27,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Cell editor for datum value.

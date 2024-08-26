@@ -1,7 +1,7 @@
 # Java 8 extended support until December 2030
 target_version := --release 8 -Xlint:-options
 
-APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/base/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION=//" | tr -d "\"\; ")
+APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/lib/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION=//" | tr -d "\"\; ")
 ifeq ($(IZPACKDIR),)
 IZPACKDIR:=/usr/local/IzPack
 endif
@@ -21,6 +21,9 @@ test-cli	: lib/datatooltk-restricted.jar
 
 test-sql	: lib/datatooltk.jar
 	bin/datatooltk --debug --output tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
+
+test-extra	: lib/datatooltk-extra.jar
+	bin/datatooltk-extra --debug --gui --xls tests/booklist.xls
 
 dist	: ../dist/datatooltk-installer.jar \
 	../dist/datatooltk-all.zip
@@ -104,17 +107,17 @@ lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*
 lib/resources/helpsets/datatooltk-en/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
 	make -C doc en
 
-lib/datatooltklib.jar	: classes/com/dickimawbooks/datatooltk/base/DatatoolTk.class 
+lib/datatooltklib.jar	: classes/com/dickimawbooks/datatooltk/DatatoolTk.class 
 	cd classes; \
 	jar cf ../lib/datatooltklib.jar \
-	com/dickimawbooks/datatooltk/base/*.class \
-	com/dickimawbooks/datatooltk/base/*/*.class 
+	com/dickimawbooks/datatooltk/*.class \
+	com/dickimawbooks/datatooltk/io/*.class 
 
-classes/com/dickimawbooks/datatooltk/base/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/base/*.java java/base/io/*.java \
+classes/com/dickimawbooks/datatooltk/DatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
+	java/lib/*.java java/lib/io/*.java \
 	lib/texjavahelplib.jar \
 	lib/texparserlib.jar
-	cd java/base; \
+	cd java/lib; \
 	javac $(target_version) -d ../../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
 	-cp ../../lib/texjavahelplib.jar:../../lib/texparserlib.jar \
@@ -161,11 +164,10 @@ lib/datatooltk-extra.jar	: lib/datatooltkguilib.jar java/extra/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/extra/ExtraDatatoolTk.class 
 	cd classes; \
 	jar cmf ../java/extra/Manifest.txt ../lib/datatooltk-extra.jar \
-	com/dickimawbooks/datatooltk/extra/*.class \
-	com/dickimawbooks/datatooltk/thirdparty/*.class 
+	com/dickimawbooks/datatooltk/extra/*.class 
 
 classes/com/dickimawbooks/datatooltk/extra/ExtraDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/thirdparty/*.java java/extra/*.java \
+	java/extra/*.java \
 	lib/datatooltkguilib.jar \
 	lib/texjavahelplib.jar \
 	lib/texparserlib.jar \
@@ -178,7 +180,7 @@ classes/com/dickimawbooks/datatooltk/extra/ExtraDatatoolTk.class	: classes/com/d
 	javac $(target_version) -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
 	-cp ../lib/datatooltklib.jar:../lib/datatooltkguilib.jar:../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar \
-	extra/*.java thirdparty/*.java
+	extra/*.java
 
 lib/datatooltk-restricted.jar	: lib/datatooltklib.jar java/restricted/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/restricted/RestrictedDatatoolTk.class 

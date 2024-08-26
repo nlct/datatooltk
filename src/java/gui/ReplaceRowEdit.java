@@ -21,7 +21,7 @@ package com.dickimawbooks.datatooltk.gui;
 import javax.swing.undo.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Replace an entire row undoable edit.

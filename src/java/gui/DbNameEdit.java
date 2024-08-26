@@ -20,7 +20,7 @@ package  com.dickimawbooks.datatooltk.gui;
 
 import javax.swing.undo.*;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Change database name undoable edit.

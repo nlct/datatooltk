@@ -23,8 +23,8 @@ import java.io.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.dickimawbooks.datatooltk.base.DatatoolTk;
-import com.dickimawbooks.datatooltk.base.MessageHandler;
+import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Panel for error messages.

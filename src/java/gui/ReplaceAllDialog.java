@@ -24,7 +24,7 @@ import java.awt.Dimension;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Dialog box for replacing all instances of one string with

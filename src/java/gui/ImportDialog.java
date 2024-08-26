@@ -33,8 +33,8 @@ import javax.swing.filechooser.FileFilter;
 import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
-import com.dickimawbooks.datatooltk.base.*;
-import com.dickimawbooks.datatooltk.base.io.*;
+import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.io.*;
 
 /**
  * Dialog box for importing files.

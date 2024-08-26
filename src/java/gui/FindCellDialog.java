@@ -25,7 +25,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import com.dickimawbooks.datatooltk.base.DatatoolTk;
+import com.dickimawbooks.datatooltk.DatatoolTk;
 
 /**
  * Dialog box for finding a cell that matches a search string.

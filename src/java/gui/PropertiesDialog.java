@@ -44,9 +44,9 @@ import com.dickimawbooks.texjavahelplib.IconSet;
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
-import com.dickimawbooks.datatooltk.base.*;
-import com.dickimawbooks.datatooltk.base.io.DatatoolFileFormat;
-import com.dickimawbooks.datatooltk.base.io.UnsupportedFileFormatException;
+import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.io.DatatoolFileFormat;
+import com.dickimawbooks.datatooltk.io.UnsupportedFileFormatException;
 
 /**
  * Dialog box to allow user to edit application settings.

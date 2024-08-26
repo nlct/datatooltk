@@ -23,7 +23,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * A toolbar that scrolls if there are too many buttons to fit

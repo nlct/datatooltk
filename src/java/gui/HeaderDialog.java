@@ -24,7 +24,7 @@ import javax.swing.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Dialog box to allow user to edit column header information.

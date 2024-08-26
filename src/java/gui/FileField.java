@@ -26,8 +26,8 @@ import javax.swing.*;
 
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
-import com.dickimawbooks.datatooltk.base.DatatoolTk;
-import com.dickimawbooks.datatooltk.base.MessageHandler;
+import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Component for specifying a file or directory.

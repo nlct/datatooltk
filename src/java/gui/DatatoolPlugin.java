@@ -25,7 +25,7 @@ import java.util.regex.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Class representing a plugin.

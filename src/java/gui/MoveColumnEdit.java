@@ -21,7 +21,7 @@ package com.dickimawbooks.datatooltk.gui;
 import java.util.Vector;
 import javax.swing.undo.*;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Move column undoable edit.

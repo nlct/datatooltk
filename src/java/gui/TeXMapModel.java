@@ -26,7 +26,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Table model for TeX mappings (used in import settings panel).

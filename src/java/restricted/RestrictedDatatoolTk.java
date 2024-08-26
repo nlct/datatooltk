@@ -22,9 +22,9 @@ import java.io.IOException;
 
 import com.dickimawbooks.texjavahelplib.InvalidSyntaxException;
 
-import com.dickimawbooks.datatooltk.base.DatatoolSettings;
-import com.dickimawbooks.datatooltk.base.DatatoolTk;
-import com.dickimawbooks.datatooltk.base.MessageHandler;
+import com.dickimawbooks.datatooltk.DatatoolSettings;
+import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Main application class with just a restricted batch mode.

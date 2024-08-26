@@ -26,7 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 
-import com.dickimawbooks.datatooltk.base.DatatoolTk;
+import com.dickimawbooks.datatooltk.DatatoolTk;
 
 /**
  * Progress messages window.

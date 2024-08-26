@@ -24,9 +24,8 @@ import javax.swing.JOptionPane;
 
 import com.dickimawbooks.texjavahelplib.*;
 
-import com.dickimawbooks.datatooltk.base.*;
-import com.dickimawbooks.datatooltk.base.io.*;
-import com.dickimawbooks.datatooltk.thirdparty.*;
+import com.dickimawbooks.datatooltk.*;
+import com.dickimawbooks.datatooltk.io.*;
 
 import com.dickimawbooks.datatooltk.gui.DatatoolProperties;
 import com.dickimawbooks.datatooltk.gui.DatatoolGuiResources;

@@ -21,7 +21,7 @@ package com.dickimawbooks.datatooltk.gui;
 import javax.swing.undo.*;
 import javax.swing.table.TableColumn;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Insert a new column undoable edit.

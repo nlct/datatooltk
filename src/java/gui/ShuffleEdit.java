@@ -21,7 +21,7 @@ package  com.dickimawbooks.datatooltk.gui;
 import javax.swing.undo.*;
 import java.util.Random;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Shuffle data undoable edit.

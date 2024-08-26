@@ -25,8 +25,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import com.dickimawbooks.datatooltk.base.DatatoolTk;
-import com.dickimawbooks.datatooltk.base.MessageHandler;
+import com.dickimawbooks.datatooltk.DatatoolTk;
+import com.dickimawbooks.datatooltk.MessageHandler;
 
 /**
  * Dialog box for searching for text within displayed cell editor dialog.

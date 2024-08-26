@@ -33,7 +33,7 @@ import com.dickimawbooks.texjavahelplib.JLabelGroup;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.texjavahelplib.TJHAbstractAction;
 
-import com.dickimawbooks.datatooltk.base.DatatoolTk;
+import com.dickimawbooks.datatooltk.DatatoolTk;
 
 /**
  * Application GUI resources.

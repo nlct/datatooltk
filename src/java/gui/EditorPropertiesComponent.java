@@ -30,7 +30,7 @@ import javax.swing.event.*;
 import com.dickimawbooks.texjavahelplib.JLabelGroup;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 
-import com.dickimawbooks.datatooltk.base.*;
+import com.dickimawbooks.datatooltk.*;
 
 /**
  * Component for editor settings.
