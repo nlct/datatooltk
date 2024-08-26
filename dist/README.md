@@ -20,3 +20,5 @@ remove the bash scripts, otherwise remove the .bat files.
  - `datatooltk-extra.zip`: only contains restricted version.
 
 See the general [README.md](https://github.com/nlct/datatooltk) for further details.
+
+Also check the [Dickimaw Books Experimental Code page](https://www.dickimaw-books.com/expl/) for any unstable versions of `datatool.sty`.
