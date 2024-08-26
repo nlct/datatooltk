@@ -93,8 +93,15 @@ public class CellDialog extends JDialog
       toolBar.addSeparator();
 
       editM.add(createJMenuItem("edit", "parse", toolBar));
-      editM.add(createJMenuItem("edit", "reload", "reset", toolBar));
       editM.add(createJMenuItem("edit", "cell_to_null", toolBar));
+
+      reformatItem = createJMenuItem("edit", "reformat", toolBar);
+      editM.add(reformatItem);
+
+      editM.addSeparator();
+      toolBar.addSeparator();
+
+      editM.add(createJMenuItem("edit", "reload", "reset", toolBar));
 
       toolBar.addSeparator();
 
@@ -317,11 +324,13 @@ public class CellDialog extends JDialog
 
          currencyComp.setVisible(type==DatumType.CURRENCY);
          numericComp.setVisible(true);
+         reformatItem.setEnabled(true);
       }
       else
       {
          currencyComp.setVisible(false);
          numericComp.setVisible(false);
+         reformatItem.setEnabled(false);
       }
    }
 
@@ -527,7 +536,7 @@ public class CellDialog extends JDialog
          textPane.setText(datum.getText());
          setDatum(datum);
       }
-      else if (action.equals("format"))
+      else if (action.equals("reformat"))
       {
          DatumType type = typeBox.getSelectedType();
 
@@ -682,7 +691,7 @@ public class CellDialog extends JDialog
    private CellDocument document;
 
    private JMenuItem undoItem, redoItem, copyItem, cutItem,
-     findAgainItem;
+     findAgainItem, reformatItem;
 
    private DatumTypeComboBox typeBox;
    private JLabel typeBoxLabel;

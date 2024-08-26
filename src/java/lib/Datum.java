@@ -245,10 +245,11 @@ public class Datum implements Comparable<Datum>
       {
          try
          {
-            return new Datum(text, null, new BigDecimal(text), settings);
+            return new Datum(DatumType.DECIMAL, text, null, new BigDecimal(text), settings);
          }
          catch (NumberFormatException e)
-         {
+         {// shouldn't happen
+            settings.getMessageHandler().debug(e);
          }
       }
 
@@ -610,6 +611,60 @@ public class Datum implements Comparable<Datum>
       }
 
       return numValue.equals(other.numValue);
+   }
+
+   /**
+    * Reformats the string representation, if this Datum is numeric.
+    */
+   public void reformat()
+   {
+      reformat(type);
+   }
+
+   /**
+    * Reformats the string representation according to the given
+    * type, if this Datum and the given type are numeric.
+    */
+   public void reformat(DatumType dataType)
+   {
+      if (numValue == null)
+      {
+         // do nothing
+         return;
+      }
+
+      if (dataType == DatumType.DECIMAL && settings.useSIforDecimals())
+      {
+         stringValue = String.format("\\num{%g}", doubleValue());
+      }
+      else
+      {
+         NumberFormat numfmt = settings.getNumericFormatter(type);
+
+         switch (dataType)
+         {
+            case INTEGER:
+              stringValue = numfmt.format(intValue());
+            break;
+            case DECIMAL:
+              stringValue = numfmt.format(doubleValue());
+            break;
+            case CURRENCY:
+              stringValue = numfmt.format(doubleValue());
+
+              if (currencySymbol == null)
+              {
+                 currencySymbol = numfmt.getCurrency().getSymbol();
+                 type = dataType;
+              }
+              else
+              {
+                 stringValue = stringValue.replace(
+                    numfmt.getCurrency().getSymbol(), currencySymbol);
+              }
+            break;
+         }
+      }
    }
 
    /**

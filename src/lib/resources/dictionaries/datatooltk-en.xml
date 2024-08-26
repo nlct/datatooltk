@@ -848,6 +848,10 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="editormenu.edit.cell_to_null.mnemonic">N</entry>
 <entry key="editormenu.edit.cell_to_null.tooltip">Replace cell contents with null value</entry>
 
+<entry key="editormenu.edit.reformat">Reformat</entry>
+<entry key="editormenu.edit.reformat.mnemonic">F</entry>
+<entry key="editormenu.edit.reformat.tooltip">Reformat numeric value based on current settings</entry>
+
 <entry key="editormenu.search">Search</entry>
 <entry key="editormenu.search.mnemonic">S</entry>
 
