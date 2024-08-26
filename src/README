@@ -6,18 +6,28 @@ License: GPL
 
 Requirements:
 
-MySQL connector (http://dev.mysql.com/downloads/connector/j/)
-Apache POI (http://poi.apache.org/download.html), which in turn
-requires Apache Commons IO, which requires Log4j
+All datatooltk applications require:
+
 TeX Parser Lib (https://github.com/nlct/texparser)
 TeX Java Help (https://github.com/nlct/texjavahelp)
+
+basic datatooltk and datatooltk extra require:
+
+MySQL connector (http://dev.mysql.com/downloads/connector/j/)
+
+datatooltk extra requires:
+
+Apache POI (http://poi.apache.org/download.html), which in turn
+requires Apache Commons IO, which requires Log4j
 
 Instructions:
 
 Fetch the above and copy or symlink the jar files 
 (mysql-connector-java.jar, poi-5.3.0.jar, poi-ooxml-5.3.0.jar,
 poi-ooxml-full-5.3.0.jar, apache-commons-io.jar, log4j-api.jar,
-jOpenDocument-1.3.jar, texjavahelplib.jar and texparserlib.jar)
-in the lib/ directory (create lib/ if it doesn't exist)
+texjavahelplib.jar and texparserlib.jar)
+in the lib/ directory.
+
+cd to src directory and run make
 
 www.dickimaw-books.com
