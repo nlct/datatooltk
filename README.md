@@ -1,7 +1,7 @@
 # datatooltk
 Java application for use with the datatool LaTeX package.
 
-The DatatoolTk Java application that can be used to create
+The DatatoolTk Java application can be used to create
 [datatool.sty](https://ctan.org/pkg/datatool) DBTEX files, 
 which can be quickly imported into a LaTeX document using 
 `\DTLread` (for `datatool.sty` v3.0+ or `\input` for older 
