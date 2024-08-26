@@ -40,7 +40,7 @@
 
     <resources>
         <res id="LicencePanel.licence" src="doc/LICENSE"/>
-        <res id="InfoPanel.info" src="doc/README"/>
+        <res id="InfoPanel.info" src="doc/README.md"/>
         <res id="shortcutSpec.xml" src="installer/shortcutSpec.xml"/>
         <res id="Unix_shortcutSpec.xml" src="installer/unix_shortcutSpec.xml"/>
 
@@ -60,7 +60,7 @@
     <packs>
         <pack name="Base" required="yes">
             <description>The base files</description>
-            <file src="doc/README" targetdir="$INSTALL_PATH"/>
+            <file src="doc/README.md" targetdir="$INSTALL_PATH"/>
             <file src="doc/LICENSE" targetdir="$INSTALL_PATH"/>
             <file src="lib" targetdir="$INSTALL_PATH"/>
             <fileset dir="bin" excludes="**/*.bat"
@@ -74,42 +74,15 @@
             <executable targetfile="$INSTALL_PATH/bin/datatooltk-gui"
             stage="never"/>
         </pack>
-        <pack name="Documentation GB" required="no" preselected="no">
+        <pack name="Documentation English (GB)" required="no" preselected="no">
             <description>The datatooltk documentation</description>
             <fileset dir="doc" includes="**/*-en-GB.pdf" targetdir="$INSTALL_PATH/doc"/>
-            <fileset dir="doc" includes="**/*.1" targetdir="$INSTALL_PATH/man"/>
+            <fileset dir="doc" includes="**/*.1" targetdir="$INSTALL_PATH/doc"/>
         </pack>
-        <pack name="Documentation US" required="no" preselected="no">
+        <pack name="Documentation English (no Region)" required="no" preselected="no">
             <description>The datatooltk documentation</description>
-            <fileset dir="doc" includes="**/*-en-US.pdf" targetdir="$INSTALL_PATH/doc"/>
-            <fileset dir="doc" includes="**/*.1" targetdir="$INSTALL_PATH/man"/>
-        </pack>
-        <pack name="Source" required="no" preselected="no">
-            <description>The source code</description>
-            <file src="doc/createdatatooltkdocs" targetdir="$INSTALL_PATH/src/doc" />
-            <file src="doc/datatooltk.pod" targetdir="$INSTALL_PATH/src/doc" />
-            <file src="doc/datatooltk.dtd" targetdir="$INSTALL_PATH/src/doc" />
-            <file src="doc/datatooltk-en.xml" targetdir="$INSTALL_PATH/src/doc" />
-            <file src="doc/datatooltk.cls" targetdir="$INSTALL_PATH/src/doc" />
-            <file src="doc/Makefile" targetdir="$INSTALL_PATH/src/doc" />
-            <file src="doc/images" targetdir="$INSTALL_PATH/src/doc" />
-            <file src="Makefile" targetdir="$INSTALL_PATH/src" />
-            <file src="README" targetdir="$INSTALL_PATH/src" />
-            <file src="doc/LICENSE" targetdir="$INSTALL_PATH/src" />
-            <file src="bin" targetdir="$INSTALL_PATH/src" />
-            <file src="images" targetdir="$INSTALL_PATH/src" />
-            <file src="java" targetdir="$INSTALL_PATH/src" />
-            <file src="resources/imagemap.prop" targetdir="$INSTALL_PATH/src/resources" />
-            <fileset dir="resources/plugins" targetdir="$INSTALL_PATH/src/resources/plugins"/>
-            <fileset dir="resources/templates" targetdir="$INSTALL_PATH/src/resources/templates"/>
-            <fileset dir="tests" targetdir="$INSTALL_PATH/src/tests"
-              includes="**/*.tex" />
-            <fileset dir="tests" targetdir="$INSTALL_PATH/src/tests"
-              includes="**/*.dbtex" />
-            <fileset dir="tests" targetdir="$INSTALL_PATH/src/tests"
-              includes="**/*.csv" />
-            <fileset dir="tests" targetdir="$INSTALL_PATH/src/tests"
-              includes="**/*.sql" />
+            <fileset dir="doc" includes="**/*-en.pdf" targetdir="$INSTALL_PATH/doc"/>
+            <fileset dir="doc" includes="**/*.1" targetdir="$INSTALL_PATH/doc"/>
         </pack>
     </packs>
 

@@ -1,5 +1,6 @@
 datatooltk-props*.bib
 version.tex
+LICENSE
 *.glstex
 *.aux
 *.log

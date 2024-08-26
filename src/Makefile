@@ -1,7 +1,7 @@
 # Java 8 extended support until December 2030
 target_version := --release 8 -Xlint:-options
 
-APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/lib/DatatoolTk.java | sed "s/public\sstatic\sfinal\sString\sAPP_VERSION=//" | tr -d "\"\; ")
+APP_VERSION:=$(shell grep "public static final String APP_VERSION" java/lib/DatatoolTk.java | sed -E  "s/.*\"(.*)\";/\1/")
 ifeq ($(IZPACKDIR),)
 IZPACKDIR:=/usr/local/IzPack
 endif
@@ -26,9 +26,13 @@ test-extra	: lib/datatooltk-extra.jar
 	bin/datatooltk-extra --debug --gui --xls tests/booklist.xls
 
 dist	: ../dist/datatooltk-installer.jar \
-	../dist/datatooltk-all.zip
-	cp doc/datatooltk-en-GB.pdf ../dist
+	../dist/datatooltk-all.zip doc/LICENSE
+	cp doc/datatooltk-en.pdf ../dist
 	cp doc/datatooltk.1 ../dist
+	sed "s/APPVERSION/$(APP_VERSION)/g" README-dist.md > ../dist/README.md
+
+doc/LICENSE	:
+	cd doc; ln -s ../../LICENSE
 
 ../dist/datatooltk-installer.jar	: lib/datatooltk-restricted.jar lib/datatooltk.jar lib/datatooltk-extra.jar installer/install.xml
 	"$(IZPACKDIR)/bin/compile" installer/install.xml -b . \

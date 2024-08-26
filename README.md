@@ -74,11 +74,15 @@ every LaTeX run.
 
 ## Provided Applications
 
-The following applications are available:
+The following applications are available (as from version 2.0):
 
  - [Basic DatatoolTk](#basic-datatooltk)
  - [DatatoolTk Restricted](#datatooltk-restricted)
  - [DatatoolTk Extra](#datatooltk-extra)
+
+Go to the [Releases page](https://github.com/nlct/datatooltk/releases) for the latest stable release or
+the [`dist` directory](https://github.com/nlct/datatooltk/tree/master/dist)
+for the most recent development (unstable) version.
 
 ### Basic DatatoolTk
 
