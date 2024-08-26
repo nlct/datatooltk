@@ -64,7 +64,7 @@ so DatatoolTk isn't required in the following:
 \end{document}
 ```
 However, extra support needs to be added for localised sorting with
-`datatool.sty`, Java can support and parse more efficiently than TeX,
+`datatool.sty`, Java can sort and parse formatted numbers more efficiently than TeX,
 and DatatoolTk can also import data from other sources that aren't 
 supported by `\DTLread`, as well as shuffling and filtering the data.
 
