@@ -9,7 +9,6 @@ Requirements:
 MySQL connector (http://dev.mysql.com/downloads/connector/j/)
 Apache POI (http://poi.apache.org/download.html), which in turn
 requires Apache Commons IO, which requires Log4j
-jOpenDocument (http://www.jopendocument.org/)
 TeX Parser Lib (https://github.com/nlct/texparser)
 TeX Java Help (https://github.com/nlct/texjavahelp)
 

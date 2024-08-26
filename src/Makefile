@@ -22,14 +22,81 @@ test-cli	: lib/datatooltk-restricted.jar
 test-sql	: lib/datatooltk.jar
 	bin/datatooltk --debug --output tests/test-sql-data.dbtex --sql "SELECT * FROM testsqldata" --sqldb datatooltk --sqluser datatool
 
-dist	: ../dist/datatooltk-installer.jar
+dist	: ../dist/datatooltk-installer.jar \
+	../dist/datatooltk-all.zip
 	cp doc/datatooltk-en-GB.pdf ../dist
 	cp doc/datatooltk.1 ../dist
 
-../dist/datatooltk-installer.jar	: app installer/install.xml
+../dist/datatooltk-installer.jar	: lib/datatooltk-restricted.jar lib/datatooltk.jar lib/datatooltk-extra.jar installer/install.xml
 	"$(IZPACKDIR)/bin/compile" installer/install.xml -b . \
 	-h "$(IZPACKDIR)" \
 	-o ../dist/datatooltk-installer.jar -k standard
+
+../dist/datatooltk-all.zip	: lib/datatooltk-extra.jar lib/datatooltk-restricted.jar lib/datatooltk.jar
+	mkdir -p ../dist/datatooltk
+	mkdir -p ../dist/datatooltk/doc
+	rsync -rLKptgov --exclude=".*" lib ../dist/datatooltk
+	rsync -rLKptgov --exclude=".*" bin ../dist/datatooltk
+	cp doc/*.{1,pdf} ../dist/datatooltk/doc
+	cp doc/README.md ../dist/datatooltk/
+	cp CHANGES ../dist/datatooltk/
+	cd ../dist; zip -r datatooltk-all.zip datatooltk
+
+../dist/datatooltk-restricted.zip	: ../dist/datatooltk-all.zip
+	cd ../dist; \
+	zip datatooltk-restricted.zip datatooltk/ \
+	datatooltk/README.md \
+	datatooltk/CHANGES \
+	datatooltk/bin/datatooltk-restricted* \
+	datatooltk/doc/*.{1,pdf} \
+	datatooltk/lib/texparserlib.jar \
+	datatooltk/lib/texjavahelplib.jar \
+	datatooltk/lib/datatooltklib.jar \
+	datatooltk/lib/datatooltk-restricted.jar \
+	datatooltk/lib/resources/ \
+	datatooltk/lib/resources/dictionaries \
+	datatooltk/lib/resources/dictionaries/*.xml 
+
+../dist/datatooltk.zip	: ../dist/datatooltk-all.zip
+	cd ../dist; \
+	zip datatooltk.zip -r  \
+	datatooltk/README.md \
+	datatooltk/CHANGES \
+	datatooltk/bin/datatooltk-restricted* \
+	datatooltk/bin/datatooltk-gui* \
+	datatooltk/bin/datatooltk \
+	datatooltk/bin/datatooltk.* \
+	datatooltk/doc/*.{1,pdf} \
+	datatooltk/lib/texparserlib.jar \
+	datatooltk/lib/texjavahelplib.jar \
+	datatooltk/lib/datatooltklib.jar \
+	datatooltk/lib/datatooltkguilib.jar \
+	datatooltk/lib/datatooltk-restricted.jar \
+	datatooltk/lib/datatooltk.jar \
+	datatooltk/lib/mysql-connector-java.jar \
+	datatooltk/lib/*.{html,png} \
+	datatooltk/lib/resources/ 
+
+../dist/datatooltk-extra.zip	: ../dist/datatooltk-all.zip
+	cd ../dist; \
+	zip datatooltk-extra.zip -r  \
+	datatooltk/README.md \
+	datatooltk/CHANGES \
+	datatooltk/bin/datatooltk-restricted* \
+	datatooltk/bin/datatooltk-extra* \
+	datatooltk/doc/*.{1,pdf} \
+	datatooltk/lib/texparserlib.jar \
+	datatooltk/lib/texjavahelplib.jar \
+	datatooltk/lib/datatooltklib.jar \
+	datatooltk/lib/datatooltkguilib.jar \
+	datatooltk/lib/datatooltk-restricted.jar \
+	datatooltk/lib/datatooltk-extra.jar \
+	datatooltk/lib/mysql-connector-java.jar \
+	datatooltk/lib/poi-*.jar \
+	datatooltk/lib/apache-commons-io.jar \
+	datatooltk/lib/log4j-api.jar \
+	datatooltk/lib/*.{html,png} \
+	datatooltk/lib/resources/ 
 
 lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en-GB.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
 	make -C doc en-GB
@@ -73,14 +140,14 @@ classes/com/dickimawbooks/datatooltk/gui/DatatoolGUI.class	: java/gui/*.java \
 	-cp ../../lib/datatooltklib.jar:../../lib/texjavahelplib.jar:../../lib/texparserlib.jar \
 	*.java
 
-lib/datatooltk.jar	: lib/datatooltkguilib.jar java/combined/Manifest.txt \
-			classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class 
+lib/datatooltk.jar	: lib/datatooltkguilib.jar java/basic/Manifest.txt \
+			classes/com/dickimawbooks/datatooltk/basic/BasicDatatoolTk.class 
 	cd classes; \
-	jar cmf ../java/combined/Manifest.txt ../lib/datatooltk.jar \
-	com/dickimawbooks/datatooltk/combined/*.class 
+	jar cmf ../java/basic/Manifest.txt ../lib/datatooltk.jar \
+	com/dickimawbooks/datatooltk/basic/*.class 
 
-classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
-	java/combined/*.java \
+classes/com/dickimawbooks/datatooltk/basic/BasicDatatoolTk.class	: classes/com/dickimawbooks/datatooltk \
+	java/basic/*.java \
 	lib/datatooltkguilib.jar \
 	lib/texjavahelplib.jar \
 	lib/texparserlib.jar
@@ -88,7 +155,7 @@ classes/com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk.class	: classes
 	javac $(target_version) -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
 	-cp ../lib/datatooltklib.jar:../lib/datatooltkguilib.jar:../lib/texjavahelplib.jar:../lib/texparserlib.jar \
-	combined/*.java 
+	basic/*.java 
 
 lib/datatooltk-extra.jar	: lib/datatooltkguilib.jar java/extra/Manifest.txt \
 			classes/com/dickimawbooks/datatooltk/extra/ExtraDatatoolTk.class 

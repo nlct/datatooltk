@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.dickimawbooks.datatooltk.combined;
+package com.dickimawbooks.datatooltk.basic;
 
 import java.io.*;
 
@@ -34,9 +34,9 @@ import com.dickimawbooks.datatooltk.gui.DatatoolGUI;
 /**
  * Main application class with batch and GUI mode.
  */
-public class CombinedDatatoolTk extends DatatoolTk
+public class BasicDatatoolTk extends DatatoolTk
 {
-   public CombinedDatatoolTk() throws IOException
+   public BasicDatatoolTk() throws IOException
    {
       // Allows GUI and SQL but not Binary Excel.
       super(true, true, false);
@@ -88,7 +88,7 @@ public class CombinedDatatoolTk extends DatatoolTk
 
       try
       {
-         datatooltk = new CombinedDatatoolTk();
+         datatooltk = new BasicDatatoolTk();
          datatooltk.runApplication(args);
       }
       catch (InvalidSyntaxException e)

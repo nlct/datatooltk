@@ -1,3 +1,39 @@
+v2.0 (pending)
+
+ - Split into three applications: basic DatatoolTk (batch and GUI
+   and TeX, CSV/TSV, ODS, XLSX and SQL import options),
+   DatatoolTk Extra (as basic but with extra XLS import option),
+   and DatatoolTk Restricted (batch only, no SQL import option).
+
+ - Added support for new datatool.sty v3.0 database construction commands.
+
+ - Added support for new datatool.sty v3.0 datum format (which
+   allows both a formatted number and the actual plain number to be
+   stored together, to avoid repeated parsing and re-formatting).
+
+ - Added support for sorting by multiple columns (where equal values
+   are compared, try the next column in the list) and providing 
+   fallback columns (where a value needed for comparison is missing,
+   use the value provided by the fallback column).
+
+ - Dropped some third party libraries.
+
+ - Reimplemented parsing for ODS and added support for XLSX.
+   (This only searches for applicable XML content rather than
+    parsing everything.)
+
+ - Replaced the help system used in GUI mode.
+
+ - (GUI mode) replaced multiple import menu items with single import
+   dialog; (batch mode) added multi-purpose `--import` switch which
+   probes file to determine the likely file type (if the probe is
+   incorrect, you will need to use the applicable older switch, for
+   example `--csv` or `--probsoln`).
+
+ - (Batch mode) added `--tsv` to identify tab-separated files (since
+   it can be difficult to include a tab character in the command
+   line).
+
 v1.9 (2018-07-06):
 
  - Fixed --help and --version

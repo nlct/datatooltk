@@ -1,2 +1,2 @@
-Main-Class: com/dickimawbooks/datatooltk/combined/CombinedDatatoolTk
+Main-Class: com/dickimawbooks/datatooltk/basic/BasicDatatoolTk
 Class-Path: . datatooltklib.jar datatooltkguilib.jar mysql-connector-java.jar texparserlib.jar texjavahelplib.jar
