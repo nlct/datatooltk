@@ -338,8 +338,8 @@ public class DatatoolExcel implements DatatoolImport
               NumberFormat numFmt = settings.getNumericFormatter(type);
 
               if ((doubleValue == Math.floor(doubleValue))
-                   && doubleValue >= Integer.MIN_VALUE
-                   && doubleValue <= Integer.MAX_VALUE)
+                   && doubleValue >= -TeXParser.MAX_TEX_INT
+                   && doubleValue <= TeXParser.MAX_TEX_INT)
               {
                  type = DatumType.INTEGER;
                  num = Integer.valueOf((int)doubleValue);
@@ -354,6 +354,7 @@ public class DatatoolExcel implements DatatoolImport
            type = DatumType.STRING;
          break;
          case BOOLEAN:
+           strValue = cell.toString();
            num = Integer.valueOf(cell.getBooleanCellValue() ? 1 : 0);
            type = DatumType.INTEGER;
          break;
