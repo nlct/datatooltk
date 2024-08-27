@@ -408,6 +408,40 @@ public class DatatoolSettings
       decimalFormat = format;
    }
 
+   public String formatCurrency(String currencySym, double value)
+   {
+      Locale locale = getNumericLocale();
+      NumberFormat fmt;
+
+      if (currencyFormat != null)
+      {
+         fmt = currencyFormat;
+      }
+      else
+      {
+         fmt = NumberFormat.getCurrencyInstance(locale);
+      }
+
+      String text = fmt.format(value);
+
+      String locSym = fmt.getCurrency().getSymbol();
+
+      if (currencySym != null && !locSym.equals(currencySym))
+      {
+         int idx = text.indexOf(locSym);
+
+         if (idx > -1)
+         {
+            String pre = text.substring(0, idx);
+            String post = text.substring(idx + locSym.length());
+
+            text = pre + currencySym + post;
+         }
+      }
+
+      return text;
+   }
+
    public NumberFormat getNumericFormatter(DatumType type)
    {
       Locale locale = getNumericLocale();
