@@ -3461,7 +3461,29 @@ public class DatatoolDb
       }
 
       setValue(rowIdx, colIdx, value);
+   }
 
+   public void addCell(int rowIdx, int colIdx, Datum value)
+   {
+      // Do we have a column with index colIdx?
+
+      DatatoolHeader header = getHeader(colIdx);
+
+      if (header == null)
+      {
+         header = insertColumn(colIdx);
+      }
+
+      // Do we already have a row with index rowIdx ?
+
+      DatatoolRow row = getRow(rowIdx);
+
+      if (row == null)
+      {
+         row = insertRow(rowIdx);
+      }
+
+      setValue(rowIdx, colIdx, value);
    }
 
    // Get header from its key
@@ -4834,7 +4856,8 @@ public class DatatoolDb
    private MissingSortValueAction missingSortValueAction
      = MissingSortValueAction.REPLACE_NULL_ONLY;
 
-   public static final String NULL_VALUE="\\@dtlnovalue";
+   public static final String NULL_VALUE
+     ="\\" + DataToolBaseSty.OLD_NULL_VALUE_CSNAME;
 
    private static final Pattern PATTERN_END_DBSLASH 
     = Pattern.compile(".*[^\\\\](\\\\\\\\)+");
