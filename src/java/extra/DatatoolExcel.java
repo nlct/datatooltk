@@ -22,12 +22,19 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.Vector;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import java.text.NumberFormat;
+
 import javax.swing.JOptionPane;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
+import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+
 import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.*;
 
@@ -131,7 +138,7 @@ public class DatatoolExcel implements DatatoolImport
             return db;
          }
 
-         Vector<String> fields = new Vector<String>();
+         Vector<Datum> fields = new Vector<Datum>();
          CsvBlankOption blankOpt = importSettings.getBlankRowAction();
 
          int skipLines = importSettings.getSkipLines();
@@ -155,15 +162,16 @@ public class DatatoolExcel implements DatatoolImport
 
             for (int colIdx = 0, n = fields.size(); colIdx < n; colIdx++)
             {
-               String field = fields.get(colIdx);
+               Datum field = fields.get(colIdx);
+               String text = (field == null ? null : field.getText());
 
-               if (field.isEmpty())
+               if (text == null || text.isEmpty())
                {
-                  field = getMessageHandler().getLabelWithValues(
+                  text = getMessageHandler().getLabelWithValues(
                      "default.field", (colIdx+1));
                }
 
-               db.addColumn(new DatatoolHeader(db, field));
+               db.addColumn(new DatatoolHeader(db, text));
             }
          }
          else
@@ -182,7 +190,21 @@ public class DatatoolExcel implements DatatoolImport
                    (colIdx+1)));
                db.addColumn(header);
 
-               db.addCell(rowIdx, colIdx, fields.get(colIdx));
+               Datum datum = fields.get(colIdx);
+
+               if (datum == null)
+               {
+                  if (settings.isImportEmptyToNullOn())
+                  {
+                     datum = Datum.createNull(settings);
+                  }
+                  else
+                  {
+                     datum = new Datum(settings);
+                  }
+               }
+
+               db.addCell(rowIdx, colIdx, datum);
             }
 
             rowIdx++;
@@ -192,7 +214,21 @@ public class DatatoolExcel implements DatatoolImport
          {
             for (int colIdx = 0, n = fields.size(); colIdx < n; colIdx++)
             {
-               db.addCell(rowIdx, colIdx, fields.get(colIdx));
+               Datum datum = fields.get(colIdx);
+
+               if (datum == null)
+               {
+                  if (settings.isImportEmptyToNullOn())
+                  {
+                     datum = Datum.createNull(settings);
+                  }
+                  else
+                  {
+                     datum = new Datum(settings);
+                  }
+               }
+
+               db.addCell(rowIdx, colIdx, datum);
             }
             
             rowIdx++;
@@ -208,7 +244,7 @@ public class DatatoolExcel implements DatatoolImport
       return db;
    }
 
-   public Vector<String> readRow(Iterator<Row> rowIter, Vector<String> fields,
+   public Vector<Datum> readRow(Iterator<Row> rowIter, Vector<Datum> fields,
      CsvBlankOption blankOpt)
    {
       if (!rowIter.hasNext()) return null;
@@ -225,7 +261,14 @@ public class DatatoolExcel implements DatatoolImport
 
             for (Cell cell : row)
             {
-               fields.add(getCellValue(cell));
+               int colIdx = cell.getColumnIndex();
+
+               if (colIdx >= fields.size())
+               {
+                  fields.setSize(colIdx+1);
+               }
+
+               fields.set(colIdx, getCellValue(cell));
 
                empty = false;
             }
@@ -247,32 +290,89 @@ public class DatatoolExcel implements DatatoolImport
 
          for (Cell cell : row)
          {
-            fields.add(getCellValue(cell));
+            int colIdx = cell.getColumnIndex();
+
+            if (colIdx >= fields.size())
+            {
+               fields.setSize(colIdx+1);
+            }
+
+            fields.set(colIdx, getCellValue(cell));
          }
       }
 
       return fields;
    }
 
-   private String getCellValue(Cell cell)
+   protected Datum getCellValue(Cell cell)
    {
-      switch (cell.getCellType())
+      String strValue = null;
+      Number num = null;
+      String currencySym = null;
+      DatumType type = DatumType.UNKNOWN;
+
+      CellType cellType = cell.getCellType();
+
+      switch (cellType)
       {
          case NUMERIC:
          case FORMULA:
-           return ""+cell.getNumericCellValue();
+           double doubleValue = cell.getNumericCellValue();
+           num = Double.valueOf(doubleValue);
+           type = DatumType.DECIMAL;
+
+           String fmtStr = cell.getCellStyle().getDataFormatString();
+
+           Matcher m = CURRENCY_PATTERN.matcher(fmtStr);
+
+           if (m.matches())
+           {
+              currencySym = m.group(1);
+              type = DatumType.CURRENCY;
+              strValue = settings.formatCurrency(currencySym, doubleValue);
+
+              currencySym = mapFieldIfRequired(currencySym);
+           }
+           else
+           {
+              NumberFormat numFmt = settings.getNumericFormatter(type);
+
+              if ((doubleValue == Math.floor(doubleValue))
+                   && doubleValue >= Integer.MIN_VALUE
+                   && doubleValue <= Integer.MAX_VALUE)
+              {
+                 type = DatumType.INTEGER;
+                 num = Integer.valueOf((int)doubleValue);
+                 numFmt = settings.getNumericFormatter(type);
+              }
+
+              strValue = numFmt.format(doubleValue);
+           }
+         break;
+         case STRING:
+           strValue = cell.getStringCellValue();
+           type = DatumType.STRING;
+         break;
+         case BOOLEAN:
+           num = Integer.valueOf(cell.getBooleanCellValue() ? 1 : 0);
+           type = DatumType.INTEGER;
+         break;
          case BLANK:
-           return "";
+           if (!settings.isImportEmptyToNullOn())
+           {
+              strValue = "";
+           }
+         break;
       }
 
-      String value = cell.toString();
-
-      if (value == null)
+      if (strValue == null)
       {
-         return "\\@dtlnovalue ";
+         return Datum.createNull(settings);
       }
 
-      return mapFieldIfRequired(value);
+      strValue = mapFieldIfRequired(strValue);
+
+      return new Datum(type, strValue, currencySym, num, settings);
    }
 
    public String mapFieldIfRequired(String field)
@@ -317,4 +417,9 @@ public class DatatoolExcel implements DatatoolImport
 
    private DatatoolSettings settings;
    private ImportSettings importSettings;
+
+   // Not implementing style formatting, but try to pick out
+   // currency symbol from the format:
+   static final Pattern CURRENCY_PATTERN 
+      = Pattern.compile(".*\\[\\$([^-]+)-\\d+\\].*");
 }
