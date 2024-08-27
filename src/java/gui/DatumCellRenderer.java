@@ -34,6 +34,7 @@ import com.dickimawbooks.datatooltk.Datum;
  */
 public class DatumCellRenderer implements TableCellRenderer
 {
+   static final int SPACER=10, TOP_GAP=10;
    private DatatoolGuiResources resources;
 
    private JTextField typeField, currencyField, numField;
@@ -94,6 +95,7 @@ public class DatumCellRenderer implements TableCellRenderer
 
       datumInfoComponent = Box.createVerticalBox();
       datumInfoComponent.setOpaque(false);
+
       numComp.add(datumInfoComponent, BorderLayout.CENTER);
 
       JComponent rowComp;
@@ -106,6 +108,8 @@ public class DatumCellRenderer implements TableCellRenderer
 
       numComp.add(textComp, BorderLayout.NORTH);
 
+      datumInfoComponent.add(Box.createVerticalStrut(TOP_GAP));
+
       rowComp = createRow();
       datumInfoComponent.add(rowComp);
 
@@ -114,7 +118,10 @@ public class DatumCellRenderer implements TableCellRenderer
       typeField = createField();
       typeField.setText(resources.getTypeLabel(type));
 
+      rowComp.add(Box.createHorizontalStrut(SPACER));
       rowComp.add(typeField);
+
+      adjustRowSize(rowComp);
 
       JComponent valueRow = createRow();
       datumInfoComponent.add(valueRow);
@@ -122,7 +129,10 @@ public class DatumCellRenderer implements TableCellRenderer
       JLabel valueLabel = resources.createJLabel("celledit.numeric");
       valueRow.add(valueLabel);
       numField = createField();
+      valueRow.add(Box.createHorizontalStrut(SPACER));
       valueRow.add(numField);
+
+      adjustRowSize(valueRow);
 
       if (type == DatumType.CURRENCY)
       {
@@ -132,7 +142,9 @@ public class DatumCellRenderer implements TableCellRenderer
          currencyRow.add(resources.createJLabel("celledit.currency"));
          currencyField = createField();
 
+         currencyRow.add(Box.createHorizontalStrut(SPACER));
          currencyRow.add(currencyField);
+         adjustRowSize(currencyRow);
       }
 
       datumInfoComponent.add(Box.createVerticalGlue());
@@ -142,16 +154,18 @@ public class DatumCellRenderer implements TableCellRenderer
       return numComp;
    }
 
-   protected JComponent createRow()
+   protected void adjustRowSize(JComponent rowComp)
    {
-      return createRow(FlowLayout.LEADING);
+      Dimension pref = rowComp.getPreferredSize();
+      Dimension max = rowComp.getMaximumSize();
+      max.height = pref.height+10;
+      rowComp.setMaximumSize(max);
    }
 
-   protected JComponent createRow(int align)
+   protected JComponent createRow()
    {
-      JComponent comp = new JPanel(new FlowLayout(align, 2, 1));
+      JComponent comp = Box.createHorizontalBox();
       comp.setOpaque(false);
-
       return comp;
    }
 
