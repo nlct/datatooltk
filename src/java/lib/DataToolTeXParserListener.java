@@ -27,6 +27,7 @@ import com.dickimawbooks.texparserlib.latex.datatool.*;
 import com.dickimawbooks.texparserlib.latex.probsoln.*;
 
 public class DataToolTeXParserListener extends PreambleParser
+  implements NewRowReadListener
 {
    public DataToolTeXParserListener(DatatoolSettings settings)
      throws IOException
@@ -46,6 +47,7 @@ public class DataToolTeXParserListener extends PreambleParser
 
       datatoolSty = new DataToolSty(null, this, false);
       usepackage(datatoolSty, parser);
+      datatoolSty.addNewRowReadListener(this);
 
       probSolnSty = new ProbSolnSty(
          settings.getInitialRowCapacity(), true,
@@ -193,6 +195,27 @@ public class DataToolTeXParserListener extends PreambleParser
          ioSettings.setCsvLiteral(false);
          datatoolSty.setCsvLiteralMappingOn(false);
       }
+   }
+
+   @Override
+   public boolean acceptNewRowRead(NewRowReadEvent evt)
+   {
+      if (settings.isImportEmptyToNullOn())
+      {
+         DataObjectList row = evt.getRow();
+
+         for (int i = 0; i < row.size(); i++)
+         {
+            TeXObject obj = row.get(i);
+
+            if (obj.isEmpty())
+            {
+               row.set(i, new TeXCsRef(DataToolBaseSty.OLD_NULL_VALUE_CSNAME));
+            }
+         }
+      }
+
+      return true;
    }
 
    protected DataToolSty datatoolSty;
