@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 
+import com.dickimawbooks.texparserlib.TeXParser;
 import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 
