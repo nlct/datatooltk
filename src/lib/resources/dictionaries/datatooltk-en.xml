@@ -952,7 +952,7 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="header.type.int">Integer</entry>
 <entry key="header.type.int.mnemonic">R</entry>
 
-<entry key="header.type.real">Real</entry>
+<entry key="header.type.real">Decimal</entry>
 <entry key="header.type.real.mnemonic">A</entry>
 
 <entry key="header.type.string">String</entry>
