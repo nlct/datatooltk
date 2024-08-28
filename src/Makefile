@@ -102,6 +102,7 @@ doc/LICENSE	:
 	datatooltk/lib/poi-*.jar \
 	datatooltk/lib/apache-commons-io.jar \
 	datatooltk/lib/log4j-api.jar \
+	datatooltk/lib/log4j-core.jar \
 	datatooltk/lib/*.{html,png} \
 	datatooltk/lib/resources/ 
 
@@ -179,11 +180,11 @@ classes/com/dickimawbooks/datatooltk/extra/ExtraDatatoolTk.class	: classes/com/d
 	lib/poi-$(POIVER).jar lib/poi-ooxml-$(POIVER).jar \
 	lib/poi-ooxml-full-$(POIVER).jar \
 	lib/apache-commons-io.jar \
-	lib/log4j-api.jar 
+	lib/log4j-api.jar lib/log4j-core.jar 
 	cd java; \
 	javac $(target_version) -d ../classes \
 	 -Xlint:unchecked -Xlint:deprecation \
-	-cp ../lib/datatooltklib.jar:../lib/datatooltkguilib.jar:../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/texparserlib.jar \
+	-cp ../lib/datatooltklib.jar:../lib/datatooltkguilib.jar:../lib/texjavahelplib.jar:../lib/mysql-connector-java.jar:../lib/poi-$(POIVER).jar:../lib/poi-ooxml-$(POIVER).jar:../lib/poi-ooxml-full-$(POIVER).jar:../lib/apache-commons-io.jar:../lib/log4j-api.jar:../lib/log4j-core.jar:../lib/texparserlib.jar \
 	extra/*.java
 
 lib/datatooltk-restricted.jar	: lib/datatooltklib.jar java/restricted/Manifest.txt \
