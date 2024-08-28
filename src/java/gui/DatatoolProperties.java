@@ -2072,7 +2072,7 @@ public class DatatoolProperties extends DatatoolSettings
 
    public String getFontName()
    {
-      return getProperty("fontname");
+      return getProperty("fontname", "Monospaced");
    }
 
    public void setFontName(String name)
@@ -2101,6 +2101,40 @@ public class DatatoolProperties extends DatatoolSettings
    public Font getFont()
    {
       return new Font(getFontName(), Font.PLAIN, getFontSize());
+   }
+
+   public String getAnnotationFontName()
+   {
+      return getProperty("annotefontname", "SansSerif");
+   }
+
+   public void setAnnotationFontName(String name)
+   {
+      setProperty("annotefontname", name);
+   }
+
+   public int getAnnotationFontSize()
+   {
+      try
+      {
+         return Integer.parseInt(getProperty("annotefontsize"));
+      }
+      catch (NumberFormatException e)
+      {
+         return getFontSize()-2;
+      }
+   }
+
+   public void setAnnotationFontSize(int fontSize)
+   {
+      setProperty("annotefontsize", ""+fontSize);
+   }
+
+   public String getAnnotationFontRules()
+   {
+      return HelpFontSettings.getBodyFontRule(getAnnotationFontName(),
+        getAnnotationFontSize())
+       +  HelpFontSettings.getMonoFontRule(getFontName());
    }
 
    public void setCellWidth(int cellWidth, DatumType type)

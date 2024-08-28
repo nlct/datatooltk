@@ -27,6 +27,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.datatooltk.Datum;
 
 /**
@@ -34,12 +35,11 @@ import com.dickimawbooks.datatooltk.Datum;
  */
 public class DatumCellRenderer implements TableCellRenderer
 {
-   static final int SPACER=10, TOP_GAP=10;
+   static final int TOP_GAP = 10;
    private DatatoolGuiResources resources;
 
-   private JTextField typeField, currencyField, numField;
+   private JEditorPane datumInfoPane;
    private Component panel;
-   private JComponent datumInfoComponent;
    private JTextComponent textComp;
 
    private DatumType type;
@@ -93,12 +93,14 @@ public class DatumCellRenderer implements TableCellRenderer
       JComponent numComp = new JPanel(new BorderLayout());
       numComp.setOpaque(true);
 
-      datumInfoComponent = Box.createVerticalBox();
-      datumInfoComponent.setOpaque(false);
+      datumInfoPane = new JEditorPane("text/html",
+       getDatumHTML(type, null, null));
 
-      numComp.add(datumInfoComponent, BorderLayout.CENTER);
+      datumInfoPane.setOpaque(false);
+      datumInfoPane.setEditable(false);
+      datumInfoPane.setBorder(BorderFactory.createEmptyBorder(TOP_GAP,0,0,0));
 
-      JComponent rowComp;
+      numComp.add(datumInfoPane, BorderLayout.CENTER);
 
       JTextField textField = createField();
       textField.setHorizontalAlignment(JTextField.TRAILING);
@@ -108,65 +110,54 @@ public class DatumCellRenderer implements TableCellRenderer
 
       numComp.add(textComp, BorderLayout.NORTH);
 
-      datumInfoComponent.add(Box.createVerticalStrut(TOP_GAP));
-
-      rowComp = createRow();
-      datumInfoComponent.add(rowComp);
-
-      JLabel typeLabel = resources.createJLabel("celledit.type");
-      rowComp.add(typeLabel);
-      typeField = createField();
-      typeField.setText(resources.getTypeLabel(type));
-
-      rowComp.add(Box.createHorizontalStrut(SPACER));
-      rowComp.add(typeField);
-
-      adjustRowSize(rowComp);
-
-      JComponent valueRow = createRow();
-      datumInfoComponent.add(valueRow);
-
-      JLabel valueLabel = resources.createJLabel("celledit.numeric");
-      valueRow.add(valueLabel);
-      numField = createField();
-      valueRow.add(Box.createHorizontalStrut(SPACER));
-      valueRow.add(numField);
-
-      adjustRowSize(valueRow);
-
-      if (type == DatumType.CURRENCY)
-      {
-         JComponent currencyRow = createRow();
-         datumInfoComponent.add(currencyRow);
-
-         currencyRow.add(resources.createJLabel("celledit.currency"));
-         currencyField = createField();
-
-         currencyRow.add(Box.createHorizontalStrut(SPACER));
-         currencyRow.add(currencyField);
-         adjustRowSize(currencyRow);
-      }
-
-      datumInfoComponent.add(Box.createVerticalGlue());
-
-      datumInfoComponent.setVisible(resources.isCellDatumVisible());
+      datumInfoPane.setVisible(resources.isCellDatumVisible());
 
       return numComp;
    }
 
-   protected void adjustRowSize(JComponent rowComp)
+   protected String getDatumHTML(DatumType type, Number num,
+     String currency)
    {
-      Dimension pref = rowComp.getPreferredSize();
-      Dimension max = rowComp.getMaximumSize();
-      max.height = pref.height+10;
-      rowComp.setMaximumSize(max);
+      StringBuilder builder = new StringBuilder();
+
+      builder.append("<html><head><style>");
+      builder.append(resources.getSettings().getAnnotationFontRules());
+      builder.append("</style></head></body><strong>");
+
+      builder.append(resources.getMessage("celledit.type"));
+      builder.append("</strong> ");
+      builder.append(
+        TeXJavaHelpLib.encodeHTML(resources.getTypeLabel(type), false));
+
+      if (num != null)
+      {
+         builder.append("<br><strong>");
+         builder.append(resources.getMessage("celledit.numeric"));
+         builder.append("</strong> ");
+         builder.append(num.toString());
+      }
+
+      if (currency != null)
+      {
+         builder.append("<br><strong>");
+         builder.append(resources.getMessage("celledit.currency"));
+         builder.append("</strong> <code>");
+         builder.append(TeXJavaHelpLib.encodeHTML(currency, false));
+         builder.append("</code>");
+      }
+
+      builder.append("</body></html>");
+
+      return builder.toString();
    }
 
-   protected JComponent createRow()
+   protected void updateDatumInfo(DatumType type, Number num, String currency)
    {
-      JComponent comp = Box.createHorizontalBox();
-      comp.setOpaque(false);
-      return comp;
+      if (datumInfoPane != null)
+      {
+         datumInfoPane.setText(getDatumHTML(type, num, currency));
+         datumInfoPane.setVisible(resources.isCellDatumVisible());
+      }
    }
 
    protected JTextField createField()
@@ -235,36 +226,7 @@ public class DatumCellRenderer implements TableCellRenderer
       panel.setBackground(bg);
       panel.setForeground(fg);
 
-      if (typeField != null)
-      {
-         typeField.setText(resources.getTypeLabel(valType));
-      }
-
-      if (currencyField != null)
-      {
-         if (currencySym == null)
-         {
-            currencyField.setText("");
-         }
-         else
-         { 
-            currencyField.setText(currencySym);
-         }
-      }
-
-      if (numField != null)
-      {
-         if (num == null)
-         {
-            numField.setText("");
-         }
-         else
-         { 
-            numField.setText(num.toString());
-         }
-
-         datumInfoComponent.setVisible(resources.isCellDatumVisible());
-      }
+      updateDatumInfo(valType, num, currencySym);
 
       return panel;
    }
