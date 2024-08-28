@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:rpt="http://openoffice.org/2005/report" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
- <office:meta><dc:date>2024-07-31T14:24:58.398231224</dc:date><meta:editing-duration>PT8M1S</meta:editing-duration><meta:editing-cycles>1</meta:editing-cycles><meta:generator>LibreOffice/24.2.5.2$Linux_X86_64 LibreOffice_project/420$Build-2</meta:generator><meta:document-statistic meta:table-count="1" meta:cell-count="75" meta:object-count="0"/></office:meta>
+ <office:meta><dc:date>2024-08-28T11:15:50.669685451</dc:date><meta:editing-duration>PT32M51S</meta:editing-duration><meta:editing-cycles>3</meta:editing-cycles><meta:generator>LibreOffice/24.2.5.2$Linux_X86_64 LibreOffice_project/420$Build-2</meta:generator><meta:document-statistic meta:table-count="1" meta:cell-count="99" meta:object-count="0"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
    <config:config-item config:name="VisibleAreaTop" config:type="int">0</config:config-item>
    <config:config-item config:name="VisibleAreaLeft" config:type="int">0</config:config-item>
-   <config:config-item config:name="VisibleAreaWidth" config:type="int">18613</config:config-item>
+   <config:config-item config:name="VisibleAreaWidth" config:type="int">26986</config:config-item>
    <config:config-item config:name="VisibleAreaHeight" config:type="int">6322</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
@@ -14,7 +14,7 @@
      <config:config-item-map-named config:name="Tables">
       <config:config-item-map-entry config:name="booklist">
        <config:config-item config:name="CursorPositionX" config:type="int">0</config:config-item>
-       <config:config-item config:name="CursorPositionY" config:type="int">13</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">14</config:config-item>
        <config:config-item config:name="ActiveSplitRange" config:type="short">2</config:config-item>
        <config:config-item config:name="PositionLeft" config:type="int">0</config:config-item>
        <config:config-item config:name="PositionRight" config:type="int">0</config:config-item>
@@ -31,7 +31,7 @@
       </config:config-item-map-entry>
      </config:config-item-map-named>
      <config:config-item config:name="ActiveTable" config:type="string">booklist</config:config-item>
-     <config:config-item config:name="HorizontalScrollbarWidth" config:type="int">1294</config:config-item>
+     <config:config-item config:name="HorizontalScrollbarWidth" config:type="int">1187</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ZoomValue" config:type="int">100</config:config-item>
      <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
@@ -70,6 +70,15 @@
    <config:config-item config:name="EmbedFonts" config:type="boolean">false</config:config-item>
    <config:config-item config:name="EmbedLatinScriptFonts" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbedOnlyUsedFonts" config:type="boolean">false</config:config-item>
+   <config:config-item-map-indexed config:name="ForbiddenCharacters">
+    <config:config-item-map-entry>
+     <config:config-item config:name="Language" config:type="string">en</config:config-item>
+     <config:config-item config:name="Country" config:type="string">GB</config:config-item>
+     <config:config-item config:name="Variant" config:type="string"/>
+     <config:config-item config:name="BeginLine" config:type="string"/>
+     <config:config-item config:name="EndLine" config:type="string"/>
+    </config:config-item-map-entry>
+   </config:config-item-map-indexed>
    <config:config-item config:name="GridColor" config:type="int">12632256</config:config-item>
    <config:config-item config:name="HasColumnRowHeaders" config:type="boolean">true</config:config-item>
    <config:config-item config:name="HasSheetTabs" config:type="boolean">true</config:config-item>
@@ -81,9 +90,9 @@
    <config:config-item config:name="IsSnapToRaster" config:type="boolean">false</config:config-item>
    <config:config-item config:name="LinkUpdateMode" config:type="short">3</config:config-item>
    <config:config-item config:name="LoadReadonly" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="PrinterName" config:type="string">Generic Printer</config:config-item>
+   <config:config-item config:name="PrinterName" config:type="string">DCP-9020CDW</config:config-item>
    <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="PrinterSetup" config:type="base64Binary">tAH+/0dlbmVyaWMgUHJpbnRlcgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU0dFTlBSVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAMAoAAAAAAAAAAEAAhSAAAEdAAASm9iRGF0YSAxCnByaW50ZXI9R2VuZXJpYyBQcmludGVyCm9yaWVudGF0aW9uPVBvcnRyYWl0CmNvcGllcz0xCmNvbGxhdGU9ZmFsc2UKbWFyZ2luYWRqdXN0bWVudD0wLDAsJzAsMApjb2xvcmRlcHRoPTI0CmNvbG9yZGV2aWNlPTAKUFBEQ29udGV4dERhdGEKUGFnZVNpemU6QTQAABIAQ09NUEFUX0RVUExFWF9NT0RFDwBEdXBsZXhNb2RlOjpPZmYMAFBSSU5URVJfTkFNRQ8AR2VuZXJpYyBQcmludGVyCwBEUklWRVJfTkFNRQcAU0dFTlBSVA==</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">tQH+/0RDUC05MDIwQ0RXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ1VQUzpEQ1AtOTAyMENEVwAAAAAAAAAAAAAAAAAAAAAWAAMAnAAAAAAAAAAEAAhSAAAEdAAASm9iRGF0YSAxCnByaW50ZXI9RENQLTkwMjBDRFcKb3JpZW50YXRpb249UG9ydHJhaXQKY29waWVzPTEKY29sbGF0ZT1mYWxzZQptYXJnaW5hZGp1c3RtZW50PTAsMCwnMCwwCmNvbG9yZGVwdGg9MjQKY29sb3JkZXZpY2U9MApQUERDb250ZXh0RGF0YQpQYWdlU2l6ZTpBNAAAEgBDT01QQVRfRFVQTEVYX01PREUPAER1cGxleE1vZGU6Ok9mZgwAUFJJTlRFUl9OQU1FCwBEQ1AtOTAyMENEVwsARFJJVkVSX05BTUUQAENVUFM6RENQLTkwMjBDRFc=</config:config-item>
    <config:config-item config:name="RasterIsVisible" config:type="boolean">false</config:config-item>
    <config:config-item config:name="RasterResolutionX" config:type="int">1000</config:config-item>
    <config:config-item config:name="RasterResolutionY" config:type="int">1000</config:config-item>
@@ -107,7 +116,9 @@
  </office:settings>
  <office:scripts>
   <office:script script:language="ooo:Basic">
-   <ooo:libraries xmlns:ooo="http://openoffice.org/2004/office" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+   <ooo:libraries xmlns:ooo="http://openoffice.org/2004/office" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ooo:library-embedded ooo:name="Standard"/>
+   </ooo:libraries>
   </office:script>
  </office:scripts>
  <office:font-face-decls>
@@ -271,9 +282,15 @@
    <style:table-column-properties fo:break-before="auto" style:column-width="1.942cm"/>
   </style:style>
   <style:style style:name="co4" style:family="table-column">
-   <style:table-column-properties fo:break-before="auto" style:column-width="1.642cm"/>
+   <style:table-column-properties fo:break-before="auto" style:column-width="3.085cm"/>
   </style:style>
   <style:style style:name="co5" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="3.03cm"/>
+  </style:style>
+  <style:style style:name="co6" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="1.642cm"/>
+  </style:style>
+  <style:style style:name="co7" style:family="table-column">
    <style:table-column-properties fo:break-before="auto" style:column-width="2.258cm"/>
   </style:style>
   <style:style style:name="ro1" style:family="table-row">
@@ -285,20 +302,39 @@
   <number:number-style style:name="N2">
    <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1"/>
   </number:number-style>
+  <number:date-style style:name="N36" number:automatic-order="true">
+   <number:day number:style="long"/>
+   <number:text>/</number:text>
+   <number:month number:style="long"/>
+   <number:text>/</number:text>
+   <number:year number:style="long"/>
+  </number:date-style>
+  <number:date-style style:name="N72" number:automatic-order="true">
+   <number:day number:style="long"/>
+   <number:text>/</number:text>
+   <number:month number:style="long"/>
+   <number:text>/</number:text>
+   <number:year number:style="long"/>
+   <number:text> </number:text>
+   <number:hours number:style="long"/>
+   <number:text>:</number:text>
+   <number:minutes number:style="long"/>
+  </number:date-style>
   <style:style style:name="ce1" style:family="table-cell" style:parent-style-name="Default">
    <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
   </style:style>
+  <style:style style:name="ce5" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N36">
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce6" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N36"/>
+  <style:style style:name="ce7" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N72">
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce8" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N72"/>
   <style:style style:name="ce2" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N10124">
    <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
   </style:style>
   <style:style style:name="ce3" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N10124"/>
-  <style:style style:name="ce7" style:family="table-cell" style:parent-style-name="Default">
-   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
-  </style:style>
-  <style:style style:name="ce8" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N10124">
-   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
-  </style:style>
-  <style:style style:name="ce9" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N10124"/>
   <style:page-layout style:name="pm1">
    <style:page-layout-properties style:writing-mode="lr-tb"/>
    <style:header-style>
@@ -341,7 +377,7 @@
      <text:p><text:sheet-name>???</text:sheet-name><text:s/>(<text:title>???</text:title>)</text:p>
     </style:region-left>
     <style:region-right>
-     <text:p><text:date style:data-style-name="N2" text:date-value="2024-08-02">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="12:41:46.751685823">00:00:00</text:time></text:p>
+     <text:p><text:date style:data-style-name="N2" text:date-value="2024-08-28">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="10:40:26.426407734">00:00:00</text:time></text:p>
     </style:region-right>
    </style:header>
    <style:header-left style:display="false"/>
@@ -360,30 +396,38 @@
     <table:table-column table:style-name="co1" table:default-cell-style-name="Default"/>
     <table:table-column table:style-name="co2" table:default-cell-style-name="Default"/>
     <table:table-column table:style-name="co3" table:default-cell-style-name="Default"/>
-    <table:table-column table:style-name="co4" table:default-cell-style-name="Default"/>
-    <table:table-column table:style-name="co4" table:default-cell-style-name="ce9"/>
-    <table:table-column table:style-name="co5" table:default-cell-style-name="ce9"/>
-    <table:table-column table:style-name="co5" table:number-columns-repeated="16378" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co4" table:default-cell-style-name="ce6"/>
+    <table:table-column table:style-name="co5" table:default-cell-style-name="ce8"/>
+    <table:table-column table:style-name="co6" table:default-cell-style-name="Default"/>
+    <table:table-column table:style-name="co6" table:default-cell-style-name="ce3"/>
+    <table:table-column table:style-name="co7" table:default-cell-style-name="ce3"/>
+    <table:table-column table:style-name="co7" table:number-columns-repeated="16376" table:default-cell-style-name="Default"/>
     <table:table-row table:style-name="ro1">
-     <table:table-cell table:style-name="ce7" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:style-name="ce1" office:value-type="string" calcext:value-type="string">
       <text:p>Title</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce7" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:style-name="ce1" office:value-type="string" calcext:value-type="string">
       <text:p>Author</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce7" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:style-name="ce1" office:value-type="string" calcext:value-type="string">
       <text:p>Format</text:p>
      </table:table-cell>
+     <table:table-cell table:style-name="ce5" office:value-type="string" calcext:value-type="string">
+      <text:p>Publication Date</text:p>
+     </table:table-cell>
      <table:table-cell table:style-name="ce7" office:value-type="string" calcext:value-type="string">
+      <text:p>Purchased</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce1" office:value-type="string" calcext:value-type="string">
       <text:p>Quantity</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce8" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:style-name="ce2" office:value-type="string" calcext:value-type="string">
       <text:p>Price</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce8" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:style-name="ce2" office:value-type="string" calcext:value-type="string">
       <text:p>Total</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce7" table:number-columns-repeated="16378"/>
+     <table:table-cell table:style-name="ce1" table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -395,16 +439,22 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>paperback</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2015-09-30" calcext:value-type="date">
+      <text:p>30/09/2015</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2022-08-01T14:23:15" calcext:value-type="date">
+      <text:p>01/08/2022 14:23</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="3" calcext:value-type="float">
       <text:p>3</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="10.99" calcext:value-type="currency">
       <text:p>$10.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D2]*[.E2]" office:value-type="currency" office:currency="USD" office:value="32.97" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F2]*[.G2]" office:value-type="currency" office:currency="USD" office:value="32.97" calcext:value-type="currency">
       <text:p>$32.97</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -416,16 +466,22 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>paperback</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2015-10-29" calcext:value-type="date">
+      <text:p>29/10/2015</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2022-08-01T14:23:15" calcext:value-type="date">
+      <text:p>01/08/2022 14:23</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="5" calcext:value-type="float">
       <text:p>5</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="19.99" calcext:value-type="currency">
       <text:p>$19.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D3]*[.E3]" office:value-type="currency" office:currency="USD" office:value="99.95" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F3]*[.G3]" office:value-type="currency" office:currency="USD" office:value="99.95" calcext:value-type="currency">
       <text:p>$99.95</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -437,16 +493,22 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>paperback</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2016-01-31" calcext:value-type="date">
+      <text:p>31/01/2016</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2022-08-01T14:23:15" calcext:value-type="date">
+      <text:p>01/08/2022 14:23</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="1" calcext:value-type="float">
       <text:p>1</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="12.99" calcext:value-type="currency">
       <text:p>$12.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D4]*[.E4]" office:value-type="currency" office:currency="USD" office:value="12.99" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F4]*[.G4]" office:value-type="currency" office:currency="USD" office:value="12.99" calcext:value-type="currency">
       <text:p>$12.99</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -458,16 +520,22 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>paperback</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2018-06-01" calcext:value-type="date">
+      <text:p>01/06/2018</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2022-08-01T14:23:15" calcext:value-type="date">
+      <text:p>01/08/2022 14:23</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="3" calcext:value-type="float">
       <text:p>3</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="11.99" calcext:value-type="currency">
       <text:p>$11.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D5]*[.E5]" office:value-type="currency" office:currency="USD" office:value="35.97" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F5]*[.G5]" office:value-type="currency" office:currency="USD" office:value="35.97" calcext:value-type="currency">
       <text:p>$35.97</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -479,16 +547,22 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>hardback</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2015-10-01" calcext:value-type="date">
+      <text:p>01/10/2015</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2022-08-01T14:23:15" calcext:value-type="date">
+      <text:p>01/08/2022 14:23</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="3" calcext:value-type="float">
       <text:p>3</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="19.99" calcext:value-type="currency">
       <text:p>$19.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D6]*[.E6]" office:value-type="currency" office:currency="USD" office:value="59.97" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F6]*[.G6]" office:value-type="currency" office:currency="USD" office:value="59.97" calcext:value-type="currency">
       <text:p>$59.97</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -500,16 +574,22 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>hardback</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2015-09-30" calcext:value-type="date">
+      <text:p>30/09/2015</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2022-08-01T14:23:15" calcext:value-type="date">
+      <text:p>01/08/2022 14:23</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="9" calcext:value-type="float">
       <text:p>9</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="18.99" calcext:value-type="currency">
       <text:p>$18.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D7]*[.E7]" office:value-type="currency" office:currency="USD" office:value="170.91" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F7]*[.G7]" office:value-type="currency" office:currency="USD" office:value="170.91" calcext:value-type="currency">
       <text:p>$170.91</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -521,16 +601,22 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>paperback</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2018-07-31" calcext:value-type="date">
+      <text:p>31/07/2018</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2023-08-01T13:26:02" calcext:value-type="date">
+      <text:p>01/08/2023 13:26</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="20" calcext:value-type="float">
       <text:p>20</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="14.99" calcext:value-type="currency">
       <text:p>$14.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D8]*[.E8]" office:value-type="currency" office:currency="USD" office:value="299.8" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F8]*[.G8]" office:value-type="currency" office:currency="USD" office:value="299.8" calcext:value-type="currency">
       <text:p>$299.80</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -542,16 +628,22 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>ebook</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2016-03-01" calcext:value-type="date">
+      <text:p>01/03/2016</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2023-08-01T13:26:02" calcext:value-type="date">
+      <text:p>01/08/2023 13:26</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="10" calcext:value-type="float">
       <text:p>10</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="8.99" calcext:value-type="currency">
       <text:p>$8.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D9]*[.E9]" office:value-type="currency" office:currency="USD" office:value="89.9" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F9]*[.G9]" office:value-type="currency" office:currency="USD" office:value="89.9" calcext:value-type="currency">
       <text:p>$89.90</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -563,16 +655,22 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>ebook</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2020-01-01" calcext:value-type="date">
+      <text:p>01/01/2020</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2023-08-01T13:26:02" calcext:value-type="date">
+      <text:p>01/08/2023 13:26</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="50" calcext:value-type="float">
       <text:p>50</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="5.99" calcext:value-type="currency">
       <text:p>$5.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D10]*[.E10]" office:value-type="currency" office:currency="USD" office:value="299.5" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F10]*[.G10]" office:value-type="currency" office:currency="USD" office:value="299.5" calcext:value-type="currency">
       <text:p>$299.50</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -584,16 +682,23 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>hardback</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2020-03-30" calcext:value-type="date">
+      <text:p>30/03/2020</text:p>
+     </table:table-cell>
+     <table:table-cell/>
      <table:table-cell office:value-type="float" office:value="0" calcext:value-type="float">
       <text:p>0</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="59.99" calcext:value-type="currency">
       <text:p>$59.99</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D11]*[.E11]" office:value-type="currency" office:currency="USD" office:value="0" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F11]*[.G11]" office:value-type="currency" office:currency="USD" office:value="0" calcext:value-type="currency">
       <text:p>$0.00</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:style-name="Note" office:value-type="string" calcext:value-type="string">
+      <text:p>Out of stock</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="16375"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
@@ -605,33 +710,39 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>ebook</text:p>
      </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2022-12-01" calcext:value-type="date">
+      <text:p>01/12/2022</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="date" office:date-value="2023-08-01T13:26:02" calcext:value-type="date">
+      <text:p>01/08/2023 13:26</text:p>
+     </table:table-cell>
      <table:table-cell office:value-type="float" office:value="11" calcext:value-type="float">
       <text:p>11</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="currency" office:currency="USD" office:value="2" calcext:value-type="currency">
       <text:p>$2.00</text:p>
      </table:table-cell>
-     <table:table-cell table:formula="of:=[.D12]*[.E12]" office:value-type="currency" office:currency="USD" office:value="22" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=[.F12]*[.G12]" office:value-type="currency" office:currency="USD" office:value="22" calcext:value-type="currency">
       <text:p>$22.00</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell table:number-columns-repeated="16384"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
-     <table:table-cell table:style-name="ce7" office:value-type="string" calcext:value-type="string">
+     <table:table-cell table:style-name="ce1" office:value-type="string" calcext:value-type="string">
       <text:p>Totals</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="2"/>
-     <table:table-cell table:formula="of:=SUM([.D2:.D12])" office:value-type="float" office:value="115" calcext:value-type="float">
+     <table:table-cell table:number-columns-repeated="4"/>
+     <table:table-cell table:formula="of:=SUM([.F2:.F12])" office:value-type="float" office:value="115" calcext:value-type="float">
       <text:p>115</text:p>
      </table:table-cell>
      <table:table-cell/>
-     <table:table-cell table:formula="of:=SUM([.F2:.F12])" office:value-type="currency" office:currency="USD" office:value="1123.96" calcext:value-type="currency">
+     <table:table-cell table:formula="of:=SUM([.H2:.H12])" office:value-type="currency" office:currency="USD" office:value="1123.96" calcext:value-type="currency">
       <text:p>$1,123.96</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="16378"/>
+     <table:table-cell table:number-columns-repeated="16376"/>
     </table:table-row>
     <table:table-row table:style-name="ro1" table:number-rows-repeated="1048561">
      <table:table-cell table:number-columns-repeated="16384"/>
