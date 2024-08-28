@@ -619,58 +619,7 @@ public class OfficeOpenReader extends XMLReaderAdapter
                      text = datum.getText();
                   }
 
-                  String key = importSettings.getColumnKey(i);
-                  String title = importSettings.getColumnHeader(i);
-
-                  if (title == null || title.isEmpty())
-                  {
-                     title = text;
-                  }
-
-                  if (key == null)
-                  {
-                     if (!importSettings.isAutoKeysOn())
-                     {
-                        if (text == null)
-                        {
-                           key = title;
-                        }
-                        else
-                        {
-                           key = text;
-                        }
-                     }
-                  }
-
-                  if (title == null || title.isEmpty())
-                  {
-                     title = key;
-                  }
-
-                  if (key != null)
-                  {
-                     Matcher m = DatatoolDb.INVALID_LABEL_CONTENT.matcher(key);
-
-                     key = m.replaceAll("");
-
-                     if (importSettings.isTrimLabelsOn())
-                     {
-                        key = key.trim();
-                     }
-                  }
-
-                  if (key == null || key.isEmpty())
-                  {
-                     key = messageSystem.getMessageWithFallback(
-                      "default.field", "Field{0,number}", i);
-                  }
-
-                  if (importSettings.isTrimElementOn())
-                  {
-                     title = title.trim();
-                  }
-
-                  db.addColumn(new DatatoolHeader(db, key, title));
+                  db.addColumn(importSettings.createHeader(db, i, text));
                }
 
                inHeader = false;

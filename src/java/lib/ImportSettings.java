@@ -20,6 +20,7 @@ package com.dickimawbooks.datatooltk;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.regex.Matcher;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -536,6 +537,70 @@ public class ImportSettings
    public String[] getColumnHeaders()
    {
       return headers;
+   }
+
+   public DatatoolHeader createHeader(DatatoolDb db, int colIdx, String text)
+   {
+      String key = null;
+      String title = getColumnHeader(colIdx);
+
+      if (isAutoKeysOn())
+      {
+         key = getMessageHandler().getLabelWithValues(
+                     "default.field", (colIdx+1));
+      }
+      else
+      {
+         key = getColumnKey(colIdx);
+
+         if (key == null || key.isEmpty())
+         {
+            if (text != null)
+            {
+               key = text;
+            }
+
+            if (key == null || key.isEmpty())
+            {
+               key = getMessageHandler().getLabelWithValues(
+                     "default.field", (colIdx+1));
+            }
+         }
+      }
+
+      if (title == null || title.isEmpty())
+      {
+         if (text == null || text.isEmpty())
+         {
+            title = key;
+         }
+         else
+         {
+            title = text;
+         }
+      }
+
+      Matcher m = DatatoolDb.INVALID_LABEL_CONTENT.matcher(key);
+
+      key = m.replaceAll("");
+
+      if (isTrimLabelsOn())
+      {
+         key = key.trim();
+      }
+
+      if (isTrimElementOn())
+      {
+         title = title.trim();
+      }
+
+      if (key.isEmpty())
+      {
+         key = getMessageHandler().getLabelWithValues(
+            "default.field", "Field{0,number}", colIdx);
+      }
+
+      return new DatatoolHeader(db, key, title);
    }
 
    public Charset getTeXEncoding()

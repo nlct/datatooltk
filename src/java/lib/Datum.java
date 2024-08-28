@@ -109,6 +109,14 @@ public class Datum implements Comparable<Datum>
         settings);
    }
 
+   public void setToNull()
+   {
+      type = DatumType.UNKNOWN;
+      stringValue = DatatoolDb.NULL_VALUE;
+      numValue = null;
+      currencySymbol = null;
+   }
+
    public boolean isNull()
    {
       return stringValue.equals(DatatoolDb.NULL_VALUE);

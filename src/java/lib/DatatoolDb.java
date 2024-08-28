@@ -3700,6 +3700,11 @@ public class DatatoolDb
       return header.getType();
    }
 
+   public void setToNull(int rowIdx, int colIdx)
+   {
+      data.get(rowIdx).get(colIdx).setToNull();
+   }
+
    public void setValue(int rowIdx, int colIdx, String value)
    {
       setValue(rowIdx, colIdx, Datum.valueOf(value, getSettings()));
@@ -3724,6 +3729,7 @@ public class DatatoolDb
       return row.get(colIdx);
    }
 
+   // use getDatum(int,int)
    @Deprecated
    public Object getValue(int rowIdx, int colIdx)
    {

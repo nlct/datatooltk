@@ -662,8 +662,6 @@ public class OpenDocReader extends XMLReaderAdapter
       for (int i = startIdxIncl; i < endIdxExcl; i++)
       {
          String value = null;
-         String key = null;
-         String title = importSettings.getColumnHeader(i);
 
          if (i < currentRow.size())
          {
@@ -675,55 +673,7 @@ public class OpenDocReader extends XMLReaderAdapter
             }
          }
 
-         if (importSettings.isAutoKeysOn()
-          || value == null || value.isEmpty())
-         {
-            key = messageSystem.getMessageWithFallback(
-               "default.field", "Field{0,number}", i);
-         }
-         else
-         {
-            key = importSettings.getColumnKey(i);
-
-            if (key == null || key.isEmpty())
-            {
-               key = value;
-            }
-         }
-
-         if (title == null || title.isEmpty())
-         {
-            if (value == null || value.isEmpty())
-            {
-               title = key;
-            }
-            else
-            {
-               title = value;
-            }
-         }
-
-         Matcher m = DatatoolDb.INVALID_LABEL_CONTENT.matcher(key);
-
-         key = m.replaceAll("");
-
-         if (importSettings.isTrimLabelsOn())
-         {
-            key = key.trim();
-         }
-
-         if (importSettings.isTrimElementOn())
-         {
-            title = title.trim();
-         }
-
-         if (key.isEmpty())
-         {
-            key = messageSystem.getMessageWithFallback(
-               "default.field", "Field{0,number}", i);
-         }
-
-         db.addColumn(new DatatoolHeader(db, key, title),
+         db.addColumn(importSettings.createHeader(db, i, value),
            importSettings.isImportEmptyToNullOn());
       }
    }

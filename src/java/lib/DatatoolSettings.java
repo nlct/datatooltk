@@ -25,6 +25,7 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
 import java.text.Collator;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 import com.dickimawbooks.texparserlib.TeXApp;
 import com.dickimawbooks.texparserlib.TeXSyntaxException;
@@ -767,6 +769,11 @@ public class DatatoolSettings
       return importSettings.getColumnHeaders();
    }
 
+   public String getColumnHeader(int colIdx)
+   {
+      return importSettings.getColumnHeader(colIdx);
+   }
+
    public void setColumnKeys(String[] keys)
    {
       importSettings.setColumnKeys(keys);
@@ -777,6 +784,11 @@ public class DatatoolSettings
       return importSettings.getColumnKeys();
    }
 
+   public String getColumnKey(int colIdx)
+   {
+      return importSettings.getColumnKey(colIdx);
+   }
+
    public void setAutoKeys(boolean on)
    {
       importSettings.setAutoKeys(on);
@@ -785,6 +797,11 @@ public class DatatoolSettings
    public boolean isAutoKeysOn()
    {
       return importSettings.isAutoKeysOn();
+   }
+
+   public DatatoolHeader createHeader(DatatoolDb db, int colIdx, String text)
+   {
+      return importSettings.createHeader(db, colIdx, text);
    }
 
    public boolean hasCSVStrictQuotes()
@@ -1396,6 +1413,21 @@ public class DatatoolSettings
       return getTeXApp().createBufferedWriter(path, StandardCharsets.UTF_8);
    }
 
+   public String formatDate(Date date)
+   {
+      return DATE_FORMAT.format(date);
+   }
+
+   public String formatDateTime(Date date)
+   {
+      return DATE_TIME_FORMAT.format(date);
+   }
+
+   public String formatTime(Date date)
+   {
+      return TIME_FORMAT.format(date);
+   }
+
    protected int initialRowCapacity = 100;
    protected int initialColumnCapacity = 10;
    protected String defaultOutputFormat = null;
@@ -1477,4 +1509,11 @@ public class DatatoolSettings
    public static final String DICT_DIR = RESOURCES_PATH+"/dictionaries/";
 
    public static final String RESOURCE_PREFIX = "datatooltk-";
+
+   static final SimpleDateFormat DATE_TIME_FORMAT
+      = new SimpleDateFormat("y-MM-dd HH:mm:ss");
+   static final SimpleDateFormat DATE_FORMAT
+      = new SimpleDateFormat("y-MM-dd");
+   static final SimpleDateFormat TIME_FORMAT
+      = new SimpleDateFormat("HH:mm:ss");
 }

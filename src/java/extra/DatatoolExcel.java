@@ -166,13 +166,7 @@ public class DatatoolExcel implements DatatoolImport
                Datum field = fields.get(colIdx);
                String text = (field == null ? null : field.getText());
 
-               if (text == null || text.isEmpty())
-               {
-                  text = getMessageHandler().getLabelWithValues(
-                     "default.field", (colIdx+1));
-               }
-
-               db.addColumn(new DatatoolHeader(db, text));
+               db.addColumn(importSettings.createHeader(db, colIdx, text));
             }
          }
          else
@@ -186,10 +180,7 @@ public class DatatoolExcel implements DatatoolImport
 
             for (int colIdx = 0, n = fields.size(); colIdx < n; colIdx++)
             {
-               DatatoolHeader header = new DatatoolHeader(db,
-                 getMessageHandler().getLabelWithValues("default.field", 
-                   (colIdx+1)));
-               db.addColumn(header);
+               db.addColumn(importSettings.createHeader(db, colIdx, null));
 
                Datum datum = fields.get(colIdx);
 
@@ -202,6 +193,15 @@ public class DatatoolExcel implements DatatoolImport
                   else
                   {
                      datum = new Datum(settings);
+                  }
+               }
+
+               if (colIdx >= db.getColumnCount())
+               {
+                  for (int i = db.getColumnCount(); i <= colIdx; i++)
+                  {
+                     db.addColumn(importSettings.createHeader(db, i, null),
+                       importSettings.isImportEmptyToNullOn());
                   }
                }
 
@@ -229,7 +229,24 @@ public class DatatoolExcel implements DatatoolImport
                   }
                }
 
+               if (colIdx >= db.getColumnCount())
+               {
+                  for (int i = db.getColumnCount(); i <= colIdx; i++)
+                  {
+                     db.addColumn(importSettings.createHeader(db, i, null),
+                       importSettings.isImportEmptyToNullOn());
+                  }
+               }
+
                db.addCell(rowIdx, colIdx, datum);
+            }
+
+            if (importSettings.isImportEmptyToNullOn())
+            {
+               for (int i = fields.size(); i < db.getColumnCount(); i++)
+               {
+                  db.setToNull(rowIdx, i);
+               }
             }
             
             rowIdx++;
@@ -334,6 +351,24 @@ public class DatatoolExcel implements DatatoolImport
 
               currencySym = mapFieldIfRequired(currencySym);
            }
+           else if (DATE_TIME_PATTERN.matcher(fmtStr).matches())
+           {
+              type = DatumType.STRING;
+              num = null;
+              strValue = settings.formatDateTime(cell.getDateCellValue());
+           }
+           else if (DATE_PATTERN.matcher(fmtStr).matches())
+           {
+              type = DatumType.STRING;
+              num = null;
+              strValue = settings.formatDate(cell.getDateCellValue());
+           }
+           else if (TIME_PATTERN.matcher(fmtStr).matches())
+           {
+              type = DatumType.STRING;
+              num = null;
+              strValue = settings.formatTime(cell.getDateCellValue());
+           }
            else
            {
               NumberFormat numFmt = settings.getNumericFormatter(type);
@@ -424,4 +459,12 @@ public class DatatoolExcel implements DatatoolImport
    // currency symbol from the format:
    static final Pattern CURRENCY_PATTERN 
       = Pattern.compile(".*\\[\\$([^-]+)-\\d+\\].*");
+   // Likewise, try to detect if the format indicates a date/time
+   static final Pattern DATE_TIME_PATTERN
+      = Pattern.compile(".*(yy.*hh?|hh?.*yy).*");
+   static final Pattern DATE_PATTERN
+      = Pattern.compile(".*yy.*");
+   static final Pattern TIME_PATTERN
+      = Pattern.compile(".*hh?.*");
+
 }
