@@ -39,6 +39,10 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.Temporal;
+
 import com.dickimawbooks.texparserlib.TeXApp;
 import com.dickimawbooks.texparserlib.TeXSyntaxException;
 import com.dickimawbooks.texparserlib.latex.datatool.AddDelimiterOption;
@@ -47,6 +51,7 @@ import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
 import com.dickimawbooks.texparserlib.latex.datatool.EscapeCharsOption;
 import com.dickimawbooks.texparserlib.latex.datatool.FileFormatType;
 import com.dickimawbooks.texparserlib.latex.datatool.IOSettings;
+import com.dickimawbooks.texparserlib.latex.datatool.Julian;
 import com.dickimawbooks.texjavahelplib.*;
 
 import com.dickimawbooks.datatooltk.io.DatatoolPasswordReader;
@@ -380,6 +385,76 @@ public class DatatoolSettings
       useSiForDecimals = enable;
    }
 
+   public boolean useFmtForTemporal()
+   {
+      return useFmtForTemporal;
+   }
+
+   public void setUseFmtForTemporal(boolean enable)
+   {
+      useFmtForTemporal = enable;
+   }
+
+   public void setDateFormatStyle(FormatStyle style)
+   {
+      dateFormatStyle = style;
+
+      if (datetimeLocale != null)
+      {
+         dateFormat = DateTimeFormatter.ofLocalizedDate(dateFormatStyle);
+
+         if (!datetimeLocale.equals(dateFormat.getLocale()))
+         {
+            dateFormat = dateFormat.withLocale(datetimeLocale);
+         }
+      }
+   }
+
+   public FormatStyle getDateFormatStyle()
+   {
+      return dateFormatStyle;
+   }
+
+   public void setDateTimeFormatStyle(FormatStyle style)
+   {
+      datetimeFormatStyle = style;
+
+      if (datetimeLocale != null)
+      {
+         datetimeFormat = DateTimeFormatter.ofLocalizedDateTime(datetimeFormatStyle);
+
+         if (!datetimeLocale.equals(datetimeFormat.getLocale()))
+         {
+            datetimeFormat = datetimeFormat.withLocale(datetimeLocale);
+         }
+      }
+   }
+
+   public FormatStyle getDateTimeFormatStyle()
+   {
+      return datetimeFormatStyle;
+   }
+
+   public void setTimeFormatStyle(FormatStyle style)
+   {
+      timeFormatStyle = style;
+
+      if (datetimeLocale != null)
+      {
+         timeFormat = DateTimeFormatter.ofLocalizedTime(timeFormatStyle);
+
+         if (!datetimeLocale.equals(timeFormat.getLocale()))
+         {
+            timeFormat = timeFormat.withLocale(datetimeLocale);
+         }
+      }
+   }
+
+   public FormatStyle getTimeFormatStyle()
+   {
+      return timeFormatStyle;
+   }
+
    public boolean isIntegerFormatterSet()
    {
       return integerFormat != null;
@@ -510,7 +585,7 @@ public class DatatoolSettings
    {
       if (numericLocale == null)
       {
-         numericLocale = Locale.getDefault(Locale.Category.FORMAT);
+         return getTeXApp().getDefaultLocale(Locale.Category.FORMAT);
       }
 
       return numericLocale;
@@ -519,6 +594,57 @@ public class DatatoolSettings
    public void setNumericLocale(Locale locale)
    {
       numericLocale = locale;
+   }
+
+   public void setDateTimeLocale(Locale locale)
+   {
+      datetimeLocale = locale;
+
+      if (locale == null)
+      {
+         dateFormat = DateTimeFormatter.ISO_DATE;
+         datetimeFormat = DateTimeFormatter.ISO_DATE_TIME;
+         timeFormat = DateTimeFormatter.ISO_TIME;
+      }
+      else
+      {
+         dateFormat = DateTimeFormatter.ofLocalizedDate(dateFormatStyle);
+
+         if (!locale.equals(dateFormat.getLocale()))
+         {
+            dateFormat = dateFormat.withLocale(locale);
+         }
+
+         if (timeFormat == null)
+         {
+            timeFormat = DateTimeFormatter.ofLocalizedDate(timeFormatStyle);
+         }
+
+         if (!locale.equals(timeFormat.getLocale()))
+         {
+            timeFormat = timeFormat.withLocale(locale);
+         }
+
+         if (datetimeFormat == null)
+         {
+            datetimeFormat = DateTimeFormatter.ofLocalizedDate(datetimeFormatStyle);
+         }
+
+         if (!locale.equals(datetimeFormat.getLocale()))
+         {
+            datetimeFormat = datetimeFormat.withLocale(locale);
+         }
+      }
+   }
+
+   public Locale getDateTimeLocale()
+   {
+      if (datetimeLocale == null)
+      {
+         return getTeXApp().getDefaultLocale(Locale.Category.FORMAT);
+      }
+
+      return datetimeLocale;
    }
 
    public Collator getSortCollator()
@@ -1413,19 +1539,25 @@ public class DatatoolSettings
       return getTeXApp().createBufferedWriter(path, StandardCharsets.UTF_8);
    }
 
-   public String formatDate(Date date)
+   public String formatTemporal(Julian julian)
    {
-      return DATE_FORMAT.format(date);
-   }
+      Temporal temporal = julian.getTemporal();
 
-   public String formatDateTime(Date date)
-   {
-      return DATE_TIME_FORMAT.format(date);
-   }
-
-   public String formatTime(Date date)
-   {
-      return TIME_FORMAT.format(date);
+      if (julian.hasDate())
+      {
+         if (julian.hasTime())
+         {
+            return datetimeFormat.format(temporal);
+         }
+         else
+         {
+            return dateFormat.format(temporal);
+         }
+      }
+      else
+      {
+         return timeFormat.format(temporal);
+      }
    }
 
    protected int initialRowCapacity = 100;
@@ -1439,12 +1571,22 @@ public class DatatoolSettings
    protected boolean isCurrencyDbTeX3DatumValueOn = true;
    protected DbTeX3DatumValue dbtex3DatumValue = DbTeX3DatumValue.HEADER;
    protected boolean useSiForDecimals = false;
+   protected boolean useFmtForTemporal = false;
    protected DecimalFormat integerFormat = null;
    protected DecimalFormat currencyFormat = null;
    protected DecimalFormat decimalFormat = null;
    protected DecimalFormat numericParser = null;
    protected Locale numericLocale = null;
    protected Locale sortLocale = null;
+   protected Locale datetimeLocale = null;
+
+   protected FormatStyle dateFormatStyle = FormatStyle.SHORT;
+   protected FormatStyle timeFormatStyle = FormatStyle.SHORT;
+   protected FormatStyle datetimeFormatStyle = FormatStyle.SHORT;
+
+   protected DateTimeFormatter dateFormat = DateTimeFormatter.ISO_DATE;
+   protected DateTimeFormatter timeFormat = DateTimeFormatter.ISO_TIME;
+   protected DateTimeFormatter datetimeFormat = DateTimeFormatter.ISO_DATE_TIME;
 
    protected String sqlHost = "localhost";
    protected String sqlPrefix = "jdbc:mysql://";
@@ -1511,7 +1653,7 @@ public class DatatoolSettings
    public static final String RESOURCE_PREFIX = "datatooltk-";
 
    static final SimpleDateFormat DATE_TIME_FORMAT
-      = new SimpleDateFormat("y-MM-dd HH:mm:ss");
+      = new SimpleDateFormat("y-MM-dd'T'HH:mm:ss");
    static final SimpleDateFormat DATE_FORMAT
       = new SimpleDateFormat("y-MM-dd");
    static final SimpleDateFormat TIME_FORMAT

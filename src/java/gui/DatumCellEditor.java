@@ -19,6 +19,9 @@
 package com.dickimawbooks.datatooltk.gui;
 
 import java.util.EventObject;
+import java.util.Locale;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -27,6 +30,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.Julian;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -57,6 +61,8 @@ public class DatumCellEditor extends DefaultCellEditor
 
       rowComp.add(resources.createJLabel("celledit.type", typeBox));
       rowComp.add(typeBox);
+
+      midComp.add(createTemporalComponents());
 
       currencyRow = createRow();
       midComp.add(currencyRow);
@@ -104,6 +110,83 @@ public class DatumCellEditor extends DefaultCellEditor
       autoReparseBox.setSelected(true);
    }
 
+   protected JComponent createTemporalComponents()
+   {
+      DatatoolGuiResources resources = gui.getResources();
+
+      temporalCardLayout = new CardLayout();
+      temporalComp = new JPanel(temporalCardLayout);
+
+      Locale locale = resources.getSettings().getDateTimeLocale();
+      String pattern;
+      DateFormat df;
+
+      JComponent datetimeRow = createRow();
+      temporalComp.add(datetimeRow, "datetime");
+
+      df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
+
+      if (df instanceof SimpleDateFormat)
+      {
+         pattern = ((SimpleDateFormat)df).toPattern();
+      }
+      else
+      {
+         pattern = "yyyy-mm-dd hh:mm:ss";
+      }
+
+      datetimeSpinnerModel = new SpinnerDateModel();
+      datetimeSpinner = new JSpinner(datetimeSpinnerModel);
+      datetimeSpinner.setEditor(new JSpinner.DateEditor(datetimeSpinner, pattern));
+
+      datetimeRow.add(resources.createJLabel("celledit.datetime", datetimeSpinner));
+      datetimeRow.add(datetimeSpinner);
+
+      JComponent dateRow = createRow();
+      temporalComp.add(dateRow, "date");
+
+      df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+
+      if (df instanceof SimpleDateFormat)
+      {
+         pattern = ((SimpleDateFormat)df).toPattern();
+      }
+      else
+      {
+         pattern = "yyyy-mm-dd";
+      }
+
+      dateSpinnerModel = new SpinnerDateModel();
+      dateSpinner = new JSpinner(dateSpinnerModel);
+      dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, pattern));
+
+      dateRow.add(resources.createJLabel("celledit.date", dateSpinner));
+      dateRow.add(dateSpinner);
+
+      JComponent timeRow = createRow();
+      temporalComp.add(timeRow, "time");
+
+      df = DateFormat.getTimeInstance(DateFormat.SHORT, locale);
+
+      if (df instanceof SimpleDateFormat)
+      {
+         pattern = ((SimpleDateFormat)df).toPattern();
+      }
+      else
+      {
+         pattern = "hh:mm:ss";
+      }
+
+      timeSpinnerModel = new SpinnerDateModel();
+      timeSpinner = new JSpinner(timeSpinnerModel);
+      timeSpinner.setEditor(new JSpinner.DateEditor(timeSpinner, pattern));
+
+      timeRow.add(resources.createJLabel("celledit.time", timeSpinner));
+      timeRow.add(timeSpinner);
+
+      return temporalComp;
+   }
+
    protected JComponent createRow()
    {
       JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -145,6 +228,7 @@ public class DatumCellEditor extends DefaultCellEditor
       midCompSp.setVisible(!autoOn);
       currencyRow.setVisible(false);
       valueRow.setVisible(false);
+      temporalComp.setVisible(false);
       autoReformatBox.setVisible(false);
 
       if (!autoOn)
@@ -154,7 +238,8 @@ public class DatumCellEditor extends DefaultCellEditor
          if (type.isNumeric())
          {
             autoReformatBox.setVisible(true);
-            valueRow.setVisible(true);
+            valueRow.setVisible(!type.isTemporal());
+            temporalComp.setVisible(!valueRow.isVisible());
 
             switch (type)
             {
@@ -166,6 +251,16 @@ public class DatumCellEditor extends DefaultCellEditor
                  // fall through
                case DECIMAL:
                  valueCardLayout.show(valueRow, "dec");
+               break;
+               case DATE:
+                 temporalCardLayout.show(temporalComp, "date");
+               break;
+               case TIME:
+                 temporalCardLayout.show(temporalComp, "time");
+               break;
+               case DATETIME:
+                 temporalCardLayout.show(temporalComp, "datetime");
+               break;
             }
          }
       }
@@ -190,6 +285,13 @@ public class DatumCellEditor extends DefaultCellEditor
            catch (NumberFormatException e)
            {
            }
+         break;
+         case DATE:
+            return Long.valueOf(dateSpinnerModel.getDate().getTime()); 
+         case TIME:
+            return Long.valueOf(timeSpinnerModel.getDate().getTime()); 
+         case DATETIME:
+            return Long.valueOf(datetimeSpinnerModel.getDate().getTime()); 
       }
 
       return Integer.valueOf(0);
@@ -206,6 +308,7 @@ public class DatumCellEditor extends DefaultCellEditor
       DatumType type = typeBox.getSelectedType();
       String currencySym = null;
       Number num = null;
+      Julian julian = null;
 
       switch (type)
       {
@@ -224,16 +327,29 @@ public class DatumCellEditor extends DefaultCellEditor
            {
               num = Double.valueOf(0);
            }
+         break;
+         case DATE:
+           julian = Julian.createDay(dateSpinnerModel.getDate(),
+             gui.getSettings().getDateTimeLocale());
+         break;
+         case TIME:
+           julian = Julian.createTime(timeSpinnerModel.getDate(),
+             gui.getSettings().getDateTimeLocale());
+         break;
+         case DATETIME:
+           julian = Julian.createDate(datetimeSpinnerModel.getDate(),
+             gui.getSettings().getDateTimeLocale());
+         break;
       }
 
       String text = getTextField().getText();
 
       if (autoReformatBox.isSelected() && type.isNumeric())
       {
-         return Datum.format(type, currencySym, num, gui.getSettings());
+         return Datum.format(type, currencySym, num, julian, gui.getSettings());
       }
 
-      return new Datum(type, text, currencySym, num, gui.getSettings());
+      return new Datum(type, text, currencySym, num, julian, gui.getSettings());
    }
 
    @Override
@@ -306,11 +422,12 @@ public class DatumCellEditor extends DefaultCellEditor
    private JTextField currencyField;
    private Number orgValue = Integer.valueOf(0);
 
-   private JSpinner intSpinner;
+   private JSpinner intSpinner, dateSpinner, datetimeSpinner, timeSpinner;
    private SpinnerNumberModel intSpinnerModel;
    private JTextField decimalField;
-   private CardLayout valueCardLayout;
-   private JComponent currencyRow, valueRow;
+   private CardLayout valueCardLayout, temporalCardLayout;
+   private JComponent currencyRow, valueRow, temporalComp;
+   private SpinnerDateModel dateSpinnerModel, timeSpinnerModel, datetimeSpinnerModel;
 
    private JCheckBox autoReparseBox, autoReformatBox;
 }

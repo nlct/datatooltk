@@ -667,6 +667,9 @@ the \strong'{'lazy'}' dog.
 <entry key="preferences.tex.save_datum.type.decimal">Decimal</entry>
 <entry key="preferences.tex.save_datum.type.currency">Currency</entry>
 <entry key="preferences.tex.save_datum.type.string">String</entry>
+<entry key="preferences.tex.save_datum.type.date">Date</entry>
+<entry key="preferences.tex.save_datum.type.time">Time</entry>
+<entry key="preferences.tex.save_datum.type.datetime">Date-Time</entry>
 
 <entry key="preferences.tex.import">Imported Data</entry>
 
@@ -789,6 +792,12 @@ the \strong'{'lazy'}' dog.
 <entry key="celledit.currency.mnemonic">Y</entry>
 <entry key="celledit.numeric">Value:</entry>
 <entry key="celledit.numeric.mnemonic">V</entry>
+<entry key="celledit.date">Date:</entry>
+<entry key="celledit.date.mnemonic">D</entry>
+<entry key="celledit.time">Time:</entry>
+<entry key="celledit.time.mnemonic">T</entry>
+<entry key="celledit.datetime">Timestamp:</entry>
+<entry key="celledit.datetime.mnemonic">M</entry>
 
 
 <entry key="message.celledit.not_numeric">Text is not numeric.
@@ -960,6 +969,15 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="header.type.unset">Unset</entry>
 <entry key="header.type.unset.mnemonic">T</entry>
+
+<entry key="header.type.date">Date</entry>
+<entry key="header.type.date.mnemonic">D</entry>
+
+<entry key="header.type.time">Time</entry>
+<entry key="header.type.time.mnemonic">M</entry>
+
+<entry key="header.type.datetime">Date-Time</entry>
+<entry key="header.type.datetime.mnemonic">E</entry>
 
 <!-- New From Template Dialog -->
 

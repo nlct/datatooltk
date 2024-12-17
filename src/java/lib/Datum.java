@@ -40,6 +40,7 @@ import com.dickimawbooks.texparserlib.latex.datatool.DataNumericElement;
 import com.dickimawbooks.texparserlib.latex.datatool.DataToolBaseSty;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumElement;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.Julian;
 
 public class Datum implements Comparable<Datum>
 {
@@ -70,12 +71,49 @@ public class Datum implements Comparable<Datum>
    public Datum(String stringValue, String currencySymbol, Number num,
       DatatoolSettings settings)
    {
+      this(stringValue, currencySymbol, num, null, settings);
+   }
+
+   public Datum(String stringValue, String currencySymbol, Number num,
+      Julian julian, DatatoolSettings settings)
+   {
       this.settings = settings;
       this.stringValue = stringValue;
       this.currencySymbol = currencySymbol;
       this.numValue = num;
+      this.julian = julian;
 
-      if (num == null)
+      if (julian != null)
+      {
+         if (julian.hasDate() && julian.hasTime())
+         {
+            type = DatumType.DATETIME;
+
+            if (num == null)
+            {
+               num = Double.valueOf(julian.getJulianDate());
+            }
+         }
+         else if (julian.hasTime())
+         {
+            type = DatumType.TIME;
+
+            if (num == null)
+            {
+               num = Double.valueOf(julian.getJulianTime());
+            }
+         }
+         else
+         {
+            type = DatumType.DATE;
+
+            if (num == null)
+            {
+               num = Integer.valueOf(julian.getJulianDay());
+            }
+         }
+      }
+      else if (num == null)
       {
          type = DatumType.STRING;
       }
@@ -96,11 +134,40 @@ public class Datum implements Comparable<Datum>
    public Datum(DatumType type, String stringValue, String currencySymbol,
      Number numValue, DatatoolSettings settings)
    {
+      this(type, stringValue, currencySymbol, numValue, null, settings);
+   }
+
+   public Datum(DatumType type, String stringValue, 
+     Julian julian, DatatoolSettings settings)
+   {
+      this(type, stringValue, null, null, julian, settings);
+   }
+
+   public Datum(DatumType type, String stringValue, String currencySymbol,
+     Number num, Julian julian, DatatoolSettings settings)
+   {
       this.settings = settings;
       this.type = type;
       this.stringValue = stringValue;
       this.currencySymbol = currencySymbol;
-      this.numValue = numValue;
+      this.numValue = num;
+      this.julian = julian;
+
+      if (julian != null && numValue == null)
+      {
+         if (julian.hasDate() && julian.hasTime())
+         {
+            numValue = Double.valueOf(julian.getJulianDate());
+         }
+         else if (julian.hasTime())
+         {
+            numValue = Double.valueOf(julian.getJulianTime());
+         }
+         else
+         {
+            numValue = Integer.valueOf(julian.getJulianDay());
+         }
+      }
    }
 
    public static Datum createNull(DatatoolSettings settings)
@@ -115,6 +182,7 @@ public class Datum implements Comparable<Datum>
       stringValue = DatatoolDb.NULL_VALUE;
       numValue = null;
       currencySymbol = null;
+      julian = null;
    }
 
    public boolean isNull()
@@ -133,6 +201,7 @@ public class Datum implements Comparable<Datum>
       DatumType elemType = DatumType.UNKNOWN;
       Number elemValue = null;
       String sym = null;
+      Julian julian = null;
       TeXObject content = entryContents;
 
       if (entryContents instanceof DatumElement)
@@ -140,6 +209,12 @@ public class Datum implements Comparable<Datum>
          DatumElement elem = (DatumElement)entryContents;
          content = elem.getOriginal();
          elemType = elem.getDatumType();
+         julian = elem.getJulian();
+
+         if (julian == null && elemType.isTemporal())
+         {
+            elemType = DatumType.STRING;
+         }
 
          if (elemType.isNumeric())
          {
@@ -170,6 +245,12 @@ public class Datum implements Comparable<Datum>
          DataElement elem = (DataElement)entryContents;
          content = elem.getContent(parser);
          elemType = elem.getDatumType();
+         julian = elem.getJulian();
+
+         if (julian == null && elemType.isTemporal())
+         {
+            elemType = DatumType.STRING;
+         }
 
          if (elemType == DatumType.CURRENCY)
          {
@@ -222,7 +303,7 @@ public class Datum implements Comparable<Datum>
       }
       else
       {
-         return new Datum(elemType, text, sym, elemValue, settings);
+         return new Datum(elemType, text, sym, elemValue, julian, settings);
       }
    }
 
@@ -259,6 +340,19 @@ public class Datum implements Comparable<Datum>
          {// shouldn't happen
             settings.getMessageHandler().debug(e);
          }
+      }
+
+      // Try date/time
+
+      Julian julian = null;
+
+      try
+      {
+         julian = Julian.create(text);
+         return new Datum(julian.getDatumType(), text, julian, settings);
+      }
+      catch (IllegalArgumentException e)
+      {// not date/time
       }
 
       // Try if the text is formatted according to the
@@ -413,6 +507,16 @@ public class Datum implements Comparable<Datum>
       this.currencySymbol = sym;
    }
 
+   public void setJulian(Julian julian)
+   {
+      this.julian = julian;
+   }
+
+   public Julian getJulian()
+   {
+      return julian;
+   }
+
    @Override
    public String toString()
    {
@@ -432,6 +536,21 @@ public class Datum implements Comparable<Datum>
          case CURRENCY:
             numStr = String.format((Locale)null, "%g", doubleValue());
          break;
+         case DATETIME:
+            numStr = String.format((Locale)null,
+              "\\DTLtemporalvalue{%g}{%s}",
+              julian.getJulianDate(), julian.getTimeStamp());
+         break;
+         case TIME:
+            numStr = String.format((Locale)null,
+              "\\DTLtemporalvalue{%g}{%s}",
+              julian.getJulianTime(), julian.getTimeStamp());
+         break;
+         case DATE:
+            numStr = String.format((Locale)null,
+              "\\DTLtemporalvalue{%d}{%s}",
+              julian.getJulianDay(), julian.getTimeStamp());
+         break;
       }
 
       return String.format((Locale)null, "{%s}{%s}{%s}{%d}",
@@ -444,6 +563,7 @@ public class Datum implements Comparable<Datum>
       return numValue != null && type.isNumeric();
    }
 
+   @Deprecated
    public boolean overrides(DatumType other)
    {
       return type.overrides(other);
@@ -489,9 +609,12 @@ public class Datum implements Comparable<Datum>
 
       switch (compareType)
       {
+         case DATE:
          case INTEGER:
            result = Integer.compare(intValue(), other.intValue());
          break;
+         case TIME:
+         case DATETIME:
          case DECIMAL:
            result = Double.compare(doubleValue(), other.doubleValue());
          break;
@@ -558,12 +681,15 @@ public class Datum implements Comparable<Datum>
       {
          switch (type)
          {
+            case DATE:
             case INTEGER:
-              if (other.type == DatumType.INTEGER)
+              if (other.type == type)
               {
                  result = Integer.compare(intValue(), other.intValue());
                  break;
               }
+            case TIME:
+            case DATETIME:
             case DECIMAL:
             case CURRENCY:
               // currency symbol is ignored unless values are equal
@@ -645,6 +771,17 @@ public class Datum implements Comparable<Datum>
       {
          stringValue = String.format("\\num{%g}", doubleValue());
       }
+      else if (dataType.isTemporal())
+      {
+         if (settings.useFmtForTemporal())
+         {
+            stringValue = julian.getTeXFormatCode();
+         }
+         else
+         {
+            stringValue = settings.formatTemporal(julian);
+         }
+      }
       else
       {
          NumberFormat numfmt = settings.getNumericFormatter(type);
@@ -681,11 +818,59 @@ public class Datum implements Comparable<Datum>
    public static Datum format(DatumType type, String currencySym, Number num,
       DatatoolSettings settings)
    {
+      return format(type, currencySym, num, null, settings);
+   }
+
+   public static Datum format(DatumType type, String currencySym, Number num,
+      Julian julian, DatatoolSettings settings)
+   {
       String text = "";
 
       if (type == DatumType.DECIMAL && settings.useSIforDecimals())
       {
          text = String.format("\\num{%g}", num.doubleValue());
+      }
+      else if (type.isTemporal())
+      {
+         if (julian == null)
+         {
+            switch (type)
+            {
+               case DATE:
+                  julian = Julian.createDay(num.intValue());
+               break;
+               case DATETIME:
+                  julian = Julian.createDate(num.doubleValue());
+               break;
+               case TIME:
+                  julian = Julian.createTime(num.doubleValue());
+               break;
+            }
+         }
+         else if (num == null)
+         {
+            if (type == DatumType.DATETIME)
+            {
+               num = Double.valueOf(julian.getJulianDate());
+            }
+            else if (type == DatumType.TIME)
+            {
+               num = Double.valueOf(julian.getJulianTime());
+            }
+            else
+            {
+               num = Integer.valueOf(julian.getJulianDay());
+            }
+         }
+
+         if (settings.useFmtForTemporal())
+         {
+            text = julian.getTeXFormatCode();
+         }
+         else
+         {
+            text = settings.formatTemporal(julian);
+         }
       }
       else
       {
@@ -713,7 +898,7 @@ public class Datum implements Comparable<Datum>
          }
       }
 
-      return new Datum(text, currencySym, num, settings);
+      return new Datum(text, currencySym, num, julian, settings);
    }
 
    public void setCollationKey(CollationKey key)
@@ -750,6 +935,7 @@ public class Datum implements Comparable<Datum>
    private String stringValue;
    private String currencySymbol;
    private Number numValue;
+   private Julian julian;
    DatatoolSettings settings;
 
    CollationKey collationKey;

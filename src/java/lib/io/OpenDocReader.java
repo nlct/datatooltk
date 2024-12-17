@@ -331,6 +331,7 @@ public class OpenDocReader extends XMLReaderAdapter
                String strVal = attrs.getValue("office:value");
                String currency = attrs.getValue("office:currency");
 
+System.out.println("TABLE CELL "+type);
                DatumType datumType = DatumType.UNKNOWN;
 
                if ("string".equals(type))
@@ -357,6 +358,12 @@ public class OpenDocReader extends XMLReaderAdapter
                   {
                      currency = "\\DTLcurr{" + currency + "}";
                   }
+               }
+               else if ("date".equals(type))
+               {
+                  String iso = attrs.getValue("office:date-value");
+
+// TODO
                }
 
                if (strVal != null)

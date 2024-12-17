@@ -2222,6 +2222,18 @@ public class DatatoolProperties extends DatatoolSettings
             tag = "currency";
             defValue = 150;
          break;
+         case DATE:
+            tag = "date";
+            defValue = 60;
+         break;
+         case TIME:
+            tag = "time";
+            defValue = 60;
+         break;
+         case DATETIME:
+            tag = "datetime";
+            defValue = 100;
+         break;
          default:
             throw new IllegalArgumentException(
               "getCellWidth(DatumType): Invalid data type "+type);

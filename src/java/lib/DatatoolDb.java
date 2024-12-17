@@ -968,10 +968,8 @@ public class DatatoolDb
             Datum datum = Datum.valueOf(value, settings);
             row.addCell(colIdx, datum);
 
-            if (datum.overrides(header.getDatumType()))
-            {
-               header.setType(datum.getDatumType());
-            }
+            header.setType(
+             DatumType.getDominant(datum.getDatumType(), header.getDatumType()));
          }
          else if (line.startsWith("\\DTLdbSetHeader"))
          {
@@ -1153,10 +1151,8 @@ public class DatatoolDb
             Datum datum = Datum.valueOf(value, settings);
             row.addCell(colIdx, datum);
 
-            if (datum.overrides(header.getDatumType()))
-            {
-               header.setType(datum.getDatumType());
-            }
+            header.setType(
+             DatumType.getDominant(datum.getDatumType(), header.getDatumType()));
          }
          else if (line.startsWith("\\DTLsetheader"))
          {

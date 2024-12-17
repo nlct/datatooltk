@@ -52,23 +52,17 @@ public class DatatoolGuiResources
 
    private void initLabels()
    {
-      TYPE_LABELS = new String[] 
-      {
-         getMessage("header.type.unset"),
-         getMessage("header.type.string"),
-         getMessage("header.type.int"),
-         getMessage("header.type.real"),
-         getMessage("header.type.currency")
-      };
+      DatumType[] types = DatumType.values();
 
-      TYPE_MNEMONICS = new int[] 
+      TYPE_LABELS = new String[types.length];
+      TYPE_MNEMONICS = new int[types.length];
+
+      for (int i = 0; i < types.length; i++)
       {
-         getMnemonicInt("header.type.unset"),
-         getMnemonicInt("header.type.string"),
-         getMnemonicInt("header.type.int"),
-         getMnemonicInt("header.type.real"),
-         getMnemonicInt("header.type.currency")
-      };
+         String tag = types[i].getTag();
+         TYPE_LABELS[i] = getMessage("header.type."+tag);
+         TYPE_MNEMONICS[i] = getMnemonicInt("header.type."+tag);
+      } 
    }
 
    public String getTypeLabel(DatumType type)

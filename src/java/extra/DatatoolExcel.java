@@ -19,6 +19,7 @@
 package com.dickimawbooks.datatooltk.extra;
 
 import java.io.*;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -34,7 +35,9 @@ import org.apache.poi.ss.usermodel.*;
 
 import com.dickimawbooks.texparserlib.TeXParser;
 import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
+import com.dickimawbooks.texparserlib.latex.datatool.DataToolBaseSty;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.Julian;
 
 import com.dickimawbooks.datatooltk.*;
 import com.dickimawbooks.datatooltk.io.*;
@@ -327,6 +330,7 @@ public class DatatoolExcel implements DatatoolImport
       String strValue = null;
       Number num = null;
       String currencySym = null;
+      Julian julian = null;
       DatumType type = DatumType.UNKNOWN;
 
       CellType cellType = cell.getCellType();
@@ -353,21 +357,51 @@ public class DatatoolExcel implements DatatoolImport
            }
            else if (DATE_TIME_PATTERN.matcher(fmtStr).matches())
            {
-              type = DatumType.STRING;
-              num = null;
-              strValue = settings.formatDateTime(cell.getDateCellValue());
+              type = DatumType.DATETIME;
+              Calendar cal = Calendar.getInstance(settings.getDateTimeLocale());
+              cal.setTime(cell.getDateCellValue());
+              julian = Julian.createDate(cal);
+
+              if (settings.useFmtForTemporal())
+              {
+                 strValue = julian.getTeXFormatCode();
+              }
+              else
+              {
+                 strValue = settings.formatTemporal(julian);
+              }
            }
            else if (DATE_PATTERN.matcher(fmtStr).matches())
            {
-              type = DatumType.STRING;
-              num = null;
-              strValue = settings.formatDate(cell.getDateCellValue());
+              type = DatumType.DATE;
+              Calendar cal = Calendar.getInstance(settings.getDateTimeLocale());
+              cal.setTime(cell.getDateCellValue());
+              julian = Julian.createDay(cal);
+
+              if (settings.useFmtForTemporal())
+              {
+                 strValue = julian.getTeXFormatCode();
+              }
+              else
+              {
+                 strValue = settings.formatTemporal(julian);
+              }
            }
            else if (TIME_PATTERN.matcher(fmtStr).matches())
            {
-              type = DatumType.STRING;
-              num = null;
-              strValue = settings.formatTime(cell.getDateCellValue());
+              type = DatumType.TIME;
+              Calendar cal = Calendar.getInstance(settings.getDateTimeLocale());
+              cal.setTime(cell.getDateCellValue());
+              julian = Julian.createTime(cal);
+
+              if (settings.useFmtForTemporal())
+              {
+                 strValue = julian.getTeXFormatCode();
+              }
+              else
+              {
+                 strValue = settings.formatTemporal(julian);
+              }
            }
            else
            {
@@ -407,9 +441,12 @@ public class DatatoolExcel implements DatatoolImport
          return Datum.createNull(settings);
       }
 
-      strValue = mapFieldIfRequired(strValue);
+      if (!type.isNumeric())
+      {
+         strValue = mapFieldIfRequired(strValue);
+      }
 
-      return new Datum(type, strValue, currencySym, num, settings);
+      return new Datum(type, strValue, currencySym, num, julian, settings);
    }
 
    public String mapFieldIfRequired(String field)

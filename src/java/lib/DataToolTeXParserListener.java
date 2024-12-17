@@ -47,6 +47,9 @@ public class DataToolTeXParserListener extends PreambleParser
 
       datatoolSty = new DataToolSty(null, this, false);
       usepackage(datatoolSty, parser);
+
+      datatoolSty.getDataToolBaseSty().setNumericLocale(settings.getNumericLocale());
+
       datatoolSty.addNewRowReadListener(this);
 
       probSolnSty = new ProbSolnSty(
