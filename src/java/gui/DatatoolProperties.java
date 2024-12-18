@@ -2139,30 +2139,7 @@ public class DatatoolProperties extends DatatoolSettings
 
    public void setCellWidth(int cellWidth, DatumType type)
    {
-      String tag="";
-
-      switch (type)
-      {
-         case STRING:
-            tag = "string";
-         break;
-         case UNKNOWN:
-            tag = "unset";
-         break;
-         case INTEGER:
-            tag = "int";
-         break;
-         case DECIMAL:
-            tag = "real";
-         break;
-         case CURRENCY:
-            tag = "currency";
-         break;
-         default:
-            assert false : "Invalid data type "+type;
-      }
-
-      setProperty("cellwidth."+tag, ""+cellWidth);
+      setProperty("cellwidth."+type.getTag(), ""+cellWidth);
    }
 
    @Deprecated
@@ -2197,42 +2174,34 @@ public class DatatoolProperties extends DatatoolSettings
 
    public int getCellWidth(DatumType type)
    {
-      String tag;
+      String tag = type.getTag();
       int defValue;
 
       switch (type)
       {
          case STRING:
-            tag = "string";
             defValue = 300;
          break;
          case UNKNOWN:
-            tag = "unset";
             defValue = 100;
          break;
          case INTEGER:
-            tag = "int";
             defValue = 40;
          break;
          case DECIMAL:
-            tag = "real";
             defValue = 60;
          break;
          case CURRENCY:
-            tag = "currency";
             defValue = 150;
          break;
          case DATE:
-            tag = "date";
-            defValue = 60;
+            defValue = 100;
          break;
          case TIME:
-            tag = "time";
             defValue = 60;
          break;
          case DATETIME:
-            tag = "datetime";
-            defValue = 100;
+            defValue = 160;
          break;
          default:
             throw new IllegalArgumentException(

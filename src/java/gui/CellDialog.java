@@ -27,6 +27,7 @@ import javax.swing.undo.*;
 import javax.swing.text.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.Julian;
 import com.dickimawbooks.datatooltk.*;
 
 /**
@@ -249,6 +250,9 @@ public class CellDialog extends JDialog
       decComp.add(decimalField);
       numericComp.add(decComp, "dec");
 
+      temporalComp = new TemporalPanel(gui, "celledit");
+      datumPanel.add(temporalComp);
+
       return datumPanel;
    }
 
@@ -311,7 +315,15 @@ public class CellDialog extends JDialog
    {
       DatumType type = typeBox.getSelectedType();
 
-      if (type.isNumeric())
+      if (type.isTemporal())
+      {
+         currencyComp.setVisible(false);
+         temporalComp.update(type);
+         temporalComp.setVisible(true);
+         numericComp.setVisible(false);
+         reformatItem.setEnabled(true);
+      }
+      else if (type.isNumeric())
       {
          if (type == DatumType.INTEGER)
          {
@@ -324,12 +336,14 @@ public class CellDialog extends JDialog
 
          currencyComp.setVisible(type==DatumType.CURRENCY);
          numericComp.setVisible(true);
+         temporalComp.setVisible(false);
          reformatItem.setEnabled(true);
       }
       else
       {
          currencyComp.setVisible(false);
          numericComp.setVisible(false);
+         temporalComp.setVisible(false);
          reformatItem.setEnabled(false);
       }
    }
@@ -599,6 +613,7 @@ public class CellDialog extends JDialog
       DatumType type = typeBox.getSelectedType();
       String currencySym = null;
       Number num = null;
+      Julian julian = null;
 
       switch (type)
       {
@@ -624,7 +639,7 @@ public class CellDialog extends JDialog
             }
       }
 
-      Datum datum = new Datum(type, text, currencySym, num, gui.getSettings());
+      Datum datum = new Datum(type, text, currencySym, num, julian, gui.getSettings());
 
       panel.updateCell(datum, row, col);
       setVisible(false);
@@ -701,6 +716,8 @@ public class CellDialog extends JDialog
    private SpinnerNumberModel intSpinnerModel;
    private CardLayout valueCardLayout;
    private Number orgValue;
+
+   private TemporalPanel temporalComp;
 
    private DatatoolDbPanel panel;
 

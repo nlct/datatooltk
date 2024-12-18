@@ -1924,7 +1924,7 @@ class DatatoolCellRenderer implements TableCellRenderer
 {
    private DatatoolDb db;
    private DatumCellRenderer strCellRenderer, numCellRenderer,
-    currCellRenderer, nullCellRenderer;
+    currCellRenderer, nullCellRenderer, temporalCellRenderer;
 
    public DatatoolCellRenderer(DatatoolGuiResources resources, DatatoolDb db)
    {
@@ -1934,6 +1934,7 @@ class DatatoolCellRenderer implements TableCellRenderer
       numCellRenderer = new DatumCellRenderer(resources, DatumType.DECIMAL);
       currCellRenderer = new DatumCellRenderer(resources, DatumType.CURRENCY);
       nullCellRenderer = new DatumCellRenderer(resources, DatumType.UNKNOWN);
+      temporalCellRenderer = new DatumCellRenderer(resources, DatumType.DATETIME);
    }
 
    public Component getTableCellRendererComponent(JTable table,
@@ -1968,6 +1969,10 @@ class DatatoolCellRenderer implements TableCellRenderer
                case DECIMAL:
                   renderer = numCellRenderer;
                break;
+               case DATE:
+               case TIME:
+               case DATETIME:
+                 renderer = temporalCellRenderer;
             }
          }
       }

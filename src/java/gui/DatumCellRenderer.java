@@ -27,6 +27,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.Julian;
 import com.dickimawbooks.texjavahelplib.TeXJavaHelpLib;
 import com.dickimawbooks.datatooltk.Datum;
 
@@ -94,7 +95,7 @@ public class DatumCellRenderer implements TableCellRenderer
       numComp.setOpaque(true);
 
       datumInfoPane = new JEditorPane("text/html",
-       getDatumHTML(type, null, null));
+       getDatumHTML(type, null, null, null));
 
       datumInfoPane.setOpaque(false);
       datumInfoPane.setEditable(false);
@@ -116,7 +117,7 @@ public class DatumCellRenderer implements TableCellRenderer
    }
 
    protected String getDatumHTML(DatumType type, Number num,
-     String currency)
+     String currency, Julian julian)
    {
       StringBuilder builder = new StringBuilder();
 
@@ -129,21 +130,28 @@ public class DatumCellRenderer implements TableCellRenderer
       builder.append(
         TeXJavaHelpLib.encodeHTML(resources.getTypeLabel(type), false));
 
-      if (num != null)
+      if (julian != null)
+      {
+         builder.append("<br><strong>");
+         builder.append(resources.getMessage("celledit."+type.getTag()));
+         builder.append("</strong> ");
+         builder.append(julian.getTimeStamp());
+      }
+      else if (num != null)
       {
          builder.append("<br><strong>");
          builder.append(resources.getMessage("celledit.numeric"));
          builder.append("</strong> ");
          builder.append(num.toString());
-      }
 
-      if (currency != null)
-      {
-         builder.append("<br><strong>");
-         builder.append(resources.getMessage("celledit.currency"));
-         builder.append("</strong> <code>");
-         builder.append(TeXJavaHelpLib.encodeHTML(currency, false));
-         builder.append("</code>");
+         if (currency != null)
+         {
+            builder.append("<br><strong>");
+            builder.append(resources.getMessage("celledit.currency"));
+            builder.append("</strong> <code>");
+            builder.append(TeXJavaHelpLib.encodeHTML(currency, false));
+            builder.append("</code>");
+         }
       }
 
       builder.append("</body></html>");
@@ -151,11 +159,12 @@ public class DatumCellRenderer implements TableCellRenderer
       return builder.toString();
    }
 
-   protected void updateDatumInfo(DatumType type, Number num, String currency)
+   protected void updateDatumInfo(DatumType type, Number num, String currency,
+    Julian julian)
    {
       if (datumInfoPane != null)
       {
-         datumInfoPane.setText(getDatumHTML(type, num, currency));
+         datumInfoPane.setText(getDatumHTML(type, num, currency, julian));
          datumInfoPane.setVisible(resources.isCellDatumVisible());
       }
    }
@@ -193,6 +202,7 @@ public class DatumCellRenderer implements TableCellRenderer
 
       String currencySym = null;
       Number num = null;
+      Julian julian = null;
       boolean isNull = false;
       DatumType valType = type;
 
@@ -201,7 +211,11 @@ public class DatumCellRenderer implements TableCellRenderer
          Datum datum = (Datum)value;
          valType = datum.getDatumType();
 
-         if (valType.isNumeric())
+         if (valType.isTemporal())
+         {
+            julian = datum.getJulian();
+         }
+         else if (valType.isNumeric())
          {
             currencySym = datum.getCurrencySymbol();
             num = datum.getNumber();
@@ -226,7 +240,7 @@ public class DatumCellRenderer implements TableCellRenderer
       panel.setBackground(bg);
       panel.setForeground(fg);
 
-      updateDatumInfo(valType, num, currencySym);
+      updateDatumInfo(valType, num, currencySym, julian);
 
       return panel;
    }

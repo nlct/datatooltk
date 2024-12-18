@@ -929,6 +929,12 @@ public class Datum implements Comparable<Datum>
       }
       else if (type.isTemporal())
       {
+         if (julian == null && num == null)
+         {
+            throw new NullPointerException(
+             "Temporal type "+type+" can't have both Number and Julian null");
+         }
+
          if (julian == null)
          {
             switch (type)
