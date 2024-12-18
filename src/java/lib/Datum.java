@@ -46,12 +46,12 @@ public class Datum implements Comparable<Datum>
 {
    public Datum(DatatoolSettings settings)
    {
-      this(DatumType.UNKNOWN, "", null, null, settings);
+      this(DatumType.UNKNOWN, "", null, null, null, settings);
    }
 
    public Datum(String stringValue, DatatoolSettings settings)
    {
-      this(DatumType.STRING, stringValue, null, null, settings);
+      this(DatumType.STRING, stringValue, null, null, null, settings);
    }
 
    public Datum(DatumType type, String stringValue, String currencySymbol,
@@ -121,13 +121,13 @@ public class Datum implements Comparable<Datum>
       {
          type = DatumType.CURRENCY;
       }
-      else if (num instanceof Double || num instanceof Float)
+      else if (num instanceof Integer)
       {
-         type = DatumType.DECIMAL;
+         type = DatumType.INTEGER;
       }
       else
       {
-         type = DatumType.INTEGER;
+         type = DatumType.DECIMAL;
       }
    }
 
@@ -150,24 +150,62 @@ public class Datum implements Comparable<Datum>
       this.type = type;
       this.stringValue = stringValue;
       this.currencySymbol = currencySymbol;
-      this.numValue = num;
-      this.julian = julian;
 
-      if (julian != null && numValue == null)
+      if (type.isTemporal())
       {
-         if (julian.hasDate() && julian.hasTime())
+         if (julian == null && num == null)
          {
-            numValue = Double.valueOf(julian.getJulianDate());
+            throw new NullPointerException(
+              "Temporal type "+type+" requires non-null Number or Julian");
          }
-         else if (julian.hasTime())
+         else if (julian == null)
          {
-            numValue = Double.valueOf(julian.getJulianTime());
+            switch (type)
+            {
+               case DATETIME:
+                  julian = Julian.createDate(num.doubleValue());
+               break;
+               case TIME:
+                  julian = Julian.createTime(num.doubleValue());
+               break;
+               case DATE:
+                  julian = Julian.createDay(num.intValue());
+               break;
+               default:
+                 assert false : "Invalid temporal data type "+type;
+            }
          }
-         else
+         else if (num == null)
          {
-            numValue = Integer.valueOf(julian.getJulianDay());
+            switch (type)
+            {
+               case DATETIME:
+                  num = Double.valueOf(julian.getJulianDate());
+               break;
+               case TIME:
+                  num = Double.valueOf(julian.getJulianTime());
+               break;
+               case DATE:
+                  num = Integer.valueOf(julian.getJulianDay());
+               break;
+               default:
+                 assert false : "Invalid temporal data type "+type;
+            }
          }
       }
+      else if (type.isNumeric() && num == null)
+      {
+         throw new NullPointerException(
+           "Numeric type "+type+" requires non-null value");
+      }
+      else if (type == DatumType.CURRENCY && currencySymbol == null)
+      {
+         throw new NullPointerException(
+           "Type "+type+" requires non-null currency symbol");
+      }
+
+      this.julian = julian;
+      this.numValue = num;
    }
 
    public static Datum createNull(DatatoolSettings settings)
@@ -490,8 +528,8 @@ public class Datum implements Comparable<Datum>
    }
 
    /**
-    * Update the numeric value without changing the type, string value or
-    * currency symbol.
+    * Update the numeric value without changing the type, string value, 
+    * currency symbol, or Julian object.
     */
    public void setNumeric(Number num)
    {
@@ -499,17 +537,57 @@ public class Datum implements Comparable<Datum>
    }
 
    /**
-    * Update the currency symbol without changing the type, string value or
-    * numeric value.
+    * Update the currency symbol without changing the type, string value,
+    * numeric value, or Julian object.
     */
    public void setCurrencySymbol(String sym)
    {
       this.currencySymbol = sym;
    }
 
+   /**
+    * Sets the Julian value. This will also update the associated
+    * numeric value according to the data type. The provided value
+    * may be null, which will downgrade the data type if it's
+    * currently set to a temporal type.
+    */
    public void setJulian(Julian julian)
    {
       this.julian = julian;
+
+      if (julian == null)
+      {
+         if (type.isTemporal())
+         {
+            if (numValue == null)
+            {
+               type = DatumType.STRING;
+            }
+            else if (type == DatumType.DATETIME || type == DatumType.TIME)
+            {
+               type = DatumType.DECIMAL;
+            }
+            else if (type == DatumType.DATE)
+            {
+               type = DatumType.INTEGER;
+            }
+         }
+      }
+      else
+      {
+         if (type == DatumType.DATETIME)
+         {
+            numValue = Double.valueOf(julian.getJulianDate());
+         }
+         else if (type == DatumType.TIME)
+         {
+            numValue = Double.valueOf(julian.getJulianTime());
+         }
+         else if (type == DatumType.DATE)
+         {
+            numValue = Integer.valueOf(julian.getJulianDay());
+         }
+      }
    }
 
    public Julian getJulian()
@@ -677,6 +755,20 @@ public class Datum implements Comparable<Datum>
          return settings.isNullFirst() ? 1 : -1;
       }
 
+      if (julian != null && other.julian != null)
+      {
+         if (type == DatumType.TIME || other.type == DatumType.TIME
+            || (julian.hasTimeZone() && other.julian.hasTimeZone()))
+         {
+            return Double.compare(doubleValue(), other.doubleValue());
+         }
+
+         /* For date and datetime mix this will ensure dates with no
+            time are first. */
+
+         return julian.getTimeStamp().compareTo(other.julian.getTimeStamp());
+      }
+
       if (isNumeric() && other.isNumeric())
       {
          switch (type)
@@ -733,6 +825,11 @@ public class Datum implements Comparable<Datum>
 
       Datum other = (Datum)obj;
 
+      if (julian != null && other.julian != null)
+      {
+         return julian.getTimeStamp().equals(other.julian.getTimeStamp());
+      }
+
       if (!isNumeric() || !other.isNumeric())
       {
          return stringValue.equals(other.stringValue);
@@ -771,7 +868,7 @@ public class Datum implements Comparable<Datum>
       {
          stringValue = String.format("\\num{%g}", doubleValue());
       }
-      else if (dataType.isTemporal())
+      else if (julian != null)
       {
          if (settings.useFmtForTemporal())
          {
@@ -847,7 +944,7 @@ public class Datum implements Comparable<Datum>
                break;
             }
          }
-         else if (num == null)
+         else
          {
             if (type == DatumType.DATETIME)
             {
