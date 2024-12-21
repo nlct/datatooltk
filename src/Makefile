@@ -112,6 +112,9 @@ lib/resources/helpsets/datatooltk-en-GB/index.xml	: lib/resources/dictionaries/*
 lib/resources/helpsets/datatooltk-en/index.xml	: lib/resources/dictionaries/*.xml doc/datatooltk-en.tex doc/datatooltk-main.tex doc/datatooltk.bib doc/version.tex
 	make -C doc en
 
+doc/version.tex	:
+	make -C doc version.tex
+
 lib/datatooltklib.jar	: classes/com/dickimawbooks/datatooltk/DatatoolTk.class 
 	cd classes; \
 	jar cf ../lib/datatooltklib.jar \
