@@ -216,15 +216,31 @@ Requires at least Java 8 and the following libraries:
    **This library is required for the basic DatatoolTk application
    and the DatatoolTK Extra application but not for the restricted
    application which doesn't support SQL imports.**
+   For example (Fedora):
+   ```bashrc
+   sudo dnf install mysql-connector-java
+   cd lib
+   ln -s /usr/share/java/mysql-connector-java.jar
+   ```
 
  - [Apache POI](https://poi.apache.org/) (Apache License, Version 2.0)
     to read Microsoft Excel spreadsheets (xls): the files `poi-`_version_`.jar`, 
-   `poi-ooxml-`_version_`.jar` and `poi-ooxml-schema-`_version_`.jar` 
+   `poi-ooxml-`_version_`.jar` and `poi-ooxml-full-`_version_`.jar` 
    should be placed in the `lib` directory. This library in turn
    requires Apache Commons IO, which requires Log4j, so those
    jar files are also required.
    **This library and its dependencies are only required for the 
    DatatoolTK Extra application.**
+   For example (Fedora):
+   ```bashrc
+   sudo dnf install apache-commons-io log4j
+   cd lib
+   ln -s /usr/share/java/apache-commons-io.jar
+   ln -s /usr/share/java/log4j/log4j-api.jar
+   ln -s /usr/share/java/log4j/log4j-core.jar
+   ```
+   Then download Apache POI artifacts (`poi`-\*`.jar` listed above)
+   from https://poi.apache.org/download.html
    
 If any plugins are needed for the applications that have a GUI mode, 
 Perl is also required.
