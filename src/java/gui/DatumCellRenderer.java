@@ -137,7 +137,8 @@ public class DatumCellRenderer implements TableCellRenderer
          builder.append("</strong> ");
          builder.append(julian.getTimeStamp());
       }
-      else if (num != null)
+
+      if (num != null)
       {
          builder.append("<br><strong>");
          builder.append(resources.getMessage("celledit.numeric"));
@@ -215,11 +216,9 @@ public class DatumCellRenderer implements TableCellRenderer
          {
             julian = datum.getJulian();
          }
-         else if (valType.isNumeric())
-         {
-            currencySym = datum.getCurrencySymbol();
-            num = datum.getNumber();
-         }
+
+         currencySym = datum.getCurrencySymbol();
+         num = datum.getNumber();
 
          isNull = datum.isNull();
       }
