@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2024-2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,7 @@ import org.xml.sax.helpers.XMLReaderAdapter;
 
 import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.Julian;
 
 import com.dickimawbooks.texjavahelplib.MessageSystem;
 
@@ -330,8 +331,8 @@ public class OpenDocReader extends XMLReaderAdapter
                Number num = null;
                String strVal = attrs.getValue("office:value");
                String currency = attrs.getValue("office:currency");
+               Julian julian = null;
 
-System.out.println("TABLE CELL "+type);
                DatumType datumType = DatumType.UNKNOWN;
 
                if ("string".equals(type))
@@ -363,7 +364,18 @@ System.out.println("TABLE CELL "+type);
                {
                   String iso = attrs.getValue("office:date-value");
 
-// TODO
+                  if (iso != null && !iso.isEmpty())
+                  {
+                     try
+                     {
+                        julian = Julian.create(iso);
+                        datumType = julian.getDatumType();
+                     }
+                     catch (IllegalArgumentException e)
+                     {
+                        importSettings.getMessageHandler().debug(e);
+                     }
+                  }
                }
 
                if (strVal != null)
@@ -398,7 +410,7 @@ System.out.println("TABLE CELL "+type);
 
                currentCell = new Datum(datumType, 
                  datumType == DatumType.UNKNOWN ? DatatoolDb.NULL_VALUE : "",
-                 currency, num, importSettings.getSettings());
+                 currency, num, julian, importSettings.getSettings());
 
                tableCellRepetition = 1;
 
