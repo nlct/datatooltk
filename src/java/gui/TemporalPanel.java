@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2024-2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -53,8 +53,9 @@ public class TemporalPanel extends JPanel
       String pattern;
       DateFormat df;
 
-      datetimeRow = createRow();
-      add(datetimeRow, "datetime");
+      datetimeRow = createRow("datetime");
+      add(datetimeRow, datetimeRow.getName());
+      currentComponent = datetimeRow;
 
       df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
 
@@ -80,8 +81,8 @@ public class TemporalPanel extends JPanel
 
       datetimeRow.add(datetimeSpinner);
 
-      dateRow = createRow();
-      add(dateRow, "date");
+      dateRow = createRow("date");
+      add(dateRow, dateRow.getName());
 
       df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 
@@ -106,8 +107,8 @@ public class TemporalPanel extends JPanel
 
       dateRow.add(dateSpinner);
 
-      timeRow = createRow();
-      add(timeRow, "time");
+      timeRow = createRow("time");
+      add(timeRow, timeRow.getName());
 
       df = DateFormat.getTimeInstance(DateFormat.SHORT, locale);
 
@@ -133,9 +134,10 @@ public class TemporalPanel extends JPanel
       timeRow.add(timeSpinner);
    }
 
-   protected JComponent createRow()
+   protected JComponent createRow(String name)
    {
       JComponent comp = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      comp.setName(name);
 
       return comp;
    }
@@ -193,6 +195,8 @@ public class TemporalPanel extends JPanel
       {
          case DATE:
            temporalCardLayout.show(this, "date");
+           currentComponent = dateRow;
+
            if (date != null)
            {
               dateSpinnerModel.setValue(date);
@@ -200,6 +204,8 @@ public class TemporalPanel extends JPanel
          break;
          case TIME:
            temporalCardLayout.show(this, "time");
+           currentComponent = timeRow;
+
            if (date != null)
            {
               timeSpinnerModel.setValue(date);
@@ -207,6 +213,8 @@ public class TemporalPanel extends JPanel
          break;
          case DATETIME:
            temporalCardLayout.show(this, "datetime");
+           currentComponent = datetimeRow;
+
            if (date != null)
            {
               datetimeSpinnerModel.setValue(date);
@@ -217,24 +225,23 @@ public class TemporalPanel extends JPanel
 
    public Julian getJulian()
    {
-      if (dateRow.isVisible())
+      String name = currentComponent.getName();
+
+      if ("date".equals(name))
       {
          return Julian.createDay(dateSpinnerModel.getDate(),
            gui.getSettings().getDateTimeLocale());
       }
-      else if (timeRow.isVisible())
+      else if ("time".equals(name))
       {
          return Julian.createTime(timeSpinnerModel.getDate(),
             gui.getSettings().getDateTimeLocale());
       }
-      else if (datetimeRow.isVisible())
+      else
       {
          return Julian.createDate(datetimeSpinnerModel.getDate(),
             gui.getSettings().getDateTimeLocale());
       }
-
-      // TODO
-      return null;
    }
 
    public Julian getJulian(DatumType type)
@@ -258,7 +265,7 @@ public class TemporalPanel extends JPanel
 
       }
 
-      return null;
+      return julian;
    }
 
    public Number getNumeric(DatumType type)
@@ -294,5 +301,5 @@ public class TemporalPanel extends JPanel
    private CardLayout temporalCardLayout;
    private SpinnerDateModel dateSpinnerModel, timeSpinnerModel, datetimeSpinnerModel;
    private Locale locale;
-   private JComponent dateRow, timeRow, datetimeRow;
+   private JComponent dateRow, timeRow, datetimeRow, currentComponent;
 }

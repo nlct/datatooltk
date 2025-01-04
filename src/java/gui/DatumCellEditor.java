@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2024-2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ public class DatumCellEditor extends DefaultCellEditor
       currencyRow = createRow();
       midComp.add(currencyRow);
 
-      currencyField = new JTextField();
+      currencyField = new JTextField(4);
 
       currencyRow.add(resources.createJLabel("celledit.currency", currencyField));
       currencyRow.add(currencyField);
@@ -128,6 +128,10 @@ public class DatumCellEditor extends DefaultCellEditor
       if ("reparse".equals(action))
       {
          updateMidComps();
+
+         DatumType type = typeBox.getSelectedType();
+         wasTemporal = type.isTemporal();
+         wasInt = (type == DatumType.INTEGER);
       }
    }
 
@@ -139,15 +143,16 @@ public class DatumCellEditor extends DefaultCellEditor
          intSpinnerModel.setValue(Integer.valueOf(orgValue.intValue()));
          decimalField.setText(orgValue.toString());
          updateMidComps();
+
+         DatumType type = typeBox.getSelectedType();
+         wasTemporal = type.isTemporal();
+         wasInt = (type == DatumType.INTEGER);
       }
    }
 
    protected void updateMidComps()
    {
       boolean autoOn = autoReparseBox.isSelected();
-
-      boolean wasTemporal = temporalComp.isVisible();
-      boolean wasInt = intComp.isVisible();
 
       midCompSp.setVisible(!autoOn);
       currencyRow.setVisible(false);
@@ -259,10 +264,7 @@ public class DatumCellEditor extends DefaultCellEditor
       DatumType type = typeBox.getSelectedType();
       String currencySym = null;
       Number num = null;
-      Julian julian = temporalComp.getJulian(type);
-
-System.out.println("TYPE: "+type);
-System.out.println("JULIAN: "+julian);
+      Julian julian = null;
 
       switch (type)
       {
@@ -281,6 +283,11 @@ System.out.println("JULIAN: "+julian);
            {
               num = Double.valueOf(0);
            }
+         break;
+         case DATE:
+         case TIME:
+         case DATETIME:
+           julian = temporalComp.getJulian(type);
          break;
       }
 
@@ -328,11 +335,7 @@ System.out.println("JULIAN: "+julian);
          currencyField.setText(currencySym);
       }
 
-      if (julian != null)
-      {
-         temporalComp.update(type, julian);
-      }
-      else if (num == null)
+      if (num == null)
       {
          orgValue = Integer.valueOf(0);
          intSpinnerModel.setValue(orgValue);
@@ -345,11 +348,19 @@ System.out.println("JULIAN: "+julian);
          decimalField.setText(num.toString());
       }
 
+      if (julian != null)
+      {
+         temporalComp.update(type, julian);
+      }
+
       JTextField textField = 
         (JTextField)super.getTableCellEditorComponent(table,
            text, isSelected, row, column);
 
       textField.setHorizontalAlignment(JTextField.TRAILING);
+
+      wasTemporal = type.isTemporal();
+      wasInt = (type == DatumType.INTEGER);
 
       updateMidComps();
 
@@ -368,6 +379,7 @@ System.out.println("JULIAN: "+julian);
    private DatatoolGUI gui;
    private JTextField currencyField;
    private Number orgValue = Integer.valueOf(0);
+   private boolean wasTemporal=false, wasInt = false;
 
    private JSpinner intSpinner;
    private SpinnerNumberModel intSpinnerModel;
