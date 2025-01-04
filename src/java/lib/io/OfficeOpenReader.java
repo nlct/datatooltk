@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2024-2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,7 @@ import org.xml.sax.helpers.XMLReaderAdapter;
 
 import com.dickimawbooks.texparserlib.latex.datatool.CsvBlankOption;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.Julian;
 
 import com.dickimawbooks.texjavahelplib.MessageSystem;
 
@@ -73,6 +74,7 @@ public class OfficeOpenReader extends XMLReaderAdapter
       parsingWorkbook = true;
       parsingRelationships = false;
       parsingStrings = false;
+      parsingStyles = false;
       parsingData = false;
 
       try
@@ -90,6 +92,25 @@ public class OfficeOpenReader extends XMLReaderAdapter
       parsingWorkbook = false;
       parsingRelationships = true;
       parsingStrings = false;
+      parsingStyles = false;
+      parsingData = false;
+
+      try
+      {
+         parse(in);
+      }
+      catch (ParsingTerminatedException e)
+      {
+      }
+   }
+
+   public void parseStyles(InputSource in)
+   throws SAXException,IOException
+   {
+      parsingWorkbook = false;
+      parsingRelationships = false;
+      parsingStrings = false;
+      parsingStyles = true;
       parsingData = false;
 
       try
@@ -107,6 +128,7 @@ public class OfficeOpenReader extends XMLReaderAdapter
       parsingWorkbook = false;
       parsingRelationships = false;
       parsingStrings = true;
+      parsingStyles = false;
       parsingData = false;
 
       try
@@ -124,6 +146,7 @@ public class OfficeOpenReader extends XMLReaderAdapter
       parsingWorkbook = false;
       parsingRelationships = false;
       parsingStrings = false;
+      parsingStyles = false;
       parsingData = true;
 
       try
@@ -269,6 +292,19 @@ public class OfficeOpenReader extends XMLReaderAdapter
                   }
                }
             }
+         }
+      }
+      else if (parsingStyles)
+      {
+         if (qName.equals("numFmt"))
+         {
+            if (numFmts == null)
+            {
+               numFmts = new Vector<NumberStyle>();
+            }
+
+            numFmts.add(new NumberStyle(attrs.getValue("numFmtId"),
+             attrs.getValue("formatCode")));
          }
       }
       else if (parsingStrings)
@@ -479,10 +515,54 @@ public class OfficeOpenReader extends XMLReaderAdapter
 
             if ("n".equals(value))
             {
-               // TODO how to determine currency??
+               String styleId = attrs.getValue("s");
+               String currency = null;
+               DatumType type = DatumType.DECIMAL;
 
-               currentCell = new Datum(DatumType.DECIMAL,
-                "", null, Integer.valueOf(0), importSettings.getSettings());
+               if (styleId != null && !styleId.isEmpty())
+               {
+                  if (numFmts != null)
+                  {
+                     try
+                     {
+                        int sid = Integer.parseInt(styleId);
+
+                        if (sid >= 0 && sid < numFmts.size())
+                        {
+                           NumberStyle numStyle = numFmts.get(sid);
+
+                           currency = numStyle.getCurrency();
+
+                           if (currency != null)
+                           {
+                              type = DatumType.CURRENCY;
+                           }
+                           else if (numStyle.hasDate())
+                           {
+                              if (numStyle.hasTime())
+                              {
+                                 type = DatumType.DATETIME;
+                              }
+                              else
+                              {
+                                 type = DatumType.DATE;
+                              }
+                           }
+                           else if (numStyle.hasTime())
+                           {
+                              type = DatumType.TIME;
+                           }
+                        }
+                     }
+                     catch (NumberFormatException e)
+                     {
+                        importSettings.getMessageHandler().debug(e);
+                     }
+                  }
+               }
+
+               currentCell = new Datum(type,
+                "", currency, Integer.valueOf(0), importSettings.getSettings());
             }
             else
             {
@@ -532,7 +612,11 @@ public class OfficeOpenReader extends XMLReaderAdapter
                try
                {
                   num = Integer.valueOf(value);
-                  currentCell.setDatumType(DatumType.INTEGER);
+
+                  if (currentCell.getDatumType() == DatumType.DECIMAL)
+                  {
+                     currentCell.setDatumType(DatumType.INTEGER);
+                  }
                }
                catch (NumberFormatException e)
                {
@@ -547,6 +631,8 @@ public class OfficeOpenReader extends XMLReaderAdapter
                   }
                }
 
+               Julian julian = null;
+
                if (num == null)
                {
                   currentCell.setText(value);
@@ -555,19 +641,48 @@ public class OfficeOpenReader extends XMLReaderAdapter
                {
                   DatatoolSettings ds = importSettings.getSettings();
                   DatumType type = currentCell.getDatumType();
-                  NumberFormat numFmt = ds.getNumericFormatter(type);
 
-                  if (type == DatumType.DECIMAL && ds.useSIforDecimals())
+                  if (type.isTemporal())
                   {
-                     currentCell.setText(String.format("\\num{%s}", value));
+                     if (type == DatumType.DATE)
+                     {
+                        julian = Julian.createDay(num.intValue()+2415019);
+                     }
+                     else if (type == DatumType.DATETIME)
+                     {
+                        julian = Julian.createDate(num.doubleValue()+2415018.5);
+                     }
+                     else
+                     {
+                        double time = num.doubleValue()+2415018.5;
+                        julian = Julian.createTime(time-(int)time);
+                     }
+
+                     currentCell.setText(ds.formatTemporal(julian));
                   }
                   else
                   {
-                     currentCell.setText(numFmt.format(num));
+                     NumberFormat numFmt = ds.getNumericFormatter(type);
+
+                     if (type == DatumType.DECIMAL && ds.useSIforDecimals())
+                     {
+                        currentCell.setText(String.format("\\num{%s}", value));
+                     }
+                     else
+                     {
+                        currentCell.setText(numFmt.format(num));
+                     }
                   }
                }
 
-               currentCell.setNumeric(num);
+               if (julian == null)
+               {
+                  currentCell.setNumeric(num);
+               }
+               else
+               {
+                  currentCell.setJulian(julian);
+               }
             }
             else
             {
@@ -828,7 +943,7 @@ public class OfficeOpenReader extends XMLReaderAdapter
 
    protected DatatoolDb db;
    protected boolean parsingWorkbook, parsingRelationships,
-    parsingStrings, parsingData;
+    parsingStrings, parsingData, parsingStyles;
 
    protected boolean inTable = false, inHeader = false;
 
@@ -842,6 +957,7 @@ public class OfficeOpenReader extends XMLReaderAdapter
    protected HashMap<String,WorkSheetRef> sheetRefs;
    protected Vector<String> sharedStrings;
    protected int firstSheetIdx=0, activeTabIdx=0;
+   protected Vector<NumberStyle> numFmts;
 
    // used for capacity, may not be actual values
    protected int rowCount=0, columnCount=0;
@@ -947,4 +1063,60 @@ class WorkSheetRef
    String name, sheetId, rId, target;
    private int index;
    private static int indexCount=0;
+}
+
+class NumberStyle
+{
+   public NumberStyle(String fmtId, String code)
+   {
+      this.fmtId = fmtId;
+      this.code = code;
+      index = indexCount;
+      indexCount++;
+
+      if (code != null && !code.isEmpty())
+      {
+         Matcher m = CURRENCY_PATTERN.matcher(code);
+
+         if (m.matches())
+         {
+            currency = m.group(1);
+         }
+         else
+         {
+            hasDate = DATE_PATTERN.matcher(code).matches();
+            hasTime = TIME_PATTERN.matcher(code).matches();
+         }
+      }
+   }
+
+   public String getCurrency()
+   {
+      return currency;
+   }
+
+   public boolean hasDate()
+   {
+      return hasDate;
+   }
+
+   public boolean hasTime()
+   {
+      return hasTime;
+   }
+
+   String fmtId, code, currency;
+   boolean hasDate, hasTime;
+   private int index;
+   private static int indexCount=0;
+
+   static final Pattern TIME_PATTERN = Pattern.compile(
+    ".*(h{1,2}.*?m{1,2}(?:.*?s{1,2})?).*");
+   static final Pattern DATE_PATTERN = Pattern.compile(
+    ".*(y+.*?m{1,3}(?:.?d{1,2})?|(?:d{1,2}+.*?)?m{1,3}.?y|(?:m{1,3}+.*?)?d{1,2}.?y).*");
+
+   // Windows language code identifiers: 
+   // https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/70feba9f-294e-491e-b6eb-56532684c37f
+   static final Pattern CURRENCY_PATTERN = Pattern.compile(
+    ".*\\[\\$(.+?)-([0-9a-fA-F]+|[a-z]{2}(?:-[a-zA-Z_\\-])?)\\].*");
 }

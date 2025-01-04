@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2024 Nicola L.C. Talbot
+    Copyright (C) 2024-2025 Nicola L.C. Talbot
     www.dickimaw-books.com
 
     This program is free software; you can redistribute it and/or modify
@@ -162,6 +162,22 @@ public class DatatoolOfficeOpenXML implements DatatoolImport
 
          in = zipFile.getInputStream(zipEntry);
          reader.parseRelationships(new InputSource(in));
+
+         in.close();
+         in = null;
+
+         entryName = "xl/styles.xml";
+         zipEntry = zipFile.getEntry(entryName);
+
+         if (zipEntry == null)
+         {
+            throw new DatatoolImportException(
+             messageHandler.getLabelWithValues("error.zip_entry_not_found",
+               entryName, file));
+         }
+
+         in = zipFile.getInputStream(zipEntry);
+         reader.parseStyles(new InputSource(in));
 
          in.close();
          in = null;
