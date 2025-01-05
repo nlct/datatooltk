@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:rpt="http://openoffice.org/2005/report" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
- <office:meta><dc:date>2024-08-28T11:15:50.669685451</dc:date><meta:editing-duration>PT32M51S</meta:editing-duration><meta:editing-cycles>3</meta:editing-cycles><meta:generator>LibreOffice/24.2.5.2$Linux_X86_64 LibreOffice_project/420$Build-2</meta:generator><meta:document-statistic meta:table-count="1" meta:cell-count="99" meta:object-count="0"/></office:meta>
+ <office:meta><dc:date>2025-01-05T14:44:32.013442919</dc:date><meta:editing-duration>PT33M41S</meta:editing-duration><meta:editing-cycles>4</meta:editing-cycles><meta:generator>LibreOffice/24.8.4.2$Linux_X86_64 LibreOffice_project/480$Build-2</meta:generator><meta:document-statistic meta:table-count="1" meta:cell-count="99" meta:object-count="0"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
    <config:config-item config:name="VisibleAreaTop" config:type="int">0</config:config-item>
@@ -31,18 +31,19 @@
       </config:config-item-map-entry>
      </config:config-item-map-named>
      <config:config-item config:name="ActiveTable" config:type="string">booklist</config:config-item>
-     <config:config-item config:name="HorizontalScrollbarWidth" config:type="int">1187</config:config-item>
+     <config:config-item config:name="HorizontalScrollbarWidth" config:type="int">1044</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ZoomValue" config:type="int">100</config:config-item>
      <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
      <config:config-item config:name="ShowPageBreakPreview" config:type="boolean">false</config:config-item>
      <config:config-item config:name="ShowZeroValues" config:type="boolean">true</config:config-item>
      <config:config-item config:name="ShowNotes" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="ShowNoteAuthor" config:type="boolean">true</config:config-item>
      <config:config-item config:name="ShowFormulasMarks" config:type="boolean">false</config:config-item>
      <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
      <config:config-item config:name="GridColor" config:type="int">12632256</config:config-item>
-     <config:config-item config:name="ShowPageBreaks" config:type="boolean">true</config:config-item>
      <config:config-item config:name="FormulaBarHeight" config:type="short">1</config:config-item>
+     <config:config-item config:name="HasColumnRowHeaders" config:type="boolean">true</config:config-item>
      <config:config-item config:name="HasSheetTabs" config:type="boolean">true</config:config-item>
      <config:config-item config:name="IsOutlineSymbolsSet" config:type="boolean">true</config:config-item>
      <config:config-item config:name="IsValueHighlightingEnabled" config:type="boolean">false</config:config-item>
@@ -90,9 +91,9 @@
    <config:config-item config:name="IsSnapToRaster" config:type="boolean">false</config:config-item>
    <config:config-item config:name="LinkUpdateMode" config:type="short">3</config:config-item>
    <config:config-item config:name="LoadReadonly" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="PrinterName" config:type="string">DCP-9020CDW</config:config-item>
+   <config:config-item config:name="PrinterName" config:type="string">HP-ENVY-Photo-7800-series</config:config-item>
    <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="PrinterSetup" config:type="base64Binary">tQH+/0RDUC05MDIwQ0RXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ1VQUzpEQ1AtOTAyMENEVwAAAAAAAAAAAAAAAAAAAAAWAAMAnAAAAAAAAAAEAAhSAAAEdAAASm9iRGF0YSAxCnByaW50ZXI9RENQLTkwMjBDRFcKb3JpZW50YXRpb249UG9ydHJhaXQKY29waWVzPTEKY29sbGF0ZT1mYWxzZQptYXJnaW5hZGp1c3RtZW50PTAsMCwnMCwwCmNvbG9yZGVwdGg9MjQKY29sb3JkZXZpY2U9MApQUERDb250ZXh0RGF0YQpQYWdlU2l6ZTpBNAAAEgBDT01QQVRfRFVQTEVYX01PREUPAER1cGxleE1vZGU6Ok9mZgwAUFJJTlRFUl9OQU1FCwBEQ1AtOTAyMENEVwsARFJJVkVSX05BTUUQAENVUFM6RENQLTkwMjBDRFc=</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">5AH+/0hQLUVOVlktUGhvdG8tNzgwMC1zZXJpZXMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ1VQUzpIUC1FTlZZLVBob3RvLTc4MDAtc2VyaWVzAAAWAAMAqgAAAAAAAAAEAAhSAAAEdAAASm9iRGF0YSAxCnByaW50ZXI9SFAtRU5WWS1QaG90by03ODAwLXNlcmllcwpvcmllbnRhdGlvbj1Qb3J0cmFpdApjb3BpZXM9MQpjb2xsYXRlPWZhbHNlCm1hcmdpbmFkanVzdG1lbnQ9MCwwLCcwLDAKY29sb3JkZXB0aD0yNApjb2xvcmRldmljZT0wClBQRENvbnRleHREYXRhClBhZ2VTaXplOkE0AAASAENPTVBBVF9EVVBMRVhfTU9ERRQARHVwbGV4TW9kZTo6TG9uZ0VkZ2UMAFBSSU5URVJfTkFNRRkASFAtRU5WWS1QaG90by03ODAwLXNlcmllcwsARFJJVkVSX05BTUUeAENVUFM6SFAtRU5WWS1QaG90by03ODAwLXNlcmllcw==</config:config-item>
    <config:config-item config:name="RasterIsVisible" config:type="boolean">false</config:config-item>
    <config:config-item config:name="RasterResolutionX" config:type="int">1000</config:config-item>
    <config:config-item config:name="RasterResolutionY" config:type="int">1000</config:config-item>
@@ -102,6 +103,7 @@
    <config:config-item config:name="SaveVersionOnClose" config:type="boolean">false</config:config-item>
    <config:config-item config:name="ShowFormulasMarks" config:type="boolean">false</config:config-item>
    <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ShowNoteAuthor" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ShowNotes" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ShowPageBreaks" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ShowZeroValues" config:type="boolean">true</config:config-item>
@@ -377,7 +379,7 @@
      <text:p><text:sheet-name>???</text:sheet-name><text:s/>(<text:title>???</text:title>)</text:p>
     </style:region-left>
     <style:region-right>
-     <text:p><text:date style:data-style-name="N2" text:date-value="2024-08-28">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="10:40:26.426407734">00:00:00</text:time></text:p>
+     <text:p><text:date style:data-style-name="N2" text:date-value="2025-01-05">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="14:43:42.444369199">00:00:00</text:time></text:p>
     </style:region-right>
    </style:header>
    <style:header-left style:display="false"/>
@@ -604,8 +606,8 @@
      <table:table-cell office:value-type="date" office:date-value="2018-07-31" calcext:value-type="date">
       <text:p>31/07/2018</text:p>
      </table:table-cell>
-     <table:table-cell office:value-type="date" office:date-value="2023-08-01T13:26:02" calcext:value-type="date">
-      <text:p>01/08/2023 13:26</text:p>
+     <table:table-cell office:value-type="date" office:date-value="2023-02-28T13:26:02" calcext:value-type="date">
+      <text:p>28/02/2023 13:26</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="float" office:value="20" calcext:value-type="float">
       <text:p>20</text:p>
@@ -631,8 +633,8 @@
      <table:table-cell office:value-type="date" office:date-value="2016-03-01" calcext:value-type="date">
       <text:p>01/03/2016</text:p>
      </table:table-cell>
-     <table:table-cell office:value-type="date" office:date-value="2023-08-01T13:26:02" calcext:value-type="date">
-      <text:p>01/08/2023 13:26</text:p>
+     <table:table-cell office:value-type="date" office:date-value="2023-02-28T13:26:02" calcext:value-type="date">
+      <text:p>28/02/2023 13:26</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="float" office:value="10" calcext:value-type="float">
       <text:p>10</text:p>
@@ -658,8 +660,8 @@
      <table:table-cell office:value-type="date" office:date-value="2020-01-01" calcext:value-type="date">
       <text:p>01/01/2020</text:p>
      </table:table-cell>
-     <table:table-cell office:value-type="date" office:date-value="2023-08-01T13:26:02" calcext:value-type="date">
-      <text:p>01/08/2023 13:26</text:p>
+     <table:table-cell office:value-type="date" office:date-value="2023-02-28T13:26:02" calcext:value-type="date">
+      <text:p>28/02/2023 13:26</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="float" office:value="50" calcext:value-type="float">
       <text:p>50</text:p>
@@ -713,8 +715,8 @@
      <table:table-cell office:value-type="date" office:date-value="2022-12-01" calcext:value-type="date">
       <text:p>01/12/2022</text:p>
      </table:table-cell>
-     <table:table-cell office:value-type="date" office:date-value="2023-08-01T13:26:02" calcext:value-type="date">
-      <text:p>01/08/2023 13:26</text:p>
+     <table:table-cell office:value-type="date" office:date-value="2023-02-28T13:26:00" calcext:value-type="date">
+      <text:p>28/02/2023 13:26</text:p>
      </table:table-cell>
      <table:table-cell office:value-type="float" office:value="11" calcext:value-type="float">
       <text:p>11</text:p>
