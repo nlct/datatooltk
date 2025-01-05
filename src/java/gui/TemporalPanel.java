@@ -18,21 +18,26 @@
 */
 package com.dickimawbooks.datatooltk.gui;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import java.awt.FlowLayout;
 import java.awt.CardLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import javax.swing.*;
 
 import com.dickimawbooks.texparserlib.latex.datatool.Julian;
 import com.dickimawbooks.texparserlib.latex.datatool.DatumType;
+import com.dickimawbooks.texparserlib.latex.datatool.DataToolBaseSty;
 import com.dickimawbooks.datatooltk.*;
 
-public class TemporalPanel extends JPanel
+public class TemporalPanel extends JPanel implements ActionListener
 {
    public TemporalPanel(DatatoolGUI gui, String tagPrefix)
    {
@@ -80,6 +85,19 @@ public class TemporalPanel extends JPanel
       }
 
       datetimeRow.add(datetimeSpinner);
+
+      zoneToggle = resources.createJCheckBox(tagPrefix, "timezone", this);
+      datetimeRow.add(zoneToggle);
+
+      zoneHrSpinnerModel = new SpinnerNumberModel( 0, -12, 12, 1);
+      zoneHrSpinner = new JSpinner(zoneHrSpinnerModel);
+      zoneHrSpinner.setEditor(new JSpinner.NumberEditor(zoneHrSpinner, "+00;-00"));
+      datetimeRow.add(zoneHrSpinner);
+
+      zoneMinSpinnerModel = new SpinnerNumberModel( 0, 0, 59, 1);
+      zoneMinSpinner = new JSpinner(zoneMinSpinnerModel);
+      zoneMinSpinner.setEditor(new JSpinner.NumberEditor(zoneMinSpinner, "00"));
+      datetimeRow.add(zoneMinSpinner);
 
       dateRow = createRow("date");
       add(dateRow, dateRow.getName());
@@ -142,6 +160,53 @@ public class TemporalPanel extends JPanel
       return comp;
    }
 
+   @Override
+   public void actionPerformed(ActionEvent evt)
+   {
+      String action = evt.getActionCommand();
+
+      if (action == null) return;
+
+      if (action.equals("timezone"))
+      {
+         zoneHrSpinner.setVisible(zoneToggle.isSelected());
+         zoneMinSpinner.setVisible(zoneToggle.isSelected());
+      }
+   }
+
+   protected void setTimeZone(int tzhr, int tzmin)
+   {
+      zoneHrSpinner.setValue(Integer.valueOf(tzhr));
+      zoneMinSpinner.setValue(Integer.valueOf(tzmin));
+   }
+
+   protected int getTimeZoneHour()
+   {
+      return zoneHrSpinnerModel.getNumber().intValue();
+   }
+
+   protected int getTimeZoneMinute()
+   {
+      return zoneMinSpinnerModel.getNumber().intValue();
+   }
+
+   protected long getTimeZoneMillis()
+   {
+      int tzh = getTimeZoneHour();
+      int tzm = getTimeZoneMinute();
+
+      long millis = 3600000L * (long)Math.abs(tzh) + 60000L * (long)tzm;
+
+      if (tzh < 0)
+      {
+         return -millis;
+      }
+      else
+      {
+         return millis;
+      }
+   }
+
    public void update(DatumType newType)
    {
       update(newType, getJulian());
@@ -184,12 +249,18 @@ public class TemporalPanel extends JPanel
          }
       }
 
-      Date date = null;
+      Calendar calendar;
 
       if (julian != null)
       {
-         date = julian.toCalendar().getTime();
+         calendar = julian.toCalendar();
       }
+      else
+      {
+         calendar = Calendar.getInstance(locale);
+      }
+
+      Date date = calendar.getTime();
 
       switch (newType)
       {
@@ -219,53 +290,85 @@ public class TemporalPanel extends JPanel
            {
               datetimeSpinnerModel.setValue(date);
            }
+
+           if (julian != null && julian.hasTimeZone())
+           {
+              zoneHrSpinnerModel.setValue(julian.getTimeZoneHour());
+              zoneMinSpinnerModel.setValue(julian.getTimeZoneMinute());
+
+              zoneToggle.setSelected(true);
+              zoneHrSpinner.setVisible(true);
+              zoneMinSpinner.setVisible(true);
+           }
+           else
+           {
+              zoneHrSpinnerModel.setValue(0);
+              zoneMinSpinnerModel.setValue(0);
+              zoneToggle.setSelected(false);
+              zoneHrSpinner.setVisible(false);
+              zoneMinSpinner.setVisible(false);
+           }
          break;
       }
+
+      currentJulian = julian;
    }
 
-   public Julian getJulian()
+   public DatumType getDatumType()
    {
       String name = currentComponent.getName();
 
       if ("date".equals(name))
       {
-         return Julian.createDay(dateSpinnerModel.getDate(),
-           gui.getSettings().getDateTimeLocale());
+         return DatumType.DATE;
       }
       else if ("time".equals(name))
       {
-         return Julian.createTime(timeSpinnerModel.getDate(),
-            gui.getSettings().getDateTimeLocale());
+         return DatumType.TIME;
       }
       else
       {
-         return Julian.createDate(datetimeSpinnerModel.getDate(),
-            gui.getSettings().getDateTimeLocale());
+         return DatumType.DATETIME;
       }
+   }
+
+   public Julian getJulian()
+   {
+      return getJulian(getDatumType());
    }
 
    public Julian getJulian(DatumType type)
    {
-      Julian julian = null;
-
       switch (type)
       {
          case DATE:
-           julian = Julian.createDay(dateSpinnerModel.getDate(),
+           currentJulian = Julian.createDay(dateSpinnerModel.getDate(),
              gui.getSettings().getDateTimeLocale());
          break;
          case TIME:
-           julian = Julian.createTime(timeSpinnerModel.getDate(),
+           currentJulian = Julian.createTime(timeSpinnerModel.getDate(),
              gui.getSettings().getDateTimeLocale());
          break;
          case DATETIME:
-           julian = Julian.createDate(datetimeSpinnerModel.getDate(),
-             gui.getSettings().getDateTimeLocale());
+           Date date = datetimeSpinnerModel.getDate();
+
+           if (zoneToggle.isSelected())
+           {
+              long millis = date.getTime() - getTimeZoneMillis();
+              currentJulian = Julian.createDate(
+               DataToolBaseSty.unixEpochMillisToJulianDate(millis), 
+                getTimeZoneHour(), getTimeZoneMinute());
+           }
+           else
+           {
+              currentJulian = Julian.createDate(date,
+                 gui.getSettings().getDateTimeLocale());
+           }
          break;
 
       }
 
-      return julian;
+      return currentJulian;
    }
 
    public Number getNumeric(DatumType type)
@@ -297,9 +400,12 @@ public class TemporalPanel extends JPanel
 
    DatatoolGUI gui;
 
-   private JSpinner dateSpinner, datetimeSpinner, timeSpinner;
+   private JSpinner dateSpinner, datetimeSpinner, timeSpinner, zoneHrSpinner, zoneMinSpinner;
    private CardLayout temporalCardLayout;
    private SpinnerDateModel dateSpinnerModel, timeSpinnerModel, datetimeSpinnerModel;
+   private SpinnerNumberModel zoneHrSpinnerModel, zoneMinSpinnerModel;
+   private JCheckBox zoneToggle;
    private Locale locale;
    private JComponent dateRow, timeRow, datetimeRow, currentComponent;
+   private Julian currentJulian;
 }

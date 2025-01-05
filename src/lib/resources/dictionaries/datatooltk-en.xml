@@ -798,6 +798,9 @@ the \strong'{'lazy'}' dog.
 <entry key="celledit.time.mnemonic">T</entry>
 <entry key="celledit.datetime">Timestamp:</entry>
 <entry key="celledit.datetime.mnemonic">M</entry>
+<entry key="celledit.timezone">TZ</entry>
+<entry key="celledit.timezone.tooltip">Time zone offset (hh:mm)</entry>
+<entry key="celledit.timezone.mnemonic">Z</entry>
 
 
 <entry key="message.celledit.not_numeric">Text is not numeric.

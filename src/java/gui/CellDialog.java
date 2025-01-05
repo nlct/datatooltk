@@ -280,7 +280,12 @@ public class CellDialog extends JDialog
             break;
          }
 
-         updateDatumComp();
+         if (type != currentType)
+         {
+            updateDatumComp();
+         }
+
+         currentType = type;
       }
    }
 
@@ -313,12 +318,35 @@ public class CellDialog extends JDialog
 
    protected void updateDatumComp()
    {
-      DatumType type = typeBox.getSelectedType();
+      updateDatumComp(null);
+   }
+
+   protected void updateDatumComp(Datum datum)
+   {
+      DatumType type;
+
+      if (datum == null)
+      {
+         type = typeBox.getSelectedType();
+      }
+      else
+      {
+         type = datum.getDatumType();
+      }
 
       if (type.isTemporal())
       {
          currencyComp.setVisible(false);
-         temporalComp.update(type);
+
+         if (datum == null)
+         {
+            temporalComp.update(type);
+         }
+         else
+         {
+            temporalComp.update(type, datum.getJulian());
+         }
+
          temporalComp.setVisible(true);
          numericComp.setVisible(false);
          reformatItem.setEnabled(true);
@@ -372,6 +400,8 @@ public class CellDialog extends JDialog
          decimalField.setText("");
       }
 
+      updateDatumComp(datum);
+      currentType = type;
       typeBox.setSelectedType(type);
    }
 
@@ -442,8 +472,6 @@ public class CellDialog extends JDialog
          decimalField.setText("");
       }
 
-      typeBox.setSelectedType(type);
-
       try
       {
          document.setText(
@@ -454,7 +482,9 @@ public class CellDialog extends JDialog
          getMessageHandler().error(this, e);
       }
 
-      updateDatumComp();
+      updateDatumComp(datum);
+      currentType = type;
+      typeBox.setSelectedType(type);
 
       undoManager.discardAllEdits();
       undoItem.setEnabled(false);
@@ -716,6 +746,7 @@ public class CellDialog extends JDialog
    private SpinnerNumberModel intSpinnerModel;
    private CardLayout valueCardLayout;
    private Number orgValue;
+   private DatumType currentType = DatumType.UNKNOWN;
 
    private TemporalPanel temporalComp;
 
