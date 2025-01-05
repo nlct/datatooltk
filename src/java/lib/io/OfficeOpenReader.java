@@ -303,7 +303,7 @@ public class OfficeOpenReader extends XMLReaderAdapter
                numFmts = new Vector<NumberStyle>();
             }
 
-            numFmts.add(new NumberStyle(attrs.getValue("numFmtId"),
+            numFmts.add(new NumberStyle(this, attrs.getValue("numFmtId"),
              attrs.getValue("formatCode")));
          }
       }
@@ -635,7 +635,7 @@ public class OfficeOpenReader extends XMLReaderAdapter
 
                if (num == null)
                {
-                  currentCell.setText(value);
+                  currentCell.setText(processText(value));
                }
                else
                {
@@ -660,13 +660,18 @@ public class OfficeOpenReader extends XMLReaderAdapter
 
                      currentCell.setText(ds.formatTemporal(julian));
                   }
+                  else if (type == DatumType.CURRENCY)
+                  {
+                     currentCell.setText(ds.formatCurrency(
+                       currentCell.getCurrencySymbol(), num.doubleValue()));
+                  }
                   else
                   {
                      NumberFormat numFmt = ds.getNumericFormatter(type);
 
                      if (type == DatumType.DECIMAL && ds.useSIforDecimals())
                      {
-                        currentCell.setText(String.format("\\num{%s}", value));
+                        currentCell.setText(String.format("\\num{%s}", processText(value)));
                      }
                      else
                      {
@@ -708,7 +713,7 @@ public class OfficeOpenReader extends XMLReaderAdapter
                   importSettings.getMessageHandler().warning(
                     messageSystem.getMessage("error.number_expected", value), e);
 
-                  currentCell.setText(value);
+                  currentCell.setText(processText(value));
                }
             }
          }
@@ -1067,7 +1072,7 @@ class WorkSheetRef
 
 class NumberStyle
 {
-   public NumberStyle(String fmtId, String code)
+   public NumberStyle(OfficeOpenReader reader, String fmtId, String code)
    {
       this.fmtId = fmtId;
       this.code = code;
@@ -1080,7 +1085,7 @@ class NumberStyle
 
          if (m.matches())
          {
-            currency = m.group(1);
+            currency = reader.processText(m.group(1));
          }
          else
          {
