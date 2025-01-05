@@ -169,8 +169,31 @@ public class TemporalPanel extends JPanel implements ActionListener
 
       if (action.equals("timezone"))
       {
-         zoneHrSpinner.setVisible(zoneToggle.isSelected());
-         zoneMinSpinner.setVisible(zoneToggle.isSelected());
+         if (zoneToggle.isSelected())
+         {
+            zoneHrSpinner.setVisible(true);
+            zoneMinSpinner.setVisible(true);
+
+            Locale curLocale = getResources().getSettings().getDateTimeLocale();
+
+            Calendar cal = new Calendar.Builder().setCalendarType("iso8601")
+             .setLocale(curLocale).setInstant(datetimeSpinnerModel.getDate()).build();
+
+            TimeZone tz = cal.getTimeZone();
+
+            int offset = tz.getOffset(cal.getTimeInMillis()) / 1000;
+
+            int tzh = offset / 3600;
+            int tzm = Math.abs(offset%60);
+
+            zoneHrSpinner.setValue(Integer.valueOf(tzh));
+            zoneMinSpinner.setValue(Integer.valueOf(tzm));
+         }
+         else
+         {
+            zoneHrSpinner.setVisible(false);
+            zoneMinSpinner.setVisible(false);
+         }
       }
    }
 
