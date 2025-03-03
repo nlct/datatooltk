@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
-datatooltk --in sample-1000x3-newdb.tex -o data.dbtex || exit $?
+datatooltk --output-format dbtex-2 --in sample-1000x3-newdb.tex -o data.dbtex || exit $?
 pdflatex -jobname test-dbtex-doc5 test-dbtex-doc

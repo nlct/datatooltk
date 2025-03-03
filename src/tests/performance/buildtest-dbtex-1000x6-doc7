@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
-datatooltk --nomap-tex-specials --nocsv-escape --sort Field1 --sort-locale en-GB --csv sample-1000x6.csv -o data.dbtex --remove-columns "4-" || exit $?
+datatooltk --output-format dbtex-2 --nomap-tex-specials --nocsv-escape --sort Field1 --sort-locale en-GB --csv sample-1000x6.csv -o data.dbtex --remove-columns "4-" || exit $?
 pdflatex -jobname test-dbtex-1000x6-doc7 test-dbtex-doc

@@ -2,10 +2,11 @@
 
 \usepackage{datatool}
 
-\DTLread[name={testdata},format=csv,csv-content=literal]{sample-1000x6.csv}
+\input{sample-1000x3-action.tex}
 
 \begin{document}
-\DTLforeach*{testdata}
+
+\DTLforeach*{\testdata}
  {\Fieldi=Field1,\Fieldii=Field2,\Fieldiii=Field3}
  {\Fieldi, \Fieldii, \Fieldiii.\par}
 

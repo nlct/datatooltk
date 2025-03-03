@@ -2,7 +2,7 @@
 
 \usepackage{datatool}
 
-\DTLloadrawdb{testdata}{sample-1000x3-spchar.csv}
+\DTLread[name={testdata},format=csv,csv-content=literal]{sample-1000x3-spchar.csv}
 
 \begin{document}
 \DTLforeach*{testdata}

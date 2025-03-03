@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
-datatooltk --nomap-tex-specials --nocsv-escape --csv sample-1000x3.csv --filter Field1 eq grammatically -o data.dbtex || exit $?
+datatooltk --output-format dbtex-2 --nomap-tex-specials --nocsv-escape --csv sample-1000x3.csv --filter Field1 eq grammatically -o data.dbtex || exit $?
 pdflatex -jobname test-dbtex-single-doc2 test-dbtex-single-doc2

@@ -4,7 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{datatool}
 
-\DTLloadrawdb{testdata}{sample-1000x3-utf8-spchar.csv}
+\DTLread[name={testdata},format=csv,csv-content=literal]{sample-1000x3-utf8-spchar.csv}
 \dtlsort{Field1}{testdata}{\dtlicompare}
 
 \begin{document}
