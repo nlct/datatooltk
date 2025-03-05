@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
-datatooltk --output-format dbtex-2 --map-tex-specials --csv-escape '\' --csv sample-1000x3-spchar.csv -o data.dbtex || exit $?
+datatooltk --output-format dbtex-2 --map-tex-specials --csv-escape '\' --csv-sep ',' --csv sample-1000x3-spchar.csv -o data.dbtex || exit $?
 pdflatex -jobname test-dbtex-doc4 test-dbtex-doc

@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
-datatooltk --output-format dbtex-2 --nomap-tex-specials --nocsv-escape --csv sample-1000x6.csv -o data.dbtex || exit $?
+datatooltk --output-format dbtex-2 --nomap-tex-specials --nocsv-escape --csv-sep ',' --csv sample-1000x6.csv -o data.dbtex || exit $?
 pdflatex -jobname test-dbtex-1000x6-doc1 test-dbtex-doc

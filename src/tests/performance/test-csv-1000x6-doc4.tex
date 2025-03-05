@@ -1,11 +1,12 @@
 \documentclass{article}
 
-\usepackage{datatool}[2025/03/03]
+% no localisation
+\usepackage[nolocales]{datatool}[2025/03/03]
 
-\input{sample-1000x6-action.tex}
+\DTLread[name=testdata,format=csv,csv-content=tex]{sample-1000x6.csv}
+\DTLsortdata{testdata}{Field1}
 
 \begin{document}
-
 \DTLforeach*{testdata}
  {\Fieldi=Field1,\Fieldii=Field2,\Fieldiii=Field3}
  {\Fieldi, \Fieldii, \Fieldiii.\par}

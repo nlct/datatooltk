@@ -1,0 +1,15 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[locales={en}]{datatool}[2025/03/03]
+
+\DTLread[name={testdata},format=csv,csv-content=literal]{sample-1000x3-utf8-spchar.csv}
+\DTLsortdata{testdata}{Field1}
+
+\begin{document}
+\DTLforeach*{testdata}
+ {\Fieldi=Field1,\Fieldii=Field2,\Fieldiii=Field3}
+ {\Fieldi, \Fieldii, \Fieldiii.\par}
+
+\end{document}

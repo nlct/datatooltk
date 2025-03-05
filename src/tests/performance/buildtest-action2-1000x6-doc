@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+pdflatex test-action2-1000x6-doc

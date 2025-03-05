@@ -2,9 +2,10 @@
 
 \usepackage{datatool}[2025/03/03]
 
-\input{sample-1000x6-action.tex}
+\DTLread[name=testdata,format=csv,csv-content=tex]{sample-1000x3.csv}
 
 \begin{document}
+\DTLsortdata{testdata}{Field1}
 
 \DTLforeach*{testdata}
  {\Fieldi=Field1,\Fieldii=Field2,\Fieldiii=Field3}

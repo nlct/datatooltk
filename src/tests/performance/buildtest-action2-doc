@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+pdflatex test-action2-doc
