@@ -196,6 +196,7 @@ may be \qtt{latest} or \qtt{1.6}}
 
 @switch{switch.literal,
   parent={app.datatooltk},
+  description={synonym for \switch{map-tex-specials}},
   alias={switch.map-tex-specials}
 }
 
@@ -207,6 +208,7 @@ data (default)}
 
 @switch{switch.noliteral,
   parent={app.datatooltk},
+  description={synonym for \switch{nomap-tex-specials}},
   alias={switch.nomap-tex-specials}
 }
 
@@ -556,7 +558,7 @@ imported using the given \glsxtrshort{sql} query}
   description={The \glsxtrshort{sql} password (insecure). If
 omitted, you will be prompted for a password if you try to import
 data from an \glsxtrshort{sql} database},
-  seealso={switch.noconsole-action}
+  seealso={switch.missing-console-action}
 }
 
 @switch{switch.wipepassword,
@@ -571,13 +573,20 @@ used to connect to an \glsxtrshort{sql} database (default)}
 used to connect to an \glsxtrshort{sql} database (default)}
 }
 
-@switch{switch.noconsole-action,
+@switch{switch.missing-console-action,
   parent={app.datatooltk},
   syntax={\meta{action}},
   defaultvalue={gui},
   description={The action to perform if \app{datatooltk} is run in batch mode and a password is required, where
    \meta{action} may be one of: \qtt{error},
    \qtt{stdin}, or \qtt{gui}}
+}
+
+@switch{switch.noconsole-action,
+  parent={app.datatooltk},
+  syntax={\meta{action}},
+  description={synonym for \switch{missing-console-action}},
+  alias={switch.missing-console-action}
 }
 
 @switch{switch.probsoln,

@@ -1098,7 +1098,7 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.title">Syntax:</entry>
 
-<entry key="syntax.autotrimlabels">{0}	Automatically trim labels.{1}</entry>
+<entry key="syntax.autotrimlabels">{0}	Automatically trim labels. (Default: {1})</entry>
 
 <entry key="syntax.batch">{0} (or {1})	No GUI interface. (Default.)</entry>
 
@@ -1121,7 +1121,6 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="syntax.csv_header">{0}		CSV files have a header row.{1} Synonym: {2}.</entry>
 
 <entry key="syntax.csv_noheader">{0}		CSV files don''t have a header row.{1} Synonym: {2}.</entry>
-<entry key="syntax.csv_nostrictquotes">{0}		Don''t ignore characters that haven''t been enclosed in the designated delimiters.</entry>
 
 <entry key="syntax.csv_opts">CSV Options:</entry>
 
@@ -1133,7 +1132,7 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.csv_strictquotes">{0}		Ignore characters not enclosed in the designated delimiters.</entry>
 
-<entry key="syntax.debug">{0}			Switch on debug mode.</entry>
+<entry key="syntax.debug">{0}			Enable debug mode.</entry>
 <entry key="syntax.debug-mode">{0} &lt;mode&gt;		Set debug mode for TeX Parser Library.</entry>
 <entry key="syntax.default">Default</entry>
 
@@ -1176,8 +1175,8 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.log">{0} &lt;filename&gt;		If debugging on, log TeX Parser messages in the given file.</entry>
 
-<entry key="syntax.maptexspecials">{0}	Map TeX special characters.{1}</entry>
-<entry key="syntax.literal">{0}	Non-TeX imports have literal content.{1}</entry>
+<entry key="syntax.maptexspecials">{0}	Equivalent to {1}.</entry>
+<entry key="syntax.literal">{0}	Non-TeX imports have literal content. (Default: {1})</entry>
 
 <entry key="syntax.merge">{0} &lt;key&gt; &lt;file&gt;
 		Merge input or imported database with the database
@@ -1216,14 +1215,7 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.name">{0} &lt;name&gt;	Set the database label (as used in \DTLnewdb) to &lt;name&gt;.</entry>
 
-<entry key="syntax.noautotrimlabels">{0}	Don''t trim labels.{1}</entry>
-<entry key="syntax.nodebug">{0}		Switch off debug mode. (Default.)</entry>
 <entry key="syntax.csv_noescape">{0}		Synonym: {1}.</entry>
-<entry key="syntax.nomaptexspecials">{0}	Don''t map TeX special characters.{1}</entry>
-
-<entry key="syntax.noowner_only">{0}	Don''t change file permissions for .dbtex files. {1}</entry>
-<entry key="syntax.noskipemptyrows">{0}	Don''t skip empty rows on import.{1}</entry>
-<entry key="syntax.no_shuffle">{0}	Don''t shuffle the database. (Default.)</entry>
 
 <entry key="syntax.ods">{0} &lt;filename&gt;	Import ODS data from &lt;filename&gt;</entry>
 <entry key="syntax.ods_opts">ODS Options:</entry>
@@ -1236,7 +1228,7 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.out">{0} (or {1}) &lt;filename&gt;	Save to &lt;filename&gt;.</entry>
 
-<entry key="syntax.owner_only">{0}	Set file permissions to owner read/write on .dbtex files. {1}</entry>
+<entry key="syntax.owner_only">{0}	Set file permissions to owner read/write on .dbtex files. (Default: {1})</entry>
 
 <entry key="syntax.preamble_only">{0}	If the TeX parser encounters \begin'{'document'}', stop parsing</entry>
 <entry key="syntax.probsoln">{0} &lt;filename&gt;	Import probsoln data from &lt;filename&gt;</entry>
@@ -1255,7 +1247,8 @@ Check the parser settings if this is incorrect.</entry>
 <entry key="syntax.shuffle">{0}	Shuffle the database. (Shuffle is always performed after sort,
 		regardless of the option order.)</entry>
 
-<entry key="syntax.skipemptyrows">{0}	Skip empty rows on import from CSV or spreadsheet.{1}</entry>
+<entry key="syntax.skipemptyrows">{0}	Equivalent to {1}</entry>
+<entry key="syntax.noskipemptyrows">{0}	Equivalent to {1}</entry>
 
 <entry key="syntax.sort">{0} [+|-]&lt;field&gt;
 		Sort the database on the column whose label is given by &lt;field&gt;.
@@ -1280,15 +1273,12 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.sql_host">{0} &lt;hostname&gt;	SQL host. (Default: ''{1}''.)</entry>
 
-<entry key="syntax.sql_noconsole">{0} &lt;action&gt;
+<entry key="syntax.sql_missing_console_action">{0} &lt;action&gt;
 	When requesting a SQL password in batch mode if there is no
 	console available do:
 	&lt;action&gt;: ''stdin'' - read from STDIN instead (least secure option)
 	&lt;action&gt;: ''gui'' - use a dialog box (default)
 	&lt;action&gt;: ''error'' - issue an error.</entry>
-
-<entry key="syntax.sql_nowipepassword">{0}	Don''t wipe the password from memory as soon as it has
-			been used to connect to a SQL database.{1}</entry>
 
 <entry key="syntax.sql_opts">SQL Options:</entry>
 
@@ -1302,8 +1292,7 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.sql_user">{0} &lt;user name&gt;	SQL user name.</entry>
 
-<entry key="syntax.sql_wipepassword">{0}	For extra security, wipe the password from memory as
-		soon as it has been used to connect to a SQL database.{1}</entry>
+<entry key="syntax.sql_wipepassword">{0}	For extra security, wipe the password from memory as soon as it has been used to connect to a SQL database. (Default: {1})</entry>
 
 <entry key="syntax.tex_encoding">{0} &lt;encoding&gt;		TeX file encoding.</entry>
 

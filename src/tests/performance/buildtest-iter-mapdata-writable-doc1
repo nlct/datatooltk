@@ -1,3 +1,0 @@
-#!/usr/bin/bash
-
-pdflatex test-iter-mapdata-writable-doc1

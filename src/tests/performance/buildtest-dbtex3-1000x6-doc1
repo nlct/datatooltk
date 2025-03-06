@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
-datatooltk --output-format dbtex-3 --noliteral --csv sample-1000x6.csv -o data.dbtex || exit $?
-pdflatex -jobname test-dbtex3-1000x6-doc1 test-dbtex-doc
+datatooltk --output-format dbtex-3 --nomap-tex-specials --csv-sep ',' --csv sample-1000x6.csv -o data-v3.dbtex || exit $?
+pdflatex -jobname test-dbtex3-1000x6-doc1 test-dbtex3-doc

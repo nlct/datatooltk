@@ -607,8 +607,7 @@ public abstract class DatatoolTk
 
       System.out.println(getLabelWithValues("syntax.version", "--version", "-v"));
       System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
-      System.out.println(getLabelWithValues("syntax.debug", "--debug"));
-      System.out.println(getLabelWithValues("syntax.nodebug", "--nodebug"));
+      System.out.println(getLabelWithValues("syntax.debug", "--[no]debug"));
       System.out.println(getLabelWithValues("syntax.debug-mode", "--debug-mode"));
       System.out.println(getLabelWithValues("syntax.log", "--log"));
       System.out.println(getLabelWithValues("syntax.compat", "--compat"));
@@ -623,25 +622,20 @@ public abstract class DatatoolTk
       System.out.println(getLabelWithValues("syntax.dtl_write", "--dtl-write"));
 
       System.out.println(getLabelWithValues("syntax.literal",
-          "--literal",
-          (settings.isLiteralContent()?" ("+getLabel("syntax.default")+".)":"")));
-      System.out.println(getLabelWithValues("syntax.noliteral",
-         "--noliteral",
-         (settings.isLiteralContent() ?
-         "": " ("+getLabel("syntax.default")+".)")));
+          "--[no]literal",
+         (settings.isLiteralContent() ? "--literal" : "--noliteral")));
+
+      System.out.println(getLabelWithValues("syntax.maptexspecials",
+          "--[no]map-tex-specials",
+          "--[no]literal"));
 
       System.out.println(getLabelWithValues("syntax.autotrimlabels",
-          "--auto-trim-labels",
+          "--[no]auto-trim-labels",
           (settings.isAutoTrimLabelsOn() ? 
-             " ("+getLabel("syntax.default")+".)":"")));
-      System.out.println(getLabelWithValues("syntax.noautotrimlabels",
-          "--noauto-trim-labels",
-          (settings.isAutoTrimLabelsOn() ? 
-             "":" ("+getLabel("syntax.default")+".)")));
+             "--auto-trim-labels" : "--noauto-trim-labels")));
 
       System.out.println(getLabelWithValues("syntax.seed", "--seed"));
-      System.out.println(getLabelWithValues("syntax.shuffle", "--shuffle"));
-      System.out.println(getLabelWithValues("syntax.no_shuffle", "--noshuffle"));
+      System.out.println(getLabelWithValues("syntax.shuffle", "--[no]shuffle"));
       System.out.println(getLabelWithValues("syntax.sort", "--sort"));
       System.out.println(getLabelWithValues("syntax.sort_case_sensitive",
          "--sort-case-sensitive"));
@@ -650,11 +644,9 @@ public abstract class DatatoolTk
       System.out.println(getLabelWithValues("syntax.sort_locale",
          "--sort-locale"));
       System.out.println(getLabelWithValues("syntax.owner_only",
-         "--owner_only", (settings.isOwnerOnly() ?
-         " ("+getLabel("syntax.default")+".)" : "")));
-      System.out.println(getLabelWithValues("syntax.noowner_only",
-         "--noowner_only", (settings.isOwnerOnly() ?
-         "" : " ("+getLabel("syntax.default")+".)")));
+         "--[no]owner_only",
+         (settings.isOwnerOnly() ?  "--owner-only" : "--[no]owner-only")));
+
       System.out.println(getLabelWithValues("syntax.truncate",
          "--truncate"));
       System.out.println(getLabelWithValues("syntax.remove_cols",
@@ -716,16 +708,14 @@ public abstract class DatatoolTk
       System.out.println(getLabelWithValues("syntax.tsv_sep", "--tab-sep", "--csv-sep"));
       System.out.println(getLabelWithValues("syntax.csv_sep", "--csv-sep", 
         new String(Character.toChars(settings.getSeparator())), "--sep"));
+
       System.out.println(getLabelWithValues("syntax.csv_delim", "--csv-delim", 
         new String(Character.toChars(settings.getDelimiter())), "--delim"));
+
       System.out.println(getLabelWithValues("syntax.csv_header",
-        "--csv-header",
-        (settings.hasCSVHeader()?" ("+getLabel("syntax.default")+".)":""),
+        "--[no]csv-header",
+        (settings.hasCSVHeader()?"--csv-header":"--nocsv-header"),
         "--csvheader"));
-      System.out.println(getLabelWithValues("syntax.csv_noheader",
-        "--nocsv-header",
-        (settings.hasCSVHeader()? "" : " ("+getLabel("syntax.default")+".)"),
-        "--nocsvheader"));
 
       CsvBlankOption blankOpt = settings.getCsvBlankOption();
 
@@ -734,27 +724,28 @@ public abstract class DatatoolTk
 
       System.out.println(getLabelWithValues("syntax.skipemptyrows",
           "--csv-skip-empty-rows",
-          (blankOpt == CsvBlankOption.IGNORE ? 
-             " ("+getLabel("syntax.default")+".)":"")));
+          "--csv-empty-rows "+CsvBlankOption.IGNORE.getName()));
+
       System.out.println(getLabelWithValues("syntax.noskipemptyrows",
           "--nocsv-skip-empty-rows",
-          (blankOpt != CsvBlankOption.IGNORE ? 
-             "":" ("+getLabel("syntax.default")+".)")));
+          "--csv-empty-rows "+CsvBlankOption.EMPTY_ROW));
 
       System.out.println(getLabelWithValues("syntax.csv_escape_chars",
         "--csv-escape-chars",
         settings.getEscapeCharsOption()));
 
-      System.out.println(getLabelWithValues("syntax.csv_escape", "--csv-escape",
-        "--csv-escape-chars"));
-      System.out.println(getLabelWithValues("syntax.csv_noescape", 
-        "--nocsv-escape", "--csv-escape-chars none"));
+      System.out.println(getLabelWithValues("syntax.csv_escape",
+        "--[no]csv-escape", "--csv-escape-chars"));
 
-      System.out.println(getLabelWithValues("syntax.csv_skiplines", "--csv-skiplines"));
-      System.out.println(getLabelWithValues("syntax.csv_strictquotes", "--csv-strictquotes"));
-      System.out.println(getLabelWithValues("syntax.csv_nostrictquotes", "--nocsv-strictquotes"));
+      System.out.println(getLabelWithValues("syntax.csv_skiplines",
+        "--csv-skiplines"));
+
+      System.out.println(getLabelWithValues("syntax.csv_strictquotes",
+        "--[no]csv-strictquotes"));
+
       System.out.println(getLabelWithValues("syntax.csv_encoding", 
         "--csv-encoding", "--csvencoding"));
+
       System.out.println();
 
    }
@@ -794,28 +785,33 @@ public abstract class DatatoolTk
       if (allowsSQL)
       {
          System.out.println(getLabel("syntax.sql_opts"));
+
          System.out.println(getLabelWithValues("syntax.sql", "--sql"));
          System.out.println(getLabelWithValues("syntax.merge_sql", "--merge-sql"));
          System.out.println(getLabelWithValues("syntax.sql_db", "--sqldb"));
+
          System.out.println(getLabelWithValues("syntax.sql_prefix",
            "--sqlprefix", settings.getSqlPrefix()));
+
          System.out.println(getLabelWithValues("syntax.sql_port",
            "--sqlport", ""+settings.getSqlPort()));
+
          System.out.println(getLabelWithValues("syntax.sql_host",
            "--sqlhost", settings.getSqlHost()));
+
          System.out.println(getLabelWithValues("syntax.sql_user", "--sqluser"));
+
          System.out.println(getLabelWithValues("syntax.sql_password",
            "--sqlpassword"));
+
          System.out.println(getLabelWithValues("syntax.sql_wipepassword",
-           "--wipepassword", 
+           "--[no]wipepassword", 
            (settings.isWipePasswordEnabled()?
-              " ("+getLabel("syntax.default")+")":"")));
-         System.out.println(getLabelWithValues("syntax.sql_nowipepassword",
-           "--nowipepassword", 
-           (settings.isWipePasswordEnabled()?
-              "":" ("+getLabel("syntax.default")+")")));
-         System.out.println(getLabelWithValues("syntax.sql_noconsole",
-           "--noconsole-action"));
+              "--wipepassword":"--nowipepassword")));
+
+         System.out.println(getLabelWithValues("syntax.sql_missing_console_action",
+           "--missing-console-action"));
+
          System.out.println();
       }
 
@@ -1628,7 +1624,8 @@ public abstract class DatatoolTk
 
             settings.setWipePassword(false);
          }
-         else if (args[i].equals("--noconsole-action"))
+         else if (args[i].equals("--noconsole-action")
+                ||args[i].equals("--missing-console-action"))
          {
             i++;
 
@@ -2362,8 +2359,8 @@ public abstract class DatatoolTk
    }
 
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_VERSION = "1.9.20240828";
-   public static final String APP_DATE = "2024-08-28";
+   public static final String APP_VERSION = "1.9.20250306";
+   public static final String APP_DATE = "2025-03-06";
    public static final String START_COPYRIGHT_YEAR = "2014";
    public static final String COPYRIGHT_YEAR
     = START_COPYRIGHT_YEAR+"-"+APP_DATE.substring(0,4);

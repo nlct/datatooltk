@@ -766,7 +766,7 @@ has been used to connect to an \gls{sql} database. (Default.)
 Don't wipe the password from memory as soon as it 
 has been used to connect to an \gls{sql} database.
 
-\switchdef{noconsole-action}
+\switchdef{missing-console-action}
 If in batch mode and a SQL password is required
 and \switch{sqlpassword} hasn't been used, the
 default action is for \app{datatooltk} to request a password
@@ -780,6 +780,9 @@ which may be one of:
   an annoying flicker);
   \item \qtt{gui} display a dialog box in which to enter the password (default).
 \end{itemize}
+
+\switchdef{noconsole-action}
+Synonym for \switch{missing-console-action}.
 
 \switchdef{probsoln}
 Import \sty{probsoln} data from \meta{filename}.
