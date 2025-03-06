@@ -1,0 +1,22 @@
+\documentclass{article}
+
+\usepackage{datatool}[2025/03/03]
+
+\DTLread[name=testdata,format=csv,csv-content=tex]{sample-1000x3.csv}
+
+\begin{document}
+\DTLaction[
+ name=testdata,
+ key={Field1},
+ value={grammatically},
+]
+{select row}
+
+\DTLget{\result}
+\DTLifnull\result
+{No match!}
+{Row \result:
+\DTLuse{Field1}, \DTLuse{Field2}, \DTLuse{Field3}.
+}
+
+\end{document}

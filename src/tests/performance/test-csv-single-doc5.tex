@@ -1,0 +1,24 @@
+\documentclass{article}
+
+\usepackage{datatool}[2025/03/03]
+
+\DTLread[name=testdata,format=csv,csv-content=tex]{sample-1000x3.csv}
+
+\begin{document}
+\DTLaction[
+ name=testdata,
+ assign= {\Fieldi=Field1,\Fieldii=Field2,\Fieldiii=Field3},
+ options={
+   direction=descending,
+   inline = {\ifdefstring{\Fieldi}{grammatically}{#1}{}}
+  }
+]
+{find}
+
+\DTLget{\result}
+\DTLifnull\result
+{No match!}
+{Row \result:
+\Fieldi, \Fieldii, \Fieldiii.
+}
+\end{document}
