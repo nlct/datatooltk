@@ -3079,7 +3079,8 @@ public class DatatoolDb
                   out.format(" {%% Column %d Content%n", colNum);
 
                   out.print("   ");
-                  out.println(settings.getDbTeX3Cell(datum, header));
+                  out.print(settings.getDbTeX3Cell(datum, header));
+                  out.println("%");
 
                   out.format(" }%% End of column %d Content%n", colNum);
                }
