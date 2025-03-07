@@ -1098,124 +1098,92 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.title">Syntax:</entry>
 
-<entry key="syntax.autotrimlabels">{0}	Automatically trim labels. (Default: {1})</entry>
+<entry key="syntax.autotrimlabels">{0}	Automatically trim labels (default: {1}).</entry>
 
-<entry key="syntax.batch">{0} (or {1})	No GUI interface. (Default.)</entry>
+<entry key="syntax.batch">{0} (or {1})	No GUI interface.</entry>
 
 <entry key="syntax.bugreport">Report bugs to: {0}</entry>
 
-<entry key="syntax.compat">{0} &lt;level&gt;		Set the compatibility level.</entry>
+<entry key="syntax.compat">{0} &lt;level&gt;	Set the compatibility level.</entry>
 
-<entry key="syntax.csv">{0} &lt;csv file&gt;	Import &lt;csv file&gt;.</entry>
+<entry key="syntax.csv">{0} &lt;csv file&gt;	Import CSV data from &lt;csv file&gt;.</entry>
 
-<entry key="syntax.csv_delim">{0} &lt;character&gt;	Delimiter used in CSV files. (Defaults to ''{1}''. Synonym: {2})</entry>
+<entry key="syntax.csv_delim">{0} &lt;character&gt;	Delimiter used in CSV files (synonym: {2}, default value: {1}).</entry>
 
-<entry key="syntax.csv_encoding">{0} &lt;encoding&gt;		CSV file encoding. Synonym: {1}.</entry>
+<entry key="syntax.csv_encoding">{0} &lt;encoding&gt;	CSV file encoding (synonym: {1}).</entry>
 
-<entry key="syntax.csv_empty_rows">{0} &lt;setting&gt;	Set behaviour for empty rows on import from CSV or spreadsheet. (Default value: {1})</entry>
+<entry key="syntax.csv_empty_rows">{0} &lt;setting&gt;	Set behaviour for empty rows on import from CSV or spreadsheet (default value: {1}).</entry>
 
 <entry key="syntax.csv_escape">{0} &lt;char&gt;	Deprecated, use {1} instead.</entry>
 
-<entry key="syntax.csv_escape_chars">{0} &lt;setting&gt;	Set behaviour for parsing special characters within elements in CSV files. (Default value: {1})</entry>
+<entry key="syntax.csv_escape_chars">{0} &lt;setting&gt;	Set behaviour for parsing special characters within elements in CSV files (default value: {1}).</entry>
 
-<entry key="syntax.csv_header">{0}		CSV files have a header row.{1} Synonym: {2}.</entry>
-
-<entry key="syntax.csv_noheader">{0}		CSV files don''t have a header row.{1} Synonym: {2}.</entry>
+<entry key="syntax.csv_header">{0}	CSV files have a header row (synonym: {2}, default: {1}).</entry>
 
 <entry key="syntax.csv_opts">CSV Options:</entry>
 
-<entry key="syntax.csv_sep">{0} &lt;character&gt;	Separator used in CSV files. (Defaults to ''{1}''. Synonym: {2})</entry>
+<entry key="syntax.csv_sep">{0} &lt;character&gt;	Separator used in CSV files (synonym: {2}, Default: {1}).</entry>
 
-<entry key="syntax.tsv_sep">{0}		CSV files have TAB separators. (Equivalent to using ''{1}'' with TAB character)</entry>
+<entry key="syntax.tsv_sep">{0}	CSV files have TAB separators. (Equivalent to using ''{1}'' with TAB character.)</entry>
 
-<entry key="syntax.csv_skiplines">{0} &lt;number&gt;		Skip the specified &lt;number&gt; of lines at the start of CSV files.</entry>
+<entry key="syntax.csv_skiplines">{0} &lt;number&gt;	Skip the specified &lt;number&gt; of lines at the start of CSV files.</entry>
 
-<entry key="syntax.csv_strictquotes">{0}		Ignore characters not enclosed in the designated delimiters.</entry>
+<entry key="syntax.csv_strictquotes">{0}	Ignore characters not enclosed in the designated delimiters.</entry>
 
-<entry key="syntax.debug">{0}			Enable debug mode.</entry>
-<entry key="syntax.debug-mode">{0} &lt;mode&gt;		Set debug mode for TeX Parser Library.</entry>
+<entry key="syntax.debug">{0}	Enable debug mode.</entry>
+<entry key="syntax.debug-mode">{0} &lt;mode&gt;	Set debug mode for TeX Parser Library.</entry>
 <entry key="syntax.default">Default</entry>
 
 <entry key="syntax.filter">{0} &lt;key&gt; &lt;operator&gt; &lt;value&gt;
-		Add a filter (may be used multiple times).
-		&lt;key&gt; is the name of a column label and &lt;operator&gt; may be one
-		of: ''eq'' (equals), ''ne'' (does not equal), ''le'' (is less than or
-		equal to), ''lt'' (is less than), ''ge'' (is greater than or equal
-		to), ''gt'' (is greater than), ''regex'' (matches the regular
-		expression).</entry>
+Add a filter	&lt;key&gt; is the name of a column label and &lt;operator&gt; may be one of:
+	''eq'' (equals),
+	''ne'' (does not equal),
+	''le'' (is less than or equal to),
+	''lt'' (is less than),
+	''ge'' (is greater than or equal to),
+	''gt'' (is greater than),
+	''regex'' (matches the regular expression).
+Option may be used multiple times.</entry>
 
 <entry key="syntax.filter_and">{0}	Use ''AND'' operator when filtering.</entry>
 
-<entry key="syntax.filter_or">{0}	Use ''OR'' operator when filtering. (Default.)</entry>
+<entry key="syntax.filter_or">{0}	Use ''OR'' operator when filtering (default).</entry>
 
-<entry key="syntax.filter_exclude">{0}
-		When filtering discard rows that match the filter
-		specifications (and keep those that don''t match).</entry>
+<entry key="syntax.filter_exclude">{0}	When filtering discard rows that match the filter specifications (and keep those that don''t match).</entry>
 
-<entry key="syntax.filter_include">{0}
-		When filtering discard rows that don''t match the filter
-		specifications (and keep those that do match).
-		(Default.)</entry>
+<entry key="syntax.filter_include">{0}	When filtering discard rows that don''t match the filter specifications (and keep those that do match). (Default.)</entry>
 
 <entry key="syntax.general">General Options:</entry>
 
 <entry key="syntax.gui">{0} (or {1})	GUI interface.</entry>
 
-<entry key="syntax.help">{0} (or {1})		Print this help message and exit.</entry>
+<entry key="syntax.help">{0} (or {1})	Print this help message and exit.</entry>
 <entry key="syntax.homepage">{0} home page: {1}</entry>
 
 <entry key="syntax.import">{0} &lt;filename&gt;	Import data from &lt;filename&gt;</entry>
 
-<entry key="syntax.in">{0} (or {1}) &lt;datatool file&gt;
-		Load &lt;datatool file&gt;. (Can''t be used with --csv or --sql or
-		--probsoln.) The {0} (or {1}) switch is optional so
-		{2} &lt;file&gt; is equivalent to {2} {0} &lt;file&gt;.</entry>
+<entry key="syntax.in">{0} (or {1}) &lt;datatool file&gt;	Load &lt;datatool file&gt;. The {0} (or {1}) switch is optional so {2} &lt;file&gt; is equivalent to {2} {0} &lt;file&gt;. (Can''t be used with import options unless merging.)</entry>
 
-<entry key="syntax.in">{0} &lt;log file&gt;	Write messages to log file</entry>
-
-<entry key="syntax.log">{0} &lt;filename&gt;		If debugging on, log TeX Parser messages in the given file.</entry>
+<entry key="syntax.log">{0} &lt;log file&gt;	If debugging on, log TeX Parser messages in the given file.</entry>
 
 <entry key="syntax.maptexspecials">{0}	Equivalent to {1}.</entry>
-<entry key="syntax.literal">{0}	Non-TeX imports have literal content. (Default: {1})</entry>
+<entry key="syntax.literal">{0}	Non-TeX imports have literal content (default: {1}).</entry>
 
-<entry key="syntax.merge">{0} &lt;key&gt; &lt;file&gt;
-		Merge input or imported database with the database
-		stored in the given file on the column whose label is &lt;key&gt;.
-		(Only one of the merge options is permitted.)</entry>
+<entry key="syntax.merge">{0} &lt;key&gt; &lt;file&gt;	Merge input or imported database with the database stored in the given file on the column whose label is &lt;key&gt;. (Only one of the merge options is permitted.)</entry>
 
-<entry key="syntax.merge_import">{0} &lt;key&gt; &lt;file&gt;
-		Merge input or imported database with data imported from
-		given file on the column whose label is &lt;key&gt;.
-		(Only one of the merge options is permitted.)</entry>
+<entry key="syntax.merge_import">{0} &lt;key&gt; &lt;file&gt; Merge input or imported database with data imported from given file on the column whose label is &lt;key&gt;. (Only one of the merge options is permitted.)</entry>
 
-<entry key="syntax.merge_csv">{0} &lt;key&gt; &lt;file&gt;	Import CSV data from &lt;file&gt;
-				and merge with the loaded database
-				on the column whose label is &lt;key&gt;.
-			(Only one of the merge options is permitted.)</entry>
+<entry key="syntax.merge_csv">{0} &lt;key&gt; &lt;file&gt;	Import CSV data from &lt;file&gt; and merge with the loaded database on the column whose label is &lt;key&gt;. (Only one of the merge options is permitted.)</entry>
 
-<entry key="syntax.merge_ods">{0} &lt;key&gt; &lt;filename&gt;	Import ODS data from &lt;filename&gt;
-				and merge with the loaded database
-				on the column whose label is &lt;key&gt;.
-			(Only one of the merge options is permitted.)</entry>
+<entry key="syntax.merge_ods">{0} &lt;key&gt; &lt;filename&gt;	Import ODS data from &lt;filename&gt; and merge with the loaded database on the column whose label is &lt;key&gt;. (Only one of the merge options is permitted.)</entry>
 
-<entry key="syntax.merge_probsoln">{0} &lt;key&gt; &lt;file&gt;	Import probsoln data from &lt;file&gt;
-				and merge with the loaded database
-				on the column whose label is &lt;key&gt;.
-			(Only one of the merge options is permitted.)</entry>
+<entry key="syntax.merge_probsoln">{0} &lt;key&gt; &lt;file&gt;	Import probsoln data from &lt;file&gt; and merge with the loaded database on the column whose label is &lt;key&gt;. (Only one of the merge options is permitted.)</entry>
 
-<entry key="syntax.merge_sql">{0} &lt;key&gt; &lt;statement&gt;	Import data from SQL database
-				and merge with the loaded database
-				on the column whose label is &lt;key&gt;.
-			(Only one of the merge options is permitted.)</entry>
+<entry key="syntax.merge_sql">{0} &lt;key&gt; &lt;statement&gt;	Import data from SQL database and merge with the loaded database on the column whose label is &lt;key&gt;. (Only one of the merge options is permitted.)</entry>
 
-<entry key="syntax.merge_xls">{0} &lt;key&gt; &lt;filename&gt;	Import Excel data from &lt;filename&gt;
-				and merge with the loaded database
-				on the column whose label is &lt;key&gt;.
-			(Only one of the merge options is permitted.)</entry>
+<entry key="syntax.merge_xls">{0} &lt;key&gt; &lt;filename&gt;	Import Excel data from &lt;filename&gt; and merge with the loaded database on the column whose label is &lt;key&gt;. (Only one of the merge options is permitted.)</entry>
 
 <entry key="syntax.name">{0} &lt;name&gt;	Set the database label (as used in \DTLnewdb) to &lt;name&gt;.</entry>
-
-<entry key="syntax.csv_noescape">{0}		Synonym: {1}.</entry>
 
 <entry key="syntax.ods">{0} &lt;filename&gt;	Import ODS data from &lt;filename&gt;</entry>
 <entry key="syntax.ods_opts">ODS Options:</entry>
@@ -1228,7 +1196,7 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.out">{0} (or {1}) &lt;filename&gt;	Save to &lt;filename&gt;.</entry>
 
-<entry key="syntax.owner_only">{0}	Set file permissions to owner read/write on .dbtex files. (Default: {1})</entry>
+<entry key="syntax.owner_only">{0}	Set file permissions to owner read/write on .dbtex files (default: {1}).</entry>
 
 <entry key="syntax.preamble_only">{0}	If the TeX parser encounters \begin'{'document'}', stop parsing</entry>
 <entry key="syntax.probsoln">{0} &lt;filename&gt;	Import probsoln data from &lt;filename&gt;</entry>
@@ -1240,72 +1208,53 @@ Check the parser settings if this is incorrect.</entry>
 
 <entry key="syntax.seed">{0} &lt;number&gt;	Set the random seed to &lt;number&gt; or clear it if &lt;number&gt; is "".</entry>
 
-<entry key="syntax.sheet">{0} &lt;ref&gt;		Fetch data from sheet &lt;ref&gt;,
-			where &lt;ref&gt; can be an index (starting from 0)
-			or the name of a sheet.</entry>
+<entry key="syntax.sheet">{0} &lt;ref&gt;	Fetch data from sheet &lt;ref&gt;, where &lt;ref&gt; can be an index (starting from 0) or the name of a sheet.</entry>
 
-<entry key="syntax.shuffle">{0}	Shuffle the database. (Shuffle is always performed after sort,
-		regardless of the option order.)</entry>
+<entry key="syntax.shuffle">{0}	Shuffle the database. (Shuffle is always performed after sort, regardless of the option order.)</entry>
 
 <entry key="syntax.skipemptyrows">{0}	Equivalent to {1}</entry>
 <entry key="syntax.noskipemptyrows">{0}	Equivalent to {1}</entry>
 
-<entry key="syntax.sort">{0} [+|-]&lt;field&gt;
-		Sort the database on the column whose label is given by &lt;field&gt;.
-		If &lt;field&gt; is preceded by ''+'', use ascending order. If
-		&lt;field&gt; is preceded by ''-'', use descending order. If sign
-		prefix is omitted, ''+'' is assumed. (Sort is always performed
-		before shuffle, regardless of option order.)</entry>
+<entry key="syntax.sort">{0} [+|-]&lt;field&gt; Sort the database on the column whose label is given by &lt;field&gt;. If &lt;field&gt; is preceded by ''+'', use ascending order. If &lt;field&gt; is preceded by ''-'', use descending order. If sign prefix is omitted, ''+'' is assumed. (Sort is always performed before shuffle, regardless of option order.)</entry>
 
-<entry key="syntax.sort_case_insensitive">{0}	Use case insensitive comparison when sorting strings.
-			(Default.)</entry>
+<entry key="syntax.sort_case_insensitive">{0}	Use case insensitive comparison when sorting strings (default).</entry>
 
 <entry key="syntax.sort_case_sensitive">{0}	Use case sensitive comparison when sorting strings.</entry>
 
-<entry key="syntax.sort_locale">{0} &lt;tag&gt;	Sort according to the alphabet identified
-			by &lt;tag&gt; (which should be a valid IETF
-			language tag) or, if &lt;tag&gt; is the keyword
-			''none'' use non-locale letter order.</entry>
+<entry key="syntax.sort_locale">{0} &lt;tag&gt;	Sort according to the alphabet identified by &lt;tag&gt; (which should be a valid IETF language tag) or, if &lt;tag&gt; is the keyword ''none'' use non-locale letter order.</entry>
 
 <entry key="syntax.sql">{0} &lt;statement&gt;	Import data from SQL database where &lt;statement&gt; is a SQL SELECT statement.</entry>
 
-<entry key="syntax.sql_db">{0} &lt;name&gt;		SQL database name.</entry>
+<entry key="syntax.sql_db">{0} &lt;name&gt;	SQL database name.</entry>
 
-<entry key="syntax.sql_host">{0} &lt;hostname&gt;	SQL host. (Default: ''{1}''.)</entry>
+<entry key="syntax.sql_host">{0} &lt;hostname&gt;	SQL host (default: {1}).</entry>
 
-<entry key="syntax.sql_missing_console_action">{0} &lt;action&gt;
-	When requesting a SQL password in batch mode if there is no
-	console available do:
+<entry key="syntax.sql_missing_console_action">{0} &lt;action&gt; When requesting a SQL password in batch mode if there is no console available do:
 	&lt;action&gt;: ''stdin'' - read from STDIN instead (least secure option)
 	&lt;action&gt;: ''gui'' - use a dialog box (default)
 	&lt;action&gt;: ''error'' - issue an error.</entry>
 
 <entry key="syntax.sql_opts">SQL Options:</entry>
 
-<entry key="syntax.sql_password">{0}  &lt;password&gt;
-		SQL password (insecure). If omitted, you will be prompted for
-		the password if you try to import data from a SQL database.</entry>
+<entry key="syntax.sql_password">{0}  &lt;password&gt; SQL password (insecure). If omitted, you will be prompted for the password if you try to import data from a SQL database.</entry>
 
-<entry key="syntax.sql_port">{0} &lt;number&gt;	SQL port. (Default: {1}.)</entry>
+<entry key="syntax.sql_port">{0} &lt;number&gt;	SQL port (default: {1}).</entry>
 
-<entry key="syntax.sql_prefix">{0} &lt;prefix&gt;	SQL prefix. (Default: ''{1}''.)</entry>
+<entry key="syntax.sql_prefix">{0} &lt;prefix&gt;	SQL prefix (default: {1}).</entry>
 
 <entry key="syntax.sql_user">{0} &lt;user name&gt;	SQL user name.</entry>
 
-<entry key="syntax.sql_wipepassword">{0}	For extra security, wipe the password from memory as soon as it has been used to connect to a SQL database. (Default: {1})</entry>
+<entry key="syntax.sql_wipepassword">{0}	For extra security, wipe the password from memory as soon as it has been used to connect to a SQL database (default: {1}).</entry>
 
-<entry key="syntax.tex_encoding">{0} &lt;encoding&gt;		TeX file encoding.</entry>
+<entry key="syntax.tex_encoding">{0} &lt;encoding&gt;	TeX file encoding.</entry>
 
-<entry key="syntax.output_format">{0} dbtex-2|dbtex-3|dtltex-2|dtltex-3		Output file format.</entry>
+<entry key="syntax.output_format">{0} &lt;format&gt;	Output file format, where &lt;format&gt; may be one of: dbtex-2 (DBTEX v2.0), dbtex-3 (DBTEX v3.0), dtltex-2 (DTLTEX v2.0), or dtltex-3 (DTLTEX v3.0).</entry>
 
 <entry key="syntax.dtl_read">{0} &lt;options&gt; &lt;file&gt; Import option that simulates \DTLread[&lt;options&gt;]'{'&lt;file&gt;'}'.</entry>
 
 <entry key="syntax.dtl_write">{0} &lt;options&gt; &lt;file&gt; Export option that simulates \DTLwrite[&lt;options&gt;]'{'&lt;file&gt;'}'.</entry>
 
-<entry key="syntax.truncate">{0} &lt;n&gt;	Truncate the database to the first &lt;n&gt; rows.
-		(Has no effect if &lt;n&gt; is greater than the total number of rows.)
-		This option is always performed last (after any sorting,
-		shuffling and filtering).</entry>
+<entry key="syntax.truncate">{0} &lt;n&gt;	Truncate the database to the first &lt;n&gt; rows. (Has no effect if &lt;n&gt; is greater than the total number of rows.) This option is always performed last (after any sorting, shuffling and filtering).</entry>
 
 <entry key="syntax.version">{0} (or {1})	Print version and exit.</entry>
 

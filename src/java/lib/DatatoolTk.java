@@ -568,6 +568,8 @@ public abstract class DatatoolTk
 
    public void help()
    {
+      TeXJavaHelpLib helpLib = getHelpLib();
+
       version();
       System.out.println();
       System.out.println(getLabel("syntax.title"));
@@ -596,75 +598,94 @@ public abstract class DatatoolTk
 
       if (allowsGUI)
       {
-         System.out.println(getLabelWithValues("syntax.gui", "--gui", "-g"));
-         System.out.println(getLabelWithValues("syntax.batch", "--batch", "-b"));
+         helpLib.printSyntaxItem(getLabelWithValues("syntax.gui", "--gui", "-g"));
+         helpLib.printSyntaxItem(getLabelWithValues("syntax.batch", "--batch", "-b"));
       }
 
-      System.out.println(getLabelWithValues("syntax.in", 
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.in", 
         "--in", "-i", getApplicationName()));
-      System.out.println(getLabelWithValues("syntax.name", "--name"));
-      System.out.println(getLabelWithValues("syntax.out", "--output", "-o"));
 
-      System.out.println(getLabelWithValues("syntax.version", "--version", "-v"));
-      System.out.println(getLabelWithValues("syntax.help", "--help", "-h"));
-      System.out.println(getLabelWithValues("syntax.debug", "--[no]debug"));
-      System.out.println(getLabelWithValues("syntax.debug-mode", "--debug-mode"));
-      System.out.println(getLabelWithValues("syntax.log", "--log"));
-      System.out.println(getLabelWithValues("syntax.compat", "--compat"));
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.name", "--name"));
 
-      System.out.println(getLabelWithValues("syntax.tex_encoding",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.out", "--output", "-o"));
+
+      helpLib.printSyntaxItem(
+        getLabelWithValues("syntax.version", "--version", "-v"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.help", "--help", "-h"));
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.debug", "--[no]debug"));
+      helpLib.printSyntaxItem(
+        getLabelWithValues("syntax.debug-mode", "--debug-mode"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.log", "--log"));
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.compat", "--compat"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.tex_encoding",
          "--tex-encoding"));
 
-      System.out.println(getLabelWithValues("syntax.output_format",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.output_format",
          "--output-format"));
 
-      System.out.println(getLabelWithValues("syntax.dtl_read", "--dtl-read"));
-      System.out.println(getLabelWithValues("syntax.dtl_write", "--dtl-write"));
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.dtl_read", "--dtl-read"));
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.dtl_write", "--dtl-write"));
 
-      System.out.println(getLabelWithValues("syntax.literal",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.literal",
           "--[no]literal",
          (settings.isLiteralContent() ? "--literal" : "--noliteral")));
 
-      System.out.println(getLabelWithValues("syntax.maptexspecials",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.maptexspecials",
           "--[no]map-tex-specials",
           "--[no]literal"));
 
-      System.out.println(getLabelWithValues("syntax.autotrimlabels",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.autotrimlabels",
           "--[no]auto-trim-labels",
           (settings.isAutoTrimLabelsOn() ? 
              "--auto-trim-labels" : "--noauto-trim-labels")));
 
-      System.out.println(getLabelWithValues("syntax.seed", "--seed"));
-      System.out.println(getLabelWithValues("syntax.shuffle", "--[no]shuffle"));
-      System.out.println(getLabelWithValues("syntax.sort", "--sort"));
-      System.out.println(getLabelWithValues("syntax.sort_case_sensitive",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.seed", "--seed"));
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.shuffle", "--[no]shuffle"));
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.sort", "--sort"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.sort_case_sensitive",
          "--sort-case-sensitive"));
-      System.out.println(getLabelWithValues("syntax.sort_case_insensitive",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.sort_case_insensitive",
          "--sort-case-insensitive"));
-      System.out.println(getLabelWithValues("syntax.sort_locale",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.sort_locale",
          "--sort-locale"));
-      System.out.println(getLabelWithValues("syntax.owner_only",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.owner_only",
          "--[no]owner_only",
          (settings.isOwnerOnly() ?  "--owner-only" : "--[no]owner-only")));
 
-      System.out.println(getLabelWithValues("syntax.truncate",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.truncate",
          "--truncate"));
-      System.out.println(getLabelWithValues("syntax.remove_cols",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.remove_cols",
          "--remove-columns"));
-      System.out.println(getLabelWithValues("syntax.remove_except_cols",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.remove_except_cols",
          "--remove-except-columns"));
-      System.out.println(getLabelWithValues("syntax.filter_or",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter_or",
          "--filter-or"));
-      System.out.println(getLabelWithValues("syntax.filter_and",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter_and",
          "--filter-and"));
-      System.out.println(getLabelWithValues("syntax.filter_include",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter_include",
          "--filter-include"));
-      System.out.println(getLabelWithValues("syntax.filter_exclude",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter_exclude",
          "--filter-exclude"));
-      System.out.println(getLabelWithValues("syntax.filter",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter",
          "--filter"));
-      System.out.println(getLabelWithValues("syntax.merge",
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.merge",
          "--merge"));
+
       System.out.println();
 
       helpImportOptions();
@@ -673,14 +694,19 @@ public abstract class DatatoolTk
         "https://github.com/nlct/datatooltk/issues"));
       System.out.println(getLabelWithValues("syntax.homepage", 
         getApplicationName(),
-        "http://www.dickimaw-books.com/software/datatooltk/"));
+        "https://www.dickimaw-books.com/software/datatooltk/"));
    }
 
    public void helpImportOptions()
    {
-      System.out.println(getLabelWithValues("syntax.import", "--import"));
-      System.out.println(getLabelWithValues("syntax.merge_import", "--merge-import"));
-      System.out.println(getLabelWithValues("syntax.preamble_only",
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.import", "--import"));
+
+      helpLib.printSyntaxItem(
+         getLabelWithValues("syntax.merge_import", "--merge-import"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.preamble_only",
          "--[no]preamble-only"));
 
       System.out.println();
@@ -693,57 +719,78 @@ public abstract class DatatoolTk
 
    public void helpTeXImportOptions()
    {
+      TeXJavaHelpLib helpLib = getHelpLib();
+
       System.out.println(getLabel("syntax.probsoln_opts"));
-      System.out.println(getLabelWithValues("syntax.probsoln", "--probsoln"));
-      System.out.println(getLabelWithValues("syntax.merge_probsoln", "--merge-probsoln"));
+
+      helpLib.printSyntaxItem(
+        getLabelWithValues("syntax.probsoln", "--probsoln"));
+
+      helpLib.printSyntaxItem(
+        getLabelWithValues("syntax.merge_probsoln", "--merge-probsoln"));
+
       System.out.println();
 
    }
 
    public void helpCSVImportOptions()
    {
-      System.out.println(getLabel("syntax.csv_opts"));
-      System.out.println(getLabelWithValues("syntax.csv", "--csv"));
-      System.out.println(getLabelWithValues("syntax.merge_csv", "--merge-csv"));
-      System.out.println(getLabelWithValues("syntax.tsv_sep", "--tab-sep", "--csv-sep"));
-      System.out.println(getLabelWithValues("syntax.csv_sep", "--csv-sep", 
-        new String(Character.toChars(settings.getSeparator())), "--sep"));
+      TeXJavaHelpLib helpLib = getHelpLib();
 
-      System.out.println(getLabelWithValues("syntax.csv_delim", "--csv-delim", 
+      System.out.println(getLabel("syntax.csv_opts"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv", "--csv"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.merge_csv", "--merge-csv"));
+
+      helpLib.printSyntaxItem(
+        getLabelWithValues("syntax.tsv_sep", "--tab-sep", "--csv-sep"));
+
+      String sep = new String(Character.toChars(settings.getSeparator()));
+
+      if (sep.equals("\t"))
+      {
+         sep = "[TAB]";
+      }
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_sep", "--csv-sep", 
+        sep, "--sep"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_delim", "--csv-delim", 
         new String(Character.toChars(settings.getDelimiter())), "--delim"));
 
-      System.out.println(getLabelWithValues("syntax.csv_header",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_header",
         "--[no]csv-header",
         (settings.hasCSVHeader()?"--csv-header":"--nocsv-header"),
-        "--csvheader"));
+        "--[no]csvheader"));
 
       CsvBlankOption blankOpt = settings.getCsvBlankOption();
 
-      System.out.println(getLabelWithValues("syntax.csv_empty_rows",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_empty_rows",
         "--csv-empty-rows", blankOpt.getName()));
 
-      System.out.println(getLabelWithValues("syntax.skipemptyrows",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.skipemptyrows",
           "--csv-skip-empty-rows",
           "--csv-empty-rows "+CsvBlankOption.IGNORE.getName()));
 
-      System.out.println(getLabelWithValues("syntax.noskipemptyrows",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.noskipemptyrows",
           "--nocsv-skip-empty-rows",
           "--csv-empty-rows "+CsvBlankOption.EMPTY_ROW));
 
-      System.out.println(getLabelWithValues("syntax.csv_escape_chars",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_escape_chars",
         "--csv-escape-chars",
         settings.getEscapeCharsOption()));
 
-      System.out.println(getLabelWithValues("syntax.csv_escape",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_escape",
         "--[no]csv-escape", "--csv-escape-chars"));
 
-      System.out.println(getLabelWithValues("syntax.csv_skiplines",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_skiplines",
         "--csv-skiplines"));
 
-      System.out.println(getLabelWithValues("syntax.csv_strictquotes",
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_strictquotes",
         "--[no]csv-strictquotes"));
 
-      System.out.println(getLabelWithValues("syntax.csv_encoding", 
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_encoding", 
         "--csv-encoding", "--csvencoding"));
 
       System.out.println();
@@ -752,64 +799,79 @@ public abstract class DatatoolTk
 
    public void helpSpreadSheetImportOptions()
    {
-      System.out.println(getLabel("syntax.xls_opts"));
-      System.out.println(getLabelWithValues("syntax.xlsx", "--xlsx"));
+      TeXJavaHelpLib helpLib = getHelpLib();
+
+      helpLib.printSyntaxItem(getLabel("syntax.xls_opts"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.xlsx", "--xlsx"));
 
       if (allowsXLS)
       {
-         System.out.println(getLabelWithValues("syntax.xls", "--xls"));
+         helpLib.printSyntaxItem(getLabelWithValues("syntax.xls", "--xls"));
       }
 
-      System.out.println(getLabelWithValues("syntax.merge_xlsx", "--merge-xlsx"));
+      helpLib.printSyntaxItem(
+         getLabelWithValues("syntax.merge_xlsx", "--merge-xlsx"));
 
       if (allowsXLS)
       {
-         System.out.println(getLabelWithValues("syntax.merge_xls", "--merge-xls"));
+         helpLib.printSyntaxItem(
+            getLabelWithValues("syntax.merge_xls", "--merge-xls"));
       }
 
       System.out.println();
 
-      System.out.println(getLabel("syntax.ods_opts"));
-      System.out.println(getLabelWithValues("syntax.ods", "--ods"));
-      System.out.println(getLabelWithValues("syntax.merge_ods", "--merge-ods"));
+      helpLib.printSyntaxItem(getLabel("syntax.ods_opts"));
+
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.ods", "--ods"));
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.merge_ods", "--merge-ods"));
       System.out.println();
 
-      System.out.println(getLabel("syntax.xlsods_opts"));
-      System.out.println(getLabelWithValues("syntax.sheet", "--sheet"));
+      helpLib.printSyntaxItem(getLabel("syntax.xlsods_opts"));
+      helpLib.printSyntaxItem(getLabelWithValues("syntax.sheet", "--sheet"));
       System.out.println();
 
    }
 
    public void helpSQLImportOptions()
    {
+      TeXJavaHelpLib helpLib = getHelpLib();
+
       if (allowsSQL)
       {
-         System.out.println(getLabel("syntax.sql_opts"));
+         helpLib.printSyntaxItem(getLabel("syntax.sql_opts"));
 
-         System.out.println(getLabelWithValues("syntax.sql", "--sql"));
-         System.out.println(getLabelWithValues("syntax.merge_sql", "--merge-sql"));
-         System.out.println(getLabelWithValues("syntax.sql_db", "--sqldb"));
+         helpLib.printSyntaxItem(
+            getLabelWithValues("syntax.sql", "--sql"));
 
-         System.out.println(getLabelWithValues("syntax.sql_prefix",
+         helpLib.printSyntaxItem(
+            getLabelWithValues("syntax.merge_sql", "--merge-sql"));
+
+         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_db", "--sqldb"));
+
+         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_prefix",
            "--sqlprefix", settings.getSqlPrefix()));
 
-         System.out.println(getLabelWithValues("syntax.sql_port",
+         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_port",
            "--sqlport", ""+settings.getSqlPort()));
 
-         System.out.println(getLabelWithValues("syntax.sql_host",
+         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_host",
            "--sqlhost", settings.getSqlHost()));
 
-         System.out.println(getLabelWithValues("syntax.sql_user", "--sqluser"));
+         helpLib.printSyntaxItem(
+            getLabelWithValues("syntax.sql_user", "--sqluser"));
 
-         System.out.println(getLabelWithValues("syntax.sql_password",
+         helpLib.printSyntaxItem(
+           getLabelWithValues("syntax.sql_password",
            "--sqlpassword"));
 
-         System.out.println(getLabelWithValues("syntax.sql_wipepassword",
+         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_wipepassword",
            "--[no]wipepassword", 
            (settings.isWipePasswordEnabled()?
               "--wipepassword":"--nowipepassword")));
 
-         System.out.println(getLabelWithValues("syntax.sql_missing_console_action",
+         helpLib.printSyntaxItem(
+            getLabelWithValues("syntax.sql_missing_console_action",
            "--missing-console-action"));
 
          System.out.println();
