@@ -23,7 +23,7 @@ for file in buildtest-newdb-doc*; do
  build $file
 done
 
-for file in buildtest-action-doc*; do
+for file in buildtest-action*-doc*; do
  [ -e "$file" ] || continue
  build $file
 done
@@ -74,6 +74,11 @@ for file in buildtest-dbtex-*x*-doc*; do
 done
 
 for file in buildtest-iter-*-doc*; do
+ [ -e "$file" ] || continue
+ build $file
+done
+
+for file in buildtest-numeric*-doc*; do
  [ -e "$file" ] || continue
  build $file
 done
