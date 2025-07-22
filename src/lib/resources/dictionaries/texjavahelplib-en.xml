@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>English language file for texjavahelplib</comment>
+<comment>English language file for texjavahelplib
+https://github.com/nlct/texjavahelp
+GPL-3.0
+Nicola Talbot
+</comment>
 
 <!-- Help Menu (for the main application) -->
 
@@ -11,38 +15,59 @@
 <entry key="menu.help.manual">Manual</entry>
 <entry key="menu.help.manual.mnemonic">M</entry>
 <entry key="menu.help.manual.keystroke">F1</entry>
+<entry key="menu.help.manual.tooltip">Open manual</entry>
 
-<entry key="action.help">Help</entry>
-<entry key="action.help.mnemonic">H</entry>
-<entry key="action.help.description">Open manual</entry>
-<entry key="action.help.keystroke">shift F1</entry>
-<entry key="action.help.defaultkeys">format=glsignore</entry>
+<entry key="button.help">Help</entry>
+<entry key="button.help.mnemonic">H</entry>
+<entry key="button.help.tooltip">Open relevant section of the manual</entry>
+<entry key="button.help.keystroke">shift F1</entry>
+<entry key="button.help.defaultkeys">format=glsignore</entry>
 
-<!-- Common Actions -->
+<!-- Common Buttons -->
 
-<entry key="action.okay">Okay</entry>
-<entry key="action.okay.mnemonic">O</entry>
-<entry key="action.okay.keystroke">shift ENTER</entry>
-<entry key="action.okay.defaultkeys">format=glsignore</entry>
+<entry key="button.okay">Okay</entry>
+<entry key="button.okay.mnemonic">O</entry>
+<entry key="button.okay.keystroke">shift ENTER</entry>
+<entry key="button.okay.defaultkeys">format=glsignore</entry>
 
-<entry key="action.cancel">Cancel</entry>
-<entry key="action.cancel.mnemonic">C</entry>
-<entry key="action.cancel.keystroke">ESCAPE</entry>
-<entry key="action.cancel.defaultkeys">format=glsignore</entry>
+<entry key="button.cancel">Cancel</entry>
+<entry key="button.cancel.mnemonic">C</entry>
+<entry key="button.cancel.keystroke">ESCAPE</entry>
+<entry key="button.cancel.defaultkeys">format=glsignore</entry>
 
-<entry key="action.apply">Apply</entry>
-<entry key="action.apply.mnemonic">A</entry>
-<entry key="action.apply.defaultkeys">format=glsignore</entry>
+<entry key="button.apply">Apply</entry>
+<entry key="button.apply.mnemonic">A</entry>
+<entry key="button.apply.defaultkeys">format=glsignore</entry>
 
-<entry key="action.close">Close</entry>
-<entry key="action.close.mnemonic">C</entry>
-<entry key="action.close.keystroke">alt F4</entry>
-<entry key="action.close.defaultkeys">format=glsignore</entry>
+<entry key="button.close">Close</entry>
+<entry key="button.close.mnemonic">C</entry>
+<entry key="button.close.keystroke">ENTER</entry>
+<entry key="button.close.defaultkeys">format=glsignore</entry>
 
-<entry key="action.copy">Copy</entry>
-<entry key="action.copy.mnemonic">C</entry>
-<entry key="action.copy.keystroke">control C</entry>
-<entry key="action.copy.defaultkeys">format=glsignore</entry>
+<entry key="button.copy">Copy</entry>
+<entry key="button.copy.mnemonic">C</entry>
+<entry key="button.copy.keystroke">control C</entry>
+<entry key="button.copy.defaultkeys">format=glsignore</entry>
+
+<entry key="button.copy_all">Copy All</entry>
+<entry key="button.copy_all.mnemonic">A</entry>
+<entry key="button.copy_all.keystroke">control shift C</entry>
+
+<!-- TeXJavaHelpLibAppAdapter error reporting -->
+
+<entry key="button.quit_without_saving">Quit Without Saving</entry>
+<entry key="button.quit_without_saving.mnemonic">Q</entry>
+
+<entry key="stacktrace.message">Error Message</entry>
+<entry key="stacktrace.message.mnemonic">E</entry>
+
+<entry key="stacktrace.details">Details</entry>
+<entry key="stacktrace.details.mnemonic">D</entry>
+
+<entry key="stacktrace.copy">Copy</entry>
+<entry key="stacktrace.copy.mnemonic">C</entry>
+<entry key="stacktrace.copy.keystroke">control C</entry>
+
 
 <!-- Menus and Buttons for the Help System -->
 
@@ -374,7 +399,12 @@
 <!-- Version information -->
 
 <entry key="about.version">{0} ({1})</entry>
+<entry key="about.version_date">{0} {1} ({2})</entry>
+
 <entry key="about.library.version">Bundled with {0} version {1} ({2})</entry>
+
+<entry key="about.translator_info"></entry>
+<entry key="about.acknowledgements"></entry>
 
 <!-- Index Map -->
 
@@ -421,8 +451,10 @@
 <entry key="manual.keystroke.right">\rightkeysym</entry>
 <entry key="manual.keystroke.right.description">Right</entry>
 
-<entry key="manual.keystroke.pageup">Page Up</entry>
-<entry key="manual.keystroke.pagedown">Page Down</entry>
+<entry key="manual.keystroke.pageup">PgUp</entry>
+<entry key="manual.keystroke.pageup.description">Page Up</entry>
+<entry key="manual.keystroke.pagedown">PgDn</entry>
+<entry key="manual.keystroke.pagedown.description">Page Down</entry>
 
 <entry key="manual.keystroke.tab">\tabsym</entry>
 <entry key="manual.keystroke.tab.description">Tab</entry>
@@ -527,7 +559,7 @@ code should appear in the PDF</entry>
 <entry key="manual.example.plural">examples</entry>
 <entry key="manual.section">section</entry>
 <entry key="manual.section.plural">sections</entry>
-<entry key="manual.seealso">see also</entry>
+<entry key="manual.seealsoname">see also</entry>
 
 <entry key="manual.contents">Contents</entry>
 <entry key="manual.listofexamples">Examples</entry>
@@ -544,6 +576,7 @@ code should appear in the PDF</entry>
 <entry key="manual.idxcounter">counter</entry>
 <entry key="manual.idxcounter">variable</entry>
 <entry key="manual.idxmenu">menu</entry>
+<entry key="manual.idxbutton">button</entry>
 
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>
@@ -567,5 +600,25 @@ Unable to open URL {0}</entry>
 <entry key="error.browse_failed">Unable to open browser to view {0}</entry>
 <entry key="error.missing_search_term">Missing search term</entry>
 <entry key="error.image_load_failed">Failed to load image ''{0}''</entry>
+
+<!-- CLI syntax parsing -->
+
+<entry key="clisyntax.usage">Usage: {0}</entry>
+<entry key="clisyntax.help">{0}	Display help and exit.</entry>
+<entry key="clisyntax.help2">{0} (or {1})	Display help and exit.</entry>
+<entry key="clisyntax.version">{0}	Display version information and exit.</entry>
+<entry key="clisyntax.version2">{0} (or {1})	Display version information and exit.</entry>
+
+<entry key="clisyntax.bugreport">Report bugs to: {0}</entry>
+<entry key="clisyntax.homepage">{0} home page: {1}</entry>
+
+
+<entry key="error.clisyntax.missing.value">Missing value for: {0}</entry>
+<entry key="error.clisyntax.invalid.int_value">Invalid ''{0}'' value: {1} (number required)</entry>
+<entry key="error.clisyntax.unknown.arg">Unknown option: {0}
+Use {1} for help.</entry>
+<entry key="error.clisyntax.toomany.arg">Too many arguments.
+Use {0} for help.</entry>
+
 
 </properties>
