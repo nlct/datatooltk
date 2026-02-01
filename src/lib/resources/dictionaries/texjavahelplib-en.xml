@@ -29,29 +29,38 @@ Nicola Talbot
 <entry key="button.okay.mnemonic">O</entry>
 <entry key="button.okay.keystroke">shift ENTER</entry>
 <entry key="button.okay.defaultkeys">format=glsignore</entry>
+<entry key="button.okay.tooltip">Accept changes and close window</entry>
 
 <entry key="button.cancel">Cancel</entry>
 <entry key="button.cancel.mnemonic">C</entry>
 <entry key="button.cancel.keystroke">ESCAPE</entry>
 <entry key="button.cancel.defaultkeys">format=glsignore</entry>
+<entry key="button.cancel.tooltip">Discard changes and close window</entry>
 
 <entry key="button.apply">Apply</entry>
 <entry key="button.apply.mnemonic">A</entry>
 <entry key="button.apply.defaultkeys">format=glsignore</entry>
+<entry key="button.apply.tooltip">Apply changes</entry>
 
 <entry key="button.close">Close</entry>
 <entry key="button.close.mnemonic">C</entry>
 <entry key="button.close.keystroke">ENTER</entry>
 <entry key="button.close.defaultkeys">format=glsignore</entry>
+<entry key="button.close.tooltip">Close window</entry>
 
 <entry key="button.copy">Copy</entry>
 <entry key="button.copy.mnemonic">C</entry>
 <entry key="button.copy.keystroke">control C</entry>
 <entry key="button.copy.defaultkeys">format=glsignore</entry>
+<entry key="button.copy.tooltip">Copy selected</entry>
 
 <entry key="button.copy_all">Copy All</entry>
 <entry key="button.copy_all.mnemonic">A</entry>
 <entry key="button.copy_all.keystroke">control shift C</entry>
+<entry key="button.copy_all.tooltip">Select all and copy</entry>
+
+<entry key="button.linked">Link</entry>
+<entry key="button.linked.tooltip">Link/unlink</entry>
 
 <!-- TeXJavaHelpLibAppAdapter error reporting -->
 
@@ -429,8 +438,8 @@ Nicola Talbot
 <entry key="manual.keystroke.space">\spacekeysym</entry>
 <entry key="manual.keystroke.space.description">Space</entry>
 
-<entry key="manual.keystroke.contextmenu">\contextmenusym</entry>
-<entry key="manual.keystroke.contextmenu.description">Context Menu</entry>
+<entry key="manual.keystroke.context_menu">\contextmenusym</entry>
+<entry key="manual.keystroke.context_menu.description">Context Menu</entry>
 
 <entry key="manual.keystroke.control">Control</entry>
 <entry key="manual.keystroke.ctrl">Ctrl</entry>
@@ -475,7 +484,8 @@ Nicola Talbot
 <entry key="manual.keystroke.menu">Menu</entry>
 <entry key="manual.keystroke.insert">Insert</entry>
 <entry key="manual.keystroke.delete">Delete</entry>
-<entry key="manual.keystroke.backspace">Backspace</entry>
+<entry key="manual.keystroke.backspace">\backspacekeysym</entry>
+<entry key="manual.keystroke.backspace.description">Backspace</entry>
 <entry key="manual.keystroke.capslock">Caps Lock</entry>
 <entry key="manual.keystroke.printscreen">PrtScn</entry>
 <entry key="manual.keystroke.printscreen.description">Print Screen</entry>
@@ -498,6 +508,10 @@ Nicola Talbot
 <entry key="manual.definition">Definition</entry>
 <entry key="manual.definition.description">the syntax and usage of a command,
 environment or option etc</entry>
+
+<entry key="manual.dialog">Dialog</entry>
+<entry key="manual.dialog.description">a dialog or similar 
+window to change settings or input values</entry>
 
 <entry key="manual.valuesetting">Setting</entry>
 <entry key="manual.valuesetting.description">an option 
@@ -570,6 +584,9 @@ code should appear in the PDF</entry>
 
 <entry key="manual.cont_explanation">(The symbol \continuesymbol\ above indicates a~line wrap. Don't insert a~line break at that point.)</entry>
 
+<entry key="manual.longtable_continued">Continued</entry>
+<entry key="manual.longtable_continued_next_page">Continued on next page</entry>
+
 <entry key="manual.idxenv">environment</entry>
 <entry key="manual.idxpackage">package</entry>
 <entry key="manual.idxclass">class</entry>
@@ -577,6 +594,11 @@ code should appear in the PDF</entry>
 <entry key="manual.idxcounter">variable</entry>
 <entry key="manual.idxmenu">menu</entry>
 <entry key="manual.idxbutton">button</entry>
+
+<!-- Messages -->
+
+<entry key="process.running">Running {0}</entry>
+<entry key="process.running_in_dir">Running {0} in directory {1}</entry>
 
 <!--  Errors -->
 <entry key="error.xml.more_than_one_tag">More than 1 &lt;{0}&gt; found</entry>
@@ -600,6 +622,29 @@ Unable to open URL {0}</entry>
 <entry key="error.browse_failed">Unable to open browser to view {0}</entry>
 <entry key="error.missing_search_term">Missing search term</entry>
 <entry key="error.image_load_failed">Failed to load image ''{0}''</entry>
+<entry key="error.index_item_file_not_exists">Index item filename ''{0}'' for key ''{1}'' doesn''t exist (check all sections have a label)</entry>
+<entry key="error.timedout">Process timed-out (process time limit: {0}ms)</entry>
+
+<!-- CLI syntax parsing -->
+
+<entry key="clisyntax.usage">Usage: {0}</entry>
+<entry key="clisyntax.help">{0}	Display help and exit.</entry>
+<entry key="clisyntax.help2">{0} (or {1})	Display help and exit.</entry>
+<entry key="clisyntax.version">{0}	Display version information and exit.</entry>
+<entry key="clisyntax.version2">{0} (or {1})	Display version information and exit.</entry>
+
+<entry key="clisyntax.bugreport">Report bugs to: {0}</entry>
+<entry key="clisyntax.homepage">{0} home page: {1}</entry>
+
+
+<entry key="error.clisyntax.missing.value">Missing value for: {0}</entry>
+<entry key="error.clisyntax.invalid.syntax">Invalid syntax for: {0}</entry>
+<entry key="error.clisyntax.invalid.int_value">Invalid ''{0}'' value: {1} (number required)</entry>
+<entry key="error.clisyntax.unknown.arg">Unknown option: {0}
+Use {1} for help.</entry>
+<entry key="error.clisyntax.toomany.arg">Too many arguments.
+Use {0} for help.</entry>
+
 
 <!-- CLI syntax parsing -->
 

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>English language file for texparserlib</comment>
+<comment>English language file for texparserlib
+https://github.com/nlct/texparser
+GPL-3.0
+Nicola Talbot
+</comment>
 
 <!--  Messages -->
 <entry key="message.reading">Reading {0}...</entry>
@@ -21,6 +25,7 @@
 <entry key="warning.unsupported.image.type">Unsupported image type {0}</entry>
 <entry key="warning.unsupported.generic">Not supported: {0}</entry>
 <entry key="warning.overwriting">Overwriting file {0}</entry>
+<entry key="warning.no_aux">No aux data found</entry>
 
 <!--  TeX Error Messages -->
 
@@ -40,6 +45,7 @@
 <entry key="tex.error.missing_closing">Missing closing {0}</entry>
 <entry key="tex.error.missing_closing.from_open">Missing closing {0} (from opening {1} on line {2})</entry>
 <entry key="tex.error.dimen_expected">Dimension expected</entry>
+<entry key="tex.error.dimen_expected_found">Dimension expected but found ''{0}''</entry>
 <entry key="tex.error.missing_unit">Missing unit</entry>
 <entry key="tex.error.expected">Expected {0}</entry>
 <entry key="tex.error.expected_but_found">Expected {0} but found ''{1}''</entry>
@@ -140,6 +146,7 @@
 <entry key="datatool.row.not.found">Row index ''{0}'' doesn''t exist.</entry>
 <entry key="datatool.loaddb.message">Database ''{0}'' loaded from ''{1}'' (column count={2}, row count={3}).</entry>
 <entry key="datatool.index.outofrange">Index ''{0}'' out of range.</entry>
+<entry key="datatool.invalid.datetime">Invalid date/time format ''{0}''</entry>
 <entry key="datatool.no.columns">No columns available for database ''{0}''</entry>
 <entry key="datatool.file_info">Identified file format {0} version {1} (encoding {2})</entry>
 <entry key="datatool.file_info_failed">Failed to parse file identifier on first line of file {0} (assuming {1})</entry>
@@ -147,11 +154,11 @@
 <entry key="datatool.write.comment">Created by {0} version {1} on {2, date, yyyy-MM-dd HH:mm:ss Z}</entry>
 <entry key="datatool.warn.dbtex3exp">Detected DBTEX v3.0 experimental format. Resave database file as DBTEX v3.0</entry>
 <entry key="datatool.unsupported.action">Unsupported action: ''{0}''</entry>
+<entry key="datatool.unknown_data_type">Unknown data type ''{0}''.</entry>
 
 <entry key="datagidx.term_not_defined">Term ''{0}'' not defined</entry>
 <entry key="datagidx.database_not_defined">Index database ''{0}'' not defined</entry>
 <entry key="datagidx.no_databases">No index databases defined</entry>
-<entry key="datagidx.not_index_database">Database ''{0}'' is not a datagidx index database</entry>
 
 <!--  ifthen messages -->
 
@@ -196,6 +203,27 @@
 <!--  nlctuserguide.sty/texjavahelp.sty messages -->
 
 <entry key="nlctdoc.unknown_tag_group">Unknown tag group ''{0}''.</entry>
+
+<!--  flowfram messages -->
+
+<entry key="flowfram.flow_already_defined">Flow frame ''{0}'' already defined.</entry>
+<entry key="flowfram.flow_id_not_defined">Flow frame ID ''{0}'' not defined.</entry>
+<entry key="flowfram.flow_label_not_defined">Flow frame label ''{0}'' not defined.</entry>
+
+<entry key="flowfram.static_already_defined">Static frame ''{0}'' already defined.</entry>
+<entry key="flowfram.static_id_not_defined">Static frame ID ''{0}'' not defined.</entry>
+<entry key="flowfram.static_label_not_defined">Static frame label ''{0}'' not defined.</entry>
+
+<entry key="flowfram.dynamic_already_defined">Dynamic frame ''{0}'' already defined.</entry>
+<entry key="flowfram.dynamic_id_not_defined">Dynamic frame ID ''{0}'' not defined.</entry>
+<entry key="flowfram.dynamic_label_not_defined">Dynamic frame label ''{0}'' not defined.</entry>
+
+<entry key="flowfram.label_not_defined">Label ''{0}'' not defined for frame type ''{1}''.</entry>
+<entry key="flowfram.id_not_defined">ID ''{0}'' not defined for frame type ''{1}''.</entry>
+<entry key="flowfram.invalid_frame_setting">Setting {0} = {1} not valid for frame type ''{2}''.</entry>
+<entry key="flowfram.invalid_frame_noval_setting">Setting {0} not valid for frame type ''{1}''.</entry>
+<entry key="flowfram.invalid_cmd_arg">Invalid \{0} argument: {1}</entry>
+<entry key="flowfram.locdata_label_not_defined">Relative location data label ''{0}'' not defined.</entry>
 
 <!--  Image drawing messages -->
 
