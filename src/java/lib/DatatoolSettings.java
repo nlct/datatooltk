@@ -189,7 +189,14 @@ public class DatatoolSettings
 
    public Charset getTeXEncoding()
    {
-      return importSettings.getTeXEncoding();
+      Charset charset = importSettings.getTeXEncoding();
+
+      if (charset == null)
+      {
+         charset = getTeXEncodingDefault();
+      }
+
+      return charset == null ? StandardCharsets.UTF_8 : charset;
    }
 
    public Charset getTeXEncodingDefault()
