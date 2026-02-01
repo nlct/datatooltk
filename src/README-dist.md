@@ -1,6 +1,7 @@
 ## Unstable Development Releases
 
 Current unstable release APPVERSION.
+The documentation may not be up-to-date.
 
 To install, choose one of the following options:
 

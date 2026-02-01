@@ -1,6 +1,7 @@
 ## Unstable Development Releases
 
 Current unstable release 1.9.20260201.
+The documentation may not be up-to-date.
 
 To install, choose one of the following options:
 
