@@ -451,19 +451,29 @@ public class DatatoolDb
          {
             DataToolHeader header = headerRow.getHeader(i+1);
 
-            String key = header.getColumnLabel();
-            String title = key;
-
-            TeXObject headerTitle = header.getTitle();
-
-            if (headerTitle != null)
+            if (header == null)
             {
-               title = headerTitle.toString(texParser);
+               String defName = db.getMessageHandler().getLabelWithValues(
+                 "default.field", (i+1));
+
+               db.addColumn(new DatatoolHeader(db, defName, defName));
             }
+            else
+            {
+               String key = header.getColumnLabel();
+               String title = key;
+
+               TeXObject headerTitle = header.getTitle();
+
+               if (headerTitle != null)
+               {
+                  title = headerTitle.toString(texParser);
+               }
    
-            DatumType type = header.getDataType();
+               DatumType type = header.getDataType();
    
-            db.addColumn(new DatatoolHeader(db, key, title, type));
+               db.addColumn(new DatatoolHeader(db, key, title, type));
+            }
          }
    
          DataToolRows contents = texDb.getData();
