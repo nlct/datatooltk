@@ -1,3 +1,7 @@
+% Common file provided with TeXJavaHelpLib
+% https://github.com/nlct/texjavahelp
+% NB remember to copy over referenced images
+
 \menudef{menu.help.manual}
 
 The application's manual is available as either a \gls{pdf}
@@ -5,7 +9,7 @@ document, which can be viewed outside of the application, or as a
 set of \gls{html} files which can be viewed within the application
 via the \menu{help.manual} menu item. This will open the primary
 help window (\sectionref{sec:primaryhelp}), but some dialog boxes
-may also have a \inlineglsdef{action.help} button that will open a secondary help
+may also have a \gls+{button.help} button that will open a secondary help
 dialog (\sectionref{sec:secondaryhelp}).
 
 Both the primary help window and the secondary help dialog windows
@@ -29,7 +33,7 @@ can be activated on the current \dgls{help-page} for both the
 primary and secondary help windows. The mouse press to show a popup
 menu is typically the right mouse button, but this may not be the
 case for all operating systems.  The popup menu can also be
-activated using the context menu \keys{\keyref{contextmenu}} key if the
+activated using the context menu \keys{\keyref{context_menu}} key if the
 \dgls{help-page} has the focus.  The menu has the following items.
 
 \FloatSubFigs
@@ -39,21 +43,21 @@ activated using the context menu \keys{\keyref{contextmenu}} key if the
    {\includeimg
      [alt=
       {Primary help window popup menu}
-     ]{images/helppagepopup}%
+     ]{helppagepopup}%
    }
    {},
    {fig:helpdialogpopup}
    {\includeimg
      [alt=
       {Secondary help multi-page dialog popup menu}
-     ]{images/helpdialogpopup}%
+     ]{helpdialogpopup}%
    }
    {},
    {fig:helpdialogsinglepopup}
    {\includeimg
      [alt=
       {Secondary help single-page dialog popup menu}
-     ]{images/helpdialogsinglepopup}%
+     ]{helpdialogsinglepopup}%
    }
    {}
 }
@@ -74,7 +78,7 @@ image. This item will be disabled if the popup menu wasn't activated
 over an image.
 
 Where the popup menu was activated using the context menu
-\keys{\keyref{contextmenu}} key, 
+\keys{\keyref{context_menu}} key, 
 the position of the caret will determine
 whether or not to enable this menu item.
 
@@ -189,7 +193,7 @@ section).
      [\entrytooltip{menu.helpframe.navigation.up} Button]
      [\entrytooltip{menu.helpframe.navigation.next} Button]
    }
- ]{images/navbuttons}%
+ ]{navbuttons}%
 }
 [Primary Help Window Navigation Buttons]
 {Primary Help Window Navigation Buttons (Home, Previous, Up, Next)}
@@ -237,7 +241,7 @@ which may be used to lookup relevant pages.
      [\entrytooltip{menu.helpframe.navigation.search} Button]
      [\entrytooltip{menu.helpframe.navigation.index} Button]
    }
- ]{images/search+index}%
+ ]{search+index}%
 }
 {Search and Index Buttons}
 
@@ -270,7 +274,7 @@ the symbol \gls{symbol.location_prefix}.
 {\includeimg
  [alt=
    {image of index window showing part of the document index}
- ]{images/indexframe}%
+ ]{indexframe}%
 }
 {Index Window}
 
@@ -289,7 +293,7 @@ possible to go forward.
       [\entrytooltip{menu.helpframe.navigation.historyforward} Button]
      }
     ]
-    {images/historybuttons-annote}%
+    {historybuttons-annote}%
  }
  {History Buttons}
 
@@ -309,7 +313,7 @@ Select the required page and click on the
  {fig:historywindow}
  {\includeimg
    [alt={image of the help page history window}]
-   {images/historyframe}%
+   {historyframe}%
  }
  {The Page History Window}
 
@@ -369,7 +373,7 @@ can hide the text by deselecting the
 {\includeimg
  [alt=
    {Help page lower navigation bar}
- ]{images/helplowernavbar}%
+ ]{helplowernavbar}%
 }
 {Help Page Lower Navigation Bar}
 
@@ -437,7 +441,7 @@ topic context contains multiple pages.
      [\entrytooltip{menu.helpdialog.navigation.up} Button]
      [\entrytooltip{menu.helpdialog.navigation.next} Button]
    }
- ]{images/secondaryNavButtons}%
+ ]{secondaryNavButtons}%
 }
 [Secondary Help Window Navigation Buttons for Multi-Page Topics]
 {Secondary Help Window Navigation Buttons for Multi-Page Topics
@@ -487,7 +491,7 @@ characters.
 {\includeimg
  [alt=
    {Help page font dialog}
- ]{images/helpfontdialog}%
+ ]{helpfontdialog}%
 }
 {Help Page Font Dialog}
 
@@ -537,7 +541,7 @@ ignored.
 {\includeimg
  [alt=
    {image of search window showing search term highlighted in a paragraph}
- ]{images/searchframe}%
+ ]{searchframe}%
 }
 {Search Window}
 

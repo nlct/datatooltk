@@ -11,6 +11,8 @@
 \hypersetup{colorlinks,linkcolor=blue}
 \DeclareGraphicsExtensions{.png,.pdf,.tex}
 
+\graphicspath{{images/}}
+
 \glsxtrnewgls{plugin.}{\plugin}
 \glsxtrnewgls{template.}{\template}
 
@@ -187,7 +189,7 @@ to the file base name).  The database label can be changed using
 {fig:setnamedialog}
 {\includeimg
  [scale={0.75},alt={Image of dialog box}]
- {images/setnamedialog.png}
+ {setnamedialog.png}
 }
 {Setting the Database Name}
 
@@ -297,7 +299,7 @@ I have used \gls{lstinputlisting}.
    scale=0.75,
    alt={Image of main window showing cells with listing input}
   ]
-  {images/verb.png}%
+  {verb.png}%
 }
 {Verbatim Blocks Need to be in Separate Files}
 
@@ -814,7 +816,7 @@ and the filename (without the path) will be shown in the title bar.
  {%
     \includeimg
      [ scale=0.75, alt={Image of main window} ]
-     {images/mainwindow.png}
+     {mainwindow.png}
  }
  {Main Window}
 
@@ -877,7 +879,7 @@ string data type. Alternatively, select the cell (of any type) and use
       scale=0.75,
       alt={Image of cell editor dialog}
     ]
-    {images/celleditor.png}
+    {celleditor.png}
  }
  {Cell Editor Dialog}
 
@@ -932,7 +934,7 @@ the same value as the label.
      scale=0.75,
      alt={Image of header dialog box}
    ]
-   {images/headerdialog.png}
+   {headerdialog.png}
  }
  {Header Dialog}
 
@@ -949,7 +951,7 @@ label and type displayed in a tooltip (see
       scale=0.75,
       alt={Image of main window showing header tooltip}
     ]
-    {images/headerdetails.png}
+    {headerdetails.png}
  }
  {Header Details Shown in Tooltip}
 
@@ -1045,7 +1047,7 @@ the \dialog{sort} dialog box (see \figureref{fig:sortdialog}).
       scale=0.75,
       alt={Image of sort dialog box}
     ]
-    {images/sortdialog.png}
+    {sortdialog.png}
  }
  {Sort Dialog}
 
@@ -1095,7 +1097,7 @@ includes the currency symbol (see \tableref{tab:sortex3}).
       scale=0.75,
       alt={Image of example database}
     ]
-    {images/sortex1.png}
+    {sortex1.png}
  }
  {Original Data}
 
@@ -1162,7 +1164,7 @@ correspond to medium difficulty.
       scale=0.75,
       alt={Image of example database}
    ]
-   {images/shuffleex1.png}
+   {shuffleex1.png}
  }
  {Shuffle Example}
 
@@ -1249,7 +1251,7 @@ question hasn't been used.)
      scale=0.75,
      alt={Image of example database}
    ]
-   {images/sortshuffleex1.png}
+   {sortshuffleex1.png}
  }
  {Sort and Shuffle Example}
 
@@ -1349,7 +1351,7 @@ sudo dnf install perl-Tk
       scale=0.75,
       alt={Image of main window}
     ]
-    {images/peopletemplate.png}
+    {peopletemplate.png}
  }
  {Database Created From people Template}
 
@@ -1372,7 +1374,7 @@ sudo dnf install perl-Tk
       scale=0.75,
       alt={Image of people dialog}
     ]
-    {images/peopleplugin.png}
+    {peopleplugin.png}
  }
  {The people Plugin Dialog}
 
@@ -1390,7 +1392,7 @@ sudo dnf install perl-Tk
       scale=0.75,
       alt={Image of main window}
     ]
-    {images/peoplepluginex1.png}
+    {peoplepluginex1.png}
  }
  {A New Row of Data}
 
@@ -1436,7 +1438,7 @@ sudo dnf install perl-Tk
       scale=0.75,
       alt={Image of main window}
     ]
-    {images/datagidxplugin1.png}
+    {datagidxplugin1.png}
  }
  {A Database Created From the datagidx Template}
 
@@ -1448,7 +1450,7 @@ sudo dnf install perl-Tk
       scale=0.75,
       alt={Image of datagidx plugin dialog}
     ]
-    {images/datagidxplugin2.png}
+    {datagidxplugin2.png}
  }
  {The datagidx Plugin Dialog}
 
@@ -1483,7 +1485,7 @@ sudo dnf install perl-Tk
       scale=0.75,
       alt={Image of datagidx plugin dialog}
     ]
-    {images/datagidxplugin3.png}
+    {datagidxplugin3.png}
  }
  {Most Fields Are Auto-Filled From the Name Field}
 
@@ -1502,7 +1504,7 @@ sudo dnf install perl-Tk
       scale=0.75,
       alt={Image of main window}
     ]
-    {images/datagidxplugin4.png}
+    {datagidxplugin4.png}
  }
  {New Row Added to the Database}
 
@@ -1521,7 +1523,7 @@ sudo dnf install perl-Tk
       scale=0.75,
       alt={Image of datagidx plugin dialog}
     ]
-    {images/datagidxplugin5.png}
+    {datagidxplugin5.png}
  }
  {Parent Field Lists Other Entry Labels}
 
@@ -1538,7 +1540,7 @@ sudo dnf install perl-Tk
       scale=0.75,
       alt={Image of main window}
     ]
-    {images/datagidxplugin6.png}
+    {datagidxplugin6.png}
  }
  {Child Entry Automatically Adjusted For Parent Entry}
 
@@ -1562,7 +1564,7 @@ sudo dnf install perl-Tk
       scale=0.6,
       alt={Image of datagidx plugin dialog}
     ]
-    {images/datagidxplugin7.png}
+    {datagidxplugin7.png}
  }
  {Cross-Referencing Entries}
 
@@ -1765,7 +1767,8 @@ sys	0m0.065s
 
    Data can be imported from a \gls{csv} file using
    the \switch{csv} command line option or (in \gls{gui} mode)
-   using the \menu{file.import.importcsv} menu item. The default
+   using the \menu{file.import} menu item to open the 
+   \dialog{import} dialog. The default
    separator is a \gls{comma} and the default delimiter is the \gls{dbqt}
    character. These can be changed using the \switch{csv-sep} and 
    \switch{csv-delim} command line options or in the 
@@ -1806,7 +1809,7 @@ sys	0m0.065s
       scale=0.75,
       alt={Image of main window showing cell with paragraph break}
     ]
-    {images/csvpara.png}
+    {csvpara.png}
  }
  {Paragraph Breaks Appear as a Single Blank Line}
 
@@ -1822,8 +1825,8 @@ sys	0m0.065s
    or an Open Document Spreadsheet using the
    \switch{xls} or \switch{ods} command line options, respectively.
    Alternative, in \gls{gui} mode you can use the 
-   \menu{file.import.importspread} menu item.
-   Note that the \ext{xlsx} is currently unsupported.
+   \menu{file.import} menu item to open the \dialog{import} dialog
+   and select the applicable radio button.
 
  When using the command line,
    you additionally need to specify the sheet index (starting from 0) or the 
@@ -1836,8 +1839,7 @@ Importing data from a spreadsheet uses the same header row option and
    So if the sheet doesn't have a header row, you need to use
    \switch{nocsvheader} or uncheck the
 \widget{preferences.csv.hasheader} button 
-   in the \dialog{preferences} dialog box. Note that 
-   \ext{xlsx} files aren't supported.
+   in the \dialog{preferences} dialog box.
 
 
    \begin{information}
@@ -1852,7 +1854,7 @@ Importing data from a spreadsheet uses the same header row option and
 
    Data can be imported from an \gls{sql} database using
    the \switch{sql} command line option or the 
-   \menu{file.import.importsql} menu item. You additionally need to
+   \menu{file.import} menu item. You additionally need to
    supply the database, port, prefix, host, user name and password. In batch 
    mode, you can use the command line options \switch{sqldb},
    \switch{sqlport}, \switch{sqlprefix}, \switch{sqlhost} and
@@ -1866,10 +1868,11 @@ console available, you need to use the \switch{noconsole-action}
    to determine what action to perform. See \sectionref{sec:introduction} for more details
    about command line options.
 
-
-   In \gls{gui} mode, when you use \menu{file.import.importsql}
-   the dialog box shown in \figureref{fig:sqlimportdialog} will be displayed,
-   where you can enter the settings. In addition to the above named settings,
+   In \gls{gui} mode, use the \menu{file.import} menu to open the 
+   \dialog{import} dialog and select the
+   \widget{iosettings.format.sql} radio
+   button, which will show the SQL settings
+   (\figureref{fig:sqlimportdialog}). In addition to the spreadsheet settings,
    you must also specify the \gls{sql} SELECT statement that identifies 
    the required data to import. (This manual assumes that if you have
    data in an \gls{sql} database, then you have a basic
@@ -1883,7 +1886,7 @@ console available, you need to use the \switch{noconsole-action}
       scale=0.75,
       alt={Image of the SQL dialog box}
     ]
-    {images/sqlimportdialog.png}
+    {sqlimportdialog.png}
  }
  {SQL Import Dialog Box}
 
@@ -1904,7 +1907,7 @@ console available, you need to use the \switch{noconsole-action}
       scale=0.75,
       alt={Image of the password dialog box}
     ]
-    {images/sqlpassworddialog.png}
+    {sqlpassworddialog.png}
  }
  {Password Dialog Box}
 
@@ -1941,8 +1944,11 @@ Password:
    key \gls{probsoln.set} and contains the dataset label. 
    You can import one of these
    files using the \switch{probsoln} command line option or (in
-   \gls{gui} mode) using the \menu{file.import.importprobsoln}
-   menu item. If you have a large number of problems, you can speed things
+   \gls{gui} mode) using the \menu{file.import}
+   menu item to open the \dialog{import} dialog and then select the 
+   \widget{iosettings.format.tex} radio button. 
+
+   If you have a large number of problems, you can speed things
    up by setting the initial capacity to that number. (If the initial
    capacity is smaller than the total number of problems, the hash map
    used to store the data will have to be enlarged whenever the current
@@ -1983,7 +1989,7 @@ Password:
       scale=0.75,
       alt={Image of the main window}
     ]
-    {images/importps.png}
+    {importps.png}
  }
  {Pretty Printing and Comments are No Longer Lost When Importing Data from probsoln}
 
@@ -2017,7 +2023,7 @@ Password:
       scale=0.75,
       alt={Image of template dialog}
     ]
-    {images/templatedialog.png}
+    {templatedialog.png}
  }
  {New From Template Dialog}
 
@@ -2037,7 +2043,7 @@ Password:
       scale=0.75,
       alt={Image of main window}
     ]
-    {images/peopletemplate.png}
+    {peopletemplate.png}
  }
  {New Database Created from people Template}
 
@@ -2140,7 +2146,7 @@ box, which has the following tabs.
       scale=0.75,
       alt={Image of the general tab of the preferences dialog box}
     ]
-    {images/pref-general.png}
+    {pref-general.png}
  }
  {General Tab}
 
@@ -2173,7 +2179,7 @@ strip leading and trailing spaces from database and column labels
       scale=0.75,
       alt={Image of the csv tab of the preferences dialog box}
     ]
-    {images/pref-csv.png}
+    {pref-csv.png}
  }
  {CSV Tab}
 
@@ -2227,7 +2233,7 @@ Check the \widget{preferences.csv.hasheader} button if your
       scale=0.75,
       alt={Image of the SQL tab of the preferences dialog box}
     ]
-    {images/pref-sql.png}
+    {pref-sql.png}
  }
  {SQL Tab}
 
@@ -2256,7 +2262,7 @@ box has been selected.
       scale=0.75,
       alt={Image of the tex tab of the preferences dialog box}
     ]
-    {images/pref-tex.png}
+    {pref-tex.png}
  }
  {TeX Tab}
 
@@ -2389,7 +2395,7 @@ and replace function to perform more complex changes.
       scale=0.75,
       alt={Image of the add mapping dialog box}
     ]
-    {images/addmap.png}
+    {addmap.png}
  }
  {Add Mapping Dialog}
 
@@ -2407,7 +2413,7 @@ and replace function to perform more complex changes.
       scale=0.75,
       alt={Image of the currencies tab of the preferences dialog box}
     ]
-    {images/pref-currencies.png}
+    {pref-currencies.png}
  }
  {Currencies Tab}
 
@@ -2459,7 +2465,7 @@ toolbar.
       scale=0.75,
       alt={Image of the display tab of the preferences dialog box}
     ]
-    {images/pref-display.png}
+    {pref-display.png}
  }
  {Display Tab}
 
@@ -2492,7 +2498,7 @@ shows the same window but with the \qt{Nimbus} \gls{LF}.
       alt={Image of the display tab of the preferences dialog box
 with Nimbus Look and Feel}
     ]
-    {images/pref-display-nimbus.png}
+    {pref-display-nimbus.png}
  }
  {Display Tab (Nimbus Look and Feel)}
 
@@ -2506,7 +2512,7 @@ with Nimbus Look and Feel}
       scale=0.75,
       alt={Image of the language tab of the preferences dialog box}
     ]
-    {images/pref-language.png}
+    {pref-language.png}
  }
  {Language Tab}
 
@@ -2532,7 +2538,7 @@ effect.
       scale=0.75,
       alt={Image of the plugins tab of the preferences dialog box}
     ]
-    {images/pref-plugins.png}
+    {pref-plugins.png}
  }
  {Plugins Tab}
 

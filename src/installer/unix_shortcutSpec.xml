@@ -2,7 +2,7 @@
 
 <izpack:shortcuts version="5.0" xmlns:izpack="http://izpack.org/schema/shortcuts" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://izpack.org/schema/shortcuts http://izpack.org/schema/5.0/izpack-shortcuts-5.0.xsd">
 
-  <programGroup defaultName="DickimawBooks/DatatoolTk"
+  <programGroup defaultName="Office"
   location="applications"/>
 
   <shortcut
@@ -22,57 +22,6 @@
      KdeSubstUID="false"
      initialState="normal">
      <createForPack name="Base"/>
-   </shortcut>
-
-   <shortcut
-     name="DatatoolTK Documentation"
-     programGroup="yes"
-     applications="no"
-     desktop="no"
-     workingDirectory=""
-     target="evince"
-     commandLine="$INSTALL_PATH/doc/datatooltk-en-GB.pdf"
-     initialState="normal"
-     url="$INSTALL_PATH/doc/datatooltk-en-GB.pdf"
-     type="Application"
-     mimetype="application/pdf"
-     encoding="UTF-8"
-     description="DatatoolTK user documentation (PDF format)">
-
-     <createForPack name="Documentation GB"/>
-   </shortcut>
-
-   <shortcut
-     name="DatatoolTK Documentation"
-     programGroup="yes"
-     applications="no"
-     desktop="no"
-     workingDirectory=""
-     target="evince"
-     commandLine="$INSTALL_PATH/doc/datatooltk-en-US.pdf"
-     initialState="normal"
-     url="$INSTALL_PATH/doc/datatooltk-en-US.pdf"
-     type="Application"
-     mimetype="application/pdf"
-     encoding="UTF-8"
-     description="DatatoolTK user documentation (PDF format)">
-
-     <createForPack name="Documentation US"/>
-   </shortcut>
-
-   <shortcut
-     name="DatatoolTk Uninstaller"
-     programGroup="yes"
-     applications="no"
-     desktop="no"
-     target="java"
-     workingDirectory=""
-     commandLine="-jar &quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
-     initialState="normal"
-     type="Application"
-     encoding="UTF-8"
-     description="DatatoolTk uninstaller">
-     <createForPack name="Base" />
    </shortcut>
 
 </izpack:shortcuts>
