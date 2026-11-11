@@ -46,11 +46,13 @@ import com.dickimawbooks.datatooltk.io.*;
 /**
  * Abstract application class.
  */
-public abstract class DatatoolTk
+public abstract class DatatoolTk extends CLITeXAppAdapter
 {
    public DatatoolTk(boolean allowsGUI, boolean allowsSQL, boolean allowsXLS)
      throws IOException
    {
+      super(true);
+
       this.allowsGUI = allowsGUI;
       this.allowsSQL = allowsSQL;
       this.allowsXLS = allowsXLS;
@@ -59,8 +61,1229 @@ public abstract class DatatoolTk
       {
          noConsoleAction = ConsolePasswordReader.NO_CONSOLE_ERROR;
       }
+   }
 
+   @Override
+   protected void loadDictionaries(MessageSystem msgSys) throws IOException
+   {
+      super.loadDictionaries(msgSys);
+
+      msgSys.loadDictionary(
+        "/com/dickimawbooks/datatooltk/dictionaries/",
+        "datatooltk");
+   }
+
+   @Override
+   protected void preparse() throws IOException
+   {
       settings = createSettings();
+
+      settings.loadLangTags();
+
+      HelpSetLocale msgLocale = settings.getDictionaryLocale();
+      HelpSetLocale hsLocale = settings.getHelpSetLocale();
+
+      if (msgLocale != null)
+      {
+         getCLITeXHelpLib().setMessageLocale(msgLocale);
+      }
+
+      if (hsLocale != null)
+      {
+         getCLITeXHelpLib().setHelpSetLocale(hsLocale);
+      }
+
+      loadSettings = new LoadSettings(settings);
+   }
+
+   @Override
+   public String getCLIApplicationName()
+   {
+      return APP_NAME;
+   }
+
+   @Override
+   public String getCLIApplicationVersion()
+   {
+      return VERSION;
+   }
+
+   @Override
+   public String getCLIApplicationVersionDate()
+   {
+      return VERSION_DATE;
+   }
+
+   @Override
+   public void printCLISyntax()
+   {
+      versionInfo();
+
+      System.out.println();
+      System.out.println(getMessage("syntax.title"));
+      System.out.println();
+
+      if (allowsGUI)
+      {
+         System.out.println(getApplicationName()+" --gui");
+         System.out.println(getMessage("syntax.or"));
+      }
+
+      System.out.println(getMessage("syntax.opt_db", getApplicationName()));
+      System.out.println(getMessage("syntax.or"));
+      System.out.println(getMessage("syntax.opt_import", getApplicationName()));
+
+      if (allowsSQL)
+      {
+         System.out.println(getMessage("syntax.or"));
+         System.out.println(getMessage("syntax.opt_sql", getApplicationName()));
+      }
+
+      System.out.println();
+
+      printSyntaxItem(getMessage("syntax.general"));
+
+      if (allowsGUI)
+      {
+         printSyntaxItem(getMessage("syntax.gui", "--gui", "-g"));
+         printSyntaxItem(getMessage("syntax.batch", "--batch", "-b"));
+      }
+
+      printSyntaxItem(getMessage("syntax.in", "--in", "-i", getApplicationName()));
+
+      printSyntaxItem(getMessage("syntax.name", "--name"));
+
+      printSyntaxItem(getMessage("syntax.out", "--output", "-o"));
+
+      printSyntaxItem(getMessage("syntax.tex_encoding", "--tex-encoding"));
+
+      printSyntaxItem(getMessage("syntax.output_format", "--output-format"));
+
+      printSyntaxItem(getMessage("syntax.dtl_read", "--dtl-read"));
+      printSyntaxItem(getMessage("syntax.dtl_write", "--dtl-write"));
+
+      printSyntaxItem(getMessage("syntax.literal",
+          "--[no]literal",
+         (settings.isLiteralContent() ? "--literal" : "--noliteral")));
+
+      printSyntaxItem(getMessage("syntax.maptexspecials",
+          "--[no]map-tex-specials",
+          "--[no]literal"));
+
+      printSyntaxItem(getMessage("syntax.autotrimlabels",
+          "--[no]auto-trim-labels",
+          (settings.isAutoTrimLabelsOn() ? 
+             "--auto-trim-labels" : "--noauto-trim-labels")));
+
+      printSyntaxItem(getMessage("syntax.seed", "--seed"));
+      printSyntaxItem(getMessage("syntax.shuffle", "--[no]shuffle"));
+      printSyntaxItem(getMessage("syntax.sort", "--sort"));
+
+      printSyntaxItem(getMessage("syntax.sort_case_sensitive",
+         "--sort-case-sensitive"));
+
+      printSyntaxItem(getMessage("syntax.sort_case_insensitive",
+         "--sort-case-insensitive"));
+
+      printSyntaxItem(getMessage("syntax.sort_locale", "--sort-locale"));
+
+      printSyntaxItem(getMessage("syntax.owner_only",
+         "--[no]owner_only",
+         (settings.isOwnerOnly() ?  "--owner-only" : "--[no]owner-only")));
+
+      printSyntaxItem(getMessage("syntax.truncate", "--truncate"));
+
+      printSyntaxItem(getMessage("syntax.remove_cols", "--remove-columns"));
+
+      printSyntaxItem(getMessage("syntax.remove_except_cols",
+         "--remove-except-columns"));
+
+      printSyntaxItem(getMessage("syntax.filter_or", "--filter-or"));
+
+      printSyntaxItem(getMessage("syntax.filter_and", "--filter-and"));
+
+      printSyntaxItem(getMessage("syntax.filter_include", "--filter-include"));
+
+      printSyntaxItem(getMessage("syntax.filter_exclude", "--filter-exclude"));
+
+      printSyntaxItem(getMessage("syntax.filter", "--filter"));
+
+      printSyntaxItem(getMessage("syntax.merge", "--merge"));
+
+      System.out.println();
+
+      helpImportOptions();
+
+      System.out.println();
+      System.out.println(getMessage("clisyntax.other.options"));
+      System.out.println();
+      
+      printSyntaxItem(getMessage("syntax.compat", "--compat"));
+
+      printCommonCLISyntax();
+      
+      System.out.println();
+
+      System.out.println(getMessage("clisyntax.bugreport",
+        "https://github.com/nlct/datatooltk"));
+   }
+
+   @Override
+   public void printCLIAbout()
+   {
+      System.out.println(getAboutInfo(false));
+   }
+
+   @Override
+   protected int getCLIArgCount(String arg)
+   {
+      if (
+           arg.equals("--csv-sep") || arg.equals("--sep")
+         || arg.equals("--tab-sep")
+         || arg.equals("--csv-delim") || arg.equals("--delim")
+         || arg.equals("--csv-header") || arg.equals("--csvheader")
+         || arg.equals("--csv-escape-chars")
+         || arg.equals("--csv-escape") || arg.equals("--csvescape")
+         || arg.equals("--csv-skiplines")
+         || arg.equals("--csv-empty-rows")
+         || arg.equals("--csv-encoding") || arg.equals("--csvencoding")
+         || arg.equals("--output") || arg.equals("-o")
+         || arg.equals("--in") || arg.equals("-i")
+         || arg.equals("--import")
+         || arg.equals("--csv")
+         || arg.equals("--tsv")
+         || arg.equals("--xls")
+         || arg.equals("--xlsx")
+         || arg.equals("--ods")
+         || arg.equals("--odf") || arg.equals("--fods")
+         || arg.equals("--probsoln")
+         || arg.equals("--sql")
+         || arg.equals("--sheet")
+         || arg.equals("--sqldb")
+         || arg.equals("--sqlprefix")
+         || arg.equals("--sqlhost")
+         || arg.equals("--sqluser")
+         || arg.equals("--sqlport")
+         || arg.equals("--sqlpassword")
+         || arg.equals("--noconsole-action") || arg.equals("--missing-console-action")
+         || arg.equals("--headers")
+         || arg.equals("--keys")
+         || arg.equals("--seed")
+         || arg.equals("--compat")
+         || arg.equals("--shuffle-iterations")
+         || arg.equals("--sort")
+         || arg.equals("--sort-locale")
+         || arg.equals("--tex-encoding")
+         || arg.equals("--output-format")
+         || arg.equals("--truncate")
+         || arg.equals("--remove-columns")
+         || arg.equals("--remove-except-columns")
+         || arg.equals("--name")
+         )
+      {
+         return 1;
+      }
+      else if (
+             arg.equals("--dtl-read")
+          || arg.equals("--dtl-write")
+          || arg.equals("--merge")
+          || arg.startsWith("--merge-")
+        )
+      {
+         return 2;
+      }
+      else if (
+          arg.equals("--filter")
+        )
+      {
+         return 3;
+      }
+
+      return super.getCLIArgCount(arg);
+   }
+
+   @Override
+   protected int getCLIMaxArgParams()
+   {
+      return 3;
+   }
+
+   @Override
+   protected void parseNoSwitchCLIArg(String arg)
+      throws InvalidSyntaxException
+   {
+      // if no option specified, assume --in
+
+      if (loadSettings.getInputFile() != null)
+      {
+         throw new InvalidSyntaxException(
+           getMessage("error.syntax.only_one_input"));
+      }
+
+      if (loadSettings.getDataImport() != null)
+      {
+         throw new InvalidSyntaxException(
+           getMessage("error.syntax.input_clash"));
+      }
+
+      loadSettings.setInputFile(arg);
+   }
+
+   @Override
+   protected boolean parseCLIArg(String arg, CLIArgValue[] returnVals)
+     throws InvalidSyntaxException
+   {
+      CLISyntaxParser cliParser = getSyntaxParser();
+   
+      if (cliParser.isArg(arg, null, "--sep", "--csv-sep", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.setSeparator(returnVals[0].toString().codePointAt(0));
+      }
+      else if (arg.equals("--tab-sep"))
+      {
+         settings.setSeparator('\t');
+      }
+      else if (cliParser.isArg(arg, null, "--delim", "--csv-delim", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.setDelimiter(returnVals[0].toString().codePointAt(0));
+      }
+      else if (arg.equals("--csv-header") || arg.equals("--csvheader"))
+      {
+         settings.setHasCSVHeader(true);
+      }
+      else if (arg.equals("--nocsv-header") || arg.equals("--nocsvheader"))
+      {
+         settings.setHasCSVHeader(false);
+      }
+      else if (cliParser.isArg(arg, "--csv-escape-chars", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String optName = returnVals[0].toString();
+
+         EscapeCharsOption opt = EscapeCharsOption.fromOptionName(optName);
+
+         if (opt == null)
+         {
+            StringBuilder builder = new StringBuilder();
+
+            for (EscapeCharsOption o : EscapeCharsOption.values())
+            {
+               if (builder.length() > 0)
+               {
+                  builder.append(", ");
+               }
+
+               builder.append(o.getName());
+            }
+
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.invalid_set_value",
+                  optName, arg, builder.toString()));
+         }
+         else
+         {
+            settings.setEscapeCharsOption(opt);
+         }
+      }
+      else if (cliParser.isArg(arg, null, "--csv-escape", "--csvescape", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         if (val.equals("\\"))
+         {
+            settings.setEscapeCharsOption(EscapeCharsOption.ESC_DELIM_BKSL);
+         }
+         else if (val.isEmpty())
+         {
+            settings.setEscapeCharsOption(EscapeCharsOption.NONE);
+         }
+         else if (val.codePointAt(0) == settings.getDelimiter())
+         {
+            settings.setEscapeCharsOption(EscapeCharsOption.DOUBLE_DELIM);
+         }
+         else
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.deprecated",
+                 arg, "--csv-escape-chars"));
+         }
+      }
+      else if (arg.equals("--nocsv-escape") || arg.equals("--nocsvescape"))
+      {
+         settings.setEscapeCharsOption(EscapeCharsOption.NONE);
+      }
+      else if (cliParser.isIntArg(arg, "--csv-skiplines", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.setCSVSkipLines(returnVals[0].intValue());
+      }
+      else if (arg.equals("--csv-strictquotes"))
+      {
+         settings.setCSVStrictQuotes(true);
+      }
+      else if (arg.equals("--nocsv-strictquotes"))
+      {
+         settings.setCSVStrictQuotes(false);
+      }
+      else if (cliParser.isArg(arg, null, "--csv-encoding", "--csvencoding", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         if (val.equals("default") || val.isEmpty())
+         {
+            settings.setCsvEncoding(null);
+         }
+         else
+         {
+            try
+            {
+               if (Charset.isSupported(val))
+               {
+                  settings.setCsvEncoding(Charset.forName(val));
+               }
+               else
+               {
+                 throw new InvalidSyntaxException(
+                   getMessage("error.syntax.unknown.encoding", val));
+               }
+            }
+            catch (Exception e)
+            {
+               throw new InvalidSyntaxException(
+                 getMessage("error.syntax.unknown.encoding",
+                 val), e);
+            }
+         }
+      }
+      else if (cliParser.isArg(arg, "-o", "--output", returnVals))
+      {
+         if (loadSettings.getOutputFile() != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.only_one", arg));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         loadSettings.setOutputFile(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--dtl-read", returnVals))
+      {
+         if (loadSettings.getImportSource() != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.only_one_import"));
+         }
+
+         if (loadSettings.getInputFile() != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.import_clash", arg));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_optionlist", arg));
+         }
+
+         String optList = returnVals[0].toString();
+
+         if (returnVals[1] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_filename",
+                  arg+" \""+optList+"\""));
+         }
+
+         loadSettings.setImportSource(returnVals[1].toString());
+         loadSettings.setDataImport(new DatatoolTeX(optList, settings));
+      }
+      else if (cliParser.isArg(arg, "--dtl-write", returnVals))
+      {
+         if (loadSettings.getDataExport() != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.only_one_export"));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_optionlist", arg));
+         }
+
+         String optList = returnVals[0].toString();
+
+         if (returnVals[1] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_filename",
+                  arg+" \""+optList+"\""));
+         }
+
+         loadSettings.setExportTarget(returnVals[1].toString());
+         loadSettings.setDataExport(new DatatoolTeX(optList, settings));
+      }
+      else if (arg.equals("--preamble-only"))
+      {
+         settings.setPreambleOnly(true);
+      }
+      else if (arg.equals("--nopreamble-only"))
+      {
+         settings.setPreambleOnly(false);
+      }
+      else if (cliParser.isArg(arg, "--sheet", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         try
+         {
+            settings.getImportSettings().setSheetIndex(Integer.valueOf(val));
+         }
+         catch (NumberFormatException e)
+         {
+            settings.getImportSettings().setSheetName(val);
+         }
+      }
+      else if (cliParser.isArg(arg, "--sqldb", returnVals))
+      {
+         if (!allowsSQL)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.unsupported_option", arg));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.setSqlDbName(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--sqlprefix", returnVals))
+      {
+         if (!allowsSQL)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.unsupported_option", arg));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.setSqlPrefix(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--sqlhost", returnVals))
+      {
+         if (!allowsSQL)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.unsupported_option", arg));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.setSqlHost(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--sqluser", returnVals))
+      {
+         if (!allowsSQL)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.unsupported_option", arg));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.setSqlUser(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--sqlpassword", returnVals))
+      {
+         if (!allowsSQL)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.unsupported_option", arg));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.getImportSettings().setSqlPassword(returnVals[0].toString().toCharArray());
+         returnVals[0] = null;
+      }
+      else if (arg.equals("--wipepassword"))
+      {
+         if (!allowsSQL)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.unsupported_option", arg));
+         }
+
+         settings.setWipePassword(true);
+      }
+      else if (arg.equals("--nowipepassword"))
+      {
+         if (!allowsSQL)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.unsupported_option", arg));
+         }
+
+         settings.setWipePassword(false);
+      }
+      else if (cliParser.isArg(arg,
+                 null, "--noconsole-action", "--missing-console-action",
+                 returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         if (val.equals("stdin"))
+         {
+            noConsoleAction = ConsolePasswordReader.NO_CONSOLE_STDIN;
+         }
+         else if (val.equals("gui"))
+         {
+            noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
+         }
+         else if (val.equals("error"))
+         {
+            noConsoleAction = ConsolePasswordReader.NO_CONSOLE_ERROR;
+         }
+         else
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.invalid_noconsole_action",
+                 arg, val));
+         }
+      }
+      else if (cliParser.isIntArg(arg, "--sqlport", returnVals))
+      {
+         if (!allowsSQL)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.unsupported_option", arg));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.setSqlPort(returnVals[0].intValue());
+      }
+      else if (arg.equals("--gui") || arg.equals("-g"))
+      {
+         if (!allowsGUI)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.unsupported_option", arg));
+         }
+
+         setBatchMode(false);
+      }
+      else if (arg.equals("--batch") || arg.equals("-b"))
+      {
+         setBatchMode(true);
+      }
+      else if (arg.equals("--map-tex-specials") || arg.equals("--literal"))
+      {
+         settings.setLiteralContent(true);
+      }
+      else if (arg.equals("--nomap-tex-specials") || arg.equals("--noliteral"))
+      {
+         settings.setLiteralContent(false);
+      }
+      else if (cliParser.isListArg(arg, "--headers", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         if (returnVals[0].toString().trim().isEmpty())
+         {
+            settings.setColumnHeaders(null);
+         }
+         else
+         {
+            settings.setColumnHeaders(returnVals[0].listValue());
+         }
+      }
+      else if (cliParser.isListArg(arg, "--keys", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         if (returnVals[0].toString().trim().isEmpty())
+         {
+            settings.setColumnKeys(null);
+         }
+         else
+         {
+            settings.setColumnKeys(returnVals[0].listValue());
+         }
+      }
+      else if (arg.equals("--auto-keys"))
+      {
+         settings.setAutoKeys(true);
+      }
+      else if (arg.equals("--noauto-keys"))
+      {
+         settings.setAutoKeys(false);
+      }
+      else if (arg.equals("--auto-trim-labels"))
+      {
+         settings.setAutoTrimLabels(true);
+      }
+      else if (arg.equals("--noauto-trim-labels"))
+      {
+         settings.setAutoTrimLabels(false);
+      }
+      else if (arg.equals("--csv-skip-empty-rows"))
+      {
+         settings.setCsvBlankOption(CsvBlankOption.IGNORE);
+      }
+      else if (arg.equals("--nocsv-skip-empty-rows"))
+      {
+         settings.setCsvBlankOption(CsvBlankOption.EMPTY_ROW);
+      }
+      else if (cliParser.isArg(arg, "--csv-empty-rows", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         CsvBlankOption opt = CsvBlankOption.fromOptionName(val);
+
+         if (opt == null)
+         {
+            StringBuilder builder = new StringBuilder();
+
+            for (CsvBlankOption blankOpt : CsvBlankOption.values())
+            {
+               if (builder.length() > 0)
+               {
+                  builder.append(", ");
+               }
+
+               builder.append(blankOpt.getName());
+            }
+
+            throw new InvalidSyntaxException(
+             getMessage("error.syntax.invalid_set_value", val,
+               arg, builder.toString()));
+         }
+
+         settings.setCsvBlankOption(opt);
+      }
+      else if (arg.equals("--owner-only"))
+      {
+         settings.setOwnerOnly(true);
+      }
+      else if (arg.equals("--noowner-only"))
+      {
+         settings.setOwnerOnly(false);
+      }
+      else if (cliParser.isArg(arg, "--seed", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         if (val.isEmpty())
+         {
+            settings.setRandomSeed(null);
+         }
+         else
+         {
+            try
+            {
+               settings.setRandomSeed(Long.valueOf(val));
+            }
+            catch (NumberFormatException e)
+            {
+               throw new InvalidSyntaxException(
+                 getMessage("error.clisyntax.invalid.long_value",
+                   arg, val));
+            }
+         }
+      }
+      else if (cliParser.isArg(arg, "--compat", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         if (val.equals("latest"))
+         {
+            settings.setCompatibilityLevel(settings.COMPAT_LATEST);
+         }
+         else if (val.equals("1.6"))
+         {
+            settings.setCompatibilityLevel(settings.COMPAT_1_6);
+         }
+         else
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.invalid_compat",
+                val));
+         }
+      }
+      else if (cliParser.isIntArg(arg, "--shuffle-iterations", returnVals))
+      {
+         // only provided for backward compatibility when using
+         // --compat=1.6 (not documented anymore)
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         settings.setShuffleIterations(returnVals[0].intValue());
+      }
+      else if (arg.equals("--shuffle"))
+      {
+         loadSettings.setShuffle(true);
+      }
+      else if (arg.equals("--noshuffle"))
+      {
+         loadSettings.setShuffle(false);
+      }
+      else if (arg.equals("--sort-case-sensitive"))
+      {
+         loadSettings.setCaseSensitive(true);
+      }
+      else if (arg.equals("--sort-case-insensitive"))
+      {
+         loadSettings.setCaseSensitive(false);
+      }
+      else if (cliParser.isArg(arg, "--sort", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         loadSettings.setSort(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--sort-locale", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         if (val.equals("none"))
+         {
+            settings.setSortLocale((String)null);
+         }
+         else
+         {
+            // check argument is valid
+
+            try
+            {
+               Locale locale = new Builder().setLanguageTag(val).build();
+
+               settings.setSortLocale(locale.toLanguageTag());
+            }
+            catch (Exception e)
+            {
+               throw new InvalidSyntaxException(
+                  getMessage("error.syntax.invalid_locale",
+                  val), e);
+            }
+         }
+      }
+      else if (cliParser.isArg(arg, "--tex-encoding", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         if (val.equals("default") || val.isEmpty())
+         {
+            settings.setTeXEncoding(null);
+         }
+         else
+         {
+            try
+            {
+               if (Charset.isSupported(val))
+               {
+                  settings.setTeXEncoding(Charset.forName(val));
+               }
+               else
+               {
+                 throw new InvalidSyntaxException(
+                   getMessage("error.syntax.unknown.encoding",
+                   val));
+               }
+            }
+            catch (Exception e)
+            {
+               throw new InvalidSyntaxException(
+                 getMessage("error.syntax.unknown.encoding",
+                 val), e);
+            }
+         }
+      }
+      else if (cliParser.isArg(arg, "--output-format", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         String val = returnVals[0].toString();
+
+         if (val.isEmpty() || val.equals("default"))
+         {
+            settings.setDefaultOutputFormat(null);
+         }
+         else
+         {
+            String fmt = val.toUpperCase();
+
+            Matcher m = DatatoolDb.FORMAT_PATTERN.matcher(fmt);
+
+            if (!m.matches())
+            {
+               throw new InvalidSyntaxException(
+                  getMessage("error.syntax.invalid_output_format", val));
+            }
+
+            settings.setDefaultOutputFormat(fmt);
+         }
+      }
+      else if (arg.equals("--filter-or"))
+      {
+         loadSettings.setFilterOp(true);
+      }
+      else if (arg.equals("--filter-and"))
+      {
+         loadSettings.setFilterOp(false);
+      }
+      else if (arg.equals("--filter-include"))
+      {
+         loadSettings.setFilterInclude(true);
+      }
+      else if (arg.equals("--filter-exclude"))
+      {
+         loadSettings.setFilterInclude(false);
+      }
+      else if (cliParser.isArg(arg, "--filter", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_filter_label", arg));
+         }
+
+         String label = returnVals[0].toString();
+
+         if (returnVals[1] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_filter_operator", arg, label));
+         }
+
+         String operator = returnVals[1].toString();
+
+         if (returnVals[2] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_filter_value", arg, label, operator));
+         }
+
+         loadSettings.addFilterInfo(new FilterInfo(getMessageHandler(),
+           label, operator, returnVals[2].toString()));
+      }
+      else if (cliParser.isIntArg(arg, "--truncate", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         loadSettings.setTruncate(returnVals[0].intValue());
+      }
+      else if (cliParser.isArg(arg, "--remove-columns", returnVals))
+      {
+         if (loadSettings.getRemoveExceptColumnList() != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.option_clash",
+                arg, "--remove-except-columns"));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         loadSettings.setRemoveColumnList(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--remove-except-columns", returnVals))
+      {
+         if (loadSettings.getRemoveColumnList() != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.option_clash",
+                arg, "--remove-columns"));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         loadSettings.setRemoveExceptColumnList(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--name", returnVals))
+      {
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         loadSettings.setDbName(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "-i", "--in", returnVals))
+      {
+         if (loadSettings.getInputFile() != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.only_one_input"));
+         }
+
+         if (loadSettings.getDataImport() != null)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.input_clash"));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.clisyntax.missing_value", arg));
+         }
+
+         loadSettings.setInputFile(returnVals[0].toString());
+      }
+      else if (cliParser.isArg(arg, "--merge", returnVals))
+      {
+         if (loadSettings.getMergeImportSource() != null
+             || loadSettings.getMergeFile() != null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.only_one_merge"));
+         }
+
+         if (returnVals[0] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_merge_key", arg));
+         }
+
+         String mergeKey = returnVals[0].toString();
+
+         if (returnVals[1] == null)
+         {
+            throw new InvalidSyntaxException(
+               getMessage("error.syntax.missing_merge_file", arg, mergeKey));
+         }
+
+         File mergeFile = new File(returnVals[1].toString());
+
+         if (!mergeFile.exists())
+         {
+            try
+            {
+               throw new FileNotFoundException(
+                 getMessage("error.io.file_not_found", returnVals[1]));
+            }
+            catch (IOException e)
+            {
+               error(getMessage("error.syntax.merge_omitted",
+                  arg, returnVals[0], returnVals[1], e.getMessage()), e);
+            }
+         }
+         else
+         {
+            loadSettings.setMergeKey(mergeKey);
+            loadSettings.setMergeFile(mergeFile);
+         }
+      }
+      else if (cliParser.isArgPrefix(arg, "--merge-", returnVals))
+      {
+         processMergeOption(arg, returnVals, arg.substring(8));
+      }
+      else if (cliParser.isArg(arg, "--import", returnVals))
+      {
+         processImportOption(arg, returnVals, "import");
+      }
+      else if (cliParser.isArg(arg, "--csv", returnVals))
+      {
+         processImportOption(arg, returnVals, "csv");
+      }
+      else if (cliParser.isArg(arg, "--tsv", returnVals))
+      {
+         processImportOption(arg, returnVals, "tsv");
+      }
+      else if (cliParser.isArg(arg, "--xls", returnVals))
+      {
+         processImportOption(arg, returnVals, "xls");
+      }
+      else if (cliParser.isArg(arg, "--xlsx", returnVals))
+      {
+         processImportOption(arg, returnVals, "xlsx");
+      }
+      else if (cliParser.isArg(arg, "--ods", returnVals))
+      {
+         processImportOption(arg, returnVals, "ods");
+      }
+      else if (cliParser.isArg(arg, null, "--odf", "--fods", returnVals))
+      {
+         processImportOption(arg, returnVals, "fods");
+      }
+      else if (cliParser.isArg(arg, "--probsoln", returnVals))
+      {
+         processImportOption(arg, returnVals, "probsoln");
+      }
+      else if (cliParser.isArg(arg, "--sql", returnVals))
+      {
+         processImportOption(arg, returnVals, "sql");
+      }
+      else
+      {
+         // common options
+         return super.parseCLIArg(arg, returnVals);
+      }
+
+      return true;
+   }
+
+   @Override
+   protected void postCLIProcess()
+     throws InvalidSyntaxException
+   {
+      process();
+   }
+
+   protected abstract void process();
+
+   public void setBatchMode(boolean mode)
+   {
+      isBatchMode = mode;
+   }
+
+   public boolean isBatchMode()
+   {
+      return isBatchMode;
+   }
+
+   @Override
+   public boolean isGUI()
+   {
+      return !isBatchMode;
    }
 
    /**
@@ -106,7 +1329,7 @@ public abstract class DatatoolTk
 
    public MessageHandler getMessageHandler()
    {
-      return settings.getMessageHandler();
+      return settings == null ? null : settings.getMessageHandler();
    }
 
    public DatatoolSettings getSettings()
@@ -218,67 +1441,70 @@ public abstract class DatatoolTk
       }
    }
 
-   public int processMergeOption(int i, String[] args, String type)
-     throws InvalidSyntaxException,IOException
+   public void processMergeOption(String opt, CLIArgValue[] returnVals, String type)
+     throws InvalidSyntaxException
    {
-      String opt = args[i];
       boolean isSql = allowsSQL && type.equals("sql");
 
       if (loadSettings.getMergeImport() != null)
       {
          throw new InvalidSyntaxException(
-            getLabelWithValues("error.syntax.only_one", opt));
+            getMessage("error.syntax.only_one", opt));
       }
 
-      i++;
-
-      if (i == args.length)
+      if (returnVals[0] == null)
       {
          throw new InvalidSyntaxException(
-           getLabelWithValues("error.syntax.missing_merge_key",
-             opt));
+           getMessage("error.syntax.missing_merge_key", opt));
       }
 
-      String mergeKey = args[i];
+      String mergeKey = returnVals[0].toString();
 
-      i++;
-
-      if (i == args.length)
+      if (returnVals[1] == null)
       {
          throw new InvalidSyntaxException(
-            getLabelWithValues(
+            getMessage(
                isSql ? "error.syntax.missing_merge_statement" :
                "error.syntax.missing_merge_file",
                opt, mergeKey));
       }
 
       loadSettings.setMergeKey(mergeKey);
-      loadSettings.setMergeImportSource(args[i]);
+      loadSettings.setMergeImportSource(returnVals[1].toString());
 
       if (type.equals("import"))
       {
-         File file = new File(args[i]);
+         String filename = returnVals[1].toString();
+         File file = new File(filename);
 
          if (!file.exists())
          {
-            if (allowsSQL && args[i].lastIndexOf('.') == -1)
+            if (allowsSQL && filename.lastIndexOf('.') == -1)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValues("error.io.file_not_found_query_sql",
-                     args[i], "--merge-sql"));
+                  getMessage("error.io.file_not_found_query_sql",
+                     filename, "--merge-sql"));
             }
             else
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValues("error.io.file_not_found",
-                     args[i]));
+                  getMessage("error.io.file_not_found", filename));
             }
          }
 
-         DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
-           getMessageHandler(), file);
+         try
+         {
+            DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
+              getMessageHandler(), file);
 
-         loadSettings.setMergeImport(getDatatoolImport(fmt));
+            loadSettings.setMergeImport(getDatatoolImport(fmt));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+              getMessage("error.syntax.merge_io_error",
+              opt, mergeKey, filename, e.getMessage()), e);
+         }
       }
       else
       {
@@ -289,62 +1515,66 @@ public abstract class DatatoolTk
          catch (UnsupportedFileFormatException e)
          {
             throw new InvalidSyntaxException( 
-              getLabelWithValues("error.syntax.unknown_option", opt), e);
+              getMessage("error.syntax.unknown_option", opt), e);
          }
       }
-
-      return i;
    }
 
-   public int processImportOption(int i, String[] args, String type)
-     throws InvalidSyntaxException,IOException
+   public void processImportOption(String opt, CLIArgValue[] returnVals, String type)
+     throws InvalidSyntaxException
    {
-      String opt = args[i];
       boolean isSql = allowsSQL && type.equals("sql");
 
       if (loadSettings.getDataImport() != null)
       {
          throw new InvalidSyntaxException(
-            getLabel("error.syntax.only_one_import", opt));
+            getMessage("error.syntax.only_one_import", opt));
       }
 
-      i++;
-
-      if (i == args.length)
+      if (returnVals[0] == null)
       {
          throw new InvalidSyntaxException(
-            getLabelWithValues(
+            getMessage(
                isSql ? "error.syntax.missing_sql" :
                "error.syntax.missing_filename",
                opt));
       }
 
-      loadSettings.setImportSource(args[i]);
+      String src = returnVals[0].toString();
+
+      loadSettings.setImportSource(src);
 
       if (type.equals("import"))
       {
-         File file = new File(args[i]);
+         File file = new File(src);
 
          if (!file.exists())
          {
-            if (allowsSQL && args[i].lastIndexOf('.') == -1)
+            if (allowsSQL && src.lastIndexOf('.') == -1)
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValues("error.io.file_not_found_query_sql",
-                     args[i], "--sql"));
+                  getMessage("error.io.file_not_found_query_sql",
+                     src, "--sql"));
             }
             else
             {
                throw new InvalidSyntaxException(
-                  getLabelWithValues("error.io.file_not_found",
-                     args[i]));
+                  getMessage("error.io.file_not_found", src));
             }
          }
 
-         DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
-           getMessageHandler(), file);
+         try
+         {
+            DatatoolFileFormat fmt = DatatoolFileFormat.valueOf(
+              getMessageHandler(), file);
 
-         loadSettings.setDataImport(getDatatoolImport(fmt));
+            loadSettings.setDataImport(getDatatoolImport(fmt));
+         }
+         catch (IOException e)
+         {
+            throw new InvalidSyntaxException(
+             getMessage("error.syntax.import_io_error", opt, src, e.getMessage()), e);
+         }
       }
       else
       {
@@ -355,19 +1585,9 @@ public abstract class DatatoolTk
          catch (UnsupportedFileFormatException e)
          {
             throw new InvalidSyntaxException( 
-              getLabelWithValues("error.syntax.unknown_option", opt), e);
+              getMessage("error.syntax.unknown_option", opt), e);
          }
       }
-
-      return i;
-   }
-
-   // may be overridden to provide extra options
-   public int processOption(int i, String[] args)
-     throws InvalidSyntaxException
-   {
-      throw new InvalidSyntaxException(
-       getLabelWithValues("error.syntax.unknown_option", args[i]));
    }
 
    public void doBatchProcess()
@@ -382,17 +1602,17 @@ public abstract class DatatoolTk
       {
          if (allowsGUI)
          {
-            getMessageHandler().error(getLabelWithValues("error.cli.no_data",
+            getMessageHandler().error(getMessage("error.cli.no_data",
               "--gui", "--help"), MessageHandler.SYNTAX_FAILURE);
          }
          else
          {
             getMessageHandler().error(
-              getLabelWithValues("error.cli.no_data_no_gui", "--help"),
+              getMessage("error.cli.no_data_no_gui", "--help"),
               MessageHandler.SYNTAX_FAILURE);
          }
 
-         System.exit(1);
+         exit(EXIT_SYNTAX);
       }
 
       if (!loadSettings.hasOutputAction())
@@ -411,7 +1631,7 @@ public abstract class DatatoolTk
               MessageHandler.SYNTAX_FAILURE);
          }
 
-         System.exit(1);
+         exit(EXIT_SYNTAX);
       }
 
       DatatoolDb db = null;
@@ -544,170 +1764,36 @@ public abstract class DatatoolTk
       catch (InvalidSyntaxException e)
       {
          getMessageHandler().error(e, MessageHandler.SYNTAX_FAILURE);
-         System.exit(EXIT_SYNTAX);
+         exit(EXIT_SYNTAX);
       }
       catch (DatatoolImportException e)
       {
          getMessageHandler().error(e, MessageHandler.OPEN_FAILURE);
-         System.exit(EXIT_IO);
+         exit(EXIT_IO);
       }
       catch (DatatoolExportException e)
       {
          getMessageHandler().error(e, MessageHandler.WRITE_FAILURE);
-         System.exit(EXIT_IO);
+         exit(EXIT_IO);
       }
       catch (Throwable e)
       {
          getMessageHandler().error(e);
-         System.exit(EXIT_OTHER);
+         exit(EXIT_OTHER);
       }
 
       debug("Completed");
-      System.exit(0);
-   }
-
-   public void help()
-   {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      version();
-      System.out.println();
-      System.out.println(getLabel("syntax.title"));
-      System.out.println();
-
-      if (allowsGUI)
-      {
-         System.out.println(getApplicationName()+" --gui");
-         System.out.println(getLabel("syntax.or"));
-      }
-
-      System.out.println(getLabelWithValues("syntax.opt_db", getApplicationName()));
-      System.out.println(getLabel("syntax.or"));
-      System.out.println(getLabelWithValues("syntax.opt_import", getApplicationName()));
-
-      if (allowsSQL)
-      {
-         System.out.println(getLabel("syntax.or"));
-         System.out.println(getLabelWithValues("syntax.opt_sql",
-            getApplicationName()));
-      }
-
-      System.out.println();
-
-      System.out.println(getLabel("syntax.general"));
-
-      if (allowsGUI)
-      {
-         helpLib.printSyntaxItem(getLabelWithValues("syntax.gui", "--gui", "-g"));
-         helpLib.printSyntaxItem(getLabelWithValues("syntax.batch", "--batch", "-b"));
-      }
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.in", 
-        "--in", "-i", getApplicationName()));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.name", "--name"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.out", "--output", "-o"));
-
-      helpLib.printSyntaxItem(
-        getLabelWithValues("syntax.version", "--version", "-v"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.help", "--help", "-h"));
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.debug", "--[no]debug"));
-      helpLib.printSyntaxItem(
-        getLabelWithValues("syntax.debug-mode", "--debug-mode"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.log", "--log"));
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.compat", "--compat"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.tex_encoding",
-         "--tex-encoding"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.output_format",
-         "--output-format"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.dtl_read", "--dtl-read"));
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.dtl_write", "--dtl-write"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.literal",
-          "--[no]literal",
-         (settings.isLiteralContent() ? "--literal" : "--noliteral")));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.maptexspecials",
-          "--[no]map-tex-specials",
-          "--[no]literal"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.autotrimlabels",
-          "--[no]auto-trim-labels",
-          (settings.isAutoTrimLabelsOn() ? 
-             "--auto-trim-labels" : "--noauto-trim-labels")));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.seed", "--seed"));
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.shuffle", "--[no]shuffle"));
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.sort", "--sort"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.sort_case_sensitive",
-         "--sort-case-sensitive"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.sort_case_insensitive",
-         "--sort-case-insensitive"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.sort_locale",
-         "--sort-locale"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.owner_only",
-         "--[no]owner_only",
-         (settings.isOwnerOnly() ?  "--owner-only" : "--[no]owner-only")));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.truncate",
-         "--truncate"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.remove_cols",
-         "--remove-columns"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.remove_except_cols",
-         "--remove-except-columns"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter_or",
-         "--filter-or"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter_and",
-         "--filter-and"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter_include",
-         "--filter-include"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter_exclude",
-         "--filter-exclude"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.filter",
-         "--filter"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.merge",
-         "--merge"));
-
-      System.out.println();
-
-      helpImportOptions();
-
-      System.out.println(getLabelWithValues("syntax.bugreport", 
-        "https://github.com/nlct/datatooltk/issues"));
-      System.out.println(getLabelWithValues("syntax.homepage", 
-        getApplicationName(),
-        "https://www.dickimaw-books.com/software/datatooltk/"));
+      exit(0);
    }
 
    public void helpImportOptions()
    {
-      TeXJavaHelpLib helpLib = getHelpLib();
+      printSyntaxItem(getMessage("syntax.import", "--import"));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.import", "--import"));
+      printSyntaxItem(
+         getMessage("syntax.merge_import", "--merge-import"));
 
-      helpLib.printSyntaxItem(
-         getLabelWithValues("syntax.merge_import", "--merge-import"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.preamble_only",
-         "--[no]preamble-only"));
+      printSyntaxItem(getMessage("syntax.preamble_only", "--[no]preamble-only"));
 
       System.out.println();
 
@@ -719,15 +1805,11 @@ public abstract class DatatoolTk
 
    public void helpTeXImportOptions()
    {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
       System.out.println(getLabel("syntax.probsoln_opts"));
 
-      helpLib.printSyntaxItem(
-        getLabelWithValues("syntax.probsoln", "--probsoln"));
+      printSyntaxItem(getMessage("syntax.probsoln", "--probsoln"));
 
-      helpLib.printSyntaxItem(
-        getLabelWithValues("syntax.merge_probsoln", "--merge-probsoln"));
+      printSyntaxItem(getMessage("syntax.merge_probsoln", "--merge-probsoln"));
 
       System.out.println();
 
@@ -735,16 +1817,14 @@ public abstract class DatatoolTk
 
    public void helpCSVImportOptions()
    {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
       System.out.println(getLabel("syntax.csv_opts"));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv", "--csv"));
+      printSyntaxItem(getMessage("syntax.csv", "--csv"));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.merge_csv", "--merge-csv"));
+      printSyntaxItem(getMessage("syntax.merge_csv", "--merge-csv"));
 
-      helpLib.printSyntaxItem(
-        getLabelWithValues("syntax.tsv_sep", "--tab-sep", "--csv-sep"));
+      printSyntaxItem(
+        getMessage("syntax.tsv_sep", "--tab-sep", "--csv-sep"));
 
       String sep = new String(Character.toChars(settings.getSeparator()));
 
@@ -753,125 +1833,109 @@ public abstract class DatatoolTk
          sep = "[TAB]";
       }
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_sep", "--csv-sep", 
-        sep, "--sep"));
+      printSyntaxItem(getMessage("syntax.csv_sep", "--csv-sep", sep, "--sep"));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_delim", "--csv-delim", 
+      printSyntaxItem(getMessage("syntax.csv_delim", "--csv-delim", 
         new String(Character.toChars(settings.getDelimiter())), "--delim"));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_header",
+      printSyntaxItem(getMessage("syntax.csv_header",
         "--[no]csv-header",
         (settings.hasCSVHeader()?"--csv-header":"--nocsv-header"),
         "--[no]csvheader"));
 
       CsvBlankOption blankOpt = settings.getCsvBlankOption();
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_empty_rows",
+      printSyntaxItem(getMessage("syntax.csv_empty_rows",
         "--csv-empty-rows", blankOpt.getName()));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.skipemptyrows",
+      printSyntaxItem(getMessage("syntax.skipemptyrows",
           "--csv-skip-empty-rows",
           "--csv-empty-rows "+CsvBlankOption.IGNORE.getName()));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.noskipemptyrows",
+      printSyntaxItem(getMessage("syntax.noskipemptyrows",
           "--nocsv-skip-empty-rows",
           "--csv-empty-rows "+CsvBlankOption.EMPTY_ROW));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_escape_chars",
+      printSyntaxItem(getMessage("syntax.csv_escape_chars",
         "--csv-escape-chars",
         settings.getEscapeCharsOption()));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_escape",
+      printSyntaxItem(getMessage("syntax.csv_escape",
         "--[no]csv-escape", "--csv-escape-chars"));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_skiplines",
-        "--csv-skiplines"));
+      printSyntaxItem(getMessage("syntax.csv_skiplines", "--csv-skiplines"));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_strictquotes",
-        "--[no]csv-strictquotes"));
+      printSyntaxItem(getMessage("syntax.csv_strictquotes", "--[no]csv-strictquotes"));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.csv_encoding", 
-        "--csv-encoding", "--csvencoding"));
+      printSyntaxItem(getMessage("syntax.csv_encoding", "--csv-encoding", "--csvencoding"));
 
       System.out.println();
-
    }
 
    public void helpSpreadSheetImportOptions()
    {
-      TeXJavaHelpLib helpLib = getHelpLib();
+      printSyntaxItem(getMessage("syntax.xls_opts"));
 
-      helpLib.printSyntaxItem(getLabel("syntax.xls_opts"));
-
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.xlsx", "--xlsx"));
+      printSyntaxItem(getMessage("syntax.xlsx", "--xlsx"));
 
       if (allowsXLS)
       {
-         helpLib.printSyntaxItem(getLabelWithValues("syntax.xls", "--xls"));
+         printSyntaxItem(getMessage("syntax.xls", "--xls"));
       }
 
-      helpLib.printSyntaxItem(
-         getLabelWithValues("syntax.merge_xlsx", "--merge-xlsx"));
+      printSyntaxItem(getMessage("syntax.merge_xlsx", "--merge-xlsx"));
 
       if (allowsXLS)
       {
-         helpLib.printSyntaxItem(
-            getLabelWithValues("syntax.merge_xls", "--merge-xls"));
+         printSyntaxItem(getMessage("syntax.merge_xls", "--merge-xls"));
       }
 
       System.out.println();
 
-      helpLib.printSyntaxItem(getLabel("syntax.ods_opts"));
+      printSyntaxItem(getMessage("syntax.ods_opts"));
 
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.ods", "--ods"));
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.merge_ods", "--merge-ods"));
+      printSyntaxItem(getMessage("syntax.ods", "--ods"));
+      printSyntaxItem(getMessage("syntax.merge_ods", "--merge-ods"));
       System.out.println();
 
-      helpLib.printSyntaxItem(getLabel("syntax.xlsods_opts"));
-      helpLib.printSyntaxItem(getLabelWithValues("syntax.sheet", "--sheet"));
+      printSyntaxItem(getMessage("syntax.xlsods_opts"));
+      printSyntaxItem(getMessage("syntax.sheet", "--sheet"));
       System.out.println();
 
    }
 
    public void helpSQLImportOptions()
    {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
       if (allowsSQL)
       {
-         helpLib.printSyntaxItem(getLabel("syntax.sql_opts"));
+         printSyntaxItem(getMessage("syntax.sql_opts"));
 
-         helpLib.printSyntaxItem(
-            getLabelWithValues("syntax.sql", "--sql"));
+         printSyntaxItem(getMessage("syntax.sql", "--sql"));
 
-         helpLib.printSyntaxItem(
-            getLabelWithValues("syntax.merge_sql", "--merge-sql"));
+         printSyntaxItem(getMessage("syntax.merge_sql", "--merge-sql"));
 
-         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_db", "--sqldb"));
+         printSyntaxItem(getMessage("syntax.sql_db", "--sqldb"));
 
-         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_prefix",
+         printSyntaxItem(getMessage("syntax.sql_prefix",
            "--sqlprefix", settings.getSqlPrefix()));
 
-         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_port",
+         printSyntaxItem(getMessage("syntax.sql_port",
            "--sqlport", ""+settings.getSqlPort()));
 
-         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_host",
+         printSyntaxItem(getMessage("syntax.sql_host",
            "--sqlhost", settings.getSqlHost()));
 
-         helpLib.printSyntaxItem(
-            getLabelWithValues("syntax.sql_user", "--sqluser"));
+         printSyntaxItem(getMessage("syntax.sql_user", "--sqluser"));
 
-         helpLib.printSyntaxItem(
-           getLabelWithValues("syntax.sql_password",
+         printSyntaxItem(getMessage("syntax.sql_password",
            "--sqlpassword"));
 
-         helpLib.printSyntaxItem(getLabelWithValues("syntax.sql_wipepassword",
+         printSyntaxItem(getMessage("syntax.sql_wipepassword",
            "--[no]wipepassword", 
            (settings.isWipePasswordEnabled()?
               "--wipepassword":"--nowipepassword")));
 
-         helpLib.printSyntaxItem(
-            getLabelWithValues("syntax.sql_missing_console_action",
+         printSyntaxItem(getMessage("syntax.sql_missing_console_action",
            "--missing-console-action"));
 
          System.out.println();
@@ -879,92 +1943,12 @@ public abstract class DatatoolTk
 
    }
 
-   public String getApplicationName()
-   {
-      return APP_NAME;
-   }
-
-   public String getAppInfo()
-   {
-      return getAppInfo(false);
-   }
-
-   public String getAppInfo(boolean html)
+   public String getAboutInfo(boolean html)
    {
       String par = html ? "<p>" : String.format("%n%n");
       String nl = html ? "<br>" : String.format("%n");
 
       StringBuilder builder = new StringBuilder();
-
-      builder.append(
-        getLabelWithValues("about.version", getApplicationName(),
-          APP_VERSION, APP_DATE)
-      );
-
-      builder.append(nl);
-
-// Copyright line shouldn't get translated (according to
-// http://www.gnu.org/prep/standards/standards.html)
-
-      builder.append(String.format(
-        "Copyright (C) %s Nicola L. C. Talbot (%s)",
-        COPYRIGHT_YEAR, getInfoUrl(html, "www.dickimaw-books.com")));
-
-      builder.append(nl);
-
-      String legalText = getLabel("about.legal");
-
-      if (html)
-      {
-         legalText = TeXJavaHelpLib.encodeHTML(legalText, false).replaceAll("\n", nl);
-      }
-
-      builder.append(legalText);
-
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      String translator = helpLib.getMessageIfExists("about.translator_info");
-
-      if (translator != null && !translator.isEmpty())
-      {
-         builder.append(par);
-
-         if (html)
-         {
-            translator = TeXJavaHelpLib.encodeHTML(translator, false);
-         }
-
-         builder.append(translator);
-      }
-
-      String ack = helpLib.getMessageIfExists("about.acknowledgements");
-
-      if (ack != null && !ack.isEmpty())
-      {
-         builder.append(par);
-
-         if (html)
-         {
-            ack = TeXJavaHelpLib.encodeHTML(ack, false);
-         }
-
-         builder.append(ack);
-      }
-
-      builder.append(par);
-      builder.append(getMessageWithFallback("about.library.version",
-        "Bundled with {0} version {1} ({2})",
-        "texjavahelplib.jar", TeXJavaHelpLib.VERSION, TeXJavaHelpLib.VERSION_DATE));
-      builder.append(nl);
-
-      builder.append(getInfoUrl(html, "https://github.com/nlct/texjavahelplib"));
-
-      builder.append(par);
-      builder.append(getMessageWithFallback("about.library.version",
-        "Bundled with {0} version {1} ({2})",
-        "texparserlib.jar", TeXParser.VERSION, TeXParser.VERSION_DATE));
-      builder.append(nl);
-      builder.append(getInfoUrl(html, "https://github.com/nlct/texparser"));
 
       if (allowsSQL)
       {
@@ -1046,7 +2030,17 @@ public abstract class DatatoolTk
          builder.append(dbInfo);
       }
 
-      return builder.toString();
+      return getHelpLib().getAboutInfo(html,
+        TeXJavaHelpLib.VERSION,
+        TeXJavaHelpLib.VERSION_DATE,
+        String.format(
+         "Copyright (C) %s Nicola L. C. Talbot (%s)",
+          COPYRIGHT_YEAR,
+          getHelpLib().getInfoUrl(false, "www.dickimaw-books.com")),
+         TeXJavaHelpLib.LICENSE_GPL3,
+         true, 
+         builder.toString()
+      );
    }
 
    public String getInfoUrl(boolean html, String url)
@@ -1070,11 +2064,6 @@ public abstract class DatatoolTk
       }
    }
 
-   public void version()
-   {
-      System.out.println(getAppInfo());
-   }
-
    public void warning(String message)
    {
       settings.getMessageHandler().warning(message);
@@ -1090,58 +2079,9 @@ public abstract class DatatoolTk
       settings.getMessageHandler().debug(e);
    }
 
-   public TeXJavaHelpLib getHelpLib()
-   {
-      if (settings != null)
-      {
-         return settings.getHelpLib();
-      }
-
-      return null;
-   }
-
-   public String getMessageWithFallback(String label, String fallbackFormat,
-     Object... params)
-   {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      if (helpLib == null)
-      {
-         MessageFormat fmt = new MessageFormat(fallbackFormat);
-         return fmt.format(params);
-      }
-      else
-      {
-         return helpLib.getMessageWithFallback(label, fallbackFormat, params);
-      }
-   }
-
-   public String getMessageIfExists(String label, Object... args)
-   {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      if (helpLib == null)
-      {
-         return null;
-      }
-      else
-      {
-         return helpLib.getMessageIfExists(label, args);
-      }
-   }
-
    public String getLabelWithAlt(String label, String alt)
    {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      if (helpLib == null)
-      {
-         return alt;
-      }
-      else
-      {
-         return helpLib.getMessageWithFallback(label, alt);
-      }
+      return getMessageWithFallback(label, alt);
    }
 
    public String getLabelRemoveArgs(String parent, String label)
@@ -1199,1196 +2139,7 @@ public abstract class DatatoolTk
 
    public String getLabelWithValues(String label, Object... values)
    {
-      TeXJavaHelpLib helpLib = getHelpLib();
-
-      if (helpLib == null)
-      {
-         return null;
-      }
-
-      return helpLib.getMessage(label, values);
-   }
-
-   protected void parseArgs(String[] args)
-      throws InvalidSyntaxException,IOException
-   {
-      loadSettings = new LoadSettings(settings);
-
-      for (int i = 0; i < args.length; i++)
-      {
-         if (args[i].equals("--version") || args[i].equals("-v"))
-         {
-            version();
-            System.exit(0);
-         }
-         else if (args[i].equals("--help") || args[i].equals("-h"))
-         {
-            help();
-            System.exit(0);
-         }
-         else if (args[i].equals("--sep") || args[i].equals("--csv-sep"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                getLabelWithValues("error.syntax.missing_char", args[i-1]));
-            }
-
-            if (args[i].length() > 1)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.invalid_sep"));
-            }
-
-            settings.setSeparator(args[i].charAt(0));
-         }
-         else if (args[i].equals("--tab-sep"))
-         {
-            settings.setSeparator('\t');
-         }
-         else if (args[i].equals("--delim") || args[i].equals("--csv-delim"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_char", args[i-1]));
-            }
-
-            if (args[i].length() > 1)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.invalid_delim"));
-            }
-
-            settings.setDelimiter(args[i].charAt(0));
-         }
-         else if (args[i].equals("--csv-header")
-                   || args[i].equals("--csvheader"))
-         {
-            settings.setHasCSVHeader(true);
-         }
-         else if (args[i].equals("--nocsv-header")
-                   || args[i].equals("--nocsvheader"))
-         {
-            settings.setHasCSVHeader(false);
-         }
-         else if (args[i].equals("--csv-escape-chars"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_arg", args[i-1]));
-            }
-
-            EscapeCharsOption opt = EscapeCharsOption.fromOptionName(args[i]);
-
-            if (opt == null)
-            {
-               StringBuilder builder = new StringBuilder();
-
-               for (EscapeCharsOption o : EscapeCharsOption.values())
-               {
-                  if (builder.length() > 0)
-                  {
-                     builder.append(", ");
-                  }
-
-                  builder.append(o.getName());
-               }
-
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.invalid_set_value",
-                  args[i], args[i-1], builder.toString()));
-            }
-            else
-            {
-               settings.setEscapeCharsOption(opt);
-            }
-         }
-         else if (args[i].equals("--csv-escape")
-                   || args[i].equals("--csvescape"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_char", args[i-1]));
-            }
-
-            if (args[i].length() > 1)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.invalid_esc"));
-            }
-
-            if (args[i].equals("\\"))
-            {
-               settings.setEscapeCharsOption(EscapeCharsOption.ESC_DELIM_BKSL);
-            }
-            else if (args[i].isEmpty())
-            {
-               settings.setEscapeCharsOption(EscapeCharsOption.NONE);
-            }
-            else if (args[i].codePointAt(0) == settings.getDelimiter())
-            {
-               settings.setEscapeCharsOption(EscapeCharsOption.DOUBLE_DELIM);
-            }
-            else
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.deprecated",
-                    args[i-1], "--csv-escape-chars"));
-            }
-         }
-         else if (args[i].equals("--nocsv-escape") 
-                  || args[i].equals("--nocsvescape"))
-         {
-            settings.setEscapeCharsOption(EscapeCharsOption.NONE);
-         }
-         else if (args[i].equals("--csv-skiplines"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_number", args[i-1]));
-            }
-
-            try
-            {
-               settings.setCSVSkipLines(Integer.parseInt(args[i]));
-            }
-            catch (Exception e)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.invalid_skiplines", args[i]), e);
-            }
-         }
-         else if (args[i].equals("--csv-strictquotes"))
-         {
-            settings.setCSVStrictQuotes(true);
-         }
-         else if (args[i].equals("--nocsv-strictquotes"))
-         {
-            settings.setCSVStrictQuotes(false);
-         }
-         else if (args[i].equals("--csv-encoding") 
-            || args[i].equals("--csvencoding"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_encoding", args[i-1]));
-            }
-
-            if (args[i].equals("default") || args[i].isEmpty())
-            {
-               settings.setCsvEncoding(null);
-            }
-            else
-            {
-               try
-               {
-                  if (Charset.isSupported(args[i]))
-                  {
-                     settings.setCsvEncoding(Charset.forName(args[i]));
-                  }
-                  else
-                  {
-                    throw new InvalidSyntaxException(
-                      getLabelWithValues("error.syntax.unknown.encoding",
-                      args[i]));
-                  }
-               }
-               catch (Exception e)
-               {
-                  throw new InvalidSyntaxException(
-                    getLabelWithValues("error.syntax.unknown.encoding",
-                    args[i]), e);
-               }
-            }
-         }
-         else if (args[i].equals("--output") || args[i].equals("-o"))
-         {
-            if (loadSettings.getOutputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.only_one", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_filename",
-                   args[i-1]));
-            }
-
-            loadSettings.setOutputFile(args[i]);
-         }
-         else if (args[i].equals("--dtl-read"))
-         {
-            if (loadSettings.getImportSource() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_import"));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.import_clash", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_optionlist",
-                     args[i-1]));
-            }
-
-            String optList = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_filename",
-                     args[i-1]+" \""+optList+"\""));
-            }
-
-            loadSettings.setImportSource(args[i]);
-            loadSettings.setDataImport(new DatatoolTeX(optList, settings));
-         }
-         else if (args[i].equals("--dtl-write"))
-         {
-            if (loadSettings.getDataExport() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_export"));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_optionlist",
-                     args[i-1]));
-            }
-
-            String optList = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_filename",
-                     args[i-1]+" \""+optList+"\""));
-            }
-
-            loadSettings.setExportTarget(args[i]);
-            loadSettings.setDataExport(new DatatoolTeX(optList, settings));
-         }
-         else if (args[i].equals("--preamble-only"))
-         {
-            settings.setPreambleOnly(true);
-         }
-         else if (args[i].equals("--nopreamble-only"))
-         {
-            settings.setPreambleOnly(false);
-         }
-         else if (args[i].equals("--import"))
-         {
-            i = processImportOption(i, args, "import");
-         }
-         else if (args[i].equals("--csv"))
-         {
-            i = processImportOption(i, args, "csv");
-         }
-         else if (args[i].equals("--tsv"))
-         {
-            i = processImportOption(i, args, "tsv");
-         }
-         else if (args[i].equals("--xls"))
-         {
-            i = processImportOption(i, args, "xls");
-         }
-         else if (args[i].equals("--xlsx"))
-         {
-            i = processImportOption(i, args, "xlsx");
-         }
-         else if (args[i].equals("--ods"))
-         {
-            i = processImportOption(i, args, "ods");
-         }
-         else if (args[i].equals("--odf") || args[i].equals("--fods"))
-         {
-            i = processImportOption(i, args, "fods");
-         }
-         else if (args[i].equals("--sheet"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_sheet_ref",
-                     args[i-1]));
-            }
-
-            try
-            {
-               settings.getImportSettings().setSheetIndex(
-                 Integer.valueOf(args[i]));
-            }
-            catch (NumberFormatException e)
-            {
-               settings.getImportSettings().setSheetName(args[i]);
-            }
-         }
-         else if (args[i].equals("--probsoln"))
-         {
-            i = processImportOption(i, args, "probsoln");
-         }
-         else if (args[i].equals("--sql"))
-         {
-            i = processImportOption(i, args, "sql");
-         }
-         else if (args[i].equals("--sqldb"))
-         {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.unsupported_option", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_dbname",
-                   args[i-1]));
-            }
-
-            settings.setSqlDbName(args[i]);
-         }
-         else if (args[i].equals("--sqlprefix"))
-         {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.unsupported_option", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_prefix",
-                  args[i-1]));
-            }
-
-            settings.setSqlPrefix(args[i]);
-         }
-         else if (args[i].equals("--sqlhost"))
-         {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.unsupported_option", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_host",
-                   args[i-1]));
-            }
-
-            settings.setSqlHost(args[i]);
-         }
-         else if (args[i].equals("--sqluser"))
-         {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.unsupported_option", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_user",
-                   args[i-1]));
-            }
-
-            settings.setSqlUser(args[i]);
-         }
-         else if (args[i].equals("--sqlpassword"))
-         {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.unsupported_option", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_password",
-                   args[i-1]));
-            }
-
-            settings.getImportSettings().setSqlPassword(args[i].toCharArray());
-            args[i] = "";
-         }
-         else if (args[i].equals("--wipepassword"))
-         {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.unsupported_option", args[i]));
-            }
-
-            settings.setWipePassword(true);
-         }
-         else if (args[i].equals("--nowipepassword"))
-         {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.unsupported_option", args[i]));
-            }
-
-            settings.setWipePassword(false);
-         }
-         else if (args[i].equals("--noconsole-action")
-                ||args[i].equals("--missing-console-action"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_noconsole_action",
-                    args[i-1]));
-            }
-
-            if (args[i].equals("stdin"))
-            {
-               noConsoleAction = ConsolePasswordReader.NO_CONSOLE_STDIN;
-            }
-            else if (args[i].equals("gui"))
-            {
-               noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
-            }
-            else if (args[i].equals("error"))
-            {
-               noConsoleAction = ConsolePasswordReader.NO_CONSOLE_ERROR;
-            }
-            else
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.invalid_noconsole_action",
-                    args[i-1], args[i]));
-            }
-         }
-         else if (args[i].equals("--sqlport"))
-         {
-            if (!allowsSQL)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.unsupported_option", args[i]));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_port",
-                   args[i-1]));
-            }
-
-            try
-            {
-               settings.setSqlPort(Integer.parseInt(args[i]));
-            }
-            catch (NumberFormatException e)
-            {
-               throw new InvalidSyntaxException(
-                getLabelWithValues("error.syntax.not_a_number",
-                  args[i-1], args[i]));
-            }
-         }
-         else if (args[i].equals("--gui") || args[i].equals("-g"))
-         {
-            if (!allowsGUI)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.unsupported_option", args[i]));
-            }
-
-            settings.setBatchMode(false);
-         }
-         else if (args[i].equals("--batch") || args[i].equals("-b"))
-         {
-            settings.setBatchMode(true);
-         }
-         else if (args[i].equals("--debug"))
-         {
-            settings.getMessageHandler().setDebugMode(true);
-         }
-         else if (args[i].equals("--nodebug"))
-         {
-            settings.getMessageHandler().setDebugMode(false);
-         }
-         else if (args[i].equals("--debug-mode"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_mode", args[i-1]));
-            }
-      
-            try
-            {
-               int val = Integer.parseInt(args[i]);
-      
-               if (val >= 0)
-               {
-                  settings.getMessageHandler().setTeXParserDebugLevel(val);
-               }
-            }
-            catch (NumberFormatException e)
-            {
-               try
-               {
-                  settings.getMessageHandler().setTeXParserDebugLevel(
-                    TeXParser.getDebugLevelFromModeList(args[i].split(",")));
-               }
-               catch (TeXSyntaxException e2)
-               {
-                  throw new InvalidSyntaxException(
-                    e2.getMessage(settings.getMessageHandler().getTeXApp()), e2);
-               }
-            }
-
-            settings.getMessageHandler().setDebugMode(
-             settings.getMessageHandler().getTeXParserDebugLevel() > 0);
-         }
-         else if (args[i].equals("--log"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_filename",
-                   args[i-1]));
-            }
-
-            settings.getMessageHandler().setLogFile(args[i]);
-         }
-         else if (args[i].equals("--nolog"))
-         {
-            settings.getMessageHandler().setLogFile((File)null);
-         }
-         else if (args[i].equals("--map-tex-specials")
-                || args[i].equals("--literal"))
-         {
-            settings.setLiteralContent(true);
-         }
-         else if (args[i].equals("--nomap-tex-specials")
-                || args[i].equals("--noliteral"))
-         {
-            settings.setLiteralContent(false);
-         }
-         else if (args[i].equals("--headers"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_arg",
-                   args[i-1]));
-            }
-
-            String value = args[i].trim();
-
-            if (value.isEmpty())
-            {
-               settings.setColumnHeaders(null);
-            }
-            else
-            {
-               settings.setColumnHeaders(value.split(" *, *"));
-            }
-         }
-         else if (args[i].equals("--keys"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_arg",
-                   args[i-1]));
-            }
-
-            String value = args[i].trim();
-
-            if (value.isEmpty())
-            {
-               settings.setColumnKeys(null);
-            }
-            else
-            {
-               settings.setColumnKeys(value.split(" *, *"));
-            }
-         }
-         else if (args[i].equals("--auto-keys"))
-         {
-            settings.setAutoKeys(true);
-         }
-         else if (args[i].equals("--noauto-keys"))
-         {
-            settings.setAutoKeys(false);
-         }
-         else if (args[i].equals("--auto-trim-labels"))
-         {
-            settings.setAutoTrimLabels(true);
-         }
-         else if (args[i].equals("--noauto-trim-labels"))
-         {
-            settings.setAutoTrimLabels(false);
-         }
-         else if (args[i].equals("--csv-skip-empty-rows"))
-         {
-            settings.setCsvBlankOption(CsvBlankOption.IGNORE);
-         }
-         else if (args[i].equals("--nocsv-skip-empty-rows"))
-         {
-            settings.setCsvBlankOption(CsvBlankOption.EMPTY_ROW);
-         }
-         else if (args[i].equals("--csv-empty-rows"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                getLabelWithValues("error.syntax.missing_arg", args[i-1]));
-            }
-
-            CsvBlankOption opt = CsvBlankOption.fromOptionName(args[i]);
-
-            if (opt == null)
-            {
-               StringBuilder builder = new StringBuilder();
-
-               for (CsvBlankOption blankOpt : CsvBlankOption.values())
-               {
-                  if (builder.length() > 0)
-                  {
-                     builder.append(", ");
-                  }
-
-                  builder.append(blankOpt.getName());
-               }
-
-               throw new InvalidSyntaxException(
-                getLabelWithValues("error.syntax.invalid_set_value", args[i],
-                  args[i-1], builder.toString()));
-            }
-
-            settings.setCsvBlankOption(opt);
-         }
-         else if (args[i].equals("--owner-only"))
-         {
-            settings.setOwnerOnly(true);
-         }
-         else if (args[i].equals("--noowner-only"))
-         {
-            settings.setOwnerOnly(false);
-         }
-         else if (args[i].equals("--seed"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_number",
-                   args[i-1]));
-            }
-
-            if (args[i].isEmpty())
-            {
-               settings.setRandomSeed(null);
-            }
-            else
-            {
-               try
-               {
-                  settings.setRandomSeed(Long.valueOf(args[i]));
-               }
-               catch (NumberFormatException e)
-               {
-                  throw new InvalidSyntaxException(
-                    getLabelWithValues("error.syntax.missing_number",
-                      args[i-1]));
-               }
-            }
-         }
-         else if (args[i].equals("--compat"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_value",
-                   args[i-1]));
-            }
-
-            if (args[i].equals("latest"))
-            {
-               settings.setCompatibilityLevel(settings.COMPAT_LATEST);
-            }
-            else if (args[i].equals("1.6"))
-            {
-               settings.setCompatibilityLevel(settings.COMPAT_1_6);
-            }
-            else
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.invalid_compat",
-                   args[i]));
-            }
-         }
-         else if (args[i].equals("--shuffle-iterations"))
-         {
-            // only provided for backward compatibility when using
-            // --compat=1.6 (not documented anymore)
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_number",
-                   args[i-1]));
-            }
-
-            try
-            {
-               settings.setShuffleIterations(Integer.valueOf(args[i]));
-            }
-            catch (NumberFormatException e)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_number",
-                   args[i-1]));
-            }
-         }
-         else if (args[i].equals("--shuffle"))
-         {
-            loadSettings.setShuffle(true);
-         }
-         else if (args[i].equals("--noshuffle"))
-         {
-            loadSettings.setShuffle(false);
-         }
-         else if (args[i].equals("--sort-case-sensitive"))
-         {
-            loadSettings.setCaseSensitive(true);
-         }
-         else if (args[i].equals("--sort-case-insensitive"))
-         {
-            loadSettings.setCaseSensitive(false);
-         }
-         else if (args[i].equals("--sort"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_sort_field",
-                  args[i-1]));
-            }
-
-            loadSettings.setSort(args[i]);
-         }
-         else if (args[i].equals("--sort-locale"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_sort_locale",
-                  args[i-1]));
-            }
-
-            if (args[i].equals("none"))
-            {
-               settings.setSortLocale((String)null);
-            }
-            else
-            {
-               // check argument is valid
-
-               try
-               {
-                  Locale locale = new Builder().setLanguageTag(args[i]).build();
-
-                  settings.setSortLocale(locale.toLanguageTag());
-               }
-               catch (Exception e)
-               {
-                  throw new InvalidSyntaxException(
-                     getLabelWithValues("error.syntax.invalid_locale",
-                     args[i]), e);
-               }
-            }
-         }
-         else if (args[i].equals("--tex-encoding"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_encoding",
-                  args[i-1]));
-            }
-
-            if (args[i].equals("default") || args[i].isEmpty())
-            {
-               settings.setTeXEncoding(null);
-            }
-            else
-            {
-               try
-               {
-                  if (Charset.isSupported(args[i]))
-                  {
-                     settings.setTeXEncoding(Charset.forName(args[i]));
-                  }
-                  else
-                  {
-                    throw new InvalidSyntaxException(
-                      getLabelWithValues("error.syntax.unknown.encoding",
-                      args[i]));
-                  }
-               }
-               catch (Exception e)
-               {
-                  throw new InvalidSyntaxException(
-                    getLabelWithValues("error.syntax.unknown.encoding",
-                    args[i]), e);
-               }
-            }
-         }
-         else if (args[i].equals("--output-format"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.missing_arg",
-                  args[i-1]));
-            }
-
-            if (args[i].isEmpty() || args.equals("default"))
-            {
-               settings.setDefaultOutputFormat(null);
-            }
-            else
-            {
-               String fmt = args[i].toUpperCase();
-
-               Matcher m = DatatoolDb.FORMAT_PATTERN.matcher(fmt);
-
-               if (!m.matches())
-               {
-                  throw new InvalidSyntaxException(
-                     getLabelWithValues("error.syntax.invalid_output_format", args[i]));
-               }
-
-               settings.setDefaultOutputFormat(fmt);
-            }
-         }
-         else if (args[i].equals("--filter-or"))
-         {
-            loadSettings.setFilterOp(true);
-         }
-         else if (args[i].equals("--filter-and"))
-         {
-            loadSettings.setFilterOp(false);
-         }
-         else if (args[i].equals("--filter-include"))
-         {
-            loadSettings.setFilterInclude(true);
-         }
-         else if (args[i].equals("--filter-exclude"))
-         {
-            loadSettings.setFilterInclude(false);
-         }
-         else if (args[i].equals("--filter"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_filter_label",
-                   args[i-1]));
-            }
-
-            String label = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_filter_operator",
-                   args[i-2], args[i-1]));
-            }
-
-            String operator = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_filter_value",
-                   args[i-3], args[i-2], args[i-1]));
-            }
-
-            String value = args[i];
-
-            loadSettings.addFilterInfo(new FilterInfo(getMessageHandler(),
-              label, operator, value));
-         }
-         else if (args[i].equals("--truncate"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_number",
-                   args[i-1]));
-            }
-
-            try
-            {
-               loadSettings.setTruncate(Integer.parseInt(args[i]));
-            }
-            catch (NumberFormatException e)
-            {
-               throw new InvalidSyntaxException(
-                  getLabelWithValues("error.syntax.not_a_number",
-                  args[i-1], args[i]));
-            }
-         }
-         else if (args[i].equals("--remove-columns"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_arg",
-                   args[i-1]));
-            }
-
-            if (loadSettings.getRemoveExceptColumnList() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.option_clash",
-                   args[i-1], "--remove-except-columns"));
-            }
-
-            loadSettings.setRemoveColumnList(args[i]);
-         }
-         else if (args[i].equals("--remove-except-columns"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_arg",
-                   args[i-1]));
-            }
-
-            if (loadSettings.getRemoveColumnList() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.option_clash",
-                   args[i-1], "--remove-columns"));
-            }
-
-            loadSettings.setRemoveExceptColumnList(args[i]);
-         }
-         else if (args[i].equals("--merge"))
-         {
-            if (loadSettings.getMergeImportSource() != null
-                || loadSettings.getMergeFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                  getLabel("error.syntax.only_one_merge"));
-            }
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_merge_key",
-                   args[i-1]));
-            }
-
-            String mergeKey = args[i];
-
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_merge_file",
-                   args[i-2], args[i-1]));
-            }
-
-            File mergeFile = new File(args[i]);
-
-            if (!mergeFile.exists())
-            {
-               System.err.println(
-                 getLabelWithValues("error.io.file_not_found",
-                  args[i]));
-               mergeFile = null;
-               mergeKey = null;
-            }
-
-            loadSettings.setMergeKey(mergeKey);
-            loadSettings.setMergeFile(mergeFile);
-         }
-         else if (args[i].startsWith("--merge-"))
-         {
-            i = processMergeOption(i, args, args[i].substring(8));
-         }
-         else if (args[i].equals("--name"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_dbname",
-                   args[i-1]));
-            }
-
-            loadSettings.setDbName(args[i]);
-         }
-         else if (args[i].equals("--in") || args[i].equals("-i"))
-         {
-            i++;
-
-            if (i == args.length)
-            {
-               throw new InvalidSyntaxException(
-                 getLabelWithValues("error.syntax.missing_input",
-                   args[i-1]));
-            }
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_input"));
-            }
-
-            if (loadSettings.getDataImport() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.input_clash"));
-            }
-
-            loadSettings.setInputFile(args[i]);
-         }
-         else if (args[i].equals("--verbose"))
-         {
-            getMessageHandler().setVerbosity(1);
-         }
-         else if (args[i].equals("--noverbose"))
-         {
-            getMessageHandler().setVerbosity(0);
-         }
-         else if (args[i].charAt(0) == '-')
-         {
-            i = processOption(i, args);
-         }
-         else
-         {
-            // if no option specified, assume --in
-
-            if (loadSettings.getInputFile() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.only_one_input"));
-            }
-
-            if (loadSettings.getDataImport() != null)
-            {
-               throw new InvalidSyntaxException(
-                 getLabel("error.syntax.input_clash"));
-            }
-
-            loadSettings.setInputFile(args[i]);
-         }
-      }
-   }
-
-   protected abstract void process();
-
-   public void runApplication(String[] args)
-      throws InvalidSyntaxException,IOException
-   {
-      parseArgs(args);
-      process();
+      return getMessage(label, values);
    }
 
    public static void exit(DatatoolTk datatooltk, int exitCode,
@@ -2399,7 +2150,7 @@ public abstract class DatatoolTk
       {
          System.err.format("%s: %s: %s", APP_NAME, noAppMessage, e.getMessage());
 
-         if (stackTrace)
+         if (stackTrace && e != null)
          {
             e.printStackTrace();
          }
@@ -2408,7 +2159,21 @@ public abstract class DatatoolTk
       }
       else
       {
-         datatooltk.getMessageHandler().error(null, appMessage, e, msgCode);
+         MessageHandler msgHandler = datatooltk.getMessageHandler();
+
+         if (msgHandler == null)
+         {
+            System.err.format("%s: %s: %s", APP_NAME, noAppMessage, e.getMessage());
+
+            if (stackTrace && e != null)
+            {
+               e.printStackTrace();
+            }
+         }
+         else
+         {
+            msgHandler.error(null, appMessage, e, msgCode);
+         }
 
          datatooltk.exit(exitCode);
       }
@@ -2416,27 +2181,34 @@ public abstract class DatatoolTk
 
    public void exit(int exitCode)
    {
-      getMessageHandler().closeLogFile();
+      MessageHandler msgHandler = getMessageHandler();
+
+      if (msgHandler != null)
+      {
+         msgHandler.closeLogFile();
+      }
+
       System.exit(exitCode);
    }
 
    public static final String APP_NAME = "datatooltk";
-   public static final String APP_VERSION = "1.9.20260201";
-   public static final String APP_DATE = "2026-02-01";
+   public static final String VERSION = "1.9.20260201";
+   public static final String VERSION_DATE = "2026-02-01";
    public static final String START_COPYRIGHT_YEAR = "2014";
    public static final String COPYRIGHT_YEAR
-    = START_COPYRIGHT_YEAR+"-"+APP_DATE.substring(0,4);
+    = START_COPYRIGHT_YEAR+"-"+VERSION_DATE.substring(0,4);
 
    protected LoadSettings loadSettings;
 
    private int noConsoleAction = ConsolePasswordReader.NO_CONSOLE_GUI;
 
-   private String dict = null;
-
    protected DatatoolSettings settings;
 
    protected boolean allowsGUI, allowsSQL, allowsXLS;
+   protected boolean isBatchMode = true;
 
-   public static final int EXIT_SYNTAX=1, EXIT_IO=2, EXIT_USER_FORCED=3,
-    EXIT_OTHER=255;
+   public static final int EXIT_SYNTAX = TeXJavaHelpLibAppAdapter.EXIT_SYNTAX;//1
+   public static final int EXIT_IO = TeXJavaHelpLibAppAdapter.EXIT_IO;//2
+   public static final int EXIT_USER_FORCED = 8;
+   public static final int EXIT_OTHER = 255;
 }

@@ -60,7 +60,7 @@ public class MessageHandler extends ErrorManager
 
    private void init(boolean isBatchMode)
    {
-      this.isBatchMode = isBatchMode;
+      setBatchMode(isBatchMode);
 
       texApp = new DatatoolTeXApp(this);
    }
@@ -105,12 +105,12 @@ public class MessageHandler extends ErrorManager
 
    public void setBatchMode(boolean isBatchMode)
    {
-      this.isBatchMode = isBatchMode;
+      datatooltk.setBatchMode(isBatchMode);
    }
 
    public boolean isBatchMode()
    {
-      return isBatchMode;
+      return datatooltk.isBatchMode();
    }
 
    public void setDebugMode(boolean enabled)
@@ -681,7 +681,7 @@ public class MessageHandler extends ErrorManager
    }
 
    protected int verbosity = 0;
-   protected boolean isBatchMode, debugMode=false;
+   protected boolean debugMode=false;
    protected DatatoolTk datatooltk;
    protected File logFile;
    protected PrintWriter logWriter;

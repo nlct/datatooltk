@@ -47,7 +47,7 @@ public class DatatoolTeXApp extends TeXAppAdapter
    @Override
    public String getApplicationVersion()
    {
-      return DatatoolTk.APP_VERSION;
+      return DatatoolTk.VERSION;
    }
 
    @Override

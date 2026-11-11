@@ -1,3 +1,4 @@
+% helpinterface.tex
 % Common file provided with TeXJavaHelpLib
 % https://github.com/nlct/texjavahelp
 % NB remember to copy over referenced images
@@ -100,17 +101,6 @@ first in the applicable section of the dialog topic).
 It will be disabled if the current page is the reset target page.
 This menu item is not available on the primary help window.
 
-\menudef{menu.helppage.up}
-
-If the popup menu is activated on the primary help window or on the
-secondary help window that has multiple pages
-(\figuresref{fig:helpframepopup,fig:helpdialogpopup}), then this will behave
-as the primary \menu{helpframe.navigation.up} or
-secondary \menu{helpdialog.navigation.up} menu items. (That is, it
-will move up a hierarchical level, if available.)
-This menu item will be disabled if there is no parent page (or, for
-secondary windows, no parent page within the topic set).
-
 \menudef{menu.helppage.previous}
 
 If the popup menu is activated on the primary help window or on the
@@ -121,6 +111,17 @@ secondary \menu{helpdialog.navigation.previous} menu items.  (That
 is, it will move to the previous page, if available.) This menu item
 will be disabled if there is no previous page (or, for secondary
 windows, no previous page within the topic set).
+
+\menudef{menu.helppage.up}
+
+If the popup menu is activated on the primary help window or on the
+secondary help window that has multiple pages
+(\figuresref{fig:helpframepopup,fig:helpdialogpopup}), then this will behave
+as the primary \menu{helpframe.navigation.up} or
+secondary \menu{helpdialog.navigation.up} menu items. (That is, it
+will move up a hierarchical level, if available.)
+This menu item will be disabled if there is no parent page (or, for
+secondary windows, no parent page within the topic set).
 
 \menudef{menu.helppage.next}
 
@@ -155,7 +156,6 @@ This will behave as the primary
 (That is, it will move forward a page in the history list, if available.)
 This menu item is in all the help page popup menus but will be
 disabled if there is no page to go forward to.
-
 
 \section{The Primary Help Window}
 \label{sec:primaryhelp}
@@ -204,6 +204,14 @@ The \menu{helpframe.navigation.home} item, which is also available
 as a button on the toolbar, will replace the current view with the
 first page of the document.
 
+\menudef{menu.helpframe.navigation.previous}
+
+The \menu{helpframe.navigation.previous} item, which is also available as
+a button on the toolbar, will replace the current view with the
+previous page. The item and button will be disabled if there is no
+previous page. (That is, if the current page is the first
+page of the document.)
+
 \menudef{menu.helpframe.navigation.up}
 
 The \menu{helpframe.navigation.up} item, which is also available
@@ -213,14 +221,6 @@ will be disabled if there is no parent page (that is, if the current
 page is the document's home page). The parent page may
 also be the previous page if the current page is the first in its
 current hierarchical level.
-
-\menudef{menu.helpframe.navigation.previous}
-
-The \menu{helpframe.navigation.previous} item, which is also available as
-a button on the toolbar, will replace the current view with the
-previous page. The item and button will be disabled if there is no
-previous page. (That is, if the current page is the first
-page of the document.)
 
 \menudef{menu.helpframe.navigation.next}
 
@@ -331,6 +331,10 @@ The \menu{helpframe.navigation.historyforward} menu item, which is
 also available as a button on the toolbar, will replace the current view with the
 next page in the history list. The item and button will be disabled if the
 currently viewed page is at the end of the history list. 
+
+\menudef{menu.helpframe.navigation.close}
+
+Closes the help window.
 
 \menudef*{menu.helpframe.settings}
 
@@ -471,15 +475,30 @@ switch the current page with the next page in the topic set.
 This menu item will be disabled if the next page is not within the
 topic set.
 
+\menudef{menu.helpdialog.navigation.close}
+
+Closes the help window.
+
 \section{Help Font Dialog}
 \label{sec:helpfontdialog}
 
 The \menu{helpframe.settings.font} item opens the
 \inlineglsdef{help_font_settings.title} dialog (see
-\figureref{fig:helpfontdialog}). Use the
-\widget{help_font_settings.family} selector for the main body font
-family and the \widget{help_font_settings.size} selector for the
-main body font size. Icon characters, such as
+\figureref{fig:helpfontdialog}). 
+
+\widgetdef{help_font_settings.family}
+
+Use the \widget{help_font_settings.family} selector for the main body font
+family.
+
+\widgetdef{help_font_settings.size}
+
+The \widget{help_font_settings.size} selector sets the size for the
+main body font. 
+
+\widgetdef{help_font_settings.icon_font_family}
+
+Icon characters, such as
 \gls{symbol.help.navigation.history.pointer}, may not be available
 for your preferred font family, so you can specify an alternative
 with the \widget{help_font_settings.icon_font_family} selector. This
@@ -495,16 +514,29 @@ characters.
 }
 {Help Page Font Dialog}
 
+\widgetdef{help_font_settings.keystroke_font_family}
+
 Use the \widget{help_font_settings.keystroke_font_family} selector to
 choose the font to show keystrokes (such as
-\keys{\keyref{shift}}) and the
-\widget{help_font_settings.mono_font_family} selector to choose the
+\keys{\keyref{shift}}).
+
+\widgetdef{help_font_settings.mono_font_family}
+
+The \widget{help_font_settings.mono_font_family} selector determines the
 font to display code fragments (such as \verb|% \ { } #|).
 
-The document hyperlink style can also be changed with the 
-\widget{help_font_settings.hyperlinks} 
-\btn{help_font_settings.choose_colour} and
-\btn{help_font_settings.underline} widgets.
+\widgetdef{help_font_settings.hyperlinks} 
+The document hyperlink style can be adjusted with the 
+\widget{help_font_settings.hyperlinks} settings.
+
+\widgetdef{help_font_settings.choose_colour} 
+
+The \btn{help_font_settings.choose_colour} button opens a color
+selector to select the text color.
+
+\widgetdef{help_font_settings.underline}
+Toggle the \btn{help_font_settings.underline} checkbox to enable or
+disable underlining.
 
 The styles are applied to the primary help window, all secondary
 help windows and related windows, such as the \dialog{help.navigation.history} 

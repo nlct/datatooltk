@@ -57,21 +57,15 @@ public class DatatoolProperties extends DatatoolSettings
    public DatatoolProperties(DatatoolTk datatooltk)
     throws IOException
    {
-      this(datatooltk, null, null);
+      super(datatooltk);
+
+      properties = new Properties();
+      recentFiles = new Vector<String>();
    }
 
-   public DatatoolProperties(DatatoolTk datatooltk,
-      String dictionaryTag, String helpsetTag)
-    throws IOException
+   protected MessageHandler createMessageHandler()
    {
-      this.datatooltk = datatooltk;
-      messageHandler = new CombinedMessageHandler(datatooltk);
-      importSettings = new ImportSettings(this);
-
-      initLocalisation(dictionaryTag, helpsetTag);
-
-      recentFiles = new Vector<String>();
-      setDefaults();
+      return new CombinedMessageHandler(datatooltk);
    }
 
    public File getPropertiesPath()
@@ -83,82 +77,12 @@ public class DatatoolProperties extends DatatoolSettings
    protected void initLocalisation(String dictionaryTag, String helpsetTag)
      throws IOException
    {
-      properties = new Properties();
 
-      setPropertiesPath();
-
-      if (dictionaryTag != null)
-      {
-         dictLocale = new HelpSetLocale(dictionaryTag);
-      }
-
-      if (helpsetTag != null)
-      {
-         helpSetLocale = new HelpSetLocale(helpsetTag);
-      }
-
-      if (dictLocale == null || helpSetLocale == null)
-      {
-         initLangTags();
-      }
-
-      helpLib = new TeXJavaHelpLib(messageHandler,
-       datatooltk.getApplicationName(), RESOURCES_PATH,
-       DICT_DIR, dictLocale, helpSetLocale,
-       "texparserlib", RESOURCE_PREFIX);
+      super.initLocalisation(dictionaryTag, helpsetTag);
 
       helpLib.setIconPath(ICON_DIR);
       helpLib.setSmallIconSuffix(DEFAULT_SMALL_ICON_SUFFIX);
       helpLib.setLargeIconSuffix(DEFAULT_LARGE_ICON_SUFFIX);
-   }
-
-   protected void initLangTags() throws IOException
-   {
-      File file = new File(propertiesPath, LANGTAG_FILE_NAME);
-
-      if (file.exists())
-      {
-         BufferedReader in = null;
-
-         try
-         {
-            in = createBufferedReader(file);
-
-            String line = in.readLine();
-
-            if (line != null && dictLocale == null)
-            {
-               dictLocale = new HelpSetLocale(line.trim());
-            }
-
-            if (line != null && helpSetLocale == null)
-            {
-               line = in.readLine();
-
-               if (line != null)
-               {
-                  helpSetLocale = new HelpSetLocale(line.trim());
-               }
-            }
-         }
-         finally
-         {
-            if (in != null)
-            {
-               in.close();
-            }
-         }
-      }
-
-      if (dictLocale == null)
-      {
-         dictLocale = new HelpSetLocale(Locale.getDefault());
-      }
-
-      if (helpSetLocale == null)
-      {
-         helpSetLocale = dictLocale;
-      }
    }
 
    public static String getApplicationIconPath()
@@ -186,6 +110,7 @@ public class DatatoolProperties extends DatatoolSettings
       return properties.getProperty(key, defValue);
    }
 
+   @Override
    protected void setPropertiesPath()
    {
       String dirname = System.getenv("DATATOOLTK");
@@ -2785,8 +2710,6 @@ public class DatatoolProperties extends DatatoolSettings
    protected Properties properties;
 
    protected Vector<String> recentFiles;
-
-   protected File propertiesPath = null;
 
    protected static final String PROPERTIES_NAME = "datatooltk.prop";
 

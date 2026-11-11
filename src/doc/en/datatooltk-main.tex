@@ -22,6 +22,8 @@
 
 \newcommand{\appname}{DatatoolTk}
 
+\TJHRequireIcons{texjavahelplibicons}{16}{24}
+
 \title{User Manual for \appname}
 \author{Nicola L.C. Talbot\\\href{https://www.dickimaw-books.com/}{\nolinkurl{dickimaw-books.com}}}
 
@@ -154,7 +156,15 @@ will retry using the \TeX\ Parser Library, which has some limited
 understanding of \TeX\ syntax and \sty{datatool} commands.
 This is more sophisticated than a simple pattern match, but it's slower.
 For example, suppose the file contains:
-\verbatiminput{../tests/test-dtlnewdb.tex}
+\begin{codebox*}
+\gls{DTLnewdb}\marg{testdata}
+\gls{DTLnewrow}\marg{testdata}
+\gls{DTLnewdbentry}\marg{testdata}\marg{Info}\marg{sample}
+\gls{DTLnewdbentry}\marg{testdata}\marg{Value}\marg{1.23}
+\gls{DTLnewrow}\marg{testdata}
+\gls{DTLnewdbentry}\marg{testdata}\marg{Info}\marg{another sample}
+\gls{DTLnewdbentry}\marg{testdata}\marg{Value}\marg{3.75}
+\end{codebox*}
 This doesn't match the \ext{dbtex} format, so \app{datatooltk} will
 switch to using the \TeX\ Parser Library, which can interpret these
 commands, but note that if the file is subsequently saved
@@ -304,14 +314,14 @@ I have used \gls{lstinputlisting}.
 {Verbatim Blocks Need to be in Separate Files}
 
 That database requires two files: \filefmt{HelloWorld.java}
-\verbatiminput{../tests/HelloWorld.java}
+\verbatiminput{../../tests/HelloWorld.java}
 and \filefmt{HelloUser.java}:
-\verbatiminput{../tests/HelloUser.java}
+\verbatiminput{../../tests/HelloUser.java}
 
 Assuming that I've saved my database in a file called
 \filefmt{prob-verb.dbtex} with database label \qtt{problems},
 here's a sample document:
-\verbatiminput{../tests/test-probsoln-doc.tex}
+\verbatiminput{../../tests/test-probsoln-doc.tex}
 
 \seealsorefs{sec:shuffle,sec:sortshuffle,sec:importprobsoln}
 
@@ -1182,10 +1192,10 @@ ordering every time you run that command. For example:
 \app{datatooltk} \switch{seed} 2013 \switch{shuffle} \switch{in} data.dbtex \switch{output} data-shuffled.dbtex
 \end{terminal}
 This shuffled database can now be loaded in my document:
-\verbatiminput{../tests/test-shuffle.tex}
+\verbatiminput{../../tests/test-shuffle.tex}
 What if I want all the easy questions listed first? This requires 
 some modifications to the code as shown below:
-\verbatiminput{../tests/test-shuffle-level.tex}
+\verbatiminput{../../tests/test-shuffle-level.tex}
 
 Now, the \gls{DTLforeach} loop just stores the row numbers of the
 required questions in two lists, corresponding to the two different levels.
@@ -1290,7 +1300,7 @@ To solve this, once you have selected the maximum required number of
 questions, don't break out of the loop, as was done earlier (see
 \sectionref{sec:shuffle}). Instead, for the rest of the loop, if the exam
 year is set to the current year, clear it.
-\verbatiminput{../tests/test-exam.tex}
+\verbatiminput{../../tests/test-exam.tex}
 
 \begin{information}
 Since this overwrites the \sty{datatool} file, you will
@@ -1587,7 +1597,7 @@ sudo dnf install perl-Tk
    called \filefmt{datagidx-test.dbtex}. I can now load it into 
    a \LaTeX\ document as follows:
 
-\verbatiminput{../tests/datagidx-doc.tex}
+\verbatiminput{../../tests/datagidx-doc.tex}
 Ensure you have at least version 2.15 of the \sty{datatool} bundle.
 \end{example}
 
@@ -1607,7 +1617,7 @@ Ensure you have at least version 2.15 of the \sty{datatool} bundle.
 
    First, let's look at a document that uses \sty{datagidx} with \gls{newgidx}:
 
-\verbatiminput{../tests/datagidx/test-datagidx.tex}
+\verbatiminput{../../tests/datagidx/test-datagidx.tex}
 
    In general you need three \LaTeX\ runs to compile a \sty{datagidx}
    document. In this case, you actually only need to do it twice
@@ -1619,7 +1629,7 @@ Ensure you have at least version 2.15 of the \sty{datatool} bundle.
    file that corresponds the same set of entries. This can be done
    with the following document:
 
-\verbatiminput{../tests/datagidx/test-savedbtex.tex}
+\verbatiminput{../../tests/datagidx/test-savedbtex.tex}
 
    This just converts the entries listed in \filefmt{entries.tex}
    into the appropriate database file, simulating having entered
@@ -1635,7 +1645,7 @@ Ensure you have at least version 2.15 of the \sty{datatool} bundle.
    This creates a file called \filefmt{index-sorted.dbtex}.
    This file can be loaded into a document as follows:
 
-\verbatiminput{../tests/datagidx/test-loaddb.tex}
+\verbatiminput{../../tests/datagidx/test-loaddb.tex}
 
    Now let's look at the \sty{glossaries} package. Since the terms
    have been defined using \gls{newterm}, I've defined a command
@@ -1645,7 +1655,7 @@ Ensure you have at least version 2.15 of the \sty{datatool} bundle.
    label, so I've added a quick way of generating an
    analogous accent-free label and sort key that can be used with \gls{newglossaryentry}. Here's the document:
 
-\verbatiminput{../tests/datagidx/test-glossaries.tex}
+\verbatiminput{../../tests/datagidx/test-glossaries.tex}
 
    In order to compare them, I used \app{arara} with 
    the Linux \app{time} command. In each case, the \optfmt{clean}
@@ -1728,7 +1738,7 @@ sys	0m0.069s
    If you're interested to know how this compares with \gls{makenoidxglossaries} instead of \gls{makeglossaries}, here's the revised 
    \sty{glossaries} code:
 
-\verbatiminput{../tests/datagidx/test-glossaries-noidx.tex}
+\verbatiminput{../../tests/datagidx/test-glossaries-noidx.tex}
 
    The result is:
 
@@ -1795,7 +1805,7 @@ sys	0m0.065s
 
    Consider the \gls{csv} file shown below:
 
-\verbatiminput{../tests/test-para.csv}
+\verbatiminput{../../tests/test-para.csv}
    This has a cell with multiple lines. When it's imported into
    \app{datatooltk}, the paragraph break is converted to \gls{DTLpar}.
    However, this isn't visible when you look at the file in 
@@ -1974,7 +1984,7 @@ Password:
    Consider the file called \filefmt{prob-mixed.tex} that contains the 
    following:
 
-\verbatiminput{../tests/prob-mixed.tex}
+\verbatiminput{../../tests/prob-mixed.tex}
 
    This contains a mixture of \gls{newproblem} and
    \env{defproblem}. It also has comments and spaces to make

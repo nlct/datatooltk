@@ -64,51 +64,99 @@ public class DatatoolSettings
    public DatatoolSettings(DatatoolTk datatooltk)
     throws IOException
    {
-      this(datatooltk, null, null);
-   }
-
-   public DatatoolSettings(DatatoolTk datatooltk,
-      String dictionaryTag, String helpsetTag)
-    throws IOException
-   {
-      this();
       this.datatooltk = datatooltk;
-      messageHandler = new MessageHandler(datatooltk);
+      currencies = new Vector<String>();
+
+      messageHandler = createMessageHandler();
       importSettings = new ImportSettings(this);
 
-      initLocalisation(dictionaryTag, helpsetTag);
-
       setDefaults();
+      setPropertiesPath();
    }
 
-   protected DatatoolSettings()
+   protected MessageHandler createMessageHandler()
    {
-      currencies = new Vector<String>();
+      return new MessageHandler(datatooltk);
    }
 
-   protected void initLocalisation(String dictionaryTag, String helpsetTag)
-     throws IOException
+   protected void setPropertiesPath()
    {
-      if (dictionaryTag != null)
+      String dirname = System.getenv("DATATOOLTK");
+   
+      if (dirname != null && !dirname.isEmpty())
       {
-         dictLocale = new HelpSetLocale(dictionaryTag);
+         File file = new File(dirname);
+
+         if (file.exists() && file.isDirectory())
+         {
+            propertiesPath = file;
+         }
       }
 
-      if (helpsetTag != null)
+      if (propertiesPath == null)
       {
-         helpSetLocale = new HelpSetLocale(helpsetTag);
-      }
+         String base;
 
-      if (dictLocale == null || helpSetLocale == null)
+         if (System.getProperty("os.name").toLowerCase().startsWith("win"))
+         {
+            base = "datatooltk-settings";
+         }
+         else
+         {
+            base = ".datatooltk";
+         }
+
+         String home = System.getProperty("user.home");
+
+         if (home != null)
+         {
+            File file = new File(new File(home), base);
+
+            if (file.exists() && file.isDirectory())
+            {
+               propertiesPath = file;
+            }
+         }
+      }
+   }
+
+   public void loadLangTags() throws IOException
+   {
+      File file = new File(propertiesPath, LANGTAG_FILE_NAME);
+
+      if (file.exists())
       {
-         dictLocale = new HelpSetLocale("en");
-         helpSetLocale = new HelpSetLocale("en");
-      }
+         BufferedReader in = null;
 
-      helpLib = new TeXJavaHelpLib(messageHandler,
-       datatooltk.getApplicationName(), RESOURCES_PATH,
-       DICT_DIR, dictLocale, helpSetLocale,
-       "texparserlib", RESOURCE_PREFIX);
+         try
+         {
+            in = createBufferedReader(file);
+
+            String line = in.readLine();
+
+            if (line != null && dictLocale == null)
+            {
+               dictLocale = new HelpSetLocale(line.trim());
+            }
+
+            if (line != null && helpSetLocale == null)
+            {
+               line = in.readLine();
+
+               if (line != null)
+               {
+                  helpSetLocale = new HelpSetLocale(line.trim());
+               }
+            }
+         }
+         finally
+         {
+            if (in != null)
+            {
+               in.close();
+            }
+         }
+      }
    }
 
    public int getInitialRowCapacity()
@@ -1389,7 +1437,7 @@ public class DatatoolSettings
 
    public TeXJavaHelpLib getHelpLib()
    {
-      return helpLib;
+      return datatooltk.getHelpLib();
    }
 
    public void setDefaults()
@@ -1465,17 +1513,17 @@ public class DatatoolSettings
 
    public DatatoolTk getDatatoolTk()
    {
-      return messageHandler.getDatatoolTk();
+      return datatooltk;
    }
 
    public boolean isBatchMode()
    {
-      return messageHandler == null ? true : messageHandler.isBatchMode();
+      return datatooltk.isBatchMode();
    }
 
    public void setBatchMode(boolean enabled)
    {
-      messageHandler.setBatchMode(enabled);
+      datatooltk.setBatchMode(enabled);
    }
 
    public boolean isCompatibilityLevel(int level)
@@ -1628,8 +1676,6 @@ public class DatatoolSettings
    protected DatatoolTk datatooltk;
    protected MessageHandler messageHandler;
 
-   protected TeXJavaHelpLib helpLib;
-
    protected ImportSettings importSettings;
 
    protected Vector<String> currencies;
@@ -1646,6 +1692,8 @@ public class DatatoolSettings
 
    protected HelpSetLocale helpSetLocale, dictLocale;
 
+   protected File propertiesPath;
+
    protected DataToolTeXParserListener parserListener;
 
    public static final int COMPAT_LATEST=0;
@@ -1657,7 +1705,10 @@ public class DatatoolSettings
    public static final String RESOURCES_PATH = "/resources";
    public static final String DICT_DIR = RESOURCES_PATH+"/dictionaries/";
 
-   public static final String RESOURCE_PREFIX = "datatooltk-";
+   public static final String RESOURCE_NAME = "datatooltk";
+   public static final String RESOURCE_PREFIX = RESOURCE_NAME + "-";
+
+   protected final String LANGTAG_FILE_NAME = "languages";
 
    static final SimpleDateFormat DATE_TIME_FORMAT
       = new SimpleDateFormat("y-MM-dd'T'HH:mm:ss");

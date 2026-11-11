@@ -1311,6 +1311,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.syntax.deprecated">Option {0} is deprecated. Use {1} instead.</entry>
 
 <entry key="error.syntax.import_clash">{0} can''t be used with &lt;datatool file&gt;</entry>
+<entry key="error.syntax.import_io_error">Import option {0} {1} can''t be implemented: {2}</entry>
 <entry key="error.syntax.input_clash">&lt;datatool file&gt; can''t be used with an import option</entry>
 <entry key="error.syntax.invalid_compat">Invalid compatibility setting {0}</entry>
 <entry key="error.syntax.invalid_delim">Delimiter must be a single character not a string</entry>
@@ -1322,6 +1323,7 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.syntax.invalid_sep">Separator must be a single character not a string</entry>
 <entry key="error.syntax.invalid_skiplines">Invalid CSV skip lines value {0} (must be a non-negative number)</entry>
 
+<entry key="error.syntax.merge_io_error">Merge option {0} {1} {2} can''t be implemented: {3}</entry>
 <entry key="error.syntax.missing_arg">Missing argument after {0}</entry>
 <entry key="error.syntax.missing_char">Character expected after {0}</entry>
 <entry key="error.syntax.missing_dbname">Database name expected after {0}</entry>
@@ -1352,9 +1354,10 @@ Trying again with TeX Parser Library.</entry>
 <entry key="error.syntax.only_one_merge">Only one merge option permitted</entry>
 <entry key="error.syntax.option_clash">Option conflict: can''t specify both {0} and {1}</entry>
 
-<entry key="error.syntax.syntax.missing_merge_file">Missing merge file after {0} {1}</entry>
-<entry key="error.syntax.syntax.missing_merge_key">Missing merge key after ''{0}''</entry>
-<entry key="error.syntax.syntax.missing_merge_statement">Missing merge SQL statement after {0} {1}</entry>
+<entry key="error.syntax.missing_merge_file">Missing merge file after {0} {1}</entry>
+<entry key="error.syntax.missing_merge_key">Missing merge key after ''{0}''</entry>
+<entry key="error.syntax.missing_merge_statement">Missing merge SQL statement after {0} {1}</entry>
+<entry key="error.syntax.merge_omitted">Omitting {0} {1} {2}: {3}</entry>
 
 <entry key="error.syntax.missing_optionlist">Missing option list after {0}</entry>
 
