@@ -73,12 +73,9 @@ public class DatatoolProperties extends DatatoolSettings
       return propertiesPath;
    }
 
-   @Override
-   protected void initLocalisation(String dictionaryTag, String helpsetTag)
-     throws IOException
+   public void setIcons()
    {
-
-      super.initLocalisation(dictionaryTag, helpsetTag);
+      TeXJavaHelpLib helpLib = getHelpLib();
 
       helpLib.setIconPath(ICON_DIR);
       helpLib.setSmallIconSuffix(DEFAULT_SMALL_ICON_SUFFIX);
@@ -212,6 +209,8 @@ public class DatatoolProperties extends DatatoolSettings
                in.close();
             }
          }
+
+         TeXJavaHelpLib helpLib = getHelpLib();
 
          helpLib.setLargeIconSuffix(getLargeIconSuffix());
          helpLib.setSmallIconSuffix(getSmallIconSuffix());
@@ -451,7 +450,7 @@ public class DatatoolProperties extends DatatoolSettings
       String lastVersion = getProperty("version");
 
       if (lastVersion == null
-            || lastVersion.compareTo(DatatoolTk.APP_VERSION) < 0)
+            || lastVersion.compareTo(DatatoolTk.VERSION) < 0)
       {
          upgrade=true;
 
@@ -884,6 +883,8 @@ public class DatatoolProperties extends DatatoolSettings
 
    public void initHelpSetSettings()
    {
+      TeXJavaHelpLib helpLib = getHelpLib();
+
       helpLib.setDefaultLowerNavSettings(
         isHelpSetLowerNavLabelTextOn(),
         getHelpSetLowerNavLabelLimit());
@@ -893,6 +894,8 @@ public class DatatoolProperties extends DatatoolSettings
 
    public void updateHelpSetSettings()
    {
+      TeXJavaHelpLib helpLib = getHelpLib();
+
       setManualFont(helpLib.getHelpFontSettings());
       setHelpSetLowerNavLabelLimit(helpLib.getDefaultLowerNavLabelLimit());
       setHelpSetLowerNavLabelText(helpLib.isDefaultLowerNavLabelTextOn());

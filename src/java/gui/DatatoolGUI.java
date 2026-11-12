@@ -428,7 +428,7 @@ public class DatatoolGUI extends JFrame
       aboutDialog = new MessageDialog(this,
        getMessageHandler().getLabelWithValues("about.title", 
            getMessageHandler().getApplicationName()),
-       true, helpLib, getMessageHandler().getDatatoolTk().getAppInfo(true));
+       true, helpLib, getMessageHandler().getDatatoolTk().getAboutInfo(true));
 
       createLicenceDialog();
 

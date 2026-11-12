@@ -115,23 +115,37 @@ public class MessageHandler extends ErrorManager
 
    public void setDebugMode(boolean enabled)
    {
-      debugMode = enabled;
-
-      if (debugMode && verbosity < 1)
+      if (enabled)
       {
-         verbosity = 1;
+         if (texParserDebugLevel > 0)
+         {
+            datatooltk.setDebuggingLevel(texParserDebugLevel);
+         }
+         else
+         {
+            datatooltk.setDebuggingLevel(1);
+         }
+
+         if (verbosity < 1)
+         {
+            verbosity = 1;
+         }
+      }
+      else
+      {
+         datatooltk.setDebuggingLevel(0);
       }
    }
 
    public boolean isDebugMode()
    {
-      return debugMode;
+      return datatooltk.isDebuggingOn();
    }
 
    @Override
    public boolean isDebuggingOn()
    {
-      return debugMode;
+      return datatooltk.isDebuggingOn();
    }
 
    public int getTeXParserDebugLevel()
@@ -142,12 +156,12 @@ public class MessageHandler extends ErrorManager
    public void setTeXParserDebugLevel(int level)
    {
       texParserDebugLevel = level;
+      datatooltk.setDebuggingLevel(level);
    }
 
    public void setDebugModeForParser(TeXParser parser) throws IOException
    {
-      checkLogWriterOpen();
-      parser.setDebugMode(texParserDebugLevel, logWriter);
+      datatooltk.setParserDebugging(parser);
    }
 
   /**
@@ -185,6 +199,7 @@ public class MessageHandler extends ErrorManager
       }
    }
 
+   @Deprecated
    public void setLogFile(String filename) throws IOException
    {
       if (filename == null || filename.isEmpty())
@@ -197,6 +212,7 @@ public class MessageHandler extends ErrorManager
       }
    }
 
+   @Deprecated
    public void setLogFile(File file) throws IOException
    {
       if (file != null)
@@ -208,6 +224,7 @@ public class MessageHandler extends ErrorManager
       logFile = file;
    }
 
+   @Deprecated
    public void closeLogFile()
    {
       if (logWriter != null)
@@ -219,6 +236,8 @@ public class MessageHandler extends ErrorManager
 
    protected void checkLogWriterOpen() throws IOException
    {
+      datatooltk.ensureLogOpenIfSet();
+
       if (logWriter == null && logFile != null)
       {
          logWriter = new PrintWriter(
@@ -229,56 +248,19 @@ public class MessageHandler extends ErrorManager
 
    public void logMessage(String msg)
    {
-      if (logFile != null && msg != null)
-      {
-         try
-         {
-            checkLogWriterOpen();
+      datatooltk.logMessage(msg);
+   }
 
-            logWriter.println(msg);
-         }
-         catch (IOException e)
-         {
-            System.err.println(e);
-
-            if (debugMode)
-            {
-               e.printStackTrace();
-            }
-
-            logFile = null;
-            closeLogFile();
-         }
-      }
+   public void logMessage(Throwable t, String msg)
+   {
+      datatooltk.logMessage(t, msg);
    }
 
    public void logMessage(Throwable t)
    {
-      if (logFile != null && t != null)
+      if (t != null)
       {
-         try
-         {
-            if (logWriter == null)
-            {
-               logWriter = new PrintWriter(
-                 texApp.createBufferedWriter(logFile.toPath(),
-                  StandardCharsets.UTF_8));
-            }
-
-            t.printStackTrace(logWriter);
-         }
-         catch (IOException e)
-         {
-            System.err.println(e);
-
-            if (debugMode)
-            {
-               e.printStackTrace();
-            }
-
-            logFile = null;
-            closeLogFile();
-         }
+         datatooltk.logMessage(t, null);
       }
    }
 
@@ -392,7 +374,7 @@ public class MessageHandler extends ErrorManager
    {
       warning(parent, msg);
 
-      if (debugMode)
+      if (isDebugMode())
       {
          e.printStackTrace();
          logMessage(e);
@@ -402,7 +384,7 @@ public class MessageHandler extends ErrorManager
    @Override
    public void debug(String message)
    {
-      if (debugMode)
+      if (isDebugMode())
       {
          System.err.println(String.format("%s: %s", 
            getApplicationName(), message));
@@ -414,7 +396,7 @@ public class MessageHandler extends ErrorManager
    @Override
    public void debug(String message, Throwable e)
    {
-      if (debugMode)
+      if (isDebugMode())
       {
          System.err.println(String.format("%s: %s", 
            getApplicationName(), message));
@@ -427,7 +409,7 @@ public class MessageHandler extends ErrorManager
    @Override
    public void debug(Component parent, Throwable e)
    {
-      if (debugMode)
+      if (isDebugMode())
       {
          error(parent, e, GENERIC_FAILURE);
       }
@@ -436,7 +418,7 @@ public class MessageHandler extends ErrorManager
    @Override
    public void debug(Component parent, String message)
    {
-      if (debugMode)
+      if (isDebugMode())
       {
          error(parent, message, null, GENERIC_FAILURE);
       }
@@ -445,7 +427,7 @@ public class MessageHandler extends ErrorManager
    @Override
    public void debug(Component parent, String message, Throwable e)
    {
-      if (debugMode)
+      if (isDebugMode())
       {
          error(parent, message, e, GENERIC_FAILURE);
       }
@@ -468,7 +450,7 @@ public class MessageHandler extends ErrorManager
       {
          error(getMessage(throwable), null, RUNTIME_FAILURE);
 
-         if (debugMode)
+         if (isDebugMode())
          {
             throwable.printStackTrace();
             logMessage(throwable);
@@ -557,7 +539,7 @@ public class MessageHandler extends ErrorManager
             System.err.println(getMessage(cause));
          }
 
-         if (debugMode)
+         if (isDebugMode())
          {
             exception.printStackTrace();
          }
@@ -681,7 +663,6 @@ public class MessageHandler extends ErrorManager
    }
 
    protected int verbosity = 0;
-   protected boolean debugMode=false;
    protected DatatoolTk datatooltk;
    protected File logFile;
    protected PrintWriter logWriter;

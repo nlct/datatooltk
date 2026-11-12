@@ -1590,6 +1590,13 @@ public abstract class DatatoolTk extends CLITeXAppAdapter
       }
    }
 
+   public void runApplication(String[] args)
+    throws InvalidSyntaxException,IOException
+   {
+      initialiseHelpAndParse(args);
+      process();
+   }
+
    public void doBatchProcess()
    {
       settings.setPasswordReader(new ConsolePasswordReader(
@@ -1982,7 +1989,7 @@ public abstract class DatatoolTk extends CLITeXAppAdapter
                }
             }
             catch (SQLException e)
-            {
+            {// ignore
             }
 
             if (dbInfo == null)

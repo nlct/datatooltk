@@ -47,7 +47,7 @@ public class CombinedMessageHandler extends MessageHandler
    @Override
    public void progress(int percentage)
    {
-      if (isBatchMode) return;
+      if (isBatchMode()) return;
 
       guiResources.progress(percentage);
    }
@@ -55,7 +55,7 @@ public class CombinedMessageHandler extends MessageHandler
    @Override
    public void progress(String msg)
    {
-      if (isBatchMode)
+      if (isBatchMode())
       {
          message(msg);
       }
@@ -68,7 +68,7 @@ public class CombinedMessageHandler extends MessageHandler
    @Override
    public void startBuffering()
    {
-      if (isBatchMode) return;
+      if (isBatchMode()) return;
 
       errorBuffer = new StringBuffer();
       warningBuffer = new StringBuffer();
@@ -77,7 +77,7 @@ public class CombinedMessageHandler extends MessageHandler
    @Override
    public void stopBuffering()
    {
-      if (isBatchMode) return;
+      if (isBatchMode()) return;
 
       if (errorBuffer.length() > 0)
       {
@@ -104,7 +104,7 @@ public class CombinedMessageHandler extends MessageHandler
    {
       logMessage(message);
 
-      if (isBatchMode)
+      if (isBatchMode())
       {
          System.err.println(String.format("%s: %s", 
            getApplicationName(), message));
@@ -134,10 +134,9 @@ public class CombinedMessageHandler extends MessageHandler
    public void error(Component parent, String msg, 
      Throwable exception, int code)
    {
-      logMessage(msg);
-      logMessage(exception);
+      logMessage(exception, msg);
 
-      if (isBatchMode)
+      if (isBatchMode())
       {
          if (msg == null)
          {
@@ -230,7 +229,7 @@ public class CombinedMessageHandler extends MessageHandler
          }
       }
 
-      if (exception != null && debugMode)
+      if (exception != null && isDebugMode())
       {
          exception.printStackTrace();
       }
